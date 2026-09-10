@@ -1,132 +1,437 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.6])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A9447CC8A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 11:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BB47D94A
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 12:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789041517; cv=none; b=qyTkurvBhbO46+hCOee96i3rXmm/ft+BIX8M65IPrblSuzWQXeeJinNOmRCWJBQfr3UntFX/4fl0W58i+eo++IFWAZEaMvfpJLd3QcUDF2O1ruzgS7+9AMfp7XIJSytN6VcZJj9jQjR6Szc/ncaGv124W7DTOFOCQVCaEYJMRxc=
+	t=1789041608; cv=none; b=hgiIgkFxPr4UjaNq+P6TtwgrwvHZ9pyBw+sxtfbYqgVC7AKawoyYlN9VzQAQt5PwoQjthGvWYK+kZS8hJH284jk6MjbgjzPccb4JUDhzyZxIS/6CTfR9XZXJEjsJnv+e42mP8I7syY03OpVjTvMAK0LuxyVXeyp+Agfd+6+xrA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789041517; c=relaxed/simple;
-	bh=zK6PmxwVTfF0SdLwbstSd41fqF13cMBGlp5bErkrisQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=OrizayVSNNjLm8lvN2pfjEKOpmQCb1wE2UO3wf+cSGkcpKgkc2WYkkoJVWYGRA2cLiQj6iXQoCkI7wnBM87m+pcCbB84JbSlodzX0wnSAQS1QIjzwN8QIOpIE3gfrBq5LhrC7qR0IdxoCafeCQE/L/i2JC6Xg0mZxf8uLby3Lok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ex6n2Jg+; arc=none smtp.client-ip=192.198.163.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1789041608; c=relaxed/simple;
+	bh=p15CaMlU+NJqumt6i2JWbq4u6OSoIhblZDwl0I3jh8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0kOd/jKVeFG6QxU9CKMpw2Ifn+ggHiI0g1SFjDfAmRLcPYDoFe2q8B2uNcp6Al+UnNPjuuCIxvmjLu3N6hf1N8f/XnQfNm0O3dE2zvZkCU98EO9Xg9f4bYxIC9Tnyr6Rj13ijyRtABwVuiDg/+N83/RFEucqAmmeiIxPHaBlQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XQoNw8cb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ex6n2Jg+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789041515; x=1820577515;
-  h=date:from:to:cc:subject:message-id;
-  bh=zK6PmxwVTfF0SdLwbstSd41fqF13cMBGlp5bErkrisQ=;
-  b=ex6n2Jg+2vki9GsPpkF3JMk6SWzaiEK6ZmkfGawyU62fxCHLsUw4mP2F
-   2yENLBxfXqIb2ep6NZ5BmoKTXB0gbR9xoWAmhvFP1yiB4Lf0yVupI+bSW
-   ee1CFuKPpVaSPhzhg3QARsl236SKQMPLd+2I4YXxBqmGhEj04Q7mpv47q
-   TpR/fec/2mqveJQcscpOvycqNRk3Wd6eafDMLVvLz6stsDEoLjYvOnciC
-   irIyQsjGHQ5Ijj/pAQnGYcJRgqqfw84fXF89aqnOy2PifErA8nvzRz1OW
-   qe0B1Vs9yebWMbm/XZlm0U6onBs1DKHfDxJzechbiNhHvewLSUJUsp6g8
-   Q==;
-X-CSE-ConnectionGUID: GiBbeTH5SmqRDhOoOB0VXw==
-X-CSE-MsgGUID: SkLRypIdTomP6PNRceWBqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="10604"
-X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
-   d="scan'208";a="10604"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa116.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 04:58:33 -0700
-X-CSE-ConnectionGUID: jlknJmG8Qy2it+0rstOb3g==
-X-CSE-MsgGUID: lU3r62bLRiueSu/Xy1SyfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
-   d="scan'208";a="269039630"
-Received: from lkp-server01.sh.intel.com (HELO a3e91e2cf319) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Sep 2026 04:58:32 -0700
-Received: from kbuild by a3e91e2cf319 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x4dQD-000000001m3-3LWP;
-	Thu, 10 Sep 2026 11:58:29 +0000
-Date: Thu, 10 Sep 2026 19:57:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- 8dda3e6dc64e2f676d5d324c9ab6fe18e766cbe0
-Message-ID: <202609101925.dKdtCE1T-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XQoNw8cb"
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DD6FAC48;
+	Thu, 10 Sep 2026 13:58:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1789041506;
+	bh=p15CaMlU+NJqumt6i2JWbq4u6OSoIhblZDwl0I3jh8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQoNw8cbJ4QSoKxYYF9tSs1EnZxppmg6w4Ck6lgHRKdPqr06G2vsJ+E0BK26Q4jQ3
+	 APsHXbjs+JOp/544B2xDJJVQAuBOQai3ScJadhSWSlRZLbd4rMTHaKG4bCOxC0ABGY
+	 eRuHnKdTa29Hvog57F3hEsh0FOo2itL161jLEbA4=
+Date: Thu, 10 Sep 2026 15:00:01 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, geert+renesas@glider.be,
+	kieran.bingham+renesas@ideasonboard.com,
+	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+	tomi.valkeinen+renesas@ideasonboard.com
+Subject: Re: [PATCH v4 35/41] drm/rcar-du: Convert to atomic_create_state
+Message-ID: <20260910120001.GK1892234@killaraus.ideasonboard.com>
+References: <20260908-drm-no-more-plane-reset-v4-0-a31b3fcfc989@kernel.org>
+ <20260908-drm-no-more-plane-reset-v4-35-a31b3fcfc989@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260908-drm-no-more-plane-reset-v4-35-a31b3fcfc989@kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: 8dda3e6dc64e2f676d5d324c9ab6fe18e766cbe0  Merge branches 'renesas-arm-defconfig-for-v7.4' and 'renesas-dts-for-v7.4' into renesas-next
+Hi Maxime,
 
-elapsed time: 1305m
+Thank you for the patch.
 
-configs tested: 55
-configs skipped: 4
+On Tue, Sep 08, 2026 at 04:47:06PM +0200, Maxime Ripard wrote:
+> The plane reset implementation creates a custom state
+> subclass, but only initializes a pristine state without resetting any
+> hardware. This is equivalent to what atomic_create_state expects.
+> Convert to it.
+> 
+> The conversion was done using the following Coccinelle semantic patch:
+> 
+> @@
+> identifier funcs;
+> symbol drm_atomic_helper_plane_reset;
+> symbol drm_atomic_helper_plane_create_state;
+> @@
+> 
+> struct drm_plane_funcs funcs = {
+>   ...,
+> - .reset = drm_atomic_helper_plane_reset,
+> + .atomic_create_state = drm_atomic_helper_plane_create_state,
+>   ...,
+> };
+> 
+> @match_struct_reset@
+> identifier funcs, reset_func;
+> @@
+> struct drm_plane_funcs funcs = {
+>     ...,
+>     .reset = reset_func,
+>     ...,
+> };
+> 
+> @reset_uses_helpers depends on match_struct_reset@
+> identifier match_struct_reset.reset_func;
+> @@
+> 
+>  void reset_func(...)
+>  {
+>  	<+...
+> (
+>  	__drm_atomic_helper_plane_reset(...);
+> |
+> 	__drm_gem_reset_shadow_plane(...);
+> )
+>  	...+>
+>  }
+> 
+> @match_struct_destroy@
+> identifier funcs, destroy_func;
+> @@
+> struct drm_plane_funcs funcs = {
+>     ...,
+>     .atomic_destroy_state = destroy_func,
+>     ...,
+> };
+> 
+> @script:python renamed_func@
+> old_name << match_struct_reset.reset_func;
+> new_name;
+> @@
+> if old_name.endswith("_reset"):
+>     coccinelle.new_name = old_name.replace("_reset", "_create_state")
+> else:
+>     coccinelle.new_name = old_name
+> 
+> @update_struct depends on match_struct_reset && reset_uses_helpers@
+> identifier match_struct_reset.funcs, match_struct_reset.reset_func;
+> identifier renamed_func.new_name;
+> @@
+> struct drm_plane_funcs funcs = {
+>     ...,
+> -   .reset = reset_func,
+> +   .atomic_create_state = new_name,
+>     ...,
+> };
+> 
+> @drop_destroy depends on update_struct && match_struct_destroy@
+> identifier match_struct_reset.reset_func;
+> identifier match_struct_destroy.destroy_func;
+> identifier container_func;
+> identifier P;
+> symbol drm_atomic_helper_plane_destroy_state;
+> symbol __drm_atomic_helper_plane_destroy_state;
+> @@
+> 
+>  void reset_func(struct drm_plane *P)
+>  {
+>  	...
+> (
+> -	if (P->state) {
+> - 		<+...
+> (
+> -		drm_atomic_helper_plane_destroy_state(P, P->state);
+> |
+> -		__drm_atomic_helper_plane_destroy_state(P->state);
+> |
+> -		P->funcs->atomic_destroy_state(P, P->state);
+> |
+> -		destroy_func(P, P->state);
+> )
+> - 		...+>
+> - 	}
+> |
+> -	drm_WARN_ON_ONCE(P->dev, P->state);
+> |
+> -	WARN_ON(P->state);
+> )
+>  	...
+> (
+> -	kfree(P->state);
+> |
+> -	kfree(container_func(P->state));
+> |
+>  	// kfree is optional
+> )
+> (
+> -	P->state = NULL;
+> |
+>  	// plane->state clearing is optional
+> )
+>  	...
+>  }
+> 
+> @drop_destroy_mtk depends on update_struct@
+> identifier P;
+> symbol __drm_atomic_helper_plane_destroy_state;
+> symbol to_mtk_plane_state;
+> @@
+> 
+>  void mtk_plane_reset(struct drm_plane *P)
+>  {
+>  	...
+> -	if (P->state) {
+> -		__drm_atomic_helper_plane_destroy_state(P->state);
+> -		...
+> -	} else {
+>  		...
+> -	}
+>  	...
+>  }
+> 
+> @transform_nv50_wndw depends on update_struct@
+> identifier S;
+> @@
+> 
+>  void nv50_wndw_reset(...)
+>  {
+>  	...
+> -	if (WARN_ON(!(S = kzalloc_obj(*S))))
+> +	S = kzalloc_obj(*S);
+> +	if (WARN_ON(!S))
+>  		return;
+>  	...
+>  }
+> 
+> @transform_kzalloc depends on update_struct@
+> identifier match_struct_reset.reset_func;
+> identifier P, S;
+> statement ST;
+> statement list STL;
+> @@
+> 
+>  void reset_func(struct drm_plane *P)
+>  {
+>  	<...
+>  	S = kzalloc_obj(*S);
+> (
+> -	if (S)
+> -	{
+> -		STL
+> -	}
+> +	if (!S) return;
+> +
+> +	STL
+> |
+> -	if (S) ST
+> +	if (!S) return;
+> +
+> +	ST
+> )
+> 	...>
+>  }
+> 
+> @transform_body depends on update_struct@
+> identifier match_struct_reset.reset_func;
+> identifier renamed_func.new_name;
+> identifier S, P;
+> expression PS;
+> @@
+> - void reset_func(struct drm_plane *P)
+> + struct drm_plane_state *new_name(struct drm_plane *P)
+> {
+> 	...
+>  	S = kzalloc_obj(*S);
+> 	...
+> (
+>  	if (!S) {
+> 		...
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+> |
+>  	if (WARN_ON(!S)) {
+> 		...
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+> |
+>  	if (S == NULL) {
+>  		...
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+> )
+> 	...
+> (
+> -	__drm_atomic_helper_plane_reset(P, PS);
+> +	__drm_atomic_helper_plane_state_init(PS, P);
+> |
+> -	__drm_gem_reset_shadow_plane(P, PS);
+> +	__drm_gem_shadow_plane_state_init(P, PS);
+> )
+> 	...
+> }
+> 
+> @update_early_return depends on update_struct@
+> identifier match_struct_reset.reset_func;
+> identifier renamed_func.new_name;
+> identifier P;
+> expression PS;
+> @@
+>  struct drm_plane_state *new_name(struct drm_plane *P)
+> {
+> 	<+...
+> -	return;
+> +	return ERR_PTR(-EINVAL);
+> 	...+>
+> }
+> 
+> @update_return_plane depends on update_struct@
+> identifier match_struct_reset.reset_func;
+> identifier renamed_func.new_name;
+> identifier P;
+> expression PS;
+> @@
+>  struct drm_plane_state *new_name(struct drm_plane *P)
+> {
+> 	...
+>  	__drm_atomic_helper_plane_state_init(PS, P);
+> 	...
+> +
+> +	return PS;
+> }
+> 
+> @update_return_shadow depends on update_struct@
+> identifier renamed_func.new_name;
+> identifier P;
+> expression PS;
+> @@
+>  struct drm_plane_state *new_name(struct drm_plane *P)
+> {
+> 	...
+>  	__drm_gem_shadow_plane_state_init(P, PS);
+> 	...
+> +
+> +	return &PS->base;
+> }
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+An impressive semantic patch.
 
-tested configs:
-alpha         allnoconfig    gcc-16.1.0
-alpha        allyesconfig    gcc-16.1.0
-arc          allmodconfig    clang-24
-arc           allnoconfig    gcc-16.1.0
-arc          allyesconfig    clang-24
-arm           allnoconfig    gcc-16.1.0
-arm          allyesconfig    clang-24
-arm64        allmodconfig    clang-24
-arm64         allnoconfig    gcc-16.1.0
-csky         allmodconfig    gcc-16.1.0
-csky          allnoconfig    gcc-16.1.0
-hexagon      allmodconfig    gcc-16.1.0
-hexagon       allnoconfig    gcc-16.1.0
-i386         allmodconfig    clang-22
-i386          allnoconfig    gcc-16.1.0
-i386         allyesconfig    clang-22
-loongarch    allmodconfig    clang-24
-loongarch     allnoconfig    gcc-16.1.0
-m68k         allmodconfig    gcc-16.1.0
-m68k          allnoconfig    gcc-16.1.0
-m68k         allyesconfig    clang-24
-microblaze    allnoconfig    gcc-16.1.0
-microblaze   allyesconfig    gcc-16.1.0
-mips         allmodconfig    gcc-16.1.0
-mips          allnoconfig    gcc-16.1.0
-mips         allyesconfig    gcc-16.1.0
-nios2        allmodconfig    clang-20
-nios2         allnoconfig    clang-24
-openrisc     allmodconfig    clang-20
-openrisc      allnoconfig    clang-24
-parisc       allmodconfig    gcc-16.1.0
-parisc        allnoconfig    clang-24
-parisc       allyesconfig    clang-17
-powerpc      allmodconfig    gcc-16.1.0
-powerpc       allnoconfig    clang-24
-riscv        allmodconfig    clang-24
-riscv         allnoconfig    clang-24
-riscv        allyesconfig    clang-24
-s390         allmodconfig    clang-17
-s390          allnoconfig    clang-24
-s390         allyesconfig    gcc-16.1.0
-sh           allmodconfig    gcc-16.1.0
-sh            allnoconfig    clang-24
-sh           allyesconfig    clang-17
-sparc         allnoconfig    clang-24
-sparc64      allmodconfig    clang-20
-um           allmodconfig    clang-17
-um            allnoconfig    clang-24
-um           allyesconfig    gcc-16.1.0
-x86_64       allmodconfig    clang-22
-x86_64        allnoconfig    clang-24
-x86_64       allyesconfig    clang-22
-x86_64      rhel-9.4-rust    clang-22
-xtensa        allnoconfig    clang-24
-xtensa       allyesconfig    clang-20
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+> Cc: geert+renesas@glider.be
+> Cc: kieran.bingham+renesas@ideasonboard.com
+> Cc: laurent.pinchart+renesas@ideasonboard.com
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: magnus.damm@gmail.com
+> Cc: tomi.valkeinen+renesas@ideasonboard.com
+> ---
+>  drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c | 15 ++++++---------
+>  drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c   | 15 ++++++---------
+>  2 files changed, 12 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
+> index 8870766b9e54..da2dff9bb317 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
+> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
+> @@ -710,28 +710,25 @@ static void rcar_du_plane_atomic_destroy_state(struct drm_plane *plane,
+>  {
+>  	__drm_atomic_helper_plane_destroy_state(state);
+>  	kfree(to_rcar_plane_state(state));
+>  }
+>  
+> -static void rcar_du_plane_reset(struct drm_plane *plane)
+> +static struct drm_plane_state *rcar_du_plane_create_state(struct drm_plane *plane)
+>  {
+>  	struct rcar_du_plane_state *state;
+>  
+> -	if (plane->state) {
+> -		rcar_du_plane_atomic_destroy_state(plane, plane->state);
+> -		plane->state = NULL;
+> -	}
+> -
+>  	state = kzalloc_obj(*state);
+>  	if (state == NULL)
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+>  
+> -	__drm_atomic_helper_plane_reset(plane, &state->state);
+> +	__drm_atomic_helper_plane_state_init(&state->state, plane);
+>  
+>  	state->hwindex = -1;
+>  	state->source = RCAR_DU_PLANE_MEMORY;
+>  	state->colorkey = RCAR_DU_COLORKEY_NONE;
+> +
+> +	return &state->state;
+>  }
+>  
+>  static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
+>  					     struct drm_plane_state *state,
+>  					     struct drm_property *property,
+> @@ -765,11 +762,11 @@ static int rcar_du_plane_atomic_get_property(struct drm_plane *plane,
+>  }
+>  
+>  static const struct drm_plane_funcs rcar_du_plane_funcs = {
+>  	.update_plane = drm_atomic_helper_update_plane,
+>  	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.reset = rcar_du_plane_reset,
+> +	.atomic_create_state = rcar_du_plane_create_state,
+>  	.destroy = drm_plane_cleanup,
+>  	.atomic_duplicate_state = rcar_du_plane_atomic_duplicate_state,
+>  	.atomic_destroy_state = rcar_du_plane_atomic_destroy_state,
+>  	.atomic_set_property = rcar_du_plane_atomic_set_property,
+>  	.atomic_get_property = rcar_du_plane_atomic_get_property,
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
+> index ae9f381b03c8..4293e792afdb 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
+> @@ -419,30 +419,27 @@ static void rcar_du_vsp_plane_atomic_destroy_state(struct drm_plane *plane,
+>  {
+>  	__drm_atomic_helper_plane_destroy_state(state);
+>  	kfree(to_rcar_vsp_plane_state(state));
+>  }
+>  
+> -static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
+> +static struct drm_plane_state *rcar_du_vsp_plane_create_state(struct drm_plane *plane)
+>  {
+>  	struct rcar_du_vsp_plane_state *state;
+>  
+> -	if (plane->state) {
+> -		rcar_du_vsp_plane_atomic_destroy_state(plane, plane->state);
+> -		plane->state = NULL;
+> -	}
+> -
+>  	state = kzalloc_obj(*state);
+>  	if (state == NULL)
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+>  
+> -	__drm_atomic_helper_plane_reset(plane, &state->state);
+> +	__drm_atomic_helper_plane_state_init(&state->state, plane);
+> +
+> +	return &state->state;
+>  }
+>  
+>  static const struct drm_plane_funcs rcar_du_vsp_plane_funcs = {
+>  	.update_plane = drm_atomic_helper_update_plane,
+>  	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.reset = rcar_du_vsp_plane_reset,
+> +	.atomic_create_state = rcar_du_vsp_plane_create_state,
+>  	.destroy = drm_plane_cleanup,
+>  	.atomic_duplicate_state = rcar_du_vsp_plane_atomic_duplicate_state,
+>  	.atomic_destroy_state = rcar_du_vsp_plane_atomic_destroy_state,
+>  };
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
