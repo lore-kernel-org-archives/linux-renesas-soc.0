@@ -1,53 +1,56 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73631577E24;
-	Thu, 10 Sep 2026 18:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4605576EC1;
+	Thu, 10 Sep 2026 18:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789064383; cv=none; b=Ya3z40uX+hux7ynB3nhA1nXQnfzjTcI8aoYsMbkBCO2MQBzG16jaZIBVRPBga5TrFgjQr58iaQGFmrZScyIY/ProxsgqCNSVSsl3abNLDCFHGX5t+d1jKoMgrlej2kclXdPS2KT1WaUxoAHU+zOq8zNLDEEGzlGXnkhd9lMXJ30=
+	t=1789064387; cv=none; b=X69KLq6uj2bQdq9DTbu9QfSDM+DiU7b8LMV6ZLB0DuCA4wMA7DjR23/3R9MchIg3U6n1Dmk81WFshxDpgW5LjQok5Awoj/mKH9G119b9oNfGAA/QZ4oiAw3uOm3DQbZQr6D6OY9zuMu3raYneIBm8YlZcbCz5zfY5uFdGSWEzkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789064383; c=relaxed/simple;
-	bh=E/N/FPYb0ESF2MzDDlGsP7anFnIhLFEQyOUqsNQfPpI=;
+	s=arc-20240116; t=1789064387; c=relaxed/simple;
+	bh=TIbgRmSdAw8rcu9vrhPoS7j51eNLKLmCGT8CPHLKFZw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HauUShtdFCsxNsApFvDLBtcWWRX8PSVdAjs720C69aC28XreXAO5cco3mMRI8tI8yCpfjQ7E5XvwEVHuRzWmWRVpmDhVp8HGdMEQYNsNEUBUvHZvROw+4X/7rERAs2X7pY3WIciWem4axgE5/le9jLtc72+YtI4WMSpp9bb4+v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IcTs6KIp; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xxm1W8QU; arc=none smtp.client-ip=80.241.56.172
+	 MIME-Version; b=XKwOhVdRQ75lV756kwAtWQiBxTNokJkygarMQOwg5hTH2f+2Rl5fcCc9hyMVVpq2Kp6aZocXlnzKNzWzY46oDrM8Z8KT4Vt+fMtm+q1VIb2i7y3vttexyUukwO73K33Cn6RpE952AUoFQrdevPn3TxZ1Ul7PrpvrfXjDa+1mw28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=b/WMVmNm; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SGygRzFi; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IcTs6KIp";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xxm1W8QU"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="b/WMVmNm";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SGygRzFi"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hgmD51kjgzMlDL;
-	Thu, 10 Sep 2026 20:19:33 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hgmDG1928zMlCq;
+	Thu, 10 Sep 2026 20:19:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789064373;
+	t=1789064382;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cukDQ4/AqWL0h0kNx0qHDmUUrqvz77O8kkFgMAMMjhM=;
-	b=IcTs6KIpbwR+cTRh4kuZTVJBfPZGPQfhO2aWxBwlLLaPQsXfv0aVEwxMLlux4odMhiY7Oa
-	onHKRJUY6CRqZofcNvvwYSdEoMfwMkafGP0izjQzDqo0VkZBgfMvQ3kMOWZCJs3S7epg9g
-	AMglvZGIEjILoJLJZCreoYr4eKfQqbX4sTfSBMrnEv6CkX9k1DyCP+Gpmph/7FmG4f5OVl
-	R23HhdRdx72aIupghMrAUcbASH1AdkCNfftJ+QBLR8Xunq/2zBlBN6xWP6djgW5HCyCrwJ
-	jcuaZD8d3qg8gfSq/RdHjE9IY42uTgEFR2qRGNUh0JE4pfq59e+FWRBxmlfbMw==
+	bh=VuGgE5X6V9SY/xFZLkGQ1I9fwLTgUpS7+mItu85ws1w=;
+	b=b/WMVmNmeNiPS7qH0FqqmbTy3w1T5PDX+3WHL/aXTD1RhS5YZeOX8qp+0gRN21jS2bEINC
+	XX6XAfItsH2yiwm8GhTIinkUbrIE7d56mJI2SMm4GyWcNNsYN2cS6NioR/FZsTch1gJq3I
+	Tupbckg98LYrT16Z1fJ2ZcXxzQorI/K41WnUzmYQwCv52HA+meVl7SQFasdLtAN09Opxiv
+	LP6opUrjL8CZicnrctKlRcpc1lf6a14L9UqE7uY5gei7SIAxkxCNgdfM4GjDyWMn8apZnm
+	GPxkfwwUXGJ/kfxDPOvZqU/GxE1eYIurbYVudxes0f3V0f97rWBJ7upoc9OQBw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=SGygRzFi;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789064371;
+	t=1789064379;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cukDQ4/AqWL0h0kNx0qHDmUUrqvz77O8kkFgMAMMjhM=;
-	b=xxm1W8QU2Vb9HlOEHPudOEGX4TYOMslLZI13qJmJPMMwVgiuYwwLcGWEfPwaRNTSuaECHQ
-	7/Dsv5Qux5Je7Lp6MrEEOO298bF7pMSBIrL+9RWLqaMVbDQQQPa0Zjmp4ERzlMMGIArXwG
-	H8w/bPEejrYwAcypJTrhQcg6+EshgrT4GNG0P5JJr2jqMewD6fKdjNt8HwmS9qT2ibTTxA
-	SOjpAkgO3l1vQ8FQRBpA5kKyWNW8i6X6qwESt2BpJk0ZPlS0POMAtRFUmFeJqR7i7Q9ZMn
-	yLcLKUwp9j4o3Ih7o7UtANJvDy7zJYmdQdlRK1aCkWYkZ/oiM9ptZr0UqoP/eg==
+	bh=VuGgE5X6V9SY/xFZLkGQ1I9fwLTgUpS7+mItu85ws1w=;
+	b=SGygRzFiEpaAWrikPn53zCgROWXOVE/89gxx79oiD7MpQuuL0gfOE714mVAN9uGHfyLPUD
+	bbV0bY5ImHKFayWwSelzuuMuW+qga49XripDCxZtykCXW4bEuZUF7bqwXZwDv4rrciBE2J
+	Unwh11s1zDi9kKf5t6FhUmA1t5VThCvs5vQPIjPylqpND51LvUijOlCo3UftwZLGohobV1
+	cLJHx2Igp6sTkYpPB6EShawSG0r2IbN/CjnQJw4Np2LkUsOkcEIpNMlHWjOsTU0gSXMqa+
+	Uei3eV7S5vNuZz4BJM9Jo2zQRvhHzNladuIRq9HUGjxaAh552Ul7TZy6yIqQAQ==
 To: dri-devel@lists.freedesktop.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -63,9 +66,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/4] drm/panel: ilitek-ili9882t: Make enable GPIO optional
-Date: Thu, 10 Sep 2026 20:18:43 +0200
-Message-ID: <20260910181918.31551-2-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v3 4/4] drm/panel: ilitek-ili9882t: Add support for Ilitek IL79600A-based panels
+Date: Thu, 10 Sep 2026 20:18:45 +0200
+Message-ID: <20260910181918.31551-4-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260910181918.31551-1-marek.vasut+renesas@mailbox.org>
 References: <20260910181918.31551-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -75,11 +78,17 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 9wp15hx7g4kqt4h4fs99c4fynhxo1acd
-X-MBO-RS-ID: 1c15d22bab3bd4a4aa1
+X-MBO-RS-META: sncire745xddja5nx41fatt9bt8einot
+X-MBO-RS-ID: 0f7a4d87bfebbbb9f64
+X-Rspamd-Queue-Id: 4hgmDG1928zMlCq
 
-The enable GPIO may not be accessible on the panel, make it optional.
-This is the case on 10" Raspberry Pi Touch Display 2.
+The Ilitek IL79600A display controller is similar to the ILI9882T and can
+be supported within the existing `panel-ilitek-ili9882t.c` driver.
+
+This patch extends the ILI9882T driver to handle IL79600A-based panels,
+such as the 10" Raspberry Pi Touch Display 2. The IL79600A uses a similar
+command sequence and initialization flow, with minor differences in power
+supply configuration and timing.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -99,24 +108,274 @@ Cc: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
 V2: No change
-V3: No change
+V3: - Rename ILI79600A to IL79600A, there is really no ILI anymore, just IL
 ---
- drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 231 ++++++++++++++++++
+ 1 file changed, 231 insertions(+)
 
 diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-index d4b383138488a..69f6427bb4ffb 100644
+index 862b1c81a609b..bea5ca70c775d 100644
 --- a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
 +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-@@ -787,7 +787,7 @@ static int ili9882t_add(struct ili9882t *ili)
- 	if (IS_ERR(ili->pp1800))
- 		return PTR_ERR(ili->pp1800);
+@@ -133,6 +133,207 @@ static const struct drm_dsc_config tianma_il79900a_dsc = {
+ 	.flatness_min_qp = 3,
+ };
  
--	ili->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
-+	ili->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(ili->enable_gpio)) {
- 		dev_err(dev, "cannot get enable-gpios %ld\n",
- 			PTR_ERR(ili->enable_gpio));
++static int rpi_10inch_init(struct ili9882t *ili)
++{
++	struct mipi_dsi_multi_context ctx = { .dsi = ili->dsi };
++
++	mipi_dsi_usleep_range(&ctx, 5000, 5100);
++
++	il79900a_switch_page(&ctx, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x00, 0x42);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x01, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x02, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x03, 0x00);
++
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x04, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x05, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x06, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x07, 0x00);
++
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x08, 0x80);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x09, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0a, 0x71);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0c, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0e, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0d, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0f, 0x00);
++
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x30, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x31, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x32, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x33, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x34, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x35, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x36, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x37, 0x28);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x38, 0x29);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x39, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3A, 0x13);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3B, 0x15);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3C, 0x17);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3D, 0x09);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3E, 0x0D);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3F, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x40, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x41, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x42, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x43, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x44, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x45, 0x02);
++
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x48, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x49, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4A, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4B, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4C, 0x07);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4D, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4E, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4F, 0x28);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x50, 0x29);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x51, 0x10);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x52, 0x12);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x53, 0x14);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x54, 0x16);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x55, 0x08);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x56, 0x0C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x57, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x58, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x59, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5A, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5B, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5C, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5D, 0x02);
++
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x2C, 0xB0);
++
++	il79900a_switch_page(&ctx, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x07, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x06, 0xD2);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x53, 0x1F);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5E, 0x40);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x84, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x29, 0x3A);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x2A, 0x3B);
++
++	il79900a_switch_page(&ctx, 0x03);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x20, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x21, 0x3C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x22, 0xFA);
++
++	il79900a_switch_page(&ctx, 0x12);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x87, 0x2C);
++
++	il79900a_switch_page(&ctx, 0x05);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x61, 0x8F);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x6D, 0xBB);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5A, 0x7C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x67, 0x7C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x54, 0x92);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x55, 0x92);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x40, 0xD2);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x46, 0x70);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x30, 0x47);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x7A, 0x89);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xA4, 0x0B);
++
++	il79900a_switch_page(&ctx, 0x06);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xC0, 0x80);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xC1, 0x7);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xCA, 0x58);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xCB, 0x2);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xCE, 0x58);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xCF, 0x2);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x10, 0x0);
++
++	il79900a_switch_page(&ctx, 0x0b);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x76, 0x55);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x78, 0x68);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x77, 0x0D);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x79, 0x60);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x7A, 0x10);
++
++	il79900a_switch_page(&ctx, 0x08);
++	mipi_dsi_dcs_write_seq_multi(&ctx,
++				     0xE0, 0x00, 0x1E, 0x3F,
++				     0x68, 0x7D, 0x72, 0x86,
++				     0x89, 0x92, 0x8E, 0xA5,
++				     0xA8, 0xAA, 0xBD, 0xB8,
++				     0xBE, 0xC5, 0xD6, 0xCD,
++				     0xC3, 0xDA, 0xEB, 0xED);
++	mipi_dsi_dcs_write_seq_multi(&ctx,
++				     0xE1, 0x00, 0x1E, 0x3F,
++				     0x68, 0x7D, 0x72, 0x86,
++				     0x89, 0x92, 0x8E, 0xA5,
++				     0xA8, 0xAA, 0xBD, 0xB8,
++				     0xBE, 0xC5, 0xD6, 0xCD,
++				     0xC3, 0xDA, 0xEB, 0xED);
++
++	il79900a_switch_page(&ctx, 0x14);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x85, 0xCC);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x87, 0x91);
++
++	il79900a_switch_page(&ctx, 0x10);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x11, 0x3);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x12, 0x34);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x10, 0x1);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x13, 0x4);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x14, 0xBB);
++
++	il79900a_switch_page(&ctx, 0x0b);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x94, 0x88);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x95, 0x23);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x96, 0x0B);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x97, 0x0B);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x98, 0xC6);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x99, 0xC6);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xA6, 0x47);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xA7, 0x77);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xA8, 0x5);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xA9, 0x5);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xAA, 0xBA);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xAB, 0xBA);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xBD, 0x92);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0xBE, 0xE0);
++
++	il79900a_switch_page(&ctx, 0x0e);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0, 0x80);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x14, 0x3);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x12, 0x0);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x13, 0x4);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x11, 0x1);
++
++	il79900a_switch_page(&ctx, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x80, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x82, 0x11);
++	il79900a_switch_page(&ctx, 0x12);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x82, 0x2C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x85, 0x2C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x87, 0x2C);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x88, 0xEC);
++	il79900a_switch_page(&ctx, 0x10);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x4, 0x1);
++	il79900a_switch_page(&ctx, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0C, 0x80);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3C, 0x80);
++
++	il79900a_switch_page(&ctx, 0x06);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0E, 0x0);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x0E, 0x3F);
++	mipi_dsi_dcs_write_seq_multi(&ctx, 0x10, 0x0);
++
++	il79900a_switch_page(&ctx, 0x00);
++	mipi_dsi_dcs_set_tear_on_multi(&ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&ctx);
++
++	mipi_dsi_msleep(&ctx, 120);
++
++	mipi_dsi_dcs_set_display_on_multi(&ctx);
++
++	mipi_dsi_msleep(&ctx, 20);
++
++	return ctx.accum_err;
++};
++
+ static int starry_ili9882t_init(struct ili9882t *ili)
+ {
+ 	struct mipi_dsi_multi_context ctx = { .dsi = ili->dsi };
+@@ -670,6 +871,19 @@ static int ili9882t_enable(struct drm_panel *panel)
+ 	return 0;
+ }
+ 
++static const struct drm_display_mode rpi_10inch_default_mode = {
++	.clock = 166666,
++	.hdisplay = 1200,
++	.hsync_start = 1200 + 28,
++	.hsync_end = 1200 + 28 + 10,
++	.htotal = 1200 + 28 + 10 + 30,
++	.vdisplay = 1920,
++	.vsync_start = 1920 + 238,
++	.vsync_end = 1920 + 238 + 4,
++	.vtotal = 1920 + 238 + 4 + 28,
++	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
++};
++
+ static const struct drm_display_mode starry_ili9882t_default_mode = {
+ 	.clock = 165280,
+ 	.hdisplay = 1200,
+@@ -696,6 +910,20 @@ static const struct drm_display_mode tianma_il79900a_default_mode = {
+ 	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+ };
+ 
++static const struct panel_desc rpi_10inch_desc = {
++	.modes = &rpi_10inch_default_mode,
++	.bpc = 8,
++	.size = {
++		.width_mm = 135,
++		.height_mm = 216,
++	},
++	.lanes = 4,
++	.format = MIPI_DSI_FMT_RGB888,
++	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
++		      MIPI_DSI_MODE_LPM,
++	.init = rpi_10inch_init,
++};
++
+ static const struct panel_desc starry_ili9882t_desc = {
+ 	.modes = &starry_ili9882t_default_mode,
+ 	.bpc = 8,
+@@ -847,6 +1075,9 @@ static int ili9882t_probe(struct mipi_dsi_device *dsi)
+ }
+ 
+ static const struct of_device_id ili9882t_of_match[] = {
++	{ .compatible = "raspberrypi,dsi-10inch",
++	  .data = &rpi_10inch_desc
++	},
+ 	{ .compatible = "starry,ili9882t",
+ 	  .data = &starry_ili9882t_desc
+ 	},
 -- 
 2.53.0
 
