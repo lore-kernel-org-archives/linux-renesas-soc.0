@@ -1,437 +1,75 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BB47D94A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 12:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A024E483804;
+	Thu, 10 Sep 2026 12:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789041608; cv=none; b=hgiIgkFxPr4UjaNq+P6TtwgrwvHZ9pyBw+sxtfbYqgVC7AKawoyYlN9VzQAQt5PwoQjthGvWYK+kZS8hJH284jk6MjbgjzPccb4JUDhzyZxIS/6CTfR9XZXJEjsJnv+e42mP8I7syY03OpVjTvMAK0LuxyVXeyp+Agfd+6+xrA4=
+	t=1789042443; cv=none; b=vCWDiiniZTh1qLxiYNykkQZH5uolXEDr8g3UJt4wNugymlGPdARfbPKNfIMfUqcDAvjk827WLcWdPFeLM//pSYLcIpAqAy3UIcsl5u4Kp4O+i3X3EAeC0kBkMZA1IfuAx08sfvO909msv8uJgf5F619TYS22jB0BumxUv4IxUpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789041608; c=relaxed/simple;
-	bh=p15CaMlU+NJqumt6i2JWbq4u6OSoIhblZDwl0I3jh8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0kOd/jKVeFG6QxU9CKMpw2Ifn+ggHiI0g1SFjDfAmRLcPYDoFe2q8B2uNcp6Al+UnNPjuuCIxvmjLu3N6hf1N8f/XnQfNm0O3dE2zvZkCU98EO9Xg9f4bYxIC9Tnyr6Rj13ijyRtABwVuiDg/+N83/RFEucqAmmeiIxPHaBlQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XQoNw8cb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XQoNw8cb"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DD6FAC48;
-	Thu, 10 Sep 2026 13:58:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789041506;
-	bh=p15CaMlU+NJqumt6i2JWbq4u6OSoIhblZDwl0I3jh8g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XQoNw8cbJ4QSoKxYYF9tSs1EnZxppmg6w4Ck6lgHRKdPqr06G2vsJ+E0BK26Q4jQ3
-	 APsHXbjs+JOp/544B2xDJJVQAuBOQai3ScJadhSWSlRZLbd4rMTHaKG4bCOxC0ABGY
-	 eRuHnKdTa29Hvog57F3hEsh0FOo2itL161jLEbA4=
-Date: Thu, 10 Sep 2026 15:00:01 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, geert+renesas@glider.be,
-	kieran.bingham+renesas@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-	tomi.valkeinen+renesas@ideasonboard.com
-Subject: Re: [PATCH v4 35/41] drm/rcar-du: Convert to atomic_create_state
-Message-ID: <20260910120001.GK1892234@killaraus.ideasonboard.com>
-References: <20260908-drm-no-more-plane-reset-v4-0-a31b3fcfc989@kernel.org>
- <20260908-drm-no-more-plane-reset-v4-35-a31b3fcfc989@kernel.org>
+	s=arc-20240116; t=1789042443; c=relaxed/simple;
+	bh=DBftJUysUX1XqckRRxhIVFWCFB3JJpZcUIhPoj1lj90=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qF6XjZGUB15JcQNJEkHrtVtSuh71o+y4SYyVlMrdwlTWcU8QcD3T3tWFX8oMTknymZlR+nvSjj01ChCzuYdv8JvmdEE34SFqV9SQutEYYmtZVRA7I1BkURvc0BRjtN/6kxPQanLzoGXDMU3LEfHZZGDNdEufP874HTQSxHcoij0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924D21F000FF;
+	Thu, 10 Sep 2026 12:13:57 +0000 (UTC)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260811200013.185956-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260811200013.185956-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 0/3] PCI: rzg3s: Fix issues in cleanup paths
+Message-Id: <178904243716.13810.14537768791974095455.b4-ty@b4>
+Date: Thu, 10 Sep 2026 14:13:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260908-drm-no-more-plane-reset-v4-35-a31b3fcfc989@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15.2
 
-Hi Maxime,
 
-Thank you for the patch.
+On Tue, 11 Aug 2026 21:00:10 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Hi all,
+> 
+> This series fixes a few issues in the cleanup paths of the Renesas RZ/G3S
+> PCIe host controller driver. The fixes include:
+> - Disabling the PCIe reference clock on probe failure.
+> - Propagating the original error code from platform_get_irq_byname() to
+> allow probe deferral.
+> - Unwinding chained handler registration on error in
+> rzg3s_pcie_init_irqdomain() and clearing chained handlers in
+> rzg3s_pcie_teardown_irqdomain() to avoid leaving stale handler and data
+> pointers attached to the parent interrupts.
+> 
+> [...]
 
-On Tue, Sep 08, 2026 at 04:47:06PM +0200, Maxime Ripard wrote:
-> The plane reset implementation creates a custom state
-> subclass, but only initializes a pristine state without resetting any
-> hardware. This is equivalent to what atomic_create_state expects.
-> Convert to it.
-> 
-> The conversion was done using the following Coccinelle semantic patch:
-> 
-> @@
-> identifier funcs;
-> symbol drm_atomic_helper_plane_reset;
-> symbol drm_atomic_helper_plane_create_state;
-> @@
-> 
-> struct drm_plane_funcs funcs = {
->   ...,
-> - .reset = drm_atomic_helper_plane_reset,
-> + .atomic_create_state = drm_atomic_helper_plane_create_state,
->   ...,
-> };
-> 
-> @match_struct_reset@
-> identifier funcs, reset_func;
-> @@
-> struct drm_plane_funcs funcs = {
->     ...,
->     .reset = reset_func,
->     ...,
-> };
-> 
-> @reset_uses_helpers depends on match_struct_reset@
-> identifier match_struct_reset.reset_func;
-> @@
-> 
->  void reset_func(...)
->  {
->  	<+...
-> (
->  	__drm_atomic_helper_plane_reset(...);
-> |
-> 	__drm_gem_reset_shadow_plane(...);
-> )
->  	...+>
->  }
-> 
-> @match_struct_destroy@
-> identifier funcs, destroy_func;
-> @@
-> struct drm_plane_funcs funcs = {
->     ...,
->     .atomic_destroy_state = destroy_func,
->     ...,
-> };
-> 
-> @script:python renamed_func@
-> old_name << match_struct_reset.reset_func;
-> new_name;
-> @@
-> if old_name.endswith("_reset"):
->     coccinelle.new_name = old_name.replace("_reset", "_create_state")
-> else:
->     coccinelle.new_name = old_name
-> 
-> @update_struct depends on match_struct_reset && reset_uses_helpers@
-> identifier match_struct_reset.funcs, match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> @@
-> struct drm_plane_funcs funcs = {
->     ...,
-> -   .reset = reset_func,
-> +   .atomic_create_state = new_name,
->     ...,
-> };
-> 
-> @drop_destroy depends on update_struct && match_struct_destroy@
-> identifier match_struct_reset.reset_func;
-> identifier match_struct_destroy.destroy_func;
-> identifier container_func;
-> identifier P;
-> symbol drm_atomic_helper_plane_destroy_state;
-> symbol __drm_atomic_helper_plane_destroy_state;
-> @@
-> 
->  void reset_func(struct drm_plane *P)
->  {
->  	...
-> (
-> -	if (P->state) {
-> - 		<+...
-> (
-> -		drm_atomic_helper_plane_destroy_state(P, P->state);
-> |
-> -		__drm_atomic_helper_plane_destroy_state(P->state);
-> |
-> -		P->funcs->atomic_destroy_state(P, P->state);
-> |
-> -		destroy_func(P, P->state);
-> )
-> - 		...+>
-> - 	}
-> |
-> -	drm_WARN_ON_ONCE(P->dev, P->state);
-> |
-> -	WARN_ON(P->state);
-> )
->  	...
-> (
-> -	kfree(P->state);
-> |
-> -	kfree(container_func(P->state));
-> |
->  	// kfree is optional
-> )
-> (
-> -	P->state = NULL;
-> |
->  	// plane->state clearing is optional
-> )
->  	...
->  }
-> 
-> @drop_destroy_mtk depends on update_struct@
-> identifier P;
-> symbol __drm_atomic_helper_plane_destroy_state;
-> symbol to_mtk_plane_state;
-> @@
-> 
->  void mtk_plane_reset(struct drm_plane *P)
->  {
->  	...
-> -	if (P->state) {
-> -		__drm_atomic_helper_plane_destroy_state(P->state);
-> -		...
-> -	} else {
->  		...
-> -	}
->  	...
->  }
-> 
-> @transform_nv50_wndw depends on update_struct@
-> identifier S;
-> @@
-> 
->  void nv50_wndw_reset(...)
->  {
->  	...
-> -	if (WARN_ON(!(S = kzalloc_obj(*S))))
-> +	S = kzalloc_obj(*S);
-> +	if (WARN_ON(!S))
->  		return;
->  	...
->  }
-> 
-> @transform_kzalloc depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier P, S;
-> statement ST;
-> statement list STL;
-> @@
-> 
->  void reset_func(struct drm_plane *P)
->  {
->  	<...
->  	S = kzalloc_obj(*S);
-> (
-> -	if (S)
-> -	{
-> -		STL
-> -	}
-> +	if (!S) return;
-> +
-> +	STL
-> |
-> -	if (S) ST
-> +	if (!S) return;
-> +
-> +	ST
-> )
-> 	...>
->  }
-> 
-> @transform_body depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> identifier S, P;
-> expression PS;
-> @@
-> - void reset_func(struct drm_plane *P)
-> + struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	...
->  	S = kzalloc_obj(*S);
-> 	...
-> (
->  	if (!S) {
-> 		...
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->  	}
-> |
->  	if (WARN_ON(!S)) {
-> 		...
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->  	}
-> |
->  	if (S == NULL) {
->  		...
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->  	}
-> )
-> 	...
-> (
-> -	__drm_atomic_helper_plane_reset(P, PS);
-> +	__drm_atomic_helper_plane_state_init(PS, P);
-> |
-> -	__drm_gem_reset_shadow_plane(P, PS);
-> +	__drm_gem_shadow_plane_state_init(P, PS);
-> )
-> 	...
-> }
-> 
-> @update_early_return depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> identifier P;
-> expression PS;
-> @@
->  struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	<+...
-> -	return;
-> +	return ERR_PTR(-EINVAL);
-> 	...+>
-> }
-> 
-> @update_return_plane depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> identifier P;
-> expression PS;
-> @@
->  struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	...
->  	__drm_atomic_helper_plane_state_init(PS, P);
-> 	...
-> +
-> +	return PS;
-> }
-> 
-> @update_return_shadow depends on update_struct@
-> identifier renamed_func.new_name;
-> identifier P;
-> expression PS;
-> @@
->  struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	...
->  	__drm_gem_shadow_plane_state_init(P, PS);
-> 	...
-> +
-> +	return &PS->base;
-> }
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Applied, thanks!
 
-An impressive semantic patch.
+[1/3] PCI: rzg3s: Disable refclk on probe failure
+      commit: f03f56f21ce0770f38f3251924a0ca98699c38ed
+[2/3] PCI: rzg3s: Propagate platform_get_irq_byname() errors
+      commit: 49daf16c881bc91a55355a3e7f03471c2b213255
+[3/3] PCI: rzg3s: Fix IRQ domain initialization error handling
+      commit: 5d9e9b3a27994a2fadce283801b7104a68ea4c48
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> ---
-> Cc: geert+renesas@glider.be
-> Cc: kieran.bingham+renesas@ideasonboard.com
-> Cc: laurent.pinchart+renesas@ideasonboard.com
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: magnus.damm@gmail.com
-> Cc: tomi.valkeinen+renesas@ideasonboard.com
-> ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c | 15 ++++++---------
->  drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c   | 15 ++++++---------
->  2 files changed, 12 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-> index 8870766b9e54..da2dff9bb317 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-> @@ -710,28 +710,25 @@ static void rcar_du_plane_atomic_destroy_state(struct drm_plane *plane,
->  {
->  	__drm_atomic_helper_plane_destroy_state(state);
->  	kfree(to_rcar_plane_state(state));
->  }
->  
-> -static void rcar_du_plane_reset(struct drm_plane *plane)
-> +static struct drm_plane_state *rcar_du_plane_create_state(struct drm_plane *plane)
->  {
->  	struct rcar_du_plane_state *state;
->  
-> -	if (plane->state) {
-> -		rcar_du_plane_atomic_destroy_state(plane, plane->state);
-> -		plane->state = NULL;
-> -	}
-> -
->  	state = kzalloc_obj(*state);
->  	if (state == NULL)
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->  
-> -	__drm_atomic_helper_plane_reset(plane, &state->state);
-> +	__drm_atomic_helper_plane_state_init(&state->state, plane);
->  
->  	state->hwindex = -1;
->  	state->source = RCAR_DU_PLANE_MEMORY;
->  	state->colorkey = RCAR_DU_COLORKEY_NONE;
-> +
-> +	return &state->state;
->  }
->  
->  static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
->  					     struct drm_plane_state *state,
->  					     struct drm_property *property,
-> @@ -765,11 +762,11 @@ static int rcar_du_plane_atomic_get_property(struct drm_plane *plane,
->  }
->  
->  static const struct drm_plane_funcs rcar_du_plane_funcs = {
->  	.update_plane = drm_atomic_helper_update_plane,
->  	.disable_plane = drm_atomic_helper_disable_plane,
-> -	.reset = rcar_du_plane_reset,
-> +	.atomic_create_state = rcar_du_plane_create_state,
->  	.destroy = drm_plane_cleanup,
->  	.atomic_duplicate_state = rcar_du_plane_atomic_duplicate_state,
->  	.atomic_destroy_state = rcar_du_plane_atomic_destroy_state,
->  	.atomic_set_property = rcar_du_plane_atomic_set_property,
->  	.atomic_get_property = rcar_du_plane_atomic_get_property,
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> index ae9f381b03c8..4293e792afdb 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-> @@ -419,30 +419,27 @@ static void rcar_du_vsp_plane_atomic_destroy_state(struct drm_plane *plane,
->  {
->  	__drm_atomic_helper_plane_destroy_state(state);
->  	kfree(to_rcar_vsp_plane_state(state));
->  }
->  
-> -static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
-> +static struct drm_plane_state *rcar_du_vsp_plane_create_state(struct drm_plane *plane)
->  {
->  	struct rcar_du_vsp_plane_state *state;
->  
-> -	if (plane->state) {
-> -		rcar_du_vsp_plane_atomic_destroy_state(plane, plane->state);
-> -		plane->state = NULL;
-> -	}
-> -
->  	state = kzalloc_obj(*state);
->  	if (state == NULL)
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->  
-> -	__drm_atomic_helper_plane_reset(plane, &state->state);
-> +	__drm_atomic_helper_plane_state_init(&state->state, plane);
-> +
-> +	return &state->state;
->  }
->  
->  static const struct drm_plane_funcs rcar_du_vsp_plane_funcs = {
->  	.update_plane = drm_atomic_helper_update_plane,
->  	.disable_plane = drm_atomic_helper_disable_plane,
-> -	.reset = rcar_du_vsp_plane_reset,
-> +	.atomic_create_state = rcar_du_vsp_plane_create_state,
->  	.destroy = drm_plane_cleanup,
->  	.atomic_duplicate_state = rcar_du_vsp_plane_atomic_duplicate_state,
->  	.atomic_destroy_state = rcar_du_vsp_plane_atomic_destroy_state,
->  };
->  
-
+Best regards,
 -- 
-Regards,
+மணிவண்ணன் சதாசிவம்
 
-Laurent Pinchart
+
