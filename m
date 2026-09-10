@@ -1,146 +1,127 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011017.outbound.protection.outlook.com [52.101.125.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EF2408614
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 15:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789053658; cv=none; b=EM5RwJuxQfLaUcF4GGi0Djb73J2+DdgF1nAPJ/mIfQiHJNk8WP5VpoNFi8cUSsVcXujV9pIDK1vD8SGhof3ZUWyqBO26EjYo27GS2woclr4xLvZZVR8cQGKu4XKa50itwkp2VN0l2ecqO/maNuljE3aAEVXD0kGtVfJIWqh+Br4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789053658; c=relaxed/simple;
-	bh=2trqB/Eot1zYhsfOyN2Wuwuf/ded3hZpU75txl+9KYM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=hFef7pLZ2qljJJiSabictsVVnWHX8UcrN1f0xSlWZWkcFSlrvNgX2Fi6Oonfz6T77Ay/4X6c41tIWZSPwT0cCFxT3NaYoewcnPWE4gRYUzjmhkj4tQhwT0oY92bzWmYkugWK9OpgD/wi5jv3/Fi5oZ8TUBg74rEjHx05W+X3Vp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mJLVaaSN; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA24A4824;
+	Thu, 10 Sep 2026 16:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789056217; cv=fail; b=mcxh7bKCZityK5W9YC/Fs4DJWpxDnBwgkS6PtQ4XqArNFvYdoX9+wi7i87M6rrKUH/r8narQAVKwcUgVNaWS/CUG1TkZPB31UuBRtiGrNeKUPBQFHiApIFkUB2weg4M7Si/pFHHk++m68n2cQ0J3/M9XdSGsHd5jv/lfkA3AUWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789056217; c=relaxed/simple;
+	bh=Ov2QI+j6rhvpFsuRbfY6J846dYEHFuTR0iewHKphmFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QStzuo4hjgNxfjZ5ON+tjoAv4kkMV/+4Wxzv+hTLxYxsy8H7SX5MVoJKhqRv4ExiIUCttHVoyHlYBCNP7/iK/IOTtBIqwJqWIqrSgu2Bpkh5mWLSIwGBRUHDbKb/jQE+Jh1fIuYBOKNCfbA27TvRsPDiNgW5VE0CGnCUhhN/Muc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=COGom96f; arc=fail smtp.client-ip=52.101.125.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mJLVaaSN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789053653; x=1820589653;
-  h=date:from:to:cc:subject:message-id;
-  bh=2trqB/Eot1zYhsfOyN2Wuwuf/ded3hZpU75txl+9KYM=;
-  b=mJLVaaSNI60h8Ohjx2L4/IJC6aW6Ijn7BgAF9HnNNFSYfnOGYXA4XeP1
-   KvyrZxB5M6YODIBpFx14cpW2ZB2PQvOvXbo+6s8WeB8DMQwG/dCEsfpaa
-   mA25hliHekhlcxXhI15FuZbRq8vW3gfUuttOcOH49TkevCPu6bRZVj0mp
-   kCWhTiwV/IKFdGvyY5q0NFTkQnwXDjxrfOdu2MFR5nrPijREGlrYYp3fM
-   L7lEWzxWUJVGtMMOSBFmcJ0ocAAPD458mldSuFg5/kSZECAW7StTmXfOu
-   LAdNrAN7Tt6Jv9v+jgS+bqj0M/wjnFSVgAwWxn5EifikcIX/BI/V/g2rw
-   g==;
-X-CSE-ConnectionGUID: JMSaQP+JRwm0Kfnz2Yklzg==
-X-CSE-MsgGUID: Q63Oy3cRT4Svfgo8iP5fng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11901"; a="89349986"
-X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
-   d="scan'208";a="89349986"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 08:20:49 -0700
-X-CSE-ConnectionGUID: IVXtvBL3RCaXYGL5rVQI9A==
-X-CSE-MsgGUID: hKKaIC8iSCG2NBQ0cESXig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
-   d="scan'208";a="296650480"
-Received: from lkp-server02.sh.intel.com (HELO 0a3643a6ed9d) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 10 Sep 2026 08:20:47 -0700
-Received: from kbuild by 0a3643a6ed9d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x4gZw-000000000C7-3F7n;
-	Thu, 10 Sep 2026 15:20:44 +0000
-Date: Thu, 10 Sep 2026 22:55:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [geert-renesas-drivers:renesas-clk-for-v7.4 16/16]
- drivers/clk/renesas/r9a09g077-cpg.c:966:16: error: cleanup argument not a
- function
-Message-ID: <202609102224.XUOQcfuF-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="COGom96f"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mbY7QkPcKxR8J0S3Ha2n5HuxQeC7cWfT4HGxbKwhXQt8AZKpcw+wnu+bvNGO0VW7WYmovk6CdoTvrV5GsfPsJiac1RW7A8m+XmaN7MBttW9hZmaJXsdMbnHUN9bX48M31kckLZ6uwK1bUl30SVwN5JkP5dbh5IwDmtiPFiqdbnlQ6/yAEKlhMZeOpIQB93iRzzicPhMpTBxV2x+6U0loudxACNwJlm3eGZ4eFfqrVVwNJsrCJoGrWuSXc59Dysv/U4NevJSSZi+K+E6J2K8mG9vqIUiAoLI3kIOYxzUMJ+MX0Pi05QA6onQHGEJf40KpB3AQna8R9KTfn/HTj1RCmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wI9/mGR9ELG0Mq0MpL2BqhEhH00jlLyciCArBz3iDVk=;
+ b=JS+d4q1Rdra2MFuZH970XqoQzrw8aav810KCzH+6q0A2kcSwLiCoahAUon0Yw+Lz98xzt0WyLYzJXMeEWPX+Z6xH11VRhAAFI7i2pDxp3W9Oik7uuhH4lAfVe0F7Ic4grvVkEiy1gwjlS6CCrrxVPJjc9LLyuXNTpDQ5z2z2SBUTu0p5/J9e/thTxYFXIUSK6LOQSn7nimA7RguGQnI8bGCrsD+4PB3hVxkpYkdfJjjnCB9gn/q440TmAiMkPb1UuzZnczq56eZcAhzmOl7Pb5M5GSMOcStV15oH7SBI993uYT+q9dz/nGRU15N9N86FTqSBcaHyKLfzh8UMLdAZAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=glider.be smtp.mailfrom=renesas.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=renesas.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wI9/mGR9ELG0Mq0MpL2BqhEhH00jlLyciCArBz3iDVk=;
+ b=COGom96fzXsq9u0RknRveIn7GM6gPSQ+xrCJ3lxVlpYXV1yZE9YFPS2M6IJxz0Nk/ExS8vCQ8WFcNQ8uXIEqV69wB+rHtglWPhC5QMtAJxBkQy0qorodb2MMgrWaR6Ag7JmS2T831MijJLIQ+Qis0srJY6PEVbs/zZEW9QB/3pA=
+Received: from OS7PR01CA0090.jpnprd01.prod.outlook.com (2603:1096:604:25b::16)
+ by TYYPR01MB14102.jpnprd01.prod.outlook.com (2603:1096:405:210::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Thu, 10 Sep
+ 2026 16:03:29 +0000
+Received: from OS1PEPF0000D210.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:25b:cafe::85) by OS7PR01CA0090.outlook.office365.com
+ (2603:1096:604:25b::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.9 via Frontend Transport; Thu, 10
+ Sep 2026 16:03:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
+ 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
+Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
+ OS1PEPF0000D210.mail.protection.outlook.com (10.167.240.39) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.5
+ via Frontend Transport; Thu, 10 Sep 2026 16:03:29 +0000
+Received: from demon-pc (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.160])
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id B1ABC300044C;
+	Fri, 11 Sep 2026 01:03:26 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Renesas RZ/T2H pinctrl fixes and cleanups
+Date: Thu, 10 Sep 2026 19:02:22 +0300
+Message-ID: <20260910160226.489183-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS1PEPF0000D210:EE_|TYYPR01MB14102:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 3f309586-577f-48e4-8d9d-08df0f550df8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700016|1800799024|82310400026|23010399003|56012099006|11063799006|10067099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	RDeWI9aEeJDsMFiolfnEKOLrw5b9Yn8uoY99L3IRXaO6gfTkma2xtV2Aol1RfZRIDQ30P+A/H5K0PS9wGMkLCtQRC1iq0Bo73BXq05LbzHSU5BR9XRhCxJYuMHBAvbH6dy3ma2rwUbLD7SzxZyCEyFlKe6bCDYdTM4h2S032MUVN+OrQ3doGZScdpjiZYuZlvp0ZkM08J5na/3bDb+oc8mHS9S0iKIYECHjkqmS3mTlgJFnW5AcyWZaeYDLCqXPmNm7wZcCxUBVrj6mfLVrD+byav79sR19hDmzupYksp2Fh6TrBEOEMYdWHUcIJKZswnmfYrQ4MPrFHUAg+d9TaJO1flchy/p7hgaMXmZKW+dzl1v+F4L1umwFwAei9s3YDKP55xEa6uue0qIRScbsGjYkiqo8lgEfVqY8T3lue+Uw9QZbzI1BudA531llWPHS1wGTq9BYaACBXcOIyJsfo3c1moGDh9Mb6gmouinilIIoEhcMnjc287OrqKAwLj+4Ssr6DQrh3gFgwqAU4OCO1DYWiswVjskx3N29/cSIxqNVMOOM4lYi3WukTUgaiKydAqOyAvPsKjL9P9ocUTVylyZWXL1cxXrR2M8dCyBZq/v9vhNlOqJ17lII0mrRp/tP1JyjKdXWUKonCaqojFJs6SBofWf4kwVnE3MJ+ZfNAFX5f6a1OQIXfbaC60xACJAJHhVjxu5rc2ZoZc6ozauHKPQ==
+X-Forefront-Antispam-Report:
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(1800799024)(82310400026)(23010399003)(56012099006)(11063799006)(10067099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	cis5shE8SE7ZiKN/Loex9+XB5ojFnWWNPDYs9pC/Mc2R3S/Za/A011G5NvP1SrU62lQLRkZScubzRlN1f8H+UXg6NTd/Wynpw1GkpV/7C7r70iC3u6NeBsgp+fYP07GAf9hRexAwVvgVLBiOoY4ZMzEd9CgOgtZJoIe8v4InJiGm0bF0ye/A6EHK1KvtZ5zdigiFwJPSnllkygf4u00RURA8PjCqgblomBVD2Di6rw0bLqemU4aZDB+BFsqAXQYhFwFZStTUtIWQlrfYbVoBrGlyYnMqYUyP/GggOm15VEUY6+UcstSbQZwcCjiB0urfYjGN96DQAbGKFGMM1cSok6SdczqKL1lzui3dkfgXwwKxcYP2LQlEk7OhE8/na5vBb0TC7p6UgyfL5i1NL5RgTeMr5eAjI8q6y4+G6wHzc1qTTPKVnQzIK76cwaCA9IP0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2026 16:03:29.0299
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f309586-577f-48e4-8d9d-08df0f550df8
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D210.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB14102
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v7.4
-head:   810b8b6c4e02c40991c29491cec09ebdaf5ec6d0
-commit: 810b8b6c4e02c40991c29491cec09ebdaf5ec6d0 [16/16] clk: renesas: r9a09g077: Register SYSC regmap
-config: um-allyesconfig (https://download.01.org/0day-ci/archive/20260910/202609102224.XUOQcfuF-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260910/202609102224.XUOQcfuF-lkp@intel.com/reproduce)
+This series fixes a couple of issues and then does some cleanups in the
+pinctrl driver for Renesas RZ/T2H.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202609102224.XUOQcfuF-lkp@intel.com/
+V2:
+ * switch pm parameter in rzt2h_pin_write_pm() to unsigned int and
+   remove the u16 cast
+ * reuse irq_idx in rzt2h_gpio_irq_request_resources()
+ * mention that irq_domain_free_irqs_common() is still wired up
+ * remove the PFC_FUNC_INTERRUPT check in rzt2h_gpio_get()
+ * pick up Geert's Reviewed-by
+ * drop patches already queued up by Geert
 
-All errors (new ones prefixed by >>):
+Cosmin Tanislav (4):
+  pinctrl: renesas: rzt2h: restore correct pin mode on IRQ free
+  pinctrl: renesas: rzt2h: setup IRQ in
+    .irq_{request,release}_resources()
+  pinctrl: renesas: rzt2h: fix reading pin value in IRQ function
+  pinctrl: renesas: rzt2h: reuse helpers
 
-   drivers/clk/renesas/r9a09g077-cpg.c: In function 'r9a09g077_post_init':
->> drivers/clk/renesas/r9a09g077-cpg.c:966:16: error: cleanup argument not a function
-     966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
-         |                ^~~~~~~~~~~~~
->> drivers/clk/renesas/r9a09g077-cpg.c:966:58: error: implicit declaration of function 'kzalloc_obj' [-Wimplicit-function-declaration]
-     966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
-         |                                                          ^~~~~~~~~~~
->> drivers/clk/renesas/r9a09g077-cpg.c:966:58: error: initialization of 'struct regmap_config *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 177 ++++++++++++++++--------
+ 1 file changed, 117 insertions(+), 60 deletions(-)
 
+-- 
+2.55.0
 
-vim +966 drivers/clk/renesas/r9a09g077-cpg.c
-
-   963	
-   964	static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub *pub)
-   965	{
- > 966		struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
-   967		struct r9a09g077_sysc_reg *sysc_reg;
-   968		struct regmap *regmap;
-   969		struct resource res;
-   970		int ret;
-   971	
-   972		/*
-   973		 * Return early if the SYSC sizes are not as expected, for backwards
-   974		 * compatibility with older device trees that only expose the 64 KiB
-   975		 * CPG register window.
-   976		 */
-   977		ret = of_address_to_resource(dev->of_node, 0, &res);
-   978		if (ret)
-   979			return ret;
-   980		if (resource_size(&res) != RZT2H_CPG_REG_SIZE)
-   981			return 0;
-   982	
-   983		ret = of_address_to_resource(dev->of_node, 1, &res);
-   984		if (ret)
-   985			return ret;
-   986		if (resource_size(&res) != RZT2H_CPG_REG_SIZE)
-   987			return 0;
-   988	
-   989		if (!regmap_cfg)
-   990			return -ENOMEM;
-   991	
-   992		sysc_reg = devm_kzalloc(dev, sizeof(*sysc_reg), GFP_KERNEL);
-   993		if (!sysc_reg)
-   994			return -ENOMEM;
-   995	
-   996		/* Only allow access in the SYSC regions */
-   997		sysc_reg->base[0] = pub->base0 + RZT2H_SYSC_OFFSET;
-   998		sysc_reg->base[1] = pub->base1 + RZT2H_SYSC_OFFSET;
-   999	
-  1000		regmap_cfg->name = "rzt2h_sysc";
-  1001		regmap_cfg->reg_bits = 32;
-  1002		regmap_cfg->reg_stride = 4;
-  1003		regmap_cfg->val_bits = 32;
-  1004		regmap_cfg->fast_io = true;
-  1005		regmap_cfg->max_register = RZT2H_SYSC_SIZE - 1;
-  1006		regmap_cfg->readable_reg = r9a09g077_writeable_readable_sysc;
-  1007		regmap_cfg->writeable_reg = r9a09g077_writeable_readable_sysc;
-  1008	
-  1009		regmap = devm_regmap_init(dev, &r9a09g077_sys_regmap_bus, sysc_reg, regmap_cfg);
-  1010		if (IS_ERR(regmap))
-  1011			return PTR_ERR(regmap);
-  1012	
-  1013		return of_syscon_register_regmap(dev->of_node, regmap);
-  1014	}
-  1015	
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
