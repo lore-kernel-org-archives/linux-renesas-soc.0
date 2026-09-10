@@ -1,81 +1,80 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BC7361941
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 06:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42E63939C8;
+	Thu, 10 Sep 2026 07:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789023539; cv=none; b=CqrzqQh53ZbV8tmssHq/uboP0D2QLAaKcMK0k5DPX+5djgzhRSSjYtWMhcKMKNJqMHQrwHVytcNfjDDE53Xnn/ML/PP/mzysBP5nDKSue+ZEdk24em6sYaNykyjaHj2E3BsBpHexXKz+KDfuW2eWTmKnCICKi+7Yle7Cb/1QGgM=
+	t=1789023815; cv=none; b=tdF8ZFCb9/DUgBP34dGKIes9f97zj3VxNrDhptfge5kiK63oR5zjTXh6s8Cv1VSAYvKdhb0n8NGE36sKEYoFI/tOz+9k8LUgpFsmms+VH5PH+UyzL3oHIACrtrwtg5aMgAItAf9gMNZTiZ9Ymi1N11aiQ8mch49o88Ghkj4kw7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789023539; c=relaxed/simple;
-	bh=V7xdm+8eQ65rYe5s8TJEriwMwBAQWYiB65ivIcm01Vk=;
+	s=arc-20240116; t=1789023815; c=relaxed/simple;
+	bh=RxZySMR2RvrEigGsQNhpoN5yrqofPSoEZKa15sewMJc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eDX3OCSPoBgt2ibBv3V5c+jAKCpOl3+oGBUb8DU98c8VVy/cAxy2Am6KBm7ZAHxcVaJ6inSq9f2Xz+rEkiMfuUO/Sb3IWX9yIWj85bl17rOIp6nVaeu+EVIqzwhM9Fvk/ylsxnm9SIa1JT+qOGtL2w9qjgAqBe+0mg0BLTading=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BA/crFeD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IfxiF/dI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CcnhW8e7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zOcAFj2e; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=UbnFdUgjzw1TWdZGFo8YW0Cd+XuPgXLkmSmzA9m1NpzxwgS9SNiefmSoDe1vlddiPr+XNgTK7t4o7zWcgvDeU6vc8XEtSrK1L+AEkLqT8jD6bpNx8dYT+WUN3I4rIMer19unzdImAix/mizifLpqVaFyd5S5X4TvnqmDfN7suIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L8SGqx6K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cgde5xHN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gULVbAzq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=af5KKfRi; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BA/crFeD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IfxiF/dI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CcnhW8e7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zOcAFj2e"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L8SGqx6K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cgde5xHN";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gULVbAzq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="af5KKfRi"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8F81421C79;
-	Thu, 10 Sep 2026 06:58:47 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E47B21BB3;
+	Thu, 10 Sep 2026 07:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1789023531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1789023803; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
-	b=BA/crFeDON15Wc186yKxPegsNCUJXK9AqAqHNwOqWtKLyfXkg7rvH0IGeUYd3EeVkqe8zk
-	QuKQjZMQyaxXJgOM5d+EuY50eNHX48/jRw86tPbl/7hImmt8tDlKCOMQ1DRGhT94ByOtTd
-	PRPe1vOlytpIvCg9CcrHB2S+gK8m2DA=
+	bh=V8y88EkP6ps9ehHOSpLcLPBRb/4bJdYWxdlvkIUXm5U=;
+	b=L8SGqx6KEAyU0nVQHDYPbod/uXFGF9NqdSVZ2Dg9F9uYZzN4v+D91WsglDCVbkRV3c3vld
+	gFzkVDpe6yJCr9H7UvRxADZW/CYIltyfWsQNVdkZvyolzvp0fL/0Pai4m7QBMkLoRuztgG
+	eCO+FyyY8706kNdadCTTc8ZbI+4O87o=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1789023531;
+	s=susede2_ed25519; t=1789023803;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
-	b=IfxiF/dI8Podx/WwHi4y7sA1i3IU1MRysaFxgoD++XYyqE87Xpx6UdNhUUpVK07Sb/D7zP
-	Ar9wmkeU6kojP0AA==
+	bh=V8y88EkP6ps9ehHOSpLcLPBRb/4bJdYWxdlvkIUXm5U=;
+	b=cgde5xHNi9RXh+i3NQDL985sugdrr1iIDY7RejpEJyX2gDgybVlH6WD9g1LFcWQBxY6kLL
+	nLkuEwO7MxpGiqCg==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CcnhW8e7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zOcAFj2e
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1789023527; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1789023798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
-	b=CcnhW8e7SeisoycjGli+tbK20IiQgjiqiji/nVEANcMBY1Pb0NUE2G6x1WfSi1ND4zp7mB
-	vR41tidT2kyT/lcr1kSYSFRFAflvmFfzuA4MD+UClyNQ1b83OtYXgGrnXbVG53/9ec7T+u
-	+6Gz+13iqj1fA27iPg/x5KwW3liKoCg=
+	bh=V8y88EkP6ps9ehHOSpLcLPBRb/4bJdYWxdlvkIUXm5U=;
+	b=gULVbAzqaSg4g0zfqn6xxiDbV37p41SWB/dofbZ2CfVrnT1vvlZGc7jP9hD0/x/lKvSwgM
+	C1nKPsWVBnDD6WAcgew/7nxWaLXVQIGIUVhhcrfSsEE/w2Qe44OhjeuqZESlUdwsv1I+wd
+	gl+ZnNsWVV4KvOTRdv191UtU4w3AOcQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1789023527;
+	s=susede2_ed25519; t=1789023798;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z9nJOZbF5gSUedN0fIPFeNa/vHSJpZm0dM+aFx6B3cg=;
-	b=zOcAFj2eq8/S/eakQ6cuFyy86QKuAWTR7fWPe9WwbOtI4WYrH3cevk3hm883GDNioxvEdN
-	macOzjNtVPowPWCQ==
+	bh=V8y88EkP6ps9ehHOSpLcLPBRb/4bJdYWxdlvkIUXm5U=;
+	b=af5KKfRim3o9PJ+u8rD5U2uAsT2GI8OEfXqNkKtoW8H1rlqluv95uWWPDTT4HFi4fH+weP
+	WS5z2fQMsoFcA+Cw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 417C313433;
-	Thu, 10 Sep 2026 06:58:47 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBD6713185;
+	Thu, 10 Sep 2026 07:03:15 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fBGEBCdVomoKdwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 10 Sep 2026 06:58:47 +0000
-Message-ID: <35dc8d0e-95f3-4a25-ac4d-08410b555327@suse.de>
-Date: Thu, 10 Sep 2026 08:58:46 +0200
+	id xJaNIzNWomrwSwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 10 Sep 2026 07:03:15 +0000
+Message-ID: <a85f3b74-5172-4e2a-ad0e-6bddddbe1e33@suse.de>
+Date: Thu, 10 Sep 2026 09:03:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -83,14 +82,52 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 37/41] drm/shmobile: Convert to atomic_create_state
+Subject: Re: [PATCH v4 00/41] drm/plane: Convert all drivers to
+ atomic_create_state and remove reset
 To: Maxime Ripard <mripard@kernel.org>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, geert+renesas@glider.be,
- linux-renesas-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
+ louis.chauvet@bootlin.com, melissa.srw@gmail.com, alexander.deucher@amd.com,
+ amd-gfx@lists.freedesktop.org, christian.koenig@amd.com,
+ alison.wang@nxp.com, stefan@agner.ch, John Stultz <jstultz@google.com>,
+ sumit.semwal@linaro.org, xinliang.liu@linaro.org, yongqin.liu@linaro.org,
+ Frank.Li@nxp.com, Sascha Hauer <s.hauer@pengutronix.de>, festevam@gmail.com,
+ imx@lists.linux.dev, kernel@pengutronix.de, victor.liu@nxp.com,
+ anitha.chrisanthus@intel.com, paulk@sys-base.io, chenhuacai@kernel.org,
+ jeffbai@aosc.io, lvjianmin@loongson.cn, wuqianhai@loongson.cn,
+ xry111@xry111.site, zhengxingda@iscas.ac.cn, marex@denx.de,
+ airlied@redhat.com, kraxel@redhat.com, spice-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, andy.yan@rock-chips.com, heiko@sntech.de,
+ hjc@rock-chips.com, linux-rockchip@lists.infradead.org,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, orsonzhai@gmail.com,
+ zhang.lyra@gmail.com, alain.volmat@foss.st.com, rgallaispou@gmail.com,
+ alexandre.torgue@foss.st.com, mcoquelin.stm32@gmail.com,
+ philippe.cornu@foss.st.com, raphael.gallais-pou@foss.st.com,
+ yannick.fertre@foss.st.com, jyri.sarha@iki.fi,
+ tomi.valkeinen@ideasonboard.com, hansg@kernel.org,
+ dmitry.osipenko@collabora.com, gurchetansingh@chromium.org,
+ olvaffe@gmail.com, michal.simek@amd.com, harry.wentland@amd.com,
+ siqueira@igalia.com, sunpeng.li@amd.com, linux@armlinux.org.uk,
+ Dharma Balasubiramani <dharma.b@microchip.com>,
+ Ludovic Desroches <ludovic.desroches@microchip.com>,
+ Manikandan Muralidharan <manikandan.m@microchip.com>,
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+ nicolas.ferre@microchip.com, alim.akhtar@samsung.com, inki.dae@samsung.com,
+ krzk@kernel.org, kyungmin.park@samsung.com,
+ linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com,
+ p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+ chunkuang.hu@kernel.org, matthias.bgg@gmail.com,
+ Lyude Paul <lyude@redhat.com>, dakr@kernel.org,
+ nouveau@lists.freedesktop.org, geert+renesas@glider.be,
+ kieran.bingham+renesas@ideasonboard.com,
+ laurent.pinchart+renesas@ideasonboard.com,
+ linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+ tomi.valkeinen+renesas@ideasonboard.com,
+ Biju Das <biju.das.jz@bp.renesas.com>, linux-sunxi@lists.linux.dev,
+ samuel@sholland.org, wens@kernel.org, Zack Rusin <zack.rusin@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com
 References: <20260908-drm-no-more-plane-reset-v4-0-a31b3fcfc989@kernel.org>
- <20260908-drm-no-more-plane-reset-v4-37-a31b3fcfc989@kernel.org>
 Content-Language: en-US
 From: Thomas Zimmermann <tzimmermann@suse.de>
 Autocrypt: addr=tzimmermann@suse.de; keydata=
@@ -117,369 +154,198 @@ Autocrypt: addr=tzimmermann@suse.de; keydata=
  SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
  Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
  4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20260908-drm-no-more-plane-reset-v4-37-a31b3fcfc989@kernel.org>
+In-Reply-To: <20260908-drm-no-more-plane-reset-v4-0-a31b3fcfc989@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -3.01
-X-Rspamd-Queue-Id: 8F81421C79
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -2.80
 X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
+X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch];
+	TAGGED_RCPT(0.00)[renesas];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch];
 	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,glider.be:email,suse.com:url,suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,gmail.com,bootlin.com,amd.com,nxp.com,agner.ch,google.com,linaro.org,pengutronix.de,lists.linux.dev,intel.com,sys-base.io,kernel.org,aosc.io,loongson.cn,xry111.site,iscas.ac.cn,denx.de,redhat.com,rock-chips.com,sntech.de,lists.infradead.org,linux.alibaba.com,foss.st.com,iki.fi,ideasonboard.com,collabora.com,chromium.org,igalia.com,armlinux.org.uk,microchip.com,tuxon.dev,samsung.com,vger.kernel.org,glider.be,bp.renesas.com,sholland.org,broadcom.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLzrpdgd8h57p4t6jqxd7odphf)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[92];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,suse.com:url,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
 
+Hi Maxime,
 
+nice series. I looked through all the patches.  For those patches where 
+I did not respond specifically, you can add
 
-Am 08.09.26 um 16:47 schrieb Maxime Ripard:
-> The plane reset implementation creates a custom state
-> subclass, but only initializes a pristine state without resetting any
-> hardware. This is equivalent to what atomic_create_state expects.
-> Convert to it.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Best regards
+Thomas
+
+Am 08.09.26 um 16:46 schrieb Maxime Ripard:
+> This is a follow-up to the bridge reset removal series, and part of a
+> larger effort to remove the reset hook from all KMS objects.
 >
-> The conversion was done using the following Coccinelle semantic patch:
+> The plane reset hook is overloaded: it is called both at probe time
+> to create the initial software state and during suspend/resume to
+> reset hardware and software state. These two roles have different
+> requirements, and the reset hook is not fallible, making error
+> handling difficult for the initial state allocation path.
 >
-> @@
-> identifier funcs;
-> symbol drm_atomic_helper_plane_reset;
-> symbol drm_atomic_helper_plane_create_state;
-> @@
+> While reset has the semantics to reset both the software and hardware
+> state, the vast majority of implementations and all the helpers only
+> reset the software state, making them equivalent to
+> atomic_create_state in practice. The atomic_create_state hook makes
+> this explicit: it only allocates and initializes a pristine state
+> without any side effect, and returns the state pointer or an ERR_PTR
+> on failure.
 >
-> struct drm_plane_funcs funcs = {
->    ...,
-> - .reset = drm_atomic_helper_plane_reset,
-> + .atomic_create_state = drm_atomic_helper_plane_create_state,
->    ...,
-> };
->
-> @match_struct_reset@
-> identifier funcs, reset_func;
-> @@
-> struct drm_plane_funcs funcs = {
->      ...,
->      .reset = reset_func,
->      ...,
-> };
->
-> @reset_uses_helpers depends on match_struct_reset@
-> identifier match_struct_reset.reset_func;
-> @@
->
->   void reset_func(...)
->   {
->   	<+...
-> (
->   	__drm_atomic_helper_plane_reset(...);
-> |
-> 	__drm_gem_reset_shadow_plane(...);
-> )
->   	...+>
->   }
->
-> @match_struct_destroy@
-> identifier funcs, destroy_func;
-> @@
-> struct drm_plane_funcs funcs = {
->      ...,
->      .atomic_destroy_state = destroy_func,
->      ...,
-> };
->
-> @script:python renamed_func@
-> old_name << match_struct_reset.reset_func;
-> new_name;
-> @@
-> if old_name.endswith("_reset"):
->      coccinelle.new_name = old_name.replace("_reset", "_create_state")
-> else:
->      coccinelle.new_name = old_name
->
-> @update_struct depends on match_struct_reset && reset_uses_helpers@
-> identifier match_struct_reset.funcs, match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> @@
-> struct drm_plane_funcs funcs = {
->      ...,
-> -   .reset = reset_func,
-> +   .atomic_create_state = new_name,
->      ...,
-> };
->
-> @drop_destroy depends on update_struct && match_struct_destroy@
-> identifier match_struct_reset.reset_func;
-> identifier match_struct_destroy.destroy_func;
-> identifier container_func;
-> identifier P;
-> symbol drm_atomic_helper_plane_destroy_state;
-> symbol __drm_atomic_helper_plane_destroy_state;
-> @@
->
->   void reset_func(struct drm_plane *P)
->   {
->   	...
-> (
-> -	if (P->state) {
-> - 		<+...
-> (
-> -		drm_atomic_helper_plane_destroy_state(P, P->state);
-> |
-> -		__drm_atomic_helper_plane_destroy_state(P->state);
-> |
-> -		P->funcs->atomic_destroy_state(P, P->state);
-> |
-> -		destroy_func(P, P->state);
-> )
-> - 		...+>
-> - 	}
-> |
-> -	drm_WARN_ON_ONCE(P->dev, P->state);
-> |
-> -	WARN_ON(P->state);
-> )
->   	...
-> (
-> -	kfree(P->state);
-> |
-> -	kfree(container_func(P->state));
-> |
->   	// kfree is optional
-> )
-> (
-> -	P->state = NULL;
-> |
->   	// plane->state clearing is optional
-> )
->   	...
->   }
->
-> @drop_destroy_mtk depends on update_struct@
-> identifier P;
-> symbol __drm_atomic_helper_plane_destroy_state;
-> symbol to_mtk_plane_state;
-> @@
->
->   void mtk_plane_reset(struct drm_plane *P)
->   {
->   	...
-> -	if (P->state) {
-> -		__drm_atomic_helper_plane_destroy_state(P->state);
-> -		...
-> -	} else {
->   		...
-> -	}
->   	...
->   }
->
-> @transform_nv50_wndw depends on update_struct@
-> identifier S;
-> @@
->
->   void nv50_wndw_reset(...)
->   {
->   	...
-> -	if (WARN_ON(!(S = kzalloc_obj(*S))))
-> +	S = kzalloc_obj(*S);
-> +	if (WARN_ON(!S))
->   		return;
->   	...
->   }
->
-> @transform_kzalloc depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier P, S;
-> statement ST;
-> statement list STL;
-> @@
->
->   void reset_func(struct drm_plane *P)
->   {
->   	<...
->   	S = kzalloc_obj(*S);
-> (
-> -	if (S)
-> -	{
-> -		STL
-> -	}
-> +	if (!S) return;
-> +
-> +	STL
-> |
-> -	if (S) ST
-> +	if (!S) return;
-> +
-> +	ST
-> )
-> 	...>
->   }
->
-> @transform_body depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> identifier S, P;
-> expression PS;
-> @@
-> - void reset_func(struct drm_plane *P)
-> + struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	...
->   	S = kzalloc_obj(*S);
-> 	...
-> (
->   	if (!S) {
-> 		...
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->   	}
-> |
->   	if (WARN_ON(!S)) {
-> 		...
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->   	}
-> |
->   	if (S == NULL) {
->   		...
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->   	}
-> )
-> 	...
-> (
-> -	__drm_atomic_helper_plane_reset(P, PS);
-> +	__drm_atomic_helper_plane_state_init(PS, P);
-> |
-> -	__drm_gem_reset_shadow_plane(P, PS);
-> +	__drm_gem_shadow_plane_state_init(P, PS);
-> )
-> 	...
-> }
->
-> @update_early_return depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> identifier P;
-> expression PS;
-> @@
->   struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	<+...
-> -	return;
-> +	return ERR_PTR(-EINVAL);
-> 	...+>
-> }
->
-> @update_return_plane depends on update_struct@
-> identifier match_struct_reset.reset_func;
-> identifier renamed_func.new_name;
-> identifier P;
-> expression PS;
-> @@
->   struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	...
->   	__drm_atomic_helper_plane_state_init(PS, P);
-> 	...
-> +
-> +	return PS;
-> }
->
-> @update_return_shadow depends on update_struct@
-> identifier renamed_func.new_name;
-> identifier P;
-> expression PS;
-> @@
->   struct drm_plane_state *new_name(struct drm_plane *P)
-> {
-> 	...
->   	__drm_gem_shadow_plane_state_init(P, PS);
-> 	...
-> +
-> +	return &PS->base;
-> }
+> This series first adds the necessary infrastructure in the simple-kms
+> and GEM atomic helpers, then converts all 51 plane drivers tree-wide
+> from the reset hook to atomic_create_state. The conversions were done
+> using a combination of Coccinelle semantic patches and manual
+> adjustments. Once all drivers are converted, the old helpers and the
+> reset hook itself are removed from struct drm_plane_funcs.
 >
 > Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
-> Cc: geert+renesas@glider.be
-> Cc: linux-renesas-soc@vger.kernel.org
+> Changes in v4:
+> - Fix a NULL pointer dereference with vkms
+> - Rebase on drm-misc-next-2026-09-03
+> - Link to v3: https://lore.kernel.org/r/20260831-drm-no-more-plane-reset-v3-0-1877c7aa57b3@kernel.org
+>
+> Changes in v3:
+> - Drop leftover state destruction in sun4i
+> - Rebase on current drm-misc-next
+> - Link to v2: https://lore.kernel.org/r/20260814-drm-no-more-plane-reset-v2-0-82d2963dd134@kernel.org
+>
+> Changes in v2:
+> - Rebase on latest drm-misc-next tag
+> - Fix sashiko reviews
+> - Fix atmel-hlcdc breakage
+> - Link to v1: https://lore.kernel.org/r/20260709-drm-no-more-plane-reset-v1-0-302d986fe5f0@kernel.org
+>
 > ---
->   drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 15 ++++++---------
->   1 file changed, 6 insertions(+), 9 deletions(-)
+> Maxime Ripard (41):
+>        drm/simple-kms: Remove unused reset_plane hook
+>        drm/vkms: Move frame_info into vkms_plane_state
+>        drm/vkms: Convert to atomic_create_state
+>        drm/gem-atomic-helper: Remove __drm_gem_reset_shadow_plane()
+>        drm/amdgpu: Convert to atomic_create_state
+>        drm/fsl-dcu: Convert to atomic_create_state
+>        drm/hisilicon/kirin: Convert to atomic_create_state
+>        drm/imx/dc: Convert to atomic_create_state
+>        drm/kmb: Convert to atomic_create_state
+>        drm/logicvc: Convert to atomic_create_state
+>        drm/loongson: Convert to atomic_create_state
+>        drm/lcdif: Convert to atomic_create_state
+>        drm/mxsfb: Convert to atomic_create_state
+>        drm/qxl: Convert to atomic_create_state
+>        drm/rockchip: Convert to atomic_create_state
+>        drm/sprd: Convert to atomic_create_state
+>        drm/sti: Convert to atomic_create_state
+>        drm/stm: Convert to atomic_create_state
+>        drm/tests: kunit: Convert to atomic_create_state
+>        drm/tilcdc: Convert to atomic_create_state
+>        drm/vboxvideo: Convert to atomic_create_state
+>        drm/verisilicon: Convert to atomic_create_state
+>        drm/virtio: Convert to atomic_create_state
+>        drm/xlnx: Convert to atomic_create_state
+>        drm/atomic-state-helper: Remove drm_atomic_helper_plane_reset()
+>        drm/amdgpu_dm: Convert to atomic_create_state
+>        drm/armada: Convert to atomic_create_state
+>        drm/atmel-hlcdc: Drop spurious csc_init call from reset
+>        drm/atmel-hlcdc: Convert to atomic_create_state
+>        drm/exynos: Convert to atomic_create_state
+>        drm/imx/ipuv3: Convert to atomic_create_state
+>        drm/mediatek: Convert to atomic_create_state
+>        drm/nouveau: Convert to atomic_create_state
+>        drm/omap: Convert to atomic_create_state
+>        drm/rcar-du: Convert to atomic_create_state
+>        drm/rz-du: Convert to atomic_create_state
+>        drm/shmobile: Convert to atomic_create_state
+>        drm/sun4i: layer: Convert to atomic_create_state
+>        drm/vmwgfx: Convert to atomic_create_state
+>        drm/atomic-state-helper: Remove __drm_atomic_helper_plane_reset()
+>        drm/plane: Remove reset
 >
-> diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-> index 148de34af785..4dec4d2c941e 100644
-> --- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-> +++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-> @@ -249,24 +249,21 @@ static void shmob_drm_plane_atomic_destroy_state(struct drm_plane *plane,
->   {
->   	__drm_atomic_helper_plane_destroy_state(state);
->   	kfree(to_shmob_plane_state(state));
->   }
->   
-> -static void shmob_drm_plane_reset(struct drm_plane *plane)
-> +static struct drm_plane_state *shmob_drm_plane_create_state(struct drm_plane *plane)
->   {
->   	struct shmob_drm_plane_state *state;
->   
-> -	if (plane->state) {
-> -		shmob_drm_plane_atomic_destroy_state(plane, plane->state);
-> -		plane->state = NULL;
-> -	}
-> -
->   	state = kzalloc_obj(*state);
->   	if (state == NULL)
-
-Another coding-style fix here, please.
-
-> -		return;
-> +		return ERR_PTR(-ENOMEM);
->   
-> -	__drm_atomic_helper_plane_reset(plane, &state->base);
-> +	__drm_atomic_helper_plane_state_init(&state->base, plane);
-> +
-> +	return &state->base;
->   }
->   
->   static const struct drm_plane_helper_funcs shmob_drm_plane_helper_funcs = {
->   	.atomic_check = shmob_drm_plane_atomic_check,
->   	.atomic_update = shmob_drm_plane_atomic_update,
-> @@ -281,11 +278,11 @@ static const struct drm_plane_helper_funcs shmob_drm_primary_plane_helper_funcs
->   };
->   
->   static const struct drm_plane_funcs shmob_drm_plane_funcs = {
->   	.update_plane = drm_atomic_helper_update_plane,
->   	.disable_plane = drm_atomic_helper_disable_plane,
-> -	.reset = shmob_drm_plane_reset,
-> +	.atomic_create_state = shmob_drm_plane_create_state,
->   	.atomic_duplicate_state = shmob_drm_plane_atomic_duplicate_state,
->   	.atomic_destroy_state = shmob_drm_plane_atomic_destroy_state,
->   };
->   
->   static const uint32_t formats[] = {
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |  2 +-
+>   .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    | 28 ++++++++-----
+>   .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.h    |  2 +-
+>   .../display/amdgpu_dm/tests/amdgpu_dm_plane_test.c | 30 +++++---------
+>   drivers/gpu/drm/armada/armada_overlay.c            | 39 ++++++++----------
+>   drivers/gpu/drm/armada/armada_plane.c              | 15 +++----
+>   drivers/gpu/drm/armada/armada_plane.h              |  2 +-
+>   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c    | 33 +++++++--------
+>   drivers/gpu/drm/drm_atomic_state_helper.c          | 41 ------------------
+>   drivers/gpu/drm/drm_gem_atomic_helper.c            | 20 ---------
+>   drivers/gpu/drm/drm_mode_config.c                  |  4 +-
+>   drivers/gpu/drm/exynos/exynos_drm_plane.c          | 22 ++++------
+>   drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c        |  2 +-
+>   drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c    |  2 +-
+>   drivers/gpu/drm/imx/dc/dc-plane.c                  |  2 +-
+>   drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c            | 19 ++++-----
+>   drivers/gpu/drm/kmb/kmb_plane.c                    |  2 +-
+>   drivers/gpu/drm/logicvc/logicvc_layer.c            |  2 +-
+>   drivers/gpu/drm/loongson/lsdc_plane.c              |  2 +-
+>   drivers/gpu/drm/mediatek/mtk_plane.c               | 22 ++++------
+>   drivers/gpu/drm/mxsfb/lcdif_kms.c                  |  2 +-
+>   drivers/gpu/drm/mxsfb/mxsfb_kms.c                  |  2 +-
+>   drivers/gpu/drm/nouveau/dispnv50/wndw.c            | 15 ++++---
+>   drivers/gpu/drm/omapdrm/omap_plane.c               | 13 +++---
+>   drivers/gpu/drm/qxl/qxl_display.c                  |  4 +-
+>   drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c    | 15 +++----
+>   drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c      | 15 +++----
+>   drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c       | 15 +++----
+>   drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 15 +++----
+>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  2 +-
+>   drivers/gpu/drm/rockchip/rockchip_drm_vop2.c       |  2 +-
+>   drivers/gpu/drm/sprd/sprd_dpu.c                    |  2 +-
+>   drivers/gpu/drm/sti/sti_cursor.c                   |  2 +-
+>   drivers/gpu/drm/sti/sti_gdp.c                      |  2 +-
+>   drivers/gpu/drm/sti/sti_hqvdp.c                    |  2 +-
+>   drivers/gpu/drm/stm/ltdc.c                         |  2 +-
+>   drivers/gpu/drm/sun4i/sun4i_layer.c                | 21 ++++------
+>   drivers/gpu/drm/tests/drm_kunit_helpers.c          |  2 +-
+>   drivers/gpu/drm/tilcdc/tilcdc_plane.c              |  2 +-
+>   drivers/gpu/drm/vboxvideo/vbox_mode.c              |  2 +-
+>   drivers/gpu/drm/verisilicon/vs_cursor_plane.c      |  2 +-
+>   drivers/gpu/drm/verisilicon/vs_plane.c             | 14 +++----
+>   drivers/gpu/drm/verisilicon/vs_plane.h             |  2 +-
+>   drivers/gpu/drm/verisilicon/vs_primary_plane.c     |  2 +-
+>   drivers/gpu/drm/virtio/virtgpu_plane.c             |  2 +-
+>   drivers/gpu/drm/vkms/vkms_composer.c               | 30 +++++++-------
+>   drivers/gpu/drm/vkms/vkms_drv.h                    |  2 +-
+>   drivers/gpu/drm/vkms/vkms_formats.c                | 48 +++++++++++-----------
+>   drivers/gpu/drm/vkms/vkms_plane.c                  | 36 +++++-----------
+>   drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                | 17 ++++----
+>   drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                |  2 +-
+>   drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  4 +-
+>   drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  4 +-
+>   drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  4 +-
+>   drivers/gpu/drm/xlnx/zynqmp_kms.c                  |  2 +-
+>   include/drm/drm_atomic_state_helper.h              |  3 --
+>   include/drm/drm_gem_atomic_helper.h                |  2 -
+>   include/drm/drm_plane.h                            | 12 ------
+>   include/drm/drm_simple_kms_helper.h                |  1 -
+>   59 files changed, 236 insertions(+), 381 deletions(-)
+> ---
+> base-commit: 17c6b88e85ffe5de5720004ae8c2176d52944aca
+> change-id: 20260629-drm-no-more-plane-reset-04950f42e07f
 >
+> Best regards,
 
 -- 
 --
