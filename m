@@ -1,125 +1,164 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414FB47C10C;
-	Thu, 10 Sep 2026 11:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E2647CC80
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 11:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789040757; cv=none; b=AHX78wkD5N4odkgm2BjTCRR/1sZa0Xl+MDtgD7B1Xu+vtW59BKdwsTQ/IlnRBytN92HIvAtavF78nyoOiQwQ3JgZHAHU1P8buJ9IEhtokxYpwsa0cXIC4gauQy+rhnR0WrIaBljpx0J/J3tLgyq3VeXWXiq7wp+oYPPAQqME3u0=
+	t=1789041391; cv=none; b=Un+eM3+4u2sUf221IjpHyS4M7oouRwo6lsjq58Am0WB4xXk8F1OFJgTpUrJIg0UtdZey4a8vfxSx7xhAZodnA9+3ThVDkleuuS2ke1o0++rtLJlqVRkHFfY93LV9RWoJexboOirTiFQ6se9za8Pc2UqZSIHMYXSDoKtDC7ueL6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789040757; c=relaxed/simple;
-	bh=mZ3uQbEFoWguoSsIsjnlZSCOX/afMQA9qaSy3SfszTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ps8haO/KegRUfjL+hkUEiMrnyGBmwGrtnJ2502nxPDmnriHYs7qpVhPLoRyQLm3dMCqLZRc06dyxM2UDwYxIcOYTsPa9owgLOUPk0IW1G5WnJMotwK/njrIqx4oTSmqfEsi+1nq9adrdiEqh3WMHusgupoeErgkzapYiyyc5H78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hnzBI4Q+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789041391; c=relaxed/simple;
+	bh=wRbpWsOLTz7Te8t3HsBWOhyji28osxUzkS3VrGRJwQs=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=tXfvtsAR6N5nW4KIJmJdlBmf3cNvbUx1Yme44f3vvIyskcwEkFaGbPXSYgc6SuS8klu69Bw8zE8uaHEjrDKBUu/0Afu6O1jeHroBgD6kURBAW0uVJVT13Fq/gGniWrFfBLrgeR1kdcFU03JF0I/67vECQuVky+2Muxldp3QYPQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KrYZ8jD7; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hnzBI4Q+"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8675BC48;
-	Thu, 10 Sep 2026 13:44:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789040654;
-	bh=mZ3uQbEFoWguoSsIsjnlZSCOX/afMQA9qaSy3SfszTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hnzBI4Q+uHTmWx+2n7fgZCpLNaFX0QB6iearzZlJ54NmKocLMU5XjkpHLugNj4Ywk
-	 MeTVSlfM9t6Y8+ePtFPk/qqycjKeMiRoih60vSxd/IB6nDT7KNFeG6niURfRXINmvS
-	 1cw9kwNTco55R6LW5igjVHP/TCRObBYUE8vedywg=
-Date: Thu, 10 Sep 2026 14:45:50 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Hemanth Selam <hemanth.selam@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Hans Verkuil <hverkuil@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/3] media: fix repeated words in comments
-Message-ID: <20260910114550.GJ1892234@killaraus.ideasonboard.com>
-References: <20260904113450.15838-1-hemanth.selam@gmail.com>
- <20260904113450.15838-3-hemanth.selam@gmail.com>
- <20260904133645.GA795906@killaraus.ideasonboard.com>
- <3f13417b-cca2-4403-8fb4-ac9c65f1311d@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KrYZ8jD7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789041389; x=1820577389;
+  h=date:from:to:cc:subject:message-id;
+  bh=wRbpWsOLTz7Te8t3HsBWOhyji28osxUzkS3VrGRJwQs=;
+  b=KrYZ8jD7uMnnRtP6EKc0hFnUEX3FKnnWmKzgFDGg7fFexgRFrX3Ewr4p
+   kODNV7SxUe/39fgv+olmIDn384a7FPaw4cqIK5Nr35lQe6CBC2f555sNE
+   +p4HGv7LNFJsYegBz8xyiNjxdR3SxsrmA/iQHI6KBwRYq6L44wJBhiGnh
+   JhqOEwycvie6TPTyoof/1TZkt5BZRIV9roF9tNFtLz1l54/gbSk0CffiI
+   eda+J92mlZOjIo0i2uCKLj8F5M1xtqt1uvEp/pzTTR4QhEZmIyxO/fMjE
+   BeFM35W4Zil60f3jTfxmPuQHxyWRD1Uvac1ARZRVJWIWf1NmL7MDUvz4u
+   w==;
+X-CSE-ConnectionGUID: +eJz0ZKlQLqeiox7wDp+Fw==
+X-CSE-MsgGUID: f2E4yy8gSBCRNMd1OGpzcQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="89528704"
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="89528704"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 04:56:29 -0700
+X-CSE-ConnectionGUID: e1os+frfSYmHURfycZWCLQ==
+X-CSE-MsgGUID: YTrBWUElRi6t+12+qJ8soA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="270261250"
+Received: from lkp-server01.sh.intel.com (HELO a3e91e2cf319) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 10 Sep 2026 04:56:28 -0700
+Received: from kbuild by a3e91e2cf319 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x4dOD-000000001lf-2dFp;
+	Thu, 10 Sep 2026 11:56:25 +0000
+Date: Thu, 10 Sep 2026 19:56:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:renesas-clk] BUILD REGRESSION
+ 810b8b6c4e02c40991c29491cec09ebdaf5ec6d0
+Message-ID: <202609101912.Y8YAZwHZ-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3f13417b-cca2-4403-8fb4-ac9c65f1311d@kernel.org>
 
-On Thu, Sep 10, 2026 at 01:30:11PM +0200, Hans Verkuil wrote:
-> On 04/09/2026 15:36, Laurent Pinchart wrote:
-> > On Fri, Sep 04, 2026 at 05:04:43PM +0530, Hemanth Selam wrote:
-> >> Drop words accidentally written twice, reported by checkpatch.pl as a
-> >> possible repeated word.  Only touches comments, no code changes.
-> >>
-> >> Assisted-by: Cursor:claude-opus-5
-> > 
-> > This is not a good use of reviewer time. NAK.
-> 
-> Actually, I'll take this patch.
-> 
-> Laurent, feel free to delegate patches fixing typos/grammar to me. I hate
-> typos etc. in code, they actually make the code harder to read. Patches
-> fixing that take very little time to review, so I'm fine doing that.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+branch HEAD: 810b8b6c4e02c40991c29491cec09ebdaf5ec6d0  clk: renesas: r9a09g077: Register SYSC regmap
 
-I don't welcome people who use LLMs to generate noise with barely any
-value, just for the sake of having their name in the kernel git log. We
-have enough important patches to review. This kind of submission should
-be discouraged. It would be different if the typo fixes were part of a
-human-written series that adds real value.
+Error/Warning (recently discovered and may have been fixed):
 
-> >> Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
-> >> ---
-> >>  drivers/media/i2c/adv7175.c                   | 2 +-
-> >>  drivers/media/platform/renesas/vsp1/vsp1_dl.c | 2 +-
-> >>  drivers/media/usb/gspca/ov519.c               | 2 +-
-> >>  3 files changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/media/i2c/adv7175.c b/drivers/media/i2c/adv7175.c
-> >> index f1caab8e2abd..b6f0e1b24383 100644
-> >> --- a/drivers/media/i2c/adv7175.c
-> >> +++ b/drivers/media/i2c/adv7175.c
-> >> @@ -209,7 +209,7 @@ static int adv7175_s_std_output(struct v4l2_subdev *sd, v4l2_std_id std)
-> >>  		/* This is an attempt to convert
-> >>  		 * SECAM->PAL (typically it does not work
-> >>  		 * due to genlock: when decoder is in SECAM
-> >> -		 * and encoder in in PAL the subcarrier can
-> >> +		 * and encoder in PAL the subcarrier can
-> >>  		 * not be synchronized with horizontal
-> >>  		 * quency) */
-> >>  		adv7175_write_block(sd, init_pal, sizeof(init_pal));
-> >> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_dl.c b/drivers/media/platform/renesas/vsp1/vsp1_dl.c
-> >> index 6430f2ec8b32..8257759421f3 100644
-> >> --- a/drivers/media/platform/renesas/vsp1/vsp1_dl.c
-> >> +++ b/drivers/media/platform/renesas/vsp1/vsp1_dl.c
-> >> @@ -649,7 +649,7 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
-> >>  	dl->post_cmd = NULL;
-> >>  
-> >>  	/*
-> >> -	 * body0 is reused as as an optimisation as presently every display list
-> >> +	 * body0 is reused as an optimisation as presently every display list
-> >>  	 * has at least one body, thus we reinitialise the entries list.
-> >>  	 */
-> >>  	dl->body0->num_entries = 0;
-> >> diff --git a/drivers/media/usb/gspca/ov519.c b/drivers/media/usb/gspca/ov519.c
-> >> index bffa94e76da5..57219a738c73 100644
-> >> --- a/drivers/media/usb/gspca/ov519.c
-> >> +++ b/drivers/media/usb/gspca/ov519.c
-> >> @@ -13,7 +13,7 @@
-> >>   * Copyright (c) 1999-2006 Mark W. McClelland
-> >>   * Support for OV519, OV8610 Copyright (c) 2003 Joerg Heckenbach
-> >>   * Many improvements by Bret Wallach <bwallac1@san.rr.com>
-> >> - * Color fixes by by Orion Sky Lawlor <olawlor@acm.org> (2/26/2000)
-> >> + * Color fixes by Orion Sky Lawlor <olawlor@acm.org> (2/26/2000)
-> >>   * OV7620 fixes by Charl P. Botha <cpbotha@ieee.org>
-> >>   * Changes by Claudio Matsuoka <claudio@conectiva.com>
-> >>   *
+    https://lore.kernel.org/oe-kbuild-all/202609101334.xgbNoC4e-lkp@intel.com
 
--- 
-Regards,
+    drivers/clk/renesas/r9a09g077-cpg.c:966:24: error: incompatible integer to pointer conversion initializing 'struct regmap_config *' with an expression of type 'int' [-Wint-conversion]
+    drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: 'cleanup' function '__free_pages' must take 1 parameter
+    drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: use of undeclared identifier '__free_kfree'; did you mean '__free_pages'?
+    drivers/clk/renesas/r9a09g077-cpg.c:966:51: error: call to undeclared function 'kzalloc_obj'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
 
-Laurent Pinchart
+Error/Warning ids grouped by kconfigs:
+
+recent_errors
+|-- csky-allmodconfig
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:cleanup-argument-not-a-function
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:implicit-declaration-of-function-kzalloc_obj
+|   `-- drivers-clk-renesas-r9a09g077-cpg.c:error:initialization-of-struct-regmap_config-from-int-makes-pointer-from-integer-without-a-cast
+|-- hexagon-allmodconfig
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:call-to-undeclared-function-kzalloc_obj-ISO-C99-and-later-do-not-support-implicit-function-declarations
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:cleanup-function-__free_pages-must-take-parameter
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:incompatible-integer-to-pointer-conversion-initializing-struct-regmap_config-with-an-expression-of-type-int
+|   `-- drivers-clk-renesas-r9a09g077-cpg.c:error:use-of-undeclared-identifier-__free_kfree
+|-- i386-allmodconfig
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:cleanup-argument-not-a-function
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:implicit-declaration-of-function-kzalloc_obj
+|   `-- drivers-clk-renesas-r9a09g077-cpg.c:error:initialization-of-struct-regmap_config-from-int-makes-pointer-from-integer-without-a-cast
+|-- i386-allyesconfig
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:cleanup-argument-not-a-function
+|   |-- drivers-clk-renesas-r9a09g077-cpg.c:error:implicit-declaration-of-function-kzalloc_obj
+|   `-- drivers-clk-renesas-r9a09g077-cpg.c:error:initialization-of-struct-regmap_config-from-int-makes-pointer-from-integer-without-a-cast
+`-- um-allmodconfig
+    |-- drivers-clk-renesas-r9a09g077-cpg.c:error:call-to-undeclared-function-kzalloc_obj-ISO-C99-and-later-do-not-support-implicit-function-declarations
+    |-- drivers-clk-renesas-r9a09g077-cpg.c:error:cleanup-function-__free_pages-must-take-parameter
+    |-- drivers-clk-renesas-r9a09g077-cpg.c:error:incompatible-integer-to-pointer-conversion-initializing-struct-regmap_config-with-an-expression-of-type-int
+    `-- drivers-clk-renesas-r9a09g077-cpg.c:error:use-of-undeclared-identifier-__free_kfree
+
+elapsed time: 1304m
+
+configs tested: 55
+configs skipped: 4
+
+tested configs:
+alpha         allnoconfig    gcc-16.1.0
+alpha        allyesconfig    gcc-16.1.0
+arc          allmodconfig    clang-24
+arc           allnoconfig    gcc-16.1.0
+arc          allyesconfig    clang-24
+arm           allnoconfig    gcc-16.1.0
+arm          allyesconfig    clang-24
+arm64        allmodconfig    clang-24
+arm64         allnoconfig    gcc-16.1.0
+csky         allmodconfig    gcc-16.1.0
+csky          allnoconfig    gcc-16.1.0
+hexagon      allmodconfig    gcc-16.1.0
+hexagon       allnoconfig    gcc-16.1.0
+i386         allmodconfig    clang-22
+i386          allnoconfig    gcc-16.1.0
+i386         allyesconfig    clang-22
+loongarch    allmodconfig    clang-24
+loongarch     allnoconfig    gcc-16.1.0
+m68k         allmodconfig    gcc-16.1.0
+m68k          allnoconfig    gcc-16.1.0
+m68k         allyesconfig    clang-24
+microblaze    allnoconfig    gcc-16.1.0
+microblaze   allyesconfig    gcc-16.1.0
+mips         allmodconfig    gcc-16.1.0
+mips          allnoconfig    gcc-16.1.0
+mips         allyesconfig    gcc-16.1.0
+nios2        allmodconfig    clang-20
+nios2         allnoconfig    clang-24
+openrisc     allmodconfig    clang-20
+openrisc      allnoconfig    clang-24
+parisc       allmodconfig    gcc-16.1.0
+parisc        allnoconfig    clang-24
+parisc       allyesconfig    clang-17
+powerpc      allmodconfig    gcc-16.1.0
+powerpc       allnoconfig    clang-24
+riscv        allmodconfig    clang-24
+riscv         allnoconfig    clang-24
+riscv        allyesconfig    clang-24
+s390         allmodconfig    clang-17
+s390          allnoconfig    clang-24
+s390         allyesconfig    gcc-16.1.0
+sh           allmodconfig    gcc-16.1.0
+sh            allnoconfig    clang-24
+sh           allyesconfig    clang-17
+sparc         allnoconfig    clang-24
+sparc64      allmodconfig    clang-20
+um           allmodconfig    clang-17
+um            allnoconfig    clang-24
+um           allyesconfig    gcc-16.1.0
+x86_64       allmodconfig    clang-22
+x86_64        allnoconfig    clang-24
+x86_64       allyesconfig    clang-22
+x86_64      rhel-9.4-rust    clang-22
+xtensa        allnoconfig    clang-24
+xtensa       allyesconfig    clang-20
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
