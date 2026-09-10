@@ -1,123 +1,146 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4B0489FD6;
-	Thu, 10 Sep 2026 14:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EF2408614
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 15:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789051339; cv=none; b=eYnEnl+4heWhRf/Q7ysGi0Ln5e48/RA+l/4SJvlakkt/qMUc/hsHPz+Q4tdP/SwHsuQZvnKTNooIqx2LyODTqjk2wOMI0MoYqHiDVvYj7B1/uiQlePhXagrSUF9NH2vtzoioNc80rx0mYLA635Drc+ZNMiRWu9kNAKFdD+Sd+48=
+	t=1789053658; cv=none; b=EM5RwJuxQfLaUcF4GGi0Djb73J2+DdgF1nAPJ/mIfQiHJNk8WP5VpoNFi8cUSsVcXujV9pIDK1vD8SGhof3ZUWyqBO26EjYo27GS2woclr4xLvZZVR8cQGKu4XKa50itwkp2VN0l2ecqO/maNuljE3aAEVXD0kGtVfJIWqh+Br4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789051339; c=relaxed/simple;
-	bh=qPqjuUdASs9Y65n69OhxSNlg/J55Ht5KUqLO2cTCHVk=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fXqeOcOlgCADZvnLrqbRJY9NH8/9p4Ny+72cXQrLkIDhAfLn4r0AwPh0LiLsajnrAUZvmhOsaVNVdOHgOI4/UMuZMDtMJ8zSCmrAntK4hDJWB6/ViRtbocCq1lf6LxMUaznuWHaRbSiSLy06FFgPYQ+2ahmAFNKh3LE4FbupJkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=j22MncXL; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1789053658; c=relaxed/simple;
+	bh=2trqB/Eot1zYhsfOyN2Wuwuf/ded3hZpU75txl+9KYM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=hFef7pLZ2qljJJiSabictsVVnWHX8UcrN1f0xSlWZWkcFSlrvNgX2Fi6Oonfz6T77Ay/4X6c41tIWZSPwT0cCFxT3NaYoewcnPWE4gRYUzjmhkj4tQhwT0oY92bzWmYkugWK9OpgD/wi5jv3/Fi5oZ8TUBg74rEjHx05W+X3Vp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mJLVaaSN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="j22MncXL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mJLVaaSN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1789051338; x=1820587338;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=qPqjuUdASs9Y65n69OhxSNlg/J55Ht5KUqLO2cTCHVk=;
-  b=j22MncXL8gq3H0/OpbAYkFuxZhAYpw9AyfSfIKgrGhLRtqMaQIYHFId8
-   NoXxtWW4qRr0K2v/0JnEQHWeSUIgVHWlcZEPCVRCmG+iFwTSLFRlaWvIj
-   r8O88JHe1LaCRRlaGqiEwP2MLf/Ri0PzTGoPkGytwK787wTqhnNPqi21c
-   lmLKqr6jenNePLpRjo4eXU1cj3B/2o74qIOQfJCCbc1TtnLEurmvIGVXR
-   SE0Au91JJFLaj9HULcx1w3Mgo6dV2wS+K6QEBJqcgkHR+OwKxoOaxEOBO
-   u5iH95APwNsBaQbtGzu9zuhAJqaFWwPrM2LfZaGJg9OBc/iaZphHv+Mjm
-   w==;
-X-CSE-ConnectionGUID: ++gFX0kJTeughVEf/8o8fA==
-X-CSE-MsgGUID: 9SI3P4RTS8GgOmBtetQaKg==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789053653; x=1820589653;
+  h=date:from:to:cc:subject:message-id;
+  bh=2trqB/Eot1zYhsfOyN2Wuwuf/ded3hZpU75txl+9KYM=;
+  b=mJLVaaSNI60h8Ohjx2L4/IJC6aW6Ijn7BgAF9HnNNFSYfnOGYXA4XeP1
+   KvyrZxB5M6YODIBpFx14cpW2ZB2PQvOvXbo+6s8WeB8DMQwG/dCEsfpaa
+   mA25hliHekhlcxXhI15FuZbRq8vW3gfUuttOcOH49TkevCPu6bRZVj0mp
+   kCWhTiwV/IKFdGvyY5q0NFTkQnwXDjxrfOdu2MFR5nrPijREGlrYYp3fM
+   L7lEWzxWUJVGtMMOSBFmcJ0ocAAPD458mldSuFg5/kSZECAW7StTmXfOu
+   LAdNrAN7Tt6Jv9v+jgS+bqj0M/wjnFSVgAwWxn5EifikcIX/BI/V/g2rw
+   g==;
+X-CSE-ConnectionGUID: JMSaQP+JRwm0Kfnz2Yklzg==
+X-CSE-MsgGUID: Q63Oy3cRT4Svfgo8iP5fng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11901"; a="89349986"
 X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
-   d="scan'208";a="63425380"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Sep 2026 07:42:17 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 10 Sep 2026 07:42:16 -0700
-Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 10 Sep 2026 07:42:12 -0700
-Message-ID: <5ee1b3f9832621686adbde94324e7b6350254f37.camel@microchip.com>
-Subject: Re: [PATCH net-next v12 2/9] dt-bindings: net: lan9645x: add
- LAN9645X switch bindings
-From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <UNGLinuxDriver@microchip.com>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Simon
- Horman" <horms@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Woojung
- Huh <woojung.huh@microchip.com>, Russell King <linux@armlinux.org.uk>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, Daniel Machon
-	<daniel.machon@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>
-Date: Thu, 10 Sep 2026 16:42:12 +0200
-In-Reply-To: <f745c884-ecfd-4dbd-ae33-6b713f8ab73d@lunn.ch>
-References: <20260908-dsa_lan9645x_switch_driver_base-v12-0-2d6aa59350cd@microchip.com>
-	 <20260908-dsa_lan9645x_switch_driver_base-v12-2-2d6aa59350cd@microchip.com>
-	 <f745c884-ecfd-4dbd-ae33-6b713f8ab73d@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+   d="scan'208";a="89349986"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 08:20:49 -0700
+X-CSE-ConnectionGUID: IVXtvBL3RCaXYGL5rVQI9A==
+X-CSE-MsgGUID: hKKaIC8iSCG2NBQ0cESXig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="296650480"
+Received: from lkp-server02.sh.intel.com (HELO 0a3643a6ed9d) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 10 Sep 2026 08:20:47 -0700
+Received: from kbuild by 0a3643a6ed9d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x4gZw-000000000C7-3F7n;
+	Thu, 10 Sep 2026 15:20:44 +0000
+Date: Thu, 10 Sep 2026 22:55:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [geert-renesas-drivers:renesas-clk-for-v7.4 16/16]
+ drivers/clk/renesas/r9a09g077-cpg.c:966:16: error: cleanup argument not a
+ function
+Message-ID: <202609102224.XUOQcfuF-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Tue, 2026-09-08 at 14:59 +0200, Andrew Lunn wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e content is safe
->=20
-> > rx/tx-internal-delay-ps is used to model a direct MAC to MAC fixed link=
-,
-> > using RGMII, where exactly one of them must supply the delay.
-> > Documentation/networking/phy.rst describes plain rgmii as the mode wher=
-e
-> > the MAC or the PCB adds the delay rather than the PHY.
->=20
-> This is not correct. phy-mode 'rgmii' in DT means the PCB adds the
-> delay.
->=20
-> If the value is not 'rgmii', then the MAC/PHY pair need to decided on
-> which adds the delay, and by convention, it is normally the PHY.
->=20
-> Where it gets interesting is MAC to MAC, which you do see in
-> switches. Using rx/tx-internal-delay-ps makes a lot of sense in this
-> setting.
->=20
-> The binding itself looks O.K, its just this commit message text which
-> is wrong.
->=20
->         Andrew
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v7.4
+head:   810b8b6c4e02c40991c29491cec09ebdaf5ec6d0
+commit: 810b8b6c4e02c40991c29491cec09ebdaf5ec6d0 [16/16] clk: renesas: r9a09g077: Register SYSC regmap
+config: um-allyesconfig (https://download.01.org/0day-ci/archive/20260910/202609102224.XUOQcfuF-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260910/202609102224.XUOQcfuF-lkp@intel.com/reproduce)
 
-This is exactly intended to model the MAC to MAC fixed link situation.
-So no PHYs between, and one side needs to supply the delays.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609102224.XUOQcfuF-lkp@intel.com/
 
-I had originally implemented this by using the phy interface mode to progra=
-m
-the MAC delays off of. This is what we had done previously in lan966x say.
+All errors (new ones prefixed by >>):
 
-But I was instructed that the modern approach is to use rx/tx-internal-dela=
-y-ps
-along with phy interface mode rgmii. There are a few other examples of
-dsa bindings doing this:
+   drivers/clk/renesas/r9a09g077-cpg.c: In function 'r9a09g077_post_init':
+>> drivers/clk/renesas/r9a09g077-cpg.c:966:16: error: cleanup argument not a function
+     966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+         |                ^~~~~~~~~~~~~
+>> drivers/clk/renesas/r9a09g077-cpg.c:966:58: error: implicit declaration of function 'kzalloc_obj' [-Wimplicit-function-declaration]
+     966 |         struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+         |                                                          ^~~~~~~~~~~
+>> drivers/clk/renesas/r9a09g077-cpg.c:966:58: error: initialization of 'struct regmap_config *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
 
-Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
-Documentation/devicetree/bindings/net/dsa/realtek.yaml
 
-I will remove the paragraph from the commit message if that is wrong. I hav=
-e
-misunderstood that part of phy.rst.
+vim +966 drivers/clk/renesas/r9a09g077-cpg.c
 
-Thanks,
-Emil
+   963	
+   964	static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub *pub)
+   965	{
+ > 966		struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+   967		struct r9a09g077_sysc_reg *sysc_reg;
+   968		struct regmap *regmap;
+   969		struct resource res;
+   970		int ret;
+   971	
+   972		/*
+   973		 * Return early if the SYSC sizes are not as expected, for backwards
+   974		 * compatibility with older device trees that only expose the 64 KiB
+   975		 * CPG register window.
+   976		 */
+   977		ret = of_address_to_resource(dev->of_node, 0, &res);
+   978		if (ret)
+   979			return ret;
+   980		if (resource_size(&res) != RZT2H_CPG_REG_SIZE)
+   981			return 0;
+   982	
+   983		ret = of_address_to_resource(dev->of_node, 1, &res);
+   984		if (ret)
+   985			return ret;
+   986		if (resource_size(&res) != RZT2H_CPG_REG_SIZE)
+   987			return 0;
+   988	
+   989		if (!regmap_cfg)
+   990			return -ENOMEM;
+   991	
+   992		sysc_reg = devm_kzalloc(dev, sizeof(*sysc_reg), GFP_KERNEL);
+   993		if (!sysc_reg)
+   994			return -ENOMEM;
+   995	
+   996		/* Only allow access in the SYSC regions */
+   997		sysc_reg->base[0] = pub->base0 + RZT2H_SYSC_OFFSET;
+   998		sysc_reg->base[1] = pub->base1 + RZT2H_SYSC_OFFSET;
+   999	
+  1000		regmap_cfg->name = "rzt2h_sysc";
+  1001		regmap_cfg->reg_bits = 32;
+  1002		regmap_cfg->reg_stride = 4;
+  1003		regmap_cfg->val_bits = 32;
+  1004		regmap_cfg->fast_io = true;
+  1005		regmap_cfg->max_register = RZT2H_SYSC_SIZE - 1;
+  1006		regmap_cfg->readable_reg = r9a09g077_writeable_readable_sysc;
+  1007		regmap_cfg->writeable_reg = r9a09g077_writeable_readable_sysc;
+  1008	
+  1009		regmap = devm_regmap_init(dev, &r9a09g077_sys_regmap_bus, sysc_reg, regmap_cfg);
+  1010		if (IS_ERR(regmap))
+  1011			return PTR_ERR(regmap);
+  1012	
+  1013		return of_syscon_register_regmap(dev->of_node, regmap);
+  1014	}
+  1015	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
