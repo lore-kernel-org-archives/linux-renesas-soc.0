@@ -1,80 +1,191 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D5C493D59;
-	Thu, 10 Sep 2026 14:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0B64A1DFB;
+	Thu, 10 Sep 2026 14:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789050060; cv=none; b=OBzCDA+my2luetc4Lj2VXti44w5xArmkIDhCCRN6HHDT4W3AgGN7jpS/2QY7i2OS/UpgQmvSX20q/PnmpvDuoAgBjZTrLsiRDGCuA6ZGapOtBsP9X5ovoF6Ojw/qgP2mzNui+U5pd0Q/tL/ajjSRSYNYogwl6e17tgVaxh9KaUE=
+	t=1789050437; cv=none; b=P2ix58T4rfiJlXd5y8qzHdrgesJ5xn3TxWEZ/ssvisn2XelHov7jGsmY5rob5/Cbs6uTV7qfwJ0E5KZtuBE/5KpL0W08CpuXEdm3cRdRDTuZ7fxba+o+erX3E/AJD68Wc/BX1Pru6HH4r3hMSDAvI8r758gA1nqKFqIljkM99Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789050060; c=relaxed/simple;
-	bh=TTRprxmI1C/pJ4vGFh1NmiQFkSUnD4tzXmVReW+27g0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TTqRH5fr/WMAEv57I83NyJ5KWWKSAKKyc2aRfgRXToaKFsZb1EKHNIv2cKF16qopLCwfFlmRcLgEw7UNL50nfWtUxBnxsXze1BG66Dcs5TKIuELXFmLFx6E9jEbkOQmNNEEzOR0RXjzmMm+rxErhTP5Fm/BUF8IeGXGlkUFltDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yDK83tuM; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1789050437; c=relaxed/simple;
+	bh=1uZ4ZGna+PhskcuJmNzd/28vPy7Uw3Ree2Foa3UydOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7GkWJEXLJc8zb6eppH+rLTweMig+h4SzhAGcOtFmWEzyhOhE/WUY6z8l48zTiEvN6OhZOlHV2+4bCZTtTQSVJSDaHc4RIeAE5wpsAxlkXyldji50ahq0F6HxzGwLOPfQjzl+XUTkSq87+92S7xKvj81o5rRfA+GidF4sTqwVdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftTz6hzn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yDK83tuM"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hgfwc0Wx4zMl30;
-	Thu, 10 Sep 2026 16:20:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789050048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vQ/dsCPkRG8hEn3IqMj2NKEg1v4mqBCakprJU0aCoeg=;
-	b=yDK83tuM6+XDAbPc2le2pALPFq8W5BVcIimetsMdnPEdclRneYhqjS1y3oC/c/bBJgG67r
-	XuT4wavxcHDLYyyYTI8MEeoJyO5028AwnvHRqSEi9MGn1DgceFBYmXVu4c99TzXE0cm4qp
-	HpsIbRO10mhodXH31iX1ZCvP1xMlzJztp24mdMn1LB3pHc+qcvIHZQhzr5CKHiQcoPx61k
-	0rXnHs40DTVU+PsbXoq4ZQQFBtii+nUTwaS4UP6aJpxFg0asIjPk275nuja5SGN+2GEyIG
-	rUniRsinM6bllscsVwrP99j7CxOt/fyaxOojWpfFNiReYJYL+vXIgky6OwJweA==
-Message-ID: <aee7e7be-b9c3-4d42-bc24-c29a94c0faaf@mailbox.org>
-Date: Thu, 10 Sep 2026 16:20:41 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftTz6hzn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E8C1F000FF;
+	Thu, 10 Sep 2026 14:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789050435;
+	bh=fjmjeL0fo+qZvcOSZUel0KmILfsMo70LzvFm90HVMgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ftTz6hznc8SUZalHQpTx+KZ7om6BFyqwfgpRU/G0qsVbxJFzDmYGK26ur2OE0Jvhv
+	 4RwJgwDGFzlGY3HEr4cFqJbMWGfhv/uEFqvlQoo+O2nQciUt3UacNDOq0/GpPeJPoC
+	 AEZybWEmuYAn0wtO6KIyjFlPhOQLlUh+DhwvJWTGcinEhb+dyp1717vj+j2zjknY6H
+	 Y9Gb1VsKkJdsXRvZk86ndn8YNqG57uz0jahBuzAogFYCxKEwecsySvw2TCWy9EgLdh
+	 iL2AuGpdUp/nTJBvlF8wSzUdRq/NPZsQATCGue8GDWreZBdTJ1JNK6Bj5nvOIjhx+0
+	 tE2G3hh7kVkww==
+Date: Thu, 10 Sep 2026 16:27:06 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, p.zabel@pengutronix.de, claudiu.beznea@tuxon.dev, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] PCI: rzg3s-host: Fix runtime PM handling in the
+ NOIRQ suspend/resume phase
+Message-ID: <rv4yjo55edby5dkinwoz32rdnsnjffjhhwbhs7wvrtvvtz7nkw@gpffv2q3i4kq>
+References: <20260814141312.2947972-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260814141312.2947972-3-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH/RFC 2/3] arm64: dts: renesas: r8a779g0: Add GPU node
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Alessio Belle <alessio.belle@imgtec.com>,
- Luigi Santivetti <luigi.santivetti@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Anh Nguyen <anh.nguyen.pv@renesas.com>
-Cc: imagination@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cover.1789028076.git.geert+renesas@glider.be>
- <2399b2755ee8f825c22ab12242d718d64745b239.1789028076.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <2399b2755ee8f825c22ab12242d718d64745b239.1789028076.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: wqu6jecx34w95ps8nrex46srsx1mwh3e
-X-MBO-RS-ID: b5df833567eded1f17f
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260814141312.2947972-3-claudiu.beznea+renesas@tuxon.dev>
 
-On 9/10/26 10:19 AM, Geert Uytterhoeven wrote:
-> Add a device node for the Imagination Technologies IMG AXM-8-256 GPU.
+On Fri, Aug 14, 2026 at 05:13:07PM +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The runtime PM documentation states the following:
+> - During system suspend, pm_runtime_get_noresume() is called for every
+>   device right before executing the subsystem-level .prepare() callback
+>   (in device_prepare()). In addition, the PM core disables runtime PM for
+>   every device right before executing the subsystem-level .suspend_late()
+>   callback (in device_suspend_late()).
+> - During system resume, pm_runtime_enable() is called for every device
+>   right after executing the subsystem-level .resume_early() callback (in
+>   device_resume_early()), and pm_runtime_put() is called right after
+>   executing the subsystem-level .complete() callback (in
+>   device_complete()).
+> 
+> The driver's .suspend_noirq() callback is invoked after .suspend_late(),
+> while .resume_noirq() is invoked before .resume_early().
+> 
+> If:
+> - the device is not part of the wake-up path, and
+> - its runtime PM status is not RPM_SUSPENDED,
+> the generic power domain .suspend_noirq()/.resume_noirq() callbacks
+> (genpd_suspend_noirq()/genpd_resume_noirq()) invoke the driver's
+> .suspend_noirq()/.resume_noirq() callbacks and call
+> genpd_stop_dev()/genpd_start_dev() before and after them, respectively.
+> 
+> Calling genpd_stop_dev()/genpd_start_dev() allows devices whose power is
+> controlled by generic power domains to be powered off and on during
+> system suspend and resume, even though their runtime PM usage count does
+> not reach zero.
+> 
+> Since the runtime PM usage count is incremented in device_prepare() and
+> decremented in device_complete(), runtime PM operations performed from
+> the driver's .suspend_noirq()/.resume_noirq() callbacks are no-ops. The
+> actual power transitions are handled by the generic power domain
+> .suspend_noirq()/.resume_noirq() callbacks.
+> 
+> Moreover, attempting to runtime resume a device while runtime PM is
+> disabled may return -EACCES. This may cause system resume to fail when
+> resuming after a failed Root Port reset, as described in a subsequent
+> patch adding hot-plug support.
+> 
+> Remove the runtime PM calls from the driver's
+> .suspend_noirq()/.resume_noirq() callbacks and rely on the generic power
+> domain callbacks to power the device off and on.
+> 
+> Fixes: 7ef502fb35b2 ("PCI: Add Renesas RZ/G3S host controller driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
-> Fails to load firmware:
 > 
->      powervr fd000000.gpu: Direct firmware load for powervr/rogue_30.3.408.101_v1.fw failed with error -2
->      powervr fd000000.gpu: [drm] *ERROR* failed to load firmware powervr/rogue_30.3.408.101_v1.fw (err=-2)
+> Changes in v3:
+> - none, this patch is new
 > 
-> Firmware not available in upstream linux-firmware or
-> https://gitlab.freedesktop.org/imagination/linux-firmware.
-The GPU is the next generation (Volcanic), that is why there is no firmware.
+>  drivers/pci/controller/pcie-rzg3s-host.c | 50 ++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+> index 830cd7c76699..bbc5bcec03f1 100644
+> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> @@ -1961,19 +1961,32 @@ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+>  	if (ret)
+>  		goto config_reinit;
+>  
+> -	ret = pm_runtime_put_sync(dev);
+> -	if (ret)
+> -		goto power_resets_restore;
+> +	/*
+> +	 * Since:
+> +	 * - the runtime PM usage count was incremented by
+> +	 *   pm_runtime_get_noresume() in the system suspend/resume code before
+> +	 *   executing the subsystem-level .prepare() callback
+> +	 *   (in device_prepare()),
+> +	 * - runtime PM has been disabled by the system suspend/resume code
+> +	 *   before executing the subsystem-level .suspend_late() callback
+> +	 *   (in device_suspend_late()), and
+> +	 * - the PCIe driver's runtime PM state remains RPM_ACTIVE (it was
+> +	 *   runtime resumed in probe()),
+> +	 *
+> +	 * any runtime PM operation becomes a no-op and may lead to unexpected
+> +	 * failures.
+> +	 *
+> +	 * Let the power domain's genpd_suspend_noirq() callback disable the
+> +	 * clocks, as it already does.
+> +	 */
+
+I believe you can shorten the comment. Like:
+
+	/*
+	 * Since the power domain's genpd_suspend_noirq() will disable clocks,
+	 * there is no need to manually invoke runtime PM API here.
+	 */
+
+>  
+>  	ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 0);
+>  	if (ret)
+> -		goto rpm_resume;
+> +		goto power_resets_restore;
+>  
+>  	return 0;
+>  
+>  	/* Restore the previous state if any error happens */
+> -rpm_resume:
+> -	pm_runtime_resume_and_get(dev);
+>  power_resets_restore:
+>  	reset_control_bulk_deassert(data->num_power_resets,
+>  				    host->power_resets);
+> @@ -2011,13 +2024,28 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
+>  			goto assert_rst_rsm_b;
+>  	}
+>  
+> -	ret = pm_runtime_resume_and_get(dev);
+> -	if (ret)
+> -		goto assert_rst_rsm_b;
+> +	/*
+> +	 * Since:
+> +	 * - the runtime PM usage count was incremented by
+> +	 *   pm_runtime_get_noresume() in the system suspend/resume code before
+> +	 *   executing the subsystem-level .prepare() callback
+> +	 *   (in device_prepare()),
+> +	 * - runtime PM has been disabled by the system suspend/resume code
+> +	 *   before executing the subsystem-level .suspend_late() callback
+> +	 *   (in device_suspend_late()),
+> +	 * - on resume pm_runtime_enable() is called after executing the
+> +	 *   subsystem-level .resume_early() (in device_resume_early())
+> +	 *
+> +	 * any runtime PM operation becomes a no-op and may lead to unexpected
+> +	 * failures.
+> +	 *
+> +	 * Let the power domain's genpd_resume_noirq() callback enable the
+> +	 * clocks, as it already does.
+> +	 */
+
+Same as above.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
