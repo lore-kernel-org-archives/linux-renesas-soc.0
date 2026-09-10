@@ -1,107 +1,123 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A3E49F13A;
-	Thu, 10 Sep 2026 14:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4B0489FD6;
+	Thu, 10 Sep 2026 14:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789051216; cv=none; b=LrEYYZY2PpbbAa3uOrESsfsggx8LMffy7BpOKB+ya8AzNIIkzkpeyvV85aY6SAkss/U2PfS54RbjvB8D+JEYxXLUjsPB7P/mYRKrHDo+y815BSPo7cvYz+d5O0KjI0hamAlHqKRolSOgUlKjcdF1LrOBEgV7G0hMfI73D0onNGI=
+	t=1789051339; cv=none; b=eYnEnl+4heWhRf/Q7ysGi0Ln5e48/RA+l/4SJvlakkt/qMUc/hsHPz+Q4tdP/SwHsuQZvnKTNooIqx2LyODTqjk2wOMI0MoYqHiDVvYj7B1/uiQlePhXagrSUF9NH2vtzoioNc80rx0mYLA635Drc+ZNMiRWu9kNAKFdD+Sd+48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789051216; c=relaxed/simple;
-	bh=0aGXhr0wekYKe1daywekJhJJvQqGSqeH3iZtYj1ZthY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AsDTEP0sLjpxkB1gRLxuxClAZbB2B1V3cGM04GlVnVY9o+mc4Z9QRnDwzDMJeD+3VEHt/s+KabAbBDGKxCM71koeE9cmA2NXeDinrK369Ifp92zNtIbON/Z7DwkFj0mw38MfKibs76LXMGXonYduX4ak59iqC+JTJz23kXGw6RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=r/GG4DaI; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1789051339; c=relaxed/simple;
+	bh=qPqjuUdASs9Y65n69OhxSNlg/J55Ht5KUqLO2cTCHVk=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fXqeOcOlgCADZvnLrqbRJY9NH8/9p4Ny+72cXQrLkIDhAfLn4r0AwPh0LiLsajnrAUZvmhOsaVNVdOHgOI4/UMuZMDtMJ8zSCmrAntK4hDJWB6/ViRtbocCq1lf6LxMUaznuWHaRbSiSLy06FFgPYQ+2ahmAFNKh3LE4FbupJkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=j22MncXL; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="r/GG4DaI"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hggLw54gHzKvsx;
-	Thu, 10 Sep 2026 16:40:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789051208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NmE7gMRT3k8OSgZ+Z+9TzwYWeF1O1bwOiRIgbLOfJFY=;
-	b=r/GG4DaIVQoItrRs9+/edb4433qcvDHID1mWF4dYFvv7GbcYWWp40/85Opd4r8sJHLAP43
-	wHeSOC385FmkHg162YFcBVg/HOdP6UiLKHStSYwBvu5ps5ikltes9TjuHkRb12pVD0pkXj
-	ByXXQp9TMOU9IrkcMHZGp/4HZlfH80PrUgZlNU+fY46zAUuApVXHvxmGtq5hyXH61gd7+b
-	Jb+V+gY49YCjTxJUiKiExAVapa6V9MYG6Qm66JFL98oWOd2jVQzsXZCayQxsVQ/xauvDfk
-	9WjsFDZkQsSBGoUEi/DuMGy3M3eGyB2J6drFEq2SeXkpaEWe9cqKvIqSA9rc2A==
-Message-ID: <c74e6c95-2cd2-4123-a232-a372f7b48819@mailbox.org>
-Date: Thu, 10 Sep 2026 16:40:01 +0200
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="j22MncXL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1789051338; x=1820587338;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=qPqjuUdASs9Y65n69OhxSNlg/J55Ht5KUqLO2cTCHVk=;
+  b=j22MncXL8gq3H0/OpbAYkFuxZhAYpw9AyfSfIKgrGhLRtqMaQIYHFId8
+   NoXxtWW4qRr0K2v/0JnEQHWeSUIgVHWlcZEPCVRCmG+iFwTSLFRlaWvIj
+   r8O88JHe1LaCRRlaGqiEwP2MLf/Ri0PzTGoPkGytwK787wTqhnNPqi21c
+   lmLKqr6jenNePLpRjo4eXU1cj3B/2o74qIOQfJCCbc1TtnLEurmvIGVXR
+   SE0Au91JJFLaj9HULcx1w3Mgo6dV2wS+K6QEBJqcgkHR+OwKxoOaxEOBO
+   u5iH95APwNsBaQbtGzu9zuhAJqaFWwPrM2LfZaGJg9OBc/iaZphHv+Mjm
+   w==;
+X-CSE-ConnectionGUID: ++gFX0kJTeughVEf/8o8fA==
+X-CSE-MsgGUID: 9SI3P4RTS8GgOmBtetQaKg==
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="63425380"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Sep 2026 07:42:17 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 10 Sep 2026 07:42:16 -0700
+Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 10 Sep 2026 07:42:12 -0700
+Message-ID: <5ee1b3f9832621686adbde94324e7b6350254f37.camel@microchip.com>
+Subject: Re: [PATCH net-next v12 2/9] dt-bindings: net: lan9645x: add
+ LAN9645X switch bindings
+From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <UNGLinuxDriver@microchip.com>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Simon
+ Horman" <horms@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Woojung
+ Huh <woojung.huh@microchip.com>, Russell King <linux@armlinux.org.uk>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, Daniel Machon
+	<daniel.machon@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+Date: Thu, 10 Sep 2026 16:42:12 +0200
+In-Reply-To: <f745c884-ecfd-4dbd-ae33-6b713f8ab73d@lunn.ch>
+References: <20260908-dsa_lan9645x_switch_driver_base-v12-0-2d6aa59350cd@microchip.com>
+	 <20260908-dsa_lan9645x_switch_driver_base-v12-2-2d6aa59350cd@microchip.com>
+	 <f745c884-ecfd-4dbd-ae33-6b713f8ab73d@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2.1 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC][PATCH] arm64: dts: renesas: r8a779f0: Add GICv3 ITS and
- update PCIe nodes
-To: Koichiro Den <den@valinux.co.jp>
-Cc: linux-pci@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
- <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260909175922.161658-1-marek.vasut+renesas@mailbox.org>
- <ulxyqbaodkunrodrqfev5a6idrc2x7yjkee4tpmwv45bthpfg3@c5yozpfqaou5>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <ulxyqbaodkunrodrqfev5a6idrc2x7yjkee4tpmwv45bthpfg3@c5yozpfqaou5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: gtkr539excr6cu1pu9xqwmwtwpr8qaep
-X-MBO-RS-ID: 3948277c6ed69d606f3
 
-Hello Den-san,
+On Tue, 2026-09-08 at 14:59 +0200, Andrew Lunn wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e content is safe
+>=20
+> > rx/tx-internal-delay-ps is used to model a direct MAC to MAC fixed link=
+,
+> > using RGMII, where exactly one of them must supply the delay.
+> > Documentation/networking/phy.rst describes plain rgmii as the mode wher=
+e
+> > the MAC or the PCB adds the delay rather than the PHY.
+>=20
+> This is not correct. phy-mode 'rgmii' in DT means the PCB adds the
+> delay.
+>=20
+> If the value is not 'rgmii', then the MAC/PHY pair need to decided on
+> which adds the delay, and by convention, it is normally the PHY.
+>=20
+> Where it gets interesting is MAC to MAC, which you do see in
+> switches. Using rx/tx-internal-delay-ps makes a lot of sense in this
+> setting.
+>=20
+> The binding itself looks O.K, its just this commit message text which
+> is wrong.
+>=20
+>         Andrew
 
-On 9/10/26 10:18 AM, Koichiro Den wrote:
-> On Wed, Sep 09, 2026 at 07:58:46PM +0200, Marek Vasut wrote:
->> This SoC implements GIC600 with GICv3 ITS and PCIe host mode on this
->> SoC can use it. Add GIC ITS node into GIC node, update interrupt-map
->> and add msi-map into PCIe controller node.
->>
->> The GIC ITS does have master interface to issue transactions to RAM.
->> The interface does support cacheable transactions, however, it does
->> not support shareable attribute, because the AXI port signals are tied
->> to inactive in this implementation. Therefore, add "dma-noncoherent"
->> DT property into the GIC ITS subnode.
->>
->> The GIC redistributor does not have cacheable/shareable, therefore
->> add "dma-noncoherent" DT property into the GIC node.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
->> ---
->> Cc: Conor Dooley <conor+dt@kernel.org>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Koichiro Den <den@valinux.co.jp>
->> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
->> Cc: Magnus Damm <magnus.damm@gmail.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: devicetree@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-renesas-soc@vger.kernel.org
->> ---
->> NOTE: I am sending this as an RFC. Den-san, would you please test
->>        whether this works correctly together with your Endpoint setup?
->>        Especially whether the Host-side MSI change does not break it?
->>        Thank you for your help!
-> 
-> Yes, I confirmed that it works fine with renesas-next-2026-09-09-v7.3-rc1
-> kernel.
-> 
-> Tested-by: Koichiro Den <den@valinux.co.jp>
+This is exactly intended to model the MAC to MAC fixed link situation.
+So no PHYs between, and one side needs to supply the delays.
 
-Thank you!
+I had originally implemented this by using the phy interface mode to progra=
+m
+the MAC delays off of. This is what we had done previously in lan966x say.
 
--- 
-Best regards,
-Marek Vasut
+But I was instructed that the modern approach is to use rx/tx-internal-dela=
+y-ps
+along with phy interface mode rgmii. There are a few other examples of
+dsa bindings doing this:
+
+Documentation/devicetree/bindings/net/dsa/microchip,lan937x.yaml
+Documentation/devicetree/bindings/net/dsa/realtek.yaml
+
+I will remove the paragraph from the commit message if that is wrong. I hav=
+e
+misunderstood that part of phy.rst.
+
+Thanks,
+Emil
