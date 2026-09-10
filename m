@@ -1,244 +1,105 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C967655D866;
-	Thu, 10 Sep 2026 18:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE8F36C9C0
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 21:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789064418; cv=none; b=gr/FodBBLwXiAomE0wgVFTxbGOQeiZrQDw4o2JRDMVg4vRtqOt7d3x4gzkcB6kzRD5u3W8mfGtyeGfbe822JsYRVdGqwiOLK29vJx+XrPWWdxRnnDersjMJ5AKkCQBKpX7eZOKRToVIPYG0BX8jSQJo8GWulN9rt9IJUEg3RDCg=
+	t=1789077136; cv=none; b=FqJ0VCTUeUqk7otL9JgnlqcJlScHQMxZwLWseATNv19qvOZuJHrHrigpWBGHXU8KzxfSiA1+7BNZfPvGF96G0kM51Vhtq9L/qDHB361sMDGXKMIdPbDojaWXHVWLhUeP/lbjcc3UUMq7oEWiYsrGcYIrA9qPzSzZmm/eWRQvLeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789064418; c=relaxed/simple;
-	bh=ytdtV8MEphkLh3wnH/e5LhGOVVLAFMbBgbMUE5TVfX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lFppZuBeNvfh/++AlaZXQljThRgV8NuvrJ+Mw9IzyNZ4SLUC3FZbTCq6ggCYV+kSxUPt/OaRgI0ITFKuOLAkt2zS2jKDyRCu8dYoGDbE5smHUhxHOmYnnUcThxEQPhrB9Q71ov3Iae+31FYtXvTnUlTXutRKMJndcMH+fqlF0yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vy09WiP4; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=we+03sV8; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1789077136; c=relaxed/simple;
+	bh=FOw0yj4KnPINDQ47ZccqL85C9a5gUDF4Q2B1clVk0ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxxU0/B1QB87D0p9xKMvlAF13S35P6xi+5MioCdQPDyetlHOLXz/JN8Ml0qUnyqArpXnzWGlYKArgn6nNZ5TBL2atethUTi+Y3D5Xu5fvhJGhzYCsVGHxXvbL5qOM6t6ccaj315GMv3shRYnqoGoSB4idoppGFYr2niSqQUcWMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cd50Esq7; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vy09WiP4";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="we+03sV8"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hgmDt1JsVzMlGn;
-	Thu, 10 Sep 2026 20:20:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789064414;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JT8Lel9Htpt1ONgRefXicHp4XhjRXop4uEqGlu/4M1w=;
-	b=vy09WiP4a5u0w/PXtG2Afv1m86ld6IyG0YodIVU//webwCUEuodZq3GKbpapWKjBimjmlF
-	KPhS1FVwHnZk2PFFiWP9qxG1M1K198UVFI3b1zGLpJssPCY6k+lyPqB3aVvZb0nqbfIfYb
-	PBeKvIffgY6KZ8XDTfIaqfv1MHiHvfgq5mXQTA6n1aoQOzL8r+ZDFiii7GHSUTfJoLl+LK
-	9vo4PgdpwerNHZyTFq2+bbiuKKiGRtb17yT1ynbpzM8XUKUQocpAtDneQOHZcnuTUvpH2K
-	1uQEggMfFjAUN8ooC2hTNYryY9z+QuZYU5ZRWHJswovtr7gvRubZtoAv0p+QiQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=we+03sV8;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789064412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JT8Lel9Htpt1ONgRefXicHp4XhjRXop4uEqGlu/4M1w=;
-	b=we+03sV88FIZrQGH5ffyI3BYWdl1bA4ZemCLv/ccQt6ge8I485Hwu+SHIKUlf52JZu+arx
-	/Lw8/ZhglUWuDLaW9czWXC4Fit4hRxiNEOAmHXiMdDDyjrssmIUaXdpAsEqzz1wLdAsCgE
-	2LthsvPNszOsrT7ScUA6ZczCoY0XKBL0XRKjdCpksM1X27meG7jaHaDLOLzVlFAefntekv
-	ZGmAU+C2YJXRMpFp6mSFEMSggqy8GLzXIEKtRTPGHw9VI6Ca7ImbVcIszNU+BbCD/QEL1d
-	7WfYv73qvDNrYsSV/Y+Uyv0GHOZHMceNSzDomV2h327jPfpRxrftkcZFBH29ZA==
-To: dri-devel@lists.freedesktop.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	David Airlie <airlied@gmail.com>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cd50Esq7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Tf0k
+	ECCw0I5WU5psDz+cQ21abySa5IfujkZqAr6RYTE=; b=cd50Esq7IUTUnED2qwSG
+	O9AM/D2/KU0r2dRxs4TinBUqCjr1X1vcFwJ7lyIwflqClmQy4bTi9ADA9LsjfEV/
+	fZ4UC+QFe0WJ1n5aIAZeSqIObAJdHt6FuqCuxwF7/Ldk3a0mkTLXK36RcRoTjNBh
+	I/o7eYGgvpfXwqHnL6m2XSuwwyr0DPRix9YX+zbr4ymaCLLMiY1959At+FpDI/D/
+	hJlpgQFdYPZ5bj1/Fp2RjcmFK7XqqfS3Fc+ThGK7+rgNeRYwjFikLDCkHu89U+Jh
+	eg6LYYqZpXikF14IQCsJi2kFsyOEIgete6CKLqrwNpcuaFp9LnKaua1dGpTnwidV
+	xw==
+Received: (qmail 3637333 invoked from network); 10 Sep 2026 23:52:03 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Sep 2026 23:52:03 +0200
+X-UD-Smtp-Session: l3s3148p1@lL1t+idbQN0ujnt/
+Date: Thu, 10 Sep 2026 23:52:02 +0200
+From: wsa+renesas <wsa+renesas@sang-engineering.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "biju.das.au" <biju.das.au@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3] drm/rcar-du: dsi: Implement DSI command TX using AXI memory access
-Date: Thu, 10 Sep 2026 20:19:45 +0200
-Message-ID: <20260910182003.31612-1-marek.vasut+renesas@mailbox.org>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v24 03/15] mmc: renesas_sdhi: Add clk_mask field to
+ support flexible clock divider widths
+Message-ID: <aqMmfu4mfWXORdnS@shikoro>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-4-biju.das.jz@bp.renesas.com>
+ <apgATHptEbhkohZo@shikoro>
+ <TY3PR01MB11346A72764B85A9F9C41F6BC86B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: unpwsd8c9cpkrm57a6suee78rzbxzr6b
-X-MBO-RS-ID: f8fd371e23885f80434
-X-Rspamd-Queue-Id: 4hgmDt1JsVzMlGn
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r/LHPAWzPtz7Wr2h"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB11346A72764B85A9F9C41F6BC86B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-Currently, the driver supports register access mode for DSI command
-transfer, which limits both TX and RX to only 16 Bytes long packets.
-Implement support for DSI command TX using AXI memory access mode,
-which extends the packet transfer length up to 128 Bytes long in LP
-and 1024 Bytes long in HS. Support for DSI command RX using the AXI
-access mode is not implemented due to missing test hardware.
+--r/LHPAWzPtz7Wr2h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The implementation allocates a DMAble 4k page. In case the command
-transfer is longer than 16 Bytes, the payload is copied into the
-page and sent out using the AXI access mode, otherwise the register
-access mode is used.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: David Airlie <airlied@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Use dma_set_mask_and_coherent() to set up global DMA mask and
-      drop GFP_DMA32 from dma_alloc_coherent() gfp flags.
-    - Fix DMA memory leak in missing fail path in rcar_mipi_dsi_probe()
-      and move dma_alloc_coherent() almost to the end of the probe
-      function, so as much as possible of the probe function is devm
-      managed.
-    - Unregister DSI host first, then free the DMA page
-V3: - Limit transfer to 1024 Bytes
----
- .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   | 50 ++++++++++++++++---
- 1 file changed, 42 insertions(+), 8 deletions(-)
+> If (host->mmc->actual_clock < 512), we get clock=3D0.
+>=20
+>=20
+> In this case, shall we set divider to maximum and skip the loop?
+> So that clk runs with maximum allowable divider value.
+>=20
+> Please share your thoughts on this.
+>=20
+> Or
+>=20
+> Do you have different solution, please let me know?
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-index 6e46d6d99f3c0..7a9c0a281ea6d 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-@@ -8,6 +8,7 @@
- #include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/math64.h>
-@@ -75,6 +76,9 @@ struct rcar_mipi_dsi {
- 	unsigned long mode_flags;
- 	unsigned int num_data_lanes;
- 	unsigned int lanes;
-+
-+	void *cmd_axi_cpu;
-+	dma_addr_t cmd_axi_dma;
- };
- 
- struct dsi_setup_info {
-@@ -977,6 +981,7 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
- 					      bool is_rx_xfer)
- {
- 	const bool is_tx_long = mipi_dsi_packet_format_is_long(msg->type);
-+	const bool is_tx_axi = !is_rx_xfer && is_tx_long && (msg->tx_len > 16);
- 	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
- 	struct mipi_dsi_packet packet;
- 	u8 payload[16] = { 0 };
-@@ -987,9 +992,14 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
- 	if (ret)
- 		return ret;
- 
--	/* Configure LP or HS command transfer. */
--	rcar_mipi_dsi_write(dsi, TXCMSETR, (msg->flags & MIPI_DSI_MSG_USE_LPM) ?
--					   TXCMSETR_SPDTYP : 0);
-+	/* Configure LP or HS and register or AXI command transfer. */
-+	rcar_mipi_dsi_write(dsi, TXCMSETR, ((msg->flags & MIPI_DSI_MSG_USE_LPM) ?
-+					    TXCMSETR_SPDTYP : 0) |
-+					   (is_tx_axi ? TXCMSETR_LPPDACC : 0));
-+
-+	/* Configure DMA source address for AXI command transfer. */
-+	if (is_tx_axi)
-+		rcar_mipi_dsi_write(dsi, TXCMADDRSET0R, dsi->cmd_axi_dma);
- 
- 	/* Register access mode for RX transfer. */
- 	if (is_rx_xfer)
-@@ -1011,7 +1021,10 @@ static ssize_t rcar_mipi_dsi_host_tx_transfer(struct mipi_dsi_host *host,
- 			    TXCMPHDR_DATA1(packet.header[2]) |
- 			    TXCMPHDR_DATA0(packet.header[1]));
- 
--	if (is_tx_long) {
-+	if (is_tx_axi) {
-+		memcpy(dsi->cmd_axi_cpu, packet.payload,
-+		       min(msg->tx_len, 1024));
-+	} else if (is_tx_long) {
- 		memcpy(payload, packet.payload,
- 		       min(msg->tx_len, sizeof(payload)));
- 
-@@ -1162,10 +1175,16 @@ static ssize_t rcar_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
- 	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
- 	int ret;
- 
--	if (msg->tx_len > 16 || msg->rx_len > 16) {
--		/* ToDo: Implement Memory on AXI bus command mode. */
-+	if (msg->tx_len > 1024 || msg->rx_len > 16) {
-+		/* ToDo: Implement Memory on AXI bus RX command mode. */
- 		dev_warn(dsi->dev,
--			 "Register-based command mode supports only up to 16 Bytes long payload\n");
-+			 "Command mode supports only up to 1024B long TX and 16B long RX payload\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if ((msg->flags & MIPI_DSI_MSG_USE_LPM) && msg->tx_len > 128) {
-+		dev_warn(dsi->dev,
-+			 "Command mode in LP supports only up to 128B long TX payload\n");
- 		return -EOPNOTSUPP;
- 	}
- 
-@@ -1266,6 +1285,10 @@ static int rcar_mipi_dsi_probe(struct platform_device *pdev)
- 	struct rcar_mipi_dsi *dsi;
- 	int ret;
- 
-+	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "No suitable DMA available\n");
-+
- 	dsi = devm_drm_bridge_alloc(&pdev->dev, struct rcar_mipi_dsi, bridge,
- 				    &rcar_mipi_dsi_bridge_ops);
- 	if (IS_ERR(dsi))
-@@ -1295,12 +1318,21 @@ static int rcar_mipi_dsi_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsi->rstc);
- 	}
- 
-+	dsi->cmd_axi_cpu = dma_alloc_coherent(&pdev->dev, SZ_4K, &dsi->cmd_axi_dma,
-+					      GFP_KERNEL);
-+	if (!dsi->cmd_axi_cpu) {
-+		return dev_err_probe(&pdev->dev, -ENOMEM,
-+				     "Failed to allocate DSI AXI Access command buffer\n");
-+	}
-+
- 	/* Initialize the DSI host. */
- 	dsi->host.dev = dsi->dev;
- 	dsi->host.ops = &rcar_mipi_dsi_host_ops;
- 	ret = mipi_dsi_host_register(&dsi->host);
--	if (ret < 0)
-+	if (ret < 0) {
-+		dma_free_coherent(&pdev->dev, SZ_4K, dsi->cmd_axi_cpu, dsi->cmd_axi_dma);
- 		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -1310,6 +1342,8 @@ static void rcar_mipi_dsi_remove(struct platform_device *pdev)
- 	struct rcar_mipi_dsi *dsi = platform_get_drvdata(pdev);
- 
- 	mipi_dsi_host_unregister(&dsi->host);
-+
-+	dma_free_coherent(&pdev->dev, SZ_4K, dsi->cmd_axi_cpu, dsi->cmd_axi_dma);
- }
- 
- static const struct rcar_mipi_dsi_device_info v3u_data = {
--- 
-2.53.0
+I hope I am not confusing things. What about
 
+	clock =3D max(host->mmc->actual_clock / 512, 1);
+
+? The loop should return then the smallest divider which makes sense for
+a super-small actual_clock (which is super unlikely but still)?
+
+
+--r/LHPAWzPtz7Wr2h
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqjJn4ACgkQFA3kzBSg
+KbbS6Q//WM+346AgZGZ8S3kfQT8Eo84IMPHlwaGZZZUf+/pFyXWVqcDoUsEUkZJ8
+F+eBzRxVQr4h+/oRyPI2hdI/fwWitM1ynr3cr3/uXcDz+SA5acr2ygal/KWxSCNX
+Na4J6WOa0wF7qZNcxIJpfua500cOMzVWybeF/qBcBcGpP2CLTZlpggUGzrts5WW9
+wA2WkiG6+6iAv+zu1u0BS5Upkh8EFgzs68VwozDzrJ8On1ib5eDa+lnE8n4QNgK9
+YpMJT4ecEBopT5PQm5MnjEU3PTPI8BrgO4PdY2MIBHWGuOg8itycXiXeruzuEpZX
+x9CSl+Uo3eYW6MX3SBj6DvxlGRMSBIKjjOaHLZFY+JY+L0YPGrE1JsNfEzbUEwbM
+HsU7WOLbLp6PMm/FcqZvYxU8ozoO3CBiw35tSftU1tNKo0ghbz3JvAlq3fsrUppE
+5cE5tdpk1AiZtYLjHPw3WjWQ93+u5GE7FSH3pCdIs4jBip2eO6Lc4E+xmeCIIKH3
+LJBGZw7VXmEkyCfsQRW6M5aro74IGh8mtNkPS3quNzsBqI7pzSu38A1LOmJncoKp
+kv6duy/kbwEjqVOEjPAo3FbVyN59o4nio6ndoogwgr9G5ujw68PgbfXdWUzGWPko
+5RkTY65b0mwffburD6ERfP8/Xush1wTNNBtybsM4MrE7gL2eUfo=
+=GwUg
+-----END PGP SIGNATURE-----
+
+--r/LHPAWzPtz7Wr2h--
