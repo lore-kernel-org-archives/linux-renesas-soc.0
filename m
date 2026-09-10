@@ -1,157 +1,120 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6EA3BFE41
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2026 19:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A601A6838
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2026 03:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788982652; cv=none; b=D4nZwZN62zPHvfgfzRBrEEFqTmEqBNuh3r5woa1sfLG4S/KM8F91nCsdmBKUN9+d6Xjgud4phDy0OjcvT1D9+RfzyXRQ8y/2MS2ECkHyKs2C0x/detp673Myx3pUHieF+Ia/K732wOe2lbK3I0TUhPOJPrCDNzR5LnvNX+yUT2g=
+	t=1789012343; cv=none; b=geunA2pTgdHmfpH9YgmFFUoXMiDxcw8utAZggx4qIPxNX+Dot2giH+xRUnJ12txy0VAAxXK/aCypBxxFc80hupffEdJWyVAlcar8cb6PQzmmIooUdEAOgzLk3J0+kHp6jFOtHMySulzaach0QtxjUv6JUSTOwFsHzIc+q0L+eFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788982652; c=relaxed/simple;
-	bh=RN+2l8Ry5cU7Y+SQkk4XBFHCoYkQHFINdSGrSv0wojQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aGjtbfx+JsM+pIWAPyie007PplTsKLCfSGnyEiAbaWXOJTJe223mqVPYcKKEWGoMf+3A6q4OdyBwQZREYfjEqESG2NL9pAaWqlUv2+NNQuqpzpuNDMi1mTVIWhSN37hkffJcXDn1+s/obOWS2gbE87auxyLL5aN1slHMcV8/yI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZAaKhWK; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789012343; c=relaxed/simple;
+	bh=I2Wl6tsYCJs7HhQX3gLFESUMEAERK51s9k3OFqrFUnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ATXhtvzF73Edm4O9MNLt134DgYcW7oUvEnmdswyA6ak19AexMmj2itqIdzuRQ1CcjGe4ZdvaqexN0Rs420iBG4v15+70MMRn22h2hJa9druiUPbEhV33h28Op8Qimogw3neS8RTZMPrkbIIL0iKQxLi6zY+3r44niGDb4FBbzWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YhTtHvhF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZAaKhWK"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4998b5a63e2so73150345e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2026 12:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788982648; x=1789587448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=phDmBn0qMNYKxqReRuAEO8P3Gi0eFxNdFtNGKUME1DM=;
-        b=KZAaKhWKHEzwGluEC1dehoXQWFWkKWawi1YLvku2Tj2PZReu8uzKVBiyzLGeflpHHN
-         kJA6P3/z018/XqYnb/N1f6VIXdv4M8LUz4L0uBMHtJ1l8FGB7co7uCTgfvdwEdeSDT3P
-         CTnrnFMXnDHTkT60nqY5PGfZDgGECr4cOu3LR6MAkRksh0LYbqouLLaoCeUH29G7xR50
-         3KhpBRBU6gcQ+t8l+Qg0mZL4Zwi7lWkarRvg7b9eOfmLs5tcTStBP57O2MsxCc4gzCdB
-         KOdCL5KMX/8hbaX1nB1keRBhGVA0DFOnHoMuqJV6XswmxBwl/nMGIQJ2bkhyLliEsePJ
-         Oq+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788982648; x=1789587448;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=phDmBn0qMNYKxqReRuAEO8P3Gi0eFxNdFtNGKUME1DM=;
-        b=EvKMSGQlljnvRWuEG/BC69NrZ8Eo00SX8es3UapU4iO2WeG04j3v2pSrkAEF9qQ1rr
-         HFJumwVu9sjwe8yNgOsbon8yx3na8mdAUKrb/M/BXUKlkNnefJvjaxgu+uaw4wuRQnBF
-         rqBng49jPy+b/MYmjwfcnA7lzITwN5CKEu6CK6yedHCRiPPa9ScqNb8VwShBHavepGFH
-         19IFfs2m/Z9yd37Sxs8iBVN/JtNt3Rt+VyZXdX5JDjcmaSyWVnkdhMJV98gqZI6j92do
-         Yk4Q3JPEw/ys8Yyx6LXaPP+hsVdSu5i/L0f2yvf3ih2aTa637IxuDmOr6KQqU9+uZd2n
-         0P9g==
-X-Gm-Message-State: AFuF++nI0iETzEW9yPRIL8eugYzyTtWcnTdNBGyLHqUpMNvleod8DNDQ
-	xF0thXjsoEgOC5KZWDgiNQfete1gH8Ui+SGmySF0gbwvfWUxmu9mBnfF
-X-Gm-Gg: AYBFou3hDzMDDuL4bV+3tLgPh2rqsZWJWEUOaxL209JtVAfbmhv6GMjpOmEFeOPyzWL
-	VoM70PpoqcGtb8UOtoz6nQtOxkQLczhoQdCLzRQcWkbKZ4gM0msvfxxzU13Cr6PDsWuOEhHj8/0
-	LeNCn2Tg0+ebuu3+oa94QO/Wp59s+8vMDBla9LxjBEyfmXuit0uJHAZQVCqkeVnQPB7ZTqZdI0q
-	eS07UvdsnZqeyuHrEfKBPYfpWrzdWxAGHckTFgr8gRgtcimsVG2usvIt4kfwotQlNKIfeckooAG
-	sQVgjpadsCE+JoiHNfBdK975+eSZQDpc/UX7iRJ7qGudL+9xpikGwHhJp4ewjVFTDtRkWge7S3w
-	2k8++5no3NcHdo/t1xUuUxRjSp/amswEKJRY7DF6YeFFthoc5nL28qbE9hFgcHe7NM5PxjZHdOR
-	8azRBejBNa5SiCnMpQlTTEHZTnhHgdG2s7eLPkOK0/lAU3GfhBIphrb9kIoujaSkvoOUO5ZWmzK
-	vW7to9+2eL7Fo+m9nyQCTIgMMugz0rqshMzim9cxbdbWqmzmS3IkOLVXkEH2V2+ilVNGnvrLCAd
-	p3g45NtPdQ==
-X-Received: by 2002:a05:600c:6298:b0:49d:17d4:d6ad with SMTP id 5b1f17b1804b1-49d17d4d6e7mr144087385e9.23.1788982647983;
-        Wed, 09 Sep 2026 12:37:27 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:d357:e592:d56c:d3b5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d26be64a5sm13123995e9.6.2026.09.09.12.37.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 12:37:27 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH 3/3] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Move SDHI1 dma range from 8-12 GiB
-Date: Wed,  9 Sep 2026 20:36:39 +0100
-Message-ID: <20260909193640.8069-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260909193640.8069-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260909193640.8069-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YhTtHvhF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789012341; x=1820548341;
+  h=date:from:to:cc:subject:message-id;
+  bh=I2Wl6tsYCJs7HhQX3gLFESUMEAERK51s9k3OFqrFUnQ=;
+  b=YhTtHvhFsUgsAUGnxapDnfDq5nfbEztKm0LTQoBedR0yQUEE5wWwioiD
+   janY/Kj1i4bl0mq308w8a0Hdh2rwT0tncakbW7IWxDarrRQexaMe5Lrux
+   f+XFcf/U2CcZyIqGq7kmkObd/OFzL2Xg+i2mUCGY6Q0HGD3UvW8/QNibx
+   74toHxF9y2bBvdSh/pOrr/U++5LKfz9gzUqxDLg4hgoG0IgeNCiXQ21+m
+   J+VMtagmkLN7VGaavje+LIjZKIzeymuHLMs/7rydKJqgEyDZeqaDZNFJG
+   9R99O1ysB0LXOS0XsJn86PK05w+FDVyDq4wUmCb3yMsbmuUm2goBs489B
+   g==;
+X-CSE-ConnectionGUID: MWRRjqjQQKGGekJSIPD50A==
+X-CSE-MsgGUID: cMJczSMzTxOv2W3KgPqJ2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="88599367"
+X-IronPort-AV: E=Sophos;i="6.25,271,1779174000"; 
+   d="scan'208";a="88599367"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2026 20:52:21 -0700
+X-CSE-ConnectionGUID: tpRaoPdpTwq1MkIoVvqSCg==
+X-CSE-MsgGUID: eN+dcCJ+RheJnRQfRcXE4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,271,1779174000"; 
+   d="scan'208";a="271485735"
+Received: from lkp-server01.sh.intel.com (HELO a3e91e2cf319) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 09 Sep 2026 20:52:20 -0700
+Received: from kbuild by a3e91e2cf319 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x4Vpi-000000001Lg-0NTs;
+	Thu, 10 Sep 2026 03:52:18 +0000
+Date: Thu, 10 Sep 2026 11:51:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:renesas-arm-defconfig-for-v7.4] BUILD
+ SUCCESS 74463c1be2ad066b436209d01dcdf8e717896504
+Message-ID: <202609101116.p5wTWS2C-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-defconfig-for-v7.4
+branch HEAD: 74463c1be2ad066b436209d01dcdf8e717896504  ARM: shmobile: defconfig: Refresh for v7.3-rc1
 
-Relocate SDHI1's AOF-remapped DMA window to physical 8-12 GiB
-(0x2_0000_0000-0x2_ffff_ffff), by updating the dma-ranges entry on
-aof_sdhi1_bus so that SDHI1's full 4 GiB device-side address space
-(child base 0x0, size 4 GiB) is linearly remapped starting at parent
-base 0x2_0000_0000.
+elapsed time: 819m
 
-Since SDHI1's DMA-visible addresses no longer correspond 1:1 to
-ordinary system RAM, buffers handed to it must be guaranteed to
-physically reside within this window. Add a restricted-dma-pool
-reserved-memory region covering the same 8-12 GiB range and attach
-it to sdhi1 via memory-region, so the kernel bounces SDHI1's DMA
-buffers through this pool instead of allowing dma_alloc_coherent()/
-dma_map_sg() to hand back arbitrary physical pages outside the range
-the programmed SYS_AOF17 fields can actually reach.
+configs tested: 43
+configs skipped: 40
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts  | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 0926ab891fa5..6845d576af42 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -99,6 +99,17 @@ reg_3p3v: regulator-3p3v {
- 		regulator-always-on;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		sdhi1_aof_pool: sdhi1-aof-pool@200000000 {
-+			compatible = "restricted-dma-pool";
-+			reg = <0x2 0x00000000 0x0 0x08000000>;
-+		};
-+	};
-+
- 	vqmmc_sdhi1: regulator-vccq-sdhi1 {
- 		compatible = "regulator-gpio";
- 		regulator-name = "SDHI1 VccQ";
-@@ -130,6 +141,10 @@ y1: y1-clock {
- 	};
- };
- 
-+&aof_sdhi1_bus {
-+	dma-ranges = <0x0 0x00000000 0x2 0x00000000  0x1 0x00000000>;
-+};
-+
- &audio_extal_clk {
- 	clock-frequency = <22579200>;
- };
-@@ -542,6 +557,7 @@ &scif {
- };
- 
- &sdhi1 {
-+	memory-region = <&sdhi1_aof_pool>;
- 	pinctrl-0 = <&sdhi1_pins>;
- 	pinctrl-1 = <&sdhi1_pins>;
- 	pinctrl-names = "default", "state_uhs";
--- 
-2.55.0
+tested configs:
+alpha         allnoconfig    gcc-16.1.0
+alpha        allyesconfig    gcc-16.1.0
+arc          allmodconfig    clang-24
+arc           allnoconfig    gcc-16.1.0
+arm           allnoconfig    gcc-16.1.0
+arm          allyesconfig    clang-24
+arm64         allnoconfig    gcc-16.1.0
+csky          allnoconfig    gcc-16.1.0
+hexagon      allmodconfig    gcc-16.1.0
+hexagon       allnoconfig    gcc-16.1.0
+i386         allmodconfig    clang-22
+i386          allnoconfig    gcc-16.1.0
+i386         allyesconfig    clang-22
+loongarch     allnoconfig    gcc-16.1.0
+m68k          allnoconfig    gcc-16.1.0
+m68k         allyesconfig    clang-24
+microblaze    allnoconfig    gcc-16.1.0
+mips          allnoconfig    gcc-16.1.0
+nios2        allmodconfig    clang-20
+nios2         allnoconfig    clang-24
+openrisc     allmodconfig    clang-20
+openrisc      allnoconfig    clang-24
+parisc        allnoconfig    clang-24
+parisc       allyesconfig    clang-17
+powerpc       allnoconfig    clang-24
+riscv         allnoconfig    clang-24
+riscv        allyesconfig    clang-24
+s390         allmodconfig    clang-17
+s390          allnoconfig    clang-24
+sh           allmodconfig    gcc-16.1.0
+sh            allnoconfig    clang-24
+sh           allyesconfig    clang-17
+sparc         allnoconfig    clang-24
+sparc64      allmodconfig    clang-20
+um           allmodconfig    clang-17
+um            allnoconfig    clang-24
+um           allyesconfig    gcc-16.1.0
+x86_64       allmodconfig    clang-22
+x86_64        allnoconfig    clang-24
+x86_64       allyesconfig    clang-22
+x86_64      rhel-9.4-rust    clang-22
+xtensa        allnoconfig    clang-24
+xtensa       allyesconfig    clang-20
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
