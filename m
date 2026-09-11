@@ -1,231 +1,342 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D319941D201
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Sep 2026 11:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9493B43F8D9
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Sep 2026 12:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789125492; cv=none; b=o1TpEwRUeIuNIJLc5lJmW3VaRf2Qzb57SyhKbyjbobxFJho4+I+VSbSA8ipjEa3tRYmE/nzrCa8K1kvN1i+9RSYv2e8WKnVoQDLkZptshZRqYe8oM/LvXllG87UT0MZJQOeLnEslOit9qVhSbDMZ8AG1q/R9arKZDOd7BqCIRdw=
+	t=1789128876; cv=none; b=YBjjPNrxuPAC52dXT/EQVPpJ8FH+ja5TZLd1USX1HO/Kn9cIFfWyyYv/oEsaOvQ0YJgUIMFQfG+JtKQ+fssmXOoP80ioDIenMvKeWy3wSKgWisiguA2XWKfzLpTG3g2UGMu4jRRVW61n+DyR3nnuo/MCD01S+uwcJIvQrQKB/MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789125492; c=relaxed/simple;
-	bh=M0s5qNvm6lgULK2n8QPcCEFSAsT+ro/ADdWPoCKHveU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TCaDqIbbKgjvoomNlDY4f8bXuPVsQEv0iNETK6kQIThX4B5nylhFqC7nzjLRcZZt0IxZTxLr5o1LnBens95StPNvGaMnmil0huWaGTxtFaLkAy0Nh2O2YOWPyqN9t4I4SbumyJ/82mYhLmPVO5wDho48JQv6dOKzYtI5cIzc/Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AarCKnUS; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789128876; c=relaxed/simple;
+	bh=P/KxSS2GC3+thQJ0AubUpdnmc9VbeHKznpYOwTxPqrY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OZ1qrLx9/MfEYRGsaOkSAAeCP0ouYLy66IgTHDV9Olkaomwb1LSPT3tbrNwXetazLHbe/V1rXzJTGtdtEMY0Pl01KDMhMVBx9lMnJfVSARntq1yFY8nY8S6cVQNjuSqNqCDwjk80XEIUQXrytxTKq3Cg9AUgeVe3MNI/NZkM6Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=D9Uyoq6X; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AarCKnUS"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-486e70f2457so363885f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Sep 2026 04:17:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="D9Uyoq6X"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-49d0b98d6d0so10458555e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Sep 2026 05:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789125469; x=1789730269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=p4YPgDFVhAPV2YkfLlZc7dMgt04j5FYtenK3LnM0C1E=;
-        b=AarCKnUSfJOClWAvJ+OrAx55BwAHtyhCbm3WDAcb40MVl5HiPbrLCCFgrSQMH0XEK2
-         vUiE2Wn5KPH9bJS97Qz4Ou3U69Iku/Hvu7GHdDjjmmDba1ebtEvqEpq1r4vksdiPUptU
-         XxQvdxixVZtcBO0g1y3SUXpm3g+tWMaTnreQ1P5STqXxYtm1tdmzDzDlaMlRgi+q0j68
-         Lpba6uJiY/LU6YvWgElL+n09DAAyyLqdJfOujv5FOv0KoU81rHircYuppQ2d7gfEJ1Wm
-         zu9hZGlV2h8lVEbuy1DuFGM2fTqVnZQHywjF0a3TjWQmUpxoEiuWJzk1Nr8OBJUxsyeW
-         a7+w==
+        d=tuxon.dev; s=google; t=1789128870; x=1789733670; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=GvQm9bPUMRd91sWaaaqGxcbrsUETDrFL3YR42+nfod0=;
+        b=D9Uyoq6X5O2ZL0uYY6M9W/ZUtIfAVV08XWzX7z52AXyvhzOHnLlryn6pGIgd4jCtpw
+         MyieCazKGELvr6MQMj+oK7JDLXKdvpXoY4ly62w/aKXFDe/McKOM3shs+j0WnMEeKWvK
+         dlFpkrqXuIeNpnfYnSlWdY1LZoxp/3COR6Jwkvn9p+tX9uXFC2tGfKoTitETInFYWRhs
+         52FRriuLzkRvRHcdzIc4FDoTwHXZ8HD2b5D2eYvJOu8qvhqW+/XDYasYDxZg8cWfi5Qh
+         lvKokmu7vT2wdngEaPTw++tbH84ij0CmxWTR+WJmHMqlqZqD3EZVioWRJurMbXu5DeYB
+         2rkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789125469; x=1789730269;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=p4YPgDFVhAPV2YkfLlZc7dMgt04j5FYtenK3LnM0C1E=;
-        b=mtbW/Tt9BkGfYSpNX9MbcHJ6PhGB5FQgh8Et55NZs8dZvLoZvFaPRO89HnPyG09Q9B
-         rylLFJI9qSG8JuAXrhfpXWv3fm0TPup6BfVXfnUFt+B5fOMphIenanjXGRFVGcLvqsiU
-         kkDZLXdFKm5jWVILl/NH2gVV/7Ejp5/DZJAWv+wTBQSnOTOF8UTytwW6/PhYQ/KtMPwM
-         y/BnYAX2LvdhJZYquEsoWxe8CZzA2qEdpNaWj2Qj7n/MsOD+25gZ0f3MCpjR9O5vbI5b
-         JdqnqgWiAoC29wQhojixRcQ8+M2IE7iV3r5djgqI/enOx1wROxhndKuVN+dMGNYmUyV6
-         ssNw==
-X-Gm-Message-State: AFuF++m+zGSGvbtg8vqtfqfo0BLubCbgYwuTuRchpSPIPmiXgA9+G+vY
-	8XUZV+ZAh82opa3PQv+Z+lcyGyHhE3DwN5g6wKp4YgWRaaOmL2/ygbxc
-X-Gm-Gg: AYBFou17VRTqA8Em0OnMK2mtSKs3zuPI0/PaVL9PyEYxlGYnJijh4ANBxyVXEQyARNq
-	UU/LHKiN96oBpg7A9I/IRUh48nAuRlpgFV43IRKiNJxYV54AZx0eFiITswXcgl6usEuhQtwRsuh
-	vyCQDgG395nruKd9YljsT1a+jf2bJmLxXue28rimnUiMu/WmYk0DipLSJvsKW7L/mtme81e7ZSQ
-	TzaEtgxxyGLiIz7AzJaQpcf7Q0tcn6+9sQg4JBKS1NhLRi5ZXVWuyy1GHoVKth+Qb6SsLZEUF7V
-	fcuZv0FPy5QadsfrJT84LLdSalVfc5fxUVtyxSg4Xg+0NychPokifl3PWRxYhnIa4GVjAjeEn+H
-	UYnXmXeHKPmO1afOqsvwagY36AgZH0V968rhut67Tiyy0m5ujv4Iz4f9j2Bsdz8SXIq/8Z2wj4t
-	fxy8xf4YPumoYc6tmBGDwNAZ5Y+TpBEWggHi5mhVqo4c5TGlAJ1dUn5/hbRmAyBC5I4ZrOStYJD
-	K41ZqmGq5/IfTBEbwXXYaaPOkFWVLhhrQLFAMecOMLUlCfali9H1fFGhQWkYCJZZa8c1l2eoFyG
-	gbzVJL4J/ogaVT7MKET+ZKkAJhyfaA==
-X-Received: by 2002:adf:f2c9:0:b0:482:e22f:a2b2 with SMTP id ffacd0b85a97d-486eb303657mr3242321f8f.20.1789125468686;
-        Fri, 11 Sep 2026 04:17:48 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:3de1:9f21:e874:3931])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-486eb2ecf23sm5438182f8f.5.2026.09.11.04.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 04:17:48 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 5/8] watchdog: rzv2h: Convert WDTDCR handling to regmap
-Date: Fri, 11 Sep 2026 12:17:28 +0100
-Message-ID: <20260911111731.3404308-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260911111731.3404308-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260911111731.3404308-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20251104; t=1789128870; x=1789733670;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=GvQm9bPUMRd91sWaaaqGxcbrsUETDrFL3YR42+nfod0=;
+        b=GDsf3j45BoAovLlJAT0fLAKfpYyFhcHFT27tkg9JhOXVkxD6mVQQjCrPi/XMQ7LKJp
+         7MxtslZ2Sr8+T/Wz8KecbU5I52uL7gRNZLTZzrzCUFm1to3pVhxM7IQOxwbhAX30B6QU
+         WBJQYGYvmjrzptSEOnLhUrNb8IYEEOHRd2/z9dCcZ4hmeN/IkrgWek7QPxk/trA+YyeM
+         jjZYhC3Go8HpPp7r8YRclAH7tMjQxP6nzILec+7fq/axB3dfIKEv4r8/UMCWQ3cIj8ui
+         kXPoBtIr9LlYAvVaWycUQzeJBBrVjpqduMS0bOKBU+/ohPGbL0OerDAUgWOc4Q51li8T
+         7Mhg==
+X-Forwarded-Encrypted: i=1; AKwUvBxA3Xum5K/QkcELbDiEFVmSpd8MuVbRXm3ZAGsu0IQ3RORzF6LGSjhaB4Wu2vgjTJ1NXTXSVzUatfOYLLQku+ntUQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++kpH+1+bK+0ncLCp1Q087B59y6x8iZFe98vOtEBhcdKLUdJmBpk
+	cNruXbjctKC8Z0anTjdlBUXW2DFOLmluYtCXUs3iRD3BUHC/GFpngjdbAS+kvlE16hc=
+X-Gm-Gg: AYBFou0X3IvSbRUsiA63OcCdcxA/2Uj637N8kEDHWZIC9QIl3AsM/Vaj/M7jWwfQAlM
+	igpyENdq+FF+8XHnslG7pAX2eNaoBwphSs4iKEIM40roN/GbSJCFXFk74JnV+RWSBPcWM4Brcg9
+	kpK+7mTPhYjO+xaQQEgTkz5bu/8HnLCqJE1yQOj/P/1Af+bOW301KGBpdppHutKIhdZThwxZ3j8
+	a02YRHt7xwYXUywGd7A/7y51Xytbgm4dUXS8Jk8HkA5rsbO544wjXZO3cw69Kqm7GqbNQckpT+A
+	/Hn9UpU13aA5l6+IU7AgFoEleCdpjQDWacUHQ2O4Qds39JXbUM7zjYw+d4mndkEAj1A8PMaTAso
+	/UbADfW4HCd96IaTXCOlGEg5HkT6YXD/fS5AUwycCTowS1jAlL4wlCdBGEmQwT0+YpDpwldROjI
+	I04Dczhnv44NB9n06wCCV4bMZkrHHERl33iQUEHgbbzpZRk70jqfcAC9a8VWDf0gnK8xHgyoUm7
+	lQSTVhFl5b94AGo
+X-Received: by 2002:a05:600c:3b1f:b0:49d:25b0:cc60 with SMTP id 5b1f17b1804b1-49e619d1d24mr47954605e9.29.1789128870259;
+        Fri, 11 Sep 2026 05:14:30 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e60ac42b9sm69337545e9.6.2026.09.11.05.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Sep 2026 05:14:28 -0700 (PDT)
+Message-ID: <9c8fe3e4-1dcc-4663-8e3f-684ec4e09daa@tuxon.dev>
+Date: Fri, 11 Sep 2026 15:14:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v3 7/7] PCI: rzg3s-host: Re-enumerate the bus on PCIe
+ link-state changes
+To: Manivannan Sadhasivam <mani@kernel.org>,
+ Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+ bhelgaas@google.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ John Madieu <john.madieu.xa@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20260814141312.2947972-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260814141312.2947972-8-claudiu.beznea+renesas@tuxon.dev>
+ <a7koqtuhya3psx7mmest3io5h775jxscivumouv64kbu23pssv@xkkqondobxui>
+Content-Language: en-US
+In-Reply-To: <a7koqtuhya3psx7mmest3io5h775jxscivumouv64kbu23pssv@xkkqondobxui>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi, Mani,
 
-Convert the WDTDCR register access from raw readl/writel variants over to
-the regmap framework using devm_regmap_init_mmio().
+On 9/10/26 17:38, Manivannan Sadhasivam wrote:
+> On Fri, Aug 14, 2026 at 05:13:12PM +0300, Claudiu Beznea wrote:
+>> From: John Madieu <john.madieu.xa@bp.renesas.com>
+>>
+>> The RZ/G3{E, S}, RZ/V2{H(P), N} PCIe controllers does not expose the
+>> standard PCIe Slot Capability registers, so the generic pciehp driver
+>> cannot be used. The only link-state signal the hardware provides is the
+>> DL_UpDown bit in the PEIS0 event status register, which is raised on every
+>> Data Link layer up/down transition.
+>>
+>> Enable DL_UpDown in PEIE0 and hook up an interrupt handler so the driver
+>> can react to link-state changes: a device that trains after boot gets
+>> enumerated, and a device that disappears on link loss is removed. This
+>> provides hotplug-like behavior without the PCI hotplug core, which is
+>> unavailable for the reason above.
+>>
+>> On a DL_UpDown event the handler acks the W1C status bit and schedules a
+>> worker that inspects PCSTAT1.DL_DOWN_STS:
+>>
+>>    - link up: re-run max link speed negotiation, wait for the link to
+>>      settle and pci_rescan_bus() the root bus;
+>>    - link down: reset the root port, walk the bus in reverse and
+>>      pci_stop_and_remove_bus_device() each child.
+>>
+>> Both paths take pci_lock_rescan_remove() to serialize against the PCI
+>> core.
+>>
+>> While enumeration succeeds without resetting the root port, performing
+>> reads and writes to an NVMe endpoint after a link down/link up cycle
+>> results in failures on some devices. Address this by implementing
+>> pci_host_bridge::reset_root_port() for the RZ/G3S PCIe driver.
+>>
+>> The implementation of pci_host_bridge::reset_root_port() masks all
+>> enabled interrupts and synchronizes them before resetting the controller
+>> to prevent asynchronous events from interfering with the reset operation.
+>>
+>> After the controller is reset, all previously masked interrupts are
+>> restored.
+>>
+>> Since rzg3s_pcie_host_stop() or rzg3s_pcie_host_start() can fail
+>> during a root port reset, introduce struct rzg3s_pcie_host::state to
+>> track the host controller state. The interrupt handlers and register
+>> access paths consult this state to avoid accessing the controller after a
+>> failed reset. This was implemented to be able to re-use the
+>> rzg3s_pcie_host_stop()/rzg3s_pcie_host_start() as is (since they call
+>> functions which can sleep).
+>>
+>> The introduced states are START, STOP, PROCESS, and PORT_RESET. The initial
+>> state is STOP. After the controller is initialized, the state is switched
+>> to START. Any API exposed through struct pci_ops switches the controller
+>> to the PROCESS state, as do the interrupt handlers.
+>>
+>> rzg3s_pcie_host_reset_root_port() switches the state to PORT_RESET to
+>> prevent any controller access while the Root Port reset is in progress.
+>>
+>> A controller left in a broken state (STOP) after a failed root port reset
+>> can recover after a system suspend/resume cycle, since
+>> rzg3s_pcie_host_start() is invoked again during resume.
+>>
+>> Link events are processed only after the controller has been fully
+>> initialized.
+>>
+>> While at it, make probe tolerant of an absent device. Previously, if the
+>> link failed to come up during rzg3s_pcie_host_init(), probe tore the
+>> controller back down and failed. Distinguish this case with -ENODEV,
+>> leave the controller and refclk running, and let the link-up path
+>> enumerate the device once it appears.
+>>
+> 
+> Please split the DL_UpDown addition and reset_root_port() into separate patches.
 
-This conversion serves as a preparatory refactoring step. It allows the
-driver to subsequently support syscon-based system controllers natively
-by passing along alternative regmap handles without forcing messy
-architectural branching at runtime.
+If splitting, it would mean the DL_UpDown patch will be broken (at least for 
+RZ/G3S SoC). Would that be OK with you?
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v4->v5:
-- Handled the regmap locking in the driver and introduced nolock
-  version to be used in the restart path.
+> 
+>> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+>> Co-developed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v3:
+>> - added RZG3S_PCI_PEIE0_DL_UPDOWN
+>> - re-worked the support by implemeting
+>>    struct pci_host_bridge::reset_root_port()
+>> - introduced the struct rzg3s_pcie_host::state to:
+>> -- avoid touching the controller while a reset root port is in progress
+>> -- and avoid touching the controller in case a reset root port failed
+>> -- and to be able to re-use the already existing code in the reset
+>>     root port function
+>> -- and added CLASS() constructs helpers for it to keep the state handling
+>>     code simpler
+>> - updated the patch description to reflect the updates
+>>
+>>   drivers/pci/controller/pcie-rzg3s-host.c | 375 +++++++++++++++++++++--
+>>   1 file changed, 356 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+>> index 4765ac1befba..b3531468ef38 100644
+>> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+>> @@ -86,6 +86,7 @@
+>>   #define RZG3S_PCI_MSGRCVIS_MRI			BIT(24)
+>>   
+>>   #define RZG3S_PCI_PEIE0				0x200
+>> +#define RZG3S_PCI_PEIE0_DL_UPDOWN		BIT(9)
+>>   
+>>   #define RZG3S_PCI_PEIS0				0x204
+>>   #define RZG3S_PCI_PEIS0_RX_DLLP_PM_ENTER	BIT(12)
+>> @@ -310,6 +311,24 @@ struct rzg3s_pcie_port {
+>>   	u32 device_id;
+>>   };
+>>   
+>> +/**
+>> + * enum rzg3s_pcie_host_state - RZ/G3S PCIe Host state
+>> + * @RZG3S_PCIE_HOST_STATE_STOP: Host is stopped (initial state, reached from
+>> + *                              PORT_RESET, START)
+>> + * @RZG3S_PCIE_HOST_STATE_START: Host is started (reached from STOP, PROCESS,
+>> + *                               PORT_RESET)
+>> + * @RZG3S_PCIE_HOST_STATE_PROCESS: Host is started and is processing requests
+>> + *                                 (reached from START)
+>> + * @RZG3S_PCIE_HOST_STATE_PORT_RESET: Host root port is resetting (reached from
+>> + *                                    START)
+>> + */
+>> +enum rzg3s_pcie_host_state {
+>> +	RZG3S_PCIE_HOST_STATE_STOP,
+>> +	RZG3S_PCIE_HOST_STATE_START,
+>> +	RZG3S_PCIE_HOST_STATE_PORT_RESET,
+>> +	RZG3S_PCIE_HOST_STATE_PROCESS,
+>> +};
+>> +
+>>   /**
+>>    * struct rzg3s_pcie_host - RZ/G3S PCIe data structure
+>>    * @axi: base address for AXI registers
+>> @@ -323,6 +342,8 @@ struct rzg3s_pcie_port {
+>>    * @msi: MSI data structure
+>>    * @port: PCIe Root Port
+>>    * @hw_lock: lock for access to the HW resources
+>> + * @state: PCIe controller state
+>> + * @event_irq: PCIe event interrupt for DL_UpDown detection
+>>    * @intx_irqs: INTx interrupts
+>>    * @max_link_speed: maximum supported link speed
+>>    * @controller_id: PCIe controller identifier, used for System Controller access
+>> @@ -340,6 +361,8 @@ struct rzg3s_pcie_host {
+>>   	struct rzg3s_pcie_msi msi;
+>>   	struct rzg3s_pcie_port port;
+>>   	raw_spinlock_t hw_lock;
+>> +	atomic_t state;
+>> +	int event_irq;
+>>   	int intx_irqs[PCI_NUM_INTX];
+>>   	int max_link_speed;
+>>   	enum rzg3s_pcie_controller_id controller_id;
+>> @@ -348,6 +371,61 @@ struct rzg3s_pcie_host {
+>>   
+>>   #define rzg3s_msi_to_host(_msi)	container_of(_msi, struct rzg3s_pcie_host, msi)
+>>   
+>> +/**
+>> + * struct rzg3s_pcie_host_atomic_state - RZ/G3S PCIe state data structure
+>> + * @state: Atomic state variable to operate on. Should point to
+>> + *         struct rzg3s_pcie_host::state.
+>> + * @expect: Expected host state. The host state is not changed if the
+>> + *          current host state differs from the expected state.
+>> + * @saved: Saved host state. When the host state is changed, the previous
+>> + *         state is saved in this variable. This is necessary to restore
+>> + *         the previous state after the protected section is executed.
+>> + *
+>> + * This structure is necessary for state setting and restoration using
+>> + * CLASS() constructs.
+>> + */
+>> +struct rzg3s_pcie_host_atomic_state {
+>> +	atomic_t *state;
+>> +	enum rzg3s_pcie_host_state expect;
+>> +	enum rzg3s_pcie_host_state saved;
+>> +};
+>> +
+>> +static struct rzg3s_pcie_host_atomic_state
+>> +rzg3s_pcie_host_atomic_state_save(atomic_t *state, int expect, int newval)
+>> +{
+>> +	return (struct rzg3s_pcie_host_atomic_state){
+>> +		.state = state,
+>> +		.expect = expect,
+>> +		.saved = atomic_cmpxchg(state, expect, newval),
+>> +	};
+>> +}
+>> +
+>> +static void
+>> +rzg3s_pcie_host_atomic_state_restore(struct rzg3s_pcie_host_atomic_state state)
+>> +{
+>> +	if (state.saved == state.expect)
+>> +		atomic_xchg(state.state, state.expect);
+>> +}
+>> +
+>> +DEFINE_CLASS(rzg3s_pcie_host_state_lock,
+>> +	     struct rzg3s_pcie_host_atomic_state,
+>> +	     rzg3s_pcie_host_atomic_state_restore(_T),
+>> +	     rzg3s_pcie_host_atomic_state_save(state, expect, newval),
+>> +	     atomic_t *state, int expect, int newval)
+>> +
+>> +/* Use it to change the state w/o the need to restore it on function exit. */
+>> +#define RZG3S_PCIE_HOST_STATE_CHANGE(_state, _from, _to) \
+>> +	CLASS(rzg3s_pcie_host_state_lock, _lock) \
+>> +	      (_state, RZG3S_PCIE_HOST_STATE_##_from, \
+>> +		       RZG3S_PCIE_HOST_STATE_##_to) \
+>> +
+>> +/*
+>> + * Use it to check if the state change failed. _from is the initial state.
+>> + * Use it in conjunction with RZG3S_PCIE_HOST_STATE_CHANGE().
+>> + */
+>> +#define RZG3S_PCIE_HOST_STATE_CHANGE_FAILED(_from) \
+>> +	(_lock.saved != RZG3S_PCIE_HOST_STATE_##_from)
+>> +
+> 
+> I don't really see a need for all these state management. None of the other
+> controller drivers are doing and the serialization provided by the PCI core
+> using pci_lock should be enough. If you find any issue or race, please share it
+> here.
 
-v2->v3:
-- Dropped unwinding changes to patch#1.
-- Set use_raw_spinlock to true in regmap config as certain watchdog operations
-  runs in an atomic panic context.
----
- drivers/watchdog/rzv2h_wdt.c | 54 ++++++++++++++++++++++++++----------
- 1 file changed, 39 insertions(+), 15 deletions(-)
+The problems I see are the following:
 
-diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-index 4a5a856060e9..550112446db4 100644
---- a/drivers/watchdog/rzv2h_wdt.c
-+++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright (C) 2024 Renesas Electronics Corporation.
-  */
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-@@ -12,7 +13,9 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
- #include <linux/reset.h>
-+#include <linux/spinlock.h>
- #include <linux/units.h>
- #include <linux/watchdog.h>
- 
-@@ -65,7 +68,8 @@ struct rzv2h_of_data {
- 
- struct rzv2h_wdt_priv {
- 	void __iomem *base;
--	void __iomem *wdtdcr;
-+	struct regmap *wdtdcr_regmap;
-+	spinlock_t regmap_lock; /* Protects access to the wdtdcr_regmap */
- 	struct clk *pclk;
- 	struct clk *oscclk;
- 	struct reset_control *rstc;
-@@ -89,20 +93,19 @@ static int rzv2h_wdt_ping(struct watchdog_device *wdev)
- 
- static int rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
- {
--	u32 reg = readl(priv->wdtdcr + WDTDCR);
-+	guard(spinlock_irqsave)(&priv->regmap_lock);
-+	return regmap_set_bits(priv->wdtdcr_regmap, WDTDCR, WDTDCR_WDTSTOPCTRL);
-+}
- 
--	writel(reg | WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
--
--	return 0;
-+static inline int rzt2h_wdt_wdtdcr_count_start_nolock(struct rzv2h_wdt_priv *priv)
-+{
-+	return regmap_clear_bits(priv->wdtdcr_regmap, WDTDCR, WDTDCR_WDTSTOPCTRL);
- }
- 
- static int rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
- {
--	u32 reg = readl(priv->wdtdcr + WDTDCR);
--
--	writel(reg & ~WDTDCR_WDTSTOPCTRL, priv->wdtdcr + WDTDCR);
--
--	return 0;
-+	guard(spinlock_irqsave)(&priv->regmap_lock);
-+	return rzt2h_wdt_wdtdcr_count_start_nolock(priv);
- }
- 
- static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
-@@ -235,8 +238,11 @@ static int rzv2h_wdt_restart(struct watchdog_device *wdev,
- 			WDTCR_RPES_75 | WDTCR_TOPS_1024);
- 
- 	if (priv->of_data->wdtdcr) {
--		/* best effort, ignore ret */
--		rzt2h_wdt_wdtdcr_count_start(priv);
-+		/*
-+		 * Best effort, ignore return value and use the unlocked
-+		 * variant of the function to avoid potential deadlocks.
-+		 */
-+		rzt2h_wdt_wdtdcr_count_start_nolock(priv);
- 	}
- 
- 	rzv2h_wdt_ping(wdev);
-@@ -255,14 +261,32 @@ static const struct watchdog_ops rzv2h_wdt_ops = {
- 	.restart = rzv2h_wdt_restart,
- };
- 
-+static const struct regmap_config rzv2h_wdtdcr_regmap_config = {
-+	.name = "wdtdcr",
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.max_register = WDTDCR,
-+	.max_register_is_0 = true,
-+	.disable_locking = true,
-+};
-+
- static int rzt2h_wdt_wdtdcr_init(struct platform_device *pdev,
- 				 struct rzv2h_wdt_priv *priv)
- {
-+	void __iomem *wdtdcr;
- 	int ret;
- 
--	priv->wdtdcr = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(priv->wdtdcr))
--		return PTR_ERR(priv->wdtdcr);
-+	wdtdcr = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(wdtdcr))
-+		return PTR_ERR(wdtdcr);
-+
-+	spin_lock_init(&priv->regmap_lock);
-+
-+	priv->wdtdcr_regmap = devm_regmap_init_mmio(&pdev->dev, wdtdcr,
-+						    &rzv2h_wdtdcr_regmap_config);
-+	if (IS_ERR(priv->wdtdcr_regmap))
-+		return PTR_ERR(priv->wdtdcr_regmap);
- 
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret)
--- 
-2.55.0
+1/ In theory, the rzg3s_pcie_host_start() in .reset_root_port() can fail. If
+    that happens the controller is left with the clocks and resets disabled.
+    Accessing  it later in this state may lead to sync aborts, and the system
+    being fully blocked. This is how the HW behaves. Re-enabling clocks and
+    resets in this situation may lead to unbalanced  reference counters for them.
+
+2/ In theory, struct pci_ops::{read, write} ops could be called while the reset
+    is in progress, if I'm not wrong. That can be avoided by using a common spin
+    lock but we can't use it in .reset_root_port() since this calls APIs
+    that could sleep (e.g. clk_prepare_enable()/clk_disable_unprepare())
+
+3/ Since at the moment the .suspend() is called the IRQs are enabled, the link
+    event and the .suspend() can race. This could also be avoided by using
+    a spin lock but, again, there are APIs on .reset_root_port() that can sleep.
+
+4/ To keep sane the reference counted resources, handled in
+    rzg3s_pcie_host_stop()/rzg3s_pcie_host_start(), the state track would be
+    needed, for .reset_root_port() failure case and racing, since these functions
+    are also called in suspend/resume
+
+I think I should drop the state check from the IRQ ack APIs.
+
+Please let me know if you have any suggestions.
+
+Thank you,
+Claudiu
+
+> But I really believe that we can fix it without all these complicated
+> state management.
+> 
+> - Mani
+> 
 
