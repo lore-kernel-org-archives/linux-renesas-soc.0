@@ -1,342 +1,139 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9493B43F8D9
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Sep 2026 12:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2D04772A5;
+	Fri, 11 Sep 2026 12:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789128876; cv=none; b=YBjjPNrxuPAC52dXT/EQVPpJ8FH+ja5TZLd1USX1HO/Kn9cIFfWyyYv/oEsaOvQ0YJgUIMFQfG+JtKQ+fssmXOoP80ioDIenMvKeWy3wSKgWisiguA2XWKfzLpTG3g2UGMu4jRRVW61n+DyR3nnuo/MCD01S+uwcJIvQrQKB/MM=
+	t=1789130766; cv=none; b=lpcpu5SMbWl/o1yechDHgmSEc8T05YSh3i6T55iGIfc6bgYQUBEkD1lyyupLnjoYxrM6+6vT9P9N95jsH1cK8gfXvU5b5YgDdwRK/s6urUYn+EksuQnCFtATl9be2SE3hscknGTJCChfUsZhcsHU7HcMBkigSvmem4cZxPWB1qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789128876; c=relaxed/simple;
-	bh=P/KxSS2GC3+thQJ0AubUpdnmc9VbeHKznpYOwTxPqrY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OZ1qrLx9/MfEYRGsaOkSAAeCP0ouYLy66IgTHDV9Olkaomwb1LSPT3tbrNwXetazLHbe/V1rXzJTGtdtEMY0Pl01KDMhMVBx9lMnJfVSARntq1yFY8nY8S6cVQNjuSqNqCDwjk80XEIUQXrytxTKq3Cg9AUgeVe3MNI/NZkM6Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=D9Uyoq6X; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1789130766; c=relaxed/simple;
+	bh=R9L/eTaXmKcO3hBnU98W/9G77TNfUeBGNOLDd6WiCkE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IOfnLcdM4YkubIQeCbBNsrB0AiIw3MPnSso/NzMe5le//kjuMypjTvGNPiuuP5F4vxbm2t/6BmOERa7levzV5/hZmf+VuP9oba5sYI7iH4vV8unpkjEOl+bmRWHd2wx7ogjr/JPjmRgi/3PZEgqysoCKhVt2TfxQt/8L1oJU2A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0YT2oS46; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5noCCjOB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="D9Uyoq6X"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-49d0b98d6d0so10458555e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Sep 2026 05:14:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1789128870; x=1789733670; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GvQm9bPUMRd91sWaaaqGxcbrsUETDrFL3YR42+nfod0=;
-        b=D9Uyoq6X5O2ZL0uYY6M9W/ZUtIfAVV08XWzX7z52AXyvhzOHnLlryn6pGIgd4jCtpw
-         MyieCazKGELvr6MQMj+oK7JDLXKdvpXoY4ly62w/aKXFDe/McKOM3shs+j0WnMEeKWvK
-         dlFpkrqXuIeNpnfYnSlWdY1LZoxp/3COR6Jwkvn9p+tX9uXFC2tGfKoTitETInFYWRhs
-         52FRriuLzkRvRHcdzIc4FDoTwHXZ8HD2b5D2eYvJOu8qvhqW+/XDYasYDxZg8cWfi5Qh
-         lvKokmu7vT2wdngEaPTw++tbH84ij0CmxWTR+WJmHMqlqZqD3EZVioWRJurMbXu5DeYB
-         2rkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789128870; x=1789733670;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GvQm9bPUMRd91sWaaaqGxcbrsUETDrFL3YR42+nfod0=;
-        b=GDsf3j45BoAovLlJAT0fLAKfpYyFhcHFT27tkg9JhOXVkxD6mVQQjCrPi/XMQ7LKJp
-         7MxtslZ2Sr8+T/Wz8KecbU5I52uL7gRNZLTZzrzCUFm1to3pVhxM7IQOxwbhAX30B6QU
-         WBJQYGYvmjrzptSEOnLhUrNb8IYEEOHRd2/z9dCcZ4hmeN/IkrgWek7QPxk/trA+YyeM
-         jjZYhC3Go8HpPp7r8YRclAH7tMjQxP6nzILec+7fq/axB3dfIKEv4r8/UMCWQ3cIj8ui
-         kXPoBtIr9LlYAvVaWycUQzeJBBrVjpqduMS0bOKBU+/ohPGbL0OerDAUgWOc4Q51li8T
-         7Mhg==
-X-Forwarded-Encrypted: i=1; AKwUvBxA3Xum5K/QkcELbDiEFVmSpd8MuVbRXm3ZAGsu0IQ3RORzF6LGSjhaB4Wu2vgjTJ1NXTXSVzUatfOYLLQku+ntUQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++kpH+1+bK+0ncLCp1Q087B59y6x8iZFe98vOtEBhcdKLUdJmBpk
-	cNruXbjctKC8Z0anTjdlBUXW2DFOLmluYtCXUs3iRD3BUHC/GFpngjdbAS+kvlE16hc=
-X-Gm-Gg: AYBFou0X3IvSbRUsiA63OcCdcxA/2Uj637N8kEDHWZIC9QIl3AsM/Vaj/M7jWwfQAlM
-	igpyENdq+FF+8XHnslG7pAX2eNaoBwphSs4iKEIM40roN/GbSJCFXFk74JnV+RWSBPcWM4Brcg9
-	kpK+7mTPhYjO+xaQQEgTkz5bu/8HnLCqJE1yQOj/P/1Af+bOW301KGBpdppHutKIhdZThwxZ3j8
-	a02YRHt7xwYXUywGd7A/7y51Xytbgm4dUXS8Jk8HkA5rsbO544wjXZO3cw69Kqm7GqbNQckpT+A
-	/Hn9UpU13aA5l6+IU7AgFoEleCdpjQDWacUHQ2O4Qds39JXbUM7zjYw+d4mndkEAj1A8PMaTAso
-	/UbADfW4HCd96IaTXCOlGEg5HkT6YXD/fS5AUwycCTowS1jAlL4wlCdBGEmQwT0+YpDpwldROjI
-	I04Dczhnv44NB9n06wCCV4bMZkrHHERl33iQUEHgbbzpZRk70jqfcAC9a8VWDf0gnK8xHgyoUm7
-	lQSTVhFl5b94AGo
-X-Received: by 2002:a05:600c:3b1f:b0:49d:25b0:cc60 with SMTP id 5b1f17b1804b1-49e619d1d24mr47954605e9.29.1789128870259;
-        Fri, 11 Sep 2026 05:14:30 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e60ac42b9sm69337545e9.6.2026.09.11.05.14.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Sep 2026 05:14:28 -0700 (PDT)
-Message-ID: <9c8fe3e4-1dcc-4663-8e3f-684ec4e09daa@tuxon.dev>
-Date: Fri, 11 Sep 2026 15:14:25 +0300
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0YT2oS46";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5noCCjOB"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9908D1F79D;
+	Fri, 11 Sep 2026 12:45:46 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1789130746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tzsC2VzdToDvjyu2bKo4kXLJkrMvANfsE4sUyvOrhy8=;
+	b=0YT2oS467GDz5Jb+FNn42kMHKgOv8Os+MTeed95wwhwmprlCL0grm5Ze4oi4tGk3S5YutP
+	99+RwGo3JJq50EzEBXFD/XWuMrT6bHQU17q3r0LzJS9aHxDqP2mCQ01vts9po0Xb+WSYx7
+	SjLLTtgANg5BUx+Iwb/4nLveg2RZJLw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1789130746;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tzsC2VzdToDvjyu2bKo4kXLJkrMvANfsE4sUyvOrhy8=;
+	b=5noCCjOByuvOQLxXAMnWcFFwzL91l8msT3tuk55VUOqYc6+kVx9JFbAeIOK+xjspayPRMR
+	bjuHvzX9/Pq6q0Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E8A6C136ED;
+	Fri, 11 Sep 2026 12:45:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0F1yN/n3o2r8EQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 11 Sep 2026 12:45:45 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	airlied@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	geert@linux-m68k.org,
+	rdunlap@infradead.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	nouveau@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	stable@vger.kernel.org
+Subject: [PATCH v5 01/14] drm/panic: Do not use un-escaped URL as format string
+Date: Fri, 11 Sep 2026 14:43:54 +0200
+Message-ID: <20260911124540.279841-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260911124540.279841-1-tzimmermann@suse.de>
+References: <20260911124540.279841-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v3 7/7] PCI: rzg3s-host: Re-enumerate the bus on PCIe
- link-state changes
-To: Manivannan Sadhasivam <mani@kernel.org>,
- Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
- bhelgaas@google.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- John Madieu <john.madieu.xa@bp.renesas.com>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20260814141312.2947972-1-claudiu.beznea+renesas@tuxon.dev>
- <20260814141312.2947972-8-claudiu.beznea+renesas@tuxon.dev>
- <a7koqtuhya3psx7mmest3io5h775jxscivumouv64kbu23pssv@xkkqondobxui>
-Content-Language: en-US
-In-Reply-To: <a7koqtuhya3psx7mmest3io5h775jxscivumouv64kbu23pssv@xkkqondobxui>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 9908D1F79D
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLo585esf9b7txaosbn5shab9z)]
 
-Hi, Mani,
+Replace the direct use of DRM_PANIC_SCREEN_QR_CODE_URL in snprintf()
+with a %s conversion specifier. Avoids a possible vulnerabilty from
+a crafted URL string.
 
-On 9/10/26 17:38, Manivannan Sadhasivam wrote:
-> On Fri, Aug 14, 2026 at 05:13:12PM +0300, Claudiu Beznea wrote:
->> From: John Madieu <john.madieu.xa@bp.renesas.com>
->>
->> The RZ/G3{E, S}, RZ/V2{H(P), N} PCIe controllers does not expose the
->> standard PCIe Slot Capability registers, so the generic pciehp driver
->> cannot be used. The only link-state signal the hardware provides is the
->> DL_UpDown bit in the PEIS0 event status register, which is raised on every
->> Data Link layer up/down transition.
->>
->> Enable DL_UpDown in PEIE0 and hook up an interrupt handler so the driver
->> can react to link-state changes: a device that trains after boot gets
->> enumerated, and a device that disappears on link loss is removed. This
->> provides hotplug-like behavior without the PCI hotplug core, which is
->> unavailable for the reason above.
->>
->> On a DL_UpDown event the handler acks the W1C status bit and schedules a
->> worker that inspects PCSTAT1.DL_DOWN_STS:
->>
->>    - link up: re-run max link speed negotiation, wait for the link to
->>      settle and pci_rescan_bus() the root bus;
->>    - link down: reset the root port, walk the bus in reverse and
->>      pci_stop_and_remove_bus_device() each child.
->>
->> Both paths take pci_lock_rescan_remove() to serialize against the PCI
->> core.
->>
->> While enumeration succeeds without resetting the root port, performing
->> reads and writes to an NVMe endpoint after a link down/link up cycle
->> results in failures on some devices. Address this by implementing
->> pci_host_bridge::reset_root_port() for the RZ/G3S PCIe driver.
->>
->> The implementation of pci_host_bridge::reset_root_port() masks all
->> enabled interrupts and synchronizes them before resetting the controller
->> to prevent asynchronous events from interfering with the reset operation.
->>
->> After the controller is reset, all previously masked interrupts are
->> restored.
->>
->> Since rzg3s_pcie_host_stop() or rzg3s_pcie_host_start() can fail
->> during a root port reset, introduce struct rzg3s_pcie_host::state to
->> track the host controller state. The interrupt handlers and register
->> access paths consult this state to avoid accessing the controller after a
->> failed reset. This was implemented to be able to re-use the
->> rzg3s_pcie_host_stop()/rzg3s_pcie_host_start() as is (since they call
->> functions which can sleep).
->>
->> The introduced states are START, STOP, PROCESS, and PORT_RESET. The initial
->> state is STOP. After the controller is initialized, the state is switched
->> to START. Any API exposed through struct pci_ops switches the controller
->> to the PROCESS state, as do the interrupt handlers.
->>
->> rzg3s_pcie_host_reset_root_port() switches the state to PORT_RESET to
->> prevent any controller access while the Root Port reset is in progress.
->>
->> A controller left in a broken state (STOP) after a failed root port reset
->> can recover after a system suspend/resume cycle, since
->> rzg3s_pcie_host_start() is invoked again during resume.
->>
->> Link events are processed only after the controller has been fully
->> initialized.
->>
->> While at it, make probe tolerant of an absent device. Previously, if the
->> link failed to come up during rzg3s_pcie_host_init(), probe tore the
->> controller back down and failed. Distinguish this case with -ENODEV,
->> leave the controller and refclk running, and let the link-up path
->> enumerate the device once it appears.
->>
-> 
-> Please split the DL_UpDown addition and reset_root_port() into separate patches.
+As the attacker needs to control the kernel at the Kconfig level, the
+potential for an exploit is likely low.
 
-If splitting, it would mean the DL_UpDown patch will be broken (at least for 
-RZ/G3S SoC). Would that be OK with you?
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
+Cc: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v6.12+
+---
+ drivers/gpu/drm/drm_panic.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
->> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
->> Co-developed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - added RZG3S_PCI_PEIE0_DL_UPDOWN
->> - re-worked the support by implemeting
->>    struct pci_host_bridge::reset_root_port()
->> - introduced the struct rzg3s_pcie_host::state to:
->> -- avoid touching the controller while a reset root port is in progress
->> -- and avoid touching the controller in case a reset root port failed
->> -- and to be able to re-use the already existing code in the reset
->>     root port function
->> -- and added CLASS() constructs helpers for it to keep the state handling
->>     code simpler
->> - updated the patch description to reflect the updates
->>
->>   drivers/pci/controller/pcie-rzg3s-host.c | 375 +++++++++++++++++++++--
->>   1 file changed, 356 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
->> index 4765ac1befba..b3531468ef38 100644
->> --- a/drivers/pci/controller/pcie-rzg3s-host.c
->> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
->> @@ -86,6 +86,7 @@
->>   #define RZG3S_PCI_MSGRCVIS_MRI			BIT(24)
->>   
->>   #define RZG3S_PCI_PEIE0				0x200
->> +#define RZG3S_PCI_PEIE0_DL_UPDOWN		BIT(9)
->>   
->>   #define RZG3S_PCI_PEIS0				0x204
->>   #define RZG3S_PCI_PEIS0_RX_DLLP_PM_ENTER	BIT(12)
->> @@ -310,6 +311,24 @@ struct rzg3s_pcie_port {
->>   	u32 device_id;
->>   };
->>   
->> +/**
->> + * enum rzg3s_pcie_host_state - RZ/G3S PCIe Host state
->> + * @RZG3S_PCIE_HOST_STATE_STOP: Host is stopped (initial state, reached from
->> + *                              PORT_RESET, START)
->> + * @RZG3S_PCIE_HOST_STATE_START: Host is started (reached from STOP, PROCESS,
->> + *                               PORT_RESET)
->> + * @RZG3S_PCIE_HOST_STATE_PROCESS: Host is started and is processing requests
->> + *                                 (reached from START)
->> + * @RZG3S_PCIE_HOST_STATE_PORT_RESET: Host root port is resetting (reached from
->> + *                                    START)
->> + */
->> +enum rzg3s_pcie_host_state {
->> +	RZG3S_PCIE_HOST_STATE_STOP,
->> +	RZG3S_PCIE_HOST_STATE_START,
->> +	RZG3S_PCIE_HOST_STATE_PORT_RESET,
->> +	RZG3S_PCIE_HOST_STATE_PROCESS,
->> +};
->> +
->>   /**
->>    * struct rzg3s_pcie_host - RZ/G3S PCIe data structure
->>    * @axi: base address for AXI registers
->> @@ -323,6 +342,8 @@ struct rzg3s_pcie_port {
->>    * @msi: MSI data structure
->>    * @port: PCIe Root Port
->>    * @hw_lock: lock for access to the HW resources
->> + * @state: PCIe controller state
->> + * @event_irq: PCIe event interrupt for DL_UpDown detection
->>    * @intx_irqs: INTx interrupts
->>    * @max_link_speed: maximum supported link speed
->>    * @controller_id: PCIe controller identifier, used for System Controller access
->> @@ -340,6 +361,8 @@ struct rzg3s_pcie_host {
->>   	struct rzg3s_pcie_msi msi;
->>   	struct rzg3s_pcie_port port;
->>   	raw_spinlock_t hw_lock;
->> +	atomic_t state;
->> +	int event_irq;
->>   	int intx_irqs[PCI_NUM_INTX];
->>   	int max_link_speed;
->>   	enum rzg3s_pcie_controller_id controller_id;
->> @@ -348,6 +371,61 @@ struct rzg3s_pcie_host {
->>   
->>   #define rzg3s_msi_to_host(_msi)	container_of(_msi, struct rzg3s_pcie_host, msi)
->>   
->> +/**
->> + * struct rzg3s_pcie_host_atomic_state - RZ/G3S PCIe state data structure
->> + * @state: Atomic state variable to operate on. Should point to
->> + *         struct rzg3s_pcie_host::state.
->> + * @expect: Expected host state. The host state is not changed if the
->> + *          current host state differs from the expected state.
->> + * @saved: Saved host state. When the host state is changed, the previous
->> + *         state is saved in this variable. This is necessary to restore
->> + *         the previous state after the protected section is executed.
->> + *
->> + * This structure is necessary for state setting and restoration using
->> + * CLASS() constructs.
->> + */
->> +struct rzg3s_pcie_host_atomic_state {
->> +	atomic_t *state;
->> +	enum rzg3s_pcie_host_state expect;
->> +	enum rzg3s_pcie_host_state saved;
->> +};
->> +
->> +static struct rzg3s_pcie_host_atomic_state
->> +rzg3s_pcie_host_atomic_state_save(atomic_t *state, int expect, int newval)
->> +{
->> +	return (struct rzg3s_pcie_host_atomic_state){
->> +		.state = state,
->> +		.expect = expect,
->> +		.saved = atomic_cmpxchg(state, expect, newval),
->> +	};
->> +}
->> +
->> +static void
->> +rzg3s_pcie_host_atomic_state_restore(struct rzg3s_pcie_host_atomic_state state)
->> +{
->> +	if (state.saved == state.expect)
->> +		atomic_xchg(state.state, state.expect);
->> +}
->> +
->> +DEFINE_CLASS(rzg3s_pcie_host_state_lock,
->> +	     struct rzg3s_pcie_host_atomic_state,
->> +	     rzg3s_pcie_host_atomic_state_restore(_T),
->> +	     rzg3s_pcie_host_atomic_state_save(state, expect, newval),
->> +	     atomic_t *state, int expect, int newval)
->> +
->> +/* Use it to change the state w/o the need to restore it on function exit. */
->> +#define RZG3S_PCIE_HOST_STATE_CHANGE(_state, _from, _to) \
->> +	CLASS(rzg3s_pcie_host_state_lock, _lock) \
->> +	      (_state, RZG3S_PCIE_HOST_STATE_##_from, \
->> +		       RZG3S_PCIE_HOST_STATE_##_to) \
->> +
->> +/*
->> + * Use it to check if the state change failed. _from is the initial state.
->> + * Use it in conjunction with RZG3S_PCIE_HOST_STATE_CHANGE().
->> + */
->> +#define RZG3S_PCIE_HOST_STATE_CHANGE_FAILED(_from) \
->> +	(_lock.saved != RZG3S_PCIE_HOST_STATE_##_from)
->> +
-> 
-> I don't really see a need for all these state management. None of the other
-> controller drivers are doing and the serialization provided by the PCI core
-> using pci_lock should be enough. If you find any issue or race, please share it
-> here.
-
-The problems I see are the following:
-
-1/ In theory, the rzg3s_pcie_host_start() in .reset_root_port() can fail. If
-    that happens the controller is left with the clocks and resets disabled.
-    Accessing  it later in this state may lead to sync aborts, and the system
-    being fully blocked. This is how the HW behaves. Re-enabling clocks and
-    resets in this situation may lead to unbalanced  reference counters for them.
-
-2/ In theory, struct pci_ops::{read, write} ops could be called while the reset
-    is in progress, if I'm not wrong. That can be avoided by using a common spin
-    lock but we can't use it in .reset_root_port() since this calls APIs
-    that could sleep (e.g. clk_prepare_enable()/clk_disable_unprepare())
-
-3/ Since at the moment the .suspend() is called the IRQs are enabled, the link
-    event and the .suspend() can race. This could also be avoided by using
-    a spin lock but, again, there are APIs on .reset_root_port() that can sleep.
-
-4/ To keep sane the reference counted resources, handled in
-    rzg3s_pcie_host_stop()/rzg3s_pcie_host_start(), the state track would be
-    needed, for .reset_root_port() failure case and racing, since these functions
-    are also called in suspend/resume
-
-I think I should drop the state check from the IRQ ack APIs.
-
-Please let me know if you have any suggestions.
-
-Thank you,
-Claudiu
-
-> But I really believe that we can fix it without all these complicated
-> state management.
-> 
-> - Mani
-> 
+diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+index e576c4791861..ba21df4be338 100644
+--- a/drivers/gpu/drm/drm_panic.c
++++ b/drivers/gpu/drm/drm_panic.c
+@@ -658,7 +658,8 @@ static int drm_panic_get_qr_code_url(u8 **qr_image)
+ 	char *kmsg;
+ 	int max_qr_data_size, url_len;
+ 
+-	url_len = snprintf(url, sizeof(url), CONFIG_DRM_PANIC_SCREEN_QR_CODE_URL "?a=%s&v=%s&z=",
++	url_len = snprintf(url, sizeof(url), "%s?a=%s&v=%s&z=",
++			   CONFIG_DRM_PANIC_SCREEN_QR_CODE_URL,
+ 			   utsname()->machine, utsname()->release);
+ 
+ 	max_qr_data_size = drm_panic_qr_max_data_size(panic_qr_version, url_len);
+-- 
+2.55.0
 
