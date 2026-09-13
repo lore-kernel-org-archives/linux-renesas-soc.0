@@ -1,95 +1,95 @@
-Received: from mail-ej2-f7.google.com (mail-ej2-f7.google.com [74.125.228.135])
+Received: from mail-ej2-f6.google.com (mail-ej2-f6.google.com [74.125.228.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE22352038
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 15:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8705A367B71
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 15:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.134
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789313426; cv=pass; b=SjZ/mu+bmi8T0Lq9dV/cHNnQQhr0ssWFQl5FUyZic/7osnd6DF8+Zb021w7t9M4ioKvJm2kohvmoTTrfg8CkBLYkkZIXesNheKtXwyp+urQxuLKHPAezqGGSWASdPptJ22KgDdnsOP8NzFSsze4Rtsw75Uo9ItP9C1JyrDq6RnI=
+	t=1789314448; cv=pass; b=ny1A6DyZ8U6nHY4SwMyMomewgDY/TB6D7YCKP8qyeWJnMOpgOEjmcKSqDOKf15hqdpXyyEmjBbWAJY6Acdz0jDhiTLRuJ8CGXZY+ytfSqdRCaoZ6cOIm9kzy8fgP6kRr+G458ke4ITCRw5naA4eOZdhN/JwhJ3Zcfyv8MJ+TyUQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789313426; c=relaxed/simple;
-	bh=QOnd9Be0VKsR33e3Mz4oeKHlFLKxA5Rt/jBaVV6NUZU=;
+	s=arc-20240116; t=1789314448; c=relaxed/simple;
+	bh=0J4H18xBnaTXwWA0eFc908GPhTPH1AfqEK/WH2weBo4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sq6axxCopMdh5AIPU1jakLrkvTAopMjoTfMvimDELxvCHn0w2Ze1b1mgc5RIGMWjr7JVwCaKE1YqQKCD/6WG839XWYfDfzC/P07FaeFizwgFUGtrhWYrOhBD8SbFrtiINwVWDMoLHGAtneDSyiFL3HqISr3vvAL/FrMLsNJyEeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sxBeHxwc; arc=pass smtp.client-ip=74.125.228.135
+	 To:Cc:Content-Type; b=QkJDDv9CYwU3c8gX4tljQdqKkZUOBHsolmcCruiAATnqKk/wYlLbJhKNVDQeXqlIBxPLfYxh/7EYWWQ1upXyi5sGq/1vTOE2BRI0oTs1r5QQ7XRo1n278j7TwrMHbfc2YfQhYzuwh2NvDrbm4iAP7XiISw5gey1Ksdi/Efs3BFI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQao12pB; arc=pass smtp.client-ip=74.125.228.134
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sxBeHxwc"
-Received: by mail-ej2-f7.google.com with SMTP id a640c23a62f3a-c29390fa872so155723366b.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 08:30:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789313421; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQao12pB"
+Received: by mail-ej2-f6.google.com with SMTP id a640c23a62f3a-c294716dbf3so186856266b.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 08:47:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789314444; cv=none;
         d=google.com; s=arc-20260327;
-        b=ZxnR9BVkiELq9yMTGNypBOOyXQfZxtKJ/RIfBLHuiT8npDyIZQY0rYBua3CpBJntX4
-         0kgXfCF0mxjKUfgcfCvtg3jJWsGAqPVSNb3RUW9vh3bMY0Upig7ctc2Obku1sOzzDhXk
-         98T0XBvc2XhynCSaQaWS0uig4J+6Es6M2PvUOiJCqCPmI0yjV7z+m2CdyyrrWWPGJ9Nb
-         6Wl8fmfIWLzujWfkyqSl7lLBb/h1h1AaPxLRNdkDxI0sQETRp7echyuhX1QTZ6pubKiH
-         YQ5ZYDiEU0ExCt6QAxsFoXviHaSU+3+vSQhHLNaezP8OnQCz9oYQSN++vsS7f/VInFcq
-         eG8w==
+        b=GX0YPK3MOEIf+u0cYpxCWPznLthZCnWjvCuNV9bM3QNbuMSs/C7mn7Y6lk1DPZvceS
+         lRHS46/Sh78zAiQfIDrhuO9YToTe6u1JKdon5eoX4CnK/+d4SRCPUZ9A5+CDGFPE5bQ1
+         7en08gtO/0APmPZL9qo+WtlKGj5ouqtIZRnwFtj+xfV7CRVk9LlSoDxuycgomfbBjHTO
+         jUgrCCy8d2MDklJ6Cb/XEEdqgKDpJU29lTafWJ3GS1s5DPBAiXD1/m4McUuzQPetWOOc
+         XeX12ZxXDOUXoxcAZPRzgc+u/ruszsAvLQkyQcj3xVKB6Io7A/G6byY2qQiIWHrQCx2A
+         p9kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=MUmHj/LFwOw941/kenFz/i5xXlBgFi4Hi0DQiphahvI=;
-        fh=KUoyUy8OixNNwxlS1kXqBb8veiO9z2uwbafb7O1En/M=;
-        b=sWomhLbdSR+tFQsCnubk430aUXkchb8T6mLQ9bPFXIVNzTXH5nUsIKr3ecH5z8Socs
-         z7ZFBNbqFgHod9G03GOxw+0BENT0DkZl/YvgZrPxUQhgj87XcgCHPsqbQCeIpehFRGSj
-         58sBvd/vB+0hqrSlMYRnuF9+7JvsHaE3v/fevXJiQxhZgCeRUFTmls/DqJX30Y4fTtac
-         YD5IlNabyUTEe1jUsEzM8SxRwRpl8Z3vjEnBdySfVYXEPPocJSqLDExiDbO6k3xFCvYj
-         e1JOSYRzoFOJmAInyoa0lCo1nEBjpgmtCum08SuRIEWClMimn7qkDT3WtgOdWhfmKqvI
-         /N2g==;
+        bh=xd4RtXYSQe4fX2yQzgQaQhaAGqt8/5t2s9pKA9e2Z/M=;
+        fh=UpVDfO1rDeb0quRz0uX2l601Rj5kn4Fix3tj7zN8r1E=;
+        b=kF6Mefdc1DH78sOnLDmt27KODUbBvN/cW+PN0frrnRYUNEaEa/PDziKJhVvcD26BTV
+         ciA/YlJvtXYm+QYR+eqmplwZPcriDZkc0bbSsoCTERCKj4ekU5wv8twiGOOHSj/2Q+R6
+         ZoM1veMGyGGCQtF7fkPaunqWIFipQn2D/5AMhvidyaw8qGo1M49QbdjYBBGC0N1wtEpT
+         4QCt4E3YDl4x9LdbmEFRrsavLFl57QnqkU+eZCIxmo1mp1weVd7C47CxXCz1S4mloG73
+         s2KG2iuiWnv4ZmCS7dRkDoqbZ8bTE0fAZDBwt0q2CA2wj67G55dmZGYtj8sFCttrA59U
+         +27w==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789313421; x=1789918221; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789314444; x=1789919244; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=MUmHj/LFwOw941/kenFz/i5xXlBgFi4Hi0DQiphahvI=;
-        b=sxBeHxwcYJZnauDyGs4G+wJeTExNt2znk2aa0D9SeqyB6QWN/P9OCBXnV+lGAV6VUt
-         2GOOIAUQxtnIk/8e4HZjGu5ZydTndQciLuyvL0FiOyWI7gDI2SUpuWDJNXgJe6rIfdWo
-         8tYxoNQZclHs+5mChholUzK1yKUzVIjlNONUYMvSotyj1o4WdAaPuNUdfe7xWCpWpC1Z
-         fBdDhSScik7JO1Wat4ounuDbOZTXwIFfQHCg2gKrfF0u9W28Rw0qsdpghlXgvba6N9z/
-         VXvpkXmpUIsiSSDqXCPxKJ8s8UrNfAvEUfxOtYk5TGV25hLGwJqI1KjPZ1Ibr7rNlN4k
-         k9Rw==
+        bh=xd4RtXYSQe4fX2yQzgQaQhaAGqt8/5t2s9pKA9e2Z/M=;
+        b=GQao12pBWJj5yV02h/hWeLD1RM4nG2jHYtiTAKgXq3mc7t5SVXc8G1cNXJ9BfvNK1G
+         lUH0HSbIak1kHn22z/2CBwBbQoZZExeYqs5ckO06cyLATQNssR3E08fiM6GQvtMfHm2H
+         B+5sh9rueSIYKHdctZRkfyedkAiYp4PFP7v34v4Uri9+d9TS+7lExh/VT409KOUe8l9v
+         yPAgr89qVQXQO+zOk3NrR+ezBcxjWQnP9KUFLi3R3DNarGQFFOwZPywJ5PWUegvU+zAr
+         sPIY8Mt6J4ljACadBSYeEfLIPNX9FQGJy2KVDoauIMLdUQxBNXHO1mWR7FJgAa/p2IjK
+         GvHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789313421; x=1789918221;
+        d=1e100.net; s=20251104; t=1789314444; x=1789919244;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=MUmHj/LFwOw941/kenFz/i5xXlBgFi4Hi0DQiphahvI=;
-        b=Z5GzunTg3t58ZqQXq1sIw7CeRA0WeOWP2f37cdMS5oFzvM2KrDIobDBHolLzRaZQR3
-         WmuQ7is7FWZPRmLNepRLrfGcPPUH7ij3XYnwoMPM1rhV/ExZp6SbDAi+t+7UDHRo01Q6
-         /WuCIkI1JICYrL8YkNzlxKW31T5Fz23mU0TphJizakXSzqF2GFdJbU5nQUuy6jB8u/6W
-         GBC7HO7BKvFCF21wH1Tv6WN52DT4nBzwPcQ9Re7QhAVH0bEKxjs/O0zeSA6QALZI0ezv
-         gw2wz3s/ee+MkggeluotHgO0pCIHuR3QZIzNyZ378+UsBEQS/2+XzoBh0gDZ0sh8eACA
-         ZNzA==
-X-Forwarded-Encrypted: i=1; AKwUvBydZWk0rcu+aagzDTBWQNrCNtaI49oB4GOxf2robB8RPqVQfmqi5SR+MazZaK19xxAuqDLcKMn7aRKdGk4IcOwadQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++nbh2bnyIFZjrJBUmjdMoXaYlX1P5VcyIcBf2LJXyemnn3iYQXW
-	cE4N81GaOmMrs3PQqLkSwOdUaosCIU5i1V0sJ9fHbyaPeW3EpqI5l+4KO4cbxKNxE6s3ylG/KjW
-	uI1fR5EDTob4DiGc2xeP1vqSSOG9R2ww=
-X-Gm-Gg: AYBFou10uAPAvHMKQ1Hsxs85QzAABCGq9nR8fMqTdQgj+ulgwQXZKhjNYbmZQqtIsEy
-	l7/Xv8r+dCtoieLSrAro4c2FtYh/KVcBYmzG6MggHKPP0eZUoX8WRQspD31MpLaasLGe/D7bFX2
-	/5JrImGC6/zG3YfxERfOZs5lgStIG58brE+Q4aEOJgzQAdGP89FvaIS9Ka2E2z8/AblwgUPawHk
-	7qjZSRpi1EOOFHrkuYTC2CamxeuPNO1ZLbdLJwrNcgXnn34CkjIsxujnD4PRVSuziDGJOnzete2
-	aRQNcbpLIgy2hQ0jnkEpmV3PTc/xdrHt+TLinoroqXOOwDvKT79oJCv9Wkw=
-X-Received: by 2002:a17:907:6d0c:b0:c26:1649:47a5 with SMTP id
- a640c23a62f3a-c29858afb4dmr388468266b.27.1789313421314; Sun, 13 Sep 2026
- 08:30:21 -0700 (PDT)
+        bh=xd4RtXYSQe4fX2yQzgQaQhaAGqt8/5t2s9pKA9e2Z/M=;
+        b=RqfKSCVY6etZvLsnsu6rEyYlAjBkSOLzi90O2LwBmONcVSlfiujGjCawelNLB/aR0Q
+         Py4bXzH+n1VhM8Eoutx6m09e9n9BW+tWsaKEkkyfmuZ17f0Sa/qwtR9kVLYiIKuPQPvR
+         V54uvYwrZ8dcOUS2c9hNK4sCpbnosSCNJUAaMmob39M8x5Avlg2SzPMQtm0PyJ5N1qnl
+         ZTZQ3i/jyOgBT0BES7wvJV1njs96hzMTyX/uXy6Eex65jGoVYnDl5pxTAda+iWMiPSPp
+         y51f8QrkWNiDOCQObJ9n5IpUVFGVe9XEee53iNFhVbhpLpBVjlF7d6BT+kbxwpAJWzPF
+         9+Sw==
+X-Forwarded-Encrypted: i=1; AKwUvByK8JccIkTHs8Cy3A+LhgqpZ43MxbROJyFGOoALEm83wdNoaqDYJQIbICnvhkKUNCrHGqPtDkv/OawKJ7dAzMaegg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nKo9H9Va4Fa3DPg2ff5Ic8vHCU1Qu1V/S2g4Ya//ZMl1MD/ilk
+	mMITfNd0bBeIxsJel4W7IiQkPKaeQw+Vy3c4D5+oqiDjLkKBBf9invmAzTyo+CnfZJeyOdv6Bzu
+	VAXcHdXzBxkd2xIB8ABe3lxX3vsA24ZY=
+X-Gm-Gg: AYBFou1lIr6HiLlDhvPzB6wH4Y4YuJWhvWUfVjrTqGRjhRdXXkSjeUFHE7Bt8jBfjRX
+	VMkratbTweixv7xrt881356kPIAO5f5psymwvfZBCGEQ/hh8qfLYBDRsvCG3BHicAEtKbo+6b/F
+	LZSW6B/x53ZNNecS95fLTrW79FTXuyvaHeSrOaT3Yl2UJvpGj8zhpIsh/PtrcTSzqrYegUhbV3Z
+	4K6iWDQJrHIudN10OoLe8nwGSFbukO9L7EvkPPvJcBahNsjMBmmA83jIdWhHZN7SRHYeWyfAW5F
+	BvKDtrt+ne3Zfd5a2xmw8ZksUODlD0vidrTwFaI6VWzAU9qoFbipgsZUD36gO8ZP6jpI
+X-Received: by 2002:a17:907:b049:20b0:c26:2f5e:29c7 with SMTP id
+ a640c23a62f3a-c29856af6e3mr248244566b.7.1789314443704; Sun, 13 Sep 2026
+ 08:47:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260907153713.2572547-6-coiaprant@gmail.com> <20260912201324.126973-1-kuba@kernel.org>
-In-Reply-To: <20260912201324.126973-1-kuba@kernel.org>
+References: <20260907153713.2572547-7-coiaprant@gmail.com> <20260912201325.127009-1-kuba@kernel.org>
+In-Reply-To: <20260912201325.127009-1-kuba@kernel.org>
 From: Coia Prant <coiaprant@gmail.com>
-Date: Sun, 13 Sep 2026 23:30:09 +0800
-X-Gm-Features: AcwNN1WBFJod78ZuorP_y9LCkHOcoGiWiUu5Cum7Oj84vat35RmRCRAX8YYOUss
-Message-ID: <CALj3r0hevQ2Y9ttORKOa-oOFmyi7zDwNdLETRG0endxhCoFibA@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 04/10] dt-bindings: net: pcs: add
- rockchip,rk3568-xpcs support
+Date: Sun, 13 Sep 2026 23:47:12 +0800
+X-Gm-Features: AcwNN1UukBh9R-kSgJT1DSG6HaucuFjaf0b71SnVjdkjmimZTMpjLzcMh3JEWAU
+Message-ID: <CALj3r0h7ZQKPvMZbjpy0Cc=u0LvS+WAXUFNcsi+gWY9OxL+jfg@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 05/10] arm64: dts: rockchip: rk3568: add XPCS
+ and fixed-clock nodes
 To: Jakub Kicinski <kuba@kernel.org>
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
 	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
@@ -111,261 +111,122 @@ Jakub Kicinski <kuba@kernel.org> =E4=BA=8E2026=E5=B9=B49=E6=9C=8813=E6=97=
 > This is an AI-generated review of your patch. The human sending this
 > email has considered the AI review valid, or at least plausible.
 > ---
-> dt-bindings: net: pcs: add rockchip,rk3568-xpcs support
+> arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes
 >
-> This adds a new standalone schema describing the Synopsys DesignWare XPCS
-> as integrated on the Rockchip RK3568, with a CSR window, csr/eee clocks, =
-a
-> Naneng Combo SerDes phy, a power domain and four MII child ports.  A few
-> questions about the property set and the file naming below.
+> This adds the RK3568 Synopsys DesignWare XPCS node (with four pcs-mii
+> sub-nodes) plus two 125 MHz fixed-clock nodes used as GMAC reference
+> clocks.  The XPCS node and its sub-nodes are disabled by default and are
+> meant to be completed and enabled at the board level.
 >
-> > diff --git a/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.=
-yaml b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
-> > new file mode 100644
-> > index 0000000000000..0852d0bcb66a2
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
-> > @@ -0,0 +1,110 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/pcs/rockchip-dwxpcs.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> A couple of questions about the new nodes below.
 >
-> [Severity: Low]
->
-> This isn't a bug, but should the file be named after the documented
-> compatible, i.e. rockchip,rk3568-xpcs.yaml?  The other schemas in
-> Documentation/devicetree/bindings/net/pcs/ all use that form:
-> snps,dw-xpcs.yaml, fsl,lynx-pcs.yaml, mediatek,sgmiisys.yaml,
-> renesas,rzn1-miic.yaml.
->
-> A rename would also have to update the $id line above, since it encodes t=
-he
-> same name.
->
-> Related: the example at the bottom uses pcs@fda00000 and pcs-mii@0, while
-> the sibling PCS binding uses the generic ethernet-pcs@... node name, and =
-no
-> $nodename constraint is added here.  The SoC dtsi added later in the seri=
-es
-> copies the pcs@/pcs-mii@ names verbatim.
-
-I chose rockchip-dwxpcs.yaml intentionally, in case Rockchip integrates
-the same XPCS IP into other SoCs in the future. The filename is more
-generic and can cover multiple compatible strings if needed.
-
-However, I understand the convention is to name the file after the
-compatible string (like snps,dw-xpcs.yaml and fsl,lynx-pcs.yaml). If
-you prefer rockchip,rk3568-xpcs.yaml, I will rename it.
-
-> > +properties:
-> > +  compatible:
-> > +    const: rockchip,rk3568-xpcs
->
-> [Severity: Low]
->
-> This isn't a bug, but would a set of SoC-specific if/then blocks in
-> Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml be preferred
-> over a second schema for the same IP?
->
-> To be clear, a snps,dw-xpcs fallback compatible or a $ref to that schema
-> would be wrong here.  The glue driver added later in the series builds CS=
-R
-> addresses with only a 3-bit MMD field:
->
->         return FIELD_PREP(0x70000, dev) | FIELD_PREP(0xffff, reg);
->
-> and remaps the vendor MMDs in xpcs_rk_mdio_read_remapping() /
-> xpcs_rk_mdio_write_remapping(), so the generic direct mapping described i=
-n
-> snps,dw-xpcs.yaml would compute different offsets.
->
-> So the only question is where the description should live, not whether th=
-e
-> compatible should be shared.
-
-As you noted, a $ref to snps,dw-xpcs.yaml would be wrong because the
-Rockchip glue uses a different address mapping (3-bit MMD field with
-remapping). A separate schema is the right choice.
-
-> [Severity: Low]
->
-> Should the sbd_intr_o output be described as an optional interrupts
-> property?  With additionalProperties: false at the end of the file, a
-> conforming device tree cannot carry it, although adding it later stays
-> backward compatible.
->
-> The single unnamed 2 MiB window itself does match the driver:
-> xpcs_rk_init_res() uses platform_get_resource(pdev, IORESOURCE_MEM, 0) an=
-d
-> requires resource_size(res) >=3D SZ_2M, and the largest computed offset
-> 0x7FFFF << 2 =3D 0x1FFFFC still falls inside 0x200000, so reg-names and
-> reg-io-width are not needed.
-
-These are optional and can be added later without breaking ABI. I'll
-leave them out for now, since the mainline XPCS driver doesn't use them.
-
-> > +
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 0
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: APB3 bus interface clock (clk_csr_i), required fo=
-r register access
-> > +      - description: EEE clock (clk_eee_i), required for Energy Effici=
-ent Ethernet operation
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: csr
-> > +      - const: eee
-> > +
-> > +  phys:
-> > +    maxItems: 1
-> > +
-> > +  phy-names:
-> > +    const: serdes
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
->
-> [Severity: Low]
->
-> Should resets/reset-names be described here too?  The RK3568 CRU exposes
-> four dedicated reset lines for this block in
-> include/dt-bindings/clock/rk3568-cru.h:
->
->         #define SRST_XPCS               150
->         #define SRST_XPCS_TX_DIV10      151
->         #define SRST_XPCS_RX_DIV10      152
->         #define SRST_XPCS_XGXS_RX       153
->
-> Since the schema ends with additionalProperties: false, a conforming devi=
-ce
-> tree cannot express them at all, and the glue driver added later in the
-> series never requests a reset control, so it depends on those resets alre=
-ady
-> being de-asserted.
->
-> Peer blocks in the same island do describe theirs, e.g. combphy0 with
-> resets =3D <&cru SRST_PIPEPHY0> and gmac0 with resets =3D <&cru SRST_A_GM=
-AC0>.
->
-> Note the XPCS core does provide a register-level reset via xpcs_soft_rese=
-t()
-> in drivers/net/pcs/pcs-xpcs.c, so a state-machine restart is possible
-> without the CRU resets, and an optional resets property can be added late=
-r
-> without breaking the ABI.
-
-These are optional and can be added later without breaking ABI. I'll
-leave them out for now, since the mainline XPCS driver doesn't use them.
-
-> > +patternProperties:
-> > +  "^pcs-mii@[0-3]$":
-> > +    type: object
-> > +    description:
-> > +      One of the four MII ports of the XPCS. The port is linked to an
-> > +      Ethernet MAC controller via the pcs-handle property in the MAC's
-> > +      device tree node.
-> > +
-> > +    properties:
-> > +      reg:
-> > +        description: MII port number.
-> > +        enum: [0, 1, 2, 3]
->
-> [Severity: Low]
->
-> This isn't a bug, but is pcs-mii@N the intended name for these per-port
-> children rather than the generic ethernet-pcs@N?
->
-> Resolving a MAC pcs-handle that points at one of these children does work
-> with the rest of the series: xpcs_rk_create() in
-> drivers/net/pcs/pcs-xpcs-rk.c reads the child reg, walks up with
-> of_get_parent() and calls xpcs_create_mdiodev(pxpcs->bus, port), and
-> rk_pcs_init() in drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c does
-> of_parse_phandle(np, "pcs-handle", 0).  So the open point is just the nod=
-e
-> naming.
-
-Yes, I will use ethernet-pcs@N
-
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> > +    additionalProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#address-cells"
-> > +  - "#size-cells"
-> > +  - clocks
-> > +  - clock-names
-> > +  - phys
-> > +  - phy-names
-> > +  - power-domains
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot=
+/dts/rockchip/rk3568.dtsi
+> > index 3bc653f027f1f..989e164c0eb39 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> > @@ -110,6 +110,51 @@ sata0: sata@fc000000 {
+> >               status =3D "disabled";
+> >       };
+> >
+> > +     xpcs: pcs@fda00000 {
+> > +             compatible =3D "rockchip,rk3568-xpcs";
+> > +             #address-cells =3D <1>;
+> > +             #size-cells =3D <0>;
+> > +             reg =3D <0x0 0xfda00000 0x0 0x200000>;
+> > +             clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
+> > +             clock-names =3D "csr", "eee";
+> > +             power-domains =3D <&power RK3568_PD_PIPE>;
+> > +             status =3D "disabled";
 >
 > [Severity: Medium]
+> Does this node validate against the binding added earlier in the same
+> series?  Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
+> lists phys and phy-names unconditionally:
 >
-> Does requiring phys and phy-names here make dtbs_check fail for the RK356=
-8
-> boards?  The SoC node added later in the same series omits both, because =
-the
-> SerDes selection is board specific:
+> required:
+>   - compatible
+>   - reg
+>   - "#address-cells"
+>   - "#size-cells"
+>   - clocks
+>   - clock-names
+>   - phys
+>   - phy-names
+>   - power-domains
 >
-> arch/arm64/boot/dts/rockchip/rk3568.dtsi:
->         xpcs: pcs@fda00000 {
->                 compatible =3D "rockchip,rk3568-xpcs";
->                 #address-cells =3D <1>;
->                 #size-cells =3D <0>;
->                 reg =3D <0x0 0xfda00000 0x0 0x200000>;
->                 clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
->                 clock-names =3D "csr", "eee";
->                 power-domains =3D <&power RK3568_PD_PIPE>;
->                 status =3D "disabled";
+> The node here supplies neither, and dt-validate does not skip nodes with
+> status =3D "disabled", so dtbs_check should report "'phys' is a required
+> property" and "'phy-names' is a required property" for every rk3568 dtb
+> that includes this dtsi.
 >
-> and only the board fills them in:
+> At the tip of the series only rk3568-photonicat.dts fills them in:
 >
-> arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts:
->         &xpcs {
->                 status =3D "okay";
->                 phys =3D <&combphy2 PHY_TYPE_SGMII>;
->                 phy-names =3D "serdes";
->         };
+> &xpcs {
+>         status =3D "okay";
+>         phys =3D <&combphy2 PHY_TYPE_SGMII>;
+>         phy-names =3D "serdes";
+> };
 >
-> dtschema validates nodes irrespective of status =3D "disabled", so wouldn=
-'t
-> every rk3568*.dtb apart from the Photonicat report "'phys', 'phy-names' a=
-re
-> required properties"?
+> so rk3568-evb, rk3568-rock-3a, rk3568-roc-pc, rk3568-radxa-cm3j,
+> rk3568-wolfvision-pf5 and friends would still be missing them.
 >
-> Should phys/phy-names be dropped from required (or made conditional), or
-> should the SoC dtsi carry them instead?
+> If which combphy carries SGMII is genuinely a board-level choice, should
+> phys/phy-names be moved out of the unconditional required: list in the
+> binding instead, or should the dtsi provide a default?
 
-This is not actually a problem. dtbs_check and CHECK_DTBS only validate
-required properties for enabled nodes. As confirmed by Rob Herring:
-
-    "the dtbs_check only checks required properties from yaml if the
-     node is enabled. Yes, that is exactly how it works."
-
-The xpcs node in rk3568.dtsi is marked status =3D "disabled", so boards
-that include rk3568.dtsi without enabling XPCS will not trigger any
-validation warnings. Only boards that enable it need to provide phys
-and phy-names, and they do so at the board level (as Photonicat does).
-
-This is also the standard pattern for SoC nodes with board-specific
-connections: keep the SoC node disabled, and let the board dts enable
-it with all required properties.
+As I replied in the earlier patch, dtbs_check and CHECK_DTBS only
+validate required properties for enabled nodes, as confirmed by Rob
+Herring. The xpcs node in rk3568.dtsi is status =3D "disabled", so
+boards that include rk3568.dtsi without enabling XPCS will not trigger
+any validation warnings. Only boards that enable it need to provide
+phys and phy-names, and they do so at the board level.
 
 The phys/phy-names properties cannot be moved into rk3568.dtsi anyway,
 because the SerDes connection is board-specific: some boards use
 combphy1 for SGMII, others use combphy2 (like Photonicat).
 
-Thanks,
+> > +     xpcs_gmac0_clk: xpcs-gmac0-clock {
+> > +             compatible =3D "fixed-clock";
+> > +             clock-frequency =3D <125000000>;
+> > +             clock-output-names =3D "clk_gmac0_xpcs_mii";
+> > +             #clock-cells =3D <0>;
+> > +     };
+> > +
+> > +     xpcs_gmac1_clk: xpcs-gmac1-clock {
+> > +             compatible =3D "fixed-clock";
+> > +             clock-frequency =3D <125000000>;
+> > +             clock-output-names =3D "clk_gmac1_xpcs_mii";
+> > +             #clock-cells =3D <0>;
+> > +     };
+>
+> [Severity: Low]
+> These two node names take the deprecated branch of the fixed-clock
+> $nodename schema.  Documentation/devicetree/bindings/clock/fixed-clock.ya=
+ml
+> has:
+>
+>   $nodename:
+>     anyOf:
+>       - description:
+>           Preferred name is 'clock-<freq>' with <freq> being the output
+>           frequency as defined in the 'clock-frequency' property.
+>         pattern: "^clock-([0-9]+|[a-z0-9-]+)$"
+>       - description: Any name allowed
+>         deprecated: true
+>
+> xpcs-gmac0-clock and xpcs-gmac1-clock do not match the preferred
+> pattern, so they land on the "Any name allowed" branch.  Newer Rockchip
+> dtsi files use the preferred form already, for example rk3528.dtsi with
+> xin24m: clock-xin24m and gmac0_clk: clock-gmac50m.
+>
+> Could these be named clock-xpcs-gmac0 and clock-xpcs-gmac1?  The labels
+> xpcs_gmac0_clk / xpcs_gmac1_clk and all references would stay the same.
+
+You're right, xpcs-gmac0-clock and xpcs-gmac1-clock do not match the
+preferred clock-<freq> pattern in fixed-clock.yaml. I'll rename them to
+clock-xpcs-gmac0 and clock-xpcs-gmac1. The labels xpcs_gmac0_clk and
+xpcs_gmac1_clk will be match clock-output-names.
+
+Best,
+Coia
