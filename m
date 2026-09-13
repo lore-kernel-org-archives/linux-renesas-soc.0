@@ -1,63 +1,63 @@
 Received: from mail-pj2-f5.google.com (mail-pj2-f5.google.com [74.125.227.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894E5316905
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 19:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A2E3FC5D0
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 19:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789326072; cv=none; b=NGAu/J7h9u8U2HJdlX8i4ccnUYONfDN1KhcVObJY7lSR/l4pdNWIc/Hws9hOEFKkRZCC+R3ug0WCqmBG3NNqx7EbRAED/Fdf73o6su0ZPvOzyv/r1ISO7yssGAuNQWJi5cHKr7ieaF7cpdTyuWc6QCW7rAF4/5oH4k1QGOIcy+w=
+	t=1789326076; cv=none; b=ZnA/LgDG1eg6DBHqGN6pLzJfcT4C+TNfq+wAekAAd2mwFcapTsMEXu7o7cRtXxA3iF/lVYjrxGdLQwC+1KQlAoKaQFEQ0Np8wWUbnLwWRXCG0OyEhbbF1qFxoOrHjYPu22NBl/t6eQvRU4o7r4veAb8/Y7wUTSnK2IJvycRYwmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789326072; c=relaxed/simple;
-	bh=/e/kk+DU54cove6v/ST/9cisBgxXeCiXSV3LGHMARr0=;
+	s=arc-20240116; t=1789326076; c=relaxed/simple;
+	bh=RGeiUbt1ILnRnxxwfPtaUyN72PdSbFuLoFXljuwFvyQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NsNaegO9zH2QOutABT6vq2r8XSUf51K0fxMGnZbQa0V/PDgUZF6sNHm0eoELkpv4CqUSUAcHMnQmTg1PacKuff0qes9FaML+kMAL5bMzeShlBHbgjWEwi7hi19whxM07ORzn6fm7B3pxySJTf0mFO+A/teD7nHtoOsiUOVAkdw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bD6QBUt4; arc=none smtp.client-ip=74.125.227.133
+	 MIME-Version; b=B9i+g9eKRC+QWwEq4mj+bJnjHU10rKKmEF6+VtS1N4a4ddD+L2OyWsf0ynY/fAxP1N5BM48mqy8L9SG9WkIoZzv4aYJ4u817dtiRA3EKxgH7e7RhG19h7zap45YlRw/hWvyKIhIgOUWgbP/xFcjwhmqRQJF377UhKhuwNiwhWss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rdvuoUsn; arc=none smtp.client-ip=74.125.227.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bD6QBUt4"
-Received: by mail-pj2-f5.google.com with SMTP id d9443c01a7336-2d6f9dddd99so12057365ad.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 12:01:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdvuoUsn"
+Received: by mail-pj2-f5.google.com with SMTP id d9443c01a7336-2d942de6574so15901815ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 12:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789326063; x=1789930863; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789326072; x=1789930872; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=+DyjQ9loM0wDm9rGROTMfggQGQnOkAeWemGVcdToBZo=;
-        b=bD6QBUt4W8je9BxP6uvPucl22hlWgXvX/LM0np7zKGKTZtskuwXL4hLexHaOyHnkG8
-         qOLli58O97ox/9Byue17urxW0dRILVdyUu8qOhxnWPREwH/x6SOwBofl0v3+BgkkDkMS
-         L94wBaS3rESUe1gl4x+MBDwX13wGOa8uslwbpqQmy4gRluAioPC79UuK239x970zNO6d
-         7XC1vgqP0CraJztw5yHPmhwx7fZpWlfeh/R3qHBWHo550sZE1xVsRS8M3ZkeUOHcpQaT
-         4NpIkCtNIknL6qpzO4yMcIX5hcdSofvCVhCJeMDP8dm1qLR6B7gIVxDCr31+kk7VkSFa
-         pPSQ==
+        bh=IUBpSQaA91JU4u4hSD0CHnRFwoDOkNzew04B1AEq+dc=;
+        b=rdvuoUsnUw3igx7ZbMagUUA9L33bfl7eM56BNx2tnreQbYbT3XZy8glHxpR5NfKH22
+         no09nUPoAx2OvveW79xdpwDfYR+05riW5YoWm71XTLFHLuYhKIP8U7SIfdi6K/C1m21s
+         djc2dtoJT8fC1ty8KqmJkHfa/QVS0clzyuPyLqbVbhH/e32LKK+I9bfulBOCjlCGwr4y
+         kj2LBGl9NTBqwFPwKbDB2I4DHD0guy59gFt/v6ph56GeV4yNWAshH9CVh22auotuk4oy
+         musnjj8cfO3GCzMS3n9ivfZbJSJqQLHsvtHP5sthKshndLP1ju+Dgcw4zNUr3trxtB1s
+         r/Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789326063; x=1789930863;
+        d=1e100.net; s=20251104; t=1789326072; x=1789930872;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+DyjQ9loM0wDm9rGROTMfggQGQnOkAeWemGVcdToBZo=;
-        b=UDvFAL2ItaDWCgMWTFQMVfg8nuEr1iUKiyXi2j3vwFvlXbS8H7mBezFKXOghW3bwZR
-         3s56iA7KHMK9vxNQFOf/BI5ddD0Hp4K2sN8DLrGyjiDvT3pGlt7BmAMF9oajp7atYgMg
-         1TYcRik9Q3/NuAjI+k/1KMHd+dZfN55XOgGR8r1JR6cgl6Nfs+Wb2mAzqNao2SE+W5l7
-         v0hHBFd60C6VwUNZoh3Hy6sGpXcEx2TeR+YOzVTK85uPoSguFz+uWIUnsBZ1KATZZ3q5
-         42hd0poyuFNqYiqjjW3b8Jau3VYb+kfZSn7E5ZgT1mMwJu66hDjafI8TDlf4U6y7OLid
-         qzvg==
-X-Forwarded-Encrypted: i=1; AKwUvBwndzZol382z7OTloD/Ppq0uirReiafRS6Y32vQLmJbDh4Fwek64gLucl059k4piGt1UwG7j8QalhlIy/lYm+vWww==@vger.kernel.org
-X-Gm-Message-State: AFuF++lH6HVf2zTcDdG6qbm3mfoFyptbSh7hh1jhWkKIgouOaqBEB/X8
-	a6RTcafc6ehTyICaMUI4SnWjPjfzjBXf5pLul+Pz2UEpZEMhpMKXL/W8
-X-Gm-Gg: AYBFou0LHqr8p1iV/VjYktsRWa8k/KOG0qr5pIfzRt6MYBAhqNPF8zU1GFLpfHJsNKn
-	1JiExkTrlO3dt5ag4rb/7BLdK6V+Y/QUVkQC6ajtSm7KvvZLL00J8W/zjDMsJtbPaFSabXSTcdc
-	kO2nLFiZDL26071uo178MdursE5d2x9h4MH130En6M/p389mjCCfmX3xCEM0VqIc4voJ2yDrt1z
-	1HCOUQ/NnyZCpoPIFgxOu6xUFf0GA8vzBNWBBBuvmeDdzwFXomF9mVshQPVNo4pGLxqxrVetkSi
-	8Yk2ukoswzXfoef3YmY1W6qYhRwfw/SXsjfEe5R9bDQuIHagcaKGWdBD4bqn0aFAOCkXz+kygBG
-	5xUmz60C55WLO5W1jq9FK2ExcEmY/cI/WFobSS2oQZ14b8BDY6qiTRpMCtyxHRwsb0IUlB/B0g3
-	R60QauiXj2RytvLzB5VMWrn/3rYHtzsnPfJIKsFTpVOF1JA+ypzDvWtxv0UvFX0S83VX4T9w==
-X-Received: by 2002:a17:902:e88a:b0:2d5:2f49:b3f4 with SMTP id d9443c01a7336-2dd2a1d5275mr237270575ad.2.1789326062483;
-        Sun, 13 Sep 2026 12:01:02 -0700 (PDT)
+        bh=IUBpSQaA91JU4u4hSD0CHnRFwoDOkNzew04B1AEq+dc=;
+        b=EOzDsomNUjY2AimUAmzf6/e+RqjHuHY3OXpnd1OB/D38uoNhoEgxL4yBjHWk3TWsAz
+         stiWgQrw+IHLc/6z6x1Dn5S1OYAXxGdFQpae+mgVz2CwbxDnkjzgD/OZyZ8V8wbsegV+
+         /MC0P25D5L5M/O3lXcECYTGmSBxJb7jbzb5DxvuRgVZ5M+fQbf+RYDUXXO+xV44xDqG4
+         XVyOjd59irDRokKb4lac47guOUL3b8THGddGHxZ1TLIAH3mEEGQpglL3K9SZoSu0R6f/
+         Wf3ApFKBRCOkqm8DWaIAyo6pLcYFV/zfi8oGr1tIOjVZec2/MAxvwNTxWsV6gWez4CY1
+         7+IA==
+X-Forwarded-Encrypted: i=1; AKwUvBx16H3vyi1L+cne5Wa/bmBI8sfU0ccg6FwY6/JFlD1zR9XMG5691jGFeJ+ut1FCowF8LC5c2+KlJHZr/+Mr+Q9t3Q==@vger.kernel.org
+X-Gm-Message-State: AFuF++l7Uqu6oc0IoY6ZWomTW3hRzKP4KP2fkK9/RUVehmDpoQheZuwe
+	I4XocNGOAral1QmcrYTeP244TEQNoMZd2adB4F+2QFo8jzqs/+EchfsP
+X-Gm-Gg: AYBFou0Lfwaite4dhENhYaur4/s7PL3wyJ9Rtoo7q5WDYKy0eE9M6ZfzW+s258rb+Yv
+	M28Sa2O7AzVJSNVFyaSbSsa8I5dfJKrKu2Y8utXOOiZgPPPfjdvTR6Vql/gX29daATxne2/nQ4t
+	Wv2oH38mTCcfdBbrFi3jxlTlleKO0NZtsi3x/3BbR0QxS1Wjl/c9sQXTv5Lrdx5qM1F1TIALOfZ
+	02Wg9l358/qN1sT/wNHIoBFmAA92dxRNZ0MOpDTJxxI+yh6EsEJxQyInLh4wx/Lgu8jR4NvL3XH
+	54gTnk5almUw3L4+Fi1PGSIx73pMv2u1qU1xDrhMLvOnIfEoTwJySzVOHTkLPZIjvc5e5pZg49v
+	9nODIna+klxzCzFK4X/sLrG0AswVpESEqFYg5SD4DfIXFAYheJ34undgsWccxGr1up8Ws6P00Ub
+	GDNx0TmyCVCXXarLIJ+bHZ4VXuWW8jKQ8l0GJvyBZXecSeg89ROb57zL+6oGrVXta2c7cRqw==
+X-Received: by 2002:a17:903:298f:b0:2d9:43f5:b462 with SMTP id d9443c01a7336-2dd2a1ce8d4mr275603645ad.5.1789326072035;
+        Sun, 13 Sep 2026 12:01:12 -0700 (PDT)
 Received: from server.lan ([168.138.199.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2dd2cca6b7bsm36808655ad.3.2026.09.13.12.00.53
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2dd2cca6b7bsm36808655ad.3.2026.09.13.12.01.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Sep 2026 12:01:00 -0700 (PDT)
+        Sun, 13 Sep 2026 12:01:11 -0700 (PDT)
 From: Coia Prant <coiaprant@gmail.com>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -88,9 +88,9 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	linux-phy@lists.infradead.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v5 09/11] net: stmmac: dwmac-rk: add SGMII support for RK3568
-Date: Mon, 14 Sep 2026 02:58:44 +0800
-Message-ID: <20260913185849.907479-10-coiaprant@gmail.com>
+Subject: [PATCH net-next v5 10/11] arm64: dts: rockchip: rk3568-photonicat: enable SGMII LAN port
+Date: Mon, 14 Sep 2026 02:58:45 +0800
+Message-ID: <20260913185849.907479-11-coiaprant@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260913185849.907479-1-coiaprant@gmail.com>
 References: <20260913185849.907479-1-coiaprant@gmail.com>
@@ -102,351 +102,143 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RK3568 SoC integrates a Synopsys DesignWare XPCS that can be
-connected to GMAC0 or GMAC1 in SGMII mode.  Add the necessary glue
-logic to support this configuration.
+The Ariaboard Photonicat has a Motorcomm YT8521SC Gigabit Ethernet PHY
+connected to GMAC0 via XPCS SGMII.  Enable the necessary nodes to make
+this port functional.
 
-The current dwmac-rk driver does not support SGMII mode.  SGMII
-requires a PCS to handle auto-negotiation and link state reporting,
-but the existing driver only supports RGMII and RMII.
+Add rockchip,sgmii-mac-sel = <0> to the already enabled combphy2,
+to route the SGMII interface to GMAC0.
 
-Add a set_to_sgmii() callback to configure the GMAC GRF register for
-SGMII mode (bit 7 set, interface selection bits 4:6 ignored when set).
-Also add a set_to_rmii() callback for rk3568 to explicitly clear bit 7,
-since the new SGMII path leaves it set and the RMII branch previously
-relied on the SoC reset value.
+Enable the xpcs node and its port 0 sub-node, referencing combphy2
+as the SerDes PHY.
 
-Provide pcs_init/pcs_exit callbacks to create/destroy the XPCS via
-xpcs_rk_create() from the Rockchip XPCS platform driver, and a
-select_pcs callback to return the XPCS to phylink.
+Add the mdio0 node with the YT8521SC PHY at address 3, including its
+reset GPIO and LED configuration.  Also add LED configuration for the
+existing RGMII PHY on mdio1 for consistency.
 
-Reorder rk_gmac_powerup() so that gmac_clk_enable() is called before
-the SGMII check.  The SGMII path skips rk_get_phy_intf_sel(), so the
-clock must be enabled earlier to cover all register accesses in that
-path.  While at it, unify the error unwinding into a single
-clk_disable label and add error handling for the default (unhandled
-interface) case.
-
-SGMII In-band vs Out-of-band
-============================
-On RK3568, the MAC clock is fixed at 125 MHz and cannot be dynamically
-changed by the stmmac core's set_clk_tx_rate callback.  In-band mode
-works because the PCS handles rate adaptation internally.  Out-of-band
-mode does not work because the MAC would need to change the clock rate
-to 125/12.5/1.25 MHz for 1000/100/10 Mbps respectively, and the clock
-is fixed.
-
-Enable default_an_inband for SGMII and disable the generic stmmac
-set_clk_tx_rate callback.  This forces phylink to use in-band mode,
-where the PCS is responsible for speed/duplex negotiation.
-
-Note that default_an_inband can be overridden by a fixed-link node,
-and phylink may also fall back to out-of-band if the PHY does not
-support in-band signalling.  Out-of-band SGMII is not supported by
-this driver: the MAC clock would stay at 125 MHz for 10/100 Mbps,
-giving working TX but failing RX.  Boards must use in-band mode
-(managed = "in-band-status" or an in-band capable PHY).
-
-Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TRM%20Part1%20V1.1-20210301.pdf (Page 386)
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: Coia Prant <coiaprant@gmail.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 134 +++++++++++++++---
- 2 files changed, 115 insertions(+), 20 deletions(-)
+ .../boot/dts/rockchip/rk3568-photonicat.dts   | 74 ++++++++++++++++++-
+ 1 file changed, 72 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index e3dd5adda5aca..5088acc06982e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -170,6 +170,7 @@ config DWMAC_ROCKCHIP
- 	default ARCH_ROCKCHIP
- 	depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
- 	select MFD_SYSCON
-+	select PCS_XPCS_ROCKCHIP
- 	help
- 	  Support for Ethernet controller on Rockchip RK3288 SoC.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+index 58c1052ba8ef3..fdaa4a2a4328b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+@@ -3,6 +3,7 @@
+ /dts-v1/;
  
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 8d7042e689261..5d501ed8d1429 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -20,6 +20,7 @@
- #include <linux/delay.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <linux/pcs/pcs-xpcs-rk.h>
- #include <linux/pm_runtime.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
+ #include <dt-bindings/soc/rockchip,vop2.h>
+ #include "rk3568.dtsi"
+@@ -241,6 +242,7 @@ &combphy1 {
+ };
  
- #include "stmmac_platform.h"
-@@ -47,6 +48,7 @@ struct rk_gmac_ops {
- 	void (*set_to_rgmii)(struct rk_priv_data *bsp_priv,
- 			     int tx_delay, int rx_delay);
- 	void (*set_to_rmii)(struct rk_priv_data *bsp_priv);
-+	void (*set_to_sgmii)(struct rk_priv_data *bsp_priv);
- 	int (*set_speed)(struct rk_priv_data *bsp_priv,
- 			 phy_interface_t interface, int speed);
- 	void (*integrated_phy_powerup)(struct rk_priv_data *bsp_priv);
-@@ -63,6 +65,7 @@ struct rk_gmac_ops {
- 	bool clock_grf_reg_in_php;
- 	bool supports_rgmii;
- 	bool supports_rmii;
-+	bool supports_sgmii;
- 	bool php_grf_required;
- 	bool regs_valid;
- 	u32 regs[];
-@@ -98,6 +101,7 @@ struct rk_priv_data {
- 	bool integrated_phy;
- 	bool supports_rgmii;
- 	bool supports_rmii;
-+	bool supports_sgmii;
+ &combphy2 {
++	rockchip,sgmii-mac-sel = <0>;
+ 	status = "okay";
+ };
  
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-@@ -809,6 +813,8 @@ static const struct rk_gmac_ops rk3528_ops = {
- #define RK3568_GRF_GMAC1_CON1		0x038c
+@@ -260,9 +262,18 @@ &cpu3 {
+ 	cpu-supply = <&vdd_cpu>;
+ };
  
- /* RK3568_GRF_GMAC0_CON1 && RK3568_GRF_GMAC1_CON1 */
-+#define RK3568_GMAC_MODE_RMII_RGMII		GRF_CLR_BIT(7)
-+#define RK3568_GMAC_MODE_SGMII_QSGMII		GRF_BIT(7)
- #define RK3568_GMAC_FLOW_CTRL			GRF_BIT(3)
- #define RK3568_GMAC_FLOW_CTRL_CLR		GRF_CLR_BIT(3)
- #define RK3568_GMAC_RXCLK_DLY_ENABLE		GRF_BIT(1)
-@@ -836,6 +842,17 @@ static int rk3568_init(struct rk_priv_data *bsp_priv)
- 	}
- }
+-/* Motorcomm YT8521SC LAN port (require SGMII) */
++/* Motorcomm YT8521SC LAN port */
+ &gmac0 {
+-	status = "disabled";
++	assigned-clocks = <&cru SCLK_GMAC0_RX_TX>;
++	assigned-clock-parents = <&clk_gmac0_xpcs_mii>;
++	managed = "in-band-status";
++	pcs-handle = <&xpcs_mii0>;
++	phy-handle = <&sgmii_phy>;
++	phy-mode = "sgmii";
++	phy-supply = <&vcc_3v3>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&gmac0_miim>;
++	status = "okay";
+ };
  
-+static void rk3568_set_to_rmii(struct rk_priv_data *bsp_priv)
-+{
-+	u32 con1;
+ /* Motorcomm YT8521SC WAN port */
+@@ -341,6 +352,36 @@ &i2s0_8ch {
+ 	status = "okay";
+ };
+ 
++&mdio0 {
++	sgmii_phy: ethernet-phy@3 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0x3>;
++		max-speed = <1000>;
++		reset-assert-us = <20000>;
++		reset-deassert-us = <100000>;
++		reset-gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
 +
-+	con1 = (bsp_priv->id == 1) ? RK3568_GRF_GMAC1_CON1 :
-+				     RK3568_GRF_GMAC0_CON1;
++		leds {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+	regmap_write(bsp_priv->grf, con1,
-+		     RK3568_GMAC_MODE_RMII_RGMII);
-+}
++			led@1 {
++				reg = <1>;
++				color = <LED_COLOR_ID_AMBER>;
++				function = LED_FUNCTION_LAN;
++				default-state = "keep";
++			};
 +
- static void rk3568_set_to_rgmii(struct rk_priv_data *bsp_priv,
- 				int tx_delay, int rx_delay)
- {
-@@ -851,19 +868,31 @@ static void rk3568_set_to_rgmii(struct rk_priv_data *bsp_priv,
- 		     RK3568_GMAC_CLK_TX_DL_CFG(tx_delay));
- 
- 	regmap_write(bsp_priv->grf, con1,
-+		     RK3568_GMAC_MODE_RMII_RGMII |
- 		     RK3568_GMAC_RXCLK_DLY_ENABLE |
- 		     RK3568_GMAC_TXCLK_DLY_ENABLE);
- }
- 
-+static void rk3568_set_to_sgmii(struct rk_priv_data *bsp_priv)
-+{
-+	u32 con1;
++			led@2 {
++				reg = <2>;
++				color = <LED_COLOR_ID_GREEN>;
++				function = LED_FUNCTION_LAN;
++				default-state = "keep";
++			};
++		};
++	};
++};
 +
-+	con1 = (bsp_priv->id == 1) ? RK3568_GRF_GMAC1_CON1 :
-+				     RK3568_GRF_GMAC0_CON1;
+ &mdio1 {
+ 	rgmii_phy: ethernet-phy@3 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+@@ -350,6 +391,25 @@ rgmii_phy: ethernet-phy@3 {
+ 		reset-gpios = <&gpio4 RK_PC0 GPIO_ACTIVE_LOW>;
+ 		rx-internal-delay-ps = <1500>;
+ 		tx-internal-delay-ps = <1500>;
 +
-+	regmap_write(bsp_priv->grf, con1, RK3568_GMAC_MODE_SGMII_QSGMII);
-+}
++		leds {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
- static const struct rk_gmac_ops rk3568_ops = {
- 	.init = rk3568_init,
-+	.set_to_rmii = rk3568_set_to_rmii,
- 	.set_to_rgmii = rk3568_set_to_rgmii,
-+	.set_to_sgmii = rk3568_set_to_sgmii,
++			led@1 {
++				reg = <1>;
++				color = <LED_COLOR_ID_AMBER>;
++				function = LED_FUNCTION_WAN;
++				default-state = "keep";
++			};
 +
- 	.set_speed = rk_set_clk_mac_speed,
++			led@2 {
++				reg = <2>;
++				color = <LED_COLOR_ID_GREEN>;
++				function = LED_FUNCTION_WAN;
++				default-state = "keep";
++			};
++		};
+ 	};
+ };
  
- 	.gmac_phy_intf_sel_mask = GENMASK_U16(6, 4),
- 
--	.supports_rmii = true,
--
- 	.regs_valid = true,
- 	.regs = {
- 		0xfe2a0000, /* gmac0 */
-@@ -1208,6 +1237,43 @@ static void rk_phy_powerdown(struct rk_priv_data *bsp_priv)
- 		dev_err(bsp_priv->dev, "fail to disable phy-supply\n");
- }
- 
-+static int rk_pcs_init(struct stmmac_priv *priv)
-+{
-+	struct device_node *np = priv->device->of_node;
-+	struct device_node *pcs_node;
-+	struct dw_xpcs *xpcs;
+@@ -586,3 +646,13 @@ &xin32k {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&clk32k_out1>;
+ };
 +
-+	pcs_node = of_parse_phandle(np, "pcs-handle", 0);
-+	if (!pcs_node)
-+		return -ENODEV;
++&xpcs {
++	phys = <&combphy2 PHY_TYPE_SGMII>;
++	phy-names = "serdes";
++	status = "okay";
++};
 +
-+	xpcs = xpcs_rk_create(priv->device, pcs_node);
-+	of_node_put(pcs_node);
-+	if (IS_ERR(xpcs))
-+		return PTR_ERR(xpcs);
-+
-+	priv->hw->xpcs = xpcs;
-+	return 0;
-+}
-+
-+static void rk_pcs_exit(struct stmmac_priv *priv)
-+{
-+	if (!priv->hw->xpcs)
-+		return;
-+
-+	xpcs_destroy(priv->hw->xpcs);
-+	priv->hw->xpcs = NULL;
-+}
-+
-+static struct phylink_pcs *rk_select_pcs(struct stmmac_priv *priv,
-+					 phy_interface_t interface)
-+{
-+	if (!priv->hw->xpcs)
-+		return NULL;
-+
-+	return xpcs_to_phylink_pcs(priv->hw->xpcs);
-+}
-+
- static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
- 					  struct plat_stmmacenet_data *plat,
- 					  const struct rk_gmac_ops *ops)
-@@ -1330,6 +1396,7 @@ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
- 
- 	bsp_priv->supports_rgmii = ops->supports_rgmii || !!ops->set_to_rgmii;
- 	bsp_priv->supports_rmii = ops->supports_rmii || !!ops->set_to_rmii;
-+	bsp_priv->supports_sgmii = ops->supports_sgmii || !!ops->set_to_sgmii;
- 
- 	if (ops->init) {
- 		ret = ops->init(bsp_priv);
-@@ -1361,6 +1428,10 @@ static int rk_gmac_check_ops(struct rk_priv_data *bsp_priv)
- 		if (!bsp_priv->supports_rmii)
- 			return -EINVAL;
- 		break;
-+	case PHY_INTERFACE_MODE_SGMII:
-+		if (!bsp_priv->supports_sgmii)
-+			return -EINVAL;
-+		break;
- 	default:
- 		dev_err(bsp_priv->dev,
- 			"unsupported interface %d", bsp_priv->phy_iface);
-@@ -1379,16 +1450,19 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 	if (ret)
- 		return ret;
- 
-+	ret = gmac_clk_enable(bsp_priv, true);
-+	if (ret)
-+		return ret;
-+
-+	if (bsp_priv->phy_iface == PHY_INTERFACE_MODE_SGMII)
-+		goto set_mode;
-+
- 	ret = rk_get_phy_intf_sel(bsp_priv->phy_iface);
- 	if (ret < 0)
--		return ret;
-+		goto clk_disable;
- 
- 	intf = ret;
- 
--	ret = gmac_clk_enable(bsp_priv, true);
--	if (ret)
--		return ret;
--
- 	if (bsp_priv->gmac_phy_intf_sel_mask ||
- 	    bsp_priv->gmac_rmii_mode_mask) {
- 		/* If defined, encode the phy_intf_sel value */
-@@ -1399,10 +1473,8 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 				      bsp_priv->gmac_rmii_mode_mask);
- 
- 		ret = rk_write_gmac_grf_reg(bsp_priv, val);
--		if (ret < 0) {
--			gmac_clk_enable(bsp_priv, false);
--			return ret;
--		}
-+		if (ret < 0)
-+			goto clk_disable;
- 	}
- 
- 	if (bsp_priv->clock.rmii_mode_mask) {
-@@ -1410,13 +1482,12 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 				     bsp_priv->clock.rmii_mode_mask);
- 
- 		ret = rk_write_clock_grf_reg(bsp_priv, val);
--		if (ret < 0) {
--			gmac_clk_enable(bsp_priv, false);
--			return ret;
--		}
-+		if (ret < 0)
-+			goto clk_disable;
- 	}
- 
--	/*rmii or rgmii*/
-+set_mode:
-+	/* rmii, rgmii, sgmii */
- 	switch (bsp_priv->phy_iface) {
- 	case PHY_INTERFACE_MODE_RGMII:
- 		dev_info(dev, "init for RGMII\n");
-@@ -1447,15 +1518,20 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 		if (bsp_priv->ops->set_to_rmii)
- 			bsp_priv->ops->set_to_rmii(bsp_priv);
- 		break;
-+	case PHY_INTERFACE_MODE_SGMII:
-+		dev_info(dev, "init for SGMII\n");
-+		if (bsp_priv->ops->set_to_sgmii)
-+			bsp_priv->ops->set_to_sgmii(bsp_priv);
-+		break;
- 	default:
- 		dev_err(dev, "NO interface defined!\n");
-+		ret = -EINVAL;
-+		goto clk_disable;
- 	}
- 
- 	ret = rk_phy_powerup(bsp_priv);
--	if (ret) {
--		gmac_clk_enable(bsp_priv, false);
--		return ret;
--	}
-+	if (ret)
-+		goto clk_disable;
- 
- 	pm_runtime_get_sync(dev);
- 
-@@ -1463,6 +1539,10 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 		bsp_priv->ops->integrated_phy_powerup(bsp_priv);
- 
- 	return 0;
-+
-+clk_disable:
-+	gmac_clk_enable(bsp_priv, false);
-+	return ret;
- }
- 
- static void rk_gmac_powerdown(struct rk_priv_data *gmac)
-@@ -1486,6 +1566,9 @@ static void rk_get_interfaces(struct stmmac_priv *priv, void *bsp_priv,
- 
- 	if (rk->supports_rmii)
- 		__set_bit(PHY_INTERFACE_MODE_RMII, interfaces);
-+
-+	if (rk->supports_sgmii)
-+		__set_bit(PHY_INTERFACE_MODE_SGMII, interfaces);
- }
- 
- static int rk_set_clk_tx_rate(void *bsp_priv_, struct clk *clk_tx_i,
-@@ -1602,6 +1685,17 @@ static int rk_gmac_probe(struct platform_device *pdev)
- 	plat_dat->suspend = rk_gmac_suspend;
- 	plat_dat->resume = rk_gmac_resume;
- 
-+	if (plat_dat->phy_interface == PHY_INTERFACE_MODE_SGMII) {
-+		/* SGMII clock always runs at 125 MHz */
-+		plat_dat->set_clk_tx_rate = NULL;
-+
-+		/* SGMII requires a PCS */
-+		plat_dat->default_an_inband = true;
-+		plat_dat->pcs_init = rk_pcs_init;
-+		plat_dat->pcs_exit = rk_pcs_exit;
-+		plat_dat->select_pcs = rk_select_pcs;
-+	}
-+
- 	plat_dat->bsp_priv = rk_gmac_setup(pdev, plat_dat, data);
- 	if (IS_ERR(plat_dat->bsp_priv))
- 		return PTR_ERR(plat_dat->bsp_priv);
++&xpcs_mii0 {
++	status = "okay";
++};
 -- 
 2.47.3
 
