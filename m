@@ -1,95 +1,95 @@
-Received: from mail-ej2-f5.google.com (mail-ej2-f5.google.com [74.125.228.133])
+Received: from mail-ej2-f7.google.com (mail-ej2-f7.google.com [74.125.228.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75233546ED
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 15:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE22352038
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 15:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.135
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789312331; cv=pass; b=Fl2aKhTbo5zlBYtyZm9CakDvfUlF28VH3SZhK+IpFo5ainb/0f/bRH8npkWf8OG+a5Dpg9skGWxwuz4DU43+95US8ut6YEiW5YsqqUBj8zFHTk8pPdh7YFnhXr7lPc3RjqFeaXIj5x2S7a35BmwKRoEsuHtD9kHrTtOTX5bJl9U=
+	t=1789313426; cv=pass; b=SjZ/mu+bmi8T0Lq9dV/cHNnQQhr0ssWFQl5FUyZic/7osnd6DF8+Zb021w7t9M4ioKvJm2kohvmoTTrfg8CkBLYkkZIXesNheKtXwyp+urQxuLKHPAezqGGSWASdPptJ22KgDdnsOP8NzFSsze4Rtsw75Uo9ItP9C1JyrDq6RnI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789312331; c=relaxed/simple;
-	bh=V9KdXH7CS1cOOua64xEPqp2VoZ+exq9zbbv82Os6Ku8=;
+	s=arc-20240116; t=1789313426; c=relaxed/simple;
+	bh=QOnd9Be0VKsR33e3Mz4oeKHlFLKxA5Rt/jBaVV6NUZU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JADaohGIx7kIb3ZDuG2Hoap0GOskLG1MmzvYZeH4V83ugbm4gzkeZU1NE41TBdw7P6GZra8gGf07Dod7ngFl4lWBmqRn3NKfjgIFMROlxhYUTGvktqkXicAvJQo7WZYd/Evb/qBlnXOSJjJYNzoMVF1GLQ2Nh1AS6qVTnWEhQiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtQ9PtY+; arc=pass smtp.client-ip=74.125.228.133
+	 To:Cc:Content-Type; b=sq6axxCopMdh5AIPU1jakLrkvTAopMjoTfMvimDELxvCHn0w2Ze1b1mgc5RIGMWjr7JVwCaKE1YqQKCD/6WG839XWYfDfzC/P07FaeFizwgFUGtrhWYrOhBD8SbFrtiINwVWDMoLHGAtneDSyiFL3HqISr3vvAL/FrMLsNJyEeM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sxBeHxwc; arc=pass smtp.client-ip=74.125.228.135
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtQ9PtY+"
-Received: by mail-ej2-f5.google.com with SMTP id a640c23a62f3a-c2950c25486so145030566b.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 08:12:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789312325; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sxBeHxwc"
+Received: by mail-ej2-f7.google.com with SMTP id a640c23a62f3a-c29390fa872so155723366b.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 08:30:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789313421; cv=none;
         d=google.com; s=arc-20260327;
-        b=RrNC+lZ7sRV4epkSE8lmgb4niVGB5uroCUXv1ARdAKL0ykPlmjZ5Y53Iy9pCUTGCtr
-         KLHrXGzs+69SW4gKyum0Xh+iW7gph0doz0IKK9CQvPXEK2HbrC+9ccGW2bfttcmvzB7m
-         VQF2jaSxne3Zs4sHJ0INWy9AqIW1+cs6q1YOeow3esHdMlo1P21F73PQX5YeIQnc0L3L
-         PCGK5omIT0uFcwlif6pF7TI1EYrpG4AZ+gCsq3EAONgHYEn0/nCTd35070hRd9KN5Gvw
-         4k28qZGUE5PnTp4KUxUSLj4mvsLfAI+LMA+U0g4cTJrVYgDG0HfLxxUUa1z2OZQVJvrf
-         xAqw==
+        b=ZxnR9BVkiELq9yMTGNypBOOyXQfZxtKJ/RIfBLHuiT8npDyIZQY0rYBua3CpBJntX4
+         0kgXfCF0mxjKUfgcfCvtg3jJWsGAqPVSNb3RUW9vh3bMY0Upig7ctc2Obku1sOzzDhXk
+         98T0XBvc2XhynCSaQaWS0uig4J+6Es6M2PvUOiJCqCPmI0yjV7z+m2CdyyrrWWPGJ9Nb
+         6Wl8fmfIWLzujWfkyqSl7lLBb/h1h1AaPxLRNdkDxI0sQETRp7echyuhX1QTZ6pubKiH
+         YQ5ZYDiEU0ExCt6QAxsFoXviHaSU+3+vSQhHLNaezP8OnQCz9oYQSN++vsS7f/VInFcq
+         eG8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=i6FKqhHGMKbN+g1kF5qjdCbk6ZlE4yPuWZmPTrF4npY=;
-        fh=71y4olvF0fQxrYbOvxmKBy4S78loXY5tqnIMDZS7t/Y=;
-        b=Fgx+r4w+0td0BVRt1GCIvVzhN9hxE4ONeVQ1ObKwLBdd7qy+qYgxsnhFCm68rLr6zS
-         oHT+q5SNNw4YJeJSMplCVmKSIIngELVnvqFj+RG6P5sj4ijNG5WOIJR6mfggtA4OCxa6
-         BemeIMY5PmqIqujUEYQ1jZObgZeX0+P0zFvNUlXoFf9d4h4j7VdVCuzBw+6W2mDXSyqd
-         VjHkDh2EkCfOCtlPvSJOEa9xerIOFcaGrBdTSg2m5Ffi/jeoyAPU7icRULSKyWxA0xtN
-         BSAo44pSdjnNQOR1otAc6yvaNepCe9grq1zEBybdZ7nE+z7c6SXDod9tX3C+sz1CmsE2
-         /i9Q==;
+        bh=MUmHj/LFwOw941/kenFz/i5xXlBgFi4Hi0DQiphahvI=;
+        fh=KUoyUy8OixNNwxlS1kXqBb8veiO9z2uwbafb7O1En/M=;
+        b=sWomhLbdSR+tFQsCnubk430aUXkchb8T6mLQ9bPFXIVNzTXH5nUsIKr3ecH5z8Socs
+         z7ZFBNbqFgHod9G03GOxw+0BENT0DkZl/YvgZrPxUQhgj87XcgCHPsqbQCeIpehFRGSj
+         58sBvd/vB+0hqrSlMYRnuF9+7JvsHaE3v/fevXJiQxhZgCeRUFTmls/DqJX30Y4fTtac
+         YD5IlNabyUTEe1jUsEzM8SxRwRpl8Z3vjEnBdySfVYXEPPocJSqLDExiDbO6k3xFCvYj
+         e1JOSYRzoFOJmAInyoa0lCo1nEBjpgmtCum08SuRIEWClMimn7qkDT3WtgOdWhfmKqvI
+         /N2g==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789312325; x=1789917125; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789313421; x=1789918221; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=i6FKqhHGMKbN+g1kF5qjdCbk6ZlE4yPuWZmPTrF4npY=;
-        b=mtQ9PtY+hXTDYFGOJzHeDL6RqWAIpqX/sgR8a+JUwBy81Rh7xKGGFJgoORe3fNVKVt
-         TZHhaCidM9wa//4IIuALb0RKKz49eW64/83dF+niiS0mFWPtrRIP/dzlTEMEolLfkcze
-         /U7Unvva88+erEt31A8qwo7Zn26WESvls8TSNruWdo9zpBTCB+VzhJPWFxDgEl5/3E/1
-         77Hr03l9EVAGgqcDFd3lQoQ5sQsStmNJ6/FBr6JLC52ZKTnZfvYybw9H8qoq6IrAu0w0
-         4JPjG1V/T9e008tQbGdig3wgpqa19uW/3PEDLVEzOMUZR8PWzax34dpTMPtofkyJ43ho
-         Ha4w==
+        bh=MUmHj/LFwOw941/kenFz/i5xXlBgFi4Hi0DQiphahvI=;
+        b=sxBeHxwcYJZnauDyGs4G+wJeTExNt2znk2aa0D9SeqyB6QWN/P9OCBXnV+lGAV6VUt
+         2GOOIAUQxtnIk/8e4HZjGu5ZydTndQciLuyvL0FiOyWI7gDI2SUpuWDJNXgJe6rIfdWo
+         8tYxoNQZclHs+5mChholUzK1yKUzVIjlNONUYMvSotyj1o4WdAaPuNUdfe7xWCpWpC1Z
+         fBdDhSScik7JO1Wat4ounuDbOZTXwIFfQHCg2gKrfF0u9W28Rw0qsdpghlXgvba6N9z/
+         VXvpkXmpUIsiSSDqXCPxKJ8s8UrNfAvEUfxOtYk5TGV25hLGwJqI1KjPZ1Ibr7rNlN4k
+         k9Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789312325; x=1789917125;
+        d=1e100.net; s=20251104; t=1789313421; x=1789918221;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=i6FKqhHGMKbN+g1kF5qjdCbk6ZlE4yPuWZmPTrF4npY=;
-        b=rVd0NUR8Xmk9nMcGnos35UkJNxve9+vlyA5o+lDAk3NhXycD20PK1is0nCp+R+OvEB
-         vwleYwjM8dudamNsxphCEhRh7vP1+pB72lyq6hjSxtv7ikhyAem87NRYHdh0bhx13ZoL
-         WDSn60YXBHBINfmtWGzQ9Dv3XV3WfL7O/+E5/2bOvAZFSXX5mkm3U3YCV4MGIRe0wtD/
-         ergeEcRTdPGPNHVsYU3QPIxCtfwJprlaf3g3qzvyJGpXpZiSLf9ZnBOkWaUcKRAgl9sx
-         HmQg1ZNxE+xCOxyUWZfmDUJFO+nijsYbsfG+QcE7FXIbON8ff/HcMluOiom/lPffpEpR
-         FfGw==
-X-Forwarded-Encrypted: i=1; AKwUvBy2tQe4+QIRBk0sX76fqDu9nc0sz3VcvOHz1cgbkplJjMhaPt2YR5cTRl9EoN+Q2hkIhdFtfXeKjyuIaFrCQx1Fkw==@vger.kernel.org
-X-Gm-Message-State: AFuF++kxaM7+wD6pVnE2e1BV8GI2TYrK71uj3IfkApPNrTdWXRYHpZ/b
-	LTbEyfexSAR/dMhIRQorkSqEsU7WYf+0dzXZYk51qrCAZoXWcyCpPEhFCceLhC5OA02H8V00kwW
-	G1KN+4lP9L774Mxecp2DVc8mrhrIIrFc=
-X-Gm-Gg: AYBFou0Ok7FL1GVl2SDJizQQR/z488vuKFrYhoyht/LKZ8CSSOLtZfgrTcg9zEErdud
-	sg/sFxLQnq4GHDxFF3KUrRs6G6Ecgth+0Knr2MK5T/OUqZEhHoRx8C3iVWb1uMfGUxjoxX0bkBl
-	MHjihaOzoXz9A+9g9HM15ZquArWWnWmtTYKY/yBrAQzVtysehXZFa8Xy92MWBYWLKZo+9mnJX1+
-	xNkvDYhtIHKLag88xspYvtm7FSRk+taMH61u/YLza59gub7EPv67BvER/oPycuSDWsRLWS83R6L
-	h/DtjzeF72nUDR2buappb9u2UsP3ZncwEHmq2L3Df9+YX1hWGz5vHQYyoQ==
-X-Received: by 2002:a17:907:c48d:b0:c25:8eb7:f388 with SMTP id
- a640c23a62f3a-c2966732b44mr1279507266b.17.1789312324376; Sun, 13 Sep 2026
- 08:12:04 -0700 (PDT)
+        bh=MUmHj/LFwOw941/kenFz/i5xXlBgFi4Hi0DQiphahvI=;
+        b=Z5GzunTg3t58ZqQXq1sIw7CeRA0WeOWP2f37cdMS5oFzvM2KrDIobDBHolLzRaZQR3
+         WmuQ7is7FWZPRmLNepRLrfGcPPUH7ij3XYnwoMPM1rhV/ExZp6SbDAi+t+7UDHRo01Q6
+         /WuCIkI1JICYrL8YkNzlxKW31T5Fz23mU0TphJizakXSzqF2GFdJbU5nQUuy6jB8u/6W
+         GBC7HO7BKvFCF21wH1Tv6WN52DT4nBzwPcQ9Re7QhAVH0bEKxjs/O0zeSA6QALZI0ezv
+         gw2wz3s/ee+MkggeluotHgO0pCIHuR3QZIzNyZ378+UsBEQS/2+XzoBh0gDZ0sh8eACA
+         ZNzA==
+X-Forwarded-Encrypted: i=1; AKwUvBydZWk0rcu+aagzDTBWQNrCNtaI49oB4GOxf2robB8RPqVQfmqi5SR+MazZaK19xxAuqDLcKMn7aRKdGk4IcOwadQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nbh2bnyIFZjrJBUmjdMoXaYlX1P5VcyIcBf2LJXyemnn3iYQXW
+	cE4N81GaOmMrs3PQqLkSwOdUaosCIU5i1V0sJ9fHbyaPeW3EpqI5l+4KO4cbxKNxE6s3ylG/KjW
+	uI1fR5EDTob4DiGc2xeP1vqSSOG9R2ww=
+X-Gm-Gg: AYBFou10uAPAvHMKQ1Hsxs85QzAABCGq9nR8fMqTdQgj+ulgwQXZKhjNYbmZQqtIsEy
+	l7/Xv8r+dCtoieLSrAro4c2FtYh/KVcBYmzG6MggHKPP0eZUoX8WRQspD31MpLaasLGe/D7bFX2
+	/5JrImGC6/zG3YfxERfOZs5lgStIG58brE+Q4aEOJgzQAdGP89FvaIS9Ka2E2z8/AblwgUPawHk
+	7qjZSRpi1EOOFHrkuYTC2CamxeuPNO1ZLbdLJwrNcgXnn34CkjIsxujnD4PRVSuziDGJOnzete2
+	aRQNcbpLIgy2hQ0jnkEpmV3PTc/xdrHt+TLinoroqXOOwDvKT79oJCv9Wkw=
+X-Received: by 2002:a17:907:6d0c:b0:c26:1649:47a5 with SMTP id
+ a640c23a62f3a-c29858afb4dmr388468266b.27.1789313421314; Sun, 13 Sep 2026
+ 08:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260907153713.2572547-5-coiaprant@gmail.com> <20260912201322.126940-1-kuba@kernel.org>
-In-Reply-To: <20260912201322.126940-1-kuba@kernel.org>
+References: <20260907153713.2572547-6-coiaprant@gmail.com> <20260912201324.126973-1-kuba@kernel.org>
+In-Reply-To: <20260912201324.126973-1-kuba@kernel.org>
 From: Coia Prant <coiaprant@gmail.com>
-Date: Sun, 13 Sep 2026 23:11:52 +0800
-X-Gm-Features: AcwNN1XiM26q-ovJF_4CrXhU4nIDQ7WEDIwpgpUZziGAyddbfl9wQtAk49btimU
-Message-ID: <CALj3r0jVNnwhT1odBn_7Fg4hqC5covyQTsw0B3wiNQhiciFTEg@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 03/10] phy: rockchip: naneng-combphy: add
- SGMII MAC selection for RK3568
+Date: Sun, 13 Sep 2026 23:30:09 +0800
+X-Gm-Features: AcwNN1WBFJod78ZuorP_y9LCkHOcoGiWiUu5Cum7Oj84vat35RmRCRAX8YYOUss
+Message-ID: <CALj3r0hevQ2Y9ttORKOa-oOFmyi7zDwNdLETRG0endxhCoFibA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 04/10] dt-bindings: net: pcs: add
+ rockchip,rk3568-xpcs support
 To: Jakub Kicinski <kuba@kernel.org>
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
 	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
@@ -111,215 +111,261 @@ Jakub Kicinski <kuba@kernel.org> =E4=BA=8E2026=E5=B9=B49=E6=9C=8813=E6=97=
 > This is an AI-generated review of your patch. The human sending this
 > email has considered the AI review valid, or at least plausible.
 > ---
-> phy: rockchip: naneng-combphy: add SGMII MAC selection for RK3568
+> dt-bindings: net: pcs: add rockchip,rk3568-xpcs support
 >
-> This adds a "rockchip,sgmii-mac-sel" DT property to the RK3568 combphy
-> driver so the SGMII interface can be routed to GMAC0 or GMAC1 through the
-> pipe GRF pipe_sgmii_mac_sel bit. The value defaults to 1 (GMAC1) when the
-> property is absent, and is written during PHY_TYPE_SGMII configuration.
+> This adds a new standalone schema describing the Synopsys DesignWare XPCS
+> as integrated on the Rockchip RK3568, with a CSR window, csr/eee clocks, =
+a
+> Naneng Combo SerDes phy, a power domain and four MII child ports.  A few
+> questions about the property set and the file naming below.
 >
-> Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TR=
-M%20Part1%20V1.1-20210301.pdf (Page 229)
+> > diff --git a/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.=
+yaml b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
+> > new file mode 100644
+> > index 0000000000000..0852d0bcb66a2
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/pcs/rockchip-dwxpcs.yaml
+> > @@ -0,0 +1,110 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/pcs/rockchip-dwxpcs.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >
-> A few questions below.
+> [Severity: Low]
 >
-> > diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drive=
-rs/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > index 7843356a4dd47..919bb97a4b182 100644
-> > --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+> This isn't a bug, but should the file be named after the documented
+> compatible, i.e. rockchip,rk3568-xpcs.yaml?  The other schemas in
+> Documentation/devicetree/bindings/net/pcs/ all use that form:
+> snps,dw-xpcs.yaml, fsl,lynx-pcs.yaml, mediatek,sgmiisys.yaml,
+> renesas,rzn1-miic.yaml.
 >
-> [ ... ]
+> A rename would also have to update the $id line above, since it encodes t=
+he
+> same name.
 >
-> > @@ -212,6 +213,7 @@ struct rockchip_combphy_priv {
-> >       bool enable_ssc;
-> >       bool ext_refclk;
-> >       struct clk *refclk;
-> > +     u32 sgmii_mac_sel;
-> >  };
-> >
-> >  static void rockchip_combphy_updatel(struct rockchip_combphy_priv *pri=
-v,
-> > @@ -375,6 +377,9 @@ static int rockchip_combphy_parse_dt(struct device =
-*dev, struct rockchip_combphy
-> >
-> >       priv->ext_refclk =3D device_property_present(dev, "rockchip,ext-r=
-efclk");
-> >
-> > +     priv->sgmii_mac_sel =3D 1;
-> > +     device_property_read_u32(dev, "rockchip,sgmii-mac-sel", &priv->sg=
-mii_mac_sel);
+> Related: the example at the bottom uses pcs@fda00000 and pcs-mii@0, while
+> the sibling PCS binding uses the generic ethernet-pcs@... node name, and =
+no
+> $nodename constraint is added here.  The SoC dtsi added later in the seri=
+es
+> copies the pcs@/pcs-mii@ names verbatim.
+
+I chose rockchip-dwxpcs.yaml intentionally, in case Rockchip integrates
+the same XPCS IP into other SoCs in the future. The filename is more
+generic and can cover multiple compatible strings if needed.
+
+However, I understand the convention is to name the file after the
+compatible string (like snps,dw-xpcs.yaml and fsl,lynx-pcs.yaml). If
+you prefer rockchip,rk3568-xpcs.yaml, I will rename it.
+
+> > +properties:
+> > +  compatible:
+> > +    const: rockchip,rk3568-xpcs
+>
+> [Severity: Low]
+>
+> This isn't a bug, but would a set of SoC-specific if/then blocks in
+> Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml be preferred
+> over a second schema for the same IP?
+>
+> To be clear, a snps,dw-xpcs fallback compatible or a $ref to that schema
+> would be wrong here.  The glue driver added later in the series builds CS=
+R
+> addresses with only a 3-bit MMD field:
+>
+>         return FIELD_PREP(0x70000, dev) | FIELD_PREP(0xffff, reg);
+>
+> and remaps the vendor MMDs in xpcs_rk_mdio_read_remapping() /
+> xpcs_rk_mdio_write_remapping(), so the generic direct mapping described i=
+n
+> snps,dw-xpcs.yaml would compute different offsets.
+>
+> So the only question is where the description should live, not whether th=
+e
+> compatible should be shared.
+
+As you noted, a $ref to snps,dw-xpcs.yaml would be wrong because the
+Rockchip glue uses a different address mapping (3-bit MMD field with
+remapping). A separate schema is the right choice.
+
+> [Severity: Low]
+>
+> Should the sbd_intr_o output be described as an optional interrupts
+> property?  With additionalProperties: false at the end of the file, a
+> conforming device tree cannot carry it, although adding it later stays
+> backward compatible.
+>
+> The single unnamed 2 MiB window itself does match the driver:
+> xpcs_rk_init_res() uses platform_get_resource(pdev, IORESOURCE_MEM, 0) an=
+d
+> requires resource_size(res) >=3D SZ_2M, and the largest computed offset
+> 0x7FFFF << 2 =3D 0x1FFFFC still falls inside 0x200000, so reg-names and
+> reg-io-width are not needed.
+
+These are optional and can be added later without breaking ABI. I'll
+leave them out for now, since the mainline XPCS driver doesn't use them.
+
 > > +
+> > +  "#address-cells":
+> > +    const: 1
+> > +
+> > +  "#size-cells":
+> > +    const: 0
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: APB3 bus interface clock (clk_csr_i), required fo=
+r register access
+> > +      - description: EEE clock (clk_eee_i), required for Energy Effici=
+ent Ethernet operation
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: csr
+> > +      - const: eee
+> > +
+> > +  phys:
+> > +    maxItems: 1
+> > +
+> > +  phy-names:
+> > +    const: serdes
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+>
+> [Severity: Low]
+>
+> Should resets/reset-names be described here too?  The RK3568 CRU exposes
+> four dedicated reset lines for this block in
+> include/dt-bindings/clock/rk3568-cru.h:
+>
+>         #define SRST_XPCS               150
+>         #define SRST_XPCS_TX_DIV10      151
+>         #define SRST_XPCS_RX_DIV10      152
+>         #define SRST_XPCS_XGXS_RX       153
+>
+> Since the schema ends with additionalProperties: false, a conforming devi=
+ce
+> tree cannot express them at all, and the glue driver added later in the
+> series never requests a reset control, so it depends on those resets alre=
+ady
+> being de-asserted.
+>
+> Peer blocks in the same island do describe theirs, e.g. combphy0 with
+> resets =3D <&cru SRST_PIPEPHY0> and gmac0 with resets =3D <&cru SRST_A_GM=
+AC0>.
+>
+> Note the XPCS core does provide a register-level reset via xpcs_soft_rese=
+t()
+> in drivers/net/pcs/pcs-xpcs.c, so a state-machine restart is possible
+> without the CRU resets, and an optional resets property can be added late=
+r
+> without breaking the ABI.
+
+These are optional and can be added later without breaking ABI. I'll
+leave them out for now, since the mainline XPCS driver doesn't use them.
+
+> > +patternProperties:
+> > +  "^pcs-mii@[0-3]$":
+> > +    type: object
+> > +    description:
+> > +      One of the four MII ports of the XPCS. The port is linked to an
+> > +      Ethernet MAC controller via the pcs-handle property in the MAC's
+> > +      device tree node.
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: MII port number.
+> > +        enum: [0, 1, 2, 3]
+>
+> [Severity: Low]
+>
+> This isn't a bug, but is pcs-mii@N the intended name for these per-port
+> children rather than the generic ethernet-pcs@N?
+>
+> Resolving a MAC pcs-handle that points at one of these children does work
+> with the rest of the series: xpcs_rk_create() in
+> drivers/net/pcs/pcs-xpcs-rk.c reads the child reg, walks up with
+> of_get_parent() and calls xpcs_create_mdiodev(pxpcs->bus, port), and
+> rk_pcs_init() in drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c does
+> of_parse_phandle(np, "pcs-handle", 0).  So the open point is just the nod=
+e
+> naming.
+
+Yes, I will use ethernet-pcs@N
+
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> > +    additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+> > +  - clocks
+> > +  - clock-names
+> > +  - phys
+> > +  - phy-names
+> > +  - power-domains
 >
 > [Severity: Medium]
-> Since the return value of device_property_read_u32() is discarded here,
-> rockchip_combphy_parse_dt() cannot distinguish "the DT asked for GMAC1"
-> from "the DT said nothing about the mux".
 >
-> The result is that rk3568_combphy_cfg() writes PIPE_GRF 0x0040 bit 1 on
-> every PHY_TYPE_SGMII bring-up, including for device trees that do not hav=
-e
-> the new property. Before this patch that bit was never touched, so whatev=
-er
-> routing the SoC reset or the boot firmware established was left alone.
+> Does requiring phys and phy-names here make dtbs_check fail for the RK356=
+8
+> boards?  The SoC node added later in the same series omits both, because =
+the
+> SerDes selection is board specific:
 >
-> The commit message states:
+> arch/arm64/boot/dts/rockchip/rk3568.dtsi:
+>         xpcs: pcs@fda00000 {
+>                 compatible =3D "rockchip,rk3568-xpcs";
+>                 #address-cells =3D <1>;
+>                 #size-cells =3D <0>;
+>                 reg =3D <0x0 0xfda00000 0x0 0x200000>;
+>                 clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
+>                 clock-names =3D "csr", "eee";
+>                 power-domains =3D <&power RK3568_PD_PIPE>;
+>                 status =3D "disabled";
 >
->   "The hardware reset value is GMAC1 (1). If the property is set to 0,
->   the driver routes SGMII to GMAC0; if set to 1 (or omitted), it
->   remains at GMAC1."
+> and only the board fills them in:
 >
-> The "or omitted" case now depends entirely on that reset value being 1. I=
-f
-> the reset value is actually 0, or if firmware routed SGMII to GMAC0 on a
-> board wired that way and its DT lacks the property, does phy_init() still
-> return success while the XPCS ends up attached to the wrong MAC, giving a
-> link that never comes up and no message explaining why?
+> arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts:
+>         &xpcs {
+>                 status =3D "okay";
+>                 phys =3D <&combphy2 PHY_TYPE_SGMII>;
+>                 phy-names =3D "serdes";
+>         };
 >
-> Would it make sense to only write the bit when the property is actually
-> present, for example:
+> dtschema validates nodes irrespective of status =3D "disabled", so wouldn=
+'t
+> every rk3568*.dtb apart from the Photonicat report "'phys', 'phy-names' a=
+re
+> required properties"?
 >
->         if (!device_property_read_u32(dev, "rockchip,sgmii-mac-sel",
->                                       &priv->sgmii_mac_sel))
->                 priv->sgmii_mac_sel_valid =3D true;
->
-> so that omitting the property leaves the mux untouched?
+> Should phys/phy-names be dropped from required (or made conditional), or
+> should the SoC dtsi carry them instead?
 
-SGMII has never been functional on RK3568 in mainline before this
-series. There is no existing user that relies on the old behaviour,
-and no in-tree device tree enables SGMII. Boards that have the SGMII
-routing configured in their bootloader were never able to use it with
-a mainline kernel, because the driver did not support it.
+This is not actually a problem. dtbs_check and CHECK_DTBS only validate
+required properties for enabled nodes. As confirmed by Rob Herring:
 
-Given that, unconditionally writing the MAC-select bit (with a default
-of GMAC1, which matches the hardware reset value) is reasonable. It
-makes the driver's behaviour explicit and deterministic rather than
-depending on whatever the bootloader happened to leave behind.
+    "the dtbs_check only checks required properties from yaml if the
+     node is enabled. Yes, that is exactly how it works."
 
-I'll keep the current logic, but I'll make the commit message clearer
-about the hardware reset value and the fact that SGMII is new in
-mainline.
+The xpcs node in rk3568.dtsi is marked status =3D "disabled", so boards
+that include rk3568.dtsi without enabling XPCS will not trigger any
+validation warnings. Only boards that enable it need to provide phys
+and phy-names, and they do so at the board level (as Photonicat does).
 
-> >       priv->phy_rst =3D devm_reset_control_get_exclusive(dev, "phy");
-> >       /* fallback to old behaviour */
-> >       if (PTR_ERR(priv->phy_rst) =3D=3D -ENOENT)
-> > @@ -873,6 +878,8 @@ static int rk3568_combphy_cfg(struct rockchip_combp=
-hy_priv *priv)
-> >               break;
-> >
-> >       case PHY_TYPE_SGMII:
-> > +             rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_s=
-gmii_mac_sel,
-> > +                                     priv->sgmii_mac_sel > 0);
->
-> [Severity: Low]
-> The binding added in the preceding patch of this series declares the
-> property as:
->
->   rockchip,sgmii-mac-sel:
->     $ref: /schemas/types.yaml#/definitions/uint32
->     enum: [0, 1]
->     default: 1
->
-> but "priv->sgmii_mac_sel > 0" collapses the value to a boolean, and
-> rockchip_combphy_parse_dt() does no range check.
->
-> Does that mean a device tree setting the property to 2 or 0xffffffff is
-> silently treated as GMAC1 rather than rejected? Similarly, a
-> present-but-malformed property (wrong length or type) makes
-> device_property_read_u32() fail, and the pre-seeded default of 1 is used
-> with no diagnostic.
->
-> dtschema only validates in-tree device trees, so for bootloader-supplied
-> DTs or overlays the driver is the only place the enum can be enforced.
-> Would checking the value against {0, 1} and returning an error, or
-> alternatively documenting the property as a plain flag, close that gap?
+This is also the standard pattern for SoC nodes with board-specific
+connections: keep the SoC node disabled, and let the board dts enable
+it with all required properties.
 
-The property is validated by dtschema. For in-tree device trees, values
-other than 0 or 1 are rejected at build time. I don't think the driver
-needs to duplicate this check.
-
-> [Severity: Low]
-> The mux write is only added to the PHY_TYPE_SGMII case. The adjacent
-> PHY_TYPE_QSGMII case in rk3568_combphy_cfg() programs the same pipe-grf
-> register (pipe_xpcs_phy_ready at offset 0x0040 bit 2) but never touches
-> the MAC-select bit:
->
->         case PHY_TYPE_QSGMII:
->                 rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_x=
-pcs_phy_ready, true);
->                 ...
->
-> The binding gates the property on the compatible only, not on the PHY
-> type, and rockchip_combphy_parse_dt() runs at probe time before the PHY
-> type is known from rockchip_combphy_xlate().
->
-> If a device tree sets rockchip,sgmii-mac-sel on a combphy that a consumer
-> later claims with PHY_TYPE_QSGMII, is the requested routing simply droppe=
-d
-> with no warning? If the property is meant to be SGMII-only, would
-> rejecting or warning about it for other PHY types make that explicit?
-
-You're right that the property is SGMII-only. For QSGMII, the hardware
-routes to both MACs internally, so there is no MAC-selection bit to
-program. We have not found any QSGMII device that exists outside of
-OEM SDK EVB code, and mainline XPCS does not support QSGMII, so this
-case is not currently reachable. I'll leave it as is.
-
-> >               rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_x=
-pcs_phy_ready, true);
-> >               rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_ph=
-ymode_sel, true);
-> >               rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_se=
-l_qsgmii, true);
-> > @@ -984,6 +991,7 @@ static const struct rockchip_combphy_grfcfg rk3568_=
-combphy_grfcfgs =3D {
-> >       .con3_for_sata          =3D { 0x000c, 15, 0, 0x00, 0x4407 },
-> >       /* pipe-grf */
-> >       .pipe_con0_for_sata     =3D { 0x0000, 15, 0, 0x00, 0x2220 },
-> > +     .pipe_sgmii_mac_sel     =3D { 0x0040, 1, 1, 0x00, 0x01 },
-> >       .pipe_xpcs_phy_ready    =3D { 0x0040, 2, 2, 0x00, 0x01 },
-> >       .u3otg0_port_en         =3D { 0x0104, 15, 0, 0x0181, 0x1100 },
-> >       .u3otg1_port_en         =3D { 0x0144, 15, 0, 0x0181, 0x1100 },
->
-> For reference on the first two comments: this disable/enable encoding
-> ({ 0x0040, 1, 1, 0x00, 0x01 }) is what maps the DT value onto GMAC0/GMAC1=
-,
-> and rockchip_combphy_param_write() always sets the write-enable mask:
->
->         tmp =3D en ? reg->enable : reg->disable;
->         mask =3D GENMASK(reg->bitend, reg->bitstart);
->         val =3D (tmp << reg->bitstart) | (mask << BIT_WRITEABLE_SHIFT);
->
-> so the bit is committed to hardware on every SGMII bring-up regardless of
-> whether the device tree expressed a preference. Could the TRM bit polarit=
-y
-> and the claimed reset value of 1 be confirmed in the commit message?
->
-> Note that no in-tree Rockchip device tree requests PHY_TYPE_SGMII before
-> this series, and the only user (rk3568-photonicat.dts) is added later in
-> the series, so nothing in-tree changes behaviour today.
-
-You're right, the commit message should state this explicitly. I'll
-update it to describe both the bit polarity and the hardware reset
-value.
-
-From the RK3568 TRM Part1 (Page 229), the PIPE_GRF_XPCS_CON0 register
-bit 1 is pipe_sgmii_mac_sel:
-
-    0: SGMII interface is routed to GMAC0
-    1: SGMII interface is routed to GMAC1
-
-The hardware reset value is 1 (GMAC1). This matches the default I use
-when the property is absent.
-
-I'll include this in the commit message and the binding description so
-that reviewers can verify the behaviour against the TRM.
-
-Regarding the unconditional write: as I mentioned, SGMII has never been
-functional on RK3568 in mainline before this series, and no in-tree
-device tree enables it. So writing the bit on every SGMII bring-up does
-not change behaviour for any existing user.
+The phys/phy-names properties cannot be moved into rk3568.dtsi anyway,
+because the SerDes connection is board-specific: some boards use
+combphy1 for SGMII, others use combphy2 (like Photonicat).
 
 Thanks,
-Coia
