@@ -1,93 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BAA2E7379;
-	Sun, 13 Sep 2026 03:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73692DCF67;
+	Sun, 13 Sep 2026 07:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789270308; cv=none; b=hmn2o7cxgONkNKdXA6GM9gnk4O8oxpMYWJ+8lIFtM7M7F6jQzUSPDgecZykoGZ+Gf4gxmOxspCKPYkWzuJ6TkwfMpFHgf5tDBF7FXWzySi3QbEV+uaI8ceCMRi5WEEDPLP80DYfdcwpLGb6KjO+bFZow/UytSMIdyj6ScnPaza4=
+	t=1789285903; cv=none; b=cqmGi2CjVG/0TfWJ+jnD29puV4G+Firo5URvrUbmQOIebnaHBstS5sDrHVhOW/IRyLEyYp+qGK45vidVbwWNbpIRKKnSNkj/wtIhdtUYt8NIF/9zLbR9/yorf+vZ+iu8y+qgrRFHDEw4zMmhTuZl2lwwQplKRT7/F5tzqASLp1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789270308; c=relaxed/simple;
-	bh=eb5OX78e6j3lSciReGCxqqRheO7oA15G32dADSrzfHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qv0/+4DaNFqz5BTYAkAt36Un8nn+VYHXCnuhsuST5X5MsCy7gpNKwG4lNmwzNvEyPs4MjI4eGogYEdij+9iiheAXpshvGe4Epk0epOWnlLTRyXpVZGbeUmVMpI7NZSRe8uJUtvZEUdH5CNMa5J9NfbD1i/Pw5YYTikA4atx9XGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/3phhsT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789285903; c=relaxed/simple;
+	bh=U5jQQMKTN366RCXgQeUoN6dB/a7saDdDqr4pShisUIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=at+53dsrj3yB2BGersFyNIro8mP455OUzUn0Bz+0TeFikXXOHxluYl4yurVj6TzmlTfixEFebs70txqIRdExh/o4+RZOxOuQKc7ZjeFSg9AcG9F9FxGMNIIKff/Kvgj3UHuV+cFcxVd3xrSsa0Nc2g7rdB9Qau/PGN9T81PI8bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JZWpRVGN; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/3phhsT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC7C1F000FF;
-	Sun, 13 Sep 2026 03:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789270306;
-	bh=Kf0Pm/olxgNF7gFBWaGJ/CyqQmUYl0iacOBfb1wQ+F0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=m/3phhsTwdqhd9zh8LeoUdiOsDkKPetUv7BRMBAKNM6QKEXgqnv3z630uhLXnPYoT
-	 h0kONnks3YWlgARVvo+Oj2Fw9QnUrd5ABsPP2IiVlcPOEjiPUu2LrBDuBHFXlywPjA
-	 hmp6C6sV46u1JTgMJ8evlkMMef53O0Qfo2mIVtRyvgfN6IjFK0XBM6ssaBfFvzmlK3
-	 2mfBXcTPtdJ8Uzr0XHT+5qc7tt04t8alS341Hgl6pALXX6DOpRi8/ReT1S+OKnn2eN
-	 AVpvHVgNKB1pb3v33xB4fiHXpLOYyc3sxracPU7ZhFpWW893BmmRpsA9R+BZukEqeS
-	 VxgSiZxFzbp0Q==
-Date: Sun, 13 Sep 2026 04:31:41 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Chris
- Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 3/5] iio: adc: rzg2l_adc: Add RZ/G3L ADC support for TSU
-Message-ID: <20260913043141.1e50ae3b@jic23-hlaptop>
-In-Reply-To: <20260911133653.115553-4-biju.das.jz@bp.renesas.com>
-References: <20260911133653.115553-1-biju.das.jz@bp.renesas.com>
-	<20260911133653.115553-4-biju.das.jz@bp.renesas.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JZWpRVGN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789285902; x=1820821902;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U5jQQMKTN366RCXgQeUoN6dB/a7saDdDqr4pShisUIc=;
+  b=JZWpRVGNVjzkxHLl36Yd6TYKyc1bDBdyfyVd9s5WeYdls/z2/PZmjmoG
+   g5jOWpZ4JT4P7ug5BVXYTyhme4v6/ETUt7Mrue3E15M/yV6LXBvxHw2ur
+   +5V+KWHu1nyDv+wwpdRsqzaYdaMI3/3H1+ao1/yNOYS/uRYDex6PMGtfY
+   3xvpVtrfo+PpCAptQ/sCluiWW6kVS1WUrLw8EYnyifByf28FPX3GkFxRJ
+   4icAeHzDpQHCiG3NckhzlcW5uwwkbDj36cWyjlbCOes1hs3l0o5cyVED7
+   LoWwZ7oAycvPKZsAnPAaYuElY+wIxzjlgZn4zbxivQgdsXDO6HDa5mN0k
+   w==;
+X-CSE-ConnectionGUID: pYMFUsFcTzmmoWTWwbBfsg==
+X-CSE-MsgGUID: P5gJozoRTRCytpVRmaM40w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11903"; a="89446614"
+X-IronPort-AV: E=Sophos;i="6.27,100,1787036400"; 
+   d="scan'208";a="89446614"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2026 00:51:41 -0700
+X-CSE-ConnectionGUID: Z+Ftw4SMSfOCKzFLzTY0gA==
+X-CSE-MsgGUID: wpSkICYnQSC6BEEMuoS/wQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,100,1787036400"; 
+   d="scan'208";a="272857424"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa009.jf.intel.com with ESMTP; 13 Sep 2026 00:51:39 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 653E599; Sun, 13 Sep 2026 09:51:38 +0200 (CEST)
+Date: Sun, 13 Sep 2026 09:51:38 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH v2 3/4] pinctrl: renesas: rzt2h: fix reading pin value in
+ IRQ function
+Message-ID: <aqZWCqBi71yjl_xg@black.igk.intel.com>
+References: <20260910160226.489183-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20260910160226.489183-4-cosmin-gabriel.tanislav.xa@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260910160226.489183-4-cosmin-gabriel.tanislav.xa@renesas.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 11 Sep 2026 14:36:46 +0100
-Biju Das <biju.das.jz@bp.renesas.com> wrote:
-
-> Add renesas,r9a08g046-adc1 compatible string and its hardware
-> parameters for the ADC1 IP on RZ/G3L, which is dedicated to
-> the on-chip TSU (thermal sensor unit).
+On Thu, Sep 10, 2026 at 07:02:25PM +0300, Cosmin Tanislav wrote:
+> rzt2h_gpio_get() only reports a level for pins in input or output mode
+> and returns -EINVAL otherwise. When a pin is requested as an interrupt
+> it is switched to IRQ function and its I/O mode is set to Hi-Z, so its
+> value can no longer be read.
 > 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-I'm in general fine with patches 1-3. If you respin, send
-the whole series to everyone. It's not big enough to need messing around
-with who gets what and the real DT example is patch 5.
-
-
-> ---
->  drivers/iio/adc/rzg2l_adc.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> gpiolib calls gpiod_get_value_cansleep() to determine the edge's
+> direction when a line is watched with GPIO_V2_LINE_FLAG_EDGE_BOTH.
+> Non-zero values are translated to a rising edge, zero to a falling edge.
 > 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index 408fbf8c29cc..35eaebfbdd77 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -500,8 +500,17 @@ static const struct rzg2l_adc_hw_params rzg3s_hw_params = {
->  	.adint_inten_mask = GENMASK(11, 0),
->  };
->  
-> +static const struct rzg2l_adc_hw_params rzg3l_adc1_hw_params = {
-> +	.num_channels = 9,
-> +	.default_adcmp = 0x1d,
-> +	.default_adsmp = { 0x7f, 0xff },
-> +	.adsmp_mask = GENMASK(7, 0),
-> +	.adint_inten_mask = BIT(8),
-> +};
+> Since gpiod_get_value_cansleep() ends up calling rzt2h_gpio_get() which
+> returns -EINVAL when the pin is in IRQ function, every edge is reported
+> as rising.
+> 
+> When using the IRQ function, the input buffers are enabled and the PINm
+> registers reflect the live state of the input.
+> 
+> Report the input level even when the pin is used as an IRQ.
+
+...
+
+> +static u8 rzt2h_pin_read_pfc(struct rzt2h_pinctrl *pctrl, u8 port, u8 pin)
+> +{
+> +	u64 reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
 > +
->  static const struct of_device_id rzg2l_adc_match[] = {
->  	{ .compatible = "renesas,r9a08g045-adc", .data = &rzg3s_hw_params },
-> +	{ .compatible = "renesas,r9a08g046-adc1", .data = &rzg3l_adc1_hw_params },
->  	{ .compatible = "renesas,rzg2l-adc", .data = &rzg2l_hw_params },
->  	{ }
->  };
+> +	return field_get(PFC_PIN_MASK(pin), reg64);
+> +}
+
+This is a dead code. Add it when it has users.
+Especially this is weird to have in the patch with Fixes tag and Cc to stable@.
+Bad rebase?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
