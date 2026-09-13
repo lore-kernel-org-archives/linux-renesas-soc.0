@@ -1,104 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19D2361954;
-	Sun, 13 Sep 2026 17:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B400937105A
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 13 Sep 2026 17:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789320617; cv=none; b=Azbhe0sXL2h7if88geJ7N2yZyTtDwS4SoF4uXiSpu+SHH57/LGKaRVRicF7K2dMawiMxeUfOQq/C2Dk/79iqE2Nh8sMmXZ739/mFr/hj2CaGQQZ+Wwb6SaF5OKHH48FxUusBUHMpnqzU+LVRxsnZBNYawD6wp4xw71dQ+FRK5V0=
+	t=1789321666; cv=none; b=VRQXxqPgusRszP0IKsFRrs2KmS5JwFIV5akKlBuv4CfokHb5fD2AiMPF7EIyhz/uNjytE6wnkDhZvEStW3vz+hwDBxR/7XxeLOgcrtMKyonl2LAn6jp39+yx7BuhCLU/VMeKslyjoqc+slNtwmgyMI50TggPzr+mhouAsVKhK8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789320617; c=relaxed/simple;
-	bh=srkcEAyojx1b6cUg0sJcTwxCa9yjd5mik5kS2jv97vI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eIJcc7HIDO5K+MxrL/P2SIGgpgopl2yoIpcRMA6A8r3DFnzRCggyP45dyufya4OKD33dOjfO57qoAIAd7AMY7aOMbj8dRfeZZYlc3hzKrU/KcwPBcU05TauG/shUltJqgeUVyZrJQzb4xRK+E5N79dOwcrupckHqt82c4VseG20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhEv4X8h; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789321666; c=relaxed/simple;
+	bh=dpOHoI59DgAETXAJG3aK3/ZrGyZodG9lNyPbGymOtk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NToRV1KFrB/KGHTuayW7pg4RcOaoM7jT2RorPU0OGP66PUH9kj6Kn6suJK4Sx5n7/b31Bsckglx0aThxtNA3AmOlDah7+ZcX5zjBT+22buryiW/Csb5Ljh4c0HrOCNHvix0jE9+qRnDz3L4StnboX/SBvTe2bOdon9ShYQrMSpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=C2lNIjAv; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhEv4X8h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BD21F000FF;
-	Sun, 13 Sep 2026 17:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789320616;
-	bh=iAcMuIqZGbpwdMHtB5bzg48FC/3zvuOUad9CpLHqF70=;
-	h=From:To:Cc:Subject:Date;
-	b=jhEv4X8h9ByrCXJDNs3YaimMo0M5OjPUbZZ0p7ju8cXr2IO5MovAdJtCLKBaUXulk
-	 0azyUJHT7wimlY77J2ta35rbokmiIpWMRCqr9q8Vd8tvWDsy4jt1PNPaBqZZaaxeat
-	 YNuY7dZwI7E/OXXkBFZXawH7h1p0MUafZ+iRv+m8YlkTnAr6DmVpyNXhh0qbGHRZeU
-	 RSL6F9G14LDV66ai5NNBm2kSvQ4FPujSVM76cGii/pUUvvQulciJ5pf4DNRPOa5PD1
-	 Z0ptp8K5il3HwwOCeVwbkZFUW5/2EI867pF4cHmlbrNEldIcOAOKVXpizeX7pt73K+
-	 jxWJX/g5ftoWA==
-From: Sasha Levin <sashal@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: Sasha Levin <sashal@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: r9a09g077: Add missing slab.h and cleanup.h includes
-Date: Sun, 13 Sep 2026 13:30:08 -0400
-Message-ID: <20260913173009.1164899-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="C2lNIjAv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=82oA
+	MXeOM/wVdIBlxhSh3KHSbx4Ulol1YU0zCWMPa5Y=; b=C2lNIjAveIf9xVvmbwS7
+	kMXbLUsNabHlHRv9nepK787sIrGoRwgfb0KnwdiS+WYSzreLAppOvBXMFeqts5uz
+	wgy7jo3WAcgRrwmbwYL9QRChgE2sxOsgk8ILMnb8WvZn6TmC05O3sPULw4An10zA
+	CW2MT5px3FQ3nR180xNpZGpMeeSwwEsLfRnDv+DMgGot8UzffLPJtrUF8T0cHAcf
+	nCfoUkLH+6s5r/3+YuB5GJGFuZWA3KyEz0V+vhhU2BBbx2Sge9+566MhIpUvG1Up
+	7at3ula7eIg0is79GsVgwijaoXpQ8br+pYWm21w2anj5o27IVmosiL+Qcnipr6EQ
+	Pg==
+Received: (qmail 422051 invoked from network); 13 Sep 2026 19:47:33 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2026 19:47:33 +0200
+X-UD-Smtp-Session: l3s3148p1@n9aI6WBbTLUujnu2
+Date: Sun, 13 Sep 2026 19:47:32 +0200
+From: wsa+renesas <wsa+renesas@sang-engineering.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "biju.das.au" <biju.das.au@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v24 07/15] mmc: renesas_sdhi: Add tuning delay support
+ for RZ/G2L
+Message-ID: <aqbhsQTKkGfLsEXX@ninjato>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-8-biju.das.jz@bp.renesas.com>
+ <apk-J8is9MNm7I2R@shikoro>
+ <TY3PR01MB113460485B6D3FD62D027C2AA86B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PxjBzLQea6JB4Y7t"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113460485B6D3FD62D027C2AA86B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-r9a09g077_post_init() uses kzalloc_obj() and __free(kfree), but the file
-includes neither <linux/slab.h> nor <linux/cleanup.h>. It only builds
-where those happen to be pulled in transitively; on arm allmodconfig
-they are not, and the build fails:
+--PxjBzLQea6JB4Y7t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: use of undeclared
-  identifier '__free_kfree'; did you mean '__free_pages'?
-  drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: 'cleanup' function
-  '__free_pages' must take 1 parameter
-  drivers/clk/renesas/r9a09g077-cpg.c:966:51: error: call to undeclared
-  function 'kzalloc_obj'; ISO C99 and later do not support implicit
-  function declarations [-Wimplicit-function-declaration]
-  drivers/clk/renesas/r9a09g077-cpg.c:966:24: error: incompatible integer
-  to pointer conversion initializing 'struct regmap_config *' with an
-  expression of type 'int' [-Wint-conversion]
+Hi Biju,
 
-gcc reports the same thing as "cleanup argument not a function" plus an
-implicit declaration of kzalloc_obj().
+> > > If an incorrect device tree binding or a hardware fault causes the
+> > > controller to report a version older than SDHI_VER_GEN2_SDR104,
+> > > priv->scc_ctl might not be mapped during probe.
+>=20
+> I agree if there is a memory corruption, any check can lead to
+> Unpredictable result.
 
-Include both headers explicitly rather than relying on an incidental
-include chain.
+I was more worried about the incorrect DT binding than the memory
+corruption.
 
-Fixes: 810b8b6c4e02 ("clk: renesas: r9a09g077: Register SYSC regmap")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202609101334.xgbNoC4e-lkp@intel.com/
-Assisted-by: LLM
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/renesas/r9a09g077-cpg.c | 2 ++
- 1 file changed, 2 insertions(+)
+> > I agree. We should ensure in probe() that either
+> >=20
+> > a) TMIO_MMC_TUNING_DELAY has a valid SCC or bail out otherwise
+> >=20
+> > or
+> >=20
+> > b) clear the TMIO_MMC_TUNING_DELAY flag if there is no SCC present
+> >=20
+> > What do you think?
+>=20
+> I agree, we can add defensive check in probe().
+>=20
+> TBH, I am not convinced with Sashiko report here, but please recheck my c=
+omments
+> and provide feedback
 
-diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-index 0495e3206973c..5a0e7df1eb06c 100644
---- a/drivers/clk/renesas/r9a09g077-cpg.c
-+++ b/drivers/clk/renesas/r9a09g077-cpg.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/cleanup.h>
- #include <linux/clk-provider.h>
- #include <linux/clk/renesas.h>
- #include <linux/device.h>
-@@ -20,6 +21,7 @@
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/regmap.h>
-+#include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/units.h>
- 
--- 
-2.53.0
+Well... your statements make sense with the current state of the driver.
+However, there is de-facto a new requirement added that
+TMIO_MMC_TUNING_DELAY needs an SCC. This is currently handled correctly,
+but since it is not addressed explicitly, I would consider it a little
+fragile. SDHI is complex and I am worried that some future logic changes
+might break the logic chain you quoted above. This is why I think an
+explicit check makes sense - it cannot break and it makes logic more
+obvious for future hackers.
 
+Can you agree?
+
+Happy hacking,
+
+   Wolfram
+
+
+--PxjBzLQea6JB4Y7t
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqm4bEACgkQFA3kzBSg
+Kba2UBAAliLKPw6gd4vAKxTeNLW5nhw6kmAzkjcHrtfH/8vjcSSq6pIrb7F1PkvW
+JRjxPjMC2zPnTLw7Q679XD7BxjHl8eSDxmFIamfnxJR1/tq9M/URHIQZqKFg+WHa
+/WOqgkFmpb8XuLUoI5d6mwxAYC6oG9gD1sUXahKmro2ZqbJNZJoYH0jQdI5qb6cH
+jcMyHrgxYn/u+OBPO9weL2NVETjfOrp29tpCeuImb61P8UrV4g6qHg+J5Xe2R1O/
+/l+rcRgTn0sO9qbGL4XMbQcJskU6dZR1TCJd7BwMaUSTS95pw1F/HQP1Lffx1t+9
+XL0uZ6/vX+9TFMz4LGM3EI6GPAaqv1OcD6N5aRkxxlM1TInkJLw9el3D5FyLWLo4
+QQZyi+b2A47tuC+npmNhua+I+m5rMl4R+X2LiwT7h1+fiyHYsM7K2eQ6WkMxelOl
+QJvmL/NQPISc0CXPdASaJgJRN2/5W2DVrkz7RoiNamsxjNWEUeT68GRUyhqR8do1
+TFrxsNpJrurH1gTIykHlGtjwt7j6hH0BUH8SLQFIeht26GCp40pNKqjOXJusYyjG
+5h56OcIONZz0YTB9nILE1dhhX6Y0Duq93I5XK0HZ4xgOLAfD+aJCeWnss7vpprLZ
+FkEIKefY3eCaWWXIeKdwd85JJhoUYZ31DjagWD+YkYXaqaoE/N8=
+=5xRy
+-----END PGP SIGNATURE-----
+
+--PxjBzLQea6JB4Y7t--
