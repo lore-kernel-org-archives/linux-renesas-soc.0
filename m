@@ -1,110 +1,120 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D0A2D7380
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 06:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8D93F1AC4
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 07:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789367962; cv=none; b=IPVJoj9jXGpQ/XWI05JMUSrYt/8NvxGI8Lj3IitDK5S+4rJyY8KNL+b7ZcQ7HSzYBXJ9XnekgWh3ER1rgIN/A6g0pl05l01Hu8kxG9U6jtKaaop+dZZjRm0fCLqJ6FiD5scqpyIs3qf8++7VgWzan1TQ27Byi8WooAtlKbMJ+1U=
+	t=1789371500; cv=none; b=rGjWrV5YRRjwDIP2ZLfXueNTMLjaAmeoecQS+Rmn67UbMjQ5rVzA/wY6Sj9oX6TdyIOFjxicMBxMFydsA4tC+jfZtZx7Zz68RJBFJ+QMNmVvVNy8Q1NzTklRWi9kcU9c+oZzSAhk0if7iRORg7saiHD4U/9GNYYIRJaJk5xVceA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789367962; c=relaxed/simple;
-	bh=VOkZzQnASceULlIHJmNILmMFsL5FLqoMtxt3SLlpOI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgkWWUPRnwNiIxcnCP5nQ+z5OTrDmSy87dN9qnUsz5829ZWm2Kf+1m4Vq7kWj2EKPV89gwCbzbbo2THjXd/is1c6MsepSOtn2j2fKfVUeSBAMrFZvfQpwF2oajZSgBDVvXV0VEWl3QZVq5vq3qfAVQTC+pNkjDFLH7qhpt8eIVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fvKx4Tdt; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fvKx4Tdt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=/cVM
-	/IDDOzikhcJupTR3xSZvZ74pj/xcauelMyq7BK8=; b=fvKx4Tdt6wkypmlKv94g
-	Xz+t3QekiiAyGbprOzHK7h/VG6xjY/y2ncyQtg6VHdRscDvFHqa9qOrfmUa+b5vp
-	diD+A9/tctRGeLe7B5rz+58KJdaGZ+eyzMIwDpOozTeL61Zzu1HklHR6TPvVR3S6
-	1/zhah2Qy97R61Z7068BMhrAAgRad74YKxTeX//N14/kdfi5n4O1uyyoZtAuUQYp
-	4RphxIqMbrZLy0j1BTMOk/WeHyNXluLVSd/4af4FnUlGzJtpK4DQ15ZWUV7W2i0r
-	2UuQp+8MgEPcQgSWx2rSsMfRFWmLrCeOtmBtmiYF24FkFllETVg1C2miMsog39Ne
-	Iw==
-Received: (qmail 624259 invoked from network); 14 Sep 2026 08:39:13 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2026 08:39:13 +0200
-X-UD-Smtp-Session: l3s3148p1@g84/sWtbRt8ujnvr
-Date: Mon, 14 Sep 2026 08:39:13 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 2/4] clocksource/drivers: Add support for the Renesas
- RZ/N1 timers
-Message-ID: <aqeWkVB4SWuD4_tB@ninjato>
-References: <20260911150456.893761-1-herve.codina@bootlin.com>
- <20260911150456.893761-3-herve.codina@bootlin.com>
+	s=arc-20240116; t=1789371500; c=relaxed/simple;
+	bh=am3YRQdfDAT3nmaBqC7y5nue7c7B51qzUVM5Eheco6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HFMnkssCP2ai+V1+rnM5Q6AX31VixtxiTD5Vn/eCygp9WqIYHwTY8APnnvIcuImictlbVc92N4cD/0/o9rev15NH3b4/8IO4/NDvDRwpCplDdMBlGTZ2zELzL6NGDwzKwkmH5l//xU7fvQZgMUrezYB507NmtWfQE6xT4MQFA8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5c2c46a428eso2510634e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 00:38:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789371498; x=1789976298;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ig0KNWBSwSP4iz1PoFYIig3Kn8oJ6i+WfrIPn0M81M0=;
+        b=a7D3KmyhNOpbe2qOdhHmVVU91tbFfpYkmBwHrXoVvZrL0pSkMPxVx5ebDI4rl5z0ce
+         6LxC0wMcFRnetR00AP5uwMFT/7pxWpfLlF8trmywQrhZ2nwuyEHOpARCjdyANdy3nHuC
+         WJlO/6moydir3CazaWBORM+bUe5N7l+IGN4+lqXmqnAHFeMQNMSm3J0HdlP8fnKYaN40
+         JmfB0nA2ZyjUwLPvwL/5gpy0tXFyBgOHjnSV/muEh6xYtjHx1ZQ2lgaH8XNLhWsjUhS5
+         +bZsW68sgHKPKSR97TeUzFtmt3si5AXU8hRhFCcwMLpLpc2RQfOSfpHIOYmz+lDR43gL
+         OmLA==
+X-Forwarded-Encrypted: i=1; AKwUvBxTOQIAAJ7G6iIp0dxNG7vBvQXo4XPus99iEAsmvPNgHaiTTIFAJVk1tz670v0BrpFPRZaQ0svsy2+fbpeg8vqnaQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nbyI9Meo4Fyqrj8prYRNgO6jjB23NzKXInlH7V0u7BvupTZEjx
+	UvbHlg47ktAoEabt1baeBlcAhZkatT5kwvybq2U26KFfujilc6YR6nYsUJLVc4Fy
+X-Gm-Gg: AYBFou2W+QVzx7vpw2LUVWDxbOJr/jXK/RlYSB7y61VchGjTYVZqJoRAcKsdF0E5WuA
+	tV5KQdilkchXE4SH1YGyhJbjckZxEMjiCiCu7CupioFk6G5OqWJF0czKgx9OIfV4r05rQUWCAHF
+	wlRj0pFzSVndxYV9Gff6daRQBpY9NFtaNhAOTveIVoDSBaPJHwx7SQbOWQNBqM7ajXce10ixaMA
+	DWfE5aN1PYf4JDXyBWsW55YZXlJEpbD/8RShzMge2r7ueIvNfFz3VurOuWyjQiUI1YiJ3zj/cb7
+	/lItVrR8YvjVLt0gg2LdkOAJjXjYRj2Y5wA0t27ZbtvlRXfIrb317pbJVycjPIZaXCpQUgtj+V7
+	wtAW3pEJ5OgWQpMNod3qdPIttbBgC3vbKxSYq1fK5zK8AmfGKtu/Ae70OcvdiL2YaReYB09lqH0
+	NDDKHbpKh3hY9fgw5G8et6kfrOOUXXOCehXFGxmY0mITPzNg80HPy7JtIBK9SXB5XKDNmABjPtq
+	MSQwJ+rxBEeWiVDrGqFGwxd4SEJtsAqzO/a
+X-Received: by 2002:a05:6122:21a9:b0:5c2:c0b2:9880 with SMTP id 71dfb90a1353d-5c981adc33fmr697188e0c.1.1789371497809;
+        Mon, 14 Sep 2026 00:38:17 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c8470f4e30sm10822333e0c.10.2026.09.14.00.38.17
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2026 00:38:17 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9828b5b20eeso1849574241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 00:38:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByqB9N3LgxMdEKRghj89RyqDXNg7Y0e1Ep1e0CFCtK5Y6DxgCtM6TN2c40XnJ5vWsyBCKnHJ1T2qF55HfSUcL6KrQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:2b89:b0:785:e444:15de with SMTP id
+ ada2fe7eead31-79b588868b0mr615690137.6.1789371496720; Mon, 14 Sep 2026
+ 00:38:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vg9j45dWTZVADX+/"
-Content-Disposition: inline
-In-Reply-To: <20260911150456.893761-3-herve.codina@bootlin.com>
+References: <20260913173009.1164899-1-sashal@kernel.org>
+In-Reply-To: <20260913173009.1164899-1-sashal@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Sep 2026 09:38:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXvDrscWWod8HAqpTRH-VZfyVC+pKJuQy9enD8tbyhsng@mail.gmail.com>
+X-Gm-Features: AcwNN1X-8Qz82mGtefbPfDrQ5FfGVFMErWxdtZEnRaKLFMPVj7qmjR9TiGuLaw8
+Message-ID: <CAMuHMdXvDrscWWod8HAqpTRH-VZfyVC+pKJuQy9enD8tbyhsng@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a09g077: Add missing slab.h and cleanup.h includes
+To: Sasha Levin <sashal@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, kernel test robot <lkp@intel.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---vg9j45dWTZVADX+/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Sasha,
 
-On Fri, Sep 11, 2026 at 05:04:53PM +0200, Herve Codina (Schneider Electric)=
- wrote:
-> The Renesas RZ/N1 timer block controller is the controller in charge of
-> timers available in the Renesas RZ/N1 SoCs family.
->=20
-> This controller handles 8 timers:
->   - 6 16-bit timers
->   - 2 32-bit timers
->=20
-> Each timer has its own interrupt, its own prescaler that can be used to
-> divide the clock by 25 and all of them can work in either one-shot or
-> periodic mode.
->=20
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
+On Sun, 13 Sept 2026 at 19:30, Sasha Levin <sashal@kernel.org> wrote:
+> r9a09g077_post_init() uses kzalloc_obj() and __free(kfree), but the file
+> includes neither <linux/slab.h> nor <linux/cleanup.h>. It only builds
+> where those happen to be pulled in transitively; on arm allmodconfig
+> they are not, and the build fails:
+>
+>   drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: use of undeclared
+>   identifier '__free_kfree'; did you mean '__free_pages'?
+>   drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: 'cleanup' function
+>   '__free_pages' must take 1 parameter
+>   drivers/clk/renesas/r9a09g077-cpg.c:966:51: error: call to undeclared
+>   function 'kzalloc_obj'; ISO C99 and later do not support implicit
+>   function declarations [-Wimplicit-function-declaration]
+>   drivers/clk/renesas/r9a09g077-cpg.c:966:24: error: incompatible integer
+>   to pointer conversion initializing 'struct regmap_config *' with an
+>   expression of type 'int' [-Wint-conversion]
+>
+> gcc reports the same thing as "cleanup argument not a function" plus an
+> implicit declaration of kzalloc_obj().
+>
+> Include both headers explicitly rather than relying on an incidental
+> include chain.
+>
+> Fixes: 810b8b6c4e02 ("clk: renesas: r9a09g077: Register SYSC regmap")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202609101334.xgbNoC4e-lkp@intel.com/
 
-Still dunno how much this helps ;) But I successfully ran
-'inconsistency-check', 'nanosleep', and 'clocksource-switch' from the
-kernel selftest on my N1D board.
+See my reply to that message:
+https://lore.kernel.org/oe-kbuild-all/CAMuHMdVBFCKA5gjQeXuTrOYbaY_sZg-Gnz-fgOCSKhF3cV8jhg@mail.gmail.com/
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Assisted-by: LLM
 
+Gr{oetje,eeting}s,
 
---vg9j45dWTZVADX+/
-Content-Type: application/pgp-signature; name=signature.asc
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqnlpEACgkQFA3kzBSg
-KbYmWA/+Iqdg4qP7EVRCDJZzz/wSJU8TVoeSBllxmjwRIqDBwSWBGtut18a1YdyK
-IMGEb59ercftpj4zCobECG0dj2/SKHgQaJsoXIZzFK/UrkwHqWMhW0zWcnRfMvNQ
-NZ9T4WQQeCngC5mxLWgLX5KElefwQ2qXu8pO/Wdo9F5YKmkli2NJ2yOpLdl9CxS1
-p+0N5OCfG7bnM5d11cq7CJ6PdR+2UmW2/ublmEh7yexjvxhklVs+r1ILTpnmUrHL
-2eR32D5r1C5p/9F+KPcDIjtgLigYG4DdcXGAsAMf0CzBJzGohWQaSe5we+g47eGy
-+w81565pNwWQsfFi+mpFKp0nEOmzomFhZP9jWk9l9JuvHt60p4a7L5oI+i/FTQuY
-OgHN5kQXz6zSyIY57l9lwU2rfF5/DPOwsLbPsKA2d7Zv1FSgHfEKwUTXsI19B/ve
-npn0lL2iHuydkp/etNZDCHRfBpPTxBuzqAIO2kbmGnmmd+j1vFfHSBoSKyTO5A+K
-X9zP4WV3VsBi80GhRduTHkgCOvHEoYDwF2uuHIUVpu+XVM6awj3uYJSmQZNJxgKl
-/YjOKpX2Axip9dgY9izAwLrcCfff33jawLTBFD4Ld9SpYqDsgeNFtSjiOTJ47Pso
-VmXVTgihYwciDzKZjhkEmkzYHEyJWuCxkZZiPGmWuALUv6EWPm8=
-=9yXe
------END PGP SIGNATURE-----
-
---vg9j45dWTZVADX+/--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
