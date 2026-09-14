@@ -1,139 +1,131 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010039.outbound.protection.outlook.com [52.101.229.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2689489FA4;
-	Mon, 14 Sep 2026 16:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789404661; cv=fail; b=kYXqXNb7xx/PLNOhgHY27WD6Gsmbo3AujTX28E7UU0QMakVyckgAWmHIkFDhnfQBXU7CBQF5PbnBOhFj8bSuzVZ0LfeIGO56T8xwzAQ35Kz+ixd71VhtNwP3Cqk6BZFxLWYNjYaBEWClc3w8zIE/25ZmwFt07yu24ygjV9DVoFg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789404661; c=relaxed/simple;
-	bh=P61S9vUuHhOKWR2bYmXUTxZ1I1DLiz7UR8WzU83SOgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WFP9QsDiPXg6gqgFFbbF/c6sSceLVXV1AAu70vL3sVDa5DnKHRJZJO/EhTHDPfRi3klAc0Ll2zeSlxFQ6IInYudwDG+n8NJtka+nPSFN0R3FZ4Qz2ECa4jazLZX89bym+n179rBkD2e0MKHUBaanKeuVjavr7U8p6XnCUySAF4Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=tiNEo1b9; arc=fail smtp.client-ip=52.101.229.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="tiNEo1b9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JYhgLbcgB2Su3MEqgNnvefptXVFFiW3Qog4viZcz2DvmCL4pLE/k79o6uFlS+AoylOHxRFLtUf3v7/+3B2atN838AvlDRF6Ae1EzC0saSKLkb83f6ceJtywDk2eeyl3kjWnK5q7lta4inJ985KQ2apKq6uoEkHEwcvQRdV5HGzhuKscIlffFITmbpfqg4doc5tLLhD1z20N7j5B2M1vdzSvlqnxC2PL2bRDZ5gfH/cYcvaMijoAv/tXwDANoYIzxlpbTbu+eTj2ZTGcUUdJQENMX+f0icN6o0/ew8OEBD6gJl2PpBglaCSnGFROVZ2R7FmiRjczywdHvXPQwmPRjjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GK8GAPqwZjRT++axqW2CzjiqF4d/241mpNrnGAbLwOU=;
- b=VevrnIVSoYdXYV2JLCK2cA+daAntpRcDbj5MzN7YxVBAku8RYi7cCJSV+FmIx+ipHafvnO1FPJ8Rik/uk472zqk9x5K1p66ksK2lcZ31mTe/g85Nxx3sDh2q/s0sZaDhlN7oF6CaGwyHKVfi0lCx/ENC6tVpSz30ZRLl1XijTGNRJcXVWWzLcr71rt99N24GvsoX7vg5XUkrWTZ4BtuCwmThf5Knr33pv/0sffyS7of/8V80z+yqloJC10ILa7yYGWduGZV6kLFp5tyhLgfEyhSVkPui5QDcYy4lLiJ0RR4wJea+hhjo8PmzAXDxQM9Ova7pxJFUYt+CHsTjRV13eQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=bp.renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GK8GAPqwZjRT++axqW2CzjiqF4d/241mpNrnGAbLwOU=;
- b=tiNEo1b9nLGFB7XwPv7Q61izC4woqfBHi/+UEa9mudZXlHRKdqztOarVCc+dBPr7LsNnn+AGYPh14s7Q8yf+cnSsckd9b3NGImpdN7jSlqL8CbBKBpzeFhscxBHLbuU+A9XlblfmfMj1X0sBwFhQwpK+GeT8leh66pVi+fC5QQU=
-Received: from TYCP286CA0074.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:31a::19)
- by OS3PR01MB10407.jpnprd01.prod.outlook.com (2603:1096:604:1ff::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Mon, 14 Sep
- 2026 16:50:55 +0000
-Received: from TY1PEPF0000BAD8.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a:cafe::49) by TYCP286CA0074.outlook.office365.com
- (2603:1096:400:31a::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.12 via Frontend Transport; Mon,
- 14 Sep 2026 16:50:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
- designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY1PEPF0000BAD8.mail.protection.outlook.com (10.167.240.37) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
- via Frontend Transport; Mon, 14 Sep 2026 16:50:55 +0000
-Received: from biju-VirtualBox.adwin.renesas.com (DEU-5CG34966J8.adwin.renesas.com [10.226.92.7])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 9D740300025E;
-	Tue, 15 Sep 2026 01:50:50 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: r9a08g046: Propagate clk rate for ETH TX mux clocks
-Date: Mon, 14 Sep 2026 17:50:23 +0100
-Message-ID: <20260914165026.184612-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAE8490C02
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 16:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789404736; cv=none; b=N1WaK6dKRdKBFhfH+lN3Qrq/FnNkB0LpzhWNxCavYTjl6VVzvFDSt2/iVXq6Cqvnb4wl7ZDsyxydQjj2fGMgUdolHrLV45oW4oMZb4ewblZ+fFLfZ72YJ5fC2NzJA1eenNFG0tn0cblePOrl8VqqfUr1Uvkimho2nfjHSTZhBfU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789404736; c=relaxed/simple;
+	bh=UIWk/mFEONZjdGSVThQcGe22wgnytiwRHqb6WEyzl6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V4m2RCFHMxebItpIl4slhLRYkV0z+1e93BES90dFaJ68MY7YFhPPr2lgCVqSOWx/mOnTjCcE2RmNXUpNaQGcmapk1tBTzI+k8DpNnvfo7DDykEk3BW7pwskGBwr+qjpxzCl3jNuJYrtiadiUlNxG2AMbSVqH6k+GHMN+KxAE21U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c8319dd4a5so907152e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:52:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789404733; x=1790009533;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=AvI/QWFHsgVdwtTPxxpgjV2LtpVQ5it1qz0zswhLJPI=;
+        b=nntKklGr6NNpQaKo6jL+TldamukE+ESyL8Tb4jp3mRjfXg7bntv1r0pMVusKjLDgeq
+         KwJgRpRlFn1ulocSFiu9BFM8CsR+SB4Cm2A8FkzQB4ol3ZQ/v9/CFJOAPTwqtw7rxJAP
+         dyl6kWtHRw3MTcUgIxrodiyo0CWzIyIAgP+IIkzppwbJvqbejWmhgNpRZCBwsb62UjH6
+         8tfe5DuZH3Ktef3+s17FmU8rFumz890DnGqw0rlgB+Bxt60l78wBFEjI7zZvPYxH7SBp
+         eukEP6TzOuymDYUX3fBA85LYu7VKMDXdl539bQP6p1LgqDs/EpNXfw5IJn/YKUIuPpc+
+         zMCw==
+X-Forwarded-Encrypted: i=1; AKwUvBxOnkW6Tin2J9E48zl209a2mtzLuhZVU77suGxZJmldRf91gPZir7L7wQl5wzUJsjAiIaKLmzhP7zO5KlmX57x0MA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lDFIgaprwywXTu+HfZAYjCf93H7Zqr2gETbf3136GeJYDhGgTj
+	51W08NHK0Iz9nWc5+tIpxV9jOsFig/r4z3TPeLRVaqGs3H5sua3/GUeykDzPVNTm
+X-Gm-Gg: AYBFou04B62Cwsi+LSUxq1hhA10QbY7h0ovncQRIbRrtHuJEsB3OaYKLzZK8WweBKoU
+	DTJECgFFnTvYpNw0S9DGYr+716XO2wa4XpXVcR+7k9WSW8eiD8llSzcfwFR12A21OJwWuMkVELa
+	GLlfB92KVbdzyPBBHJ9WQlenteCJRSfT636/dTz+Sy1OLi9oeSGko+WlZCMdvfoqACWdykn9Bgq
+	ZeOUoLtNuS8KQ6t1smRD4s5ZoJenpnz7PkGXdlz+T6q3z7yw0+YAwdXVN4DCcMUsH71e5ImcXUb
+	VJKepkJM31iOemQAweDmrD+4cQyRnvk67e/IL1ifRkfyzjt7NEl7JAKkBfjjR6UdY6+0SROyKXT
+	g0A47NAK8L+zA377hEBhNPx5s4hWFt6uqEXUvfje1jCiEKEzstJnr81jw2eiHO+nYMWkoJF7Rrl
+	igovTwdO5pI0Z49+zHVSfkI2rAF9YC3aRt9gkhPhPAKbFR0AY5zGGeNy9MXLpRgfC0T81rpd+3+
+	q3yUVApQ15oAWyNYISjaWWMZvFIDraR9cdU
+X-Received: by 2002:a05:6122:4f91:b0:5c6:58df:5826 with SMTP id 71dfb90a1353d-5c981d5fca1mr4780617e0c.5.1789404732622;
+        Mon, 14 Sep 2026 09:52:12 -0700 (PDT)
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c8470ae511sm12637672e0c.5.2026.09.14.09.52.11
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2026 09:52:12 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c8319dd4a5so907140e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:52:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByjC78F8YcJC0LInl96sZ72njpkmH40mH4rrv8DhceApv8kbPBX5hELhUhUNapVEvJnJ5HzpfIqZDlRgjGMj1WamA==@vger.kernel.org
+X-Received: by 2002:a05:6122:d86:b0:5c9:54c6:b4c6 with SMTP id
+ 71dfb90a1353d-5c981a92cbfmr4262605e0c.2.1789404731378; Mon, 14 Sep 2026
+ 09:52:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PEPF0000BAD8:EE_|OS3PR01MB10407:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d5c3f6b5-2f13-48dd-b75e-08df1280581b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|23010399003|82310400026|1800799024|10067099003|56012099006|11063799006|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	mDMDIYV91WDgF4omGubYjqHwRRv+FMTpI1/NZ4qjYd3pZ4YBZmCvlWURVjOUp+HSpeoWJzSCS+QigdJri2XeoCl50rcHKemmzRe8uPUQXLFpcxu1nyY4dDlzv88ys2jEa5IcmHouKpfK2AGp6pZMXrN5Ry/D8UUQEuwUvy31/8IQ3UH2OQjKqAE2UChpmboAcSm73LobW5yvGT6YlMghHeR2WmTjisaA/y3mW3ax3CdsKuybzUaineEZ84MCUEUKBc2rt4whEfKoINcXgFjRDZm/TCDAN0pbyHuPaBZnzFitfVCuktbFnpMe5RFoSbt+tmN02P+MycSe9xGVXo6BXUEpIxha0odOhHTyJnQw46I11NlsY0Eof9KRkBZN4q7wBltv12zk//nN2UnOz7kcSMLN8mRIYjpsDu6HSLW2xzpbOV1M+qHYShBpYY3Bl1t92ELjpsVK22yU27ljFpkqLaZDCEbqQmb7EKEQMtTGkp4wL3cV99Nt3gvSRA4Ta9JHpvirtfou5lVq2p+U83EUole0A6RoTVjyaCtGlguGzOh6VK7fbj+AUyJxKGhh37G8z8FYeFzAE/GpU1Tl2SYvYGtO2nFptJGhZf1UHCy9knMF4dTZrCzciU6GH4zl3fPikf3Ow5ahbn14hq9YKx+Iy8tFgu5gwrC1pM8DgrcP3JJlbGEtMI0bo+urzliGJ02foLhsQrUB2nP1qr9smJ4KDg==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(23010399003)(82310400026)(1800799024)(10067099003)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	i7l2QEtCCv9JkysJi4W1PAXrc1K/3KcC6aUCW2uhhGOb3QWPV2ZM8nOLDLu4ekeqXIC4HHQM/lfr7G1yxcmk3AVb0sIfecSjcjPP/+CdLaR6elR7cuNgLZh5cTS7sDph88ONkAZjLQw8VqSGNkmH2v0tGrkeOs8ixK7FdT/7/Y8B6xZf2pTg7cMGeLfUlilks2lWHzjmI478Xlo+vFuzFD4xV/mlAsKoAG+2o4nKfpXjmDUgfV5lB9v1rbojr5ytqMm3EntpP7fXU8xKxSuD2mIGrjwK0JmeM9ZAKp3wCDdwMKBZ7Ip0oR/+cPrwOZ85LmYSxEFzP/QNys/SajxhwIfMERNRXH9c8oaeKqeJHf79a3MIV7qJaDg9dXACwxip/Xg8Nz6EKp3Kb91sPAc0NufamBqQf89z9or1Y0vr8a2G2wJSxCR+d6o/PgvCX4qC
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2026 16:50:55.2723
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5c3f6b5-2f13-48dd-b75e-08df1280581b
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BAD8.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10407
+References: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260913195654.3371385-3-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20260913195654.3371385-3-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Sep 2026 18:51:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUpTKXkJFFxgZ5W8Qdb=2YFwTNyjkxKqYFr_kLEsLDWcw@mail.gmail.com>
+X-Gm-Features: AcwNN1XFaYKKRap8WdI0zgtlhQNDEsuoN6yL245cXUtWnEuRlQigs7Ay4Kwnzfc
+Message-ID: <CAMuHMdUpTKXkJFFxgZ5W8Qdb=2YFwTNyjkxKqYFr_kLEsLDWcw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] pinctrl: renesas: rzt2h: setup IRQ in .irq_{request,release}_resources()
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add CLK_SET_RATE_PARENT flag to the sel_eth0_tx and sel_eth1_tx mux
-clocks so that rate-setting requests on these clocks propagate up to
-their parent clocks. Without this flag, a clk_set_rate() call on the
-downstream GBETH clocks has no effect on the actual PLL/divider
-chain feeding the TX clock, leaving the requested rate unapplied.
+On Sun, 13 Sept 2026 at 21:58, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> When exporting a GPIO using the deprecated sysfs GPIO API,
+> gpio_is_visible() calls gpiod_to_irq() to determine whether a GPIO is
+> IRQ-capable, which ends up using
+> struct gpio_irq_chip::child_to_parent_hwirq().
+>
+> When using the GPIO character device, it is possible to request a line
+> and to dynamically switch between using it as an IRQ or as a GPIO, by
+> updating the edge detector.
+>
+> The current struct gpio_irq_chip::child_to_parent_hwirq() implementation
+> makes the assumption that it will only be called with the intention of
+> setting up the IRQ permanently, and that it will only be released when
+> the IRQ domain is freed.
+>
+> Since we now know that this is not the case, take the following steps in
+> order to properly handle that case.
+>
+> Implement struct irq_chip::irq_{request,release}_resources() based on
+> the default GPIOCHIP_IRQ_RESOURCE_HELPERS implementations.
+>
+> Move the IRQ setup and release logic inside them.
+>
+> Keep the mapping logic inside ::child_to_parent_hwirq() to be able to
+> provide a proper HW IRQ number, but do not actually setup the IRQ.
+>
+> Remove rzt2h_gpio_irq_domain_free() as its only purpose was to free the
+> acquired IRQs. irq_domain_free_irqs_common() will still be set up as
+> struct gpio_irq_chip::child_irq_domain_ops::free by
+> gpiochip_hierarchy_setup_domain_ops().
+>
+> Cc: stable@kernel.org
+> Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to handle interrupts")
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> ---
+>
+> V3:
+>  * no changes
+>
+> V2:
+>  * reuse irq_idx in rzt2h_gpio_irq_request_resources()
+>  * mention that irq_domain_free_irqs_common() is still wired up
 
-Fixes: d55a0dfec40b ("clk: renesas: r9a08g046: Add GBETH clocks and resets")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a08g046-cpg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v7.4.
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 2c5ca5ab5f57..92c76c4a1e89 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -307,10 +307,12 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 	DEF_MUX(".sel_rspi0", CLK_SEL_RSPI0, G3L_SEL_RSPI0, sel_rsci_rspi),
- 	DEF_MUX(".sel_rspi1", CLK_SEL_RSPI1, G3L_SEL_RSPI1, sel_rsci_rspi),
- 	DEF_MUX(".sel_rspi2", CLK_SEL_RSPI2, G3L_SEL_RSPI2, sel_rsci_rspi),
--	DEF_MUX(".sel_eth0_tx", CLK_SEL_ETH0_TX, G3L_SEL_ETH0_TX, sel_eth0_tx),
-+	DEF_MUX_FLAGS(".sel_eth0_tx", CLK_SEL_ETH0_TX, G3L_SEL_ETH0_TX, sel_eth0_tx,
-+		      CLK_SET_RATE_PARENT),
- 	DEF_MUX(".sel_eth0_rx", CLK_SEL_ETH0_RX, G3L_SEL_ETH0_RX, sel_eth0_rx),
- 	DEF_MUX(".sel_eth0_rm", CLK_SEL_ETH0_RM, G3L_SEL_ETH0_RM, sel_eth0_rm),
--	DEF_MUX(".sel_eth1_tx", CLK_SEL_ETH1_TX, G3L_SEL_ETH1_TX, sel_eth1_tx),
-+	DEF_MUX_FLAGS(".sel_eth1_tx", CLK_SEL_ETH1_TX, G3L_SEL_ETH1_TX, sel_eth1_tx,
-+		      CLK_SET_RATE_PARENT),
- 	DEF_MUX(".sel_eth1_rx", CLK_SEL_ETH1_RX, G3L_SEL_ETH1_RX, sel_eth1_rx),
- 	DEF_MUX(".sel_eth1_rm", CLK_SEL_ETH1_RM, G3L_SEL_ETH1_RM, sel_eth1_rm),
- 	DEF_DIV(".div_eth0_tr", CLK_ETH0_TR, CLK_PLL6, G3L_SDIV_ETH_A, dtable_4_200),
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
