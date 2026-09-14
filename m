@@ -1,113 +1,110 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B232B9BA;
-	Mon, 14 Sep 2026 03:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D0A2D7380
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 06:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789356822; cv=none; b=gj4/ZBr1zaXdBZpZqMiwfWe4CZSzA2uElvNK7avHjFlWcJK5/0HNVCq1VA3s23lBmdTj4RFGcAY3LSjoWWwLTvWIUzSbfjuVsITZ1JP62eXJpeNVyiKKcKHF/Ge+mRnrH8pr4bx0gHLaKJMbHC+CpTJdWyNUQBGp95IfYgst8Oc=
+	t=1789367962; cv=none; b=IPVJoj9jXGpQ/XWI05JMUSrYt/8NvxGI8Lj3IitDK5S+4rJyY8KNL+b7ZcQ7HSzYBXJ9XnekgWh3ER1rgIN/A6g0pl05l01Hu8kxG9U6jtKaaop+dZZjRm0fCLqJ6FiD5scqpyIs3qf8++7VgWzan1TQ27Byi8WooAtlKbMJ+1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789356822; c=relaxed/simple;
-	bh=236WAL/SVgLvSVtYPtEU82p2g0kMPt5QCc4VChf1E1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JDby9Bc0tDa7OibN/Dt9hvyDDPunSKVKxryZIehlQ3bfpV/HdVAvsSntJvBu5sy956SwtqDXotHk1ijoWA66ZkXbCRX/QzhFRUMT1QyPvkk2hVssN/0XKpDUd8wWmKbUADpY1yTm8oCi1CcElmCuzd8sYo7gY3rNLQn7qXF1wAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xirn+Ven; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1789367962; c=relaxed/simple;
+	bh=VOkZzQnASceULlIHJmNILmMFsL5FLqoMtxt3SLlpOI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgkWWUPRnwNiIxcnCP5nQ+z5OTrDmSy87dN9qnUsz5829ZWm2Kf+1m4Vq7kWj2EKPV89gwCbzbbo2THjXd/is1c6MsepSOtn2j2fKfVUeSBAMrFZvfQpwF2oajZSgBDVvXV0VEWl3QZVq5vq3qfAVQTC+pNkjDFLH7qhpt8eIVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fvKx4Tdt; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xirn+Ven"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hjrN11n10z8sqP;
-	Mon, 14 Sep 2026 05:33:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789356817;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zi/HNH51DYMqF6FrKwXWRt/DS3wGH248vhAG+zCzkeg=;
-	b=xirn+Venw00wFe+IUQ/RNMvSnxo+YxdBpuOkeFNaf8GxFGck+yfpKHTWTVWaE8ewbq5Erd
-	6W6Xsheui0UA/3iOKYpuHARwG2zg1EOslox7KPmeX9JTLVs+grgYayBb+4xe4CATN0votw
-	KJDukKN8RQ+Sft9qJYtx6F6uaHRYPNODsOHITu9soAP6a7WUt8dxmUtT8RfoomqR1e3Fgk
-	jSpzWcS6sHnSCXnjnVykK14cm+gGRmxRxK5/IHF63/JesQgPg+g+G2MV/xKjC7IVfHL7Pt
-	WIgqHQzrEn/0kQthFqruGUszK/GfHLqZG6IwDsIKIBDHb05UHMRZLrf5pyqIyg==
-Message-ID: <c88cad21-dc3c-4791-837c-49a6a41a811c@mailbox.org>
-Date: Mon, 14 Sep 2026 05:33:31 +0200
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fvKx4Tdt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/cVM
+	/IDDOzikhcJupTR3xSZvZ74pj/xcauelMyq7BK8=; b=fvKx4Tdt6wkypmlKv94g
+	Xz+t3QekiiAyGbprOzHK7h/VG6xjY/y2ncyQtg6VHdRscDvFHqa9qOrfmUa+b5vp
+	diD+A9/tctRGeLe7B5rz+58KJdaGZ+eyzMIwDpOozTeL61Zzu1HklHR6TPvVR3S6
+	1/zhah2Qy97R61Z7068BMhrAAgRad74YKxTeX//N14/kdfi5n4O1uyyoZtAuUQYp
+	4RphxIqMbrZLy0j1BTMOk/WeHyNXluLVSd/4af4FnUlGzJtpK4DQ15ZWUV7W2i0r
+	2UuQp+8MgEPcQgSWx2rSsMfRFWmLrCeOtmBtmiYF24FkFllETVg1C2miMsog39Ne
+	Iw==
+Received: (qmail 624259 invoked from network); 14 Sep 2026 08:39:13 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2026 08:39:13 +0200
+X-UD-Smtp-Session: l3s3148p1@g84/sWtbRt8ujnvr
+Date: Mon, 14 Sep 2026 08:39:13 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 2/4] clocksource/drivers: Add support for the Renesas
+ RZ/N1 timers
+Message-ID: <aqeWkVB4SWuD4_tB@ninjato>
+References: <20260911150456.893761-1-herve.codina@bootlin.com>
+ <20260911150456.893761-3-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] phy: renesas: Add Renesas Multi-Protocol PHY driver
- for R-Car X5H
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-phy@lists.infradead.org, Thanh Quan <thanh.quan.xn@renesas.com>,
- Phong Hoang <phong.hoang.wz@renesas.com>, Hai Pham
- <hai.pham.ud@renesas.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Arnd Bergmann <arnd@arndb.de>, Biju Das <biju.das.jz@bp.renesas.com>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
- <magnus.damm@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Rob Herring <robh@kernel.org>, Tam Nguyen <tam.nguyen.xa@renesas.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Vinh Nguyen <vinh.nguyen.xz@renesas.com>, Vinod Koul <vkoul@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260828192223.402422-1-marek.vasut+renesas@mailbox.org>
- <20260828192223.402422-2-marek.vasut+renesas@mailbox.org>
- <c2rlwdyn2xm3tti7skniz3uldwh4lly4jlqdmggqjm2a2xpyxq@nczmbl7tyqa7>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <c2rlwdyn2xm3tti7skniz3uldwh4lly4jlqdmggqjm2a2xpyxq@nczmbl7tyqa7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 8bfkjky1pt3whjxf1p558bchj4awyzb1
-X-MBO-RS-ID: 2deee22f53a4f685405
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vg9j45dWTZVADX+/"
+Content-Disposition: inline
+In-Reply-To: <20260911150456.893761-3-herve.codina@bootlin.com>
 
-On 9/3/26 12:15 PM, Manivannan Sadhasivam wrote:
+--vg9j45dWTZVADX+/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello Manivannan,
+On Fri, Sep 11, 2026 at 05:04:53PM +0200, Herve Codina (Schneider Electric)=
+ wrote:
+> The Renesas RZ/N1 timer block controller is the controller in charge of
+> timers available in the Renesas RZ/N1 SoCs family.
+>=20
+> This controller handles 8 timers:
+>   - 6 16-bit timers
+>   - 2 32-bit timers
+>=20
+> Each timer has its own interrupt, its own prescaler that can be used to
+> divide the clock by 25 and all of them can work in either one-shot or
+> periodic mode.
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
->> +/* Firmware update */
->> +#define MPPHY_FW_BASE			0x10000
->> +#define MPPHY_FW_CH_OFFSET		0x20000
->> +#define MPPHY_FW_NAME			"rcar_gen5_mp_phy.bin"
-> 
-> Is this firmware redistributable? I would assume not as like other Renesas IP
-> firmware. If so, you should add a documentation about how an user can get the
-> firmware, and package it. Like,
-> Documentation/PCI/controller/rcar-pcie-firmware.rst
+Still dunno how much this helps ;) But I successfully ran
+'inconsistency-check', 'nanosleep', and 'clocksource-switch' from the
+kernel selftest on my N1D board.
 
-I will do so in V2 .
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The Gen4 firmware is now part of linux-firmware, so I updated that piece 
-of documentation and sent a patch.
 
-[...]
+--vg9j45dWTZVADX+/
+Content-Type: application/pgp-signature; name=signature.asc
 
->> +static int mp_phy_probe(struct platform_device *pdev)
->> +{
+-----BEGIN PGP SIGNATURE-----
 
-[...]
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqnlpEACgkQFA3kzBSg
+KbYmWA/+Iqdg4qP7EVRCDJZzz/wSJU8TVoeSBllxmjwRIqDBwSWBGtut18a1YdyK
+IMGEb59ercftpj4zCobECG0dj2/SKHgQaJsoXIZzFK/UrkwHqWMhW0zWcnRfMvNQ
+NZ9T4WQQeCngC5mxLWgLX5KElefwQ2qXu8pO/Wdo9F5YKmkli2NJ2yOpLdl9CxS1
+p+0N5OCfG7bnM5d11cq7CJ6PdR+2UmW2/ublmEh7yexjvxhklVs+r1ILTpnmUrHL
+2eR32D5r1C5p/9F+KPcDIjtgLigYG4DdcXGAsAMf0CzBJzGohWQaSe5we+g47eGy
++w81565pNwWQsfFi+mpFKp0nEOmzomFhZP9jWk9l9JuvHt60p4a7L5oI+i/FTQuY
+OgHN5kQXz6zSyIY57l9lwU2rfF5/DPOwsLbPsKA2d7Zv1FSgHfEKwUTXsI19B/ve
+npn0lL2iHuydkp/etNZDCHRfBpPTxBuzqAIO2kbmGnmmd+j1vFfHSBoSKyTO5A+K
+X9zP4WV3VsBi80GhRduTHkgCOvHEoYDwF2uuHIUVpu+XVM6awj3uYJSmQZNJxgKl
+/YjOKpX2Axip9dgY9izAwLrcCfff33jawLTBFD4Ld9SpYqDsgeNFtSjiOTJ47Pso
+VmXVTgihYwciDzKZjhkEmkzYHEyJWuCxkZZiPGmWuALUv6EWPm8=
+=9yXe
+-----END PGP SIGNATURE-----
 
->> +	return pm_runtime_resume_and_get(dev);
-> 
-> Since the runtime usage count is incremented and not dropped anywhere else, the
-> driver will never runtime suspend.
-> 
->> +}
-
-I do not think we can actually runtime suspend the PHY itself, so this 
-is expected.
-
-The rest of the feedback is handled in V2, thank you !
-
--- 
-Best regards,
-Marek Vasut
+--vg9j45dWTZVADX+/--
