@@ -1,137 +1,113 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E40C33F368;
-	Mon, 14 Sep 2026 03:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B232B9BA;
+	Mon, 14 Sep 2026 03:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789356335; cv=none; b=OIZKS0SLSbuorQ/PjZMraz4MCDErEk0aLROY9wFE5f9UrPBVuEn8Q5XaUBjaLxMRGiThAnbHJR2ARbEP3qslzAhwObcqEyP9M8Cbopwq4Sn5jrTw9Nd3xW+13DUP0ciLnehB6kNyawQT2sttQ9WEiurj8wGal7pjfpY4IELFlFo=
+	t=1789356822; cv=none; b=gj4/ZBr1zaXdBZpZqMiwfWe4CZSzA2uElvNK7avHjFlWcJK5/0HNVCq1VA3s23lBmdTj4RFGcAY3LSjoWWwLTvWIUzSbfjuVsITZ1JP62eXJpeNVyiKKcKHF/Ge+mRnrH8pr4bx0gHLaKJMbHC+CpTJdWyNUQBGp95IfYgst8Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789356335; c=relaxed/simple;
-	bh=IfYsHEx+dOEMQvXwuS4Xc+ipk1ag8b/cNpivaCbIiCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C9q+x2YMXyy2xSQ8QfH2TKb/CwDHj5tSr93aOgLGTTsewwUAv6wVxkoZfquefuH/dwueysliqk5EtH0XmJa7FS1X+MtwFNENvlMtaSuvDCTBHFAgIRh8bv6dfr2xyPDdild3VWkzquPhYD7RGNfJBs6YUiszbyuZDVtmBR9E5zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YHg+SJUo; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NVYyaaRJ; arc=none smtp.client-ip=80.241.56.172
+	s=arc-20240116; t=1789356822; c=relaxed/simple;
+	bh=236WAL/SVgLvSVtYPtEU82p2g0kMPt5QCc4VChf1E1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JDby9Bc0tDa7OibN/Dt9hvyDDPunSKVKxryZIehlQ3bfpV/HdVAvsSntJvBu5sy956SwtqDXotHk1ijoWA66ZkXbCRX/QzhFRUMT1QyPvkk2hVssN/0XKpDUd8wWmKbUADpY1yTm8oCi1CcElmCuzd8sYo7gY3rNLQn7qXF1wAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xirn+Ven; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YHg+SJUo";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NVYyaaRJ"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xirn+Ven"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hjrBb1wS5zMlGx;
-	Mon, 14 Sep 2026 05:25:27 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hjrN11n10z8sqP;
+	Mon, 14 Sep 2026 05:33:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789356327;
+	t=1789356817;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QE3DwC9lelsk2shdi0iKu40ERDnwThYWKwgZfqGr5DY=;
-	b=YHg+SJUoRkWTT2P9SbT9katzwCv9KeGugMT/3EbomDXIO45rQNGlH3XnQ4TyVpCgest2Lq
-	womAmTZVZL7B+MV8hldzF6J/lbFiwHZuxkpyeFojKf1WNhGf4aa8vbPMUmv5ihW9HVLo9R
-	EgYP821paC+crOGDluqWq+cfvSTas5hCq0CFz9xgBVMKL6aJDCGH5kH8W+6wyqr1wpxi8O
-	ZPFyf2XpMH3SaluA7hZ5Ye97Vuo9gKs3csj2re6a7fZRwdLUBi+jyQdDtm5akxTysyO+WX
-	8L/zrDGtQTyrEatc8SRaH2Brfn9+KFwlVXdHUN8cS3wZ1ZqAozPHUm/HcA6qig==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789356325;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QE3DwC9lelsk2shdi0iKu40ERDnwThYWKwgZfqGr5DY=;
-	b=NVYyaaRJLB+1gv3cC/cmzSiUB/b5fwDSbaIREvkKwdfrn2Yc1y+nKhjLN5GkRtLPrGTJK8
-	sPQW+zoFICZYDsVaMOES4yiZKtGcwUyzO5eGM/stSFx52lrFcrGWWzcMAvPHGYmGKRdQOU
-	znz3HQvZjocJJJ4DFPd7jYRWYlX4eGaQNMo2yXQ65KaJstn35eMb0ZxTC4BTCNqFkwDGld
-	07dxhQbDpKJiJWl/uG7CGmzcGPUwBdCIB6PClCijQ/6wlNUOykb2qWQAEchMTJMwZ9hPsb
-	tXJWxdFw6wE+sAhBqX5ctUwCFvWdSTsFC5gFsYD/NoQVzkcw/lQbD5UqaHCjdw==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Rob Herring <robh@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: rcar-gen4: Update how to obtain platform firmware
-Date: Mon, 14 Sep 2026 05:24:58 +0200
-Message-ID: <20260914032520.99699-1-marek.vasut+renesas@mailbox.org>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zi/HNH51DYMqF6FrKwXWRt/DS3wGH248vhAG+zCzkeg=;
+	b=xirn+Venw00wFe+IUQ/RNMvSnxo+YxdBpuOkeFNaf8GxFGck+yfpKHTWTVWaE8ewbq5Erd
+	6W6Xsheui0UA/3iOKYpuHARwG2zg1EOslox7KPmeX9JTLVs+grgYayBb+4xe4CATN0votw
+	KJDukKN8RQ+Sft9qJYtx6F6uaHRYPNODsOHITu9soAP6a7WUt8dxmUtT8RfoomqR1e3Fgk
+	jSpzWcS6sHnSCXnjnVykK14cm+gGRmxRxK5/IHF63/JesQgPg+g+G2MV/xKjC7IVfHL7Pt
+	WIgqHQzrEn/0kQthFqruGUszK/GfHLqZG6IwDsIKIBDHb05UHMRZLrf5pyqIyg==
+Message-ID: <c88cad21-dc3c-4791-837c-49a6a41a811c@mailbox.org>
+Date: Mon, 14 Sep 2026 05:33:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: hqp166d518p71f9fi7c7zzu85utw4ewu
-X-MBO-RS-ID: 7b1d09850c6af42e9e9
+Subject: Re: [PATCH 2/2] phy: renesas: Add Renesas Multi-Protocol PHY driver
+ for R-Car X5H
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-phy@lists.infradead.org, Thanh Quan <thanh.quan.xn@renesas.com>,
+ Phong Hoang <phong.hoang.wz@renesas.com>, Hai Pham
+ <hai.pham.ud@renesas.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Arnd Bergmann <arnd@arndb.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Rob Herring <robh@kernel.org>, Tam Nguyen <tam.nguyen.xa@renesas.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Vinh Nguyen <vinh.nguyen.xz@renesas.com>, Vinod Koul <vkoul@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260828192223.402422-1-marek.vasut+renesas@mailbox.org>
+ <20260828192223.402422-2-marek.vasut+renesas@mailbox.org>
+ <c2rlwdyn2xm3tti7skniz3uldwh4lly4jlqdmggqjm2a2xpyxq@nczmbl7tyqa7>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <c2rlwdyn2xm3tti7skniz3uldwh4lly4jlqdmggqjm2a2xpyxq@nczmbl7tyqa7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 8bfkjky1pt3whjxf1p558bchj4awyzb1
+X-MBO-RS-ID: 2deee22f53a4f685405
 
-Renesas R-Car V4H (r8a779g0) has PCIe controller, and it requires
-specific firmware downloading. The firmware is now available via
-linux-firmware.git repository, update the documentation about how
-to obtain the firmware and drop the conversion script.
+On 9/3/26 12:15 PM, Manivannan Sadhasivam wrote:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- .../PCI/controller/rcar-pcie-firmware.rst     | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+Hello Manivannan,
 
-diff --git a/Documentation/PCI/controller/rcar-pcie-firmware.rst b/Documentation/PCI/controller/rcar-pcie-firmware.rst
-index 67d3bf66e3158..edf4a156fff21 100644
---- a/Documentation/PCI/controller/rcar-pcie-firmware.rst
-+++ b/Documentation/PCI/controller/rcar-pcie-firmware.rst
-@@ -7,21 +7,12 @@ Firmware of PCIe controller for Renesas R-Car V4H
- Renesas R-Car V4H (r8a779g0) has a PCIe controller, requiring a specific
- firmware download during startup.
- 
--However, Renesas currently cannot distribute the firmware free of charge.
-+Firmware file "rcar_gen4_pcie.bin" is distributed in the linux-firmware repository:
-+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/
-+since linux-firmware.git commit
-+56bb432a65bc ("rcar_gen4_pcie: add firmware for Renesas R-Car Gen4 PCIe controller")
- 
--The firmware file "104_PCIe_fw_addr_data_ver1.05.txt" (note that the file name
--might be different between different datasheet revisions) can be found in the
--datasheet encoded as text, and as such, the file's content must be converted
--back to binary form. This can be achieved using the following example script:
--
--.. code-block:: sh
--
--	$ awk '/^\s*0x[0-9A-Fa-f]{4}\s+0x[0-9A-Fa-f]{4}/ { print substr($2,5,2) substr($2,3,2) }' \
--		104_PCIe_fw_addr_data_ver1.05.txt | \
--			xxd -p -r > rcar_gen4_pcie.bin
--
--Once the text content has been converted into a binary firmware file, verify
--its checksum as follows:
-+Download the file and verify the file checksum as follows:
- 
- .. code-block:: sh
- 
+>> +/* Firmware update */
+>> +#define MPPHY_FW_BASE			0x10000
+>> +#define MPPHY_FW_CH_OFFSET		0x20000
+>> +#define MPPHY_FW_NAME			"rcar_gen5_mp_phy.bin"
+> 
+> Is this firmware redistributable? I would assume not as like other Renesas IP
+> firmware. If so, you should add a documentation about how an user can get the
+> firmware, and package it. Like,
+> Documentation/PCI/controller/rcar-pcie-firmware.rst
+
+I will do so in V2 .
+
+The Gen4 firmware is now part of linux-firmware, so I updated that piece 
+of documentation and sent a patch.
+
+[...]
+
+>> +static int mp_phy_probe(struct platform_device *pdev)
+>> +{
+
+[...]
+
+>> +	return pm_runtime_resume_and_get(dev);
+> 
+> Since the runtime usage count is incremented and not dropped anywhere else, the
+> driver will never runtime suspend.
+> 
+>> +}
+
+I do not think we can actually runtime suspend the PHY itself, so this 
+is expected.
+
+The rest of the feedback is handled in V2, thank you !
+
 -- 
-2.53.0
-
+Best regards,
+Marek Vasut
