@@ -1,106 +1,166 @@
-Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0AF44E038
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 12:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71C64968F0;
+	Mon, 14 Sep 2026 12:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789389539; cv=none; b=lViAEyKqNtYoRxwBAY9asEXIqwjhG5GYoZSbvwkEqCi/mDLtsJWvkK4m6FSymR2nMAwyuUpvTHef0M8ycbBr7umtGfr8wdYY1QwC+uisQ0HfFk1YwgrqSNKCHZHiq3E7rd08ms+nUcoas8aKTg0V6aLdNmpy/0rWDAebPFCvP+I=
+	t=1789390229; cv=none; b=PcXz/ggBnn6ulAuawx2SQXjfS4BbujzhO9X4aoFpuat5FosPQh2h5VKJoetMGxEo8V+KfV1v3YSnSKXpbZyiv8AKWj6oiBFF8G/xkzGTSjrW46cuI7t4fyZ0kE08BVBY/YMj6QPZF42Z6wWqTXwGxsnxu4AAdhNlXPhivxFDw7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789389539; c=relaxed/simple;
-	bh=alCv2i4afikLPEBE/ZSB/QPy8e/IVs00EB1s3dQO9nU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JUJ9yNchFNMme+yxay+J+u9UUI1cfIjDJC27kneV/kmgvnIFdTJLKxkmHubJ9HAC1NLoMKaXiaAsZ/4NE/E8rIz4kUIK5rGPlsc501q8Qc4osUsBCYoEDpbSt/QzbW35Ttz2zzFU5PJ4keKRkdtFVMop4truwtU3JU8pcbtMd8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-785643199baso584328137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 05:38:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789389536; x=1789994336;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=OYAVE9OAvj5W369HdyvqFVzrTYEbVyLELurCOBH65i0=;
-        b=fHAPnkePWyisJPuBdvF+WSZgC84B3Fr8MSUETaFp13jAOqPphhaQ/VlND95+HkCfcE
-         c2YFGdTJWkC0/A4vYqF5FSo+Snkzo2T8LBVeQrDnY8P694EEH3ESG9zF1icBTDSQ4FnX
-         kp7jXyV1TcAeB/2Hf7Gb3bhXAwECsCmsIdEyFFstGKfSvz/Hh3Alb1Nn/k8pq8/PLMEw
-         aF9RcayjqkcUd7u4F+Kb4vxWVvmV0VuIzpDIG+5uO5Oux/CHe+lHaGZ/XB8Wnq2+vwTn
-         BYW8h5g9/fOozyzavSLrdFgKymmS3m7ZhriONWa0URkvO99HLB7VtxQj+3Lhx1Aan/wx
-         VQaw==
-X-Forwarded-Encrypted: i=1; AKwUvByARUr0jpyzieerNVcGI3/LH4sedxiwArbySWRHxRu8QCKxvz578ntXIsog+wW1llyd1khZWV9muKb/KDInbEGhDg==@vger.kernel.org
-X-Gm-Message-State: AFuF++nubVoWxTNeBKDw3uP3cPbpcHJ2cAt4GNX2MN1dkpBwJ8x377c/
-	3HtnemhWPUHdnVevaclD2ibCufyASvU8fzDusz4fY2i1m8OcSIoiJ1u839mjTMXV
-X-Gm-Gg: AYBFou1FcrQJUjOEsJTiKD6xsGUhwXv7u8m4UIDKsVmnTs3gS7JjVyFRr5NGC1jEVvR
-	x8pvenIkW9ahJWJKdHzG/VDQyrMZ7Zm0eAIzYIrYm++ftLEj1Vzq4zzSVluQm58xOgUU1RJvCCe
-	N+hrC/icp7WqicR0c8QfI2p21iyvHGfgsJUNW+1YXuDkh3WlRQEaHXBDl2gAsCZDOkh4qoqby+9
-	T2Q0kBjbrlpfEKsSQzGvUiNoJV0wpFNgCyxYU7YSURnY2H/2jy6xlzIed2/ksRuSrhhj82yfJvO
-	nKqVqx2+LGj2jOmmRYGvdeKPoDYxpvBZfW68FoDGsN36oC+yPDStF8Aa+YADhWorOpz1cv07x+b
-	2zixXg40rF1GsGIlV2lnGqN1f7bQZhARLG8adaK6MeNv7R76hFPWl8i0d8RdFrqh2ZPivDToyEf
-	UD97PzO8gOW14PJC5FAMGxU29LxqG8KaqmFfmyfUE+krHWzQassEsPaP/zmR0qq5WJ+tyF2kIrF
-	l1VZrE9mJc4w7jPbIsTJsi2wxSjo3V78CAqYEkgxp8A2bhP
-X-Received: by 2002:a05:6102:c91:b0:79b:c51a:e5a with SMTP id ada2fe7eead31-79bc51a11a3mr980018137.0.1789389536006;
-        Mon, 14 Sep 2026 05:38:56 -0700 (PDT)
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7927eb824absm10218921137.8.2026.09.14.05.38.55
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2026 05:38:55 -0700 (PDT)
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c62dde2so564219241.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 05:38:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxUA5IyRN/2ZanOx7mhg/SGuMlfET/BOF7oBRvQ7TpmisNH/H5jdqrBNbd8TIcMqOx2lDiOFrCVZIzOHSBUvu0HWA==@vger.kernel.org
-X-Received: by 2002:a05:6102:54a9:b0:789:5f54:2367 with SMTP id
- ada2fe7eead31-79b579b0d38mr1196005137.4.1789389535416; Mon, 14 Sep 2026
- 05:38:55 -0700 (PDT)
+	s=arc-20240116; t=1789390229; c=relaxed/simple;
+	bh=51+QGtDrrULfWPwN+qx3nNNHE2I+SDEQHyJRI8YKgiQ=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PqX/wWjZJbo0HDiLTgEbMGidJ9GApC4TPnGIsBfb7ZXp87c3F5J8c9Vyq9Q7xRouej4sTbeXSyVS/z9TrYHAOsoq2rgszKn7Uqp4LkO1W0ipZ3GMooVZCnxQeCX+uj+KGW2WlsaS8l7bLZigRq9xbaARmoPmFv3S+cBsExb2lJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsrBnctL; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsrBnctL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 855C61F00902;
+	Mon, 14 Sep 2026 12:50:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789390225;
+	bh=nAHs0FwO5HirqBTAsL4xPSPoEzHJVgBNldVSVJGuM6w=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=OsrBnctLlVJgJWgc+plCxEab0DY8146Qc1y8Ip+Tu/Ll3daLLQsZaHPldecXLyIdC
+	 NBuC3ALG7uHJs19Qw3qJdlrLV9Ay7UVdlo7Bh8RRQ1RWDqKWUnsfOIRfQmgNVqrY8n
+	 wp5SesIHJyRyNLXyA+WfzoHIpICyGsVKuLUtDzW2qWN7k7FZ7WqfxCWV5etlbIM54b
+	 gVP5twM7yfOTh/ZQRqmwiVOXlFYvVhHItFHWHfKQToTY+135Kiu2uJkEBXt3uqd8VB
+	 xaTqe/pxjFr4Z0TSy6ARyNJKJNSPNL/xELAfpyHHOgSHUa5LmN0goMPEqN7VffUzm7
+	 9BAQr8UcOfqFw==
+Subject: Re: [PATCH net-next] dt-bindings: net: Use consistent indentation in
+ the example
+From: netdev-bot+sashiko@kernel.org
+To: krzysztof.kozlowski@oss.qualcomm.com
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+ jesszhan0024@gmail.com, sean@poorly.run, marijn.suijten@somainline.org,
+ airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, justin.chen@broadcom.com, florian.fainelli@broadcom.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ulli.kroll@googlemail.com,
+ linusw@kernel.org, clement.leger@bootlin.com, olteanv@gmail.com,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, hayashi.kunihiko@socionext.com,
+ mhiramat@kernel.org, nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, johannes@sipsolutions.net,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ jjohnson@kernel.org, richardcochran@gmail.com, geert+renesas@glider.be,
+ magnus.damm@gmail.com, yongxing.mou@oss.qualcomm.com, rfoss@kernel.org,
+ abelvesa@kernel.org, vineetha.g.jaya.kumaran@intel.com,
+ claudiu.manoil@nxp.com, alexandre.belloni@bootlin.com, elder@kernel.org,
+ s-vadapalli@ti.com, rogerq@kernel.org, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ ath10k@lists.infradead.org
+Date: Mon, 14 Sep 2026 12:50:22 +0000
+Message-ID: <178939022208.22033.14553895731937911806@kernel.org>
+In-Reply-To: <20260913122910.99457-3-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260913122910.99457-3-krzysztof.kozlowski@oss.qualcomm.com>
+X-sashiko-severity: Medium
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260909175922.161658-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260909175922.161658-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Sep 2026 14:38:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX=gEiN37Su3hhVS+kdTiw2j8WXDtjy=bQy0M8drBa_kQ@mail.gmail.com>
-X-Gm-Features: AcwNN1URkRSQsxTlCS1AkYCaZYHp_UGH2AcjGLEgcywIPONdLTrdjIQPHpbJFxk
-Message-ID: <CAMuHMdX=gEiN37Su3hhVS+kdTiw2j8WXDtjy=bQy0M8drBa_kQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] arm64: dts: renesas: r8a779f0: Add GICv3 ITS and
- update PCIe nodes
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Koichiro Den <den@valinux.co.jp>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 9 Sept 2026 at 19:59, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> This SoC implements GIC600 with GICv3 ITS and PCIe host mode on this
-> SoC can use it. Add GIC ITS node into GIC node, update interrupt-map
-> and add msi-map into PCIe controller node.
->
-> The GIC ITS does have master interface to issue transactions to RAM.
-> The interface does support cacheable transactions, however, it does
-> not support shareable attribute, because the AXI port signals are tied
-> to inactive in this implementation. Therefore, add "dma-noncoherent"
-> DT property into the GIC ITS subnode.
->
-> The GIC redistributor does not have cacheable/shareable, therefore
-> add "dma-noncoherent" DT property into the GIC node.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue(s) to consider:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4.
+Critical: 0 · High: 0 · Medium: 1 · Low: 0
 
-Gr{oetje,eeting}s,
+- [Medium] In Documentation/devicetree/bindings/net/cortina,gemini-
+  ethernet.yaml the patch does more than re-indent: it deletes the whole…
 
-                        Geert
+--
+
+dt-bindings: net: Use consistent indentation in the example
+
+This reindents the DT binding examples under Documentation/devicetree/
+bindings/net/ to consistent 2- or 4-space indentation so that
+dt-check-style stops reporting "indent mismatch" warnings.  Twelve
+binding files are touched.
+
+> diff --git a/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml b/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
+> index f0b5bea2458d5..da9bc170cd543 100644
+> --- a/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
+> +++ b/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
+> @@ -87,18 +87,6 @@ examples:
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>      #include <dt-bindings/clock/cortina,gemini-clock.h>
+>      #include <dt-bindings/reset/cortina,gemini-reset.h>
+> -    mdio0: mdio {
+> -      #address-cells = <1>;
+> -      #size-cells = <0>;
+> -      phy0: ethernet-phy@1 {
+> -        reg = <1>;
+> -        device_type = "ethernet-phy";
+> -      };
+> -      phy1: ethernet-phy@3 {
+> -        reg = <3>;
+> -        device_type = "ethernet-phy";
+> -      };
+> -    };
+
+[Severity: Medium]
+Is this deletion intended?  The commit message says only:
+
+    Correct indentation in the examples to consistent 2- or 4-spaces
+    indentation to fix dt-check-style warnings
+
+Every other hunk in the series is a pure whitespace shift with the brace
+nesting preserved, but here the whole mdio0 node with phy0 and phy1 is
+removed and nothing is added back.
+
+Wouldn't re-indenting the mdio0 node to 4 spaces achieve the stated goal
+without dropping the example content?
+
+> 
+>      ethernet@60000000 {
+>          compatible = "cortina,gemini-ethernet";
+> @@ -110,28 +98,28 @@ examples:
+>          ranges;
+>  
+>          gmac0: ethernet-port@0 {
+[ ... ]
+> +            phy-mode = "rgmii";
+> +            phy-handle = <&phy0>;
+>          };
+
+[Severity: Medium]
+Do the surviving phy-handle properties in gmac0 and gmac1 now reference
+labels that no longer exist in the file?  After this patch the file
+contains:
+
+    gmac0: ethernet-port@0 {
+        ...
+        phy-handle = <&phy0>;
+    };
+
+    gmac1: ethernet-port@1 {
+        ...
+        phy-handle = <&phy1>;
+    };
+
+but there is no longer any definition of phy0 or phy1 anywhere in
+cortina,gemini-ethernet.yaml, and the example no longer shows the MDIO bus
+and PHY topology it used to illustrate.
+
+If the mdio0 removal is deliberate, could it go into a separate patch that
+also updates the phy-handle references?
+
+>  
+>          gmac1: ethernet-port@1 {
+[ ... ]
+> +            phy-mode = "rgmii";
+> +            phy-handle = <&phy1>;
+>          };
+>      };
+
+[ ... remaining files snipped, no comments ... ]
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260913122910.99457-3-krzysztof.kozlowski%40oss.qualcomm.com
