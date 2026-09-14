@@ -1,49 +1,45 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE6412BF6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBD333E346
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789420739; cv=none; b=kJcgmanI0JL8YCLCJltodMwL5z8x+8OaPxScUdJ1Q427EkNpW3m0kKFWYxgT9+R7tQLolVSzZeTr9qH0yWSjXbiCtFyCoqw8LxeNcztLZELpFZf/SgNX0RTuo3nSiMYD72QgNrCyqAmHQnb3ssU4B6+RgDGIaqkP7BCHRyly/SE=
+	t=1789420741; cv=none; b=ue6LGwO/kypVXM1PQfNY5KxRe0Wa9lxxvytVdu+7T93yqtDuM1jzJeriEWD4ITayhSwpE6OnWu10QakDO/1dp/+Zt2Nif/hMC6sNKIbhZvDfD8gKzeaN93BmFbhbgOsIMGIkhLySE4265fGAZTRAJn138lfhO+FeryOJ4WKHI7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789420739; c=relaxed/simple;
-	bh=1cqu24sc0bEbkUn97SekG2f6OyLCCXWSUIMpOwmBONk=;
+	s=arc-20240116; t=1789420741; c=relaxed/simple;
+	bh=b99W4ESpHTOUw8n3WoT7xa0gdy4VpiCBo1LFrNgg+bY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NOAYa5tnXmiBm60SJOkYkTjgu6RihsGGlLdB4jMYhqKPNpt7h2aLWNFv637QaISDjrY5FxgOjDMod22i1X+s6xnp15KxXOUsI+f/549EM4tpjwGzs5d0bqd6HNw/L2+Lap4jET97OXJj7CBenWmdi+FgzAWnAZnmONi+kLTGe2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lmR4kJd0; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=MD1hC6fHf90dfcEifoAeDiIYSVTBrGhFC1/aXbAqxoakPPDr/4Kt7tjBnqybhnAAC4Z7YhFKAXZnVDYgXziG6P1SPfqbM7eCfcJZZVsdCExrBzu5sQNIN42TlgcuwH8IYEwa8AgZR4owxPXEpjiPlG0RG8VFmqnJJWQpGeqlr9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OMLFlhUw; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lmR4kJd0"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OMLFlhUw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=LKy7y/LQXWteCIfZG9HkT+fRiu0RNjjkJIkSFm776b8=; b=lmR4kJ
-	d07d5ovVzLQxEzo45t/EPuJJIc9M754bD7BAC0fKaXsB0mXwDzUoFGJ/OBuP5wnt
-	XNe2GEPPQ2Y/NJm7fuRRwmz6n2yEshXrZFV7hMGUE0GoBgY+d3YuUHvbumD6UnIn
-	FpcGXtFDPnjHuJ4Nc19LAoXs+qHam1zkIc5gd0AosI9NY7aZkzwjdkA8Dva5+U3g
-	fNmel8nMoofJERyVHrzAerQAKhfFToMV1uu9qq/eIeHZSHQklgnaW5owyv4RCPWV
-	RFs/y8oOeC0Z2RHs0SZngvIN1ej7NF9ZNYIX5EitOe16us3L0ryn4HlOgP1f+15c
-	1C4cP55XhwcizhOw==
-Received: (qmail 892869 invoked from network); 14 Sep 2026 23:18:45 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2026 23:18:45 +0200
-X-UD-Smtp-Session: l3s3148p1@NiWz+ndbhLYujnvr
+	 s=k1; bh=3QrDRwUSCCz1aEdjrMWv3T8Wu6hvE/oA5jb6/DisrNg=; b=OMLFlh
+	UwRmS4p2YHz+BbYn4zzKoilFKIHpJiHkq9OKJGipG1jhEK2h0BuYDvxXtgEGwaIv
+	pt3pYikq+Q7hHk5UEhfcEfGjw9WffApbDJ0zbhj0Xaay2tBrB/M5hlxPpuBRCyJ8
+	Ugs4wtdngX/0X5a6dCQo+8GS3sHR+kBpOpvNtjPWMy6gq8yBcizdeS6jGAhrYTzZ
+	d7tTccqqDDhNycNDZu+Q6gCfIYNBDktOPL+GhjVuN+eyoTIxb3fOjdee4ld+et32
+	zFoDtMgRqVHw3qpn7QA/BgvsiS/9QfmFUFPxF2njr1oan7Djgu2U1gfcTOVmjJsD
+	h4S8i7AbYyDgwYHQ==
+Received: (qmail 892967 invoked from network); 14 Sep 2026 23:18:48 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2026 23:18:48 +0200
+X-UD-Smtp-Session: l3s3148p1@BfPa+ndblrYujnvr
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/6] dt-bindings: rtc: rzn1: add SoC names next to their IDs
-Date: Mon, 14 Sep 2026 23:18:27 +0200
-Message-ID: <20260914211826.73727-10-wsa+renesas@sang-engineering.com>
+	linux-rtc@vger.kernel.org
+Subject: [PATCH 6/6] rtc: rzn1: add R-Car X5H support
+Date: Mon, 14 Sep 2026 23:18:31 +0200
+Message-ID: <20260914211826.73727-14-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914211826.73727-8-wsa+renesas@sang-engineering.com>
 References: <20260914211826.73727-8-wsa+renesas@sang-engineering.com>
@@ -55,37 +51,23 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This helps maintaining because the numbers are easy to confuse.
-
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- .../devicetree/bindings/rtc/renesas,rzn1-rtc.yaml      | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/rtc/rtc-rzn1.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-index e96007981c34..7ea77cd0bee1 100644
---- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -14,14 +14,14 @@ properties:
-     oneOf:
-       - items:
-           - enum:
--              - renesas,r9a06g032-rtc
--          - const: renesas,rzn1-rtc
-+              - renesas,r9a06g032-rtc # RZ/N1D
-+          - const: renesas,rzn1-rtc   # RZ/N1
+diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+index ebb56c8d75ea..4360e125632e 100644
+--- a/drivers/rtc/rtc-rzn1.c
++++ b/drivers/rtc/rtc-rzn1.c
+@@ -526,6 +526,7 @@ static const struct rzn1_rtc_data rzn1_rtc_rzn1_data = {
  
--      - const: renesas,r9a09g077-rtc
-+      - const: renesas,r9a09g077-rtc  # RZ/T2H
- 
-       - items:
--          - const: renesas,r9a09g087-rtc
--          - const: renesas,r9a09g077-rtc
-+          - const: renesas,r9a09g087-rtc  # RZ/N2H
-+          - const: renesas,r9a09g077-rtc  # RZ/T2H
- 
-   reg:
-     maxItems: 1
+ static const struct of_device_id rzn1_rtc_of_match[] = {
+ 	{ .compatible	= "renesas,r9a09g077-rtc", .data = &rzn1_rtc_rzt2h_data },
++	{ .compatible	= "renesas,rcar-gen5-rtc", .data = &rzn1_rtc_rzt2h_data },
+ 	{ .compatible	= "renesas,rzn1-rtc", .data = &rzn1_rtc_rzn1_data },
+ 	{ /* sentinel */ }
+ };
 -- 
 2.53.0
 
