@@ -1,174 +1,304 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010033.outbound.protection.outlook.com [52.101.228.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4921142C4F8;
-	Mon, 14 Sep 2026 10:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C96D44C4FD
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 12:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.226.204
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789382281; cv=fail; b=QzbDhB24J8gSC22TP9bzPOltetuawx/7CXOsurAttdkK6YeZTGIw3axuYzocadZZg3DgYZA2SkItCW1GxVZBCIxudu+Q8jvBVesuVBTStKkimD7cexMeX/aoLTYZyAC/ST4Md0+lGkoig1XJv3wAwOrK/rslPusW7cuNxCEzqQo=
+	t=1789387602; cv=pass; b=M9uTDuhS8K24UsPZjbKsXRBuYhQH2SwhRsvGJPMvR+MkZ2DKesGsFF3oHBgNFfoFVKkVniSOf0yV8lRht6s4JsgWL7WYSob0q3to5yu5zt8oxPqC2tY8W68ocraBEnhvvwxHAAINryoa7OH9ltQ4q8GhqhesCjIFvoV9F0q2eXs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789382281; c=relaxed/simple;
-	bh=AkR4LYEN3U5UxxjI3ZT0pSliq/9MT8Qpk5MFFiEMWGU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DV9dRcs0fG1LIAL+RA0DPVdcYtBaaTKMcZuzwXnpxjjeC8Y8Uwe2Aa62Ef4vEAK+1j//rZbQ8yGJXRwk5RtXTLMhXgBAe92v7tDoSqHyN7icpPdyLc3+hT8bQONKkdmJOYCJ0JRaFrf9RuBylyB3JmkRIoZ1med4YcjatwdjL7s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Bns6nJa/; arc=fail smtp.client-ip=52.101.228.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1789387602; c=relaxed/simple;
+	bh=dAQLslpPj1WS5Id3+o7zx/jx5tvNIaiKqLwvi1h/rME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oWSxG9RJJST+IzWkMbu14PCN/rlpxksEyMVV3MsrJkCfDym5P9MenKC0qjyMtDixJrrurgo4S/oQSO2K2/J4vqO63Sb4pwbMKmEqVuL7EiVi1yMjHUixELwLQRMnfPjTbBH9DEMccyZ15h4npy7GUnkhfTyQDKwc2B0rjSXy4yc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+t5UHxD; arc=pass smtp.client-ip=74.125.226.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Bns6nJa/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xSBKYoyUysZ2tGjK9GQwZlCYPetKtdU+8Xd5Pa4L4TcgvjH0ilez4EkvYkxCxAtGob6gBqvCvYuqVT7Ab8yEHq5/wlHH8CNbCxFA9hDE1FjSzCQFmu9ZxtS1zRZ1J0PAxDGfZCwpPWQirf4gwM/c8/s4OTgzzxXXrOA8X7AS/T3LwzSGJs0f3cMliA54gLUHRjeO9Ls4eH9xAv0+t2Km7PA22Im+jQooVrnqxwGrXE50WJ2Y3B/T1W9TJ7jjf/HqmKbIrCENh9lrvFTF5pce4qHgSxv5fupQ4duyN8zIvMG5qUw2czdn/8DtOzuOgJ2wdt3z3BahpyZh8XYguz38Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pocjzCrCcsP/7bkunm1R1zaiSYAh2+MirLkWFl8qm7Q=;
- b=K0TOJhactahzf+ri14UA4Hw9nvRU5mE9xHdrIjMDItGJzuU24wXYBiUHKYW7VsstcLbBsXnKGPlFLxQUNLfdTE3eyUm4r3AH0D+8+8oNT8JOD0gbJVJNWkqiQ+d15SQKCv3yJZLR6c+DGs/UPJskcbZnJ93pdjcN+T1T4iOE1bKn7CR3Bgphd1jjwGmnUsCJcgMEq09xXt3iljeHENH69FswClxp9eXfrCMFvCyiiMSiLjQ83utLFgQ8l4W5yeAdXI5xTmuh304gXFzHFez7cfrfdO2kYdl/Np3rFSJJ7FWss6cQrA3mOyAjUdUUGFt8V5qOin90O3rC5I7CJiVoOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pocjzCrCcsP/7bkunm1R1zaiSYAh2+MirLkWFl8qm7Q=;
- b=Bns6nJa/Jm86yKMSxeAsufFAU6w/Jf+Jjf6ICptNSXgSPqkpKbTC14c47vKk/eNr+HvGN775ZuMD9gQzuQTPqrsXpwvBQDQuPpK3p6Thl0K4DvP+/uMib6atIyvaxXLyzszdu4EosNJu4e/R/cbSv7iiUBDFK/h/+TH/8mbYpS8=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS9PR01MB14306.jpnprd01.prod.outlook.com (2603:1096:604:361::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Mon, 14 Sep
- 2026 10:37:52 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0406.007; Mon, 14 Sep 2026
- 10:37:51 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: wsa+renesas <wsa+renesas@sang-engineering.com>
-CC: "biju.das.au" <biju.das.au@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v24 04/15] mmc: renesas_sdhi: Add max_divider field to
- support SoC-specific clock ranges
-Thread-Topic: [PATCH v24 04/15] mmc: renesas_sdhi: Add max_divider field to
- support SoC-specific clock ranges
-Thread-Index: AQHdMMe7RxxJrlR3AEiECnq/qqkha7a7NF8AgAM8VaCACgxIAIAFiypg
-Date: Mon, 14 Sep 2026 10:37:50 +0000
-Message-ID:
- <TY3PR01MB11346199A020E8F9345B8418186BB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
- <20260820171657.62815-5-biju.das.jz@bp.renesas.com>
- <apgC-m7SrDNU9YmQ@shikoro>
- <TY3PR01MB11346696A5DF407A8E25150F186B52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <aqMnnjs_9tzfuPem@shikoro>
-In-Reply-To: <aqMnnjs_9tzfuPem@shikoro>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB14306:EE_
-x-ms-office365-filtering-correlation-id: b66d391c-bdad-42d6-3d17-08df124c3a8e
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|10067099003|4143699003|22082099003|18002099003|56012099006|11063799006|38070700021;
-x-microsoft-antispam-message-info:
- QHqlaP2Zrk1xgxJyRQbrTa+UbYrwI9a6MBkSFRCqNssKvJwLDhDualkjwVthxdV6RXOe3z18al2c2PPZzEC1b00Qo454BvPQpJNZTYk7OZv7EvHsiO7vUcNC5JiKDmjq56hZ8ySyXOnMVQZzehU5bfx4d5OHrgYDQxrQp/+e54+JQd1fYjh0aCZMiB9Sono5B5PYvcklGk/zqOi8BP8Evh4uUGbZ9OMSvTTMWy39+SqbT5d+f0zrSa5SDwifUEd5sx/MM4O75c9kai056ZwRK3giOAf+5NNQNaXnwBiWGpQU4REc8k+IslQkLCOYGRnk/Q0htulTRLJJdRr58SynURmBINoljI2L71igK3LqMURwGBk0S591KtdCdkPH6iGa2REemWiQ8G+akdJR2/hhxImpbJopDE8dadCyHdA+gEJETteWdThC2xQha9wEl4WAfTD0wbXd5zwQJXmGxMuKstf0N24PhetYTFneONjUWgQUhgw3W4RIyZbYFPpBlsB9z8IrgNlefpvGdA8d1l2S8TzJw9kJICyq60ZHfFJpTksEKxoEjnJMZxUKu/ojqfeQsIGSeKyEKkWDKafsJZKyycv4aNq22j1kjFWWh3WjWrFRYOeP50ZTJFjIvrtte3YBx/NHYdW46BgE0GbMvZIKrWFpgD6XENlzS8kK/2gOzoI84qcLICCj5Hl+xZO3IIb+yeGCS9MlLZLvstsAmON84F8wWe1t/drLyiwB8cUY30I=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(10067099003)(4143699003)(22082099003)(18002099003)(56012099006)(11063799006)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Dlj9d6BMHhUbdbY3Txlmi8FZZGtTlNMxqgB140yYmFRJd5jEpXVkNkxiK3qY?=
- =?us-ascii?Q?cNj4B/GBXqdiJFX1lp/D4EJxjurRDhgo1uHpOkqO+ifWzfBCCMwyduknleyq?=
- =?us-ascii?Q?4ezqdSJqeraL1KAfVDF2eAIPAGvxJsmOXEhP/4U2g2wX5D0JkvHQG8iU2ADt?=
- =?us-ascii?Q?rqkeuvGDMypxZaHkEMfUqLFWvMAhaKjdI6VPB2YNn2SiBLzzI1VB2Yghh9ic?=
- =?us-ascii?Q?Wu1/nCLRv1uHBYUipFDHIgz7FovRDbrXfNueZNknehk3NK93fUBSZadu4KVD?=
- =?us-ascii?Q?+bAFTvaqlCtEBtCKPeBU2uNYk+wnsS9gzVffCXs6Una8cJMzzN4xDORXqwn9?=
- =?us-ascii?Q?C9+0d1OnV8+EB8t0zVsb5z+QRQNxdaA0kaACSBZDwKg4I62CwmJr0OwKIaJA?=
- =?us-ascii?Q?oaZ8w6rmhAoInBUMChRxfu3sA+u10wEUEyRccdvsJWSeCgp+OlA0Y5cgiu0y?=
- =?us-ascii?Q?hjX405AhYSjytbXxym6D1MBVNb99pjP8cCtePU6uHqlNuh/DmDMfISN+5qhe?=
- =?us-ascii?Q?szUBAtgjaOFMSmok3IRTJdtvgu7HcSnom3fVAsYTcktQYicL+JCePtJXHOrd?=
- =?us-ascii?Q?xUNxuI/xskije1M5hWEm+vE2O8Z9EpNeOCztfOfql5bxC2JVPTIDihEcGmBr?=
- =?us-ascii?Q?nSss0bk8pxWH3dr25MlUoj9jTix2JXRMd/rnWNbFsqFYL/7Imu6w2U1X6lQ0?=
- =?us-ascii?Q?Wy5paMQcRdLstnYm80UcpBrtxCPCmE8j0v2KGomUPFH6i0KsBEwtZWfETlb2?=
- =?us-ascii?Q?JhUsfCQAJ8a+atr3VLX41cc+38brV4xLDQiB5UdkECaSz9DPLZ3V/SsfYfF5?=
- =?us-ascii?Q?Z/SPbJMCZtPx3GmCfcJi858pbtspCWjA7tgkAs3QK/upDmS9vIrxnQeK5fUX?=
- =?us-ascii?Q?oCbybKw1pNsyqrJyzucMQZ6BTBqmMXw6fV9sHNinwl1rdwOvVgmywfnN3BEI?=
- =?us-ascii?Q?aKfUzTcHbwT94n/HxYLdRER7FaBsqVg0YPbjalhMeveAvjacAsiZNbGBYQVJ?=
- =?us-ascii?Q?72PJHclxwVQNg5ZBs533cco0nlMqAWRNWlR6GDjrJ9fqw3+AMcL+3UGbSjS6?=
- =?us-ascii?Q?eKwV9ILo85kYGk8jWrL8RvZkqcrqZ3BZnlQr3WU1RuO0AwUga55W6H9EMw/w?=
- =?us-ascii?Q?jdIU+wLms9aAWVEqO8D4x1Z3W7QiGdKOxM4vkvlWXZFf79tfoVHtsJwNRCjw?=
- =?us-ascii?Q?xu1tSj9oMq860YX1UQaooXMrH9fDoPTxCZEuvGuFwDi/lM8OtZmYbnIVPqrB?=
- =?us-ascii?Q?LmvQ1a0IoesNUpkqUZi93xgmB7jN3nXnq22JkaAIUk67D2085391sdAY9rWR?=
- =?us-ascii?Q?unhb+VC54Lal4gNaxAjDycVcJTdA62Wva4G8q5Q28OK/X5q4nxQJY/5c8Jox?=
- =?us-ascii?Q?7uKwAIEEzeWRbaEv45kMXU9Qqtu5QLNQdn0K01FkH5teNnpYDT+gR6Zygb7v?=
- =?us-ascii?Q?aNIcx6IlYdyolzOtMAy/yftKCVGwxkUoGpz12DAklLtSbzv7S3v32w8afPTI?=
- =?us-ascii?Q?1OoNkNs9nHZDD+dbWf9USr2Y2WFSSetFABf/z1DBcNEERTAnCTVEYenfd0yw?=
- =?us-ascii?Q?xsYHdnOBEjqb4ZS9p4VOmSwW7CpgE0urvNntJTcCH0lCtD66knH/wTjdAV9i?=
- =?us-ascii?Q?1fj0FpPgscuAeEKSgl+HCghoW+Lik5GlpJbbHC0xn9fNM6HDqRXPFriucwb3?=
- =?us-ascii?Q?aialhHs70yBLdWWAsL7ZLxS8hHsqy5FEhAVRNF0ad5wuc7El9EIPM7+hVPOx?=
- =?us-ascii?Q?TU4R77HxAQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+t5UHxD"
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-982db8d3b1eso309958241.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 05:06:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789387597; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ceQ2L5Hlm+nZKkR+Zmuh7xNpN62zKgKZHYIe6HiMrLmKOXQiruQBIBFgeIm9Xa+iZX
+         D9+AaOBiBPA28jvvZ1/MiB8adalGG9pK+/57KeqhUCM1FXj+UjY96ZoBqtVR/JTdPsLb
+         VHc+B4FDN5QJmhLxi2y8zJl2fmpgnVTT8fREtBilxtevX0EaeZ3YbmdhFXPYQzmavg29
+         etof4e9G4JI0rDGIDYk7+nu/Z8Xm4+v4iWwAkng2fNLJR0d0JHt4Z0rIIhkYM8HmBgvp
+         2TGMeve8uHwxTHSdWhoFK5RaAs/uV8MtOLvJk9W7AFhc4hAnLCMjrIrui3pDSFrM8ROG
+         peRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=W3f2wMp0p9GaB9K8wv/S8QvGH6qPT0Hv0ZLvGcfuJsk=;
+        fh=o/RXFEEfZoAXhNjlxtLG0TpdkpqN+I7Znh4JZdmjgII=;
+        b=POPCUNo86PZESJzT9RoAiflojguMfNZtGnx9vzM61GSVHlDB6WlrT12mpCHJv/GwnR
+         lT4G27Vgt6QzsJ8NcWslWYW+gtNGKb0qzlaCgDBQ7ItJNRDZeplOVz7jcfhKcVVe1SV2
+         AU9wVPd72wM7AGqxSFag+V8RPtyMsaedc7zTpNPJE2I6L/PvoEDTfLjGJkYap90HiEe6
+         SzOaZE7CQnixA862GIdteshIAbl342yvchY0wa5xm9T8YXBPMnzrVyoBz0oZW7vMxc5Z
+         xC3d3UqRazO5MchucZOU5p1nyGDiDCLsdfVc4MOuh+M1Ru2wUm2UM8kgStilaDbWVEWU
+         6BXw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789387597; x=1789992397; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=W3f2wMp0p9GaB9K8wv/S8QvGH6qPT0Hv0ZLvGcfuJsk=;
+        b=T+t5UHxDGs+bcV9iWAS7LO+KmsIPI42yGhLz5oEfqs6SPEpvPhxF98Shja7irTkSLq
+         A/C90OkRujFq8qSq/yEHy++HH4iUyE0wSYdZaaKK6F2/2rKFj4tGB9ITtt1mQyr/34bt
+         ebt2S2et3mM2nyl/d+YKLvlyACRY+YDpQqKT3DF55ElI0wHLFCiVzMMA6Rzvy5jFWkdB
+         G1+TFvJXZCt3+6S4Rd1kdERxfJ046GRc5bBg+qmNozXpi5i/ELXOVFqEwSZ6/yd88PmC
+         Jk6mJbDS+HnoxWDvc5TeK0rws5vIEArdViBJSA3w790OiU+AKtN7CKmB09dkV0fJDfIH
+         X95g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789387597; x=1789992397;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=W3f2wMp0p9GaB9K8wv/S8QvGH6qPT0Hv0ZLvGcfuJsk=;
+        b=Mq8SsmcCs7G4+U62Z40MROeKi0/X6kWuMDXpmr+hnPgoLMg5gpiBnjNta9Az87HChd
+         YDvGO6Rwqbeg7NXOsudxg9DRXvVAcErbatbBK6HDHsQONZSGLyC/WdQXrNtbF3oxXcPT
+         JxhD/IJhlJ4J/UmOaxNZXXC9+3ww6t7hZuCPLjLNER595BmU9AaoFU7VOxRgntX1V5z8
+         SSJ6Ak5SYJ6REUXK/se4Ly2X33zLg8/f+gaX/rHIyIOKBJDX1D7C9arRCRzyp+Q8FsI9
+         kpe1GcKVevQGFZ/JDCNPzNm7SM0UBPqxkAR0VFVhbh3zetqVrWdWSnWpbD8Bnig9CVhS
+         cs9Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxPYmspCjfrD5wCmL9uqmMM8Liqpzk+YBDJZ3WE2f6fUGayjnTbMEu38TR21Qiiocr1ZU7/+F4btMv2RSpQmxpstA==@vger.kernel.org
+X-Gm-Message-State: AFuF++nqgHxR3/9WqupuBRZrLxScaKxGO1sA0ezKdyNa6g0IjVDgWfXW
+	H8qroRlMTkq9WFzwZx56So+Hkgq0aThl3CtCFE8SsrFzAmGge8FQiugvw7/F2e7vxlVhGdx8yRf
+	Oc7oSDQSTvKTlk4N9XP14F6j93JuVow8=
+X-Gm-Gg: AYBFou1lJfkLWJnLGZ7w5t4Z4QBdrJK6107EnVzwmop5lPFEjH7Pt1HQx4MAtKIHcs3
+	ND2rqM1vjwKRMZPyo1NMn/IhMaexRe0bfJhhNpol8VtnexS4QlsXgSepRAnZrcgm1T1JpZXXOf4
+	q9o5+qj9hVayz5tJ9GKBwk6GsEHR4dC0akgsJvolA6scRa8i1zSCWu/c/hRkw6YL3Qoy7iC2R6d
+	uSnZiTWepcSBRLzSjxvXOcUQ2LeEV086QZWeXMZWInNZ750YD95C/QESFKNKi/Gg7gVfJShLCDh
+	b+1xegsqVp8gOUWb5kPBesMTleluQG2/8+7r5Jch0xAcjaFVOGPNf9e8SuIoeafEqH4e
+X-Received: by 2002:a05:6102:a50:b0:79c:23df:6fc1 with SMTP id
+ ada2fe7eead31-79c23df7745mr548775137.2.1789387596957; Mon, 14 Sep 2026
+ 05:06:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b66d391c-bdad-42d6-3d17-08df124c3a8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2026 10:37:50.2228
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L89hNp8sDJpUpz8qV2a2CenPvBPdoe/f2pJOib/rcG862lpTvGYSAvkhAA3cQ5wHDFamG2CsLv2Bs2frwAmoaKC+pd0FmVURYNVBMJ4yXAY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14306
+References: <20260907-add-raa229639-and-raa229640-v1-0-8f7218cba85d@gmail.com>
+ <20260907-add-raa229639-and-raa229640-v1-1-8f7218cba85d@gmail.com>
+ <20260907-chimp-pectin-20f4ea3b772c@spud> <CAPBH0A9GZSD5R657xo1woijKfgS6gecUND4uabguaqUON2exXw@mail.gmail.com>
+ <20260908-dinner-atrophy-757595146656@spud>
+In-Reply-To: <20260908-dinner-atrophy-757595146656@spud>
+From: Colin Huang <u8813345@gmail.com>
+Date: Mon, 14 Sep 2026 20:06:25 +0800
+X-Gm-Features: AcwNN1WwTccuI-E0Tg8O_HU6Y7-t9R9kzYG63DP3-KVuGmrC7El7wKFW8D4dhcc
+Message-ID: <CAPBH0A9yKhvDA_pda45Me1c0tXcSj3zLqLoFgUOQj3MES0Mk1A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: pmbus: isl68137: Add Renesas
+ RAA229639 and RAA229640
+To: Conor Dooley <conor@kernel.org>
+Cc: Colin Huang <colin.huang2@amd.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Grant Peltier <grant.peltier.jg@renesas.com>, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
-
-Thanks for the feedback.
-
-> -----Original Message-----
-> From: wsa+renesas <wsa+renesas@sang-engineering.com>
-> Sent: 10 September 2026 22:57
-> Subject: Re: [PATCH v24 04/15] mmc: renesas_sdhi: Add max_divider field t=
-o support SoC-specific clock
-> ranges
->=20
->=20
-> > > > -	mmc->f_min =3D max(clk_round_rate(priv->clk, 1) / 512, 1L);
-> > > > +	mmc->f_min =3D max(clk_round_rate(priv->clk, 1) /
-> > > > +host->pdata->max_divider, 1L);
+Conor Dooley <conor@kernel.org> =E6=96=BC 2026=E5=B9=B49=E6=9C=889=E6=97=A5=
+=E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=8812:57=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Tue, Sep 08, 2026 at 02:31:40PM +0800, Colin Huang wrote:
+> > Conor Dooley <conor@kernel.org> =E6=96=BC 2026=E5=B9=B49=E6=9C=888=E6=
+=97=A5=E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=881:01=E5=AF=AB=E9=81=93=EF=BC=9A
 > > >
-> > > ... because the existing code is just too subtle / fragile and hard t=
-o understand. I think we should
-> move
-> > > clk_round_rate() out of max() and handle it seperatly before. What do=
- you think?
+> > > On Mon, Sep 07, 2026 at 03:03:29PM +0800, Colin Huang wrote:
+> > > > From: Colin Huang <u8813345@gmail.com>
+> > > >
+> > > > Add Device Tree compatible strings for Renesas RAA229639 and
+> > > > RAA229640 PMBus devices.
+> > >
+> > > Driver change suggests fallback compatibles could be used.
+> > > Why aren't they? If they can be, add them. Otherwise, explain why not=
+ in
+> > > your commit message.
+> > >
+> > > pw-bot: changes-requested
+> > >
+> > > Thanks,
+> > > Conor.
+> > >
+> > Hi Conor
+> >   Thanks for the review.
 > >
-> > You mean use, max(clk_get_rate(priv->clk) / 512, 1);
+> >   I didn't add a fallback compatible because I only have document for
+> > RAA229639 and RAA229640
+> >   and could not verify full DT level compatibility with any existing
+> > supported devices. While both devices
+> >   are handled by the existing raa_dmpvr2_2rail driver variant, I don't
+> > have sufficient information to establish
+> >   a compatible fallback relationship.
+>
+> Given that the match data table looks like this:
+> static const struct of_device_id isl68137_of_match[] =3D {
+>         { .compatible =3D "isil,isl68137", .data =3D (void *)raa_dmpvr1_2=
+rail },
+>         { .compatible =3D "renesas,isl68220", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl68221", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl68222", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl68223", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl68224", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl68225", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl68226", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl68227", .data =3D (void *)raa_dmpvr=
+2_1rail },
+>         { .compatible =3D "renesas,isl68229", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl68233", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl68239", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>
+>         { .compatible =3D "renesas,isl69222", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69223", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl69224", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69225", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69227", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl69228", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl69234", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69236", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69239", .data =3D (void *)raa_dmpvr=
+2_3rail },
+>         { .compatible =3D "renesas,isl69242", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69243", .data =3D (void *)raa_dmpvr=
+2_1rail },
+>         { .compatible =3D "renesas,isl69247", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69248", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69254", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69255", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69256", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "renesas,isl69259", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "isil,isl69260", .data =3D (void *)raa_dmpvr2_2=
+rail },
+>         { .compatible =3D "renesas,isl69268", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>         { .compatible =3D "isil,isl69269", .data =3D (void *)raa_dmpvr2_3=
+rail },
+>         { .compatible =3D "renesas,isl69298", .data =3D (void *)raa_dmpvr=
+2_2rail },
+>
+>         { .compatible =3D "renesas,raa228000", .data =3D (void *)raa_dmpv=
+r2_hv },
+>         { .compatible =3D "renesas,raa228004", .data =3D (void *)raa_dmpv=
+r2_hv },
+>         { .compatible =3D "renesas,raa228006", .data =3D (void *)raa_dmpv=
+r2_hv },
+>         { .compatible =3D "renesas,raa228228", .data =3D (void *)raa_dmpv=
+r2_2rail_nontc },
+>         { .compatible =3D "renesas,raa228244", .data =3D (void *)raa_dmpv=
+r2_2rail_nontc },
+>         { .compatible =3D "renesas,raa228246", .data =3D (void *)raa_dmpv=
+r2_2rail_nontc },
+>         { .compatible =3D "renesas,raa229001", .data =3D (void *)raa_dmpv=
+r2_2rail },
+>         { .compatible =3D "renesas,raa229004", .data =3D (void *)raa_dmpv=
+r2_2rail },
+>         { .compatible =3D "renesas,raa229621", .data =3D (void *)raa_dmpv=
+r2_2rail },
+>         { },
+> };
+>
+> It's probably pretty safe to assume that a fallback would work here,
+> given how many devices are served by the same data structures but
+> maybe one of the Renesas folks on CC can confirm that for us.
+> At the very least, you have documents for two devices and should be able
+> to confirm if they're compatible with one another.
+>
+> Thanks,
+> Conor.
+>
+Hi Conor,
+  Thanks for the review.
+  I found a very similar precedent here:
+      Link: https://lore.kernel.org/r/20260325090208.857-2-dawei.liu.jy@ren=
+esas.com
+      RAA228942 and RAA228943 use renesas,raa228244 as fallback compatible
+
+  Therefore, I plan to followthe same approach:
+  RAA229639 and RAA229640 also use renesas,raa228244 as fallback compatible=
+.
+
+```
+@@ -60,13 +60,13 @@ properties:
+           - renesas,raa229001
+           - renesas,raa229004
+           - renesas,raa229621
+
+       - items:
+           - enum:
+               - renesas,raa228942
+               - renesas,raa228943
++              - renesas,raa229639
++              - renesas,raa229640
+           - const: renesas,raa228244
+
+   reg:
+```
+Does this look reasonable?
+
+Best regards,
+Colin Huang
+
 > >
-> > clk_get_rate() returns unsigned long compared to clk_round_rate() which=
- return long??
->=20
-> I mean
->=20
-> 	rate =3D clk_round_rate(priv->clk, 1);
-> 	if (rate < 0)
-> 		...
-> 	mmc->f_min =3D max(rate / host->pdata->max_divider, 1L);
->=20
-> Makes sense?
-
-Yes, it make sense.
-
-Cheers,
-Biju
+> >   I will clarify this in commit message in v2.
+> >
+> > Thanks.
+> > Colin
+> > > >
+> > > > Signed-off-by: Colin Huang <u8813345@gmail.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml |=
+ 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl=
+68137.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.ya=
+ml
+> > > > index 8216cdf758d8..3537c7ddfb09 100644
+> > > > --- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.y=
+aml
+> > > > +++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.y=
+aml
+> > > > @@ -60,6 +60,8 @@ properties:
+> > > >            - renesas,raa229001
+> > > >            - renesas,raa229004
+> > > >            - renesas,raa229621
+> > > > +          - renesas,raa229639
+> > > > +          - renesas,raa229640
+> > > >
+> > > >        - items:
+> > > >            - enum:
+> > > >
+> > > > --
+> > > > 2.34.1
+> > > >
