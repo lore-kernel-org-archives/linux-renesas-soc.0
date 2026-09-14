@@ -1,71 +1,72 @@
 Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAE8490C02
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 16:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2BD491592
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 16:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789404736; cv=none; b=N1WaK6dKRdKBFhfH+lN3Qrq/FnNkB0LpzhWNxCavYTjl6VVzvFDSt2/iVXq6Cqvnb4wl7ZDsyxydQjj2fGMgUdolHrLV45oW4oMZb4ewblZ+fFLfZ72YJ5fC2NzJA1eenNFG0tn0cblePOrl8VqqfUr1Uvkimho2nfjHSTZhBfU=
+	t=1789404761; cv=none; b=l+Fsc+UYLTJUQaQ4c1U0Ks4AboOTF3+fC7H1gvk9do45nxK7wLY4U7BmRPMhyIkJ1PVEeh43xO1qGvnWY/JzV5+/5mfdBQKc4xphOvmtHYzZ8dxQvsDec1XTXJ+aObIjEml+dElKROsPSj4QjytYDAekQ7FUxt+fnG9xyVVWTiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789404736; c=relaxed/simple;
-	bh=UIWk/mFEONZjdGSVThQcGe22wgnytiwRHqb6WEyzl6A=;
+	s=arc-20240116; t=1789404761; c=relaxed/simple;
+	bh=Fd2S2NXGFBalIowiEWphlMNoSm/GpBg0YH4nqBrZ3ls=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V4m2RCFHMxebItpIl4slhLRYkV0z+1e93BES90dFaJ68MY7YFhPPr2lgCVqSOWx/mOnTjCcE2RmNXUpNaQGcmapk1tBTzI+k8DpNnvfo7DDykEk3BW7pwskGBwr+qjpxzCl3jNuJYrtiadiUlNxG2AMbSVqH6k+GHMN+KxAE21U=
+	 To:Cc:Content-Type; b=aVuMheTbBPQx+abdoyplmlOFJVOlVPugkkhoznLD/rxbJx/BuqRp4HkBAXXFycctBPzD7S57/aVtHgJaC94WuUWqjoLdAbsRVjt1enYeD0cOkZumv7aQgLVOpiFvVNJW3suNUrT3iKlq/rcjulfzLeYow8u1CnwXGoRnJX3cQ1c=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c8319dd4a5so907152e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:52:13 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-78564319a92so572078137.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:52:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789404733; x=1790009533;
+        d=1e100.net; s=20251104; t=1789404758; x=1790009558;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=AvI/QWFHsgVdwtTPxxpgjV2LtpVQ5it1qz0zswhLJPI=;
-        b=nntKklGr6NNpQaKo6jL+TldamukE+ESyL8Tb4jp3mRjfXg7bntv1r0pMVusKjLDgeq
-         KwJgRpRlFn1ulocSFiu9BFM8CsR+SB4Cm2A8FkzQB4ol3ZQ/v9/CFJOAPTwqtw7rxJAP
-         dyl6kWtHRw3MTcUgIxrodiyo0CWzIyIAgP+IIkzppwbJvqbejWmhgNpRZCBwsb62UjH6
-         8tfe5DuZH3Ktef3+s17FmU8rFumz890DnGqw0rlgB+Bxt60l78wBFEjI7zZvPYxH7SBp
-         eukEP6TzOuymDYUX3fBA85LYu7VKMDXdl539bQP6p1LgqDs/EpNXfw5IJn/YKUIuPpc+
-         zMCw==
-X-Forwarded-Encrypted: i=1; AKwUvBxOnkW6Tin2J9E48zl209a2mtzLuhZVU77suGxZJmldRf91gPZir7L7wQl5wzUJsjAiIaKLmzhP7zO5KlmX57x0MA==@vger.kernel.org
-X-Gm-Message-State: AFuF++lDFIgaprwywXTu+HfZAYjCf93H7Zqr2gETbf3136GeJYDhGgTj
-	51W08NHK0Iz9nWc5+tIpxV9jOsFig/r4z3TPeLRVaqGs3H5sua3/GUeykDzPVNTm
-X-Gm-Gg: AYBFou04B62Cwsi+LSUxq1hhA10QbY7h0ovncQRIbRrtHuJEsB3OaYKLzZK8WweBKoU
-	DTJECgFFnTvYpNw0S9DGYr+716XO2wa4XpXVcR+7k9WSW8eiD8llSzcfwFR12A21OJwWuMkVELa
-	GLlfB92KVbdzyPBBHJ9WQlenteCJRSfT636/dTz+Sy1OLi9oeSGko+WlZCMdvfoqACWdykn9Bgq
-	ZeOUoLtNuS8KQ6t1smRD4s5ZoJenpnz7PkGXdlz+T6q3z7yw0+YAwdXVN4DCcMUsH71e5ImcXUb
-	VJKepkJM31iOemQAweDmrD+4cQyRnvk67e/IL1ifRkfyzjt7NEl7JAKkBfjjR6UdY6+0SROyKXT
-	g0A47NAK8L+zA377hEBhNPx5s4hWFt6uqEXUvfje1jCiEKEzstJnr81jw2eiHO+nYMWkoJF7Rrl
-	igovTwdO5pI0Z49+zHVSfkI2rAF9YC3aRt9gkhPhPAKbFR0AY5zGGeNy9MXLpRgfC0T81rpd+3+
-	q3yUVApQ15oAWyNYISjaWWMZvFIDraR9cdU
-X-Received: by 2002:a05:6122:4f91:b0:5c6:58df:5826 with SMTP id 71dfb90a1353d-5c981d5fca1mr4780617e0c.5.1789404732622;
-        Mon, 14 Sep 2026 09:52:12 -0700 (PDT)
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c8470ae511sm12637672e0c.5.2026.09.14.09.52.11
+        bh=W3a3IBWWzJToy5a1Wctoyn07sbyxrLzeKnit0JiQFO8=;
+        b=Ys9RTe5DsYp7XvO+oSl/EtR/wx8AcIS3uUTEjHBRn2TLpTtYWwFgUVKKeUb4siyAw2
+         4a58fcNkTsum81A0GKAZBlGIc9T/lQjImZgDQyVHbHAYGGLsS6/O2UXINIhsMcwly4/E
+         391brOVtUzCL1iIS6mA0pGhl5DKG6IJb92Y8kGGRT7nn3DRYzKyv8JIq5zJhk7f/eyrN
+         /P2oi9vOSfysH1nfRK96fOmV/ir+QKlsyPQLcFsACvtm8rrpgkxym96s4PdQxImnVQug
+         4ly130ihJ+LzTcjPFf8DPC+0mxWyy+bllUHy6ZmT2uc2RuHFgK1K/HS6iQfh98aZ0RIM
+         bZgg==
+X-Forwarded-Encrypted: i=1; AKwUvBwDIu+Lbs9ywEm0lyMY+9+0AlcDC8NfecOfeLlMLHDlqoZ0Q0KEWgyhYzyb8WBSDbrzL3efxiW6LC5YKGErAmygRg==@vger.kernel.org
+X-Gm-Message-State: AFuF++lBPsJnA+k3D83znGJO0ywixzFD1CgU5AnW0DgkN5tHBAAxZ4Ma
+	hm8JrUUYH7ms89iruOt0DjK1Prddl+xVMooWsbFx10LmAbj0vx0joMkHdWEyAGgE
+X-Gm-Gg: AYBFou1iFKssSgy3X2BSm2jOj+Hluov1zyjDi3qCDBhwQyInsthA9guxHZYBQfdZQIR
+	OHETvC06fv/HCAPvEAsd+TNCxZHsJdovXggP29gHWQbaScVMbNfCK37pSDOkdEbmoLRj8Il6nZd
+	tbo6PMsOjOzwc2wLAAohmcdDio/8TrFkb04oH09uxbdhumJ8l+sX4rsmFBL9AcMXPdwJnseUH1M
+	IFOL/bwMVReuB0/A6Zy6TAJyG5beSZWCfAl/BlUY/BE3tdkw7inoatfnm699NsvBQZ24bQ5WFl2
+	1Vyfx9R3nel9ouUueOVRBh1J2uI9ND8zq8ysFlSCk7JhBSaaksTDLJqJtdeHcFX4RV090PxsyvJ
+	ZI1UKZ60QdZBumrmD42ZbvMFllhfiUUdxx7y/V8UK9vozzLU+pOG42iAfMCn/Of2cWoJ8xt4QJp
+	vaHbK06svUPcKBcfYZQjBYnCGUbJMg4HUu9U9ZeF8ifprMeUamjDl63GSPnoWTdc6YNtyeMXW/t
+	iioRdx5W9TteEwrVf7IiCr6BZCnqU2QwXM6Mw==
+X-Received: by 2002:a05:6102:3e85:b0:797:fcf6:822 with SMTP id ada2fe7eead31-79b5c032058mr3053803137.13.1789404758599;
+        Mon, 14 Sep 2026 09:52:38 -0700 (PDT)
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-795a03d341dsm7355574137.10.2026.09.14.09.52.38
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2026 09:52:12 -0700 (PDT)
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c8319dd4a5so907140e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:52:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByjC78F8YcJC0LInl96sZ72njpkmH40mH4rrv8DhceApv8kbPBX5hELhUhUNapVEvJnJ5HzpfIqZDlRgjGMj1WamA==@vger.kernel.org
-X-Received: by 2002:a05:6122:d86:b0:5c9:54c6:b4c6 with SMTP id
- 71dfb90a1353d-5c981a92cbfmr4262605e0c.2.1789404731378; Mon, 14 Sep 2026
- 09:52:11 -0700 (PDT)
+        Mon, 14 Sep 2026 09:52:38 -0700 (PDT)
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97ea5bd53b4so742687241.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:52:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzCZLVcVD7Vd8cTnBHO4wnNXc7TA17/TmqAqZYpmnxBYDVgtMEwGfoCv9cMw9P/vTGyfUycL6DQ6xlT+w75fzgFyQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:e0f:b0:799:b918:687b with SMTP id
+ ada2fe7eead31-79b5878ab25mr4331172137.7.1789404757823; Mon, 14 Sep 2026
+ 09:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260913195654.3371385-3-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20260913195654.3371385-3-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260913195654.3371385-4-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20260913195654.3371385-4-cosmin-gabriel.tanislav.xa@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Sep 2026 18:51:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUpTKXkJFFxgZ5W8Qdb=2YFwTNyjkxKqYFr_kLEsLDWcw@mail.gmail.com>
-X-Gm-Features: AcwNN1XFaYKKRap8WdI0zgtlhQNDEsuoN6yL245cXUtWnEuRlQigs7Ay4Kwnzfc
-Message-ID: <CAMuHMdUpTKXkJFFxgZ5W8Qdb=2YFwTNyjkxKqYFr_kLEsLDWcw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] pinctrl: renesas: rzt2h: setup IRQ in .irq_{request,release}_resources()
+Date: Mon, 14 Sep 2026 18:52:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWi8Jz6GVGJj0VsXOEiOw4ghJgz895m36m2hDvVCkxpxA@mail.gmail.com>
+X-Gm-Features: AcwNN1Unuk-LkzOotScnYJj-MKknR-KC4le6kfYxk1N80HhcIpZu4mg1zP5BRtg
+Message-ID: <CAMuHMdWi8Jz6GVGJj0VsXOEiOw4ghJgz895m36m2hDvVCkxpxA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] pinctrl: renesas: rzt2h: fix reading pin value in
+ IRQ function
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
 	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
@@ -74,35 +75,23 @@ Content-Type: text/plain; charset="UTF-8"
 
 On Sun, 13 Sept 2026 at 21:58, Cosmin Tanislav
 <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> When exporting a GPIO using the deprecated sysfs GPIO API,
-> gpio_is_visible() calls gpiod_to_irq() to determine whether a GPIO is
-> IRQ-capable, which ends up using
-> struct gpio_irq_chip::child_to_parent_hwirq().
+> rzt2h_gpio_get() only reports a level for pins in input or output mode
+> and returns -EINVAL otherwise. When a pin is requested as an interrupt
+> it is switched to IRQ function and its I/O mode is set to Hi-Z, so its
+> value can no longer be read.
 >
-> When using the GPIO character device, it is possible to request a line
-> and to dynamically switch between using it as an IRQ or as a GPIO, by
-> updating the edge detector.
+> gpiolib calls gpiod_get_value_cansleep() to determine the edge's
+> direction when a line is watched with GPIO_V2_LINE_FLAG_EDGE_BOTH.
+> Non-zero values are translated to a rising edge, zero to a falling edge.
 >
-> The current struct gpio_irq_chip::child_to_parent_hwirq() implementation
-> makes the assumption that it will only be called with the intention of
-> setting up the IRQ permanently, and that it will only be released when
-> the IRQ domain is freed.
+> Since gpiod_get_value_cansleep() ends up calling rzt2h_gpio_get() which
+> returns -EINVAL when the pin is in IRQ function, every edge is reported
+> as rising.
 >
-> Since we now know that this is not the case, take the following steps in
-> order to properly handle that case.
+> When using the IRQ function, the input buffers are enabled and the PINm
+> registers reflect the live state of the input.
 >
-> Implement struct irq_chip::irq_{request,release}_resources() based on
-> the default GPIOCHIP_IRQ_RESOURCE_HELPERS implementations.
->
-> Move the IRQ setup and release logic inside them.
->
-> Keep the mapping logic inside ::child_to_parent_hwirq() to be able to
-> provide a proper HW IRQ number, but do not actually setup the IRQ.
->
-> Remove rzt2h_gpio_irq_domain_free() as its only purpose was to free the
-> acquired IRQs. irq_domain_free_irqs_common() will still be set up as
-> struct gpio_irq_chip::child_irq_domain_ops::free by
-> gpiochip_hierarchy_setup_domain_ops().
+> Report the input level even when the pin is used as an IRQ.
 >
 > Cc: stable@kernel.org
 > Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to handle interrupts")
@@ -110,11 +99,10 @@ On Sun, 13 Sept 2026 at 21:58, Cosmin Tanislav
 > ---
 >
 > V3:
->  * no changes
+>  * move leftover unused function to a later patch
 >
 > V2:
->  * reuse irq_idx in rzt2h_gpio_irq_request_resources()
->  * mention that irq_domain_free_irqs_common() is still wired up
+>  * remove the PFC_FUNC_INTERRUPT check in rzt2h_gpio_get()
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-pinctrl for v7.4.
