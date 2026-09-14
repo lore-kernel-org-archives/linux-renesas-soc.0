@@ -1,96 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BA1414402
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D079D3AC0FE
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789420539; cv=none; b=j+tj0BmwiNCsDzb7BXdWF0jDnZFA6r4dWyCg4LxvzBC8mMEXMy75qxtooK+168THETseejUlk2qimUyJ20geO6SNcrb5cm3xIJMIeUO16PbLvZRg8xkXtcMn+0JO9JDKcmGbgRmHe+QbS5EFLeeFqmFgtp76shI2j3TcSfJ+GtA=
+	t=1789420737; cv=none; b=HvfC1YSym8cHUaf7NV6eYAzcpyg59M03a95t2TYi9dBSfT1Ivu1VxOfjl8JZHmpKvqBPAKtcBp9xTeT+FuOXSlgaI5ooi4GNdpIpdIV1fh6D2VHgVK/uf7s/Q780G0CV6v+E8DX2EhU3OgR6/bXr1AHOCgdiCJNk3ZBy1F/tB4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789420539; c=relaxed/simple;
-	bh=bFgdgeID/Ne6jUxyfD1OKQlY0Yi3oEhR74YsVLKphVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a2c2b/NFRVVMFgyGfEAAz9r6sy2LTqcb7YpCzbAyqbeors+PmSbW7mmRa0RhbP1LpHhbinWbjnihrtUtxlWRJBj73mGbAEF5s0mtVz3xCAcj+TwycbICQSg8AhJk/yBa7g0Ez4+FkjDlyWqyKzwDpM+ed1VQllX6RGH/8CdM+WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YohSjxCp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789420737; c=relaxed/simple;
+	bh=Mm8MDkiPx9OLq7268TUMPOqdMkNS9z46rvGxalwmJqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ola/H8ERx4zjwML9j3tb7wq1A540j36ej8T2Re7bEu8swKsedS/ohHT3tttXYjZrfValMUonXDxn8oU6JV2Mt7MRIVvJLCxpjTfu22xnl7jrRkfy2ubGJdW5Pw2T5RGxeVICVrCLhE1aMWtj8wkkVdgvfxsx20PU60XYCRmI0/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZMqM5M08; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YohSjxCp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3620B1F0089A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789420536;
-	bh=NevuUkbIbY8Xir1EiuknrCzVePMTrnsw9qsLi8W12R0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=YohSjxCp01Zt1oV1z3JKJOVm5+o3rTPSmNKWplRx5NCegA0TqmNyWvHmtuytndCXQ
-	 dTvCmJthVmbF3/i4ftF+QCQIFyqGRZJuZLI9R8xEEIMJK3doIjK4YTunjh2v86QcAn
-	 F60L4D5ajVSZvZnGXmU8Tee0h8DgmGt2Dyc78btxDgSEDuukGghOBpOe4kj5kjWKXa
-	 4/fNXKz/W9l5YBcdEIrskjFeoDy8oZNov81I2AH2k23wkZcJAWaPNRvg/LwNduRKCB
-	 xkzzvDacCxDNfCMYJpjd3HbgMJnc//gq9WID/NVybpSwaklDgESuxhN+KksIzea/PM
-	 A0AQuIPLIVvNA==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b89a0e69dfso2700678e87.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 14:15:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBybhQamjpH8zFkzwu3xhCVm4mcp1AUsmjNKCjqylDyEXcx1th6AFAf0M7XohlYVLv5zJtUdF4cK4DZF9Ke29gkwJA==@vger.kernel.org
-X-Gm-Message-State: AFuF++l8OOfJgFNHmoG4k0H23omhUV6TKyEcgug338QTm+t8iA+aR2zh
-	9oUpJF40yh+fsU8umLH3gvH04H+xcSl4Lg5A9Ee55HkvvtRLD6NGQ9+L/GG//egcS9VpfWs36Q3
-	mGDfQwIFl4P1d0NDBky3OgVEc4xM2/cU=
-X-Received: by 2002:a05:6512:3f0e:b0:5b6:183b:d214 with SMTP id
- 2adb3069b0e04-5b8ae6a6fbbmr1185441e87.59.1789420534106; Mon, 14 Sep 2026
- 14:15:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZMqM5M08"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=Tdek9Fr7Sy2rqq
+	Bf+S+jPMExvc/M65Xv4rh4n8OfQTs=; b=ZMqM5M08rqcvKZHvSfF1grY9n393UE
+	0uf/NVG1riAfqX6fnwk8A/8Fc4y2RJ1HDSe+n+ZQeg6MM5R5rmzKBTnLYmX3b0RQ
+	G7CVRRJ6n0VfcpizQM691yV/ChcIYaKwdRlVvCqCilEEYgAEWk2Pb86UZifRwc4j
+	HSWfQXEjZ88wYuL9jfU4DywJylKfW3BC55s8s23PmxhJUQnQ/MRDy7NKSZUMahKs
+	Y98elHklPajYu0qzSGZkgTBpwVK8PrKC34p7Dc6j1C7NFgJgJ1QM4Uik22bGCeRN
+	fvhg7kME4gWxWTJhwG2mXSqw9sYQJZ8Aiv0iZjd0IyiKbNP//8HoF2ZQ==
+Received: (qmail 892779 invoked from network); 14 Sep 2026 23:18:44 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2026 23:18:44 +0200
+X-UD-Smtp-Session: l3s3148p1@1l6e+ndbcrYujnvr
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-rtc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 0/6] rtc: rzn1: cleanups, no irq support, R-Car Gen5 enablement
+Date: Mon, 14 Sep 2026 23:18:25 +0200
+Message-ID: <20260914211826.73727-8-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 14 Sep 2026 23:15:20 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmu2vovxXa9jqX+pq32KV6ONQ-=Yoo3fKF-49oMFVv3GA@mail.gmail.com>
-X-Gm-Features: AcwNN1W41lYuox0pw4JKzbuFr7Ojh_AWjTCNy5TnXF9BlZMG2RX-71m9k3IWIl8
-Message-ID: <CAD++jLmu2vovxXa9jqX+pq32KV6ONQ-=Yoo3fKF-49oMFVv3GA@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next] dt-bindings: net: Use consistent indentation
- in the example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Justin Chen <justin.chen@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Jeff Johnson <jjohnson@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	"G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Alex Elder <elder@kernel.org>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Roger Quadros <rogerq@kernel.org>, 
-	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, ath10k@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 14, 2026 at 5:57=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> wrote:
+The main intention of this series is to enable RTC support for the
+Renesas R-Car Gen5 X5H SoC (patches 5+6). Because interrupts are not
+wired there, patches to make interrupts optional are included (patches
+3+4). Some cleanups I came up with are prepended (patches 1+2).
 
-> Correct indentation in the examples to consistent 2- or 4-spaces
-> indentation to fix dt-check-style warnings ("example 0
-> [indent-consistent] indent mismatch ...").  Preferred is 4-spaces, but
-> re-indenting entire example just for that is too much churn.
->
-> In cortina,gemini-ethernet.yaml also drop the wrongly indented mdio bus,
-> because it is not necessary for the example.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+These patches have been tested on the original RZ/N1D board and the new
+X5H Ironhide board. 'rtctest' passed on both SoCs. On X5H, some tests
+are skipped, of course, because no alarms are supported.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+'dt_binding_check' and 'dtbs_check' also did not find any issues.
 
-Yours,
-Linus Walleij
+A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/x5h/rtc-experimental
+
+Looking forward to comments.
+
+
+Wolfram Sang (6):
+  dt-bindings: rtc: rzn1: drop unneeded 'start-year' from example
+  dt-bindings: rtc: rzn1: add SoC names next to their IDs
+  dt-bindings: rtc: rzn1: interrupts are not required
+  rtc: rzn1: make interrupts optional
+  dt-bindings: rtc: rzn1: add R-Car X5H support
+  rtc: rzn1: add R-Car X5H support
+
+ .../bindings/rtc/renesas,rzn1-rtc.yaml        | 19 +++---
+ drivers/rtc/rtc-rzn1.c                        | 59 +++++++++----------
+ 2 files changed, 38 insertions(+), 40 deletions(-)
+
+-- 
+2.53.0
+
