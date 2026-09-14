@@ -1,73 +1,86 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBD333E346
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C684398F5;
+	Mon, 14 Sep 2026 23:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789420741; cv=none; b=ue6LGwO/kypVXM1PQfNY5KxRe0Wa9lxxvytVdu+7T93yqtDuM1jzJeriEWD4ITayhSwpE6OnWu10QakDO/1dp/+Zt2Nif/hMC6sNKIbhZvDfD8gKzeaN93BmFbhbgOsIMGIkhLySE4265fGAZTRAJn138lfhO+FeryOJ4WKHI7w=
+	t=1789427764; cv=none; b=VhMTZSYWyiJ2uWV2wyEEMq7kyaxsULetrFh3THxkh67P8AbZW+ExL4iAHTHP/fAAAvlhYetNXxNvO2ZkBuA+DPDkHeKuXeqkCJlZVtBGQXsLxWiKFRDeveVXnVWMhxHqZarzIyagM7zpahpsx9jUvLr51Edae/MLCX+A2pXC/xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789420741; c=relaxed/simple;
-	bh=b99W4ESpHTOUw8n3WoT7xa0gdy4VpiCBo1LFrNgg+bY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MD1hC6fHf90dfcEifoAeDiIYSVTBrGhFC1/aXbAqxoakPPDr/4Kt7tjBnqybhnAAC4Z7YhFKAXZnVDYgXziG6P1SPfqbM7eCfcJZZVsdCExrBzu5sQNIN42TlgcuwH8IYEwa8AgZR4owxPXEpjiPlG0RG8VFmqnJJWQpGeqlr9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OMLFlhUw; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1789427764; c=relaxed/simple;
+	bh=PzXq7TWknRAUSjNmxfaso1E5sx7aLEp9WGufOTDgD2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t1GIYZLXmlbMmIRpiSKmSGLBYjCd0vNkcCZ0VKw3q/IWxYM0qnEAXInXkEMj63OsFlpUQ5n5k6QFMVhO6Y6sats7eWlt0ASGuo5ffauDTFKRKJZ+rz0ZMfwUO0arJz+jYaVEOyTABzPqOHfj/0ODdRu+Pp3cHntKdi9k8/rrs3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIzWyZA6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OMLFlhUw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=3QrDRwUSCCz1aEdjrMWv3T8Wu6hvE/oA5jb6/DisrNg=; b=OMLFlh
-	UwRmS4p2YHz+BbYn4zzKoilFKIHpJiHkq9OKJGipG1jhEK2h0BuYDvxXtgEGwaIv
-	pt3pYikq+Q7hHk5UEhfcEfGjw9WffApbDJ0zbhj0Xaay2tBrB/M5hlxPpuBRCyJ8
-	Ugs4wtdngX/0X5a6dCQo+8GS3sHR+kBpOpvNtjPWMy6gq8yBcizdeS6jGAhrYTzZ
-	d7tTccqqDDhNycNDZu+Q6gCfIYNBDktOPL+GhjVuN+eyoTIxb3fOjdee4ld+et32
-	zFoDtMgRqVHw3qpn7QA/BgvsiS/9QfmFUFPxF2njr1oan7Djgu2U1gfcTOVmjJsD
-	h4S8i7AbYyDgwYHQ==
-Received: (qmail 892967 invoked from network); 14 Sep 2026 23:18:48 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2026 23:18:48 +0200
-X-UD-Smtp-Session: l3s3148p1@BfPa+ndblrYujnvr
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-rtc@vger.kernel.org
-Subject: [PATCH 6/6] rtc: rzn1: add R-Car X5H support
-Date: Mon, 14 Sep 2026 23:18:31 +0200
-Message-ID: <20260914211826.73727-14-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260914211826.73727-8-wsa+renesas@sang-engineering.com>
-References: <20260914211826.73727-8-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIzWyZA6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F941F000FF;
+	Mon, 14 Sep 2026 23:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789427759;
+	bh=RwH+G4NIKOPDOx7e/oMm/7Vklp7Y5keUcHCNIa7SkMw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=fIzWyZA6UdmZD7hsC15psgVvwBq/uwrPdOgfhkHgj1S6Cuz2PkBpi2vJw6ldTH7en
+	 4/YOUYZufDRk25xh7Qoqxd5cx9SmOhAV4UQeYqsCXBhHkYiJH7areds0K/D08KcUz9
+	 wghgZVZPlV1i++y4bKcODpWeJTVjxXnOBBEdSms7NXhsuvlhDPc/bqDei2LrF0J77t
+	 FZSfsmUFXNw1ySkFkB1PFaYfTDYnmIopXnBpG0BpYNTKU3NP/NFC3Lv9e747KEF7el
+	 QtCPQ7FfKsKWKStI1K/XQHHdIRl6nUJA9ZvCfOs1k5HGHcRdu51e1k2U2vYBi2VTlR
+	 WC9Da0tS7vBdg==
+Date: Mon, 14 Sep 2026 16:15:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Vinod Koul <vkoul@kernel.org>, Giuseppe
+ Cavallaro <peppe.cavallaro@st.com>, Chen-Yu Tsai <wens@kernel.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Fabio
+ Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>,
+ s32@nxp.com, Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>, Romain Gantois
+ <romain.gantois@bootlin.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Christophe Roullier <christophe.roullier@foss.st.com>, Bartosz Golaszewski
+ <brgl@kernel.org>, Radu Rendec <radu@rendec.net>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, Drew Fustini
+ <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev,
+ linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev,
+ linux-riscv@lists.infradead.org, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v14 00/10] net: stmmac: qcom-ethqos: add
+ support for SCMI power domains
+Message-ID: <20260914161557.3b520b4a@kernel.org>
+In-Reply-To: <20260908-qcom-sa8255p-emac-v14-0-ec212b747a7d@oss.qualcomm.com>
+References: <20260908-qcom-sa8255p-emac-v14-0-ec212b747a7d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/rtc/rtc-rzn1.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, 08 Sep 2026 16:57:19 +0200 Bartosz Golaszewski wrote:
+> Add support for the firmware-managed variant of the DesignWare MAC on
+> the sa8255p platform. This series contains new DT bindings and driver
+> changes required to support the MAC in the STMMAC driver.
+> 
+> It also reorganizes the ethqos code quite a bit to make the introduction
+> of power domains into the driver a bit easier on the eye.
 
-diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-index ebb56c8d75ea..4360e125632e 100644
---- a/drivers/rtc/rtc-rzn1.c
-+++ b/drivers/rtc/rtc-rzn1.c
-@@ -526,6 +526,7 @@ static const struct rzn1_rtc_data rzn1_rtc_rzn1_data = {
- 
- static const struct of_device_id rzn1_rtc_of_match[] = {
- 	{ .compatible	= "renesas,r9a09g077-rtc", .data = &rzn1_rtc_rzt2h_data },
-+	{ .compatible	= "renesas,rcar-gen5-rtc", .data = &rzn1_rtc_rzt2h_data },
- 	{ .compatible	= "renesas,rzn1-rtc", .data = &rzn1_rtc_rzn1_data },
- 	{ /* sentinel */ }
- };
--- 
-2.53.0
-
+Sorry for the delay, this series got eaten by the recent patchwork
+upgrade :( I will manually send out the AI review, would you be willing
+to report back if any of the reviews warrant v15?
