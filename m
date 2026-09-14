@@ -1,33 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7DD41DDEA;
-	Mon, 14 Sep 2026 09:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6C3423A9A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789377459; cv=none; b=AmUDOWSi1/ywsHHSocCc/xUwQifwU52W2Md3ZBzPtN5+xEEop5YrIq4PfX6sfuuLZuoTGmtlLQgsNsLPLciliwCoZuAE3oA+D+cjQuBoztk78AzJXZb4M0KqXquFjELGRJU7YLB/EnAjw+dtlSbJi1yCph/YW6tJWsghRqVoAbo=
+	t=1789378250; cv=none; b=ua8dPWN4nXbWepwNjLuBFtHhF5f/sMj2hJcxfrbugBy/B9DCZwqjSG4gvl3UEi5IV9opWcJ2XIm0uMYaXOXcxbMLui27Q/NB+xwC+/8LpXNR/eUpHL5oBsOKWPGdm/rEFEnN2OV9n0/PtYcFcYbFSHe8yCNvmdrED5jOP4Muy70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789377459; c=relaxed/simple;
-	bh=4LO209qPT9/4FhKWuPGziA9jHpYKGrG00/EKUGV1z3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dyEx9IWqss/Tt+h2VaJf27oRy4NB8bwi5Ebb15d6MWBvNoM96h7QPNnULkf3IUCKTIBatYCicLL4romjGnix1I+t1POCTkFl2uq3+KdL2E13IhcjUZl8eYOg6CUDpHJwzC5OWf3JX7DJE4W9z3Fm++5SWxQUoqdLXnA+TcD6T3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJj4jtxH; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789378250; c=relaxed/simple;
+	bh=LaWXu73lrgxnM+WOLeLQIIpfXYsTiC4ZzLiUEwSFXJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AyxzkNE9kB6El+whOmmVYnxVJkFDYAZasP6iGFC0tap9MyjE0wFQuseQi7OuNzY43AQSfHzzzCMXEnJvdZzlWBhdJ0hnjVW9B3tuxfni6oBMmPIuXXHQx/0ptreaRwSWhK1UQEJkzZulQQkyTQmfuqCLaKPrUogYXbHT//WtbY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JaxEYh0A; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TzTYUJhM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJj4jtxH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10821F000FF;
-	Mon, 14 Sep 2026 09:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789377458;
-	bh=c162nsAv+WgH5DBdIOz9opPhre+CgPQ3J8rcJUeSGws=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=EJj4jtxHyjAfrzi3/mqsrA/t06zEhysC8g9J9sGOtiCEK7zAT+AtlZln3EJM34ZD7
-	 p8rvkMcJjKvqKc9ejAfXNHOkpo/yECvujPFNk7ojFOuDyGneuxyHjlAxSM7pOyNUDU
-	 qrhgolW66BW5o2FhP4cqUlGdlbISYrmqjOSTg5Uh2aYk2YoPZEkmcTadV67pTxz3mR
-	 X8mvYAOIy5SPeu0eAdKHoocUv0xpMgrH5Ei9lQrHEiE1Q8ItNNax+z2t1cVEgsWIjA
-	 vX1Qx+vfJC2g/I1mvTaCYNK4ZgxPSzsRAEEcQN/x1Jpm8xm1fR0jOHARWlgjDlpAn/
-	 G5Ug+H8M0ZSbQ==
-Message-ID: <911f404f-ca3d-4c91-9e59-8e486bda9456@kernel.org>
-Date: Mon, 14 Sep 2026 11:17:16 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JaxEYh0A";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TzTYUJhM"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68E8Sk15595143
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:30:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QwC6/Am/Axhts9IelVPAe4AEzQV5uQbp1jHkK1vCAXs=; b=JaxEYh0AgFuASaKu
+	libuXqFtXFTaPSkzhi/TZSqE/gMgE3Kb5DiXYnnO6C/lKjVoTG8Z3/iEDGoqZlpY
+	MdSHWPMqmEzhmVjY0IjxWAVv6la9fSa2lqPgYVstXCEoxwosnzIbCyKbEwHGCukC
+	of6ehNzI13uGONMHKCG7OcAM6k9HnXXSeU29/4BWE1x8BQJG9TSUNug+niSMA08/
+	JUBE/ORKYw5lisXX3RMUPHKN7+g1o7eHm1TRTgH+ZtSNTe6FNLzjakK7shCMnr0j
+	julbwe4DnRPkHv+9ViHp7g1e88xbyktL1c+KX0bXZwybjYzzJ1yJH1sDBPo7UNs2
+	sHDSeA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gpdevr6t6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:30:47 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93a00c70d28so301112585a.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2026 02:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1789378246; x=1789983046; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QwC6/Am/Axhts9IelVPAe4AEzQV5uQbp1jHkK1vCAXs=;
+        b=TzTYUJhMQR7/HoxIedZvnV+3vLlPwtmyDrzAEg4ReMzaelBjTD2kI8RRQQLtoJLRXS
+         GIUZ1VnqM7nl+C7mQRrTVCN+GTCNQlU9uSqelUudqeN0dunwthV5vL8VvXqboLU643jL
+         7sUs+6Ps/1LR7hJUSw08e9qNzzLQBg//WL9BAvyNsYWGhiC4Vkdqv6dhMfJFTyAU+3BB
+         WbSCqB+PA1dFRTjlJ6aakvQX5lIFwgrUZVSUjiw2Dj1lQj+dm6N5ymUSEvHvAw42R4TP
+         RgZcA9z2R3XSYOXcoXopnw15L2/LPMlKaUeWho0N0uaC/3wWmToycNjMDI8XC0+Pn9TB
+         XB/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789378246; x=1789983046;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QwC6/Am/Axhts9IelVPAe4AEzQV5uQbp1jHkK1vCAXs=;
+        b=ORZb93H1+8BBBsBKrIiBW/u7QiqK0bHkuO9VYLyFl9MdZIrKA2S5+UK9k/cuJVSUbk
+         WPSoTggTWk2xr2+NILMuGAOE3i8eNWcmZ8WaUjkbBDrt2Q790GRl6OKDLmN3LU2dqwX2
+         L1R3vWCfUO/MqNDyoxJ97fqkqP5UpCBFdEzkPsTw0hA7h8ZIaDifNReC77GMpF/prWuw
+         IeDTsfPQAXlD9bZmQ4X9LFQOCYeFnm7+BSZmEob24WjGaStWdlAZdZKrUFVot48Z46FI
+         0b/BAXF475EdH0j4UTAdTp2+TJf+c1Sg9U31wDkHD70jdjdy+lX/AS1KRkv9vkTHiqAn
+         6YtA==
+X-Forwarded-Encrypted: i=1; AKwUvBzjHHouv9kePMAiXYieJTlhbqIe2v3igPvbvllR3kAkPLSPtpbBh7jExgJhDDmW+rDjJNJ/mwTAFhKPETXMjX05Mg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nVCwYOOGFykG0hRtlL9mvF1r9LgJ+sKcW7BiJFqmshxmRDfNMe
+	iSSjU9YK1lu2fFUHBergucqIDqGb/4MVrtbn+mxG6UqSp4rdeZdU9pnFfKDptCSRnVmRH+Lx9yM
+	QRw7sHuMvKYOEhgEiuj4s3e2zWr0RAEbm/HRSxtWf4+sNtFZKkGNDOVvaK8/qVkCKBV0lhPcxEw
+	==
+X-Gm-Gg: AYBFou2Efy96JQv4m1lO8Ka8YbxMPXJYGMtzu8WKJW3bvweeNKQTKeB1MiOrhgadIWD
+	isMh9veivMuQKS0vi6tC8o9ROok27WLTz462Qt6a0x7H3Z1Bp69lI63/0yFFjZkSomgi1ZN/iR7
+	nd4IAJc/c7+BOEqpxCA04wnbGJsJjYwe0wr6HfMKrCHCxBCqgd6jAjr89oy7wHWfU8ESUG8azD8
+	tkfOqzB8NxZWUouWayBGfF63sHzuusp+hHOVcKib8gAtndrIZ7MRIFC2+nedxruz9WVI+qvmhZ2
+	ngXJoC5g/dJR7nn9kWLuYvCzfG43Hrz82V+vuF0iRxc5jDXOyTUR21d6WCwzXrwcVTMrmddF5IW
+	R8eGF2rs0JTLl19Ec25uAw8tp6v7h
+X-Received: by 2002:a05:620a:1d0c:b0:939:f9b6:47f1 with SMTP id af79cd13be357-93a29a3955bmr222695385a.46.1789378246577;
+        Mon, 14 Sep 2026 02:30:46 -0700 (PDT)
+X-Received: by 2002:a05:620a:1d0c:b0:939:f9b6:47f1 with SMTP id af79cd13be357-93a29a3955bmr222688285a.46.1789378246009;
+        Mon, 14 Sep 2026 02:30:46 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.219.214])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a9b5968cf3sm3895022a12.31.2026.09.14.02.30.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2026 02:30:45 -0700 (PDT)
+Message-ID: <ad4b454e-0774-4870-b743-fd0d82d0311a@oss.qualcomm.com>
+Date: Mon, 14 Sep 2026 11:30:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -35,119 +89,105 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] dt-bindings: net: Use consistent indentation in
- the example
-To: Claudiu Manoil <claudiu.manoil@nxp.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Chen <justin.chen@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Hans Ulli Kroll <ulli.kroll@googlemail.com>,
- Linus Walleij <linusw@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <clement.leger@bootlin.com>, Vladimir Oltean <olteanv@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jeff Johnson <jjohnson@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Yongxing Mou <yongxing.mou@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
- "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alex Elder <elder@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Roger Quadros <rogerq@kernel.org>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "bcm-kernel-feedback-list@broadcom.com"
- <bcm-kernel-feedback-list@broadcom.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>
-References: <20260913122910.99457-3-krzysztof.kozlowski@oss.qualcomm.com>
- <GV2PR04MB11740B2D119032B8B12B2FA9396BB2@GV2PR04MB11740.eurprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: Use consistent indentation in the
+ example
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+        Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Binbin Zhou <zhoubinbin@loongson.cn>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+        Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Khanh Le <khanh.le.xr@renesas.com>,
+        Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>,
+        patches@opensource.cirrus.com,
+        David Rau <David.Rau.opensource@dm.renesas.com>,
+        Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Yingkun Meng <mengyingkun@loongson.cn>,
+        Trevor Wu <trevor.wu@mediatek.com>,
+        Julien Massot <jmassot@collabora.com>,
+        Jiaxin Yu <jiaxin.yu@mediatek.com>,
+        Shane Chien <shane.chien@mediatek.com>,
+        Daniel Beer <daniel.beer@igorinstitute.com>,
+        Sebastian Reichel <sre@kernel.org>, linux-sound@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        asahi@lists.linux.dev, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20260913123234.99988-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <aqe4U6EJ0cGnV+Al@opensource.cirrus.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <GV2PR04MB11740B2D119032B8B12B2FA9396BB2@GV2PR04MB11740.eurprd04.prod.outlook.com>
+In-Reply-To: <aqe4U6EJ0cGnV+Al@opensource.cirrus.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: OsX0QbGAC97oFx0Pyons-hSQivv3xurn
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE0MDEzNSBTYWx0ZWRfXwN+p0E55EZ3e
+ pmO5xR/N86Tctoi3CnW3wvi9rz5rVQ/DC6cjiNJ3cAcHtt413XyNfXC/7HmJDUJAGv48NnkcD8K
+ JqDuy/lB17pWXa1lZR6TyChAKPcYuZ8=
+X-Proofpoint-GUID: OsX0QbGAC97oFx0Pyons-hSQivv3xurn
+X-Authority-Analysis: v=2.4 cv=ftpJ914f c=1 sm=1 tr=0 ts=6aa7bec7 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=+bKQE0WJfmhK2875HamI0Q==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=chZs0_0Ys9iI7aL1xjgA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE0MDEzNSBTYWx0ZWRfXyqBLnCfBmm7V
+ RqINeXQ2rlpUlwQV3Tl+g3BpCYYMx0U0v1tIPGu7qnEidBzeZo3FyA3lXwmBLX336HIrMn0o/2C
+ Azj4cmI4Xn8a5fga0fRFpvzBkBTqSEf6vdm18RfX03w7GJwlMBJkjHoP42ckmHP7yeEi6+8R1RQ
+ pZUL14Ux7BilN0OSFS55xQnUZeiyN7b+BMhkIuk8X01lnj83Z78SRTRyKe9T3gjqY7QFIi4ZxJU
+ eHas1Wqp8SbKfOA3pzf02h/rSMgRRZwlicKhwN7Pt3/X5dc0BolbkVjF/qVDCaJ+UI4uCBAe/jP
+ pjoXRxBeG+iVaLzx5sHxliTjtKPUE3sUdfBHFXhaDJWZ8g8toujsWL3GEZu620QRMSfYyRNQdiR
+ 7FJuN9yvYzUKl8LRCJc6ov2Gy1P6GsEg/DfxsLhjDT1dB+8i4Xr4lqSHGywc2JO1jt9MC5EbW50
+ akeuDZLgy5BGRzZXpWA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-14_02,2026-09-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 phishscore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2609140135
 
-On 14/09/2026 11:14, Claudiu Manoil wrote:
+On 14/09/2026 11:03, Charles Keepax wrote:
+> On Sun, Sep 13, 2026 at 02:32:35PM +0200, Krzysztof Kozlowski wrote:
+>> Correct indentation in the examples to consistent 2- or 4-spaces
+>> indentation to fix dt-check-style warnings ("example 0
+>> [indent-consistent] indent mismatch ...").  Preferred is 4-spaces, but
+>> re-indenting entire example just for that is too much churn.
+>>
+>> While changing the lines, correct also node name to be generic in
+>> dialog,da7219.yaml.
 > 
-> 
-> 
-> NXP Confidential
+> And cs42l42 which you also fixup, would make sense to fixup
+> cs35l45 which also has a non-generic name and isn't fixed up.
 
-No. Please fix your corpo systems or switch kindly to @linux.dev
-https://korg.docs.kernel.org/linuxdev.html
 
-You just top-posted with "confidential" and then quoted entire email.
+Yes, I'll do a v2.
+
 
 Best regards,
 Krzysztof
