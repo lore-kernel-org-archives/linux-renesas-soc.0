@@ -1,40 +1,40 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6E13A453B;
-	Tue, 15 Sep 2026 08:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07700346ACE;
+	Tue, 15 Sep 2026 08:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789459875; cv=none; b=DXn4a4YsMbAwD0+FhYrAF7GX/CTCL3cvo3juLR0uOzNvhtMLmaKo90gHfWHR9JuSpR1deoAqeaCCgi7zcbUK4eZMRGomN8SETMpeMdUVAGLFxkSnFC48pnkbTaU7cODj9ayKpJkfjxD7SCg+F/hhG3PxlQp5sMD7rOPbXTOb1m8=
+	t=1789460082; cv=none; b=WohSE2ApgIq8U1sNaKPhpjs5o2cmVC0CbBvNED/eAPKl9AjNKnxXrMA1BYtpdC+JSjW6iCzv3dJFak20iSHBm6e1mWIs9UxUG8i3yJJ/WH2hwWKLg+r1sIfsxjD0vk5PxGOFQlWdCN51AEN0LUEfHMKmH0ASZxKeLS8B/H5/eQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789459875; c=relaxed/simple;
-	bh=73uxHy1r6MDxkVonn+dnL6V76W/WjmgP/tDb7X6NpH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pZ81ALj5c+gPyf/LzJAB4LXAHkGBz7S7q7/Yznr24Rx3gMKuXghSg5/wKwAtwBxR2hFKE+8pESktRx+tmUjwRp4jqqcJOXKp6igJNgLwFLrzCzk0Jj8VxnNGU2C+z86oE4QC8MYj3omx/sTXGlxBRkg40jv6JgLAq18FG6j9u44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SNehmjn6; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1789460082; c=relaxed/simple;
+	bh=peFcxrEiF5RSqGPX56LYLlt2B39hIHlN8E9Jg0EGoOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FgN+twL1kBbT3xYcZzDOhSFpt2uDVPHbiQKTHP+sQIcsIWwFKeZKznS86q5zv2j/nhB4bByWCWVRQUN5lidBmXGVPOEaioVrCZgPnzO01dC66NyJRgzv0IewdKbGT3+NrBQFn12SAOzAe7Vy5oCGoOAzaMRxJUZY4FKK1kaMJog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pcXNkLpu; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SNehmjn6"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pcXNkLpu"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1789459870;
-	bh=73uxHy1r6MDxkVonn+dnL6V76W/WjmgP/tDb7X6NpH0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=SNehmjn60lFlzv7E5Awg/TFLz5X6IXjV7ICJJ1yoSOLR6Z7ZmKSaEVaZbkI7T5ar7
-	 T7/N7K8G2pf+FKgQ8+zn13SXIfQTdmdRLPU3TiLAlRAngPiymIcIbrZcH2bXoOMrSq
-	 WMW6vd959bdeeZlPVCxdwlOu0E1A2kpbNEiapKipIgs8+K0rkeSL/MzqTF5cXMBeVo
-	 iYMHGGUscFnJ/3Mvvkgv51WTqut/My1F0QAQTs51yswrFD1OrM24mQeB9xpi5FZ2x5
-	 6DVh0NkOzQIEoSOm7SvmFcRiNL3e9u4chIxOHgm6Px9Ty62UQ8o0Wjy+iHXJbQazPj
-	 ty0MMTMnTr57g==
+	s=mail; t=1789460079;
+	bh=peFcxrEiF5RSqGPX56LYLlt2B39hIHlN8E9Jg0EGoOA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pcXNkLpug/JktcHH/E9hIzstybTXMoZ5q/oqPEZ2WtjVj9VaCdDfgWj7RIQurGubj
+	 iUcKL69G4IKdUtEuwSXlNkc4xQ8GOniGHFBJO7xQNzMwE6Bti9cdsxKEYd+yNUeB32
+	 UP+ovB6twZs8X3OA2iVCGr7f/MPa2InXlBZOfqN2OPixBKFDabh19dHkbHI3srHrnE
+	 5RRglVS75Fayvh63aOlMeu5O2hpRDT8U9CbTUYXq7sO5o3Q7Fk58OV4PjKE1OzVX2S
+	 lu2zJ3pgng8sJ9A5f+a5AJoBlAg5fAy5kbRNTnyA/2tJr2k/Ut+jzZTgJyKAsfQJH9
+	 bXhPwY9p0Gd3w==
 Received: from [100.64.1.21] (unknown [100.64.1.21])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2E50D17E0A27;
-	Tue, 15 Sep 2026 10:11:07 +0200 (CEST)
-Message-ID: <b81258a5-bc38-40f9-acef-4109aeb94d56@collabora.com>
-Date: Tue, 15 Sep 2026 10:11:06 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3209017E0A27;
+	Tue, 15 Sep 2026 10:14:35 +0200 (CEST)
+Message-ID: <27dc00f9-ac45-4f96-81d4-2ce724b296a1@collabora.com>
+Date: Tue, 15 Sep 2026 10:14:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -42,57 +42,70 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 net-next] dt-bindings: net: Use consistent indentation
- in the example
+Subject: Re: [PATCH v3] ASoC: dt-bindings: Use consistent indentation in the
+ example
 To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Justin Chen <justin.chen@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Hans Ulli Kroll <ulli.kroll@googlemail.com>,
- Linus Walleij <linusw@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <clement.leger@bootlin.com>, Vladimir Oltean <olteanv@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Matthias Brugger <matthias.bgg@gmail.com>, Jeff Johnson
- <jjohnson@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Binbin Zhou <zhoubinbin@loongson.cn>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+ Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>,
  Geert Uytterhoeven <geert+renesas@glider.be>,
  Magnus Damm <magnus.damm@gmail.com>,
- "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alex Elder <elder@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Roger Quadros <rogerq@kernel.org>, bcm-kernel-feedback-list@broadcom.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
- ath10k@lists.infradead.org
-References: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
+ Khanh Le <khanh.le.xr@renesas.com>,
+ Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>,
+ patches@opensource.cirrus.com,
+ David Rau <David.Rau.opensource@dm.renesas.com>,
+ Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ Yingkun Meng <mengyingkun@loongson.cn>, Trevor Wu <trevor.wu@mediatek.com>,
+ Julien Massot <jmassot@collabora.com>, Jiaxin Yu <jiaxin.yu@mediatek.com>,
+ Shane Chien <shane.chien@mediatek.com>,
+ Daniel Beer <daniel.beer@igorinstitute.com>,
+ Sebastian Reichel <sre@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ asahi@lists.linux.dev, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+References: <20260915063317.28971-2-krzysztof.kozlowski@oss.qualcomm.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260915063317.28971-2-krzysztof.kozlowski@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/14/26 17:56, Krzysztof Kozlowski wrote:
+On 9/15/26 08:33, Krzysztof Kozlowski wrote:
 > Correct indentation in the examples to consistent 2- or 4-spaces
 > indentation to fix dt-check-style warnings ("example 0
 > [indent-consistent] indent mismatch ...").  Preferred is 4-spaces, but
 > re-indenting entire example just for that is too much churn.
 > 
-> In cortina,gemini-ethernet.yaml also drop the wrongly indented mdio bus,
-> because it is not necessary for the example.
+> While changing the lines, correct also node name to be generic in
+> cirrus,cs35l45.yaml, cirrus,cs42l42.yaml and dialog,da7219.yaml.
 > 
+> Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > 
 
+For MediaTek:
+
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Cheers,
+Angelo
 
