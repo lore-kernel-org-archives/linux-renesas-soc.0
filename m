@@ -1,533 +1,126 @@
-Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com [74.125.231.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC85B4BAA0B
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 15:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C9E4119F9;
+	Tue, 15 Sep 2026 16:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789487995; cv=none; b=pcCWqaNXVvJtxmug+pSc+V9Rwlxfz1QXC8ZmH/EaWVYNL8DHEl+YFOeRe3qcwWy1lE2Mater6UBlyp+6tu/uHLE+qUgFbsgkHx+JvRwQjghI3qI4Ix6JYVKvLUUYw4guTS4D3xdh12p7UBEnjdv2e3mqKaD1i3sLDQ5sn+C9L/g=
+	t=1789489111; cv=none; b=g6PietbA4B5iT/bWVGMpznW2vxUET1LknsP94I5O9pwAwxxLPPTQiVDjDfCDcIEatWQEkDdgaQSVAcaUv+9i9NUQJxEwviPUepaeJTfv7phgW+Hd0to92qnLQlBg2I2WJGjcj0UG90nGkpItN71AJSr89XLEMlYEkWM4G/qIPog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789487995; c=relaxed/simple;
-	bh=tu3isjCkJ9whd6wOUuxDJ+8nmbLRSLBlYLxu4cvur1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MxaIMuObwAUuhbF1zU+qagmJQtRX0truwq+dyOqiUd4A+jEqT+eB4vszlRgTGyeZdQGoTVxroRO9gWUIq2rx1BOxXEPkVHL62O/rXmRQQp3YGfp3PZU9kwYbufPdrlBhJYpYXgbxT2bwq/nAxKx2Gpq3IL4TmXJPiI0a9N1XJiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=JxXfR391; arc=none smtp.client-ip=74.125.231.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+	s=arc-20240116; t=1789489111; c=relaxed/simple;
+	bh=xsHfdw96GFbaepBJbdXAFV0YRCZ+PaNC0b49O+JVBp0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Jn0VzZWh4eyjOfw6tlfAxdZheix+tqzxPQ3/Lsuk4x85jyunM31+VLUWjNaoznhYNqipySaZvhFvb0i5IOKpiPbs8wHRdqkAtWvrfwlxcurOtJgvPf117lKjLs7o2ZF1J8kcCa1CaykWB2vCR3mzFgKEoQowkB4l1fw0ocjdWxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h27yCwED; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="JxXfR391"
-Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4c54eed93e4so1284406b6e.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1789487989; x=1790092789; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=u17cMuYGc5vtBTFcb6UewtH/WxUd/WeV4HHc12mdl6E=;
-        b=JxXfR391zYMFKrDJDhFG0LZHM2foJZUzxKIJhGS4A8uC5HhMG4HqnsOaWuiDb1iB1r
-         NkW1Xh6vaFaqf3V3vvF6XfjXZ+mprMAvq1CPUv7Pul1Xw1PfRr9iDqAfeg3o1V8wdVAs
-         olOkoNaj+tZQ8BerD6q7SsPc03yfsRiu3F5Mw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789487989; x=1790092789;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=u17cMuYGc5vtBTFcb6UewtH/WxUd/WeV4HHc12mdl6E=;
-        b=2zfo2G9pW8SXm11wr8ixdVN0Urd+7Cdk5TuzUNyjYvLS+fR9gTGJLgGnt0+JxLhGll
-         V+xq8ASMws+JuJ05YWmvMn0lFwGlmt1dIqe0JBYEVfU/urGgFBq7C3pK9tX9cpo/R7HZ
-         pnVAFB1hqHzxY7gsZ0xLemTCdF93cUwR1Dm41NHopZxysl38LDVphLCLhH2uZw8nSX6p
-         rle2nmDz6yBLSgC+xo+NncJg1woe7EVf6r2rjCMlbQ/OrqQxGMBlNfdsoYPtmPFwNMNA
-         r3EukMoWTAG7pehtR+t2kQkeCJNcX9ywqhLdqbSd1JC6BnQ2qziUzIdQtMRG27FVvy2B
-         xkoQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxGWn+dfN2Onklmb0ziMwbjpe4gI4BuFq0c9qmz5uWCaSvF18OLEbneI6c+8BPoKwRd6OD4Fxi/4CJHUQCltomsHg==@vger.kernel.org
-X-Gm-Message-State: AFuF++nQqjnEOJS5XoVciL0C8Mof/22GxGCtIIkfdPDfqnmUgpKAa0Gy
-	dA6tKTzq4J9NJvDU7HybHqYIW0zj6x88jR8IFMM0XQiW5NWMzPW3P+1k01ixNgnw5VXL+Uwj53x
-	NW0Rfm8IN
-X-Gm-Gg: AYBFou24G6oKtDcgrbgiWjDd4XNnh0Vt6u9Q+x8lU4RG+WlVeFDsPr4Mxw0dJt1DvwY
-	A9oftXJn5nBQ+GEGQfA2stC5j04alfRjCwa3y9UChiXxhmdK9XkWvXQTrnHugchsAyoeMmcP5YX
-	MgQF0EOC1e1mPGQpBgg9PgB+bu+/NBEG90TyGzSBjFkViB2eZVQJuI+64gu9d2ZjzsLs16mhhr3
-	ujoje6Q0vhOrAhVkYt0dS75HrmD4s08a24mLMgkx6oWnMmk2PAPAPS/VGuN29jtYdoNS7oasWs7
-	ljXxKn7gZz6g43/cRQQ7d2DQjdqeKhi+U/ou8JGXIkEeRRaBLXXCyyS8d3yhUMcJIbg/b7L/Jto
-	ds7COc4+PHzIfOmmEm9NU0mMWqn2Lumwx239kU7A9LPDaz+gLdNEHArG2T1Fo7esF+nEDX/YC4w
-	gnzGCV8ap97q2hUdBlV6UdWfYGzpSgMYoMlrB9Y2aiowZ/D+klyEOETEt+LTeDRjrtOQ==
-X-Received: by 2002:a05:6808:1512:b0:4b9:a88b:888f with SMTP id 5614622812f47-4c7b5d89f12mr5055793b6e.37.1789487989169;
-        Tue, 15 Sep 2026 08:59:49 -0700 (PDT)
-Received: from [172.22.22.28] ([73.62.185.64])
-        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-4842a33f8b2sm18328fac.14.2026.09.15.08.59.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Sep 2026 08:59:47 -0700 (PDT)
-Message-ID: <28bbceed-ec75-4916-b579-f33f63bff5d4@ieee.org>
-Date: Tue, 15 Sep 2026 10:59:44 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h27yCwED"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3F11F00893;
+	Tue, 15 Sep 2026 16:18:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789489109;
+	bh=zdMtzOEeKhZuTFoJsqIR3X1skRiJm5fGYebmf2XTqE0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=h27yCwED5eGU5g7CjoRIMjXid1gcL0jK0GIkjqMBQUvezag4D7EoNkuvSCEqur0D2
+	 daVAKP9EZ4rnltqq1O3bZgPwu7oZPS8nB6jnIOQk0oX6i7HVATaCyQq5VgNy65h4rr
+	 LBLMVmA8lx7OdSEbHtlg0JRcHdL/RCfDv4iB+HPR38r5/YcnGy5AUbNRA4v5ysSxhn
+	 9dihzuIcsyXeBmoUtCp9dmFZHQHnhIo6b7LgOEvd7GubTKzN3VOSeLCkAG4WNRMyQy
+	 0gFiruljocQ7QTDMYwK9+TKqxCKwaRauuIyiCB48VbWoL7wGSk1rjSF5Dv+XCOt28W
+	 F09pU1HC4yPjQ==
+From: Mark Brown <broonie@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Sen Wang <sen@ti.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Khanh Le <khanh.le.xr@renesas.com>, 
+ Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>, 
+ patches@opensource.cirrus.com, 
+ David Rau <David.Rau.opensource@dm.renesas.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Yingkun Meng <mengyingkun@loongson.cn>, Trevor Wu <trevor.wu@mediatek.com>, 
+ Julien Massot <jmassot@collabora.com>, Jiaxin Yu <jiaxin.yu@mediatek.com>, 
+ Shane Chien <shane.chien@mediatek.com>, 
+ Daniel Beer <daniel.beer@igorinstitute.com>, 
+ Sebastian Reichel <sre@kernel.org>, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+In-Reply-To: <20260915063317.28971-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260915063317.28971-2-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v3] ASoC: dt-bindings: Use consistent indentation in
+ the example
+Message-Id: <178948092653.151760.9676551205398911501.b4-ty@b4>
+Date: Tue, 15 Sep 2026 15:02:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 net-next] dt-bindings: net: Use consistent indentation
- in the example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Justin Chen <justin.chen@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Hans Ulli Kroll <ulli.kroll@googlemail.com>,
- Linus Walleij <linusw@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <clement.leger@bootlin.com>, Vladimir Oltean <olteanv@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jeff Johnson <jjohnson@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alex Elder <elder@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Roger Quadros <rogerq@kernel.org>, bcm-kernel-feedback-list@broadcom.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
- ath10k@lists.infradead.org
-References: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1145; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=xsHfdw96GFbaepBJbdXAFV0YRCZ+PaNC0b49O+JVBp0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqqW/KhCABg54MOkosoFTzPXmeLy/RlhkivifSk
+ jMcT3bipsWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaqlvygAKCRAk1otyXVSH
+ 0LcyB/4hxF4ifiG0nOiFlkrrz1CCm5Ai3AIXbPgY9VtS02VcW230+rF+S51HzwY3b/C69z5M+sl
+ E5Bz+18HBKeoMsXQemKmgV3INECe3Ea9Ar+RsVNdjlak3uOxsrweJQs3wXAmBk39p6XeKwsIxa2
+ NFhIiS+s3/H5RQoltOYjzF3kbeotptgw8GlvnraZJLU3E8cvMurY4BbIb4ZdIYMR8eAYZ1TIYDC
+ tE68mtQGyskHvWIMuv/9pVeHIevKetO+5V4kN/PpMhJXr++EfVuolMTpCMGWRJT/FclrHONvFUq
+ MHa017eKvt2sLQlj4BPmTFz/WuSKhH6YpMhSdDizVu85Oo6q
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 9/14/26 10:56 AM, Krzysztof Kozlowski wrote:
-> Correct indentation in the examples to consistent 2- or 4-spaces
-> indentation to fix dt-check-style warnings ("example 0
-> [indent-consistent] indent mismatch ...").  Preferred is 4-spaces, but
-> re-indenting entire example just for that is too much churn.
-> 
-> In cortina,gemini-ethernet.yaml also drop the wrongly indented mdio bus,
-> because it is not necessary for the example.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+On Tue, 15 Sep 2026 08:33:18 +0200, Krzysztof Kozlowski wrote:
+> ASoC: dt-bindings: Use consistent indentation in the example
 
-Overall looks good to me (but the IPA binding in particular is good).
+Applied to
 
-Acked-by: Alex Elder <elder@riscstar.com>
-> 
-> ---
-> 
-> Changes in v2:
-> 1. Mention mdio bus removal.
-> ---
->   .../bindings/net/brcm,asp-v2.0.yaml           |  2 +-
->   .../bindings/net/cortina,gemini-ethernet.yaml | 52 ++++++--------
->   .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  |  4 +-
->   .../bindings/net/intel,dwmac-plat.yaml        |  6 +-
->   .../devicetree/bindings/net/mdio-gpio.yaml    | 16 ++---
->   .../bindings/net/mscc,vsc7514-switch.yaml     |  8 +--
->   .../devicetree/bindings/net/qcom,ipa.yaml     | 10 +--
->   .../bindings/net/realtek,rtl82xx.yaml         |  6 +-
->   .../bindings/net/socionext,uniphier-ave4.yaml | 32 ++++-----
->   .../bindings/net/ti,cpsw-switch.yaml          | 70 +++++++++----------
->   .../bindings/net/wireless/mediatek,mt76.yaml  | 32 ++++-----
->   .../bindings/net/wireless/qcom,ath10k.yaml    |  2 +-
->   12 files changed, 114 insertions(+), 126 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml b/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml
-> index a3db6d594c8c..7fcc564e820c 100644
-> --- a/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml
-> +++ b/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml
-> @@ -123,7 +123,7 @@ examples:
->               phy0: ethernet-phy@1 {
->                   reg = <1>;
->               };
-> -       };
-> +        };
->   
->           mdio@ce14 {
->               compatible = "brcm,asp-v2.1-mdio";
-> diff --git a/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml b/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
-> index f0b5bea2458d..da9bc170cd54 100644
-> --- a/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
-> +++ b/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
-> @@ -87,18 +87,6 @@ examples:
->       #include <dt-bindings/interrupt-controller/irq.h>
->       #include <dt-bindings/clock/cortina,gemini-clock.h>
->       #include <dt-bindings/reset/cortina,gemini-reset.h>
-> -    mdio0: mdio {
-> -      #address-cells = <1>;
-> -      #size-cells = <0>;
-> -      phy0: ethernet-phy@1 {
-> -        reg = <1>;
-> -        device_type = "ethernet-phy";
-> -      };
-> -      phy1: ethernet-phy@3 {
-> -        reg = <3>;
-> -        device_type = "ethernet-phy";
-> -      };
-> -    };
->   
->       ethernet@60000000 {
->           compatible = "cortina,gemini-ethernet";
-> @@ -110,28 +98,28 @@ examples:
->           ranges;
->   
->           gmac0: ethernet-port@0 {
-> -                compatible = "cortina,gemini-ethernet-port";
-> -                reg = <0x60008000 0x2000>, /* Port 0 DMA/TOE */
-> -                      <0x6000a000 0x2000>; /* Port 0 GMAC */
-> -                interrupt-parent = <&intcon>;
-> -                interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-> -                resets = <&syscon GEMINI_RESET_GMAC0>;
-> -                clocks = <&syscon GEMINI_CLK_GATE_GMAC0>;
-> -                clock-names = "PCLK";
-> -                phy-mode = "rgmii";
-> -                phy-handle = <&phy0>;
-> +            compatible = "cortina,gemini-ethernet-port";
-> +            reg = <0x60008000 0x2000>, /* Port 0 DMA/TOE */
-> +                  <0x6000a000 0x2000>; /* Port 0 GMAC */
-> +            interrupt-parent = <&intcon>;
-> +            interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-> +            resets = <&syscon GEMINI_RESET_GMAC0>;
-> +            clocks = <&syscon GEMINI_CLK_GATE_GMAC0>;
-> +            clock-names = "PCLK";
-> +            phy-mode = "rgmii";
-> +            phy-handle = <&phy0>;
->           };
->   
->           gmac1: ethernet-port@1 {
-> -                compatible = "cortina,gemini-ethernet-port";
-> -                reg = <0x6000c000 0x2000>, /* Port 1 DMA/TOE */
-> -                      <0x6000e000 0x2000>; /* Port 1 GMAC */
-> -                interrupt-parent = <&intcon>;
-> -                interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-> -                resets = <&syscon GEMINI_RESET_GMAC1>;
-> -                clocks = <&syscon GEMINI_CLK_GATE_GMAC1>;
-> -                clock-names = "PCLK";
-> -                phy-mode = "rgmii";
-> -                phy-handle = <&phy1>;
-> +            compatible = "cortina,gemini-ethernet-port";
-> +            reg = <0x6000c000 0x2000>, /* Port 1 DMA/TOE */
-> +                  <0x6000e000 0x2000>; /* Port 1 GMAC */
-> +            interrupt-parent = <&intcon>;
-> +            interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-> +            resets = <&syscon GEMINI_RESET_GMAC1>;
-> +            clocks = <&syscon GEMINI_CLK_GATE_GMAC1>;
-> +            clock-names = "PCLK";
-> +            phy-mode = "rgmii";
-> +            phy-handle = <&phy1>;
->           };
->       };
-> diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-> index ea285ef3e64f..fab6aa6237e9 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-> +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-> @@ -127,8 +127,8 @@ examples:
->                   phy-mode = "internal";
->   
->                   fixed-link {
-> -                  speed = <1000>;
-> -                  full-duplex;
-> +                    speed = <1000>;
-> +                    full-duplex;
->                   };
->               };
->           };
-> diff --git a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
-> index 62c1da36a2b5..d1522216d32b 100644
-> --- a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
-> +++ b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
-> @@ -91,9 +91,9 @@ examples:
->           snps,tx-queues-to-use = <2>;
->           snps,tx-sched-wrr;
->           queue0 {
-> -           snps,weight = <0x10>;
-> -           snps,dcb-algorithm;
-> -           snps,priority = <0x0>;
-> +            snps,weight = <0x10>;
-> +            snps,dcb-algorithm;
-> +            snps,priority = <0x0>;
->           };
->   
->           queue1 {
-> diff --git a/Documentation/devicetree/bindings/net/mdio-gpio.yaml b/Documentation/devicetree/bindings/net/mdio-gpio.yaml
-> index eb4171a1940e..36e51aaae9c0 100644
-> --- a/Documentation/devicetree/bindings/net/mdio-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/net/mdio-gpio.yaml
-> @@ -45,13 +45,13 @@ examples:
->       };
->   
->       mdio0: mdio {
-> -      compatible = "virtual,mdio-gpio";
-> -      #address-cells = <1>;
-> -      #size-cells = <0>;
-> -      gpios = <&qe_pio_a 11>,
-> -              <&qe_pio_c 6>;
-> -      ethphy0: ethernet-phy@0 {
-> -        reg = <0>;
-> -      };
-> +        compatible = "virtual,mdio-gpio";
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        gpios = <&qe_pio_a 11>,
-> +                <&qe_pio_c 6>;
-> +        ethphy0: ethernet-phy@0 {
-> +            reg = <0>;
-> +        };
->       };
->   ...
-> diff --git a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-> index 86a9c3fc76c8..d825130b54b4 100644
-> --- a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-> +++ b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
-> @@ -197,10 +197,10 @@ examples:
->               <0x71040000 0x10000>,
->               <0x71050000 0x10000>,
->               <0x71060000 0x10000>;
-> -            reg-names = "sys", "rew", "qs", "ptp", "port0", "port1",
-> -            "port2", "port3", "port4", "port5", "port6",
-> -            "port7", "port8", "port9", "port10", "qsys",
-> -            "ana", "s0", "s1", "s2";
-> +      reg-names = "sys", "rew", "qs", "ptp", "port0", "port1",
-> +                  "port2", "port3", "port4", "port5", "port6",
-> +                  "port7", "port8", "port9", "port10", "qsys",
-> +                  "ana", "s0", "s1", "s2";
->   
->         ethernet-ports {
->           #address-cells = <1>;
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> index 68ec76fe4473..38e3830512fe 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> @@ -246,14 +246,14 @@ examples:
->           qcom,remote-pid = <5>;
->   
->           ipa_smp2p_out: ipa-ap-to-modem {
-> -                qcom,entry-name = "ipa";
-> -                #qcom,smem-state-cells = <1>;
-> +            qcom,entry-name = "ipa";
-> +            #qcom,smem-state-cells = <1>;
->           };
->   
->           ipa_smp2p_in: ipa-modem-to-ap {
-> -                qcom,entry-name = "ipa";
-> -                interrupt-controller;
-> -                #interrupt-cells = <2>;
-> +            qcom,entry-name = "ipa";
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
->           };
->       };
->   
-> diff --git a/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml b/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml
-> index 45033c31a2d5..07b39ef1fc62 100644
-> --- a/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml
-> +++ b/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml
-> @@ -91,8 +91,8 @@ examples:
->           #size-cells = <0>;
->   
->           ethphy1: ethernet-phy@1 {
-> -                reg = <1>;
-> -                realtek,clkout-disable;
-> -                realtek,aldps-enable;
-> +            reg = <1>;
-> +            realtek,clkout-disable;
-> +            realtek,aldps-enable;
->           };
->       };
-> diff --git a/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml b/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml
-> index 4eb63b303cff..8c8622160abb 100644
-> --- a/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml
-> +++ b/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml
-> @@ -121,22 +121,22 @@ examples:
->     - |
->       ether: ethernet@65000000 {
->           compatible = "socionext,uniphier-ld20-ave4";
-> -                reg = <0x65000000 0x8500>;
-> -                interrupts = <0 66 4>;
-> -                phy-mode = "rgmii";
-> -                phy-handle = <&ethphy>;
-> -                clock-names = "ether";
-> -                clocks = <&sys_clk 6>;
-> -                reset-names = "ether";
-> -                resets = <&sys_rst 6>;
-> -                socionext,syscon-phy-mode = <&soc_glue 0>;
-> +        reg = <0x65000000 0x8500>;
-> +        interrupts = <0 66 4>;
-> +        phy-mode = "rgmii";
-> +        phy-handle = <&ethphy>;
-> +        clock-names = "ether";
-> +        clocks = <&sys_clk 6>;
-> +        reset-names = "ether";
-> +        resets = <&sys_rst 6>;
-> +        socionext,syscon-phy-mode = <&soc_glue 0>;
->   
-> -                mdio {
-> -                        #address-cells = <1>;
-> -                        #size-cells = <0>;
-> +        mdio {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
->   
-> -                        ethphy: ethernet-phy@1 {
-> -                                reg = <1>;
-> -                        };
-> -                };
-> +            ethphy: ethernet-phy@1 {
-> +                reg = <1>;
-> +            };
->           };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
-> index 8b5da602a2e8..4d24dadfaa5d 100644
-> --- a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
-> +++ b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
-> @@ -192,50 +192,50 @@ examples:
->           interrupt-names = "rx_thresh", "rx", "tx", "misc";
->   
->           ethernet-ports {
-> -                #address-cells = <1>;
-> -                #size-cells = <0>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
->   
-> -                cpsw_port1: port@1 {
-> -                        reg = <1>;
-> -                        label = "port1";
-> -                        mac-address = [ 00 00 00 00 00 00 ];
-> -                        phys = <&phy_gmii_sel 1>;
-> -                        phy-handle = <&ethphy0_sw>;
-> -                        phy-mode = "rgmii";
-> -                        ti,dual-emac-pvid = <1>;
-> -                };
-> +            cpsw_port1: port@1 {
-> +                reg = <1>;
-> +                label = "port1";
-> +                mac-address = [ 00 00 00 00 00 00 ];
-> +                phys = <&phy_gmii_sel 1>;
-> +                phy-handle = <&ethphy0_sw>;
-> +                phy-mode = "rgmii";
-> +                ti,dual-emac-pvid = <1>;
-> +            };
->   
-> -                cpsw_port2: port@2 {
-> -                        reg = <2>;
-> -                        label = "wan";
-> -                        mac-address = [ 00 00 00 00 00 00 ];
-> -                        phys = <&phy_gmii_sel 2>;
-> -                        phy-handle = <&ethphy1_sw>;
-> -                        phy-mode = "rgmii";
-> -                        ti,dual-emac-pvid = <2>;
-> -                };
-> +            cpsw_port2: port@2 {
-> +                reg = <2>;
-> +                label = "wan";
-> +                mac-address = [ 00 00 00 00 00 00 ];
-> +                phys = <&phy_gmii_sel 2>;
-> +                phy-handle = <&ethphy1_sw>;
-> +                phy-mode = "rgmii";
-> +                ti,dual-emac-pvid = <2>;
-> +            };
->           };
->   
->           davinci_mdio_sw: mdio@1000 {
-> -                compatible = "ti,cpsw-mdio","ti,davinci_mdio";
-> -                reg = <0x1000 0x100>;
-> -                clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0>;
-> -                clock-names = "fck";
-> -                #address-cells = <1>;
-> -                #size-cells = <0>;
-> -                bus_freq = <1000000>;
-> +            compatible = "ti,cpsw-mdio","ti,davinci_mdio";
-> +            reg = <0x1000 0x100>;
-> +            clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0>;
-> +            clock-names = "fck";
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            bus_freq = <1000000>;
->   
-> -                ethphy0_sw: ethernet-phy@0 {
-> -                        reg = <0>;
-> -                };
-> +            ethphy0_sw: ethernet-phy@0 {
-> +                reg = <0>;
-> +            };
->   
-> -                ethphy1_sw: ethernet-phy@1 {
-> -                        reg = <1>;
-> -                };
-> +            ethphy1_sw: ethernet-phy@1 {
-> +                reg = <1>;
-> +            };
->           };
->   
->           cpts {
-> -                clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 25>;
-> -                clock-names = "cpts";
-> +            clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 25>;
-> +            clock-names = "cpts";
->           };
->       };
-> diff --git a/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml b/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
-> index ae6b97cdc44b..bf4116b057d2 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
-> @@ -325,22 +325,22 @@ examples:
->             r0 {
->               regdomain = "FCC";
->               txpower-5g {
-> -               b0 {
-> -                   channels = <36 48>;
-> -                   rates-ofdm = /bits/ 8 <23 23 23 23 23 23 23 23>;
-> -                   rates-mcs = /bits/ 8 <1 23 23 23 23 23 23 23 23 23 23>,
-> -                               /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22>;
-> -                   rates-ru = /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22 22 22>,
-> -                              /bits/ 8 <4 20 20 20 20 20 20 20 20 20 20 20 20>;
-> -               };
-> -               b1 {
-> -                   channels = <100 181>;
-> -                   rates-ofdm = /bits/ 8 <14 14 14 14 14 14 14 14>;
-> -                   rates-mcs = /bits/ 8  <4 14 14 14 14 14 14 14 14 14 14>;
-> -                   txs-delta = <12 9 6>;
-> -                   rates-ru = /bits/ 8  <7 14 14 14 14 14 14 14 14 14 14 14 14>;
-> -               };
-> -             };
-> +              b0 {
-> +                channels = <36 48>;
-> +                rates-ofdm = /bits/ 8 <23 23 23 23 23 23 23 23>;
-> +                rates-mcs = /bits/ 8 <1 23 23 23 23 23 23 23 23 23 23>,
-> +                            /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22>;
-> +                rates-ru = /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22 22 22>,
-> +                           /bits/ 8 <4 20 20 20 20 20 20 20 20 20 20 20 20>;
-> +              };
-> +              b1 {
-> +                channels = <100 181>;
-> +                rates-ofdm = /bits/ 8 <14 14 14 14 14 14 14 14>;
-> +                rates-mcs = /bits/ 8  <4 14 14 14 14 14 14 14 14 14 14>;
-> +                txs-delta = <12 9 6>;
-> +                rates-ru = /bits/ 8  <7 14 14 14 14 14 14 14 14 14 14 14 14>;
-> +              };
-> +            };
->             };
->           };
->         };
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-> index e667d78b3ab3..a52cb8a0d409 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-> @@ -408,4 +408,4 @@ examples:
->                             "msi15",
->                             "legacy";
->           ieee80211-freq-limit = <5470000 5875000>;
-> -      };
-> +    };
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.4
+
+Thanks!
+
+[1/1] ASoC: dt-bindings: Use consistent indentation in the example
+      https://git.kernel.org/broonie/sound/c/bd1041d3e1c0
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
