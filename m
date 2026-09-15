@@ -1,99 +1,75 @@
-Received: from mail-pj2-f11.google.com (mail-pj2-f11.google.com [74.125.227.139])
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB74E3B6352
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 12:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDFF41A508
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 13:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789476002; cv=none; b=bwZ014SeGoHSJaa0pir1p4VqD65xo8OHthDG1h3VGHJMSZ3/lqee/P/HSepwEN2K/4lRj82OuZCIeI5A9QX214BbVwd09fJIPh46L7c17hbR4hn44qc77K56zHV9gJF97A5nqVOGItdQS9YOwGlIwd41dCNXWiO7+LwLtF5OpjA=
+	t=1789480461; cv=none; b=uLHJLr0+0D1qdx8WzssT42Mh3zzFKY4UDA2RmanNCMvmnFBdYmTPllymw4nLHRoDtMn7iLQUxUOmhyVk/Cs+drgrHa666MnxxSxy0s/B+eaRdkIF81KJmmkkRGPzujJTjZ6KM+/OsbzX35EkcWBBDkbbeetXWN4psfxMPyejTEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789476002; c=relaxed/simple;
-	bh=tCrgHNTqayWFj1XRarWJorXnl2XIBvQrDCQv89fV94M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i1CKH+sC64PeCEDSEDS28xNj/j9oL8N6/XgwlFk0O8NAtVM7xBf4hEY6k5dgke3sGRSK6LMr8Ctnw/uVy9uiUB+kBM10CpLkB/z9C1XnffrA5uVQwyXTc7056Zp6ZziIRA4QxmtzxMq/SpWXSeobKn8iiAvsfBYMNERBvBnvgQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AtCYZ6Kb; arc=none smtp.client-ip=74.125.227.139
+	s=arc-20240116; t=1789480461; c=relaxed/simple;
+	bh=Ag5tfz00fBg6YXo3im7agg0lkNAqHNZutLBmML/rBjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JltK61Lgec9HRsmajtb2f9NxPgTteQ5CEaDh009V9c1liKSjhRFMbA77RhamZk7lkV7jZ2xBLzNLxEH4zj5+xTid99SISAU/3AccEGXu174wepdyZTNETx6ELMPEZooBV19U/CxhI4VBt/5GwvLOxSPBCfP9eb0wqfuvr6YpcOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0mwRs89; arc=none smtp.client-ip=74.125.227.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtCYZ6Kb"
-Received: by mail-pj2-f11.google.com with SMTP id 98e67ed59e1d1-3989fdf58bcso265602a91.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 05:40:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0mwRs89"
+Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-39b2ad83dc6so3357792a91.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 06:54:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789476000; x=1790080800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=rQei+xFrWR/8tHZU0Qo/Qb7KMibEAMjL/DUhroeeXK4=;
-        b=AtCYZ6KbYOaS9auUBsv8QrA525jxfl7noKBHqjywxD6PrRM3L3BZVbABKVBYp5ysZB
-         hcINfyL3TmcfDgLgSxDUYaDGiUNVappIAvlUN5UovcLxMpLJMcnWJ91XM1yQlXwsI6L6
-         BMe7Ju+StEikNSmPbDQTpnSsr+xfHv56oday/jdbZ4n3zW3Uv1QcBtnncaMmoIC3Z+VY
-         Be90ZFC3QgypwSxgwYbHWhUN8ocO7OjvZ2eW5Pa6AI2Vf6EpT4tHfpx97/rSJrew1tEG
-         d6pzWISrtHgb4/MQEv/QqQs2fczOCabJgX8KusZ7rDM6RtgjIPl4Ecuvnt8BwplWsQPT
-         iMpQ==
+        d=gmail.com; s=20251104; t=1789480459; x=1790085259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=whXzJHNF2cPXx+i5FgzKhan4wYJW9EK7frxKYSb7wNI=;
+        b=H0mwRs89+UPb/DZtvXtW8tJ20Ms+Ff2SLVKSuZT+nARB6Ady+AbKw5jJno08CkCoKz
+         YzPdklCHVLFOWbKc8Mucu7fCEGzR+RcfikB6msm9o5MP1gtuw+3J0//uPLTXlMPmgCIT
+         LeqdVVvUrvHH81iyaMwADOZizOjW8ddC4QrN0UEpNg4TJ2bToX75cHcdycb8L3pvas3M
+         V1eF3OwY3ykCg7nLieG2uaHDq5b8OcYW5nNaIDb01fUP0t2X7by+SVwNUUD+cF3et6io
+         tjzFL4CYZkOGYAHSFXcLQAVood0pF87e2j6+OvcwoHP8Xt21ihO4sy5ATv34hh8h9mFU
+         qCDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789476000; x=1790080800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=rQei+xFrWR/8tHZU0Qo/Qb7KMibEAMjL/DUhroeeXK4=;
-        b=XkJf4WC5OCm+SxCveVjgi7KFTp0ewZ/tRcK1dD/Esm2Tzm9SP6Bxl6q6+UUCPJRmOp
-         SH+JrACnQLmnRJ90qiCNX+uOtxkD2PQgdijYSR9D/fcKvUaq6cM6ML98EkUSP6Xp5T6P
-         c77QwCdCdpgnkr3aKRxQF66PVF6n1Wpslbyt7AyNlWB/xx9cvT0ecP+HNAoasWGr08Oo
-         geT+NwHTRMPURaGlB/zTfMQG4BgtvU9OkUedi88yd/QrXZaK1Daw/JZ4Heu/f9S0Llp7
-         rB+Th4XL5y8JxabefROh/Zy32mkuUtTwGy1gpYCPVKW/iCkXtWOnYPFLcRjRQl3q6t4b
-         klpg==
-X-Forwarded-Encrypted: i=1; AKwUvBw3gy6VNOBY1TjSWAcV+ogRTHxlC5g7Fl/z4nqPs/bUx1ra+cALzytDZVK2qL3mcSxR9QMCBNqWlcsV1JKI/Zc6OQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mFPhwPUdBaAfDI6f5lg/4SNYyP2uRtlr91f5fXdD+LoR5K+rFa
-	eiHN2bYy4JssI0fLrk0+hdi5D7MAY36dOa/H/kuIh/bBxyO0qRjqEmbZ
-X-Gm-Gg: AYBFou2ND4gxkKo7CBzgzSc0ol3tdccVdUdDTHrJiZo+AgPj5uCekGYgk6e/VDoM/pW
-	R45o4lBmQXRLSdUk+C2W1QpUviv9zxanS6kcKYGJ618Nv/kL85v58Vo73DzKnHrBPsFZOcHwNPY
-	Y2qcTerifU7gnNRigAa5b01BIvua0E3madyl2cMNSHI2lfrQp7vLlGkRkPgAdRk7AZIuublDoSB
-	cZza0CD9c5uDwsa58RJeBN5LMjZL4pQDpDadysXlfkzLnF74rUU7VaaRuRPbQwTqjMBiVMxB+Nz
-	nL69VqwmSVDJ0xpnheVJ8vnKykYcFOKxVj7SYMGI7HxK1FQOj0gfOv31KzAly1IP2l+5dzQfy+f
-	A++LVERRYtnAxFF7Qa0Z4R++fzruNqOJo5DulY4H8Vyy/nZnWh7rAJo1IG/7cFn8eRbmvK/t/2v
-	Xye0XrjBaM6Zfhxc3YjZ/XvJ/3l1MIS5sVyS36V1onHhBh2bXRTQ3SL4pOeoQ2z2+iNcnKwao=
-X-Received: by 2002:a17:90b:314c:b0:398:9bd3:d6d6 with SMTP id 98e67ed59e1d1-39dfe1901e4mr3823167a91.16.1789476000343;
-        Tue, 15 Sep 2026 05:40:00 -0700 (PDT)
-Received: from server.lan ([168.138.199.194])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39dfdd28acbsm5307259a91.10.2026.09.15.05.39.51
+        d=1e100.net; s=20260707; t=1789480459; x=1790085259;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=whXzJHNF2cPXx+i5FgzKhan4wYJW9EK7frxKYSb7wNI=;
+        b=J/ATUzlt2W+L2s8nnKepJIpd/DNwRxRX4p74JOi59cp5stVN61GaBYyGADyKWGN2Lz
+         xcpfMyh3gtg39SBmEgWmlElsEDEn7bG7vn8XfhLWCu8Bjm9eIXwTS5znCLi3TkLTUfe1
+         aNCMoqDxKB74aYTBHjJVXKZ7w7Wve0VJAXrsXjYi2ktHt40Vmvn6iaXvqE0PzCL1mK9h
+         RTPgjHWYVaeu3WC67OqGFKYpA4O+mbh8nDmpCghVT6TORLSIii5o7fc6vk6F9J9JPFbE
+         WMXUS3pdRV5vCmhdgBL+lkqn9oqUDuTYr8yJtEsTi3zFWhLIXoxDKZgNQ1KloY7bF0eG
+         sSKA==
+X-Forwarded-Encrypted: i=1; AKwUvByO03PyqgEKp31HigiedaqjqjxgmtBd7a6sxm/bNzQm77pooOLaE2mVSNdH9kMlENiVWU1MxcglUnIkexBDYq3R3g==@vger.kernel.org
+X-Gm-Message-State: AFuF++nfzLx19c+6GpVTya+Cq10390ZhMcsuXwbTVgtQtu0qze6zlqhX
+	Izj69sDShMody3fEX+3yyV4KBjeoST08N1Tnwx68n34d3wD0gEGFmBI5
+X-Gm-Gg: AYBFou29FEYI7j5obirqKuPr2LYU2+0vD3caa1XyXnTTXh1xKB6jB815wEQgwhV9e1c
+	c+vSwbEjMQPV0iJLCwbYQlOc2Rp3x0KCFwNcCHFNPx9fnoyvz6sl6teKD+VNJdKC2W34P40wg/g
+	EYM9RT1tOm6S5PiLqO75GHRWd+CGXtQaJ+jopITJ5nG1dBcwEEoCQcbrOlhEZQNVIWpJF8NdPDY
+	+6WvzthnlrWCuBl+aBtb66RyS46TnQJ0nA8I7O3JG/FxlPAfEPMEhmvJgwaPEBQOtYu/b42oLzG
+	PNqEIaaW4lySrg7LQw3Sfb/bp8j3iIzxs8Paw6DrQVowZHQuoUuAT6BAvOlLz0SJ8OtMf4kfQ4e
+	etMq+c5jioshNyfXRNQD1A+Icusx/wl2PXodKyqWitWSF/MTB0Mo9B39Y8IIsW7KZkh1UKWCM9z
+	YfJyAX60WniXqY7hTGOJlBGYpV2yO6Vh1YxxhY8AROh0cgoyZ21jOGiFQ=
+X-Received: by 2002:a17:90b:39ac:b0:39e:261:4e0d with SMTP id 98e67ed59e1d1-39e026159e9mr5815662a91.25.1789480458971;
+        Tue, 15 Sep 2026 06:54:18 -0700 (PDT)
+Received: from lgs.. ([2001:250:5800:1002::de93])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39dfdd0ba9bsm5533757a91.7.2026.09.15.06.54.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 05:39:58 -0700 (PDT)
-From: Coia Prant <coiaprant@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Coia Prant <coiaprant@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	David Heidelberg <david@ixit.cz>,
-	netdev@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v6 11/11] MAINTAINERS: add entry for Rockchip XPCS driver
-Date: Tue, 15 Sep 2026 20:38:00 +0800
-Message-ID: <20260915123802.1561724-12-coiaprant@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260915123802.1561724-1-coiaprant@gmail.com>
-References: <20260915123802.1561724-1-coiaprant@gmail.com>
+        Tue, 15 Sep 2026 06:54:18 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Jacopo Mondi <jacopo@jmondi.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Guangshuo Li <lgs201920130244@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] media: renesas: ceu: free device data if video device is unregistered
+Date: Tue, 15 Sep 2026 21:54:06 +0800
+Message-ID: <20260915135406.2423337-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -102,37 +78,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a MAINTAINERS entry for the Rockchip RK3568 XPCS platform driver
-and its device tree binding.
+ceu_probe() allocates ceudev, while ceu_remove() does not free it if the
+video device has not been registered.
 
-Include the relevant mailing lists (netdev and linux-rockchip) so that
-future patches are properly distributed.
+The video device is registered from the async notifier complete
+callback, and its release callback is responsible for freeing ceudev.
+If the device is removed before the notifier completes, or before video
+device registration succeeds, video_unregister_device() does not invoke
+the release callback and the ceudev allocation is leaked.
 
-Signed-off-by: Coia Prant <coiaprant@gmail.com>
+Check whether the video device was registered during remove. Unregister
+it normally when registered so that its release callback handles the
+final free, otherwise free ceudev directly.
+
+This issue was found by manual code inspection.
+
+Fixes: 32e5a70dc8f4 ("media: platform: Add Renesas CEU driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/media/platform/renesas/renesas-ceu.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3b2eb2a7a89a8..f53a519da6298 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23739,6 +23739,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/sound/rockchip,rk3576-sai.yaml
- F:	sound/soc/rockchip/rockchip_sai.*
+diff --git a/drivers/media/platform/renesas/renesas-ceu.c b/drivers/media/platform/renesas/renesas-ceu.c
+index 65f7659a9e02..5015b7837381 100644
+--- a/drivers/media/platform/renesas/renesas-ceu.c
++++ b/drivers/media/platform/renesas/renesas-ceu.c
+@@ -1705,7 +1705,10 @@ static void ceu_remove(struct platform_device *pdev)
  
-+ROCKCHIP XPCS DRIVER
-+M:	Coia Prant <coiaprant@gmail.com>
-+L:	netdev@vger.kernel.org
-+L:	linux-rockchip@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/pcs/rockchip,rk3568-xpcs.yaml
-+F:	drivers/net/pcs/pcs-xpcs-rk.c
-+F:	include/linux/pcs/pcs-xpcs-rk.h
-+
- ROCKER DRIVER
- M:	Jiri Pirko <jiri@resnulli.us>
- L:	netdev@vger.kernel.org
+ 	v4l2_device_unregister(&ceudev->v4l2_dev);
+ 
+-	video_unregister_device(&ceudev->vdev);
++	if (video_is_registered(&ceudev->vdev))
++		video_unregister_device(&ceudev->vdev);
++	else
++		kfree(ceudev);
+ }
+ 
+ static const struct dev_pm_ops ceu_pm_ops = {
 -- 
-2.47.3
+2.43.0
 
