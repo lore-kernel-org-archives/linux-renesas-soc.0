@@ -1,95 +1,95 @@
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+Received: from mail-ej2-f2.google.com (mail-ej2-f2.google.com [74.125.228.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492D74921AC
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 11:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D972325B2F4
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 11:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.130
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789471325; cv=pass; b=oBgJXDua1qo8oXtwFQ/hgiGuUkOJ8mNtBFHLj/fTExXUULTzBSblWi8l2bLcflqUVB8ihgFw4jdUyBInDH3HxbJBEoxJyqIczcmNrrCelgTgB0618hpZvhrhVsaZKvHx/gR5YAC5loLRU65/Mjiz4vbevg4CQexGuDK3IoGxdEI=
+	t=1789472580; cv=pass; b=V2UGjaBcu5464+HgG3lXJtdcJoPngpa77AtA+TMpLkdHoCSH7AHdmqZFUKGPHNhnx9VH5WVS8BiyTpcwd5g2OD/Z/Ty/VSYyiYVvYuXXufvgGdUuvf8k5vyaw94cB3vvvOIiE3//UcwY5Z03BoZsFHZnqD98bIMOY4g2gqMTwM4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789471325; c=relaxed/simple;
-	bh=7IeKCihFwX9toaZ0cOF5/ll+Kqx7H0W8Cpr7TcnnDvg=;
+	s=arc-20240116; t=1789472580; c=relaxed/simple;
+	bh=77e1MGS6kCVnU1RufO4elxUOHjBahuFZ5h+/Df65DfI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sW9/Xg7EECPKm6Lh12alsd7ToDRJ/vagTjbjc+n3jZy/Vqli+vPZvKNIFa0m9gKGJFmO5foFCyvvDiZwUg4mQ8+T9Jzaw7f40bd4K204HbYLCIMwRvoh3wVDT0CYIXziVLuTyYsIB/XaJ/Al53Qtr2mdWeYP2VaBKK5IpgFmf0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iYFdV5nx; arc=pass smtp.client-ip=209.85.218.66
+	 To:Cc:Content-Type; b=VdBTKpEZBqh5ao1UQJLO8B3LdLVelDB+lZ0HNEBKUUr7Ei0WmhGhRT77HJLm7Q6ZJBSgi+kUQEN66oF9+DovVIWbRBbuuILd4imriesvOklAE5JP/UxWfIDnDNsV3/kclRZ91V+gbGFgUc5g0uUmsW4vs1Yuzo3OFhMkHrojrNw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=flw/goM4; arc=pass smtp.client-ip=74.125.228.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYFdV5nx"
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-c2946aa0d5aso89394966b.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 04:22:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789471319; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flw/goM4"
+Received: by mail-ej2-f2.google.com with SMTP id a640c23a62f3a-c294938a983so233087666b.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 04:42:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789472575; cv=none;
         d=google.com; s=arc-20260327;
-        b=LMI4r5g3qMQB7M2Jl9Ljy9yNP2HolGWXHaolrn+f7ai4SFj+YJOMc4oXJGMDLfkoE1
-         l1a4rI/RopYFaLk4UjFe3o5XztmicxSTUqwsjWBEPZ7loZV9K9vTPV6nXez6uokp24PX
-         CREpLlL7JmBhejJuA8UPg07QMAwUU1o2Imt0rgNv/bZQuV1LSuoYJHTcdmO6Wz1PU6R3
-         X1SRHRteOEp2JYguLiUp83tm7LPCk0tNmhu0/QdzT/harwnbAAFRrHCjmnasNt9G8hcM
-         v/CJrAaMKsGmGCTTIYbPfDvin6vafyctrjOrmmTlYvdZAMJ0UzLLNz0x0gW/S1cad8/O
-         qQ6w==
+        b=Uj+nDtaAcrTpfQVXswj2zQ/oAtczRP5wy167cssKIX2xlgtI8iDlg0nqD1g3O5DWkw
+         UT3/fns9om4jZ8fnHbywAI5ycqdL7RMgrvpkQnvPd+V7jplZbhKb3g29Vx2qYBDVKR8Y
+         cGytyLDGyBT+ls4L7nKjzAw2whHyqyvXxtUU24o6D/57d3td0x4losH2sUXLoMApdcE9
+         ZvIKjINMA8ubKYfqjlylHKsphb0bO+J2cdaCc0p88qmStpvYk+AQ2Px1fWlRWDIKIFTu
+         dwX/HpETQzcYMc6CtSmpEYaAELqY219l3wI8CD613Si8VmoSRu+IsvT9ym6Ygh1mMzur
+         4DIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=pdGNp72dbM+gKLQ/Ct6w0QlgPa1CkJQFFgkxU4ZsWxk=;
-        fh=KmJU2uOuIiqOPDvMs4LtkNp3ing1sb7KnGQzXoL11iM=;
-        b=V+XMFKq9g+TmRFHwJajqYB0vAcZeXuQOxZnResomINCopYCsxw2PNn2cK96UZX1ZlH
-         V5ylbeidl2PaHFtJdONk9KHqlPv/6LAaUs/JW9lHe0ty5xvEGsOdE3/J7PvwGiCK92Z2
-         PCpMq3x0cQIjdWBw/3B2qTfLf01sOCNV16X9uiP4Sm5B/Ki6GdKM/gswczomFsULzULw
-         LleSkfY2txAxkJb6fNxTWakdI0Vyr0u/yTCZZbXeEPBYidAllnQyG/2ehBeq59AspxY/
-         rvpUKkrSvrPlWIDmBUdpERr1SVFjgfFK6Hx5fB3/zAWiLx5Uxi3z8k3Lm7Vq+38z538Q
-         6QYA==;
+        bh=sISzfPmgoaQUIHyBbaL9mtqCySms90Uh3lkhXDJB000=;
+        fh=ZMx2j0lgx/Jw6hurrwgtJQZjkmAD4aJqah4YMRDEuKU=;
+        b=b2a3d6h6nfzN6mtUa3zyatC3X/38L9FSjBDizPkgtmW9Ny6V5A6lksZCMXbhL7eG51
+         ZC/IQc4cLx2lkdHV2Evnw6bTfsWXj0fU1IGmvyZwAp9KLw9hre4Gq/VAY4KY7Qc7yFcy
+         ADT/a+tuMG1joc0zio3CBNYrP1cAfZuJTSYOnmx8lwkceaNq1eGmi20hDrr3xj87x6Od
+         Sb2aDZhknX/pk5mZpZ30kb2GSHgxAK8dDkCcuW8pXOFuqmctCnoax/Yr0+aFmjAtA1Fk
+         YgQcNW+XOYCNHx1iT6AiLgGi9AZY8eyQD2RQZVL0YCxgWWx8ZKMzpCRuwhZs1aQ4D1Sr
+         GDcA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789471318; x=1790076118; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789472575; x=1790077375; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=pdGNp72dbM+gKLQ/Ct6w0QlgPa1CkJQFFgkxU4ZsWxk=;
-        b=iYFdV5nxcGf0MXlAK6MIdzuh41gdx6fBuYIPA9qp5JLCnhsKZELMU4oUoxiEsCXNeE
-         dmUXg7wuC4avKUtRPoP4SkOo5kenP7HbHGwRuZNJb338WsDltx2ojrPju5FVR9gq+Q3O
-         RZF/gQRQPyT/EE9rLcnUxKZPCIv5xHahF9Jf4entzH7tlyJvu8kZ3ghkwDQts2VLNWAT
-         2npZMVuRDeOz+HJlDKS3PYTuySlA1ubblYkPFWGyNoHVrMEAgtrADQO6YGaC9pBEjxR2
-         CP7NJvYTOz3RoUzYCo+275VAKDgcIADwxvKyBqX1uj9/JMR+cG5c3WZCf5O8YLgZ5TFv
-         zu8g==
+        bh=sISzfPmgoaQUIHyBbaL9mtqCySms90Uh3lkhXDJB000=;
+        b=flw/goM4CH254An4AqOe5VAybccWqXCz9qcK115/iQf2ZGNoyTQyvqGFYqW9GCvVD2
+         hEpCnk07JZ5RxXaAJWh9WMtR2l8bXv1YMxtEawbelzrUYC/ALYUBy6FQY9L0CfZMAeuu
+         12zpGNgsARfdE2D1xARA3y05K/cekPxzDNggByfeKFT20n72pjtz8KWkL046vaGjJABd
+         EfM5EfqrlgXSMQW+5LQPoia34DEQNlJqyFGZwAsNCboU6p57cQ7VjkKplIgrhyKv3wxg
+         +A4ZJ6y+TmWol0l2ULy8zr9yLBgl3DxQwFI8D0IOpcRyVuNbETjtFhCADzwWEXLiDloE
+         gwIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789471319; x=1790076119;
+        d=1e100.net; s=20260707; t=1789472575; x=1790077375;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=pdGNp72dbM+gKLQ/Ct6w0QlgPa1CkJQFFgkxU4ZsWxk=;
-        b=gEPdYuGZ49Z/okxxyQ3mcZF91IfRhXoI+PzH1D9JGKj1l+ryEbMQN+vMC9lyKWH3TE
-         6MNc0A13hw/vTsMttl41vPYl7UzGMIKURwgc4mdDgClB8jJ2+XlvTU7K/X3j18p4H4G6
-         tp6mfaFZ4GQ8rQPGnz5S+aHMowT7SCcyrwclAfEZYrKleh6sZHBy92SXk+YwF14E6awN
-         0SXwjttBPHgUAnee8btzuFQb5Ml/Nrun3UUTrypMJIwINKEPy1zOduRWakuYNZc4hKpl
-         kTj8fYC5UhmdR27LrqsdEg3lISOUpJ6GeG0oIeMzvrg9ovwblRy/VEiFJB08HqLqUBpl
-         5Pbw==
-X-Forwarded-Encrypted: i=1; AKwUvBwC9jJ6EspfDVVZIADfxK5IdVs++/QGDL9eDDAnRpLMRShY7OYZL1ZHnMKQNmAIfZGnLUlGuWlpuOjNZ4kmPch0bw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lvgDbqg73jMyJ7DYYsXbpiO7lvSOLaAAs1E0vHmkBth5ysMxM7
-	zwaYKY0UGCVPulGtbRW3p/D57E7yFT+OtKj9JctoxOziCMFbdyW2bIUMpAQtVrp4Tmh8cU/rYtZ
-	GvV/UpTHQnIW34Mel8lN65PrtkS38zAM=
-X-Gm-Gg: AYBFou3MToeWtIEu6oquPCnD18xZ23dnPZL99ZzPubegK6bLwfS+UC58cwMkB+5yjMN
-	PZtuUc2KTFDcA1Cup/TERFJTka5q063ygFqg2zLr+vmB3eQprUe7S1oOdLlVSllaVgkP/xBf6aZ
-	Rc91tWk/jTQuP6cLy6HjW2dQc2j1GGE6ZtFs3+eyNT0QdBl56HIggdpflc8pK0JJuBfzDkw177U
-	/jOq8TpwYfyKxdNDbb82N2rclv1h9CJ5dCxBc7RPihZgOu7SQ0EjDulj5qFQesfXOMjl0YTCd1H
-	0LhLNoF6BNBWnQhgZw/GfydBpXHdYXKDHEgZ5GQg6wJOSX3Xa884K5oROw==
-X-Received: by 2002:a17:907:3fa0:b0:c1c:4c72:e6df with SMTP id
- a640c23a62f3a-c29c85ac70amr237889766b.0.1789471318328; Tue, 15 Sep 2026
- 04:21:58 -0700 (PDT)
+        bh=sISzfPmgoaQUIHyBbaL9mtqCySms90Uh3lkhXDJB000=;
+        b=SpOB6/Fq29n0X9sfHRdHXgs01NJIxDnZXYm4SEhK0VeXrj1S61NRUKr9ob5Ul96wR2
+         IJoCw+GtwdxKHe+4mzsGeqIInqw5cVZ0S4HJfYnX/02G6eHxsgPub0ApznAUhRUHT/pq
+         Oez4nQr5ZSzP9l89sBLIIYAxvBBfakWHJ8XvnfpiBQsT7AnwS3OkjO8yQMI3iPY3dYH2
+         yMbW56DaEQjM8JgCpZS9BsPeE7JXXjo7iSkcAdZYtZdMDhoUzwo7vVIKI5VvIYlIbZc5
+         n0iFnPL3TITQg6ZXKx5mgU7evDII2qEH94ktWubjbiPWR06AD6eEi2SDEKNSYGCfRu3m
+         p32g==
+X-Forwarded-Encrypted: i=1; AKwUvBwxT/LYuZrPpzp6we46c3QB5pSrKg/CDZKf7Ndnx6Tjb2GuAbJOhDXnSmEjQUe8rhMQ8rhlBknoHAU9GoF7NNherQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mzSUr2NyT2NOCRrJU7rTqXbeLUbUmdeMpawHXAW2vxbqGJ9dy1
+	jZjpQJ18BUP9AYlyeJYj9ppAlhF2NVysGd4bJl+OAEEBTqkqOte+y00Lbk6xxojxpGkF3LFTnml
+	I+SeF4u3ad0hakWUxbAwCtjs86s8dFmo=
+X-Gm-Gg: AYBFou1cuAH9OjuhW5JmUacOf1NWVxYwsUmD4GagXIezYFdDIjrA3zvVWNnyZw1jleY
+	6+sYVNZno4t0NOcSWSHtQe+MGxlYQu4l4DIkorsWncbMqrylsDeA7uW5OmFlNiOjYE1How7CHVJ
+	vpTmUSpuTXI6U2qaTj7jQePOkrcY8AxmM8rVfF4YosGAgnS3+zI63uP3I8ssFFJ7WrrZuG8ePny
+	oGm8bZRieimNUWf5nt6HfDaH2HY0BQA6rC8bpjxbfpWIJ3SFwQxBcpNrDf5p/8x38rMVbfy3Pmh
+	SRNJ9wduBWQCUGohBR+Bqnk5YsZ6nvUF8x18lcQQgQ2QuaKV3dE8oxSHMQ==
+X-Received: by 2002:a17:906:7954:b0:c24:b11a:470f with SMTP id
+ a640c23a62f3a-c29b7ff89aemr908365266b.0.1789472574755; Tue, 15 Sep 2026
+ 04:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913185849.907479-8-coiaprant@gmail.com> <178941748759.22033.1861925605437398903@kernel.org>
-In-Reply-To: <178941748759.22033.1861925605437398903@kernel.org>
+References: <20260913185849.907479-10-coiaprant@gmail.com> <178941749179.22033.3182687831989800376@kernel.org>
+In-Reply-To: <178941749179.22033.3182687831989800376@kernel.org>
 From: Coia Prant <coiaprant@gmail.com>
-Date: Tue, 15 Sep 2026 19:21:46 +0800
-X-Gm-Features: AcwNN1WnaaSrttoZlhP6aYkwPAdiDzhJi8AhYAyuZb9mOKnk6eoTSOOLMaHeYwY
-Message-ID: <CALj3r0gm5nKVj3s11q=qpnpu+65DQt2-VmGq7mfQr9-e5054Yg@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 07/11] net: pcs: xpcs: add Rockchip RK3568
- platform glue driver
+Date: Tue, 15 Sep 2026 19:42:42 +0800
+X-Gm-Features: AcwNN1XJ2v3mnflu7VzToAP_PI-o155G_VpQm1Am3WUv52DDebpEcVrTsTiWOeY
+Message-ID: <CALj3r0giNFp6CLWW0dAXu=iSkNm2rYZb4=KUfnAbPaFDeYSUPw@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 09/11] net: stmmac: dwmac-rk: add SGMII
+ support for RK3568
 To: netdev-bot+sashiko@kernel.org
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
 	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
@@ -108,340 +108,320 @@ Content-Transfer-Encoding: quoted-printable
 <netdev-bot+sashiko@kernel.org> =E4=BA=8E2026=E5=B9=B49=E6=9C=8815=E6=97=A5=
 =E5=91=A8=E4=BA=8C 04:24=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Thank you for your contribution! Sashiko AI review found 6 potential
+> Thank you for your contribution! Sashiko AI review found 5 potential
 > issue(s) to consider:
 >
-> Critical: 0 =C2=B7 High: 1 =C2=B7 Medium: 3 =C2=B7 Low: 2
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 2 (1) =C2=B7 Low: 3
 >
-> - [High] Incorrect MMD write remapping for MII vendor registers breaks
->   configuration for ports 1, 2, and 3.
-> - [Medium] The patch silently re-packages the pre-existing generic
->   Synopsys XPCS platform driver.
-> - [Medium] xpcs_rk_init_clk() (drivers/net/pcs/pcs-xpcs-rk.c:361-362)
->   computes `pxpcs->eee_mult_fact =3D DIV_ROUND_CLOSEST(100 *=E2=80=A6
-> - [Medium] Acquiring `device_lock()` of another device from within a
->   probe path causes a lockdep warning (recursive locking).
-> - [Low] Concern that the newly exported xpcs_rk_create()
->   (include/linux/pcs/pcs-xpcs-rk.h) has no in-tree caller and no Kconfig=
-=E2=80=A6
-> - [Low] The rockchip,rk3568-xpcs binding lists `phys` and `phy-names` in
->   its `required:` list=E2=80=A6
+> - [Medium] DWMAC_ROCKCHIP gains an unconditional `select
+>   PCS_XPCS_ROCKCHIP` without inheriting the selected symbol's=E2=80=A6
+> - [Medium] For SGMII the driver removes every speed-dependent clock
+>   programming path (rk_gmac_probe() sets plat_dat->set_clk_tx_rate =3D=E2=
+=80=A6
+> - [Low] rk_get_interfaces() (dwmac-rk.c:1570-1571) now sets
+>   PHY_INTERFACE_MODE_SGMII in phylink's supported_interfaces for every=E2=
+=80=A6
+> - [Low] The RK3568 XPCS SoC node added by the series ('arm64: dts:
+>   rockchip: rk3568: add XPCS and fixed-clock nodes') omits properties=E2=
+=80=A6
+> - [Low] rk_select_pcs() (dwmac-rk.c:1268-1275) ignores its `interface`
+>   argument and returns the SGMII XPCS for every interface mode,=E2=80=A6
+>
+> Pre-existing issues:
+> - [Medium] DISCARDED (valid but pre-existing and below the reporting
+>   threshold for pre-existing defects).
 >
 > --
 >
-> net: pcs: xpcs: add Rockchip RK3568 platform glue driver
+> net: stmmac: dwmac-rk: add SGMII support for RK3568
 >
-> Adds a platform glue driver for the DesignWare XPCS block found on RK3568=
-,
-> exposing the APB3-mapped XPCS registers as a virtual MDIO bus with per-po=
-rt
-> MMD remapping so the generic pcs-xpcs core can create a phylink_pcs.  Als=
-o
-> adds new Kconfig symbols for the generic and Rockchip XPCS glue and an
-> exported xpcs_rk_create() helper for MAC drivers.
+> Adds a set_to_sgmii()/set_to_rmii() pair for rk3568 to program GRF bit 7,
+> wires up pcs_init/pcs_exit/select_pcs so the Rockchip XPCS is used as the
+> PCS, and reorders rk_gmac_powerup() so the clocks are enabled before the
+> interface-specific configuration.
 >
 > Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TR=
-M%20Part2%20V1.1-20210301.pdf (Page 2078)
+M%20Part1%20V1.1-20210301.pdf (Page 386)
 >
-> > diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
-> > index e417fd66f660a..080538f193d59 100644
-> > --- a/drivers/net/pcs/Kconfig
-> > +++ b/drivers/net/pcs/Kconfig
-> > @@ -12,6 +12,31 @@ config PCS_XPCS
-> >         This module provides a driver and helper functions for Synopsys
-> >         DesignWare XPCS controllers.
-> >
-> > +if PCS_XPCS
-> > +
-> > +config PCS_XPCS_PLATFORM
-> > +     tristate "Generic XPCS controller support"
-> > +     default PCS_XPCS
-> > +     help
-> > +       Generic DWXPCS driver for platforms that don't require any
-> > +       platform specific code to function or is using platform
-> > +       data for setup.
-> > +
-> > +       If you have a controller with this interface, say Y or M here.
-> > +
-> > +config PCS_XPCS_ROCKCHIP
-> > +     tristate "Rockchip XPCS controller support"
-> > +     default ARCH_ROCKCHIP
-> > +     depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
-> > +     depends on GENERIC_PHY || COMPILE_TEST
-> > +     depends on PM_GENERIC_DOMAINS || COMPILE_TEST
-> > +     help
-> > +       Support for XPCS controller on Rockchip RK356x SoC.
-> > +
-> > +       If you have a Rockchip SoC with this interface, say Y or M here=
-.
-> > +
-> > +endif # PCS_XPCS
-> > +
-> >  config PCS_LYNX
-> >       tristate
-> >       help
-> > diff --git a/drivers/net/pcs/Makefile b/drivers/net/pcs/Makefile
-> > index 4f7920618b900..f9f6cf2578d72 100644
-> > --- a/drivers/net/pcs/Makefile
-> > +++ b/drivers/net/pcs/Makefile
-> > @@ -1,10 +1,11 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  # Makefile for Linux PCS drivers
-> >
-> > -pcs_xpcs-$(CONFIG_PCS_XPCS)  :=3D pcs-xpcs.o pcs-xpcs-plat.o \
-> > -                                pcs-xpcs-nxp.o pcs-xpcs-wx.o
-> > +pcs_xpcs-$(CONFIG_PCS_XPCS)  :=3D pcs-xpcs.o pcs-xpcs-nxp.o pcs-xpcs-w=
-x.o
-> >
-> >  obj-$(CONFIG_PCS_XPCS)               +=3D pcs_xpcs.o
-> > +obj-$(CONFIG_PCS_XPCS_PLATFORM) +=3D pcs-xpcs-plat.o
-> > +obj-$(CONFIG_PCS_XPCS_ROCKCHIP) +=3D pcs-xpcs-rk.o
+> A few questions below.
+>
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/=
+ethernet/stmicro/stmmac/Kconfig
+> > index ab3c4cf964239..c6559e749c0ce 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > @@ -170,6 +170,7 @@ config DWMAC_ROCKCHIP
+> >       default ARCH_ROCKCHIP
+> >       depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
+> >       select MFD_SYSCON
+> > +     select PCS_XPCS_ROCKCHIP
 >
 > [Severity: Medium]
-> Should this repackaging of the pre-existing generic platform glue be a
-> separate patch, or at least be described in the commit message?
+> Does this select produce unmet dependency warnings?  PCS_XPCS_ROCKCHIP in
+> drivers/net/pcs/Kconfig carries three dependency lines:
 >
-> pcs-xpcs-plat.o is moved out of the pcs_xpcs composite object and built a=
-s
-> its own module, and the new PCS_XPCS_PLATFORM tristate makes the snps,dw-=
-xpcs
-> platform glue user-selectable where it was previously unconditional under
-> PCS_XPCS.  So the snps,dw-xpcs platform driver ships in pcs-xpcs-plat.ko
-> instead of pcs_xpcs.ko after this patch.
+>   config PCS_XPCS_ROCKCHIP
+>         tristate "Rockchip XPCS controller support"
+>         default ARCH_ROCKCHIP
+>         depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
+>         depends on GENERIC_PHY || COMPILE_TEST
+>         depends on PM_GENERIC_DOMAINS || COMPILE_TEST
 >
-> The commit message only describes adding the Rockchip glue driver and doe=
-s
-> not mention this change to existing functionality.  Could the Makefile an=
-d
-> Kconfig refactor be split out with its own rationale?
+> while DWMAC_ROCKCHIP only has "depends on OF && (ARCH_ROCKCHIP ||
+> COMPILE_TEST)".  ARCH_ROCKCHIP in arch/arm64/Kconfig.platforms selects PM
+> but neither GENERIC_PHY nor PM_GENERIC_DOMAINS, so a config with
+> ARCH_ROCKCHIP=3Dy, COMPILE_TEST=3Dn and GENERIC_PHY=3Dn (or PM_GENERIC_DO=
+MAINS=3Dn)
+> force-enables PCS_XPCS_ROCKCHIP with its own depends unsatisfied:
+>
+>   WARNING: unmet direct dependencies detected for PCS_XPCS_ROCKCHIP
+>
+> pcs-xpcs-rk.o is then built against the phy stubs where devm_phy_get()
+> returns ERR_PTR(-ENOSYS), so the probe cannot succeed.
+>
+> The select is also unconditional, so every Rockchip dwmac build
+> (RK3288/RK3328/RK3399/RK3588 ...) force-enables the RK356x-only XPCS
+> driver.  Would inheriting the constraints, or making the selection
+> conditional, be preferable here?  Note that simply adding the two depends
+> lines to DWMAC_ROCKCHIP would turn off Ethernet on existing RK3288/RK3399
+> configurations, so the choice probably needs to be explicit.
+>
+> The Kconfig change is also not mentioned anywhere in the commit message.
 
-We have added a default value for existing users when selecting PCS_XPCS.
+You're right. I'll move the dependencies into PCS_XPCS_ROCKCHIP as
+selects instead of depends on:
 
-> > +static int xpcs_rk_serdes_phy_init(struct dw_xpcs_rk *pxpcs)
+    config PCS_XPCS_ROCKCHIP
+        tristate "Rockchip XPCS controller support"
+        default ARCH_ROCKCHIP
+        depends on OF && (ARCH_ROCKCHIP || COMPILE_TEST)
+        select GENERIC_PHY
+        select PM_GENERIC_DOMAINS
+
+This way the symbol pulls in its own dependencies when it is selected
+by DWMAC_ROCKCHIP, so the unconditional select in dwmac-rk does not
+produce an unmet-dependency warning.
+
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/n=
+et/ethernet/stmicro/stmmac/dwmac-rk.c
+> > index 8d7042e689261..5d501ed8d1429 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+>
+> [ ... ]
+>
+> > @@ -1208,6 +1237,43 @@ static void rk_phy_powerdown(struct rk_priv_data=
+ *bsp_priv)
+> > +static struct phylink_pcs *rk_select_pcs(struct stmmac_priv *priv,
+> > +                                      phy_interface_t interface)
 > > +{
-> > +     struct device *dev =3D &pxpcs->pdev->dev;
+> > +     if (!priv->hw->xpcs)
+> > +             return NULL;
 > > +
-> > +     pxpcs->serdes_phy =3D devm_phy_get(dev, "serdes");
-> > +     if (IS_ERR(pxpcs->serdes_phy))
-> > +             return dev_err_probe(dev, PTR_ERR(pxpcs->serdes_phy),
-> > +                                     "Failed to get SerDes PHY\n");
-> > +
-> > +     return 0;
+> > +     return xpcs_to_phylink_pcs(priv->hw->xpcs);
 > > +}
 >
 > [Severity: Low]
-> xpcs_rk_serdes_phy_init() treats the "serdes" phy as mandatory and fails
-> probe when it cannot be resolved, and the binding added later in this ser=
-ies
-> (Documentation/devicetree/bindings/net/pcs/rockchip,rk3568-xpcs.yaml) lis=
-ts
-> phys and phy-names under required:
+> Should rk_select_pcs() look at its interface argument?  The mac_select_pc=
+s
+> contract in include/linux/phylink.h is to return the PCS for the specifie=
+d
+> interface, or NULL when none is required, but this returns the SGMII XPCS
+> for any mode.
 >
->   required:
->     - compatible
->     - reg
->     ...
->     - phys
->     - phy-names
->     - power-domains
+> On an RK3568 port probed as SGMII, rk_get_interfaces() also advertises th=
+e
+> RGMII variants and RMII, and xpcs->pcs.supported_interfaces is non-empty
+> (filled in by xpcs_get_interfaces()).  When phylink validates one of thos=
+e
+> non-SGMII interfaces, phylink_validate_mac_and_pcs() hits:
 >
-> The SoC node added in arch/arm64/boot/dts/rockchip/rk3568.dtsi only has:
+>         if (!phy_interface_empty(pcs->supported_interfaces) &&
+>             !test_bit(state->interface, pcs->supported_interfaces)) {
+>                 phylink_err(pl, "MAC returned PCS which does not support =
+%s\n",
+>                             phy_modes(state->interface));
+>                 return -EINVAL;
+>         }
 >
->         xpcs: ethernet-pcs@fda00000 {
->                 compatible =3D "rockchip,rk3568-xpcs";
->                 #address-cells =3D <1>;
->                 #size-cells =3D <0>;
->                 reg =3D <0x0 0xfda00000 0x0 0x200000>;
->                 clocks =3D <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
->                 clock-names =3D "csr", "eee";
->                 power-domains =3D <&power RK3568_PD_PIPE>;
->                 status =3D "disabled";
->
-> CHECK_DTBS validates nodes regardless of status, so does every RK3568 DTB
-> now report missing phys/phy-names for this node?  Only
-> rk3568-photonicat.dts adds them, so a board that just flips this node to
-> status =3D "okay" would also fail probe with "Failed to get SerDes PHY".
->
-> Should the SoC node carry phys/phy-names, or should the binding not mark
-> them required at the SoC level?
+> Would returning the XPCS only for PHY_INTERFACE_MODE_SGMII and NULL
+> otherwise avoid that error path?
 
-As replied earlier, the SerDes connection is board-specific (some
-boards use combphy1, others combphy2), so phys/phy-names cannot move
-into the SoC dtsi. dtbs_check skips required-property validation for
-status =3D "disabled" nodes, so boards that don't enable XPCS produce no
-warnings.
+plat_dat->select_pcs is only assigned inside the
+if (phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII) branch of
+rk_gmac_probe(). For RGMII/RMII ports the callback is NULL, so
+stmmac_mac_select_pcs() returns NULL before reaching rk_select_pcs().
 
-> > +static int xpcs_rk_init_clk(struct dw_xpcs_rk *pxpcs)
-> > +{
+On an SGMII port, phylink_validate() is called with
+state->interface =3D PHY_INTERFACE_MODE_SGMII, so only SGMII is
+validated against the PCS. The RGMII/RMII bits in supported_interfaces
+are not iterated in this path.
+
+> > @@ -1379,16 +1450,19 @@ static int rk_gmac_powerup(struct rk_priv_data =
+*bsp_priv)
+> >       if (ret)
+> >               return ret;
+> >
+> > +     ret =3D gmac_clk_enable(bsp_priv, true);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> [Severity: Medium]
+> This isn't a bug introduced by this patch, but now that gmac_clk_enable()
+> is the first resource acquisition in rk_gmac_powerup(), its partial-failu=
+re
+> path becomes more visible.  Do the bulk clocks leak when the clk_phy enab=
+le
+> fails?
+>
+> drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c:gmac_clk_enable() {
+>         ...
+>                 ret =3D clk_bulk_prepare_enable(bsp_priv->num_clks,
+>                                               bsp_priv->clks);
+>                 if (ret)
+>                         return ret;
+>
+>                 ret =3D clk_prepare_enable(bsp_priv->clk_phy);
+>                 if (ret)
+>                         return ret;
+>         ...
+> }
+>
+> The second failure returns without calling clk_bulk_disable_unprepare() a=
+nd
+> without setting bsp_priv->clk_enabled, so the later gmac_clk_enable(bsp_p=
+riv,
+> false) in rk_gmac_powerdown() and at the new clk_disable label is a no-op
+> because it is gated on clk_enabled.  This only triggers for integrated-PH=
+Y
+> setups where clk_phy is non-NULL.
+
+This is pre-existing and unrelated to SGMII.
+
+> > +     if (bsp_priv->phy_iface =3D=3D PHY_INTERFACE_MODE_SGMII)
+> > +             goto set_mode;
+> > +
+> >       ret =3D rk_get_phy_intf_sel(bsp_priv->phy_iface);
+> >       if (ret < 0)
+> > -             return ret;
+> > +             goto clk_disable;
+>
 > [ ... ]
-> > +     /*
-> > +      * Compute the multiplier for the EEE clock so that
-> > +      * clk_eee_period * (mult_fact + 1) falls within 80..120 ns.
-> > +      *
-> > +      * On RK3568, clk_xpcs_eee is muxed between gpll200 (200 MHz, 5 n=
-s)
-> > +      * and cpll125 (125 MHz, 8 ns), selected by CRU_CLKSEL_CON29 bit =
-13.
-> > +      * The reset value is 0 (200 MHz), but derive the value at runtim=
-e to
-> > +      * stay correct if the mux is changed by a board.
-> > +      */
-> > +     pxpcs->eee_mult_fact =3D DIV_ROUND_CLOSEST(100 * clk_get_rate(pxp=
-cs->eee_clk),
-> > +                                              1000000000UL) - 1;
 >
+> > @@ -1486,6 +1566,9 @@ static void rk_get_interfaces(struct stmmac_priv =
+*priv, void *bsp_priv,
+> >
+> >       if (rk->supports_rmii)
+> >               __set_bit(PHY_INTERFACE_MODE_RMII, interfaces);
+> > +
+> > +     if (rk->supports_sgmii)
+> > +             __set_bit(PHY_INTERFACE_MODE_SGMII, interfaces);
+> >  }
+> [Severity: Low]
+> Is SGMII safe to advertise on a port that was not probed as SGMII?
+> rk3568_ops populates set_to_sgmii unconditionally, and rk_gmac_setup()
+> derives supports_sgmii from it, so every RK3568 port now advertises SGMII
+> in phylink's supported_interfaces (stmmac_phy_setup() copies the
+> get_interfaces() output verbatim into config->supported_interfaces).
+>
+> All the SGMII setup, though, is keyed off the probe-time DT phy-mode:
+>
+>   - rk_gmac_powerup() writes RK3568_GMAC_MODE_SGMII_QSGMII only in the
+>     "case PHY_INTERFACE_MODE_SGMII:" branch, which runs once at init
+>   - rk_gmac_probe() installs pcs_init/pcs_exit/select_pcs,
+>     default_an_inband and clears set_clk_tx_rate only under
+>     "if (plat_dat->phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII)"
+>
+> So on a port probed as rgmii*/rmii, if phylink later selects SGMII (SFP
+> cage, or a PHY reporting SGMII as its host interface), GRF bit 7 stays
+> cleared by rk3568_set_to_rgmii()/rk3568_set_to_rmii(), plat->select_pcs i=
+s
+> NULL so stmmac_mac_select_pcs() returns NULL and there is no PCS to run
+> autonegotiation.  Before this patch SGMII was not in supported_interfaces
+> and such a configuration was rejected during validation.  Would gating th=
+e
+> __set_bit() on the probe-time interface be closer to what the hardware ca=
+n
+> actually do?
+
+phylink_create() receives the DT phy-mode as iface, and
+phylink_validate() validates that fixed interface, not every bit in
+supported_interfaces. The GRF is programmed from bsp_priv->phy_iface
+in rk_gmac_powerup(), which is also the DT phy-mode. Advertising SGMII
+in supported_interfaces does not change the interface mode at runtime.
+
+> > @@ -1602,6 +1685,17 @@ static int rk_gmac_probe(struct platform_device =
+*pdev)
+> >       plat_dat->suspend =3D rk_gmac_suspend;
+> >       plat_dat->resume =3D rk_gmac_resume;
+> >
+> > +     if (plat_dat->phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII) {
+> > +             /* SGMII clock always runs at 125 MHz */
+> > +             plat_dat->set_clk_tx_rate =3D NULL;
+> > +
+> > +             /* SGMII requires a PCS */
+> > +             plat_dat->default_an_inband =3D true;
 > [Severity: Medium]
-> Can this value overflow the 4-bit register field it ends up in?
+> The commit message says:
 >
-> For the reset configuration named in the comment (200 MHz, 5 ns) this
-> computes 100 * 200000000 / 1000000000 - 1 =3D 19.  That is passed on
-> unchecked:
+>   "Enable default_an_inband for SGMII and disable the generic stmmac
+>    set_clk_tx_rate callback.  This forces phylink to use in-band mode,
+>    where the PCS is responsible for speed/duplex negotiation."
 >
->         xpcs_config_eee_mult_fact(xpcs, pxpcs->eee_mult_fact);
+> Is "forces" accurate?  default_an_inband is only a default, and the next
+> paragraph of the message says so itself.  In phylink_parse_mode():
 >
-> and the core programs it in xpcs_config_eee():
+>         if (pl->config->default_an_inband)
+>                 pl->cfg_link_an_mode =3D MLO_AN_INBAND;
 >
->         drivers/net/pcs/pcs-xpcs.c:
->                       FIELD_PREP(DW_VR_MII_EEE_MULT_FACT_100NS,
->                                  xpcs->eee_mult_fact);
+>         dn =3D fwnode_get_named_child_node(fwnode, "fixed-link");
+>         if (dn || fwnode_property_present(fwnode, "fixed-link"))
+>                 pl->cfg_link_an_mode =3D MLO_AN_FIXED;
 >
-> with
+> and xpcs_inband_caps() advertises out-of-band as acceptable:
 >
->         drivers/net/pcs/pcs-xpcs.h:
->         #define DW_VR_MII_EEE_MULT_FACT_100NS           GENMASK(11, 8)
+>         case DW_AN_C37_SGMII:
+>         case DW_AN_C37_1000BASEX:
+>                 return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
 >
-> FIELD_PREP on a runtime value does no range check, so 19 (0x13) becomes 3=
+> so phylink_pcs_neg_mode() can settle on PHYLINK_PCS_NEG_OUTBAND for a
+> fixed-link node or a PHY without in-band support.  With set_clk_tx_rate s=
+et
+> to NULL, rk3568_ops.set_speed =3D rk_set_clk_mac_speed also becomes
+> unreachable, so a 10/100 Mbps link is brought up with the clocking left a=
+t
+> the 1 Gbps setting and nothing warns or fails.  Would rejecting a
+> non-inband neg_mode (for example in mac_config or pcs_validate), or faili=
+ng
+> probe when a fixed-link node is present for SGMII, match what the message
+> describes?
+
+The v5 commit message already notes that default_an_inband can be
+overridden by a fixed-link node, and that out-of-band SGMII is not
+supported by this driver.
+
+> One more observation on the series rather than on this patch: the new
+> binding Documentation/devicetree/bindings/net/pcs/rockchip,rk3568-xpcs.ya=
+ml
+> lists phys and phy-names in its unconditional required list, but the
+> ethernet-pcs@fda00000 node added to arch/arm64/boot/dts/rockchip/rk3568.d=
+tsi
+> supplies only reg, clocks, clock-names and power-domains.  Only
+> rk3568-photonicat.dts adds them:
+>
+>   &xpcs {
+>         phys =3D <&combphy2 PHY_TYPE_SGMII>;
+>         phy-names =3D "serdes";
+>         status =3D "okay";
+>   };
+>
+> [Severity: Low]
+> Does dtbs_check report "phys is a required property" for the other RK3568
+> board DTBs?  dtschema validates nodes regardless of status =3D "disabled"=
 .
-> The hardware is then told the 100 ns reference is 4 EEE clock periods
-> (20 ns) rather than the 80..120 ns the comment and the kernel-doc of
-> xpcs_config_eee_mult_fact() require, which affects all derived LPI timers
-> once EEE is enabled.  Since the field caps the count at 16 periods, is 15
-> the only representable value for a 5 ns clock, and should this be clamped=
-?
->
-> Two more things about the same expression:
->
-> - 100 * clk_get_rate() is evaluated in unsigned long, so on 32-bit builds
->   100 * 200000000 wraps to 2820130816 and yields mult_fact 2.  Would
->   mul_u64_u32_div() or a u64 intermediate be better here?
->
-> - If clk_get_rate() returns 0, 0 - 1 stored in a u8 becomes 255, giving
->   field value 15.  Is a zero rate worth rejecting?
+> The neighbouring sata0 node in the same dtsi does carry phys/phy-names at
+> SoC level, so would moving them into rk3568.dtsi be an option?
 
-You're right, and this is a real bug. Two problems:
-
-1. 100 * clk_get_rate() overflows unsigned long on 32-bit builds.
-2. DW_VR_MII_EEE_MULT_FACT_100NS is a 4-bit field (GENMASK(11, 8)),
-   so the value is capped at 15. For 200 MHz the formula yields 19,
-   which FIELD_PREP truncates to 3.
-
-It will be fixed in the next version.
-
-> > +struct dw_xpcs *xpcs_rk_create(struct device *dev, struct device_node =
-*np)
-> > +{
-> > +     struct platform_device *pdev;
-> > +     struct device_node *pcs_np;
-> > +     struct dw_xpcs_rk *pxpcs;
-> > +     struct dw_xpcs *xpcs;
-> > +     u32 port;
-> > +
-> > +     if (!of_device_is_available(np))
-> > +             return ERR_PTR(-ENODEV);
-> > +
-> > +     if (of_property_read_u32(np, "reg", &port))
-> > +             return ERR_PTR(-EINVAL);
-> > +
-> > +     if (!xpcs_rk_mdio_addr_validate((int)port))
-> > +             return ERR_PTR(-EINVAL);
-> > +
-> > +     /* The XPCS pdev is attached to the parent node */
-> > +     pcs_np =3D of_get_parent(np);
-> > +     if (!pcs_np)
-> > +             return ERR_PTR(-ENODEV);
-> > +
-> > +     if (!of_device_is_available(pcs_np)) {
-> > +             of_node_put(pcs_np);
-> > +             return ERR_PTR(-ENODEV);
-> > +     }
-> > +
-> > +     if (!of_match_node(xpcs_rk_of_ids, pcs_np)) {
-> > +             of_node_put(pcs_np);
-> > +             return ERR_PTR(-EINVAL);
-> > +     }
-> > +
-> > +     pdev =3D of_find_device_by_node(pcs_np);
-> > +     of_node_put(pcs_np);
-> > +     if (!pdev)
-> > +             return ERR_PTR(-EPROBE_DEFER);
-> > +
-> > +     device_lock(&pdev->dev);
->
-> [Severity: Medium]
-> xpcs_rk_create() is called from a MAC driver's probe path, which is
-> already running under device_lock() of the MAC device taken by
-> really_probe().  Taking device_lock(&pdev->dev) here nests a second
-> struct device mutex, and since all device mutexes share one lockdep
-> class unless annotated, lockdep will report "possible recursive
-> locking detected" on the first probe.  That is a splat in the logs on
-> any CONFIG_PROVE_LOCKING build, and a panic with panic_on_warn set.
->
-> Holding the XPCS device's lock across xpcs_create_mdiodev() and
-> device_link_add() is also unusual - device_link_add() does its own
-> locking and the driver core normally expects supplier device locks not
-> to be held by consumers.
->
-> What race is the lock actually protecting against?  pxpcs and
-> pxpcs->bus are published by xpcs_rk_probe() via dev_set_drvdata() and
-> xpcs_rk_init_bus(), and the !pxpcs || !pxpcs->bus case already returns
-> -EPROBE_DEFER, so the consumer retries later; the device link then
-> keeps the supplier around.  Can the device_lock()/device_unlock() pairs
-> simply be dropped, or is something else needed here (e.g. checking that
-> the supplier is bound) to close the window you had in mind?
-
-Agreed. I'll drop device_lock() and establish the device link first,
-then read platform_get_drvdata(). DL_FLAG_MANAGED keeps the supplier
-bound while the consumer is, so no extra locking is needed. Failure
-paths will call device_link_remove() explicitly, since
-DL_FLAG_AUTOREMOVE_CONSUMER only removes the link when the consumer
-device is released.
-
-> [Severity: High]
-> This block in xpcs_rk_mdio_write_remapping() ignores addr entirely:
-> any write to DW_VR_MII_AN_CTRL, DW_VR_MII_AN_INTR_STS,
-> DW_VR_MII_EEE_MCTRL0, DW_VR_MII_EEE_MCTRL1 or DW_VR_MII_DIG_CTRL2 is
-> routed to ROCKCHIP_MMD_MII, which per the commit message is port 0's
-> MMD (7), regardless of which of the four ports the MDIO address
-> selects.
->
-> So when the core configures a PCS instance created with addr 1, 2 or 3
-> - xpcs_config_aneg_c37_sgmii() writing DW_VR_MII_AN_CTRL and
-> DW_VR_MII_DIG_CTRL2, xpcs_config_eee() writing DW_VR_MII_EEE_MCTRL0/1,
-> and the interrupt-status clear on DW_VR_MII_AN_INTR_STS - the write
-> lands on port 0 instead.  That has two effects: the intended port is
-> never configured (so its link stays broken), and port 0's
-> auto-negotiation/EEE state is silently clobbered by an unrelated
-> interface, including its pending AN interrupt status.
->
-> The read path is not symmetric either: xpcs_rk_mdio_read_remapping()
-> remaps per addr with the comment "read remapping to MII is performed by
-> HW", so a write to these registers on port 2 followed by a read back
-> would not return what was written.  Is that asymmetry deliberate?
->
-> Does the TRM say these vendor registers physically exist only in MMD 7
-> and are shared by all four MII ports?  If so, redirecting writes
-> silently still leaves per-port configuration impossible, and the driver
-> probably needs to say so explicitly (reject the access, or document how
-> the shared block is meant to be programmed) rather than aliasing ports
-> 1..3 onto port 0.  If instead each port has its own copy of these
-> registers, this switch should be dropped so the addr-based mapping
-> below applies.  Which is it?
-
-ROCKCHIP_MMD_MII is a management port. The AN_CTRL / AN_INTR_STS /
-EEE_MCTRL0/1 / DIG_CTRL2 bits are read-only mirrors on ports 1-3, so
-writes can only land in MMD 7. The read path is redirected by hardware
-to the port's mirror, which is why the write path is asymmetric.
-
-On RK3568 there is only one SGMII link, so only one port is active at
-a time and the aliasing is harmless. QSGMII is not supported by this
-driver.
+As replied earlier, the SerDes connection is board-specific and cannot
+move into the SoC dtsi. dtbs_check skips required-property validation
+for status =3D "disabled" nodes.
