@@ -1,119 +1,533 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com [74.125.231.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123992D77F7
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 14:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC85B4BAA0B
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 15:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789482478; cv=none; b=a3nZKeKnBfZWQQ1cYTQN89C5rYZ3hI/7v79sGaryXdfZrbQ4JrN2Ercyoeutn7qQqba9YgD10iSrL092jawvIycOpC6Mrcy7slwx00MWxxHOSlKSQUsl0c77Kjd8rQJNGcMi9AKuF/eeVOQr8Mfg+Zh5NwYks5/FJFbh1+5nMFI=
+	t=1789487995; cv=none; b=pcCWqaNXVvJtxmug+pSc+V9Rwlxfz1QXC8ZmH/EaWVYNL8DHEl+YFOeRe3qcwWy1lE2Mater6UBlyp+6tu/uHLE+qUgFbsgkHx+JvRwQjghI3qI4Ix6JYVKvLUUYw4guTS4D3xdh12p7UBEnjdv2e3mqKaD1i3sLDQ5sn+C9L/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789482478; c=relaxed/simple;
-	bh=Z8rUKI73cs/wBfpUMs1Vn1rd+p+dS+BKxkeVBgrhyck=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=njcg57giwUIhg7DYUvci9Sg963BlfwpofcsALZOWRC01mqUToEXK+9RdJKjqPVLKJAku52ejI+rQtniOC1kcSCApuT1bSbx2UF6RSyFFX5cXOtVOKqUD/+u9UsR9oobjtlmgvKzQFOfgGEAbREcc5/GN/4FKMdCICgnZwBHP+tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2162F1F00893
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 14:27:55 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2026-09-15-v7.3-rc3
-Date: Tue, 15 Sep 2026 16:27:53 +0200
-Message-ID: <20260915142753.2216765-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1789487995; c=relaxed/simple;
+	bh=tu3isjCkJ9whd6wOUuxDJ+8nmbLRSLBlYLxu4cvur1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MxaIMuObwAUuhbF1zU+qagmJQtRX0truwq+dyOqiUd4A+jEqT+eB4vszlRgTGyeZdQGoTVxroRO9gWUIq2rx1BOxXEPkVHL62O/rXmRQQp3YGfp3PZU9kwYbufPdrlBhJYpYXgbxT2bwq/nAxKx2Gpq3IL4TmXJPiI0a9N1XJiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=JxXfR391; arc=none smtp.client-ip=74.125.231.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="JxXfR391"
+Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4c54eed93e4so1284406b6e.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1789487989; x=1790092789; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=u17cMuYGc5vtBTFcb6UewtH/WxUd/WeV4HHc12mdl6E=;
+        b=JxXfR391zYMFKrDJDhFG0LZHM2foJZUzxKIJhGS4A8uC5HhMG4HqnsOaWuiDb1iB1r
+         NkW1Xh6vaFaqf3V3vvF6XfjXZ+mprMAvq1CPUv7Pul1Xw1PfRr9iDqAfeg3o1V8wdVAs
+         olOkoNaj+tZQ8BerD6q7SsPc03yfsRiu3F5Mw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789487989; x=1790092789;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=u17cMuYGc5vtBTFcb6UewtH/WxUd/WeV4HHc12mdl6E=;
+        b=2zfo2G9pW8SXm11wr8ixdVN0Urd+7Cdk5TuzUNyjYvLS+fR9gTGJLgGnt0+JxLhGll
+         V+xq8ASMws+JuJ05YWmvMn0lFwGlmt1dIqe0JBYEVfU/urGgFBq7C3pK9tX9cpo/R7HZ
+         pnVAFB1hqHzxY7gsZ0xLemTCdF93cUwR1Dm41NHopZxysl38LDVphLCLhH2uZw8nSX6p
+         rle2nmDz6yBLSgC+xo+NncJg1woe7EVf6r2rjCMlbQ/OrqQxGMBlNfdsoYPtmPFwNMNA
+         r3EukMoWTAG7pehtR+t2kQkeCJNcX9ywqhLdqbSd1JC6BnQ2qziUzIdQtMRG27FVvy2B
+         xkoQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxGWn+dfN2Onklmb0ziMwbjpe4gI4BuFq0c9qmz5uWCaSvF18OLEbneI6c+8BPoKwRd6OD4Fxi/4CJHUQCltomsHg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nQqjnEOJS5XoVciL0C8Mof/22GxGCtIIkfdPDfqnmUgpKAa0Gy
+	dA6tKTzq4J9NJvDU7HybHqYIW0zj6x88jR8IFMM0XQiW5NWMzPW3P+1k01ixNgnw5VXL+Uwj53x
+	NW0Rfm8IN
+X-Gm-Gg: AYBFou24G6oKtDcgrbgiWjDd4XNnh0Vt6u9Q+x8lU4RG+WlVeFDsPr4Mxw0dJt1DvwY
+	A9oftXJn5nBQ+GEGQfA2stC5j04alfRjCwa3y9UChiXxhmdK9XkWvXQTrnHugchsAyoeMmcP5YX
+	MgQF0EOC1e1mPGQpBgg9PgB+bu+/NBEG90TyGzSBjFkViB2eZVQJuI+64gu9d2ZjzsLs16mhhr3
+	ujoje6Q0vhOrAhVkYt0dS75HrmD4s08a24mLMgkx6oWnMmk2PAPAPS/VGuN29jtYdoNS7oasWs7
+	ljXxKn7gZz6g43/cRQQ7d2DQjdqeKhi+U/ou8JGXIkEeRRaBLXXCyyS8d3yhUMcJIbg/b7L/Jto
+	ds7COc4+PHzIfOmmEm9NU0mMWqn2Lumwx239kU7A9LPDaz+gLdNEHArG2T1Fo7esF+nEDX/YC4w
+	gnzGCV8ap97q2hUdBlV6UdWfYGzpSgMYoMlrB9Y2aiowZ/D+klyEOETEt+LTeDRjrtOQ==
+X-Received: by 2002:a05:6808:1512:b0:4b9:a88b:888f with SMTP id 5614622812f47-4c7b5d89f12mr5055793b6e.37.1789487989169;
+        Tue, 15 Sep 2026 08:59:49 -0700 (PDT)
+Received: from [172.22.22.28] ([73.62.185.64])
+        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-4842a33f8b2sm18328fac.14.2026.09.15.08.59.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2026 08:59:47 -0700 (PDT)
+Message-ID: <28bbceed-ec75-4916-b579-f33f63bff5d4@ieee.org>
+Date: Tue, 15 Sep 2026 10:59:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net-next] dt-bindings: net: Use consistent indentation
+ in the example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Justin Chen <justin.chen@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+ Linus Walleij <linusw@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+ <clement.leger@bootlin.com>, Vladimir Oltean <olteanv@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+ Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jeff Johnson <jjohnson@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alex Elder <elder@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Roger Quadros <rogerq@kernel.org>, bcm-kernel-feedback-list@broadcom.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ ath10k@lists.infradead.org
+References: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
+Content-Language: en-US
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20260914155645.112508-2-krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I have pushed renesas-drivers-2026-09-15-v7.3-rc3 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On 9/14/26 10:56 AM, Krzysztof Kozlowski wrote:
+> Correct indentation in the examples to consistent 2- or 4-spaces
+> indentation to fix dt-check-style warnings ("example 0
+> [indent-consistent] indent mismatch ...").  Preferred is 4-spaces, but
+> re-indenting entire example just for that is too much churn.
+> 
+> In cortina,gemini-ethernet.yaml also drop the wrongly indented mdio bus,
+> because it is not necessary for the example.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
-for-next branches of various subsystem trees and (b) branches with
-driver code submitted or planned for submission to maintainers into the
-master branch of my renesas-devel.git tree.
+Overall looks good to me (but the IPA binding in particular is good).
 
-Today's version is based on renesas-devel-2026-09-15-v7.3-rc3.
+Acked-by: Alex Elder <elder@riscstar.com>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. Mention mdio bus removal.
+> ---
+>   .../bindings/net/brcm,asp-v2.0.yaml           |  2 +-
+>   .../bindings/net/cortina,gemini-ethernet.yaml | 52 ++++++--------
+>   .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  |  4 +-
+>   .../bindings/net/intel,dwmac-plat.yaml        |  6 +-
+>   .../devicetree/bindings/net/mdio-gpio.yaml    | 16 ++---
+>   .../bindings/net/mscc,vsc7514-switch.yaml     |  8 +--
+>   .../devicetree/bindings/net/qcom,ipa.yaml     | 10 +--
+>   .../bindings/net/realtek,rtl82xx.yaml         |  6 +-
+>   .../bindings/net/socionext,uniphier-ave4.yaml | 32 ++++-----
+>   .../bindings/net/ti,cpsw-switch.yaml          | 70 +++++++++----------
+>   .../bindings/net/wireless/mediatek,mt76.yaml  | 32 ++++-----
+>   .../bindings/net/wireless/qcom,ath10k.yaml    |  2 +-
+>   12 files changed, 114 insertions(+), 126 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml b/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml
+> index a3db6d594c8c..7fcc564e820c 100644
+> --- a/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml
+> +++ b/Documentation/devicetree/bindings/net/brcm,asp-v2.0.yaml
+> @@ -123,7 +123,7 @@ examples:
+>               phy0: ethernet-phy@1 {
+>                   reg = <1>;
+>               };
+> -       };
+> +        };
+>   
+>           mdio@ce14 {
+>               compatible = "brcm,asp-v2.1-mdio";
+> diff --git a/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml b/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
+> index f0b5bea2458d..da9bc170cd54 100644
+> --- a/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
+> +++ b/Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
+> @@ -87,18 +87,6 @@ examples:
+>       #include <dt-bindings/interrupt-controller/irq.h>
+>       #include <dt-bindings/clock/cortina,gemini-clock.h>
+>       #include <dt-bindings/reset/cortina,gemini-reset.h>
+> -    mdio0: mdio {
+> -      #address-cells = <1>;
+> -      #size-cells = <0>;
+> -      phy0: ethernet-phy@1 {
+> -        reg = <1>;
+> -        device_type = "ethernet-phy";
+> -      };
+> -      phy1: ethernet-phy@3 {
+> -        reg = <3>;
+> -        device_type = "ethernet-phy";
+> -      };
+> -    };
+>   
+>       ethernet@60000000 {
+>           compatible = "cortina,gemini-ethernet";
+> @@ -110,28 +98,28 @@ examples:
+>           ranges;
+>   
+>           gmac0: ethernet-port@0 {
+> -                compatible = "cortina,gemini-ethernet-port";
+> -                reg = <0x60008000 0x2000>, /* Port 0 DMA/TOE */
+> -                      <0x6000a000 0x2000>; /* Port 0 GMAC */
+> -                interrupt-parent = <&intcon>;
+> -                interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
+> -                resets = <&syscon GEMINI_RESET_GMAC0>;
+> -                clocks = <&syscon GEMINI_CLK_GATE_GMAC0>;
+> -                clock-names = "PCLK";
+> -                phy-mode = "rgmii";
+> -                phy-handle = <&phy0>;
+> +            compatible = "cortina,gemini-ethernet-port";
+> +            reg = <0x60008000 0x2000>, /* Port 0 DMA/TOE */
+> +                  <0x6000a000 0x2000>; /* Port 0 GMAC */
+> +            interrupt-parent = <&intcon>;
+> +            interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
+> +            resets = <&syscon GEMINI_RESET_GMAC0>;
+> +            clocks = <&syscon GEMINI_CLK_GATE_GMAC0>;
+> +            clock-names = "PCLK";
+> +            phy-mode = "rgmii";
+> +            phy-handle = <&phy0>;
+>           };
+>   
+>           gmac1: ethernet-port@1 {
+> -                compatible = "cortina,gemini-ethernet-port";
+> -                reg = <0x6000c000 0x2000>, /* Port 1 DMA/TOE */
+> -                      <0x6000e000 0x2000>; /* Port 1 GMAC */
+> -                interrupt-parent = <&intcon>;
+> -                interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+> -                resets = <&syscon GEMINI_RESET_GMAC1>;
+> -                clocks = <&syscon GEMINI_CLK_GATE_GMAC1>;
+> -                clock-names = "PCLK";
+> -                phy-mode = "rgmii";
+> -                phy-handle = <&phy1>;
+> +            compatible = "cortina,gemini-ethernet-port";
+> +            reg = <0x6000c000 0x2000>, /* Port 1 DMA/TOE */
+> +                  <0x6000e000 0x2000>; /* Port 1 GMAC */
+> +            interrupt-parent = <&intcon>;
+> +            interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+> +            resets = <&syscon GEMINI_RESET_GMAC1>;
+> +            clocks = <&syscon GEMINI_CLK_GATE_GMAC1>;
+> +            clock-names = "PCLK";
+> +            phy-mode = "rgmii";
+> +            phy-handle = <&phy1>;
+>           };
+>       };
+> diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> index ea285ef3e64f..fab6aa6237e9 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> @@ -127,8 +127,8 @@ examples:
+>                   phy-mode = "internal";
+>   
+>                   fixed-link {
+> -                  speed = <1000>;
+> -                  full-duplex;
+> +                    speed = <1000>;
+> +                    full-duplex;
+>                   };
+>               };
+>           };
+> diff --git a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
+> index 62c1da36a2b5..d1522216d32b 100644
+> --- a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
+> +++ b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
+> @@ -91,9 +91,9 @@ examples:
+>           snps,tx-queues-to-use = <2>;
+>           snps,tx-sched-wrr;
+>           queue0 {
+> -           snps,weight = <0x10>;
+> -           snps,dcb-algorithm;
+> -           snps,priority = <0x0>;
+> +            snps,weight = <0x10>;
+> +            snps,dcb-algorithm;
+> +            snps,priority = <0x0>;
+>           };
+>   
+>           queue1 {
+> diff --git a/Documentation/devicetree/bindings/net/mdio-gpio.yaml b/Documentation/devicetree/bindings/net/mdio-gpio.yaml
+> index eb4171a1940e..36e51aaae9c0 100644
+> --- a/Documentation/devicetree/bindings/net/mdio-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/net/mdio-gpio.yaml
+> @@ -45,13 +45,13 @@ examples:
+>       };
+>   
+>       mdio0: mdio {
+> -      compatible = "virtual,mdio-gpio";
+> -      #address-cells = <1>;
+> -      #size-cells = <0>;
+> -      gpios = <&qe_pio_a 11>,
+> -              <&qe_pio_c 6>;
+> -      ethphy0: ethernet-phy@0 {
+> -        reg = <0>;
+> -      };
+> +        compatible = "virtual,mdio-gpio";
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        gpios = <&qe_pio_a 11>,
+> +                <&qe_pio_c 6>;
+> +        ethphy0: ethernet-phy@0 {
+> +            reg = <0>;
+> +        };
+>       };
+>   ...
+> diff --git a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
+> index 86a9c3fc76c8..d825130b54b4 100644
+> --- a/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
+> +++ b/Documentation/devicetree/bindings/net/mscc,vsc7514-switch.yaml
+> @@ -197,10 +197,10 @@ examples:
+>               <0x71040000 0x10000>,
+>               <0x71050000 0x10000>,
+>               <0x71060000 0x10000>;
+> -            reg-names = "sys", "rew", "qs", "ptp", "port0", "port1",
+> -            "port2", "port3", "port4", "port5", "port6",
+> -            "port7", "port8", "port9", "port10", "qsys",
+> -            "ana", "s0", "s1", "s2";
+> +      reg-names = "sys", "rew", "qs", "ptp", "port0", "port1",
+> +                  "port2", "port3", "port4", "port5", "port6",
+> +                  "port7", "port8", "port9", "port10", "qsys",
+> +                  "ana", "s0", "s1", "s2";
+>   
+>         ethernet-ports {
+>           #address-cells = <1>;
+> diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+> index 68ec76fe4473..38e3830512fe 100644
+> --- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+> +++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+> @@ -246,14 +246,14 @@ examples:
+>           qcom,remote-pid = <5>;
+>   
+>           ipa_smp2p_out: ipa-ap-to-modem {
+> -                qcom,entry-name = "ipa";
+> -                #qcom,smem-state-cells = <1>;
+> +            qcom,entry-name = "ipa";
+> +            #qcom,smem-state-cells = <1>;
+>           };
+>   
+>           ipa_smp2p_in: ipa-modem-to-ap {
+> -                qcom,entry-name = "ipa";
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> +            qcom,entry-name = "ipa";
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+>           };
+>       };
+>   
+> diff --git a/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml b/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml
+> index 45033c31a2d5..07b39ef1fc62 100644
+> --- a/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml
+> +++ b/Documentation/devicetree/bindings/net/realtek,rtl82xx.yaml
+> @@ -91,8 +91,8 @@ examples:
+>           #size-cells = <0>;
+>   
+>           ethphy1: ethernet-phy@1 {
+> -                reg = <1>;
+> -                realtek,clkout-disable;
+> -                realtek,aldps-enable;
+> +            reg = <1>;
+> +            realtek,clkout-disable;
+> +            realtek,aldps-enable;
+>           };
+>       };
+> diff --git a/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml b/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml
+> index 4eb63b303cff..8c8622160abb 100644
+> --- a/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml
+> +++ b/Documentation/devicetree/bindings/net/socionext,uniphier-ave4.yaml
+> @@ -121,22 +121,22 @@ examples:
+>     - |
+>       ether: ethernet@65000000 {
+>           compatible = "socionext,uniphier-ld20-ave4";
+> -                reg = <0x65000000 0x8500>;
+> -                interrupts = <0 66 4>;
+> -                phy-mode = "rgmii";
+> -                phy-handle = <&ethphy>;
+> -                clock-names = "ether";
+> -                clocks = <&sys_clk 6>;
+> -                reset-names = "ether";
+> -                resets = <&sys_rst 6>;
+> -                socionext,syscon-phy-mode = <&soc_glue 0>;
+> +        reg = <0x65000000 0x8500>;
+> +        interrupts = <0 66 4>;
+> +        phy-mode = "rgmii";
+> +        phy-handle = <&ethphy>;
+> +        clock-names = "ether";
+> +        clocks = <&sys_clk 6>;
+> +        reset-names = "ether";
+> +        resets = <&sys_rst 6>;
+> +        socionext,syscon-phy-mode = <&soc_glue 0>;
+>   
+> -                mdio {
+> -                        #address-cells = <1>;
+> -                        #size-cells = <0>;
+> +        mdio {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+>   
+> -                        ethphy: ethernet-phy@1 {
+> -                                reg = <1>;
+> -                        };
+> -                };
+> +            ethphy: ethernet-phy@1 {
+> +                reg = <1>;
+> +            };
+>           };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
+> index 8b5da602a2e8..4d24dadfaa5d 100644
+> --- a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
+> +++ b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
+> @@ -192,50 +192,50 @@ examples:
+>           interrupt-names = "rx_thresh", "rx", "tx", "misc";
+>   
+>           ethernet-ports {
+> -                #address-cells = <1>;
+> -                #size-cells = <0>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+>   
+> -                cpsw_port1: port@1 {
+> -                        reg = <1>;
+> -                        label = "port1";
+> -                        mac-address = [ 00 00 00 00 00 00 ];
+> -                        phys = <&phy_gmii_sel 1>;
+> -                        phy-handle = <&ethphy0_sw>;
+> -                        phy-mode = "rgmii";
+> -                        ti,dual-emac-pvid = <1>;
+> -                };
+> +            cpsw_port1: port@1 {
+> +                reg = <1>;
+> +                label = "port1";
+> +                mac-address = [ 00 00 00 00 00 00 ];
+> +                phys = <&phy_gmii_sel 1>;
+> +                phy-handle = <&ethphy0_sw>;
+> +                phy-mode = "rgmii";
+> +                ti,dual-emac-pvid = <1>;
+> +            };
+>   
+> -                cpsw_port2: port@2 {
+> -                        reg = <2>;
+> -                        label = "wan";
+> -                        mac-address = [ 00 00 00 00 00 00 ];
+> -                        phys = <&phy_gmii_sel 2>;
+> -                        phy-handle = <&ethphy1_sw>;
+> -                        phy-mode = "rgmii";
+> -                        ti,dual-emac-pvid = <2>;
+> -                };
+> +            cpsw_port2: port@2 {
+> +                reg = <2>;
+> +                label = "wan";
+> +                mac-address = [ 00 00 00 00 00 00 ];
+> +                phys = <&phy_gmii_sel 2>;
+> +                phy-handle = <&ethphy1_sw>;
+> +                phy-mode = "rgmii";
+> +                ti,dual-emac-pvid = <2>;
+> +            };
+>           };
+>   
+>           davinci_mdio_sw: mdio@1000 {
+> -                compatible = "ti,cpsw-mdio","ti,davinci_mdio";
+> -                reg = <0x1000 0x100>;
+> -                clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0>;
+> -                clock-names = "fck";
+> -                #address-cells = <1>;
+> -                #size-cells = <0>;
+> -                bus_freq = <1000000>;
+> +            compatible = "ti,cpsw-mdio","ti,davinci_mdio";
+> +            reg = <0x1000 0x100>;
+> +            clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0>;
+> +            clock-names = "fck";
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            bus_freq = <1000000>;
+>   
+> -                ethphy0_sw: ethernet-phy@0 {
+> -                        reg = <0>;
+> -                };
+> +            ethphy0_sw: ethernet-phy@0 {
+> +                reg = <0>;
+> +            };
+>   
+> -                ethphy1_sw: ethernet-phy@1 {
+> -                        reg = <1>;
+> -                };
+> +            ethphy1_sw: ethernet-phy@1 {
+> +                reg = <1>;
+> +            };
+>           };
+>   
+>           cpts {
+> -                clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 25>;
+> -                clock-names = "cpts";
+> +            clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 25>;
+> +            clock-names = "cpts";
+>           };
+>       };
+> diff --git a/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml b/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
+> index ae6b97cdc44b..bf4116b057d2 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml
+> @@ -325,22 +325,22 @@ examples:
+>             r0 {
+>               regdomain = "FCC";
+>               txpower-5g {
+> -               b0 {
+> -                   channels = <36 48>;
+> -                   rates-ofdm = /bits/ 8 <23 23 23 23 23 23 23 23>;
+> -                   rates-mcs = /bits/ 8 <1 23 23 23 23 23 23 23 23 23 23>,
+> -                               /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22>;
+> -                   rates-ru = /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22 22 22>,
+> -                              /bits/ 8 <4 20 20 20 20 20 20 20 20 20 20 20 20>;
+> -               };
+> -               b1 {
+> -                   channels = <100 181>;
+> -                   rates-ofdm = /bits/ 8 <14 14 14 14 14 14 14 14>;
+> -                   rates-mcs = /bits/ 8  <4 14 14 14 14 14 14 14 14 14 14>;
+> -                   txs-delta = <12 9 6>;
+> -                   rates-ru = /bits/ 8  <7 14 14 14 14 14 14 14 14 14 14 14 14>;
+> -               };
+> -             };
+> +              b0 {
+> +                channels = <36 48>;
+> +                rates-ofdm = /bits/ 8 <23 23 23 23 23 23 23 23>;
+> +                rates-mcs = /bits/ 8 <1 23 23 23 23 23 23 23 23 23 23>,
+> +                            /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22>;
+> +                rates-ru = /bits/ 8 <3 22 22 22 22 22 22 22 22 22 22 22 22>,
+> +                           /bits/ 8 <4 20 20 20 20 20 20 20 20 20 20 20 20>;
+> +              };
+> +              b1 {
+> +                channels = <100 181>;
+> +                rates-ofdm = /bits/ 8 <14 14 14 14 14 14 14 14>;
+> +                rates-mcs = /bits/ 8  <4 14 14 14 14 14 14 14 14 14 14>;
+> +                txs-delta = <12 9 6>;
+> +                rates-ru = /bits/ 8  <7 14 14 14 14 14 14 14 14 14 14 14 14>;
+> +              };
+> +            };
+>             };
+>           };
+>         };
+> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
+> index e667d78b3ab3..a52cb8a0d409 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
+> @@ -408,4 +408,4 @@ examples:
+>                             "msi15",
+>                             "legacy";
+>           ieee80211-freq-limit = <5470000 5875000>;
+> -      };
+> +    };
 
-Included branches with driver code:
-  - renesas-clk-for-v7.4
-  - renesas-pinctrl-for-v7.4
-  - topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3
-
-Included fixes:
-  - drm/atomic: Convert drm_priv_to_bridge_state to container_of_const
-  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
-  - ARM: shmobile: defconfig: Update for renesas-drivers
-  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
-  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git#i3c/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git#watchdog-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
-  - https://git.pengutronix.de/git/pza/linux#reset/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
-  - https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
