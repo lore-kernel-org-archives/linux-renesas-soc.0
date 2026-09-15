@@ -1,440 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011039.outbound.protection.outlook.com [52.101.125.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6447E3D3488;
-	Tue, 15 Sep 2026 01:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789437287; cv=none; b=be9ASX3itBUlWy8ipNkGwjQLGlWcqqGRgow7eCumobh93fylcAY5Jm8ZvuQCav6dAMXDhwBFWphl1gIVluCH1YpFKlNSNo5Q9R6b/Hra52s9et++fyluznnpZTV0PTskyC+5YkwzP6uiuv+xsk1zZfnSQbeCdUyuffR/USxhbVU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789437287; c=relaxed/simple;
-	bh=hC5oMkcbHF153VYm7GIbTzw2rrFEsSFIRHM1CEHOU6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IIhgEfKQ0ubVK+zwKT1tNARI9GQIKyduGZku5lNR3D+ATx7CbU27engmN7XysuR+ZRIJZydAl1JYMj6xrZkVKmDKbkbye1DEzJ/tn4G1coQtb4ALzkVpvye1HgCv3pgBKeX9ShWi4p4+H2wa435zrTNQ+jD/jkq3A+8wFIBONKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jg9CLUgr; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741153CB8F1;
+	Tue, 15 Sep 2026 02:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789439274; cv=fail; b=cnQv/gMY5V9/J7y/z17yyO3YGHZeXLcSy8tzwzLYhfW1qhpoIr/EmgJ1QEgxSSMtAuTg02rybEBqaz4zBP18S0vRkmCtJ7c9YV8J3DuqnYS6leVE8ZVpHl8hOu6ILy7jw8UDay0kUl+vCaRUK5Tz2xzOrb+91WUZqw/8loIzt10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789439274; c=relaxed/simple;
+	bh=XZeWr3UUlgaTs6wZz8mdBLeRF8h32OTCzJ13MFk8Q/o=;
+	h=Message-ID:To:Cc:From:Subject:Content-Type:Date:MIME-Version; b=jDUCEsa2q73+PtRCaoIvwG6Hiift7b+v3uykKPounARTtIY3eG1lUcpc4G1Qz4NbZEPbBEe4ZmlDlSQRCJ9+ahKim4GoDkLWZDBn/ij/VLvhsQ/7sX+MLL41K6t2PGNOOxl/IPlha0guCgopAeK6JgTbhAspEbD3tEkK2noz/5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=KE46Zs5N; arc=fail smtp.client-ip=52.101.125.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jg9CLUgr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EEC81F000FF;
-	Tue, 15 Sep 2026 01:54:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789437285;
-	bh=7pALTNLNO+z28d53BfjackFdh1fuzWK4dPm4RdJyF6s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Jg9CLUgrXC6QcEI6d3CkIve6e/loql7p2uMdgKHskOZe5l/7dMHyPBr8Fqq+slyvj
-	 dtLbQnIgJkbPNfzOyKuhW3NMHrZ2g7FeYp4MM4plNIDEFnPtrNAz/7KT53qtlPgS3j
-	 4CbR59Xl2sA8qe7ciTGB/pegGMGlaSqDSk24BpYPG1UR73P/pFss6tmm1X7sdLxi9Q
-	 gW9qWzKnUb5lq47FpMXLeFkEIS+Q9uuJdFb7wK9gKvB5wNFQHggK000/yC3wLYXX2x
-	 Kx7/hiJzjc8yyP7KxsFrirUgs4+yE6rmMGr0uw5dOQrgq4rKSSHW5DYlYT8Pxyusos
-	 X0eYiwV9ndQQg==
-From: Jakub Kicinski <kuba@kernel.org>
-To: niklas.soderlund+renesas@ragnatech.se
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	paul@pbarker.dev,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	richardcochran@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	vadim.fedorenko@linux.dev,
-	sergei.shtylyov@gmail.com,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v4 10/10] net: ethernet: ravb: Add gPTP support for Gen4
-Date: Mon, 14 Sep 2026 18:54:44 -0700
-Message-ID: <20260915015444.881349-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260909173027.2201560-11-niklas.soderlund+renesas@ragnatech.se>
-References: <20260909173027.2201560-11-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="KE46Zs5N"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JRIizNKVjG3zV/PdgpFR3OtXIBr5A/vxlbGdrZv4lMpKGtm3XdFiVwc0JWDIAg2v+YMKq9qkM3atW+q2iydVFrLPIH1PoYQYyMekzsL+t79d0kzn3o+SF75L04rBRTLW+PZbSP2TdV6TLRMlZ4i6bUeILnCvlQRVleTUX3H1X2Xj1uFzCOd+xK2t5QqedKqQHi/l1qSRZ2Okm9V8Kp6cDQd+/bkEN5dUdpY7aJ4zbids1VbK4K4IlKU95O/Yp5bvZKgm2hbonXwKKO4Lug59LGqoYQuNTTUcKquhLOm+6cHRzy5P5nyzaJ9cmDcXzkP1morEnoVUERYgKwnXYg/Mhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eoF1oorvlLpIeRI2I3YkXfzFqZvmc2fhrqm3kh/Tar0=;
+ b=aMkXFZU36fIr4zVKXJkwZVIqPaRVHk6rgb2NFxc05fUz3U1tRz4wcin7ajQhi2DgqGbXg6pCtwEHhexhm6d/pcP8IGI4D3e3okH7oSprYDtkmYJGGLXocCqkwMEVXtdnjkCcRwPlC+A+vhc6Ar5ksJsZVe8g9Wyw33YJcuvyWBBPgS7ljMzVEF3rRaxzmTxP2Q5mXnKIxhtG6gHiRk5aBBmt9+Vo4Gva5hCwcegcMnFtxWuRwqzppFGSiKfsiLSrQ1Oh5+1yY7kCIadFBPAKeB0KtizbiuG9SqMoF8UG9e/x6cECYUnF79p5d9PqGY2MUjJHG94K7H7fIuKENcjdgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eoF1oorvlLpIeRI2I3YkXfzFqZvmc2fhrqm3kh/Tar0=;
+ b=KE46Zs5NLlqZlyV8tpKBhERui0J1hs5W4kUzpn4YISA7aajQcLAR4itJx/xmxx23Yuu1U+JxIBcK9qCnMcFf1Kougb6/NPO2VTx4SWePKGB5fKRYPnLr+qXtCtvXDH8Lfdh+KXwTfXTnhoU8p21voreajXWuGayJDRoCLo5nOsk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYYPR01MB14118.jpnprd01.prod.outlook.com
+ (2603:1096:405:214::12) by OSCPR01MB15713.jpnprd01.prod.outlook.com
+ (2603:1096:604:3cb::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.13; Tue, 15 Sep
+ 2026 02:27:50 +0000
+Received: from TYYPR01MB14118.jpnprd01.prod.outlook.com
+ ([fe80::846f:9035:6a33:1f45]) by TYYPR01MB14118.jpnprd01.prod.outlook.com
+ ([fe80::846f:9035:6a33:1f45%6]) with mapi id 15.21.0406.007; Tue, 15 Sep 2026
+ 02:27:50 +0000
+Message-ID: <87cxufs0yi.wl-kuninori.morimoto.gx@renesas.com>
+To: Brian Masney <bmasney+clk@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Jerome Brunet <jbrunet+clk@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Anh Nguyen <anh.nguyen.pv@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 0/2] clk: renesas: r8a779g0: Add ZG clocks
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 15 Sep 2026 02:27:49 +0000
+X-ClientProxiedBy: TY4P286CA0069.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:371::11) To TYYPR01MB14118.jpnprd01.prod.outlook.com
+ (2603:1096:405:214::12)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYYPR01MB14118:EE_|OSCPR01MB15713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 392f80de-c094-4979-627c-08df12d0eff1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|23010399003|366016|38350700014|10067099003|11063799006|56012099006|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	SNMlG3is59VE3TkV+UROJEnOGIvRMHSvKe0J+1AdLtW4SAXnRRgcYWeM6ZYdyXzJWKTnM2HA2wax8b8sBuwt4VTnaAaYj9ZTkjghhWdWPNYINNKtojAtVa8T0zWQ/K7rBxsM3jWndU6tgYtp8k9bmx15uGB/GVxaTGc7XCkcTn7YFcpWEBQFMviF6S3vs10Z03h2mMFXAgqqWNN3m81LAGLz1/s5TJArtR5ZVxf/IkL0u2xVcofq2OxGytWWEujFspXmz98DIobBZye3etABMOrDUhSmQqOW5fdVcQ4ycUzeDBRiSrkSG7mey8W2x4xf9TPGVjYP9j40WIA7y/zu6b/Wm5Nj7eeldf66rFRYvA3PnDrkD7R7X0NEXQYyqn2TCDfyXjSLz7+37JrEt8ZiA9wKGaYCdLhhj6JMY5gg73EEXLCqTVCtj5X2d9lygTiby/PvBVkmn0s4roaPDTzk2+6XffV7ot0sSEg6xdqH80HgvuNxEszEmd+o7n52isvrCV918UqKMU2WYZtSIGM7cV0mmlZ/3OD5EX/d9oBpyWouNL10cvRGHrhOFl6hbcG/eOEGcTGCPmGpva5zEK0DKjZMRyXpJ2x2sXmZjlrru7z4E+dljhaS+yNL3vMzPZNjQ/zvEIfY+X+54WBr3fA/G4SLY74dPwR8KuvXQboOGw6uM65TSyO4DplsNAzwSrGWWiNvATizy517x/XsdD0Z+hbxsm9nqScdREBI8OaHs7Y=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB14118.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(23010399003)(366016)(38350700014)(10067099003)(11063799006)(56012099006)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1ketRiKC3BKRBvhN9tO5+eHmUp0OkHMtay437bs8bEGb2lOdrF8Gz1EzEqPO?=
+ =?us-ascii?Q?kOE4oVpyBP3spMEUnEa5+f1ZmGuqSa+0p9WkM8+OiiHAcueV1/nhrI6vP58e?=
+ =?us-ascii?Q?283NATmtxw+jNgR13pdhurTuA7Tv3TVRPIoAqIAfSX/LZghbUuQ62BQqnjxD?=
+ =?us-ascii?Q?uF/iU089WYD9kSVxvqBVyPk/h4doF8jD7rhVnO8uXQSx5XcdPwCKQTYo1fN7?=
+ =?us-ascii?Q?8mToW9im0dWD37RAvUVsmxhn7WHeu1PWom0PKnehx4qSL69B8bfpPejmlVKQ?=
+ =?us-ascii?Q?2jK9jrqXLq+7H5mEX7z7zOL34Q6k113Q4LQgxlngD2hs2ar6BSuDPTC5vuiP?=
+ =?us-ascii?Q?wC6ym0xwnO3ZlEkinmxCZLK309zAwfIyFSAurJPTCDW7+EmEQnVYYlriCSVs?=
+ =?us-ascii?Q?dBRUxHMlJB2jrDj8sM6Hv6oo9LFGO0xqoI7X9tE8frgQ41aQTJr1TgiOTqpF?=
+ =?us-ascii?Q?eW17Q/TqHqgduSwGTkKIxdu8b7r0/AXAHEJxG5HBQvnqhWb/63nwwynG5wc+?=
+ =?us-ascii?Q?SnbcnJJV5547ZDz1FsF99zmai6keSBQocaNtdnX7XhWhWXEPnW3fafDtRtWc?=
+ =?us-ascii?Q?SXzA1FpxRF4sSAB9ILv9SjywZp8msqhAl4CIf0Ri8z+CH/JnNyWXb3gyA4XS?=
+ =?us-ascii?Q?rgCe9uy/2/dg7oL0XQ2wUe6gSnYKnzRUu8/aa45oZcFMALPKNjIHCbaIgEh7?=
+ =?us-ascii?Q?02MKVJxNdqDmp9us8dYGLigDxwZV+mSXcSzx1ooDkoaKBfso5W/qpcDpTGaf?=
+ =?us-ascii?Q?PCcuSw+ot03Amw3YpYZQlBdG29zMyuEwrNe4SNiJyJLLpHGzMltactSiEeBn?=
+ =?us-ascii?Q?x6dKMsS03XPzuSycAUMinQR26EYrQVEo1Hjp9snfwzgylGOVO5GqDOFV6p6A?=
+ =?us-ascii?Q?o8iVLjpJbwCkMhito7CgEdQZrmOxHRIh6qpwZbgaARlKTEOe0/mzXWAYVb5X?=
+ =?us-ascii?Q?46pTDoSEwCyadRIcYPjE73AHSHPXuqXaru1gDx7Slq21oiRfVX/D6NybPKAG?=
+ =?us-ascii?Q?9PfYn7E3GZZ17EVly17lnskOxfdx07/0rNnxsqXnLVrx2RNkj5RWQ1QG8Ajw?=
+ =?us-ascii?Q?wQLKNQhdkK0TDXdKclUSxUB2gacVL2UnG6YvahIUECNNjuvwqLfvVv62viR0?=
+ =?us-ascii?Q?0xDDhScxcY48Z6DmdKT1FpxNE81dBQMHk4C8uomqASZ7VkS4Rrnhqkc3W48l?=
+ =?us-ascii?Q?okw73i8fLZBwvo1SnitlnG51+AB1eM8Cb3HT8y4+uXAPJKBK4l/pB87dE1PW?=
+ =?us-ascii?Q?kmZf6luqTr5o4djdW5wEpKi8elrKCDjQZzx0l/2gc2WOrapZ9acRHuCwKeUa?=
+ =?us-ascii?Q?Bmu+q2YN4ctkQAZqminMtZtoCT6Nme7JyX/R+BQn8zr9BROyuFgt4Ikx5y7U?=
+ =?us-ascii?Q?8P6XL73GwNhnYEpOyPTOCKWEMqAWSbVK2GxQ24Rr9nu27j2BuuOF0GrUbzpq?=
+ =?us-ascii?Q?aK/ckMkIOp2fPxsFjFXyB3vXrHyxiaRby+yIr24kVS63dHv6vqj8mWpm3zEK?=
+ =?us-ascii?Q?NhGEm/ldNq4GKvWJDFJWI331ADYEurOMak4oh2n1xSLABveN+d8tb0WRkqUB?=
+ =?us-ascii?Q?YsWeNO7mVsfdRYWTPjrSUBDsTzt5sRxHTxgpLKfxK+DJYyZZSlMG3d2x+/6/?=
+ =?us-ascii?Q?QCQrspuWeKXoUqlcnP6L+cUUkGgqrF/Kd79P7GDoSVhw2iO+3YM86SdwO8qw?=
+ =?us-ascii?Q?fHqAwxfKeI0hkoqn7tzejfRzbn3Icwu+/en0InBzYiv+VWUp/u7Mo60v2E5d?=
+ =?us-ascii?Q?W0QdTYGa/o1u1/NkorqMaVd6LDHFb8JnBReDFTNZpOjUlSakwElA?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 392f80de-c094-4979-627c-08df12d0eff1
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB14118.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2026 02:27:49.9478
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nXzQToOF+j/wOthR7R+HrYoW5wiAb0VQSCmn3rbGYeVqRZvIoUeetRzL+6DZW8j+l0ztbkPyRiCeQRpYJLLXKShcQ9JLud4JYsBb4y4mtlUwuppgTN++KPlqY/JI3+Xa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB15713
+
+
+Hi Geert
+
+This patch tidyp DEF_GEN4_Z(), and adds ZG clocks for r8a779g0
+
+Kuninori Morimoto (2):
+  clk: renesas: tidyup DEF_GEN4_Z()
+  clk: renesas: r8a779g0: Add ZG clocks
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c |  6 +++---
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c |  4 ++--
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c |  4 +++-
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c |  8 ++++----
+ drivers/clk/renesas/rcar-gen4-cpg.c     | 25 +++++++++++--------------
+ drivers/clk/renesas/rcar-gen4-cpg.h     | 13 +++++++++++--
+ 6 files changed, 34 insertions(+), 26 deletions(-)
+
+-- 
+2.53.0
 
-This is an AI-generated review of your patch. The human sending this
-email has considered the AI review valid, or at least plausible.
----
-net: ethernet: ravb: Add gPTP support for Gen4
-
-This patch gives R-Car Gen4 its own ravb_gptp_info, resolving a system-wide
-gPTP timer through a new optional ptp-timer phandle instead of the
-non-existing internal gPTP clock, and selects that timer as the timestamp
-source in APSR. The node reference is released in ravb_remove().
-
-No Link: tags are present in the commit header.
-
-A few questions below, both on the commit message and on the new code.
-
-[Severity: Low]
-
-The commit message says:
-
-  "While driver advertises gPTP support on Gen4 platforms it is in fact
-  completely broken."
-
-That describes a user-visible defect in existing kernels: before this
-series ravb_gen4_hw_info had .ccc_gac = 1, ravb_get_ts_info() advertised
-so_timestamping and phc_index for those devices, and ravb_open() called
-ravb_ptp_init(), so every board matching renesas,etheravb-rcar-gen4
-exposes a /dev/ptpN for hardware the commit message says does not exist.
-
-Should this carry a Fixes: tag pointing at 949f252a8594 ("net: ravb: Add
-R-Car Gen4 support")?
-
-Since the change depends on the ten-patch gPTP refactor in this series and
-on a new DT property, it is presumably not backportable on its own - could
-the commit message state that explicitly for the stable maintainers?
-
-Also, small typo in the commit message: "optional.If not present" is
-missing a space after the period.
-
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 8617c30dbb14e..c8aa40136c3da 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -2755,6 +2755,57 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
->  	.magic_pkt = 1,
->  };
->  
-> +static int ravb_gen4_ptp_probe(struct net_device *ndev)
-> +{
-> +	struct ravb_private *priv = netdev_priv(ndev);
-> +
-> +	priv->of_gptp = of_parse_phandle(priv->pdev->dev.of_node, "ptp-timer", 0);
-
-[Severity: Medium]
-
-Does this leak the of_gptp device_node reference on probe failure?
-
-of_parse_phandle() returns the node with an incremented reference count,
-and ravb_probe() calls this callback early:
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_probe() {
-	...
-	if (info->ptp && info->ptp->probe) {
-		error = info->ptp->probe(ndev);
-		if (error)
-			goto out_reset_assert;
-	}
-
-	priv->refclk = devm_clk_get_optional(&pdev->dev, "refclk");
-	...
-}
-
-Every later failure (devm_clk_get_optional(), pm_runtime_resume_and_get(),
-devm_platform_get_and_ioremap_resource(), of_get_phy_mode(),
-dma_alloc_coherent(), ravb_set_opmode(), ravb_mdio_init(),
-register_netdev()) ends up in out_reset_assert / out_free_netdev, which do:
-
-	reset_control_assert(rstc);
-	free_netdev(ndev);
-
-free_netdev() destroys the priv that held the only pointer to the node, so
-the reference is lost. devm_clk_get_optional() can return -EPROBE_DEFER, so
-this can repeat on every retry. Would an extra unwind label, or
-devm_add_action_or_reset(), keep the acquisition symmetric?
-
-> +	if (!priv->of_gptp)
-> +		return 0;
-> +
-> +	if (!of_device_is_available(priv->of_gptp)) {
-> +		of_node_put(priv->of_gptp);
-> +		priv->of_gptp = NULL;
-> +	}
-> +
-> +	return 0;
-> +}
-
-[Severity: Medium]
-
-This resolves the timer purely from the phandle plus of_device_is_available(),
-with no dependency on the driver that actually owns and clocks the shared
-gPTP counter (rswitch on S4, rtsn on V4H).
-
-ravb_gen4_ptp_probe() cannot fail and prints nothing, so a dangling
-phandle, an unbound or deferred provider, and a genuinely absent ptp-timer
-all look identical from user space: ethtool -T simply reports no PHC. Would
-a dev_warn() (or -EPROBE_DEFER / a device link) help here?
-
-There is also no check that the shared counter is running before the
-timestamp source is switched over in ravb_gen4_ptp_set_config_mode():
-
-	/* Set PTP source to GPTP module, only option on Gen4. */
-	if (priv->of_gptp)
-		ravb_modify(ndev, APSR, APSR_GPTPTIMER_SOURCE | APSR_GPTPCLOCK,
-			    APSR_GPTPTIMER_SOURCE | APSR_GPTPCLOCK);
-
-The provider can stop that counter at any time while RAVB is up -
-rtsn_remove() and rswitch_deinit() call rcar_gen4_ptp_unregister(), which
-does:
-
-drivers/net/ethernet/renesas/rcar_gen4_ptp.c:rcar_gen4_ptp_unregister() {
-	iowrite32(1, ptp_priv->addr + PTPTMDC_REG);
-	return ptp_clock_unregister(ptp_priv->clock);
-}
-
-Is the resulting cross-driver load-order and unbind dependency intentional?
-It is not mentioned in the commit message.
-
-> +
-> +static int ravb_gen4_ptp_clock_index(struct net_device *ndev)
-> +{
-> +	struct ravb_private *priv = netdev_priv(ndev);
-> +
-> +	/* If no clock, mimic ptp_clock_index_by_of_node() fail and return -1 */
-> +	if (!priv->of_gptp)
-> +		return -1;
-> +
-> +	return ptp_clock_index_by_of_node(priv->of_gptp);
-> +}
-
-[Severity: High]
-
-Can this lookup ever succeed against an in-tree provider?
-
-ptp_clock_index_by_of_node() matches on the parent device of the registered
-clock:
-
-drivers/ptp/ptp_clock.c:ptp_clock_of_node_match() {
-	return (dev->parent && dev_of_node(dev->parent) == parent_np);
-}
-
-But the only in-tree registrar of the R-Car Gen4 system gPTP timer passes a
-NULL parent:
-
-drivers/net/ethernet/renesas/rcar_gen4_ptp.c:rcar_gen4_ptp_register() {
-	...
-	ptp_priv->clock = ptp_clock_register(&ptp_priv->info, NULL);
-	...
-}
-
-and ptp_clock_register() stores that as ptp->dev.parent. With parent NULL
-the predicate is false for every np, class_find_device() returns NULL, and
-the helper returns -1 even for a valid and enabled ptp-timer phandle.
-
-ravb_get_ts_info() only fills anything in when index >= 0:
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_get_ts_info() {
-	...
-	/* Only advertise ptp clock if present. */
-	if (index >= 0) {
-	...
-}
-
-So does Gen4 end up never advertising gPTP at all, leaving the feature this
-patch adds inert unless rswitch/rtsn are changed to pass the owning device
-to ptp_clock_register()?
-
-> +
-> +static int ravb_gen4_ptp_set_config_mode(struct net_device *ndev)
-> +{
-> +	struct ravb_private *priv = netdev_priv(ndev);
-> +	int ret;
-> +
-> +	/* Enable gPTP Clock and Select High-speed peripheral bus clock. */
-> +	ret = ravb_set_opmode(ndev, CCC_OPC_CONFIG | CCC_GAC | CCC_CSEL_HPB);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set PTP source to GPTP module, only option on Gen4. */
-> +	if (priv->of_gptp)
-> +		ravb_modify(ndev, APSR, APSR_GPTPTIMER_SOURCE | APSR_GPTPCLOCK,
-> +			    APSR_GPTPTIMER_SOURCE | APSR_GPTPCLOCK);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct ravb_gptp_info ravb_gen4_ptp_info = {
-> +	.probe = ravb_gen4_ptp_probe,
-> +	.clock_index = ravb_gen4_ptp_clock_index,
-> +	.set_config_mode = ravb_gen4_ptp_set_config_mode,
-> +};
-> +
-
-[Severity: Medium]
-
-For Gen4 without an available ptp-timer (the newly optional case), do the
-two halves of the timestamping uAPI now disagree?
-
-ravb_get_ts_info() reports nothing, because clock_index() returns -1, so
-so_timestamping, tx_types, rx_filters stay zero and phc_index keeps the
-caller's -1.
-
-ravb_hwtstamp_set() still accepts the request and returns success:
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_hwtstamp_set() {
-	...
-	priv->tstamp_tx_ctrl = tstamp_tx_ctrl;
-	priv->tstamp_rx_ctrl = tstamp_rx_ctrl;
-
-	return 0;
-}
-
-net_hwtstamp_validate() only range-checks the enums, so HWTSTAMP_TX_ON and
-HWTSTAMP_FILTER_ALL are accepted here.
-
-The datapath then keys off info->ptp, which is always non-NULL for Gen4
-now:
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_start_xmit() {
-	...
-	/* TX timestamp required */
-	if (info->ptp) {
-		if (q == RAVB_NC) {
-	...
-}
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_rx_rcar_hwstamp() {
-	if (q == RAVB_NC)
-		get_ts = priv->tstamp_rx_ctrl != HWTSTAMP_FILTER_NONE;
-	...
-}
-
-Should these gates use the same "is a gPTP clock available" predicate as
-ravb_get_ts_info(), so user space cannot enable timestamping the driver
-declares unsupported and get TFA/descriptor values from a counter the
-commit message says Gen4 does not have?
-
->  static const struct ravb_hw_info ravb_gen4_hw_info = {
->  	.receive = ravb_rx_rcar,
->  	.set_rate = ravb_set_rate_rcar,
-> @@ -2777,7 +2828,7 @@ static const struct ravb_hw_info ravb_gen4_hw_info = {
->  	.tx_counters = 1,
->  	.multi_irqs = 1,
->  	.irq_en_dis = 1,
-> -	.ptp = &ravb_gen3_ptp_info,
-> +	.ptp = &ravb_gen4_ptp_info,
->  	.nc_queues = 1,
->  	.magic_pkt = 1,
->  };
-> @@ -3191,6 +3242,7 @@ static void ravb_remove(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
->  	pm_runtime_dont_use_autosuspend(dev);
->  	clk_unprepare(priv->refclk);
-> +	of_node_put(priv->of_gptp);
->  	reset_control_assert(priv->rstc);
->  	free_netdev(ndev);
->  	platform_set_drvdata(pdev, NULL);
-
-[Severity: Medium]
-
-Is the of_gptp node also leaked on the early return at the top of
-ravb_remove()?
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_remove() {
-	error = pm_runtime_resume_and_get(dev);
-	if (error < 0)
-		return;
-	...
-	of_node_put(priv->of_gptp);
-	...
-}
-
-The new of_node_put() sits below that return, so an unbind where runtime
-resume fails drops out without releasing the reference.
-
-Two more observations about the gPTP stop paths introduced earlier in this
-series, in commit "net: ethernet: ravb: Simplify gPTP start and stop",
-which this patch builds on:
-
-[Severity: High]
-
-On Gen3, does a PHY start failure in ravb_open() leave the PTP clock
-registered?
-
-ravb_open() registers the clock and then, on ravb_phy_start() failure,
-goes to out_ptp_stop:
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_open() {
-	...
-	/* Initialise PTP Clock driver */
-	if (info->ptp && info->ptp->ndev_open) {
-		error = info->ptp->ndev_open(ndev);
-		...
-	}
-
-	/* PHY control start */
-	error = ravb_phy_start(ndev);
-	if (error)
-		goto out_ptp_stop;
-	...
-out_ptp_stop:
-	ravb_stop_dma(ndev);
-	...
-}
-
-ravb_stop_dma() only calls dmac_stop:
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_stop_dma() {
-	...
-	/* Stop PTP Clock driver */
-	if (info->ptp && info->ptp->dmac_stop)
-		info->ptp->dmac_stop(ndev);
-	...
-}
-
-but ravb_gen3_ptp_info puts ravb_ptp_stop() in .ndev_close, not
-.dmac_stop:
-
-static const struct ravb_gptp_info ravb_gen3_ptp_info = {
-	.probe = ravb_gen2_ptp_probe,
-	.clock_index = ravb_gen2_ptp_clock_index,
-	.set_config_mode = ravb_gen3_ptp_set_config_mode,
-	.ndev_open = ravb_ptp_init,
-	.ndev_close = ravb_ptp_stop,
-};
-
-so ptp_clock_unregister() is never reached. Since ndo_open failed, ndo_stop
-(and .ndev_close) will not run either. A later successful open calls
-ravb_ptp_init() again and overwrites priv->ptp.clock, and ravb_remove()
-eventually calls free_netdev() while the leaked clock still points at the
-embedded priv->ptp.info - can that turn into a use-after-free on a
-subsequent /dev/ptpN or /sys/class/ptp/ptpN access?
-
-The earlier commit claims no functional change, but the code it removed
-from out_ptp_stop covered the ccc_gac case too:
-
-	if (info->gptp || info->ccc_gac)
-		ravb_ptp_stop(ndev);
-
-[Severity: Medium]
-
-Related question for Gen2 and RZ/V2M, where ravb_ptp_stop() is reached only
-via dmac_stop at the end of ravb_stop_dma(): the function has three earlier
-error returns before that point.
-
-drivers/net/ethernet/renesas/ravb_main.c:ravb_stop_dma() {
-	error = ravb_wait(ndev, TCCR, info->tccr_mask, 0);
-	if (error)
-		return error;
-
-	error = ravb_wait(ndev, CSR, CSR_TPO0 | CSR_TPO1 | CSR_TPO2 | CSR_TPO3,
-			  0);
-	if (error)
-		return error;
-	...
-	error = ravb_wait(ndev, CSR, CSR_RPO, 0);
-	if (error)
-		return error;
-	...
-}
-
-ravb_close() only logs the failure and keeps going:
-
-	if (ravb_stop_dma(ndev) < 0)
-		netdev_err(ndev,
-			   "device will be stopped after h/w processes are done.\n");
-
-Before the refactor, ravb_close() called ravb_ptp_stop() unconditionally
-ahead of the fallible ravb_stop_dma(). Does the clock now stay registered
-after the interface goes down when a wait times out, with the next open
-overwriting priv->ptp.clock?
