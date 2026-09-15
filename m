@@ -1,95 +1,95 @@
-Received: from mail-ej2-f5.google.com (mail-ej2-f5.google.com [74.125.228.133])
+Received: from mail-ed2-f10.google.com (mail-ed2-f10.google.com [74.125.228.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6630147CC64
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 10:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D69147ECC1
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 10:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.74
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789467796; cv=pass; b=Z63arcjEjuMVqWJhnUm2+1aptwm3EmY2k1dj/43krgRUZ+2jkOf/0RGzZFNcWUvjwvsIVJavufJHc01B1K0cmXhXeyo7x2G9iqpXKJEtJRmVtMQMur6BMJKb9Hp+BhLeT0mG7hi/s0fafPcgPRhaM+7iEec0jjfoNw+6Zb1VMcE=
+	t=1789467981; cv=pass; b=jvj0c2kae/YXPjUD9/yHJkorCIePyELfJ6tVNlpdsknLXo0QYzYrPbpmz64oFHap+wWqntkHqjosXsTGWN8bXs8jDNIYnPYNK8SZMuvlo/921sa1kKUObPhF8G5fMoI1Cg5puccIabGj3ix+LghiKXDN0Jkz0B3qnJ8wL+0QOUw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789467796; c=relaxed/simple;
-	bh=c3RIJ2i8Y04OYsadwKNxN56yhveUJrAsHw56HkKOmYg=;
+	s=arc-20240116; t=1789467981; c=relaxed/simple;
+	bh=vZzYcJ1wT8Rd7uAkDW6XfZWMX25LGItG9EqsF3/2Qs0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NqDs16u+r2OiD7mF0E2Bd9H3VJKbiqurni7NqkFL0rKBe7W8lRcgfvvYnp5H31Do7wnkZeXszDhrYsDCdFidtMFVjPE7P8aO8Hj2q7g/gvTYxDMfLf8i7c36VbO4KnFetqtxY2TotzQpudhmhwgzNAl4G02CVkyr7JDGIA8AC/Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BD8BCWYb; arc=pass smtp.client-ip=74.125.228.133
+	 To:Cc:Content-Type; b=EYZsI393ah60+xekIhfu94MzTfK0Bgyb9Ub/zDVcX0nQnGs6UIPku40xo56/05ctU97NiEhAHvGfdrl3oYL5tgNF6QWtq8PigCuv85tx/0RP8soZmOwhNUFBb3fOKttYcEcCC27ue+gr4IQxU17sTZUCeFNuWnzZeveo2nDHmEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lY7XcFp0; arc=pass smtp.client-ip=74.125.228.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD8BCWYb"
-Received: by mail-ej2-f5.google.com with SMTP id a640c23a62f3a-c2950c25486so236813466b.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 03:23:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789467791; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lY7XcFp0"
+Received: by mail-ed2-f10.google.com with SMTP id 4fb4d7f45d1cf-6a14f2e937cso2496292a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2026 03:26:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789467977; cv=none;
         d=google.com; s=arc-20260327;
-        b=J/yGwzRS4mO6GAlTaYM9c/QxBzps+Vyl/B742LXgB7gpTo521ws+l80PBoruPyW6EP
-         mN2Cyb5lTiVaMbqAwdFDVEjaXCeyas0+G+vmb6QBjM6VDjBuxp1y953GzVL5p5mxCnLC
-         CYajt7h93DmxE07oK/1d+PED9jL/qtCLX0bbH544uRQmoSkPNW5w8RPg6p+c2Ny36/A7
-         X5A4ywWwEQKsQEUBz1HocjDczDFU+hci3dFi4C6HgH3lMBRB30Xb8v0zTUbRjJTTkgkI
-         HTsKDvgduuLZ6Nx08kjt6iVOJpZQ8etat8CaQTRG4dnuit3Tcw8nDSlgyjIP0crQ6n6+
-         FRDQ==
+        b=FAkYuNS+pUtYqyc0eTy5uQh8q3ToT1R758tfB3DBzV0C0hkxGhaFp9KX84CIPNlL7x
+         W441R6r7I/eLMQfYKIPC/gq3TpBejTM9pt91KgQXe31g4G93GmhCNdG53eZDsgdF1YvX
+         VXwA88v4IOFKyOb332Bi8gYxn2DqjVC5nWIRtspGvLXZWnS8JhHRoJfKUO0s3BfLU7g/
+         ltggjLpAar5ESVICFCT+cMsDcTVS7/7yH26mBMBs0dG5/1C1NHMRkVVisW/brQYksISt
+         VUJIvVD3HqHrX6gQU07fwEkCh33ba5CJXHotXoL2Xv28L0mbEZqeDhLAGTsgybmirQDT
+         i16Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=nYoTXRWm9dXxQab97Avfkm/YI6364EPnV/puvJGLZtc=;
-        fh=4ohzrJIdG85qS7BdMJvreGa0rql9+8BzswWeDnvjJ1M=;
-        b=f8KFQOeltOW8vI3zPQ9BTegfsGNDTdupGSZ0bEVTMW/FM1BvCFmHXAjdvW2GH6nXTO
-         Z7JfrfPjlxYX5ujE9FluitVdR2SeVnJz8l6r85qurMYUnaJgzKLj7vbzH9w5bMvqv9x3
-         m2pawsy+E0JmdrutNKrmK+VmWy9jLd4d4oz9T6SK+3wHCWhoJmNj9jkM3317eQZ35OUF
-         C8W1BOqB/9CzSqz76mFHfTwIUXn79aCn1omxB7YIbXWVQ/ph6LN+gWgSFvCgbvdGmDAu
-         ctAvF4VPPTZcZXOTwcKzvgRFrS4vgIwKTIYBASQD00luGEYjnv3fOaVkc2BC3ukcsrSI
-         Qpyg==;
+        bh=PDmTn3anCnjZEAou9hrMuvIHzai6E6SOKUBtirHS8WY=;
+        fh=/gFA6uqLPmQS18thU7vtSeQys28UsPJVagyJLV621yA=;
+        b=iJQsasqw6R7oV2gj7ZJEnMFKgBMSJYQ1BM4IE0Rsm29VJsbrnV2Gf/5cuwy6C3X9sU
+         VIQDDaCIT/b1OoUMTAbaihwGetw1VQThXaV+wTpS0G2+h2uyx7VyoTMOkyvJ2fS5lcTy
+         b/mNu8CvYmSRZEsdq9RhgYZm7exjA6cS4dgVeWGF5pc0zENFUNoMM8S/lUDZ2ORpfklA
+         AeCRKq5y2NxdUL/VaCDg6RrzQoC63ClavoSZIGzS7rvx+eSxfcc4X4kVyOU+RPTyO6M3
+         91P5NaQlcMUVn8KUJlYQjSJbND4ZJWRO1lIKC71lOqRPV7EhzF8JZ59ZpfmvFn8ju07h
+         XHiw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789467791; x=1790072591; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789467977; x=1790072777; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=nYoTXRWm9dXxQab97Avfkm/YI6364EPnV/puvJGLZtc=;
-        b=BD8BCWYbg/2D6ELs1XNumO73g7sbmRiB4WAMxDPiToc1VZH2i+07pszYcoto91GCXY
-         ArGwZHhNqEP5889Yg2n28jOKLcwthlZlYdybB6pm0/hhBTFG7QCpJrECo/Uj2O3MTCHk
-         j83wwHysm6Ikl3f7jPb7EgHswjSGL0ngI9QpvCXYzrtEPq/BQsVoDyxXECmQqeKKJrMP
-         B8MNqasHbfvHd5Myw2ix2+naDoTWxgYCH9xYVl6mDx/Igns3/sNkYT6vb8kH4RuyeUrA
-         m9MapE6PU8l8j7LCF+FWO52q69vLRYIwv4jqcQbbanJbsGI1D/7j4HiVAmcR5S1ElAyl
-         s0yQ==
+        bh=PDmTn3anCnjZEAou9hrMuvIHzai6E6SOKUBtirHS8WY=;
+        b=lY7XcFp0DaklzYdRxlf81uipUv5eTR6q1EHJ6VSQFTIv/YFwkJo5spbxNLcEEOrAOn
+         Jdq7jZj3j3YXu3SqT2BwylXzHoPkV0nSXCMEGcTBNbvbNtKP/gcP4ydsZH5eziyrUHD2
+         9/ZSPcN9sLvbcJ0Y5gYIXFtyLcI9yETUOFYlFj5N5PTScDIb9vZE34ICPeTBg1nI1dAU
+         yEAMMDQifn4uZD1uCdmMP52SDOzuEFyMIfNz/ylvr8rz75e551mGXKDS/seNsuZXqSqg
+         R0yQonNdjUlqjYymQ6VNVlButSe9toe0uVOMTNz1zLsCsEvobzN4BlgFJRji5REYOvmJ
+         NDkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789467791; x=1790072591;
+        d=1e100.net; s=20260707; t=1789467977; x=1790072777;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=nYoTXRWm9dXxQab97Avfkm/YI6364EPnV/puvJGLZtc=;
-        b=BZwUc/2dtEm1nVRtAKTD/ZFoPNa7jx3CX7H3kO0KKB7MQZOQK1bKKrOrtdSwGga8/B
-         5GqFPsr9yVRT0tosduXfpyVz/dxZYv2GKl8n71i2QTp7UzfkP3SQPHgNoY5Q+zmiTLBg
-         cI84ZPDRm6qAhyMySXeLEPROW/Ub+bNHm0LqhbndQpSAA3/NCqUuE0A/BLBM0COh4UQk
-         Rq0oqpPn6te5uJYD59IL0l5WULAfCjAohR+3id7Eg5Dj496+idBOrZc0iDTI5kKarQdD
-         jA0gRaHnn9QVVLrY1+DvgwvGcjlmD+nKQXUNKZ0xdqMC5dluZApQ6FEBlZiGZUduGobJ
-         lz+A==
-X-Forwarded-Encrypted: i=1; AKwUvBzPvkEAXLmtUHPzfasH1H6ll3Pb3Y/qtSPnLJoc7z24hlgriqMsPqcucVOFPUhBahCZVUG/agBYZU6iyF7PHtdxzw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lEyEMY1HXnHP+Uy1cj+LalPviesckMCELeYxFPyd5bQZVHKMjI
-	aWsyTrPEXWHqnOXYJ6INyG/5o3D1rlBGEFQwNzJPMpB6pyt9RyUv0kG4wn/jhRRALBuh+DdlYE9
-	qB0nnFVoCFdc7HOoD2Eh3qUXlSdRyEu4=
-X-Gm-Gg: AYBFou39ioYB2+hraZda/X5qLLcxUS+VbqcmkGS88V7adRQVUnP9SoTYRE6b4Ta50Hg
-	2cfOoDYgncJ0YGbQ3Q/y7rOEMHuL66BlVAZcnnE0LhX/DP5g8y6F+4T9rS+SvNcEnXxScXjr2he
-	dNQktKT2rjQ4RCfYbv/R4BObLhWDFCITzudoM9cjboPPNsu2egbyNK9bEi5OoOyQRDr6hsh7buK
-	3a+RkOaxTIA6HjQHrRXu0nNHWh8KYi9ewKhznDPVYf7cwd8H4alH4IcdtPF76ke0AFr0t4fNLLC
-	8PKasDg2moLqB7aEBJBB+PDFLinVarJpiLYO/v323Qa9RKVkLft9svineQ==
-X-Received: by 2002:a17:907:3d56:b0:c25:6c9a:88bc with SMTP id
- a640c23a62f3a-c29b87339e8mr775899466b.19.1789467791028; Tue, 15 Sep 2026
- 03:23:11 -0700 (PDT)
+        bh=PDmTn3anCnjZEAou9hrMuvIHzai6E6SOKUBtirHS8WY=;
+        b=QmiRIKvKQTP+OzzWIJt5ghEh0mBUzrC44wiKEfQD4YvYW+GDC0TzLsZrS1Y4Tdp5AW
+         HBMNTSLa9rIh7sVb23tLnrFTSj2CDA913fwXi2M+rjlp/YI14Yhu6+cagwAqvInjhyNR
+         wL0VaL0iXvYk1dBxSSO9b0EAOlN/idsry6Vw9VspRwoXNlbwpsaCW1WlaqJooNQ3O/7B
+         JH9Xey25g5O84EjpFPsXoL83TRywRxzxEYaCdYGLFA4mpkS9ikGx1Rq7O1klDTZopr1N
+         cpf1DlZmkUf1rduVjdERX9g5UT3kwHVpx/8b1uUIoNRQE5CbmdI6ZiZaK6PavoYZJo1q
+         Rskg==
+X-Forwarded-Encrypted: i=1; AKwUvBy1s6Rhy1kdakZ/xVsC8vNrDd6rbLBe0HRd8X1LpgAsoymWgzOiS3BgggXeVZCObfEF7TOggvqqIHyo8sA963wPfA==@vger.kernel.org
+X-Gm-Message-State: AFuF++nBSdc7YD01qeCV6Xj8dVU9J/QpDs6y0OBpOdvSozS3g1RbbsWc
+	bc1iu507GjMLg39GXWf+57fu0JvpJEY18AOKvRDBAh073JiVJgT33ZFYBFwCngRmQwnz3Gvk5U7
+	uHAzOedJL6lcfagiDx7uCaYUFdZ0VM2w=
+X-Gm-Gg: AYBFou3cFlXuD+pmNXw5EoqqlGvAfzwtMWu52E7s74cNISNXjDsQ8fSyrmHkMw1eb7f
+	orRV4ff/hRgyoNJvntmPWTf3q80fHOYCG1y4nDoFeujtZroqaMkHcLkCvMvdiQWBw7Flx+je5O2
+	Fd08SsnlKtjE+usw+PDGVaw+YpFEhwR1isDKksIjPIRPhp9MUGbGZigOPmB0J+/wthdz3PMS6l+
+	BaTeSO4WCT8TUjT1yNsYR8HQeshrIRxCwM0uAEL4N7mICDYZ5GcTLYdyEVelaX70+rMkV8kohvE
+	+uRJpIy6B4OWijQw2WXs+h+A1KO7F0pqCUCvGBs4BDc29Wsrwvzf6WCKYQ==
+X-Received: by 2002:a17:906:6a01:b0:c26:2205:3df8 with SMTP id
+ a640c23a62f3a-c29d7717424mr36060866b.9.1789467977119; Tue, 15 Sep 2026
+ 03:26:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913185849.907479-3-coiaprant@gmail.com> <178941747711.22033.8495700704733189874@kernel.org>
-In-Reply-To: <178941747711.22033.8495700704733189874@kernel.org>
+References: <20260913185849.907479-4-coiaprant@gmail.com> <178941747926.22033.15174869537556409251@kernel.org>
+In-Reply-To: <178941747926.22033.15174869537556409251@kernel.org>
 From: Coia Prant <coiaprant@gmail.com>
-Date: Tue, 15 Sep 2026 18:22:59 +0800
-X-Gm-Features: AcwNN1XIwap_FwM1kV5GNhNfjY4yI0txPnJoW2RyomCTNzqIwhUfgmMQ2h9aiaE
-Message-ID: <CALj3r0ge_AVi=jrUZh_T8cEt954S_Ah7Hi4QxkccjEm6zug_Ag@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 02/11] dt-bindings: phy: rockchip:
- naneng-combphy: add rockchip,sgmii-mac-sel property
+Date: Tue, 15 Sep 2026 18:26:04 +0800
+X-Gm-Features: AcwNN1ULwDCN22NcSTGJGIqUo7wEAVDbHGW4RjkupXf6vRbCRoH1F1Vq6Gp7hg4
+Message-ID: <CALj3r0hg6kchV72wSv0ybPVqG93D4_QnB-diFmW45jLZwoP_cA@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 03/11] phy: rockchip: naneng-combphy: add
+ SGMII MAC selection for RK3568
 To: netdev-bot+sashiko@kernel.org
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
 	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
@@ -113,65 +113,136 @@ Content-Transfer-Encoding: quoted-printable
 >
 > Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 0 =C2=B7 Low: 1
 >
-> - [Low] Concern (validated as NOT a defect in the series context): the
->   binding adds `rockchip,sgmii-mac-sel` while, at this commit alone, no=
+> - [Low] In rk3568_combphy_cfg() (drivers/phy/rockchip/phy-rockchip-
+>   naneng-combphy.c:881-882) the newly added write of pipe_sgmii_mac_sel=
 =E2=80=A6
 >
 > --
 >
-> dt-bindings: phy: rockchip: naneng-combphy: add rockchip,sgmii-mac-sel pr=
-operty
+> phy: rockchip: naneng-combphy: add SGMII MAC selection for RK3568
 >
-> This adds an optional rockchip,sgmii-mac-sel property to the naneng-combp=
-hy
-> binding so a board can select whether the RK3568 SGMII interface is route=
-d
-> to GMAC0 or GMAC1.  The property is restricted to the RK3568 compatible v=
-ia
-> the existing allOf conditional and defaults to 1 (GMAC1).
+> This adds a "rockchip,sgmii-mac-sel" DT property to pick whether the RK35=
+68
+> SGMII interface is routed to GMAC0 or GMAC1 via PIPE_GRF_XPCS_CON0 bit 1.
+> The value is read in rockchip_combphy_parse_dt() and programmed from the
+> PHY_TYPE_SGMII branch of rk3568_combphy_cfg().
+>
+> Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TR=
+M%20Part1%20V1.1-20210301.pdf (Page 229)
+>
+> One question about the commit message wording:
+>
+>     The hardware reset value is 1 (GMAC1). If the property is set to 0,
+>     the driver routes SGMII to GMAC0; if set to 1 (or omitted), it
+>     remains at GMAC1.
+>
+> Does "or omitted ... it remains at GMAC1" match the code?  The write in
+> rk3568_combphy_cfg() is unconditional, so in the omitted case the driver
+> does not leave the bit alone, it actively programs it to 1.  See the
+> inline comment below.
+>
+> > diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drive=
+rs/phy/rockchip/phy-rockchip-naneng-combphy.c
+> > index 7843356a4dd47..7b867e7520064 100644
+> > --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+> > +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+>
+> [ ... ]
+>
+> > @@ -375,6 +377,9 @@ static int rockchip_combphy_parse_dt(struct device =
+*dev, struct rockchip_combphy
+> >
+> >       priv->ext_refclk =3D device_property_present(dev, "rockchip,ext-r=
+efclk");
+> >
+> > +     priv->sgmii_mac_sel =3D 1;
+> > +     device_property_read_u32(dev, "rockchip,sgmii-mac-sel", &priv->sg=
+mii_mac_sel);
+> > +
 >
 > [Severity: Low]
-> At this commit alone, is rockchip,sgmii-mac-sel read by anything?
+> Since device_property_read_u32() leaves the output untouched on failure,
+> rockchip_combphy_parse_dt() ends up with priv->sgmii_mac_sel =3D=3D 1 bot=
+h when
+> the property says 1 and when the property is absent.  Is there a way for =
+the
+> driver to express "leave the bit as firmware left it"?
 >
-> rockchip_combphy_parse_dt() in
-> drivers/phy/rockchip/phy-rockchip-naneng-combphy.c does not look it up,
-> struct rockchip_combphy_grfcfg has no pipe_sgmii_mac_sel descriptor, and
-> no in-tree DTS sets it, so a kernel built from exactly this commit would
-> silently ignore the property.
+> Before this patch the kernel never touched PIPE_GRF_XPCS_CON0 bit 1, so a
+> board whose bootloader routed SGMII to GMAC0 kept that routing.  With thi=
+s
+> change, a DT that instantiates the combphy as PHY_TYPE_SGMII but does not
+> carry the new property has the bit re-programmed to GMAC1 on every
+> phy_init().  Can that break such a board's SGMII link?
 >
-> This resolves itself later in the same series: "phy: rockchip:
-> naneng-combphy: add SGMII MAC selection for RK3568" adds the parsing
->
->         priv->sgmii_mac_sel =3D 1;
->         device_property_read_u32(dev, "rockchip,sgmii-mac-sel", &priv->sg=
-mii_mac_sel);
->
-> along with the RK3568 pipe-GRF descriptor
->
->         .pipe_sgmii_mac_sel     =3D { 0x0040, 1, 1, 0x00, 0x01 },
->
-> and the write in the PHY_TYPE_SGMII path of rk3568_combphy_cfg(), and
-> "arm64: dts: rockchip: rk3568-photonicat: enable SGMII LAN port" adds the
-> first user:
->
->         &combphy2 {
->                 rockchip,sgmii-mac-sel =3D <0>;
->                 status =3D "okay";
->         };
->
-> So this is noted only for the record, since the binding and its consumer
-> being split across consecutive patches is the normal series layout.
->
-> The remaining point is a design question rather than a bug: is a raw
-> uint32 MAC index the interface preferred here, or would a phandle to the
-> GMAC controller node be a better fit for describing the routing?
+> >       priv->phy_rst =3D devm_reset_control_get_exclusive(dev, "phy");
+> >       /* fallback to old behaviour */
+> >       if (PTR_ERR(priv->phy_rst) =3D=3D -ENOENT)
+> > @@ -873,6 +878,8 @@ static int rk3568_combphy_cfg(struct rockchip_combp=
+hy_priv *priv)
+> >               break;
+> >
+> >       case PHY_TYPE_SGMII:
+> > +             rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_s=
+gmii_mac_sel,
+> > +                                          priv->sgmii_mac_sel > 0);
 
-The property maps directly onto a single bit in the combo PHY's own
-GRF register (PIPE_GRF_XPCS_CON0 bit 1), which selects whether the
-SGMII lane is routed to GMAC0 or GMAC1. It describes a mux setting
-inside the PHY, not a relationship to the GMAC node. A phandle would
-introduce an extra dependency edge between the combo PHY node and the
-GMAC node for no benefit, and the raw value matches how the BSP and
-the surrounding GRF properties describe similar muxes.
+The hardware reset value of PIPE_GRF_XPCS_CON0 bit 1 is 1 (GMAC1),
+so programming it to 1 when the property is absent produces the same
+result as leaving it alone =E2=80=94 the bit is already 1 after reset. The
+"remains at GMAC1" wording in the commit message reflects that.
 
-So I'll keep the uint32 form.
+SGMII has never been functional on RK3568 in mainline before this
+series, so there is no existing in-tree or out-of-tree board whose
+SGMII link could be broken by this. A board whose firmware happened to
+route the bit to GMAC0 still cannot use SGMII with a mainline kernel
+before this series, and will need the new property to describe that
+routing once it can.
+
+> [Severity: Low]
+> This write always happens, including in the "property omitted" case, and
+> rockchip_combphy_param_write() sets the write-enable mask along with the
+> value:
+>
+>         tmp =3D en ? reg->enable : reg->disable;
+>         mask =3D GENMASK(reg->bitend, reg->bitstart);
+>         val =3D (tmp << reg->bitstart) | (mask << BIT_WRITEABLE_SHIFT);
+>
+>         return regmap_write(base, reg->offset, val);
+>
+> so with priv->sgmii_mac_sel defaulting to 1 the register gets
+> (0x1 << 1) | (GENMASK(1, 1) << 16), i.e. GMAC1 is forced.  Would it be
+> better to only issue this write when the property is actually present?
+>
+> A second question: bit 1 of PIPE_GRF_XPCS_CON0 is a single SoC-wide mux,
+> while the property sits on a per-PHY node.  If two combphy instances that
+> share the same rockchip,pipe-grf syscon are both brought up as
+> PHY_TYPE_SGMII with different property values, the last phy_init() wins a=
+nd
+> nothing is reported.  Should conflicting values be rejected or at least
+> warned about?
+>
+> >               rockchip_combphy_param_write(priv->pipe_grf, &cfg->pipe_x=
+pcs_phy_ready, true);
+> >               rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_ph=
+ymode_sel, true);
+> >               rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_se=
+l_qsgmii, true);
+> > @@ -984,6 +991,7 @@ static const struct rockchip_combphy_grfcfg rk3568_=
+combphy_grfcfgs =3D {
+> >       .con3_for_sata          =3D { 0x000c, 15, 0, 0x00, 0x4407 },
+> >       /* pipe-grf */
+> >       .pipe_con0_for_sata     =3D { 0x0000, 15, 0, 0x00, 0x2220 },
+> > +     .pipe_sgmii_mac_sel     =3D { 0x0040, 1, 1, 0x00, 0x01 },
+> >       .pipe_xpcs_phy_ready    =3D { 0x0040, 2, 2, 0x00, 0x01 },
+>
+> For what it is worth, the only in-tree SGMII consumer at the end of this
+> series, rk3568-photonicat.dts, sets rockchip,sgmii-mac-sel =3D <0>
+> explicitly, so no upstream DT changes behaviour today; the concern is abo=
+ut
+> out-of-tree or ported device trees and about the commit message wording.
+
+There is no in-tree case where two combphy instances are both brought
+up as PHY_TYPE_SGMII with different values. This is a single SoC-wide
+mux and only one SGMII link exists on RK3568, so the situation cannot
+arise on real hardware. I'll leave it as is.
