@@ -1,157 +1,180 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010071.outbound.protection.outlook.com [52.101.228.71])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247C144B66B;
-	Wed, 16 Sep 2026 11:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789558654; cv=fail; b=YbTBBy5FhhEciPrC6xw2edv24guWl0qJjaR8OcImrHYQJqvP1uUAlvFcSuGpUC14Oi5SzHaFcrMGGt+FukQQxIdHA0Gx+vLLnYFICooh2l5II1LdQTCN6B6pz190mO8ksAgYOG4u6dHFuELNhWuLn+fkSS/GatHJDg4M1HBT2Nw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789558654; c=relaxed/simple;
-	bh=8NLVU2iMenIyya9CPc4OAkt7XVamWgkEMZqzOM6bVkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JERA5rm5AndMEdQcPxFIgiAj+1JJxAXveMgKjJZtVVRwwdsgro/CFFBouFbfwnZpSbJW298fJSooIE7vFFfzldIgHysXIXBfkLPWF27G72+KAN3ZATZiekvzwfdh0U5ZN/zEgIbEAwPWjjMB0k5j53xuO2380/rwst/FT8kiD1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=CFveK/oC; arc=fail smtp.client-ip=52.101.228.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB014BD108;
+	Wed, 16 Sep 2026 11:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789559012; cv=none; b=BAqLmInZiuvf6rY1FACXS74/5+9AuPXcPvxotQtEpGHxqJntgk1c76Olm1pR37b2XwLCH0TP8NGQwpACh5ic3sOzX8f7YxZljx/SY3AZ3lh7q4jCnKTu4G4pKPpnGukXE9udVhKNZRmMMySLy+/hAGINipxnrV9AFPD1GmWFcrQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789559012; c=relaxed/simple;
+	bh=goppTDHzWaqosN/1Y+/NEdVF1fbVuJ4qxiiCvPvpA5Q=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iN44HysxQQWfA/ejXATp/epjpKpTH0MWwfV95d4yEvzHZt0+3J/mMG+Sg9QrclGXlcR7J+zA2tTPtAOkyW3vYearjI3VARjj1R3ZAdiWAJV4xvKAFoePZ96AGkBduhAlY04ZQZ/W/iKBMK35n3rmBN23hTgBbsJ6ia1nxxRRubM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXtGdBVY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="CFveK/oC"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I22KuAZh31+v9Pd+fBUKIdGH1PkZV5iHZO0xRrG8pQ66RlUGqMliI1s3DXmBxjZ+1s7JJwFy9tdaDjKwswHdkMvZNLexIYCh++v6uGko3fzZEmhqMsHgpcNaiPIvItT43uIm61z8T+aWMwSwccgRRXVbbO3sTcuEWUPbGAs9nO/u+L4uP7SVsYch9CXLsjx4TzASfuw7EPf22oE0doma9UFNDqU1tiyb8biBI2WuYl4AE4f6cSbfKaP7rr77ri5iOX9pmh/KQYj2yRW3AqShV3h+s+68X0Yfx+xULQvQNt6s4NO6xs65nE98rX82DP22AyFNilYdurak1eM+biGWVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PbmcSxLGv1kWsaWjoLBg+aRRoNZ0mDh0k6mrtGax8N4=;
- b=ngi4o0jiUV7XXXMv6RFD6i304JoomHMpsQWfOoBsOjjfTC+Vtw+hUyf+w5twc79dG6pzyO6/sA2IHIRWLFsx0jr9fAK09+T0Ulj2HX9v0XVZFQ7KT247U30T46sGcDe9g2OOX6mzNSyb+7JUNsH8uVvtLTuvZVutM4/tQltX18l7I6OIJlfWO5ly0MNfZL6UDWbFzBhOxa3YdcLPn91+mSYy36+c1Nff6rfDBlAExxcHmxcpXXf5rYIzQwgqPstC3wWsKbA0+eRlYrz4cKHsGh4i6kek3jWa7vXbnsxDB/yraCGob71rGg4K2YY/J0bq5+QYKx7q3svCszhbpysLsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PbmcSxLGv1kWsaWjoLBg+aRRoNZ0mDh0k6mrtGax8N4=;
- b=CFveK/oC66t/FTKszqece43CnkN6/M45/Bm/tA2cD9lei7jgSQ+cA7Sd0a04SuNlJyJsZTXlyKOC+a/IQImbeWSsJ5Y3WBNnffQI+A8/i8PX0JI3lrpHHNT5B8gygIH/1mZhriAHknwHeq9kod5x0/OeStknAn7Sh6tpMDDv7wk=
-Received: from TYCP286CA0224.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c5::8)
- by TYWPR01MB8558.jpnprd01.prod.outlook.com (2603:1096:400:171::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.11; Wed, 16 Sep
- 2026 11:37:10 +0000
-Received: from TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5:cafe::a5) by TYCP286CA0224.outlook.office365.com
- (2603:1096:400:3c5::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.11 via Frontend Transport; Wed,
- 16 Sep 2026 11:37:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005621.mail.protection.outlook.com (10.167.240.52) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
- via Frontend Transport; Wed, 16 Sep 2026 11:37:10 +0000
-Received: from vm01.adwin.renesas.com (DEU-5CG20946WF.adwin.renesas.com [10.226.92.205])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 48FF03000442;
-	Wed, 16 Sep 2026 20:37:06 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: geert+renesas@glider.be,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com,
-	p.zabel@pengutronix.de,
-	niklas.soderlund+renesas@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Subject: [PATCH 2/3] clk: renesas: rzg2l: Add missing of_genpd_del_provider() call
-Date: Wed, 16 Sep 2026 11:36:36 +0000
-Message-ID: <20260916113637.86947-3-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
-References: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXtGdBVY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C741F000FF;
+	Wed, 16 Sep 2026 11:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789558994;
+	bh=cpTUrOF05Dcy1Bk2KAYOIW3v5WZK34oP8mQ9ZpYwf3Y=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=jXtGdBVYViMXZx0efLs39QetMVB182/hwnwQoOEpr/FmlYyMa9eEjJkqeG1CHn0/W
+	 EBPeKSVsA26oHySGGsVqPfM7yce2TokzlWOWaYC6xe5WVYWiNSEA2rlgOwFSUAWtp+
+	 PZjbjCG1gg70mJgZhju5RkL8wbzFvj96vsAh8YosIv4uCAEjo4sQbfryJksJGMqx7/
+	 cc5MUe/E1jfbzTtp890pdLGNb06yzp+UAxfvDEtfcEb9NW/PUxd366RlPy7xgFY1Ry
+	 0nJwlai3ya16/Onz2HC+Vt1bSkl1F5vIcp2kZYCtqk+osLXAOCtLIQRbnaXnXDnwXE
+	 KewRDn8pgj74Q==
+Subject:
+ Re: [PATCH v4 1/2] net: pcs: rzn1-miic: Fix config array initialization
+From: netdev-bot+sashiko@kernel.org
+To: khendry@reliablecontrols.com
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Wed, 16 Sep 2026 11:43:13 +0000
+Message-ID: <178955899323.22033.2372714834297554596@kernel.org>
+In-Reply-To:
+ <20260914-rzn1-miic-fix-array-v4-1-069112feec86@reliablecontrols.com>
+References:
+ <20260914-rzn1-miic-fix-array-v4-1-069112feec86@reliablecontrols.com>
+X-sashiko-severity: High
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005621:EE_|TYWPR01MB8558:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 81995b83-9a17-41f5-0c75-08df13e6d847
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|23010399003|56012099006|11063799006|10067099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	0aeEIt6mSYiiLYtc/h/pjb9hulCbVBQ3dTG/6ExHuOW8IK7hSG+CLdheLpfsxL6MStIynQjeSmN3f72Le5Q6jp2wzb6ynNtpIHM2nhH36e5AxyWSh0ibK8t2A2Hu/o+qHa/1Ct8KLf4oNDOQO80bjREcXLQZ0dyjLJV46KIulixo6MFBXLQtusgdm1KHgXD6nS1MjdpXuSHCeqAhf/gU86NnbsmQgydEoWo+jqLLXBgAYeMsbeGxHXd8BTz8ovwxwLlW2VlPKZum9hHxoZ3MwHL33th6oyXrzKSeGM2rtSreWL2Eq6CNJ67QAz++q0DOLR0Jj4bNDxj4iMBwsBnx7zojPwh0paVGUP/JOdwEOXJuGCTokxLl07qHoS9wJRykkyBfO7t+y8xmu8e8yb9NB8S67crsg6NZ5mzxHcigQh+LF5oLc95Ey8ute3/uC0/alPdufsl2T7oTI8po+81IXuxTGRuf6blJXf4HWNERwwkS79ptHASQMlvf4ctyigeNoGLdmcSpLVdIN17mxOfgeZEl8TmZJWPPWBhp3kCj1GQlJoAYe9qCq+x6WWm5acQnKog6h7mvMB0UYqCQS6aFCBOG2TgbaHMJuYMEqx7ut0DgAPIqVkNo3D5oVc+pW6uuNbilwEdMZ2/7ygZg0KcjMg0scrxOridh0EWCNpWouz6OupToBKwSnvD4zdn7wPHFisW+6xApvylO4qyPB+RuFA==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(23010399003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	gnTY8Uyf5zH2mDv1Zgyb9oKnOw9mPLBEeoUANbuRY4qldFplBAUX2c/MuffMsvlVvMRdOWVm0/KMWg7bjyd8LmzPnqOTHk57QnAPlwY8NzAz4wjQsC8A0DRBu8VdR+JHTILHimujEpvcXSIsG2q1zmeN898ctxKu7UgFokRzZpscJ1N8PxKPJFtwlCucOh5mHONNKlRV55NbcL5SzTpz3sam+RvOdqhZ4UrZg39vMROn0YPQkB/QeuKpX0OUNuElG+jId+VOLBi9WkLiKDAO858H4GnXlblwonOWwH4KWY/xDgdDWAFcvt6EHc2lG3EvRF6jQYHVVa0xIggUwT1qh1rtLuYvBCHBpf9JnqnRN5NxcRaYEm6tjxyrNok1MRdfxBQos50RG0PRQLF3NASirRI4C9kzYmH1lKVQpI+ELvgahYSbOGv0c2Q+uhaNEov0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:37:10.1346
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81995b83-9a17-41f5-0c75-08df13e6d847
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8558
 
-The RZ/G2L CPG driver registers the PM domain provider, but doesn't
-remove it on probe failure, leaving a stale provider behind.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue(s) to consider:
 
-Add the missing of_genpd_del_provider() call on the probe error path.
+Critical: 0 · High: 1 (1) · Medium: 0 · Low: 0
 
-Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- drivers/clk/renesas/rzg2l-cpg.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+- [High] One-byte heap out-of-bounds write in miic_parse_dt() on the
+  RZ/T2H (renesas,r9a09g077-miic) variant, which the series' own port-…
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 7f8decef92fd..01304b078d6f 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -2590,7 +2590,10 @@ static void rzg2l_cpg_detach_dev(struct generic_pm_domain *unused, struct device
- 
- static void rzg2l_cpg_genpd_remove(void *data)
- {
--	pm_genpd_remove(data);
-+	struct rzg2l_cpg_priv *priv = data;
-+
-+	of_genpd_del_provider(priv->dev->of_node);
-+	pm_genpd_remove(&priv->genpd);
- }
- 
- static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
-@@ -2609,11 +2612,13 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, genpd);
--	if (ret)
-+	ret = of_genpd_add_provider_simple(np, genpd);
-+	if (ret) {
-+		pm_genpd_remove(genpd);
- 		return ret;
-+	}
- 
--	return of_genpd_add_provider_simple(np, genpd);
-+	return devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, priv);
- }
- 
- static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+Pre-existing issues:
+- [High] Unbounded array index / wild pointer dereference in
+  miic_dump_conf() (drivers/net/pcs/pcs-rzn1-miic.c:566-580).
+
+--
+
+net: pcs: rzn1-miic: Fix config array initialization
+
+This corrects the memset() in miic_parse_dt() so that the whole
+kmalloc_objs() allocated dt_val array is initialized to
+MIIC_MODCTRL_CONF_NONE, instead of just the first byte. While looking at
+the surrounding code a couple of questions came up about how dt_val is
+indexed and later printed.
+
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+> index 2b72fa98ddf13..cb74861e823c8 100644
+> --- a/drivers/net/pcs/pcs-rzn1-miic.c
+> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> @@ -683,7 +683,8 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
+>  	if (!dt_val)
+>  		return -ENOMEM;
+>  
+> -	memset(dt_val, MIIC_MODCTRL_CONF_NONE, sizeof(*dt_val));
+> +	memset(dt_val, MIIC_MODCTRL_CONF_NONE,
+> +	       sizeof(*dt_val) * miic->of_data->conf_conv_count);
+>  
+>  	if (of_property_read_u32(np, "renesas,miic-switch-portin", &conf) == 0)
+>  		dt_val[0] = conf;
+
+[Severity: High]
+Now that the size of this buffer is spelled out as conf_conv_count bytes,
+can the index used a few lines further down in miic_parse_dt() run one
+past the end on the RZ/T2H variant?
+
+	for_each_available_child_of_node(np, conv) {
+		if (of_property_read_u32(conv, "reg", &port))
+			continue;
+		...
+		/* Adjust for 0 based index */
+		dt_val[port + !miic->of_data->miic_port_start] = conf;
+
+For rzt2h_miic_of_data the relevant fields are:
+
+	.conf_conv_count = 5,
+	.miic_port_start = 0,
+	.miic_port_max = 4,
+
+With miic_port_start == 0 the index is port + 1, so a child node with
+reg = <4> and a renesas,miic-input property writes dt_val[5] in a 5 byte
+allocation. The companion patch "net: pcs: rzn1-miic: Verify port number
+from dtb" bounds port by miic_port_max, but since miic_port_max is 4 for
+RZ/T2H the reg = <4> case still passes the check and still writes one byte
+past the allocation.
+
+Is miic_port_max = 4 intended here? The hardware description elsewhere in
+the driver only covers four converters:
+
+	static const char * const rzt2h_index_to_string[] = {
+		"SWITCH_PORTIN",
+		"CONV0",
+		"CONV1",
+		"CONV2",
+		"CONV3",
+	};
+
+and the binding restricts reg to enum: [0, 1, 2, 3] for the r9a09g077
+compatibles. Would bounding the computed index by conf_conv_count (or
+setting miic_port_max = 3 for RZ/T2H) be more appropriate?
+
+On RZ/N1 the same expression stays in range because miic_port_start == 1
+makes the index equal to port, with a maximum of 5 in a 6 entry array.
+
+[Severity: High]
+This isn't a bug introduced by this patch, but since the same dt_val array
+is involved: the values stored here are used directly as a string table
+index in miic_dump_conf(), without any range check.
+
+miic_parse_dt() stores the raw u32 DT properties into the s8 array:
+
+	if (of_property_read_u32(np, "renesas,miic-switch-portin", &conf) == 0)
+		dt_val[0] = conf;
+	...
+		dt_val[port + !miic->of_data->miic_port_start] = conf;
+
+and when no MODCTRL entry matches, miic_match_dt_conf() unconditionally
+dumps them:
+
+	dev_err(miic->dev, "Failed to apply requested configuration\n");
+	miic_dump_conf(miic, dt_val);
+
+miic_dump_conf() then does:
+
+	for (i = 0; i < of_data->conf_conv_count; i++) {
+		if (conf[i] != MIIC_MODCTRL_CONF_NONE)
+			conf_name = of_data->conf_to_string[conf[i]];
+		...
+		dev_err(miic->dev, "%s: %s\n",
+			of_data->index_to_string[i], conf_name);
+
+conf_to_string has 14 valid indices (0..MIIC_HSR_PORTB) and
+rzt2h_conf_to_string has 9 (0..ETHSS_ETHSW_PORT2). A DT value outside
+those ranges never matches a table row, so it always reaches this path,
+and a value above 127 is truncated to a negative s8. Can this read a
+pointer sized word from outside the string table and then dereference it
+in the %s conversion?
+
+struct miic_of_data already carries the bound, but it does not appear to be
+read anywhere:
+
+	u8 conf_to_string_count;
+	...
+	u8 index_to_string_count;
+
+Would it make sense to validate conf[i] against conf_to_string_count
+before the lookup, or to reject out of range renesas,miic-input and
+renesas,miic-switch-portin values in miic_parse_dt()?
+
 -- 
-2.34.1
-
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260914-rzn1-miic-fix-array-v4-0-069112feec86%40reliablecontrols.com
