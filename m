@@ -1,160 +1,137 @@
-Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5074D4F7981
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 13:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2143E9C17
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 14:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789565602; cv=none; b=MmVvpCPBsfNOhLf5tNDcInrJwLVD21KUB6407n1bRteeY4g5UO/bTeYR3Uv943xhUUPAeS9IhS//A8dnOwyMvnhYP/C3eBFXSwC8lz/vTcocv+JnlQVw8KMF6RyE8fLcmQ8m2lmBOvilGWnTMqgvUjDVK67NAculwIbdh7p0t7Q=
+	t=1789567298; cv=none; b=Yc6v4dOHy/Av39bl4wh5i4SmwTGeLgwKeNCHkrck60Ol3jIQqf1N7l8H20i2qR+j/aTum37XAfaK8RfFValTwKsyf7OBjZvHes3DCTcDlGsUr6KCDZw+DA2fZ83RYArBObphTT2ui8FLUDTIUDfp7JnvUKzL3fafuDLr0UNOeyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789565602; c=relaxed/simple;
-	bh=mb2XQ1KGNSPMgyuxBLUyXCoX4VmOMT1Nq+RjhXhPzMY=;
+	s=arc-20240116; t=1789567298; c=relaxed/simple;
+	bh=LOZA1HywhSNmDK1UoZyyxVq3wzA5V9QKlib/CveDAJk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rWVc0fvE8BLJBJO5m/hP4GWl/tG7yIftV7E05mvKknGaneWw1EVaoxcMD8inzb7lVsinrHRklkxjZo3BW388yQloGzYt7bxC+jLnzalrKwaWYQctK0hwKSyz8vzf8ptzQtak00W2kxsxU4T5FlV6exX/2TIMPurq6FP8xwjNBgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
+	 To:Cc:Content-Type; b=ZOYYhxe2Z6qcQCcx1LQSq4UqN5IGPMIyPsX+iweDl0lvQ+2NUkIFXWgiWqE/prVXgyNrinaW+v8gguJXSr/JILnOCTz4cK9abUxIespWKzV+Y9QpP3Tc5aWPRaJxW9n+W26ki4FfJdA3kRJ5RdThyCOFb1R/ctc9xdUl4TeRFfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-7856441f7dcso346615137.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 06:33:15 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c294ad260fdso316522566b.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 07:01:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789565594; x=1790170394;
+        d=1e100.net; s=20260707; t=1789567295; x=1790172095;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=KZim0+JELLYTz16Ra4InawCH9gXGh4ZTsyUS8+i0IEA=;
-        b=w9OnBqhv5q7c8GzZveolrszGYKAsqD8Er2PHMsrqSZxzhvjgcAXTBegSr0umPIr7rZ
-         tjlSq2BWjlGW3d6niomZ1DYggsP4quzzT+DhjB1w2bocV38ogvMx4kQeFRf/xlaHXtN8
-         s9kBV1noQk+5mSk/JPIkoRpsBuKhiaCdmKXdfZ/ZTKPq07FF+KOYkoN/WqytZl98bS8x
-         SwqfMaz1d+pxOu3lDA7nQnkYUrOuTVN+VLNiE/PB5jQwYnElP5IaMTUO1BM3SZFAOfOe
-         1IaQaFs71ytGr0XuVqAd5jf4gcEOQDwPu5i27NecvRf9eEt+2ZWuDX3Emmw8SDQ6BHjc
-         ExCg==
-X-Gm-Message-State: AFuF++ls3qL2cjjrjErTt58kOjxYOmC/pqxTe/Jhk+IxhJ6dkws+vt0Z
-	188py9d/a3vLxmJHOqGPApZQlfLbiHbpQyLk6SUIqnIyuDNCmlslidsfXEFS4xz1VOI=
-X-Gm-Gg: AYBFou2l+fbQ7dp9uERfYv9j9dJD8eDMxoWEAGOpOPMxowzu93u2aFWjgvEoKNZi4Sp
-	YsEQ8nZVpGg5LhIgVeQz3r3xa/uok5WlcdjT9RYA05VaDjUVSvxPO03iPcGW7zuP6Ht6lIfO4ye
-	r+ELb/mVDiy6u1eEdIeYPxNmWqgiUruTrEWoUwcbqgdfChcVx9IXmsd3a3o8Y4GQcajhlWK6eDg
-	UkYM3JRH7umX+Ryl6OlFN+wrlfUDzVNNf9s/BXY/Tp8UcJPyAPCcsAs59pGdMPTnnSladteXl4G
-	ya1d2vAezBJt8YIVTxr1rX2Pou1A3gX2sYSlhuZzXwRgR//32gyhbVotMv1Nveb9GGwZ1R2YPBU
-	L0PQKpqbfHpb31kub74PfoBUVb/Q9FI7HulxainraMhSfJx1JWVpmhgKxguaxH6s6/wyvWtBTDV
-	NE19fDs6k8RZqqPdiiHJ2qE6nTCFXKHtd2ny9XT0YxSQcNdXMy0mYuWa/qCYqHKkuxskkRG4Kug
-	cWc/Ja4zWsmIrN/9xgcNRji317tYdGjs8sS
-X-Received: by 2002:a05:6102:84da:10b0:7a0:eb10:79b5 with SMTP id ada2fe7eead31-7a0eb2f16c8mr1407639137.10.1789565593511;
-        Wed, 16 Sep 2026 06:33:13 -0700 (PDT)
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-79fb1148f57sm2892242137.4.2026.09.16.06.33.13
+        bh=YB5wJdJp7iKTK9TemjyuyLSregIs6jY3r0wL3mFG0oc=;
+        b=NyAvxKipXrBBFw5LlY0VzLm3PQtYYUtOf81uJkbliZ/aIa3M03ImwoAPG4x+c3BTvu
+         IDFIK04xLixemnn/xring4J8DFQUtzqqdZPL4zFL8gO2I5M5assU4wNEtXAQU5RuTgYu
+         KiJnuQ2bTcmGrg1czv2LzHVQ7diXZGkoLBpe4wrQKy3FRZeHI3puRy3oBhgEHkuD0x8c
+         3+zCn7npLZJ4o9k5cMImN7iqWGvNEH06E/iMAWyzzYigdDL1aBJpUPJ37sWKOR51MX7R
+         4WuWTT0IoGFLTQg3e5QLR5x6/MaKLMD+7p9cqhe0kIWTMN9aRpkDo8roDPxwa7grhB8c
+         WxuQ==
+X-Gm-Message-State: AFuF++l/xOD5Qs8hlc7caDnqOkveL/y/1JqYDr5dUHtMSH/VqyIanfBO
+	jdmdEWIX58nljpGXi/+8IiOCJpwtGQ9FAsganQV1VRQkIBN5BnCHOHkK3lXbgagXGzs=
+X-Gm-Gg: AYBFou0jQMQWF0FPxoMhm544S//dg1BckYJc/WxnWldkgqrogCzbAGX629PkPpNHNyY
+	LFo7hLQRksPLA3udpicrlhguRaQA2nsOnXHoIcs0ZcHvirYTcEL6wjHGEGDzUQdUb3kI6BOULC3
+	4YqPM38afMVOaIqTqkaRi778549bC6gish5QhsACBYoL8Od2kpGd5L4HbHxW4/3i7BQgh36hhWP
+	aX81Z1pbNxOeuLK/Tbs/H4E3d6PnwaTV/1yHriNroy7cimtFWRS0JzL8FlCze/Ok+JqkQ6bxfH1
+	m3D7fTXzBO8qHzvgQ//NlxCx5TnqETc+9N7/3VAWgSPf/s7iBJD3UmLm3XWnjK/PACuik+g4jz9
+	KvI1N7zZ/TtJdwy5fbWtdOtmxY2Xlllsh/6W97MBqaCgiM46GZ2l6kpwxC7IwOZjMW8kzF/U3GR
+	dFN8k+442NC3NuwVrQCKukYOPciLO2B/4wmO/GrGBnjc1EONwEUGmBL9zkEmGco68DQo/NzhTng
+	ctnXvhHxzTzz7w5e2a1SAB8KhT9XUseHZ3E
+X-Received: by 2002:a17:906:9c82:b0:c25:5a26:3787 with SMTP id a640c23a62f3a-c29c89688b5mr588452466b.8.1789567294021;
+        Wed, 16 Sep 2026 07:01:34 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c29de453f04sm146183266b.15.2026.09.16.07.01.33
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2026 06:33:13 -0700 (PDT)
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c82bb05ddaso607896e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 06:33:13 -0700 (PDT)
-X-Received: by 2002:a05:6122:1349:b0:5bf:8c77:e89a with SMTP id
- 71dfb90a1353d-5c99ab375f3mr2670104e0c.2.1789565592896; Wed, 16 Sep 2026
- 06:33:12 -0700 (PDT)
+        Wed, 16 Sep 2026 07:01:33 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a5e971c970so2447910a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 07:01:33 -0700 (PDT)
+X-Received: by 2002:a17:907:9452:b0:c25:f7dc:2dc with SMTP id
+ a640c23a62f3a-c29c8bf56d3mr614247266b.29.1789567293068; Wed, 16 Sep 2026
+ 07:01:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260916102520.24288-1-wsa+renesas@sang-engineering.com> <20260916102520.24288-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260916102520.24288-5-wsa+renesas@sang-engineering.com>
+References: <20260912191442.99453-1-wsa+renesas@sang-engineering.com> <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Sep 2026 15:33:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUzvSZUiS9JK2R7doct+NFEFmFy4sZNqerOwER-6wnJ4Q@mail.gmail.com>
-X-Gm-Features: AcwNN1XvSPah2oUTqePVUlnZa47A7Wxsz425P1ob6Q-7r15waklaFxMMFfTjinM
-Message-ID: <CAMuHMdUzvSZUiS9JK2R7doct+NFEFmFy4sZNqerOwER-6wnJ4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] rtc: rzn1: add R-Car Gen5 support
+Date: Wed, 16 Sep 2026 16:01:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
+X-Gm-Features: AcwNN1UfyJCOGSEjRjtYLZ4YGwDs-hH1sGh2EPXUqWFwEQpikBVlS7z89oufr3M
+Message-ID: <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] hwspinlock: add list of locks to debugfs
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.csengg@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-rtc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	linux-remoteproc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Wolfram,
 
-On Wed, 16 Sept 2026 at 12:25, Wolfram Sang
+On Sat, 12 Sept 2026 at 21:20, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> In general, the RTC on R-Car Gen5 is identical to RZ/T2H. X5H is an
-> exception, though, because interrupts are not wired. X5H2 will have them
-> wired again. So, skip alarm setup for the X5H case.
+> To help debugging, offer a list of registered hwspinlocks in debugfs. It
+> will also print the responsible hwspinlock_device and if the spinlock is
+> currently used. It does not show if the lock is taken because of
+> side-effects. Often, reading a lock means actually taking it.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Thanks for your patch!
 
-> --- a/drivers/rtc/rtc-rzn1.c
-> +++ b/drivers/rtc/rtc-rzn1.c
-
-> @@ -503,25 +505,39 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
->
->         spin_lock_init(&rtc->ctl1_access_lock);
->
-> -       ret = devm_request_irq(dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
-> -       if (ret)
-> -               return dev_err_probe(dev, ret, "RTC alarm interrupt not available\n");
-> -
-> -       irq = platform_get_irq_byname_optional(pdev, "pps");
-> -       if (irq == -EPROBE_DEFER)
-> -               return irq;
-> -       if (irq >= 0)
-> -               ret = devm_request_irq(dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
-> -
-> -       if (irq < 0 || ret) {
-> -               set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
-> -               clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
-> -               dev_warn(dev, "RTC pps interrupt not available. Alarm has only minute accuracy\n");
-> +       if (data->broken_irqs) {
-> +               /* All known broken irqs are on SCMP only variants */
-> +               rtc->rtcdev->ops = &rzn1_rtc_ops_scmp_no_alarm;
-> +       } else {
-> +               irq = platform_get_irq_byname(pdev, "alarm");
-> +               if (irq < 0)
-> +                       return irq;
-
-As the DT bindings declare "renesas,r8a78000-rtc" to be compatible with
-"renesas,rcar-gen5-rtc" (which does not set the broken_irqs flag),
-a missing interrupt must not be fatal?
-
-> +
-> +               ret = devm_request_irq(dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
-> +               if (ret)
-> +                       return dev_err_probe(dev, ret, "RTC alarm interrupt not available\n");
-> +
-> +               irq = platform_get_irq_byname_optional(pdev, "pps");
-> +               if (irq == -EPROBE_DEFER)
-> +                       return irq;
-> +               if (irq >= 0)
-> +                       ret = devm_request_irq(dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
-> +
-> +               if (irq < 0 || ret) {
-> +                       set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
-> +                       clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
-> +                       dev_warn(dev, "RTC pps interrupt not available. Alarm has only minute accuracy\n");
-> +               }
->         }
->
->         return devm_rtc_register_device(rtc->rtcdev);
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -860,5 +862,70 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
 >  }
+>  EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
 >
-> +static const struct rzn1_rtc_data rzn1_rtc_r8a78000_data = {
-> +       .has_subu = false,
-> +       .broken_irqs = true,
-> +};
+> +#ifdef CONFIG_DEBUG_FS
+> +static void *hwspin_lock_seq_start(struct seq_file *s, loff_t *ppos)
+> +{
+> +       unsigned long index = *ppos;
+> +       struct hwspinlock *hwlock;
 > +
->  static const struct rzn1_rtc_data rzn1_rtc_rzt2h_data = {
->         .has_subu = false,
->  };
-> @@ -531,7 +547,9 @@ static const struct rzn1_rtc_data rzn1_rtc_rzn1_data = {
->  };
->
->  static const struct of_device_id rzn1_rtc_of_match[] = {
-> +       { .compatible   = "renesas,r8a78000-rtc", .data = &rzn1_rtc_r8a78000_data },
->         { .compatible   = "renesas,r9a09g077-rtc", .data = &rzn1_rtc_rzt2h_data },
-> +       { .compatible   = "renesas,rcar-gen5-rtc", .data = &rzn1_rtc_rzt2h_data },
->         { .compatible   = "renesas,rzn1-rtc", .data = &rzn1_rtc_rzn1_data },
->         { /* sentinel */ }
->  };
+> +       rcu_read_lock();
+> +       hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
+> +       *ppos = index;
+> +
+> +       return hwlock;
+> +}
+> +
+> +static void *hwspin_lock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
+> +{
+> +       /* Increase ppos here to avoid endless loops. Don't use xa_find_after() */
+
+Do you mean xa_find_after() may loop forever?
+
+> +       unsigned long index = *ppos + 1;
+> +       struct hwspinlock *hwlock;
+> +
+> +       hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
+> +       *ppos = index;
+> +
+> +       return hwlock;
+> +}
+
+> +static int hwspin_lock_seq_show(struct seq_file *s, void *v)
+> +{
+> +       struct hwspinlock *hwlock = v;
+> +       bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
+> +
+> +       seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "in use",
+
+For easier parsing the output, you may want to use a string without
+spaces, e.g. "busy", "active", ...
+
+> +                  dev_name(hwlock->bank->dev));
+> +       return 0;
+> +}
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
