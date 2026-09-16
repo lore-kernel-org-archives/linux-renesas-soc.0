@@ -1,94 +1,112 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58684C651C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 15:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D780D50EC13;
+	Wed, 16 Sep 2026 17:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789573244; cv=none; b=hlrdBpZSxZCEfzv223hUjsN2r7ruMLPlUNqxz/HFIXhT7d/6CB+3VgQA0WQgccmd9kkkVQxf6nBZ62fS5N0HjAAmw4UfPC7aGVnwnQSh0eeqD90DuHz6bZk8Xo7aadHOAPepqEAYQ3huVUN1lcpeL9awpRvY8ipjBx5yTtKe4JI=
+	t=1789580347; cv=none; b=usGE3t3eBdfb3b6BCh9i2xistCQolD4zv3g9IHlDzh9LDq7udDLA2WZUpqqfLt9b9h7ghNb7qqkRqGCl3PMiqGVyYTU4VfN2AlWJr5YUPZxPSP1RrOS7Lo4fLwqV8IfIi5EknSWs6dLRqkbFA8aXTWu1tmo04V39Zc0lv9vmZbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789573244; c=relaxed/simple;
-	bh=9pCihnM3FbjYGVi5wLxsUnfSo47K2lILwYEk6sdnzaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ecRTmbSHg64tduNmNIeR0pF9sgeAq5tAiA0F3XcjFOCo9yfiKe0RO50WHpw8zoYiQTeh7jThcCDmpwOztTnV394G39QNjiAi4LCTyoqR7rF64yLy3DXnkqSkTcYT19TQDsqYwd47DYnqZTrgZbTu0DqtHpVKi3EVVvkTiFbYiP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5c671456e25so2195403e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 08:40:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789573239; x=1790178039;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Fboq+NK6sE1xgxN0EfjzW/gu4Sq+vQLBzrzcGneycFo=;
-        b=yaoXmtkKITM7PABXgcn8voEtYEYr6n35c5uXCjKNKZHWWEwFRYqcn7m65YnjDUs3qd
-         cM6TIMV7LN3yTze8Wyub7JEnpluoMuBPRinTiJGILoEbHSdLWfqa/tbkoPAR7VaAlaqo
-         RfUPMohB4ov2FIBYlRCqmzRETCRqg39nv8CJC9ks5weoqWBjaKm/5TVDFFGiHW9WQzJ6
-         /R+ZuchJzAdaO+8aKqyFMu8LCCjlGtyVMvCZp+cbcrPHcMYPqxXdqXN9EVI3GGBE78cq
-         2vqrMkTD23TR1eloZqqNBjMJTv1QDU323erk3tIksXEg+S2MoGyBC/UvLurY5hDRBTPv
-         7MCQ==
-X-Forwarded-Encrypted: i=1; AKwUvBz1DV7VPFbtO4DxEGPi8o2BMSHQ11BIGEJ+GII6ZPrjc04T6YqLUYdpwGwjczFIMKOdmxmiMOMr3x173zdigkAZow==@vger.kernel.org
-X-Gm-Message-State: AFuF++l9MhQ3e4jLdz8nxZpsEC7lznVMsLGI0t4Naf1/dx6Y/S0TYxym
-	IWs4OOs6lbha1l4i1rw2tIOI64pv7km8jsGeHA9zTOru0ISykl3KdI7LCDLlOwPY9ak=
-X-Gm-Gg: AYBFou0cXU+FDHIGC+7cY6FZB3tH7CH3eOIaUDl08h6P8+olpQGTLr/WJBRIPjAu8aP
-	n6oFtf0NgnqjL5GZYizCxNHgjtegdKONdaia05pbiKdRdIMWipVZixnQ4KYOnJr0GanuP7zGB+i
-	LgEg5ZFOkkpXShLisnvQ+5axfw/vOuO+OkIuo0z4xCG/nf9w4h3z7eGU5SF9Rs7FjVEvGGcWhdM
-	AGblXeRIoEVMKmIV8ffYcyhEBgvAg7Wu6+HFuTz0oV8AUGW8dTS67nTi0kAZPyzyhzgEbKW2BWW
-	vSNpFkdPuLbjlEAuRWd21fZ245wRCV9Ol5JW+1FuHESXHuJawnJxTcRQjSI186dxaU2oXgKrZ7U
-	lybHwkcAaQrpcE653XmQRr9m5k7mrBKb++gz/zflJMRsxds6u7x+88XRR9xMmEl04hVZnxc3FHH
-	F3Esjqlxhuva1hMn0qdzZzbCuTpXGUJ2nAvBVCcpHXBuUu0LAIQSqaJA6IEVOon65OZLUDcbbi4
-	RelRqZnlwU5xFjz6Ts5D7Twqi2GjzLqIMNia2n3
-X-Received: by 2002:a05:6122:6d02:b0:5c7:dcaa:980d with SMTP id 71dfb90a1353d-5c9a559bbdamr63608e0c.1.1789573239568;
-        Wed, 16 Sep 2026 08:40:39 -0700 (PDT)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c9a545f3e7sm52758e0c.17.2026.09.16.08.40.38
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2026 08:40:38 -0700 (PDT)
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5c83fbd23a5so1698511e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 08:40:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBy52uabpZXwQCBE0swXEvIac8gzmUSuBpjTeV8ecMmX9PBS2gMgGotDEmemp+AzOjFC3mPsAeOlt72PbJMO+qbxbA==@vger.kernel.org
-X-Received: by 2002:a67:ec11:0:b0:797:c1fd:9d87 with SMTP id
- ada2fe7eead31-7a1e7943469mr59486137.2.1789573238729; Wed, 16 Sep 2026
- 08:40:38 -0700 (PDT)
+	s=arc-20240116; t=1789580347; c=relaxed/simple;
+	bh=1n2xg/JoPY4kIbe3mE4yyuTv5TFw3hrpgNEEZQHM9qw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q9qpZtx11/2JAegA7tby/KdCpJ7Sjp6CgDgyifvDog0zpYXLBCVngbUvdzEQv6ZuVKoQzSWq7X9JfpsBSkcojazZoqSJ1VJnovBsVReeyM6rwPB9VEH7sz1UmBEKhfR6Nf90liHza7xQaknC9K076E3/oBk3nbYjc9NPQ35dQ8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKjnQsRx; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKjnQsRx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431EE1F0089A;
+	Wed, 16 Sep 2026 17:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789580341;
+	bh=Hw/R8i8meAA1zGDzRH9AGbiNJd1vryQPS42R/yDvgrw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=JKjnQsRxjXBgEg6lmIflMrd91xGrzhV/zR0ZR5jpj+6ZyBStCMoH2fqEYxe/wTOp/
+	 uuVFcEEFaglpcjwXx+GC7nnEhX26Ss2pIXlEsvnNSQFS8l6Pkb1SWxsg1fFup702xH
+	 qTvROjAkedcIHSOdcfIbvx9SPLZry36E0S/Squ0SRlKLJe6CYf5COUDCOzAzEo82A3
+	 8bUtzxO9UaQrhs9PEnKWVE0Fuujc/v+T3pR4YzwGk6wza+NrmSFFCYrxw+QxFEX/uK
+	 jTZzDMzKaGYl2xyTFeOvmyidvxFI1A1EOVCe0XxmCzrX0qyhNj34Ah4Dw+7DVWw88F
+	 WZ17BtYeYwyRg==
+From: William Breathitt Gray <wbg@kernel.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	biju.das.jz@bp.renesas.com,
+	lee@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] counter: rz-mtu3-cnt: Fix runtime PM leak in rz_mtu3_count_enable_write()
+Date: Wed, 16 Sep 2026 13:38:43 -0400
+Message-ID: <20260916173845.1820981-1-wbg@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260916092242.2001358-1-vulab@iscas.ac.cn>
+References: <20260916092242.2001358-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87bj9yvu5a.wl-kuninori.morimoto.gx@renesas.com> <878q52vu4q.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <878q52vu4q.wl-kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Sep 2026 17:40:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWQUiofvEVwE-ShW61nEudqqKd-kYR6yU=yQr1SpB+rEA@mail.gmail.com>
-X-Gm-Features: AcwNN1WZzoCkTGlVWoKiyI76sQkG1ugXvQ56H2D2SN8hXm3ty3CNS1u79jGX7IY
-Message-ID: <CAMuHMdWQUiofvEVwE-ShW61nEudqqKd-kYR6yU=yQr1SpB+rEA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r8a779g0: Add ZG clocks
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Anh Nguyen <anh.nguyen.pv@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2265; i=wbg@kernel.org; h=from:subject; bh=1n2xg/JoPY4kIbe3mE4yyuTv5TFw3hrpgNEEZQHM9qw=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDFmrLj/e/GzDrU2HJ6yt1taZ33FOwu5Wtwej4jn+WP29r +bvqFNl6ShlYRDjYpAVU2TpNT9798ElVY0fL+Zvg5nDygQyhIGLUwAm0veTkWF5e01K96lXYbs4 9on/vXDD/N2j/UIvrE8F8zzwfOS2774swz/1A3fUWTUmMMm3rWRrSn+XLDJpwV/Bw/I75Rta40r 3inMBAA==
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Sept 2026 at 03:54, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> Add ZG related clocks for GSX
->
-> Signed-off-by: Anh Nguyen <anh.nguyen.pv@renesas.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Wed, Sep 16, 2026 at 09:22:42AM +0000, Wentao Liang wrote:
+> When enabling a counter, the runtime PM reference taken by
+> pm_runtime_get_sync() is never dropped if rz_mtu3_initialize_counter()
+> fails and returns an error, e.g. -EBUSY when the channel is already
+> requested. Because priv->count_is_enabled[] is left false, a subsequent
+> disable write also takes the early exit path, so the reference is never
+> recovered. Additionally, if pm_runtime_get_sync() itself fails the
+> device usage count is left incremented while the hardware is still
+> accessed with runtime PM suspended.
+> 
+> Use pm_runtime_resume_and_get() to resume the device and bail out if it
+> fails, and drop the runtime PM reference when
+> rz_mtu3_initialize_counter() fails.
+> 
+> Fixes: 0be8907359df ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/counter/rz-mtu3-cnt.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
+> index 7bfb6979193c..2bfc92bea757 100644
+> --- a/drivers/counter/rz-mtu3-cnt.c
+> +++ b/drivers/counter/rz-mtu3-cnt.c
+> @@ -504,10 +504,15 @@ static int rz_mtu3_count_enable_write(struct counter_device *counter,
+>  		goto exit;
+> 
+>  	if (enable) {
+> -		pm_runtime_get_sync(counter->parent);
+> +		ret = pm_runtime_resume_and_get(counter->parent);
+> +		if (ret)
+> +			goto exit;
+> +
+>  		ret = rz_mtu3_initialize_counter(counter, count->id);
+>  		if (ret == 0)
+>  			priv->count_is_enabled[count->id] = true;
+> +		else
+> +			pm_runtime_put(counter->parent);
+>  	} else {
+>  		rz_mtu3_terminate_counter(counter, count->id);
+>  		priv->count_is_enabled[count->id] = false;
+> --
+> 2.34.1
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.4.
+Hello Wentao,
 
-Gr{oetje,eeting}s,
+This looks like an earlier patch submission we've received.[^1] In fact,
+I wonder whether these patches will be necessary anymore if the
+"counter: rz-mtu3-cnt: check clock and runtime PM errors" series is
+merged.[^2]
 
-                        Geert
+Sincerely,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+William Breathitt Gray
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[^1]: https://lore.kernel.org/all/20260814134138.1388045-1-ruoyuw560@gmail.com/
+[^2]: https://lore.kernel.org/all/20260903090719.3498955-1-dayou5941@163.com/
