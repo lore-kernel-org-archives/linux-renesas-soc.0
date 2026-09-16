@@ -1,55 +1,49 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A304D0A18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC8C4E13EE
 	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 10:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789554336; cv=none; b=r4N5Sy3sRMM5d9JCZfOHC8AeqZd07rsBKWm5vwXJU7pHEe/p0PCxY01SLwr2V2ZS4waOQZJw9b2xDVsYYZ2dor8Fz/BjCbgd0nec4sEtDxZDI6G5XPjV9Sp69INl0EkRHXK4N9EVIw9D69KO9dnSWnb5ZPMFGeaD1LntmR5F5hc=
+	t=1789554334; cv=none; b=rjvXyepkUMNuTbfMIw+ovTLwmjiwgjA8iDbAkBw1g0A0cKMDpiYU8si1v4f3l1DZw/zhte+owL6U8LkUsa2M+o1B9LLE7Q5bKmO3LbVUtE+f+/s++7iDPBewCvFluxou6il+aqjxt1yJYnFQEWL0EnGOk/qqKNtsKCNsvd8oo4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789554336; c=relaxed/simple;
-	bh=xJLIvqr2ozwwZEzDVSIxSiDxISuUPknm5gQlBdpKW5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AiSqK30OuUOJY64B1etYIHCzmSwwqeaA2+gyKw3Uqc/ISHjSIfR7Ro0+z+D8GWMvsEDftbOlc3jqGiMSZfeeqI2U5Pt3px5HrzsNN0lHiM3j3C3OSYT6w7+ucjTV48DlqdqgIp7OYHmVv7FZbzcYCA3six68ZPOTMXSf1Vzxl1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FXd6Bnvx; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1789554334; c=relaxed/simple;
+	bh=mWXgjyyi/opK9juHva65Z9uXJ6Nvmc4nZLFkL3jNTCQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TyCXFA1NxDcwa4LReuRXuafc8ivu/6hUUdTLDliKeK+Mkxz1F3lcKBUNCB883GEcfoB26IW3jFO507wX71j/5vWBevgYFKzOThlKor+JhdkNCvzGz5K7y0Orj30AJvsbYuxHk/kL00sh4iNoQYyKx0BO7wwida17tuCNSUlYryw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J+U+ewFK; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FXd6Bnvx"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J+U+ewFK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=kQyC3tYlW47DuY2FSxHyQUL3kUwEOR3KmVDydlsmjJY=; b=FXd6Bn
-	vxfxG/fJASqmBpdigjz2gCOMOS3A3kvx4lhLHXc2XuFpxvb2nUoQ57mIjFw1Qdmz
-	GCHDB0s7oqe5OqU7arEzlkllqpYiuDDBsbTUByxm7tfdRieZEdD27p6cGAOKK05Z
-	mNxKCudJQItHLRxb2o1Ir/l2Bb08XzrjQsn+a8XU/UxD4Ro2LyuWBf50ZYKAV2Mc
-	pXwzWYaZMMrHGNGlMOurW0HesF8+OBnm9IbsdMxFKdIeJ8PJGKGEwDUFCBrxXXQL
-	QOhF9A/ruPU/N87ZCQMXHJzQhuSra0ua6YzDONhHycdDY7IfSlHW9rvVPtVZq+Zh
-	Z0CyQFevwbRVEczQ==
-Received: (qmail 1502903 invoked from network); 16 Sep 2026 12:25:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2026 12:25:22 +0200
-X-UD-Smtp-Session: l3s3148p1@xl62FZdbkoMujnt4
+	:mime-version:content-transfer-encoding; s=k1; bh=e5Y66/jrSsxtvA
+	+3jkqvBmMj5YOAXyfEWuQ7W+jFODE=; b=J+U+ewFK7ntZUGQAjkUK461rItSsBP
+	o8A+j79gdW7bMgcrC4b2OIV+X39JtryK9IyQMKmqf7vvjeebO7JmnWuQGybwpzck
+	msyq2B6WdGvJFPAMiX/2EH8pu33h2zQoTvaQnF0VqU3zE8DtU8lIfOgoPQKsOojG
+	ovCKSJihsuFb53FiMoHC+UXiZEXfghV8iChaE5Lk64bFksyoyKbNubKY5s4oclsH
+	ixy+rZ/YQsIZjzryTs8sWvnjmBcgem3v37l/jdE/Rvgh3uOaFzMNzBUab1P64Wn5
+	Bb6CLgoEroHxUDA+2FPGlKs/p6UMGsPyPB8ITcKoyle5gJ5/qVMNigoQ==
+Received: (qmail 1502810 invoked from network); 16 Sep 2026 12:25:21 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2026 12:25:21 +0200
+X-UD-Smtp-Session: l3s3148p1@8cWhFZdbeIMujnt4
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 2/4] dt-bindings: rtc: rzn1: add SoC names next to their IDs
-Date: Wed, 16 Sep 2026 12:25:17 +0200
-Message-ID: <20260916102520.24288-3-wsa+renesas@sang-engineering.com>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 0/4] rtc: rzn1: cleanups, R-Car Gen5 enablement
+Date: Wed, 16 Sep 2026 12:25:15 +0200
+Message-ID: <20260916102520.24288-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260916102520.24288-1-wsa+renesas@sang-engineering.com>
-References: <20260916102520.24288-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -58,39 +52,40 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This helps maintaining because the numbers are easy to confuse.
+This series adds RTC support for the Renesas R-Car Gen5 SoCs.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
- .../devicetree/bindings/rtc/renesas,rzn1-rtc.yaml      | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Changes since v1:
+* don't support non-interrupt mode in general, but implement it only for
+  X5H while still requiring irqs for all other SoCs
+* add tags to cleanup patches
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-index e96007981c34..7ea77cd0bee1 100644
---- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -14,14 +14,14 @@ properties:
-     oneOf:
-       - items:
-           - enum:
--              - renesas,r9a06g032-rtc
--          - const: renesas,rzn1-rtc
-+              - renesas,r9a06g032-rtc # RZ/N1D
-+          - const: renesas,rzn1-rtc   # RZ/N1
- 
--      - const: renesas,r9a09g077-rtc
-+      - const: renesas,r9a09g077-rtc  # RZ/T2H
- 
-       - items:
--          - const: renesas,r9a09g087-rtc
--          - const: renesas,r9a09g077-rtc
-+          - const: renesas,r9a09g087-rtc  # RZ/N2H
-+          - const: renesas,r9a09g077-rtc  # RZ/T2H
- 
-   reg:
-     maxItems: 1
+Thanks for all the reviews of v1!
+
+These patches have been tested on the original RZ/N1D board and the new
+X5H Ironhide board. 'rtctest' passed on both SoCs. On X5H, some tests
+are skipped, of course, because no alarms are supported.
+
+'dt_binding_check' and 'dtbs_check' did not find any issues, for both,
+RZ/N1D and R-Car X5H. I also verified for both that it rightfully
+complains when irqs are different from what is expected.
+
+A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/x5h/rtc-experimental
+
+Looking forward to comments.
+
+
+Wolfram Sang (4):
+  dt-bindings: rtc: rzn1: drop unneeded 'start-year' from example
+  dt-bindings: rtc: rzn1: add SoC names next to their IDs
+  dt-bindings: rtc: rzn1: add R-Car Gen5 support
+  rtc: rzn1: add R-Car Gen5 support
+
+ .../bindings/rtc/renesas,rzn1-rtc.yaml        | 33 +++++++++---
+ drivers/rtc/rtc-rzn1.c                        | 54 ++++++++++++-------
+ 2 files changed, 61 insertions(+), 26 deletions(-)
+
 -- 
 2.53.0
 
