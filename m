@@ -1,69 +1,69 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2143E9C17
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 14:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09A53DD86C
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 14:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789567298; cv=none; b=Yc6v4dOHy/Av39bl4wh5i4SmwTGeLgwKeNCHkrck60Ol3jIQqf1N7l8H20i2qR+j/aTum37XAfaK8RfFValTwKsyf7OBjZvHes3DCTcDlGsUr6KCDZw+DA2fZ83RYArBObphTT2ui8FLUDTIUDfp7JnvUKzL3fafuDLr0UNOeyo=
+	t=1789567896; cv=none; b=YE/QRd3DS8B1+QzA1Xe59zh4l0Xa9RvMEZmp+Qno6witPeCJIP950z95G8DyrJQO3I3yPVXV1IBT4Gb9wwpUXLJlP90Pkz6GQofgRkNzn7TWgF7mY0BhXSua9ym7JBKsqnrNyAT5P+2cbcRnG86txe7u83b7QyTSpPuKeqLfJOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789567298; c=relaxed/simple;
-	bh=LOZA1HywhSNmDK1UoZyyxVq3wzA5V9QKlib/CveDAJk=;
+	s=arc-20240116; t=1789567896; c=relaxed/simple;
+	bh=w/eXQPGbd03iM9t96bJfR+o+/5L1N7pSYa1fCCqF8nc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOYYhxe2Z6qcQCcx1LQSq4UqN5IGPMIyPsX+iweDl0lvQ+2NUkIFXWgiWqE/prVXgyNrinaW+v8gguJXSr/JILnOCTz4cK9abUxIespWKzV+Y9QpP3Tc5aWPRaJxW9n+W26ki4FfJdA3kRJ5RdThyCOFb1R/ctc9xdUl4TeRFfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+	 To:Cc:Content-Type; b=CrK10OUUF+IupEs54eGyOTk9W7uxTY0Wep0+aNVklKfZbmagBH+1QBkOicgZ2P82lWumSTAzQHj5hRU6aE/NPEzl+XJ9pMCmv/vumNW3+IoB6EiGMcFcvZdJ01W32VFvR4qdwrDqVUtzW59026MKIigPHItWEfc/wgJnYHDHomE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c294ad260fdso316522566b.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 07:01:36 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e5168ceso319696e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 07:11:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789567295; x=1790172095;
+        d=1e100.net; s=20260707; t=1789567893; x=1790172693;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=YB5wJdJp7iKTK9TemjyuyLSregIs6jY3r0wL3mFG0oc=;
-        b=NyAvxKipXrBBFw5LlY0VzLm3PQtYYUtOf81uJkbliZ/aIa3M03ImwoAPG4x+c3BTvu
-         IDFIK04xLixemnn/xring4J8DFQUtzqqdZPL4zFL8gO2I5M5assU4wNEtXAQU5RuTgYu
-         KiJnuQ2bTcmGrg1czv2LzHVQ7diXZGkoLBpe4wrQKy3FRZeHI3puRy3oBhgEHkuD0x8c
-         3+zCn7npLZJ4o9k5cMImN7iqWGvNEH06E/iMAWyzzYigdDL1aBJpUPJ37sWKOR51MX7R
-         4WuWTT0IoGFLTQg3e5QLR5x6/MaKLMD+7p9cqhe0kIWTMN9aRpkDo8roDPxwa7grhB8c
-         WxuQ==
-X-Gm-Message-State: AFuF++l/xOD5Qs8hlc7caDnqOkveL/y/1JqYDr5dUHtMSH/VqyIanfBO
-	jdmdEWIX58nljpGXi/+8IiOCJpwtGQ9FAsganQV1VRQkIBN5BnCHOHkK3lXbgagXGzs=
-X-Gm-Gg: AYBFou0jQMQWF0FPxoMhm544S//dg1BckYJc/WxnWldkgqrogCzbAGX629PkPpNHNyY
-	LFo7hLQRksPLA3udpicrlhguRaQA2nsOnXHoIcs0ZcHvirYTcEL6wjHGEGDzUQdUb3kI6BOULC3
-	4YqPM38afMVOaIqTqkaRi778549bC6gish5QhsACBYoL8Od2kpGd5L4HbHxW4/3i7BQgh36hhWP
-	aX81Z1pbNxOeuLK/Tbs/H4E3d6PnwaTV/1yHriNroy7cimtFWRS0JzL8FlCze/Ok+JqkQ6bxfH1
-	m3D7fTXzBO8qHzvgQ//NlxCx5TnqETc+9N7/3VAWgSPf/s7iBJD3UmLm3XWnjK/PACuik+g4jz9
-	KvI1N7zZ/TtJdwy5fbWtdOtmxY2Xlllsh/6W97MBqaCgiM46GZ2l6kpwxC7IwOZjMW8kzF/U3GR
-	dFN8k+442NC3NuwVrQCKukYOPciLO2B/4wmO/GrGBnjc1EONwEUGmBL9zkEmGco68DQo/NzhTng
-	ctnXvhHxzTzz7w5e2a1SAB8KhT9XUseHZ3E
-X-Received: by 2002:a17:906:9c82:b0:c25:5a26:3787 with SMTP id a640c23a62f3a-c29c89688b5mr588452466b.8.1789567294021;
-        Wed, 16 Sep 2026 07:01:34 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c29de453f04sm146183266b.15.2026.09.16.07.01.33
+        bh=R8tYTO2oWmvq4rR3J0AZylxe0N8AEtq4E2BxgNYjJbc=;
+        b=uN9juC2ikY2aVSTwH/3+Tjwdz1V0+36rjtJJ5s8jpnBJSn1m2vNO4cQL4DKbplZbBw
+         fnC6y0H6kRSrxA33K02OJSya17I1uhDJKr091rD+lhEEy3njiNEj2DbV5IeStT0irrj5
+         FEj/I8TIG/eCLyc2MNHpKuZKbVEAe3ViLGymtSvZYxvSvmz26Q+4KJg+Lyb+6pCHcVVH
+         nDmdq/lAafn7chgsxWpZfz5hvCoaP6GEX9okYJiymH5CvBGaD7gbiwMV71SQN21MCKse
+         mJ1fx5q3zXl3dr95871VLVkx8dEfIrRkKV27x0AfvqlS9x2KkUmaL0wtKQ772g1YT/E3
+         rZXw==
+X-Gm-Message-State: AFuF++me7N4tXBr+FGCNKljgiujbyj3IhqG9R7c02jvZF8DRLP6BcS0T
+	G8sfklbJExaDVr4IFGNQCpn2N0gsNPGK+SsKtMxBu0gfBdDTeW2FJA09O8U3tO3H2P4=
+X-Gm-Gg: AYBFou0fTWjc8mQuFp2ncrbHVw3OU5614c1iw4iwKmX6DdA50yszbtP2IPxuEM86jNw
+	2Ee56aTgxz52stYKUigIu//9dQjdtfN51IUhCNet6nJ5nNySFnd9oE7TjglXy55R/0KDyO+H4RE
+	i3hVSQl4s3qqkjZAYq58qnXSLAglfVtCsFgkibYWiflQg+GJe6ufov+bzhqRSz2sphE9r7T4GZ4
+	boidxqmJmTMrZK/+KESlH/vgIkA4xqT+s8ynSViqW3oRgwtEFzrgtc8iOFeKHsVxCn44TNgzs7Y
+	V4Rn4xi+gPNkWXVQrgk2fjaaKVRB5yvXVShuiUVb4L9PUQGjfDA8kaiM9NL+jPY8ogcUm+PwpWY
+	mwvQsF3uzdLvT8DcrH9XLgQaMtzCyCW609iPYLBIJZbGIdsV6L6RjE5Poi6dsWzV6sExcYy0HJ6
+	WRSMd4sZDVqnzsC4fQtboY/i8L17iRCiz3vtKLnjHw+oU9b36FYpYmNJ1JbklRBb4nRAwh9Swvw
+	Mx77zyMeftRtGOgN9g0/t+mLUhHSAMTcli9
+X-Received: by 2002:a05:6122:f8b:b0:5c6:58df:5826 with SMTP id 71dfb90a1353d-5c99ac9815amr3463471e0c.5.1789567893055;
+        Wed, 16 Sep 2026 07:11:33 -0700 (PDT)
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c998735490sm2846900e0c.0.2026.09.16.07.11.31
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2026 07:01:33 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a5e971c970so2447910a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 07:01:33 -0700 (PDT)
-X-Received: by 2002:a17:907:9452:b0:c25:f7dc:2dc with SMTP id
- a640c23a62f3a-c29c8bf56d3mr614247266b.29.1789567293068; Wed, 16 Sep 2026
- 07:01:33 -0700 (PDT)
+        Wed, 16 Sep 2026 07:11:31 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e5168ceso319670e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 07:11:31 -0700 (PDT)
+X-Received: by 2002:a05:6122:2986:b0:56f:6cc0:681e with SMTP id
+ 71dfb90a1353d-5c99ab5599emr3306736e0c.1.1789567890852; Wed, 16 Sep 2026
+ 07:11:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260912191442.99453-1-wsa+renesas@sang-engineering.com> <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
+References: <20260912191442.99453-1-wsa+renesas@sang-engineering.com> <20260912191442.99453-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260912191442.99453-4-wsa+renesas@sang-engineering.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Sep 2026 16:01:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
-X-Gm-Features: AcwNN1UfyJCOGSEjRjtYLZ4YGwDs-hH1sGh2EPXUqWFwEQpikBVlS7z89oufr3M
-Message-ID: <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] hwspinlock: add list of locks to debugfs
+Date: Wed, 16 Sep 2026 16:11:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX27+sdJYd06v3T9hj2=z3ADSKOVGvu+02-qe+Jp6R4Bw@mail.gmail.com>
+X-Gm-Features: AcwNN1WJafhDFv8HErK5k3kvDPcaoO0zG6c_BSadTCdG1pMVoaBKHlljZ751d3o
+Message-ID: <CAMuHMdX27+sdJYd06v3T9hj2=z3ADSKOVGvu+02-qe+Jp6R4Bw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/3] hwspinlock: add low level debug capabilities
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Bjorn Andersson <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
@@ -72,65 +72,52 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Wolfram,
 
-On Sat, 12 Sept 2026 at 21:20, Wolfram Sang
+Thanks for your patch!
+
+On Sat, 12 Sept 2026 at 21:19, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> To help debugging, offer a list of registered hwspinlocks in debugfs. It
-> will also print the responsible hwspinlock_device and if the spinlock is
-> currently used. It does not show if the lock is taken because of
-> side-effects. Often, reading a lock means actually taking it.
+> While developing the hwspinlock core or a device driver, it can be
+> really helpful to change states from userspace. Add a debugsfs interface
+
+debugfs
+
+> to request, free, lock, unlock, and test hwspinlocks. Because this is a
+> potentially dangerous interface, it can only be enabled via source code.
+
+... code,
+
+> Similar to writeable attributes for clocks where this idea stems from.
+
+similar ...
+
+> The created files take a single id for a single lock. To test all locks
+> in a system, one could use this oneliner while in the debugfs directory:
+>
+> for l in $(cut -d: -f1 hwspinlock_summary); do echo $l > test_lock; done
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks for your patch!
-
 > --- a/drivers/hwspinlock/hwspinlock_core.c
 > +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -860,5 +862,70 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
->
-> +#ifdef CONFIG_DEBUG_FS
-> +static void *hwspin_lock_seq_start(struct seq_file *s, loff_t *ppos)
+
+> +static void hwspin_lock_low_level_debug_init(struct dentry *rootdir)
 > +{
-> +       unsigned long index = *ppos;
-> +       struct hwspinlock *hwlock;
-> +
-> +       rcu_read_lock();
-> +       hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
-> +       *ppos = index;
-> +
-> +       return hwlock;
+> +       debugfs_create_file("request", 0200, rootdir, NULL, &fops_request);
+> +       debugfs_create_file("free", 0200, rootdir, NULL, &fops_free);
+> +       debugfs_create_file("lock", 0200, rootdir, NULL, &fops_trylock_raw);
+> +       debugfs_create_file("unlock", 0200, rootdir, NULL, &fops_unlock_raw);
+> +       debugfs_create_file("test_lock", 0200, rootdir, NULL, &fops_test);
+
+Perhaps just "test"?
+
 > +}
+> +#endif
 > +
-> +static void *hwspin_lock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
-> +{
-> +       /* Increase ppos here to avoid endless loops. Don't use xa_find_after() */
+>  /*
+>   * subsys_initcall() is used here but controllers may already have been
+>   * registered earlier or will be later. The rationale is that debugfs is
 
-Do you mean xa_find_after() may loop forever?
-
-> +       unsigned long index = *ppos + 1;
-> +       struct hwspinlock *hwlock;
-> +
-> +       hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
-> +       *ppos = index;
-> +
-> +       return hwlock;
-> +}
-
-> +static int hwspin_lock_seq_show(struct seq_file *s, void *v)
-> +{
-> +       struct hwspinlock *hwlock = v;
-> +       bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
-> +
-> +       seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "in use",
-
-For easier parsing the output, you may want to use a string without
-spaces, e.g. "busy", "active", ...
-
-> +                  dev_name(hwlock->bank->dev));
-> +       return 0;
-> +}
-
+The rest LGTM, so
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
