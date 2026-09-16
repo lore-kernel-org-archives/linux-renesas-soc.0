@@ -1,52 +1,46 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C684C9579
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 10:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1539E4D8DBF
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 10:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789554340; cv=none; b=Mdf71VcO2f+VmiuKMzwzNzfBZUrvbe1Mm7k5p4jMqBCAREzdIfn1/WSwzspCLG13w7QYKKjIdj8vP+Imsdqt/bfmd3ioJ2rS7FmKxe/gNTOYn4gq0f3qpH00obkpIbUu0ZaipAc7blGzM9cTRG4kXdMgxdk3Z7x52Gfku2cboq4=
+	t=1789554351; cv=none; b=N82587uVxiSckJMVNq5vtK0KatBzB+IfAh9xh/HcOTLwfhagatI90ezw8aVB6L30ItolAZuykPy0jMvTuZxEzY5h5UZ+PTYB2GdoWUjWc3glA+fU5i/723dAjzkqRaHwJqt9LTUdfaAoR5Al1DlZ8ECVddrUVrEHVW6TX8LrtJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789554340; c=relaxed/simple;
-	bh=NPVvYa0o2JXEuO+wqb3DLtCe7TyxNaegmqQ1wWhGP/4=;
+	s=arc-20240116; t=1789554351; c=relaxed/simple;
+	bh=j9v7DkGfpB4zGAwndCJ1McVF5cfElSugk5pjDEYvNr4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lva/ltb9ifgGs2P/K9YV8Ty/SHe5ugT2zU51cDRId6BqXjDPYueAvcJX+AynGklxuF5MxudAbMAl2elfCjUEC+TN8UG0nWgJNYJyD8paWakMnqqimYqwS2AAvlMzCEXYylkda+1cWEPVsT1XvLb8Up6RAIpVWsmRz5UXMZArIc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=b4ei6V8k; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=D9iEbBKKLNMHNzN8NKz97vTQp8NVCx5yvV7zAgDbMnGoERQ0QVXqywYAl9a6oDQdqoWGc0dw8+R2WsUBVVfBmkNBn3A/qAyrvLK60NXw46QrkVX47MwBs+7am23xavWb0XuZ8dDTw1UfPR4NX9Hlh1j35iI5obFfKIVpdMPz29I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=a7XvOaV5; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="b4ei6V8k"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="a7XvOaV5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=hxjsJQLA0Yc9nWgVkiDF3bqNJIF8rogEHzVxKGUlhCI=; b=b4ei6V
-	8kXTiY0EgdWzSpeqXr1/me/XvDfS3RsbwoSa/i9CB8fBtckPGCgyspZY/LZq6Hob
-	rd2pjK1amccm9MZgJorAtgh2B29FDqUEI+HvNuD7PrVNpEyDPTyiDTm4Nx6aYC55
-	chH2/z3SdmpONKjdvyqDu70vPQiAas6GI5wKTKIec1JZ/4yEp6EjbcQlx7OxVMHr
-	GMnM1w0vCiUjl23FjUCr9koRnMhkYcaTBknRbvY/qFrJo6GpvBaD+g275gC2jgWc
-	f4LYKAJdLGpTlI5hSoMtiTcpuNnAJeH04h3tBkVC2eqFJ8H4QK1HwNoD8o/C2PxX
-	hb5/aTnFXfqIkLUg==
-Received: (qmail 1502857 invoked from network); 16 Sep 2026 12:25:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2026 12:25:22 +0200
-X-UD-Smtp-Session: l3s3148p1@jyysFZdbhoMujnt4
+	 s=k1; bh=mVCe4GYcnfFzfwKQINJLnliob4JI5t7C6E9IUFzIfpM=; b=a7XvOa
+	V5HnqsxN8aCBWaMmeLbs0QW6cVd0aDNBh065vDMZ33zsIdf2rorrhY8rGgcMKVcS
+	VJD8pcUOUrz3qmA/YQBsFVM1qvOh/yBgWg1s8C+Jr/u3m3TUe71xpJc1tzZZLrsx
+	oFcI/GYCpyadJVijktZrcuxCUytks6dOMR2HRYkdyGlA13uPFcqumD4TTi3TZsV+
+	7aR6B+nMwo/sru/NxF4nFzOsnVKDcxv5Y7PO69TW7MGu8nnZxtIwvFI05/44zoqH
+	0GWsBBN8Phd0DAalqWrhKakVgpnRJrx5V9lxCoh6EA1q5+RlkA00Hqj9VP2SWyY4
+	vcEroNVZLrMEJBnA==
+Received: (qmail 1502948 invoked from network); 16 Sep 2026 12:25:24 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2026 12:25:24 +0200
+X-UD-Smtp-Session: l3s3148p1@9gvLFZdbooMujnt4
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 1/4] dt-bindings: rtc: rzn1: drop unneeded 'start-year' from example
-Date: Wed, 16 Sep 2026 12:25:16 +0200
-Message-ID: <20260916102520.24288-2-wsa+renesas@sang-engineering.com>
+	linux-rtc@vger.kernel.org
+Subject: [PATCH v2 4/4] rtc: rzn1: add R-Car Gen5 support
+Date: Wed, 16 Sep 2026 12:25:19 +0200
+Message-ID: <20260916102520.24288-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260916102520.24288-1-wsa+renesas@sang-engineering.com>
 References: <20260916102520.24288-1-wsa+renesas@sang-engineering.com>
@@ -58,27 +52,114 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We don't use 'start-year' in upstream DTs because the driver does the
-right thing by default, ranging from 2000 to 2099. So, drop it from the
-example, too.
+In general, the RTC on R-Car Gen5 is identical to RZ/T2H. X5H is an
+exception, though, because interrupts are not wired. X5H2 will have them
+wired again. So, skip alarm setup for the X5H case.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/rtc/rtc-rzn1.c | 54 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-index ea7b039a91e7..e96007981c34 100644
---- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -91,5 +91,4 @@ examples:
-         clocks = <&sysctrl R9A06G032_HCLK_RTC>;
-         clock-names = "hclk";
-         power-domains = <&sysctrl>;
--        start-year = <2000>;
-     };
+diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+index b9d69ebdd224..349288a07632 100644
+--- a/drivers/rtc/rtc-rzn1.c
++++ b/drivers/rtc/rtc-rzn1.c
+@@ -68,6 +68,7 @@
+ 
+ struct rzn1_rtc_data {
+ 	bool has_subu;
++	bool broken_irqs;
+ };
+ 
+ struct rzn1_rtc {
+@@ -396,6 +397,11 @@ static const struct rtc_class_ops rzn1_rtc_ops_scmp = {
+ 	.alarm_irq_enable = rzn1_rtc_alarm_irq_enable,
+ };
+ 
++static const struct rtc_class_ops rzn1_rtc_ops_scmp_no_alarm = {
++	.read_time = rzn1_rtc_read_time,
++	.set_time = rzn1_rtc_set_time,
++};
++
+ static void rzn1_rtc_disable_hardware(void *data)
+ {
+ 	struct device *dev = data;
+@@ -431,10 +437,6 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(rtc->base))
+ 		return dev_err_probe(dev, PTR_ERR(rtc->base), "Missing reg\n");
+ 
+-	irq = platform_get_irq_byname(pdev, "alarm");
+-	if (irq < 0)
+-		return irq;
+-
+ 	rtc->rtcdev = devm_rtc_allocate_device(dev);
+ 	if (IS_ERR(rtc->rtcdev))
+ 		return PTR_ERR(rtc->rtcdev);
+@@ -503,25 +505,39 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&rtc->ctl1_access_lock);
+ 
+-	ret = devm_request_irq(dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "RTC alarm interrupt not available\n");
+-
+-	irq = platform_get_irq_byname_optional(pdev, "pps");
+-	if (irq == -EPROBE_DEFER)
+-		return irq;
+-	if (irq >= 0)
+-		ret = devm_request_irq(dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
+-
+-	if (irq < 0 || ret) {
+-		set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
+-		clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
+-		dev_warn(dev, "RTC pps interrupt not available. Alarm has only minute accuracy\n");
++	if (data->broken_irqs) {
++		/* All known broken irqs are on SCMP only variants */
++		rtc->rtcdev->ops = &rzn1_rtc_ops_scmp_no_alarm;
++	} else {
++		irq = platform_get_irq_byname(pdev, "alarm");
++		if (irq < 0)
++			return irq;
++
++		ret = devm_request_irq(dev, irq, rzn1_rtc_alarm_irq, 0, "RZN1 RTC Alarm", rtc);
++		if (ret)
++			return dev_err_probe(dev, ret, "RTC alarm interrupt not available\n");
++
++		irq = platform_get_irq_byname_optional(pdev, "pps");
++		if (irq == -EPROBE_DEFER)
++			return irq;
++		if (irq >= 0)
++			ret = devm_request_irq(dev, irq, rzn1_rtc_1s_irq, 0, "RZN1 RTC 1s", rtc);
++
++		if (irq < 0 || ret) {
++			set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
++			clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->rtcdev->features);
++			dev_warn(dev, "RTC pps interrupt not available. Alarm has only minute accuracy\n");
++		}
+ 	}
+ 
+ 	return devm_rtc_register_device(rtc->rtcdev);
+ }
+ 
++static const struct rzn1_rtc_data rzn1_rtc_r8a78000_data = {
++	.has_subu = false,
++	.broken_irqs = true,
++};
++
+ static const struct rzn1_rtc_data rzn1_rtc_rzt2h_data = {
+ 	.has_subu = false,
+ };
+@@ -531,7 +547,9 @@ static const struct rzn1_rtc_data rzn1_rtc_rzn1_data = {
+ };
+ 
+ static const struct of_device_id rzn1_rtc_of_match[] = {
++	{ .compatible	= "renesas,r8a78000-rtc", .data = &rzn1_rtc_r8a78000_data },
+ 	{ .compatible	= "renesas,r9a09g077-rtc", .data = &rzn1_rtc_rzt2h_data },
++	{ .compatible	= "renesas,rcar-gen5-rtc", .data = &rzn1_rtc_rzt2h_data },
+ 	{ .compatible	= "renesas,rzn1-rtc", .data = &rzn1_rtc_rzn1_data },
+ 	{ /* sentinel */ }
+ };
 -- 
 2.53.0
 
