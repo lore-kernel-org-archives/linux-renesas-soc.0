@@ -1,96 +1,88 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739B94E50AA;
-	Wed, 16 Sep 2026 21:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C382D47F790
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2026 21:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789594029; cv=none; b=CneatjcToZbNq2g5ypw1J//GB2R5TnGOllS5b8gq+km/TMQUEktb2Xl7nob6btFSgJjKHJQa73qNx01sBdPYU1DJwWtZrweWmKGBUde0ZAImUyF4XHBEKsnQ0DwfymJWmWJFkS9dm4YQnnyWKS4lMGue5eWsvdD5obR5I0umvi0=
+	t=1789594608; cv=none; b=QvpM+l/qlZV8GAaZ2F2UOjKQnqjGBnuEL6/iLfN60qMf4+U/oT3VOCWJ5Mbl9p+73U+pF65ytaC2NkHkpb2Yqop1RRFvJ6HE+grlT4Dk2By3aLiDO2QTtMpVIXuOGb7267OLVQmRatWaOuWo712LjQjcV8NxCPairkyhKfeaP3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789594029; c=relaxed/simple;
-	bh=AsQqS9710lfvxj0MAvI/7hzneJ7P3AiAYoBeWGfNftk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5suS7NiCLRVS4J4bgZlu8fg/yOX43wwhPHRfHoKF9QY4Ik5dfaNI7MYjAStaf81bLiQJR6Dw9Q6ctJ9Omx4OBDXvAVvG9TKG2jtbfvyUWDWhvknSr5UvLouNPEtD4Xd2hkCbCkP1bpZ5YJzaMWsJ4mLiwKndAltuz6o7tyKouM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=im9OzdkX; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1789594608; c=relaxed/simple;
+	bh=VG952ucKyWBOJ+kWu+uDy0Z77W/+l4kXJN0X/n/hRZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1SsJVynFnQbcpVPsvxDj/dDcN0WmNUWew17k11n8vKH3L5GA5ByyK9wk/vB7HcjTT+kr7kkxttk9ZuhDJ/TXzEkS7LJEnTXRlH5m3bl29N6Pg/ks5fjGQc3Yb26Y9HgEQUUplvrgwOBMZcEgCUTzZEtvrKv6CE0+APEvVEjv3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Oq5j8jCg; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="im9OzdkX"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4hlX5R3dNfzKnS3;
-	Wed, 16 Sep 2026 23:26:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789594011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Awx/qSMJsfDp5YFKo98US/4IxChQqsFBIzOvN17lZ2g=;
-	b=im9OzdkXDGajHZYTNlRcWyDBOZJholJgFLe9R9NjoSNZx9LsAyzSKTgO0N4qur+kW7FVMl
-	6uIO5coBY64vQfHI19PRRAz8r9Y61KHNE6QiQXBOcvFp54qBdKnAzCwsSvO8p55VtbradN
-	33PYThsRqzNNfr20VYG5IlfQc6JXCt7rlPbmPNm5xoXzqioeOqJL32KIFHVpUnS/0jiQSX
-	8xpJezTHawYbzcHWLtZRW+GFNgpbWQiqmU8++1MKJIlx9JIC/2D0g2/fomqOwWBXQ7Kslt
-	FsGHAhDPfX4KALihngTSnIZepHa4d+JYfNWSUo4Q47NSqAHusHdRhSPxJ6RU1g==
-Message-ID: <805629d1-ba2b-4e59-8d29-c374528367f9@mailbox.org>
-Date: Wed, 16 Sep 2026 23:26:47 +0200
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Oq5j8jCg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=VG95
+	2ucKyWBOJ+kWu+uDy0Z77W/+l4kXJN0X/n/hRZs=; b=Oq5j8jCg3iM5ZmfBbUbQ
+	H5epnLMIHbbpe63V5u5z8DEncnnRFomkLJNGmmOcV4NvNPrQ++O0r3pCjgGlywyf
+	59nTCJR35rmop6K/i0WvKFZiuhmwb66a82NqM/mRQubEEW6XSUl45fsrPBuDcejc
+	3D9OqOVfrZh9dNg2jopTSOQjp7OLpXHFv42GkGwBbUpukiF/ZD/zHYx3uSLglE6d
+	hOoWS3aVILX56xTckdO3hdMz3NIYDcUTNcm5usRz2NzIzhpBHDSXc+B7y6++wx7a
+	OE/XzSaleT2RN1HT2TSRkQ88dpY/w9zbPlZMpKWJYNM0eV8v0xnOTrXGuJhS3NUu
+	3w==
+Received: (qmail 1716542 invoked from network); 16 Sep 2026 23:36:33 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Sep 2026 23:36:33 +0200
+X-UD-Smtp-Session: l3s3148p1@pLQKdqBbNuAujnt4
+Date: Wed, 16 Sep 2026 23:36:33 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Lad Prabhakar <prabhakar.csengg@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] rtc: rzn1: add R-Car Gen5 support
+Message-ID: <aqsL3cudN-On-ii8@shikoro>
+References: <20260916102520.24288-1-wsa+renesas@sang-engineering.com>
+ <20260916102520.24288-5-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUzvSZUiS9JK2R7doct+NFEFmFy4sZNqerOwER-6wnJ4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] arm64: dts: renesas: sparrow-hawk: Add overlay for
- WaveShare 2CH CANFD HAT
-To: Rob Herring <robh@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
- <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260909151423.28358-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdVVcbwz1OK9tL9zn5RR_4YyML6++OUVUgmswPpaxdmRSA@mail.gmail.com>
- <34f4c088-5268-4add-aef4-33b3d3623c12@mailbox.org>
- <CAL_JsqK8--7X5g4T05Y6bEGzsxrhTq2QyQRpE5E5uHBot3jLWA@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAL_JsqK8--7X5g4T05Y6bEGzsxrhTq2QyQRpE5E5uHBot3jLWA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: h3pk3hdfad8iwfsccm1r6mrg3escspem
-X-MBO-RS-ID: 442b280c29c53d01ed2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ACYovTGWkZB3IFTf"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUzvSZUiS9JK2R7doct+NFEFmFy4sZNqerOwER-6wnJ4Q@mail.gmail.com>
 
-On 9/16/26 10:49 PM, Rob Herring wrote:
-> On Wed, Sep 9, 2026 at 10:55 AM Marek Vasut <marek.vasut@mailbox.org> wrote:
->>
->> On 9/9/26 5:31 PM, Geert Uytterhoeven wrote:
->>
->> Hello Geert,
->>
->>>> +       /*
->>>> +        * SPI_1 is operated as GPIO SPI, because MSIOF5 can not be
->>>> +        * muxed on the pins allocated for SPI_1 on this CANFD HAT.
->>>> +        */
->>>> +       spi {   /* SPI_1 */
->>>
->>> As this lives at the root node, I'd rather change it back to
->>> spi-ws-2ch-canfd while applying, if you don't mind?
->> Please make sure the DT schema check does not complain about it,
->> otherwise it is fine, thank you.
-> 
-> It does complain:
-> 
->        1 spi-ws-2ch-canfd (spi-gpio): Unevaluated properties are not
-> allowed ('#address-cells', '#size-cells', 'can@0' were unexpected)
->        1 spi-ws-2ch-canfd (spi-gpio): $nodename:0: 'spi-ws-2ch-canfd'
-> does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
-> 
-> The 1st warning is a side effect of the 2nd warning.
-> 
-> "spi-1" like the comment says if just "spi" does not work.
-Geert send this fix today:
+--ACYovTGWkZB3IFTf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[PATCH] spi: dt-bindings: Relax node name suffixes again
 
-Maybe that works too ?
+> As the DT bindings declare "renesas,r8a78000-rtc" to be compatible with
+> "renesas,rcar-gen5-rtc" (which does not set the broken_irqs flag),
+> a missing interrupt must not be fatal?
+
+Okay, I'll remove compatibility of r8a78000 with generic Gen5 then.
+
+
+--ACYovTGWkZB3IFTf
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqrC90ACgkQFA3kzBSg
+KbYsHA/+Jlh7oC9+kNcFH2EHgwPW/JWkkzNmDRD653+7TyWYcxYLLwrjP6wgOcTs
+FVreKAWqbfZINpB5ysJfPhwi3+rFcrIu1RW916nN6PsidlN27mdWwpQffU1DDdr8
+riMOUT894VSJNUpCSQ2DTtqwvlhjRiw5nxODvZAdv3DsUB21gdO+51uS9pIpYpUc
+dyD/RIZS9KO9UYz/LhefFAQ5DYPBn6a0C7ySR2hMa5dBHHvercpPmcVWtVH+yEuH
+x21m5c3nnjP8ZRnY/GM4TOotChSnTj3I+sp2CoMqBe47tvlrk2kmJjJPPaRb4ERK
+bygfj918/w3Q2SvFREeYJTAlhlRycC7ZqQBbuCxFtfK6h7unqSNPXAGEUBpNFB7k
+RsSkdUZi6SbdsC7difbH2NHI3G3dEN+/qh0JpSkaEYlzlfUoCDuMXor4QvpjGBay
+YItZHlRVMomOr1b1jqcUlqBdyD+4X6+lysxmK0Nzp5NiMhNuebNvAKVeTcaRE8ja
+SHo38ewBKPFo9oqv37L2dK2lU+tCLSW4L6ed4qrxf0a9snf41BbVJLj8j4Ed66Aw
+w4V4zSJ1OFVPGrnC5NB3E/Q9t8/lEta2SFMnx5xSTH9B7pJiWftwUFZb8LRF+C9C
+n5Uaui24faRxPTpPvS86gQkHJDrKeaIfoaeSmPS/K73BZCaHdwU=
+=i8N6
+-----END PGP SIGNATURE-----
+
+--ACYovTGWkZB3IFTf--
