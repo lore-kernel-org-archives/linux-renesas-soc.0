@@ -1,174 +1,253 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012065.outbound.protection.outlook.com [52.101.66.65])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD135383F6;
-	Thu, 17 Sep 2026 16:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789663186; cv=fail; b=GrUZO5EGOCHdNX/RqNxrpfacfJULY4R2meF9tbtYtB/RwVomGVRn/djdseUweweNfhYyWPN88R0gQDXEOn/CnVc/Wkur3I7WWoSzfGpRRV5Hhymt3tuG7VPUpqDy8wezwe/ikgBJ/YHo3gMrrY/Nr57fJ7KXB/tlJUKQ7+aeMCA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789663186; c=relaxed/simple;
-	bh=jIofWphpk8mB5DQONa2lyjLuEmC4BcG3RtV41qpvufI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rDS7xT8a1uS3zEwQ3rLikO67HEP9k8XCqlXcUeYW/8IMJU1pWjH4OuV/ixZWt1O5nPW5ys/pKp3eDJHkbO9IOgp0isVKjDapIUg4NfIKAC1fNFMS1bvvK3/I2EMl+4ONpEWFAXP+72dDJISn5L7zZ3wGk+RrtJgNoaLq8aUZut8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=XaqzHoJ0; arc=fail smtp.client-ip=52.101.66.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8CB3D16EF;
+	Thu, 17 Sep 2026 18:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789670289; cv=none; b=nRgfp1OmZl9fz6FWBOqiiqjhVdULGfYibAkxF08U6lsEPT+h1s6SxUGloyku1sngIYG/xrEcfJHr52sGnvGhTmNXaro/IlxUezuTsWgAQaziVxoSUIm6yDNWYKku5TGUk3AJD9wHy6Ys+bO4o2YqE0hqmYPMWErStc+6kSEQUOQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789670289; c=relaxed/simple;
+	bh=JBusg0CB798ntaOTMUEpsXUiiktFNNxILdyz9WqqgSo=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RiD7x7MEE5kRa8Skwe44vqRTr1QPw1IjONcAQD+uOEjwkbEhTJtd88kbYwjItBDLrlfXkjAHGErD2suL7rveECiubyekzeg5Z9UAzPgp9V+X1/CYuG+XNCljDgnI7645AsFTUVyiuROwmBCZBKc6iVbOzY/MHixlIHQkoHGRSkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsSoSZes; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="XaqzHoJ0"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HGLh8h08Z+/Ny5BqSW6Iw6gEfDNAO+jwmR4qkTFckY+xFTFkg96XrjHwPtiubQeQn6egk/7FsioiqRXlS96WzimawBvarHxptFWFcDuFkOXtqAc0V5qU+2eo8fvulc1s/5/hf5vvsPCusRxrEbRncXc/dD62LkD6EQMfMpCKGWvhZmokvU7EPbjPrOIXCtj3Qc4REo0HriivfertID2thIrSWxVmlJyfGKnOADCnk732dsKywviuao8eAnls+V3vF/DinmM6IR9UTN9Q+Ed/Cv/ZnRavrs8JwgJu/xo/daWuzsJ9dzI7mjI4SoQXTpsV+8sYyPxfU4w2jZU2ACxcyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SDbt93CcMCq1Dd+RgoBzDCu5VcwWbyepruWStA5hv2M=;
- b=jGhYArnE0pPfsbAua9YHO+gPwluHeyKdlo2rUfV+6xQgFU45YjbOwJjaAHHdlCefvX+h3iXndIltPy2hYBxe52UkNDUG6WJk/w+W5NlcXyynBd/kzI006cTraoskHQEIsDgHkuQi0Hy/I8VmZU9NyMjgJNhGv+HNLxSdLEjVl/Het8LEilCQek7ZvB2f+0hfi7awppWJBFlmx+NAqxF9Mz1hYGlBjYz/TqS88FddQzO66yVi/8INvdRUm3fs+kofauUBW0S5qyYuH1C/RqH9hgBAXdb0Lae9SLb+tb1eKOY/YZxXoj+u7wz+8cqj19QiVhzp8OHW6NyluRgWPKHNLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SDbt93CcMCq1Dd+RgoBzDCu5VcwWbyepruWStA5hv2M=;
- b=XaqzHoJ0uaac+oZ9ZovXrSGNHsdIn+E0PG/icIJ6x+t6QtY1yHTsHeP+lUTwSMmJLSCKAXUu6WKndXMwibt+45xL9vtGg/rHZprEj27yB/F2oUdQC+mHcXe1hEO51GbIU+BgUXIxwMPCuqQTK1Jh6lOJ/URGmHluLEwpxNaUNvoHRzR9LM37IEltNYa2mjUj4Ow1Uc931Nfwpm2aPdJbZ3257pfXQtGE2b9rr7JUcovJ0QAm5FosTEEJN03AS1DtzrQIttuhKEiiyEAobSSRDcfmGetSngcR/5Dw8qbOuweqe496P2hrpqxWVhS7wL2SssB7EJbyW87xF6qSkoK32A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by DB9PR04MB9283.eurprd04.prod.outlook.com (2603:10a6:10:36d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Thu, 17 Sep
- 2026 16:39:37 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0406.012; Thu, 17 Sep 2026
- 16:39:37 +0000
-Date: Thu, 17 Sep 2026 11:39:28 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Koichiro Den <den@valinux.co.jp>,
-	Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH 2/3] dmaengine: rcar-dmac: Add missing
- dma_descriptor_unmap()
-Message-ID: <aqwXwOiPgRDUQfp_@SMW015318>
-References: <20260917071208.36888-1-wsa+renesas@sang-engineering.com>
- <20260917071208.36888-3-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260917071208.36888-3-wsa+renesas@sang-engineering.com>
-X-ClientProxiedBy: PH7P220CA0122.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:327::28) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsSoSZes"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F1F1F000FF;
+	Thu, 17 Sep 2026 18:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789670287;
+	bh=Yl0NIoaTbzqJUGwioU/MGVk1zJpCWvzCqfyTcfij6Dc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=UsSoSZesD2MFZH9rCwaj7Gc1bo170eGg8BvlSC3/WwSqqtLBuusJaI82UdKYRYFNW
+	 +2MVe7VjJW5STpBjkJUoQ/P5DeoQ9kS7E45GUej6ZJi2cnRBOJr1URc9d+q9WSPZu5
+	 o+D3iUo90/k87HqbFn2u6oC8Sx9RKNwC5BHoZUwTNwQ1GmfNSoivfv42CR54AHVgjf
+	 E6LGN/T2HGs2LHbGFLsc60NjSmDmt8/xHlanG/KM93KdBxNiY1KjG2TciM16RMUyJZ
+	 fPFkbvsH76j3XI0Ak0FFqYqpLg8Ggx0V4RMkCaRy5qIwZkbYAI6nHQhv/uvTjlyVwP
+	 DLE4y24ETx49Q==
+Subject: Re: [PATCH net-next v6 01/11] net: stmmac: move XPCS lifetime
+ management to platform drivers
+From: netdev-bot+sashiko@kernel.org
+To: coiaprant@gmail.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, heiko@sntech.de, vkoul@kernel.org,
+ maxime.chevallier@bootlin.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ romain.gantois@bootlin.com, hkallweit1@gmail.com, neil.armstrong@linaro.org,
+ linux@armlinux.org.uk, shawn.lin@rock-chips.com, david@ixit.cz,
+ netdev@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-renesas-soc@vger.kernel.org
+Date: Thu, 17 Sep 2026 18:38:05 +0000
+Message-ID: <178967028545.22033.5966180145855511133@kernel.org>
+In-Reply-To: <20260915123802.1561724-2-coiaprant@gmail.com>
+References: <20260915123802.1561724-2-coiaprant@gmail.com>
+X-sashiko-severity: Medium
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|DB9PR04MB9283:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0add7c9-2f14-4dc3-c4a6-08df14da42f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|19092799006|23010399003|18002099003|22082099003|4143699003|10067099003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	4y85a5VORTWsLjc9WZaRMhIIXVABKPjOoGf4qkc/mi2fKm0JtwC5TvwsrJjBtyzYuVT1O6LVWm9FJ4aGqi3Va6xx1hu8S6KjMdsHZNsFwPE368dhkztRTEF9acyZIOYkSYqjVwwk/u3IDGWtz/ZcQ1Qi/4AtAmUA155Z2G6/x2hL9cPB+ufaYnbF85ARFRlGuVIFF6k2kPyOYChV6KrbmZLSWyg7IFtUuwr/iMF9pSNu3mo6J+uUqlUFEVG6moW3sEbIpzfNUpwvNYcXl1TdNcHfoEiN2AuXLxAOr0Hp8ojf1DZVeSXI6Tl9f04PqQgLgcJlaqUv/Jv2QKKrlSCM7uKBo+yzfqUNatr1ZZr+inurFP0F9yZK6hKZ4Rr4TEMUKiYq1Iy1SoFTUzc8lEhO/R0IfKx4xm1MxMXna9oLKjh77QWIJLXlcUmO/zjqlqbPoxzl1UNFVMaMfl6iTlaBOwOmJeXxRdkmENt//JptzUGxpi2V6Ri4oHrLtZ4UUuTMoIwC8kwZYkhEvAsrNDakxjdwBjGmuWsj+8FLJjTpOn2frCM+2pU0cZ3TfmwRul5sJtkuuMSamni9WEZd325mHrCRqfP7t3d8wUszJlz/mE0I9CjwGtTCj5koAJOV1Q6y3It73ijQL2P5n9Orw9TbpiqgjFuLEOxsAQ74IBFA56k=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(19092799006)(23010399003)(18002099003)(22082099003)(4143699003)(10067099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lDmy+VokRsFtWH7q5figJypqW3faq3x0vysKhmKTfVet4aK13yc3BRflp/7S?=
- =?us-ascii?Q?GFTZe4WL2SfKB9Q8olj1eOanuoLdvj/A4UIC/fj1N4ebpSEMzk93A81E+dSb?=
- =?us-ascii?Q?6F7KhVECMfZNHNIbZk5RieH+3tMb2CZ8mQx5J3IA80n2arf4G2I6JvjGF1Bx?=
- =?us-ascii?Q?25jmXByAzilp3EWOCyN9Cj4GsbFG175x946ViOVYYemmyIz2LGmahq4a/dKd?=
- =?us-ascii?Q?D2swiWeDH69ea0/sBCEZi12K+1P59/OyfJB5mq+Tt4b4SXnVrp+S0XQ0e97y?=
- =?us-ascii?Q?nKLjEre73RB2AUXUGNdDwMx0OG4iygTN69U8z7JAWDEdT7pp0jLg9FXfJzNe?=
- =?us-ascii?Q?grd6/z+vV0yUooUHvzqm8QW2QyDpmZuXTclMWAbMGQpwVIsJpNKo4CqYdMTY?=
- =?us-ascii?Q?Ulvfc/Nhr41oOcIwat3WCHUnZ3O3fo+TSiCDWQ+hJqVC20d5kQqVjTEJ6Mnl?=
- =?us-ascii?Q?bmWjJvOmIdAGlsIWlGmmcQuExyaZwnHjGxeZjaAbXQU/eZyYtwexcBNsWglm?=
- =?us-ascii?Q?2OliRP/Ydy/2Ma9/wvXUsFQeyBVRAw1sibWGuWfWGrHEbiKR99mcZv55eMf0?=
- =?us-ascii?Q?6GX1OIfnVfkl8Nt3G3IQvJGnnX6LoT8uo4NnYbZBueGr9iba0bDXG3zE/nXJ?=
- =?us-ascii?Q?V2/4bpZtzpZSKieGdPNDtRluFVZF92x5BQ19qQoN9n2MswqsZB5dODWvAhvR?=
- =?us-ascii?Q?cC7f2Pi/sA17VrEWXG+G8ez9CcI/PXdbqSqdqFgdMQTHI9oi3DYeL3wytJig?=
- =?us-ascii?Q?hL2uD3wwqciqdgGjMXzUcQEO5G560rbvPm1dc+dk9QZ7rn8Sc4xA5EN9IRjO?=
- =?us-ascii?Q?z3QczQvokPln8YO9fre5AKDtXlwD8UstZnIqv0FrUv1u28uClbK/NVQHDy3U?=
- =?us-ascii?Q?HobaW4zdyg6LTgOlVwFvsAsWul5dk1vqzd/kiAQE/qLusyd6b6Fl+kvN4FoU?=
- =?us-ascii?Q?AJJajq2p08EDL4fTCUUDpDdrzJWJtVL/69vJ9e3nHISeY8NRbqcGaCCX1Wz+?=
- =?us-ascii?Q?xAf9QCduEymi/zKIBuM8ygB9WzFbD4cSg4aX/UbWfIoPZCEMQob2eZMGvLlA?=
- =?us-ascii?Q?gqxNaVJbgU09BYV8spPWb3U8toxrotB0GQ2g3XuYXNGcGhMWndeYWoSwcrLe?=
- =?us-ascii?Q?+qVM5/hE4s7ORENdecC/y0+QpnyLWsDuKQNUTQrcUABOdSFad8CQkND7woF+?=
- =?us-ascii?Q?N0dxdVqD5jljajPKCqocx2bmexoyucFhgGcmLRB/hS+Vy5I97WFc0cdyjBkM?=
- =?us-ascii?Q?4l3VjbRjH9/1D1tP+AYySYQgo64n0T0Lvd6MWEf12efU2HZhZCt2ptM2PAlE?=
- =?us-ascii?Q?U+/Kuvx45he6IRZG2jJhSlFaN3EY6QAEEYrpqnXkckUNqjLNZmpdGBTdQVy2?=
- =?us-ascii?Q?AAae1fq5JYwZ7lPG35aQ0IX6WXi+jja/6LSkAC1giIHrQsGaueFbYtvuXB82?=
- =?us-ascii?Q?0b6gOsdX9v45U/Zoe2iqBhBuW1sW0ZX9geSu/6dk1LRaiau8Qp/H0B7o1kxZ?=
- =?us-ascii?Q?N5nHawfUY/Fx/Gsnx69LpXFeZpuq4v88j0uKnVSEizZ+TVe22bUnNvJFRYcE?=
- =?us-ascii?Q?5OE/UvuHF3xYBROPy+hUGw25aA2+vn0NlWehBIhtvVVYmVbJ/2UQ9p5mFVeE?=
- =?us-ascii?Q?NB2qqUhpH9eH7QmG5F7DJnpLGaXZ3E02+2+0Q5YUxdYmWb/oZ+hayd9WbTx+?=
- =?us-ascii?Q?qFyOi1kIFWO3LHHklz8yPUFUc2gy8dF8fW3kJhHe2CothgWW7L+FhAorXmbY?=
- =?us-ascii?Q?zx6k7xqYDIvqCHC+hYho7PitiRokr8G9tTkaiOcdgFv2tJP/3f4w?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0add7c9-2f14-4dc3-c4a6-08df14da42f7
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2026 16:39:37.1967
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XAffBX/VAtjRt31pcDZtuA911Fv8KGoyaY6t/BZWwEW0o84kFPbtccQXP+RfrZoe+vyGLabmoF+SLvCYJHkmly08Hiwf3WpGOn80taUX1JAV3vygkec3tK47SMC6Owtc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9283
 
-On Thu, Sep 17, 2026 at 09:12:07AM +0200, Wolfram Sang wrote:
-> From: Koichiro Den <den@valinux.co.jp>
->
-> Call dma_descriptor_unmap() right after dma_cookie_complete() in the
-> threaded IRQ completion path. Without this, streaming DMA mappings
-> attached to the descriptor are never released and may eventually exhaust
-> DMA mapping resources (e.g. IOVA with an IOMMU or bounce-buffer slots
-> with SWIOTLB), leading to dma_map_* failures.
->
-> Also ensure dma_descriptor_unmap() is called in rcar_dmac_chan_reinit()
-> (error/terminate path) to avoid the same type of leaks.
->
-> Fixes: 87244fe5abdf ("dmaengine: rcar-dmac: Add Renesas R-Car Gen2 DMA Controller (DMAC) driver")
-> Signed-off-by: Koichiro Den <den@valinux.co.jp>
-> [wsa: added Fixes tag]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/dma/sh/rcar-dmac.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-> index 5b54f1c4ce15..9155bceb723b 100644
-> --- a/drivers/dma/sh/rcar-dmac.c
-> +++ b/drivers/dma/sh/rcar-dmac.c
-> @@ -844,6 +844,7 @@ static void rcar_dmac_chan_reinit(struct rcar_dmac_chan *chan)
->
->  	list_for_each_entry_safe(desc, _desc, &descs, node) {
->  		list_del(&desc->node);
-> +		dma_descriptor_unmap(&desc->async_tx);
->  		rcar_dmac_desc_put(chan, desc);
->  	}
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue(s) to consider:
+
+Critical: 0 · High: 0 · Medium: 1 (1) · Low: 0
+
+- [Medium] stmmac_pcs_setup()
+  (drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c:426) loses the only…
+
+Pre-existing issues:
+- [Medium] Clock reference leak in the XPCS constructor now invoked from
+  intel_mgbe_pcs_init(): xpcs_init_clks() (drivers/net/pcs/pcs-…
+
+--
+
+net: stmmac: move XPCS lifetime management to platform drivers
+
+This moves XPCS creation and destruction out of the common
+stmmac_pcs_setup()/stmmac_pcs_clean() and into plat->pcs_init()/
+plat->pcs_exit(), converts the Intel mGbE glue to create its own XPCS,
+and makes the renesas-gbeth, rzn1 and socfpga pcs_exit() callbacks clear
+priv->hw->phylink_pcs after destroying the PCS.
+
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> index f5f9fa67ecd77..4308dccbf2570 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> @@ -603,13 +603,47 @@ static void common_default_data(struct plat_stmmacenet_data *plat)
+>  	plat->mdio_bus_data->needs_reset = true;
 >  }
-> @@ -1654,6 +1655,7 @@ static irqreturn_t rcar_dmac_isr_channel_thread(int irq, void *dev)
->  		desc = list_first_entry(&chan->desc.done, struct rcar_dmac_desc,
->  					node);
->  		dma_cookie_complete(&desc->async_tx);
-> +		dma_descriptor_unmap(&desc->async_tx);
+>  
+> +static int intel_mgbe_pcs_init(struct stmmac_priv *priv)
+> +{
+> +	struct fwnode_handle *devnode, *pcsnode;
+> +	struct dw_xpcs *xpcs;
+> +	int addr;
+> +
+> +	devnode = dev_fwnode(priv->device);
+> +
+> +	if (fwnode_property_present(devnode, "pcs-handle")) {
+> +		pcsnode = fwnode_find_reference(devnode, "pcs-handle", 0);
+> +		xpcs = xpcs_create_fwnode(pcsnode);
+> +		fwnode_handle_put(pcsnode);
+> +	} else {
+> +		addr = ffs(priv->plat->mdio_bus_data->pcs_mask) - 1;
+> +		xpcs = xpcs_create_mdiodev(priv->mii, addr);
+> +	}
+> +
+> +	if (IS_ERR(xpcs))
+> +		return PTR_ERR(xpcs);
 
-Does callback function still use these data? suppose should unmap after
-callback return.
+[Severity: Medium]
+This isn't a bug introduced by this patch, but since the XPCS constructor
+call now lives here, it may be worth noting: can the failure path inside
+xpcs_init_clks() in drivers/net/pcs/pcs-xpcs.c leak the clk references?
 
-Frank
+xpcs_init_clks() takes the references and, if enabling fails, returns
+without putting them back:
 
->  		list_del(&desc->node);
->
->  		dmaengine_desc_get_callback(&desc->async_tx, &cb);
-> --
-> 2.53.0
->
+	ret = clk_bulk_get_optional(dev, DW_XPCS_NUM_CLKS, xpcs->clks);
+	if (ret)
+		return dev_err_probe(dev, ret, "Failed to get clocks\n");
+
+	ret = clk_bulk_prepare_enable(DW_XPCS_NUM_CLKS, xpcs->clks);
+	if (ret)
+		return dev_err_probe(dev, ret, "Failed to enable clocks\n");
+
+xpcs_create() then takes the error path:
+
+	ret = xpcs_init_clks(xpcs);
+	if (ret)
+		goto out_free_data;
+
+out_free_data calls xpcs_free_data() (mdio_device_put() plus kfree(xpcs)),
+so xpcs_clear_clks() - the only caller of clk_bulk_put() - never runs and
+the xpcs->clks array is freed with the references still held.
+
+intel_mgbe_pcs_init() only receives an ERR_PTR here, so it has no way to
+release them. Would adding clk_bulk_put() on the failed
+clk_bulk_prepare_enable() path in xpcs_init_clks() be the right fix?
+
+[ ... ]
+
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> index afe98ff5bdcb0..7396b68899c66 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> @@ -426,35 +426,14 @@ int stmmac_mdio_reset(struct mii_bus *bus)
+>  int stmmac_pcs_setup(struct net_device *ndev)
+>  {
+>  	struct stmmac_priv *priv = netdev_priv(ndev);
+> -	struct fwnode_handle *devnode, *pcsnode;
+> -	struct dw_xpcs *xpcs = NULL;
+> -	int addr, ret;
+> -
+> -	devnode = dev_fwnode(priv->device);
+> -
+> -	if (priv->plat->pcs_init) {
+> -		ret = priv->plat->pcs_init(priv);
+> -	} else if (fwnode_property_present(devnode, "pcs-handle")) {
+> -		pcsnode = fwnode_find_reference(devnode, "pcs-handle", 0);
+> -		xpcs = xpcs_create_fwnode(pcsnode);
+> -		fwnode_handle_put(pcsnode);
+> -		ret = PTR_ERR_OR_ZERO(xpcs);
+> -	} else if (priv->plat->mdio_bus_data &&
+> -		   priv->plat->mdio_bus_data->pcs_mask) {
+> -		addr = ffs(priv->plat->mdio_bus_data->pcs_mask) - 1;
+> -		xpcs = xpcs_create_mdiodev(priv->mii, addr);
+> -		ret = PTR_ERR_OR_ZERO(xpcs);
+> -	} else {
+> +	int ret;
+> +
+> +	if (!priv->plat->pcs_init)
+>  		return 0;
+> -	}
+>  
+> +	ret = priv->plat->pcs_init(priv);
+>  	if (ret)
+> -		return dev_err_probe(priv->device, ret, "No xPCS found\n");
+> -
+> -	if (xpcs)
+> -		xpcs_config_eee_mult_fact(xpcs, priv->plat->mult_fact_100ns);
+> -
+> -	priv->hw->xpcs = xpcs;
+> +		return dev_err_probe(priv->device, ret, "Failed to initialize PCS\n");
+>  
+>  	return 0;
+>  }
+
+[Severity: Medium]
+This removes the only generic reader of the documented "pcs-handle"
+property (and of mdio_bus_data->pcs_mask). For a glue driver that does not
+install plat->pcs_init, stmmac_pcs_setup() now returns 0 before looking at
+the firmware node at all.
+
+Does that make "pcs-handle" a silent no-op for the plain Synopsys
+compatibles handled by dwmac-generic.c?
+
+	static const struct of_device_id dwmac_generic_match[] = {
+		{ .compatible = "snps,dwmac-4.10a"},
+		{ .compatible = "snps,dwmac"},
+		{ .compatible = "snps,dwxgmac-2.10"},
+
+dwmac_generic_probe() sets no pcs_init, while "pcs-handle" is defined
+generically in Documentation/devicetree/bindings/net/ethernet-controller.yaml
+and imported unrestricted by snps,dwmac.yaml. Previously such a node got an
+XPCS via xpcs_create_fwnode(); now priv->hw->xpcs stays NULL and the
+former probe diagnostic ("No xPCS found" on -EPROBE_DEFER/-ENODEV) is gone
+with nothing in its place. Should the bindings be updated, or should a
+generic pcs_init helper keep honouring the property?
+
+The commit message says:
+
+    First, if a device tree specifies a "pcs-handle" but no select_pcs()
+    callback is provided by the platform driver, the created XPCS is never
+    used.
+
+Is that accurate? priv->hw->xpcs has two consumers besides select_pcs().
+stmmac_phylink_setup() uses it to widen the interface masks:
+
+	/* If we have an xpcs, it defines which PHY interfaces are supported. */
+	if (priv->hw->xpcs)
+		pcs = xpcs_to_phylink_pcs(priv->hw->xpcs);
+	else
+		pcs = priv->hw->phylink_pcs;
+
+	if (pcs)
+		phy_interface_or(config->supported_interfaces, ...
+
+and stmmac_init_phy() uses it to skip PHY attachment:
+
+	if (priv->hw->xpcs &&
+	    xpcs_get_an_mode(priv->hw->xpcs, mode) == DW_AN_C73)
+		return 0;
+
+The commit message also says:
+
+    Platforms that do not need an XPCS simply leave the callbacks as NULL
+    and no change in behavior occurs.
+
+For a platform that relied on the generic "pcs-handle" path, does behavior
+change - narrowed config->supported_interfaces (and config->lpi_interfaces
+when priv->dma_cap.eee is set), plus an unconditional PHY attach where the
+DW_AN_C73 bypass used to apply?
+
+There appear to be no in-tree DTS files pairing "snps,dwmac" with an
+"snps,dw-xpcs" node today (RZ/N1, RZ/T2H, SoCFPGA and Rockchip all go
+through glue that sets pcs_init, and pcs_mask is set only by dwmac-intel,
+which this patch converts), and the gap is not filled later in the series -
+at the end of the series stmmac_mdio.c still only dispatches to
+plat->pcs_init and "pcs-handle" is parsed only by dwmac-intel,
+dwmac-renesas-gbeth, dwmac-rzn1 and the new dwmac-rk. Could the commit
+message state plainly that generic device tree XPCS attachment is being
+removed?
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260915123802.1561724-1-coiaprant%40gmail.com
