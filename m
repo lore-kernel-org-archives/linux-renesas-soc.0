@@ -1,31 +1,31 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B55D49A3AE
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 10:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E244AA572
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 10:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789640604; cv=none; b=qBXe/aBeMuU3h5977Gqlc9p3aIn5jNu6Y4vTyQO1vcxHA6afWWZDSy8MmW26n3f1hDJ1CVnlMx1NQMHGLtbwMOATCeiwKkBFCKunRixxBwNL1oJ+v2MALf5tT4tEQ//SE8nMOBBoBgRYEyayDUtnTBcCOYBWc3u/0+zCDv98K7k=
+	t=1789640667; cv=none; b=DKGAA762OSZlweH8oCGi6V23/5qbSzwn5io4ZeeZZi8CMXOv87qnXI8+wBims9W6+SHoArqg99rIxxRTs39wfcC5NppBf3Q+o541mMFDbzWbZEZ0BcTgIaMwh713j9pjJlw9sVb7H2FqftMOLMw8iU7XXR+UgKpVyfgC3HmQEfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789640604; c=relaxed/simple;
-	bh=IQkmbn6OBGcmELEN+K5uace/cxf6o/+LwLTMx2feC8c=;
+	s=arc-20240116; t=1789640667; c=relaxed/simple;
+	bh=762E052nR6gGTPVlP3jXRnIHa37N63QsOBfYo0kz2MQ=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=oIvLHfyU+jAkXiSoNRiUskrIVHtcKD2YbvmDip6IsMGWXDqMG0DbSPPuvkdTKSXLlJPH1oFcfGF0kb0ZWm1tOxQMaasOzlvjF/MdjdC9Opc0Nbbcys41D98hLRruh8qHCwpNxJ88kd3d/Nnlr9GB69hsoGobyQ0KoGGODCm0cGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hD09aKZH; arc=none smtp.client-ip=213.167.242.64
+	 To:Date:Message-ID; b=RuWwpfn2/UQX645yoa8MfUpjGd6VOc1D41iZwMIxrcb/B76DuuPer5qqRoBGQQyWbNNKqSznOHwNqjI0jgcs21iF7LJywBaoVvotyr5LzZXyQw5SH6aFtI2FZYzfTLHSMvv5/QjIWdL4wOwg1c4/Q6078TjNVI8ZMQrCGYQyjOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tgPhBj1N; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hD09aKZH"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tgPhBj1N"
 Received: from neptunite.rasen.tech (unknown [IPv6:2400:2411:160:2f00:a4f1:7e05:2192:a835])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 64D9A2C6;
-	Thu, 17 Sep 2026 12:21:33 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 882592C6;
+	Thu, 17 Sep 2026 12:22:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789640493;
-	bh=IQkmbn6OBGcmELEN+K5uace/cxf6o/+LwLTMx2feC8c=;
+	s=mail; t=1789640560;
+	bh=762E052nR6gGTPVlP3jXRnIHa37N63QsOBfYo0kz2MQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=hD09aKZHNOOUCTTg6cqkcWIrPYWv46aQTKM8j8xxDTud0x052Tm9iv182IaMbmShY
-	 dGxgI0oHDhUjTDVRKaSaAQLSFNFiXUKf68XpSFULP1u0iRKOX3Y2OQ2pK9EXrrIt/H
-	 NB1RfJY2DhQ9HbO9eSCMfSTfPDU1h9kHuVQtnDC4=
+	b=tgPhBj1N9BvnrJHykaoFgZwgqlHpjvVUGyFOlDQYj8GBjlp1Oqf3rRDa/c8zqZ9xc
+	 eaPtsrT9+CjhRF/y0UAM51j1yO8dJie2RQU4MYJOpomQ8xkBHLM4W2/+T8iYwVlqlP
+	 +m87E96n+paMP9riHfg5cyZd0SilnHiKiUPvrzJw=
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -34,88 +34,105 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260916235648.261920-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20260916235648.261920-1-laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [vsp-tests] [PATCH 0/4] Ease test suite packaging
+In-Reply-To: <20260916235648.261920-2-laurent.pinchart+renesas@ideasonboard.com>
+References: <20260916235648.261920-1-laurent.pinchart+renesas@ideasonboard.com> <20260916235648.261920-2-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [vsp-tests] [PATCH 1/4] Use lowercase for all shell script variables
 From: Paul Elder <paul.elder@ideasonboard.com>
 Cc:
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
-Date: Thu, 17 Sep 2026 19:23:10 +0900
-Message-ID: <178964059044.52643.3890979713408079709@neptunite.rasen.tech>
+Date: Thu, 17 Sep 2026 19:24:16 +0900
+Message-ID: <178964065610.52643.11907999068428461175@neptunite.rasen.tech>
 User-Agent: alot/0.0.0
 
-Quoting Laurent Pinchart (2026-09-17 08:56:44)
-> Hello,
+Quoting Laurent Pinchart (2026-09-17 08:56:45)
+> The vast majority of shell script variables are in lowercase, but a
+> handful still use uppercase. Use lowercase everywhere for consistency.
 >=20
-> The VSP test suite is a set of shell scripts and binaries that have
-> grown organically over time. The usage pattern has so far always been to
-> copy the files to the target device in a custom directory and run the
-> tests from there. While this works fine for manual testing, it is not
-> ideal for packaging and integration in distributions.
->=20
-> This patch series solves this issue. The first patch is a small drive-by
-> code consistency cleanup. After that, patch 2/4 updates the build system
-> to install the test suite in FHS-compatible locations. Patch 3/4 then
-> fixes storage of log files when the test suite is installed in a system
-> location. Finally, patch 4/4 prints the location of unit tests in the
-> log to ease debugging.
->=20
-> I have tested this by installing the test suite in /usr/local/ and
-> $HOME/vsp/ and running it from those two locations.
->=20
-> Paul, this should facilitate integration in buildroot. Could you please
-> test and review the series ?
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
+m>
 
-Tested-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+Reviewed-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
 
+> ---
+>  scripts/bin2png.sh   | 12 ++++++------
+>  scripts/logger.sh    |  6 +++---
+>  scripts/vsp-tests.sh |  4 ++--
+>  3 files changed, 11 insertions(+), 11 deletions(-)
 >=20
-> Laurent Pinchart (4):
->   Use lowercase for all shell script variables
->   Install in FHS-compatible locations
->   vsp-lib: Store logs in current directory
->   vsp-tests: Print location of unit tests
->=20
->  data/frames/meson.build             |  6 +-
->  meson.build                         |  4 ++
->  scripts/bin2png.sh                  | 12 ++--
->  scripts/logger.sh                   |  9 +--
->  scripts/meson.build                 |  6 +-
->  scripts/vsp-lib.sh                  | 98 +++++++++++++++--------------
->  scripts/{vsp-tests.sh =3D> vsp-tests} | 14 +++--
->  src/meson.build                     |  4 +-
->  tests/meson.build                   |  2 +-
->  tests/vsp-unit-test-0001.sh         |  2 +-
->  tests/vsp-unit-test-0002.sh         |  2 +-
->  tests/vsp-unit-test-0003.sh         |  2 +-
->  tests/vsp-unit-test-0004.sh         |  2 +-
->  tests/vsp-unit-test-0005.sh         |  2 +-
->  tests/vsp-unit-test-0006.sh         |  2 +-
->  tests/vsp-unit-test-0007.sh         |  2 +-
->  tests/vsp-unit-test-0008.sh         |  2 +-
->  tests/vsp-unit-test-0009.sh         |  2 +-
->  tests/vsp-unit-test-0010.sh         |  2 +-
->  tests/vsp-unit-test-0011.sh         |  2 +-
->  tests/vsp-unit-test-0012.sh         |  2 +-
->  tests/vsp-unit-test-0013.sh         |  2 +-
->  tests/vsp-unit-test-0014.sh         |  2 +-
->  tests/vsp-unit-test-0015.sh         |  2 +-
->  tests/vsp-unit-test-0016.sh         |  2 +-
->  tests/vsp-unit-test-0017.sh         |  2 +-
->  tests/vsp-unit-test-0018.sh         |  2 +-
->  tests/vsp-unit-test-0019.sh         |  2 +-
->  tests/vsp-unit-test-0020.sh         |  2 +-
->  tests/vsp-unit-test-0021.sh         |  2 +-
->  tests/vsp-unit-test-0022.sh         |  2 +-
->  tests/vsp-unit-test-0023.sh         |  2 +-
->  tests/vsp-unit-test-0024.sh         |  2 +-
->  tests/vsp-unit-test-0025.sh         |  2 +-
->  tests/vsp-unit-test-0026.sh         |  2 +-
->  tests/vsp-unit-test-0027.sh         |  2 +-
->  36 files changed, 113 insertions(+), 96 deletions(-)
->  rename scripts/{vsp-tests.sh =3D> vsp-tests} (77%)
->=20
->=20
-> base-commit: ec6f576c9544a66a2b62e17b52b4d36a131bc49e
+> diff --git a/scripts/bin2png.sh b/scripts/bin2png.sh
+> index e7b16ee6288b..e5cb01088687 100755
+> --- a/scripts/bin2png.sh
+> +++ b/scripts/bin2png.sh
+> @@ -2,7 +2,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-or-later
+>  # SPDX-FileCopyrightText: 2016-2017 Renesas Electronics Corporation
+> =20
+> -FILE=3D${1:-.}
+> +file=3D${1:-.}
+> =20
+>  convert_image() {
+>         local file=3D$1
+> @@ -29,14 +29,14 @@ convert_image() {
+>         rm $ppm
+>  }
+> =20
+> -if [ -d $FILE ] ; then
+> -       if [ $(ls $FILE/vsp-unit-test-00*-*frame*.bin 2>/dev/null | wc -l=
+) !=3D 0 ] ; then
+> -               for f in $FILE/vsp-unit-test-00*-*frame*.bin ; do
+> +if [ -d $file ] ; then
+> +       if [ $(ls $file/vsp-unit-test-00*-*frame*.bin 2>/dev/null | wc -l=
+) !=3D 0 ] ; then
+> +               for f in $file/vsp-unit-test-00*-*frame*.bin ; do
+>                         convert_image $f
+>                 done
+>         fi
+> -elif [ -f $FILE ] ; then
+> -       convert_image $FILE
+> +elif [ -f $file ] ; then
+> +       convert_image $file
+>  else
+>         echo "Usage: $0 <file or directory>"
+>  fi
+> diff --git a/scripts/logger.sh b/scripts/logger.sh
+> index 75426a51961a..fd9f5485c180 100755
+> --- a/scripts/logger.sh
+> +++ b/scripts/logger.sh
+> @@ -4,9 +4,9 @@
+> =20
+>  label=3D${1:+ [$1]}
+> =20
+> -TRACE_MARKER=3D/sys/kernel/debug/tracing/trace_marker
+> -if [ -e $TRACE_MARKER ] && [ "$(id -u)" =3D 0 ]; then
+> -       ./monotonic-ts "$label" | tee -a $TRACE_MARKER
+> +trace_marker=3D/sys/kernel/debug/tracing/trace_marker
+> +if [ -e $trace_marker ] && [ "$(id -u)" =3D 0 ]; then
+> +       ./monotonic-ts "$label" | tee -a $trace_marker
+>  else
+>         ./monotonic-ts "$label"
+>  fi
+> diff --git a/scripts/vsp-tests.sh b/scripts/vsp-tests.sh
+> index 13e7ba4410b5..765ec08273c3 100755
+> --- a/scripts/vsp-tests.sh
+> +++ b/scripts/vsp-tests.sh
+> @@ -18,7 +18,7 @@
+>  ##   n: Number of iterations to execute test suite
+>  ##
+> =20
+> -KERNEL_VERSION=3D`uname -r`
+> +kernel_version=3D`uname -r`
+> =20
+>  run_test() {
+>         local script=3D$1
+> @@ -44,7 +44,7 @@ run_test() {
+>         done
+> =20
+>         if [ $(ls *.bin 2>/dev/null | wc -l) !=3D 0 ] ; then
+> -               local dir=3D$KERNEL_VERSION/test-$script/$iteration/
+> +               local dir=3D$kernel_version/test-$script/$iteration/
+> =20
+>                 mkdir -p $dir
+>                 mv *.bin $dir
 > --=20
 > Regards,
 >=20
