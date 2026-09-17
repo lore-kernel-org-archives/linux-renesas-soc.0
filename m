@@ -1,40 +1,38 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89AD4C10C4
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 18:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FF83DD85E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 18:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789671566; cv=none; b=cKJsekobnSYGN/l3SBkOMf2UgOhXDz6v5vefijDBFTNb/+9JX7ZhzqpiKsw3hxYkZmA39oEI0+b9/SWtSXZC0ToItXIMFUzXeSqez4gubQ7R1c14VBwQjxHlvg7GZgjX1Cvk5XE3hpPpKfcj/K75JTOQrFb+E3NTXcTV5+r+tK8=
+	t=1789671568; cv=none; b=I/cXr76EcA77UifpjEm71ktjButiglyDu1KtT+/7cX/EczM6SjSlY/biK7XZ6ia8FWROMVfIyhdYcGSUYTGyIqWMTmuG4XGmTQav1aNbNbfG1t+9kvL+01/kt1LTz1QJuxwgdQ4YhU7OiSrInE2UHlpy4lIolFLeSzum4s1BU0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789671566; c=relaxed/simple;
-	bh=KfcKlga3iduqVUj46FoNFc2uilLHGU4EeE3eYe4ELNQ=;
+	s=arc-20240116; t=1789671568; c=relaxed/simple;
+	bh=PBcRqcOstViSRWuHjONN11fKAWkDjLFpkArjBYfTbws=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fNH8vpwmuUxFtTpKpvGTZRITYxwsowRDdR+X+xMGbJrvYzyBJCy2Ik7En9+UxU5dOwhVCDO3Mn8Ev0TRtNxPcgJajMqisau1/KTzMqHZhCX+jBQnRApGqGjbmmD+fNWPvuCRpEd62lHneoKOwRNEdJKkAgJG9t9YUXpdSTCoqKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LOaIoenO; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=HZs1c18TTzKugsX/YMTIe1fEmKa+BJz+fOZNy2utCODDuHNtmUlV782rbywWkg0HAPRnbsGLpQGNhIdW0qVw5lilK2wRPA1zfJvR+hIAM7PJNEvV2ANEljKSAfNNiri9lRMXXkpBHsuQe+CnfhH1Dfz/5uZhUiPzrSF1lEgvBHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Yv/ohBpI; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LOaIoenO"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Yv/ohBpI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=OWSWJHpcU4VqZDtiauqprL6s7wDQzwSOM87tKFR7OdE=; b=LOaIoe
-	nOorrep1Gs+Vb2NzfJ+tS7069kGvDRKaXTLHQ97M33Rp5DmvfJb5AeUa1Hr4I+W4
-	J2mz/Efqp9n1z3BAZc9sFE2AuDCJ9Glktd2jonUj15gXmMKARrzMkiWbNDuaVedm
-	nfYV6ohZ3dL8s6E7YCowZds5qbRt5jn0If51SdykHhzIe5q+sTckE1ALa11LtbSE
-	NS4BU/j5utuh7NmZZPsuZXlAIV5HXgWvBwAtsDfstjHv94cXSzM3ED7hJzOwYiAu
-	70y59VXDd2opjvUsppxqB8sSEHY3pXLPMOpxUF4OqQoWXrePjiGIwtYZpsg2zeN2
-	Dm9mpt16ENqOiEBQ==
-Received: (qmail 2157834 invoked from network); 17 Sep 2026 20:59:17 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2026 20:59:17 +0200
-X-UD-Smtp-Session: l3s3148p1@MRVwYbJbEsAujnsL
+	 s=k1; bh=R63UcNIpiW0TYQPUrgXyyCXb1Pg/Heu2w3/L+Y3ctgE=; b=Yv/ohB
+	pIqT3k4g5DK1Nib4CbTlYRi7aEBkXZOtxH2lmB9mJ13w1nyupvKU4FCImBUII8L6
+	kNIjhSdkwWvrjEZCpVlUewS2rzi5BHJAUGrnf+cl63cvmDkT9EA4QyCmhSpRRZOj
+	kjYBrm85GOVCv+yRTPKlPQIRWdvRDbOFVIFMVoETi5NGF5xwevaeaC3UGr9uyMYA
+	vVMg4p3Hw2uxktkupTJBgJdg3RWivlXxnHDqKkZzZ/uTfW1BaoTZLpw1WWQ/wXd5
+	u2grr2LW+ncn1hjweDPGapUsS1nlWM3w74dvHOlBjqoyLKySExLjQkZuF1r4zWdj
+	mCWlekR3LTtsZ9Zw==
+Received: (qmail 2157926 invoked from network); 17 Sep 2026 20:59:18 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2026 20:59:18 +0200
+X-UD-Smtp-Session: l3s3148p1@xlGFYbJbIMAujnsL
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -44,9 +42,9 @@ Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	linux-rtc@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v4 1/4] dt-bindings: rtc: rzn1: drop unneeded 'start-year' from example
-Date: Thu, 17 Sep 2026 20:59:04 +0200
-Message-ID: <20260917185903.61253-7-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 3/4] dt-bindings: rtc: rzn1: add R-Car X5H support
+Date: Thu, 17 Sep 2026 20:59:06 +0200
+Message-ID: <20260917185903.61253-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260917185903.61253-6-wsa+renesas@sang-engineering.com>
 References: <20260917185903.61253-6-wsa+renesas@sang-engineering.com>
@@ -58,31 +56,70 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We don't use 'start-year' in upstream DTs because the driver does the
-right thing by default, ranging from 2000 to 2099. So, drop it from the
-example, too.
+The RTC on R-Car X5H is a bit special because interrupts are not wired.
+Future R-Car Gen5 SoCs will have them wired again. So, create a
+dedicated entry for X5H without interrupts.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 
-Changes since v3: none
+Changes since v3: tag added
 
- Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml | 1 -
- 1 file changed, 1 deletion(-)
+ .../bindings/rtc/renesas,rzn1-rtc.yaml        | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-index ea7b039a91e7..e96007981c34 100644
+index 7ea77cd0bee1..b448725671ec 100644
 --- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
 +++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-@@ -91,5 +91,4 @@ examples:
-         clocks = <&sysctrl R9A06G032_HCLK_RTC>;
-         clock-names = "hclk";
-         power-domains = <&sysctrl>;
--        start-year = <2000>;
-     };
+@@ -23,6 +23,8 @@ properties:
+           - const: renesas,r9a09g087-rtc  # RZ/N2H
+           - const: renesas,r9a09g077-rtc  # RZ/T2H
+ 
++      - const: renesas,r8a78000-rtc   # R-Car X5H
++
+   reg:
+     maxItems: 1
+ 
+@@ -52,8 +54,6 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - interrupts
+-  - interrupt-names
+   - clocks
+   - clock-names
+   - power-domains
+@@ -66,6 +66,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - renesas,r8a78000-rtc
+               - renesas,r9a09g077-rtc
+               - renesas,r9a09g087-rtc
+     then:
+@@ -75,6 +76,20 @@ allOf:
+         clock-names:
+           minItems: 2
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a78000-rtc
++    then:
++      properties:
++        interrupts: false
++        interrupt-names: false
++    else:
++      required:
++        - interrupts
++        - interrupt-names
++
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.53.0
 
