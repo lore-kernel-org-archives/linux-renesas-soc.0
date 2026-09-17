@@ -1,171 +1,101 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD1B4B205A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 09:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6340E4AB1A2
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 10:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789639032; cv=none; b=JTlghFqr9kkf3nxXXgym/tRXy6Ds1zs1CFbTnUxhFut2Tp9bUWKvHRBHzDInWVG9g4/A7qLWiI8i2xzetQmGpV2izYAs/BSviixaCT/jI0kKv8agvyQByaAXQs+VIpNz1bVNG1QQCv40WvnoVI+yQ2OQbpgfjfaAixS8pjpXj2Q=
+	t=1789639223; cv=none; b=XqX/44z6wNor51G5+xHMlcz/daWABl1LZygic0hKm8iWid96npUOeOwxhrG8D8kS0ye3PcT8SpSvCHrK7d41nYb4Lun6nlXQTsvfMswCyGA2nVsIBZZZC66pwmc274kOqEOvf/Rnl29pI1KLee8WqekC/cPJrG38R8VEYtU7PWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789639032; c=relaxed/simple;
-	bh=CLiP9/kDGXOzeKIuPXZ0RXt5Ssq4Yljq44kyp1FA34I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mVOLfvOscoBHrA1RRkuJ0r8UY0VO7tnqqnNvYgdxwb6EVI/sx4nd0ywcV+5JAf23BhdGsaa88mLeiNIko4FEStw6Vd1SbO3pwd9KPDDG8j8Mx9YMb43UJW8Ebn5bWMSFyK/uoAVw2Xux3+ZKG9Rmn48bZiXqbL4tiEDButMAHQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GiGRVhp/; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GiGRVhp/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=LCK9bALcJzzVqBgULfcDBOozSh+yYdmo3dnW3cb5QTA=; b=GiGRVh
-	p/zAyvCD2XeuEtZGLpsNqa2pmbTM9u7KkbnRpIFnzyFdSVDCEfGBQIKSVe1oHsXK
-	MZeN077CF2Fbd1hyTu8cs+Ekt+JXBlqBcm2caBQ8/pFIED6Ye8iuEQ3Ldjk2KNPc
-	+opzA+expYJG+5bpGSyEbTMJTGJnx/jr5vQ6FFsKjR1nymn+IIWxj7ATz0xZGTHa
-	EI2TW61ZXWyBNdnU6HKZqeOEoexMH3AAJ7ggcK6tFghOnCsrXfDV1Yya0Msu89On
-	6+jG9qnD3PrUn+6YlbRo/ThAcqDlezP9/Lu0bkd9OS2CV6wjPRC2TX8oe+5IswqE
-	Hef2xqEZsm6Zor4A==
-Received: (qmail 1948070 invoked from network); 17 Sep 2026 11:56:53 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2026 11:56:53 +0200
-X-UD-Smtp-Session: l3s3148p1@ogGozapbqp4ujnsL
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v8 2/3] hwspinlock: add list of locks to debugfs
-Date: Thu, 17 Sep 2026 11:56:37 +0200
-Message-ID: <20260917095639.44159-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260917095639.44159-1-wsa+renesas@sang-engineering.com>
-References: <20260917095639.44159-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1789639223; c=relaxed/simple;
+	bh=paeQyicGy4uOJnj9MMiYfbfBIScuQX5Dy7auLPzshnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uh69fieSUOK3eXYc5kw2gMUP6NFzqlN+8EP27ZpFJMDwTFLRwi6OjAGYobRXeffQy09l2wNzR+TQq1ztFtpE5QJ26c+pAabQIe0tfyGTt1Vg0EyiluJdnSFoifSQdSlugq6qI3UJGHHwB3iC8agY7MeL5dQn55ui9vWF54ETJXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f43.google.com with SMTP id 71dfb90a1353d-5c83be8db39so363711e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 03:00:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789639206; x=1790244006;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=PgwBsZe/a4Fuzb0Py083b181bySHfV18F3y848rFS0s=;
+        b=SYyK4bcVugbheVEgkvXcoUuilYWtngHU12Lf3NTygBDJWPIXtJOUSDo2TOgg+rihtz
+         AbAE+qEy/Fy8pLPWPlUrwJnei+1TdCKoVoRXgqwwbtgclAra5YHUUXd54hP5Pc3AU1PT
+         ALx4AbEIYwXKRUwFo1MRs2NBsex++f+wVOKTlesrIJHxbyZwSz1bXRfkreGrD9QFhSsj
+         Pq/PYlellAaqBufih7kUph8PpKOCM3413Us58R0b0Pt9pfzhV1mRiNeTpLZ945tm2fUD
+         vS29gBMnShaHd69124VtKVnIE5nI+yo+O4SZ1yG7fe3iUpp3IRBK5bGU5PzGpAM1zn+O
+         wFvg==
+X-Forwarded-Encrypted: i=1; AKwUvBxI8W+JjvEbKUrOEIez/28SEmPQx0Dq0yMch5QIFrkze2XKGVSJCLiSWKM7nNb7lqt0GjfM7RvSIdgtqGMQQk71Yw==@vger.kernel.org
+X-Gm-Message-State: AFuF++myBFprJRrC6zxBVEd5l+kKw6wNP/SLvK47jNK7HzL+IMC3j2yA
+	aOrmKlN7Kjan5QZOQkP/m1kLBtcVb3pzJdZZgE6hGC61NcBDhhCzFD+PV1Qa83ipGvE=
+X-Gm-Gg: AYBFou3fR6bWMkjTwOUCSsHhw65aWa2+AQwe1RStR/cdO3dds0KU3DrBjHDlanVGG/W
+	qPzndTTIZAH2qpbn1tnSkntnIe50cTPTZbj/NZPTz20ieHJCFEil1Zgx2Gk9apVEONt/dBq5qwe
+	A7raDJurCxSkbXunAL7SCBMwddPSHr0kLdQvJxPSTNAD6MY82dkLFDE/Y+EVkU4ja33cpBhs1Kl
+	cSuDyf0zx29H8khi/HYhln92uiEjL0RmQeVwSIXNa7wL4mottEOznXqwzhTwpQeryKAjxSQOvnz
+	VOoft7RD77iluJaGIN3zzc6gVM86jISB5VKUCohVyn/+2QDa3LleARKYenVu44yYuLDBWsb9OdX
+	qR3vbEhKBzn6pC3y7TqsPfFTAlAqvegrkhv0c5LATwMUvP+CyU3qbcinn7IfFpUjjpgDGnh34Pc
+	DDAZUKwLLin355H/0PCZRcUJbov5UeMzDp1pTg6rMSQvqFHRppEAa0qnxqrRU6aeWCsLhv0Y37V
+	Cqal+FRrTG9gEXounoGuOTz1xZmITT2q8bl
+X-Received: by 2002:a05:6122:1d52:b0:5c6:599d:8730 with SMTP id 71dfb90a1353d-5c9a629f878mr879020e0c.3.1789639206133;
+        Thu, 17 Sep 2026 03:00:06 -0700 (PDT)
+Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com. [74.125.227.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c9a5429518sm2112529e0c.14.2026.09.17.03.00.05
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Sep 2026 03:00:05 -0700 (PDT)
+Received: by mail-vs2-f41.google.com with SMTP id ada2fe7eead31-790b4aeb66bso407176137.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 03:00:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwBJl40JtSXoMNVyDiXUgmaN1zogVdJSjXGOLDNcCESaz9MqDrxw78/N5yUh6YmwuDE+B1vBU/fbrMma40Eb0CrkA==@vger.kernel.org
+X-Received: by 2002:a05:6102:9d0:b0:7a1:f7d2:e826 with SMTP id
+ ada2fe7eead31-7a2049c966fmr811148137.31.1789639205042; Thu, 17 Sep 2026
+ 03:00:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260910085430.3173166-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260910085430.3173166-10-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20260910085430.3173166-10-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Sep 2026 11:59:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWcPMD9kzEUbkZofv6O6EoCz7mZ52Rp-ennBYP30v9-Yg@mail.gmail.com>
+X-Gm-Features: AcwNN1XQBPUy3BHOan6ZOGxBXs0JV-45PEV0B5RSS4MUAdKXHpMlIwNQ2uEPp3k
+Message-ID: <CAMuHMdWcPMD9kzEUbkZofv6O6EoCz7mZ52Rp-ennBYP30v9-Yg@mail.gmail.com>
+Subject: Re: [PATCH v2 9/9] arm64: dts: renesas: r9a09g087: Wire up DMA
+ support for ADC
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-To help debugging, offer a list of registered hwspinlocks in debugfs. It
-will also print the responsible hwspinlock_device and if the spinlock is
-currently used. It does not show if the lock is taken because of
-side-effects. Often, reading a lock means actually taking it.
+On Thu, 10 Sept 2026 at 10:56, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> RZ/N2H (R9A09G087) has three DMA controllers that can be used by
+> peripherals like the ADC to offload data transfers from the CPU.
+>
+> Wire up the DMA channels for the ADC peripherals.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+i.e. will queue in renesas-devel for v7.4.
 
-Changes since v7:
-* clarified comment why xa_find_after() cannot be used
-* prefer "used" over "in use" in printout to avoid the whitespace
-* added tags
+Gr{oetje,eeting}s,
 
-Thanks to Geert for the comments!
+                        Geert
 
- drivers/hwspinlock/hwspinlock_core.c | 71 ++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
-
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index 22e6c7690f1a..79eb23183434 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -9,6 +9,7 @@
- 
- #define pr_fmt(fmt)    "%s: " fmt, __func__
- 
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -21,6 +22,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/seq_file.h>
- 
- #include "hwspinlock_internal.h"
- 
-@@ -860,5 +862,74 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
- 
-+#ifdef CONFIG_DEBUG_FS
-+static void *hwspin_lock_seq_start(struct seq_file *s, loff_t *ppos)
-+{
-+	unsigned long index = *ppos;
-+	struct hwspinlock *hwlock;
-+
-+	rcu_read_lock();
-+	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
-+	*ppos = index;
-+
-+	return hwlock;
-+}
-+
-+static void *hwspin_lock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
-+{
-+	/*
-+	 * Increase ppos here always to avoid endless loops. Don't use
-+	 * xa_find_after() because it only updates the index iff an entry has
-+	 * been found.
-+	 */
-+	unsigned long index = *ppos + 1;
-+	struct hwspinlock *hwlock;
-+
-+	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
-+	*ppos = index;
-+
-+	return hwlock;
-+}
-+
-+static void hwspin_lock_seq_stop(struct seq_file *s, void *v)
-+{
-+	rcu_read_unlock();
-+}
-+
-+static int hwspin_lock_seq_show(struct seq_file *s, void *v)
-+{
-+	struct hwspinlock *hwlock = v;
-+	bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
-+
-+	seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "used",
-+		   dev_name(hwlock->bank->dev));
-+	return 0;
-+}
-+
-+static const struct seq_operations hwspinlock_sops = {
-+	.start = hwspin_lock_seq_start,
-+	.next = hwspin_lock_seq_next,
-+	.stop = hwspin_lock_seq_stop,
-+	.show = hwspin_lock_seq_show,
-+};
-+DEFINE_SEQ_ATTRIBUTE(hwspinlock);
-+
-+/*
-+ * subsys_initcall() is used here but controllers may already have been
-+ * registered earlier or will be later. The rationale is that debugfs is
-+ * accessed only late, i.e. from userspace. So, files created here must make no
-+ * assumptions about initcall ordering.
-+ */
-+static int __init hwspin_lock_init(void)
-+{
-+	struct dentry *hwspinlock_debugfs = debugfs_create_dir("hwspinlock", NULL);
-+
-+	debugfs_create_file("hwspinlock_summary", 0444, hwspinlock_debugfs,
-+			    NULL, &hwspinlock_fops);
-+	return 0;
-+}
-+subsys_initcall(hwspin_lock_init);
-+#endif	/* DEBUG_FS */
-+
- MODULE_DESCRIPTION("Hardware spinlock interface");
- MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
