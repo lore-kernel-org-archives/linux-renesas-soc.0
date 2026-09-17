@@ -1,113 +1,132 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D34E2F01;
-	Thu, 17 Sep 2026 12:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82FB50AC2B
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 12:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789647476; cv=none; b=OchPlI7Qxh40EH5ihRzzlBBMTDKxfwi+W5NZaQImG3v448qkxR1P4niFuJ503DljZdq+Mj9dYTThdFQCWQjFjB+n6rsDK4O9mfrnSCWbqZfnc7YBOhCp3TjiLi6dl8yqAkY3tR58JqOtfyC8+eqygPeLL6l+gipX//bv+lkandY=
+	t=1789648045; cv=none; b=MS3S2vnaiNgPieQZiokCd50Iuz1jqfLW3peE0dbCw5oEwBNA7Zg7iJ/NSjQMuw6EWlu5gJ5KyU4FJO7PNMnM32MzP/SCdp5liPWSciGxmUIXWpx53JIyFhjMa5ckc9MZjspezJbky7dK0GFVgpk26ADq881Y0xydQCTJ+3jdEHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789647476; c=relaxed/simple;
-	bh=pJhDjtEfI3y/JufdwLLfcoX28rId297lZF6Ojq5idWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNHCJpYPh4vDNoceQ7aF0siP2QhrS2BiYqLciixKBdxw8slUjz3fUZ1GT7bvARSW+joWJomdQMztRM3/hb7CKdbJrKrxrlM8hH56qhPLsydCviZK6IQENRDozx3ttpdGLnJCJF6oh1wzuC4t2vIrZWwAwV49YxlPlS+/w7wpYao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nZ6F752Z; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789648045; c=relaxed/simple;
+	bh=MP2FNncNzN5nDMuqa8c2mwv9xwXy0f3dmsWdn8BAIb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xn/tD+KMBTnZ6P5BZmxCbhjf0nYSdEA0OENqyoTkdIFixz4KBma3gxppTT1z+WE8LYTkEi64vCSiJ+6o+Ev17D6rXB4tzzKODTatxeLeHcp475mZdzxIleKRTGxX6u9TjTcESrKlIiG0i1yDQsgcppXq6vBfAgh0GJjodbc66eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0W0ljSc; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nZ6F752Z"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1959F2C6;
-	Thu, 17 Sep 2026 14:15:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789647357;
-	bh=pJhDjtEfI3y/JufdwLLfcoX28rId297lZF6Ojq5idWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nZ6F752ZtElaAUm6diuaB4eUGYTulF1GRH97dfMKLfFjIEWMlDW+Jv4ge6Tn2VWH8
-	 pBQReX2ZMk0xeqVZQsN73mjKODnJrxyJqMXvp+8H8VxNDOfb/7Sr2y4LQazH+7t3pR
-	 v3mGlAlaAciE8asKKJTcyuD3jMLcauYzi0sv4fMo=
-Date: Thu, 17 Sep 2026 15:17:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0W0ljSc"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-485ac898fa4so595060f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789648029; x=1790252829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xhI8SzP7IG6+w349oQAHdsKcMYwgaoAFfY9n0UY/I0M=;
+        b=H0W0ljScT/p0ZQlrCpMHadS6P4ijOldNYdJOcOb7FDCpboHp5s7NWqaaCpfN+GNGHN
+         SwEBpDLuD9psw4i2GND+lg1Y5o38fX2Lcluw/77Fw2OTFj5qykBTMLLJo1l7KSyxiEdp
+         Lfr22du+j6gZ9uhLw4SiNg5IYu6s+w6vDQjWK88MPEBb7N6XD/hsFAeG49tdEZjKLKwB
+         9fG2a4wQ/cjd94aT/sYzhxb9lizSnnTkmgRwwV8rduvf1JmVUxKXYtq7y5878KxNfdv9
+         OIYEmX8QzrAlEX8GDbXQuf4mzWBKikftOd5r9veZEznEcVj8pOlDhyIvW5Vw/odLO7yp
+         TuXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789648029; x=1790252829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=xhI8SzP7IG6+w349oQAHdsKcMYwgaoAFfY9n0UY/I0M=;
+        b=nH6HawOBIkJ8NawdOLGgXIF4mruCZcj9N8nQmJKu74tYF8LrtE3PSNzPCosnc2fnkP
+         y6BiGU0Xp5mtGJZDtIm2iAb6+dQAfeZwbMhZLkdxm4t3nFJ63assPVUmlQAhUCXZ1U3x
+         Lst1WuSfEymPrBAPpSLQFmw5/qGN7JsPeKbdcErCknmgoDtbiJc4yzNyqrjB9pIGEZjt
+         WAj4Eto7J5SLcHPt2uaWucO2ELifhIbq+Mjf+DHofqLuKoUL5TceIY4e7yGC6rKnWsRA
+         6s4v8nAootkWQgRp228bVV6zsQ9cDU9fBv+NItKq+pfNq6UtUBPUKAqXJN1gcL9pHYHq
+         9qJg==
+X-Gm-Message-State: AFuF++nKmMorYQT2xVjVMr9jzWwJ0WWYXJG/Hh0mDZ4yn2RupzNry9+E
+	Mac8oglEmju/BraX+XjvEqjVC/Q+dVCqKvoYo7fqzVkLv/Lo6f8b/mfM
+X-Gm-Gg: AYBFou1RYNPeXUz8F7jLCzdalPqRVhyXK4vV9ZdW2sVv31VI8tB1O7KANA9MyakAG6M
+	ybRiRXGq51ze8/iorTrJkPyYUfCK1x8DGLL2pOLW++t/Hblr5AWLC6ELeSBO/U/ZhnTH4z8p7dY
+	kAxKRzYquX05bpHaGkbB+tsyvLTpRPUr/qIZ3fQGXKApnbpLKxO+NG23WiU0UnltZpQzqjfwDnS
+	ZpZ8dR9bbt9oJnQdVQfCLUBO2qtLnSbfZl2QapapEOJTDqyuh2CKwbmxHHVon+PnkftQtV5/2/x
+	KYuaZEVJLv0+4XkFZtp65R9Ex5xl0KD3bbSXmHNvcspX75vbCNGXptJyrEaoJ4Nxm5Sr6UzAJic
+	+5VXXKUuxvNDN0Y2+SOp486TUddZIFHV4ahprnU3EFFMh97e6KwkBW1PwuHb5Yd8s5OT9U1H4C5
+	ixgFIzjvg1IMpYfYhkAeg9iTzwkopqzAhh7Kgj2r29RXGQ139wGsIitqr5DBExblKGGHRBAhWVj
+	ZnJNOLEWT8nimu4b/BLE+fcEiEvEm5x2tl6PisRgE6vFGUjf4iDQwgoEDH7fsdwy1nWeBVFEUTs
+	4Zn1UrGC1Y+otPLKaFoUbHabGM9c
+X-Received: by 2002:a5d:584c:0:b0:487:d79:7cf7 with SMTP id ffacd0b85a97d-4870d797e09mr8077150f8f.52.1789648028528;
+        Thu, 17 Sep 2026 05:27:08 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:881:57c7:8b8b:8936])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bef766dsm14780947f8f.4.2026.09.17.05.27.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 05:27:08 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 00/10] media: rcar-fcp, vsp1: Enable on R-Car X5H
-Message-ID: <20260917121737.GB44274@killaraus.ideasonboard.com>
-References: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: r9a09g047e57-smarc: Sort nodes alphabetically
+Date: Thu, 17 Sep 2026 13:27:01 +0100
+Message-ID: <20260917122701.160720-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 17, 2026 at 09:04:39PM +0900, Paul Elder wrote:
-> This series is based on Geert's
-> "topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3" branch [0]. A
-> branch including this series is available here [1].
-> 
-> This series enables the FCPV[BI] and the VSP[BI] blocks on the Renesas
-> R-Car X5H SoC.
-> 
-> This has been tested on an Ironhide with the vsp-tests test suite [2]:
-> 148 tests: 142 passed, 0 failed, 6 skipped
-> 
-> There was some odd behavior with the clocks, where from what I
-> understood was that the clocks for the FCPV[BI] and VSP[BI] are
-> always-on, but the tests would hang unless I explicitly enabled...  the
-> always-on clock (or fsleep). Then after I removed the patch that
-> explicitly enabled the always-on clock everything ran fine. Just
-> reporting that this happened just in case it's relevant.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Well, it's always worrying, but as you can't reproduce it now it's hard
-to debug it. Let's keep an eye on that during further VSP work.
+Move the sound card node before the vqmmc regulator node to maintain
+alphabetical ordering of the nodes under the root node.
 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3
-> [1] https://git.ideasonboard.com/epaul/linux/src/branch/epaul/v7.3-rc1/x5h/vsp/fcp
-> [2] https://git.ideasonboard.com/renesas/vsp-tests/commit/900168f58c9d96be0592c2593f4d8f34edc9c69e
-> 
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> ---
-> Paul Elder (10):
->       dt-bindings: clock: renesas,r8a78000-cpg: Add CPG_SGD4_VIO_DP_{TX,OTHER}
->       clk: renesas: r8a78000: Add clock for FCPV and VSP for SCP FW SDKv4.36
->       pmdomain: renesas: r8a78000: Add maps for VIO for SCP FW SDKv4.36
->       arm64: renesas: r8a78000: Add FCPV[BI] nodes
->       arm64: renesas: r8a78000: Add VSP[BI] nodes
->       media: rcar-fcp: Check device revision at probe time
->       media: rcar-fcp: Handle resets
->       media: vsp1: Support full VSPB on R-Car M3-W, M3-N and E3
->       media: vsp1: Document X5H SoC ID
->       media: rcar-fcp: Add R-Car X5H support
-> 
->  arch/arm64/boot/dts/renesas/r8a78000.dtsi        | 171 +++++++++++++++++++++++
->  drivers/clk/renesas/r8a78000-cpg.c               |   2 +
->  drivers/media/platform/renesas/rcar-fcp.c        | 162 +++++++++++++++++++--
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c   |  13 +-
->  drivers/media/platform/renesas/vsp1/vsp1_regs.h  |   3 +-
->  drivers/pmdomain/renesas/r8a78000-mdlc.c         |  34 ++++-
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h |   2 +
->  7 files changed, 372 insertions(+), 15 deletions(-)
-> ---
-> base-commit: 02c5d61866607bce0b3271e7c1b838c53dbedc55
-> change-id: 20260917-epaul-v7-3-rc1-x5h-vsp-fcp-8afdeb2740f7
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts      | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+index 14f5834082fa..8094599cc8e7 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+@@ -77,6 +77,14 @@ aliases {
+ 		mmc1 = &sdhi1;
+ 	};
+ 
++	sound_card: sound {
++		compatible = "audio-graph-card";
++
++		label = "snd-rzg3e";
++
++		dais = <&rsnd_port0>;	/* DA7212 */
++	};
++
+ 	vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
+ 		compatible = "regulator-gpio";
+ 		regulator-name = "SD1_PVDD";
+@@ -86,14 +94,6 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
+ 		gpios-states = <0>;
+ 		states = <3300000 0>, <1800000 1>;
+ 	};
+-
+-	sound_card: sound {
+-		compatible = "audio-graph-card";
+-
+-		label = "snd-rzg3e";
+-
+-		dais = <&rsnd_port0>;	/* DA7212 */
+-	};
+ };
+ 
+ &audio_clkb {
 -- 
-Regards,
+2.55.0
 
-Laurent Pinchart
