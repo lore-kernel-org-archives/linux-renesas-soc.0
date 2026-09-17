@@ -1,132 +1,99 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82FB50AC2B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 12:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805A44DE72D
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 12:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789648045; cv=none; b=MS3S2vnaiNgPieQZiokCd50Iuz1jqfLW3peE0dbCw5oEwBNA7Zg7iJ/NSjQMuw6EWlu5gJ5KyU4FJO7PNMnM32MzP/SCdp5liPWSciGxmUIXWpx53JIyFhjMa5ckc9MZjspezJbky7dK0GFVgpk26ADq881Y0xydQCTJ+3jdEHQ=
+	t=1789648569; cv=none; b=XIOoTTEh8YtmGbdPJ2zW+DPB+LZwTVvGawyJiHxUs4sjbPHChjB8M19zvtXWSscqsUeSidF1QiRQPBQGMZ7GEhJtHISAMcUH3wAmzUV3mwJgxzwDAfKlBW3j82hXdD2CntQmTdL8y+wPa1yGKDup28nKhs8BfLucjwQ/iYRE9fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789648045; c=relaxed/simple;
-	bh=MP2FNncNzN5nDMuqa8c2mwv9xwXy0f3dmsWdn8BAIb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xn/tD+KMBTnZ6P5BZmxCbhjf0nYSdEA0OENqyoTkdIFixz4KBma3gxppTT1z+WE8LYTkEi64vCSiJ+6o+Ev17D6rXB4tzzKODTatxeLeHcp475mZdzxIleKRTGxX6u9TjTcESrKlIiG0i1yDQsgcppXq6vBfAgh0GJjodbc66eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0W0ljSc; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1789648569; c=relaxed/simple;
+	bh=3jBklx3OV81z21pgMfCutwA9rsrppPeVwShGVq099SI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y8jaQcO2SjQFsWXp8/i+PLQ0NLddNmCPm22W1VY8tlO5lyJn7guFT2ME/JwuBp+4LCcXSO2etQptljCvVjA/BOdE1gQ+OzUCXYe5UdpHNl8M1r8xYQV9FX+rG53YGnYVMKOrc6DF1ZV9IN3o7vvIBC3gf4c822Ac36n/MXCLN0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0W0ljSc"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-485ac898fa4so595060f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789648029; x=1790252829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=xhI8SzP7IG6+w349oQAHdsKcMYwgaoAFfY9n0UY/I0M=;
-        b=H0W0ljScT/p0ZQlrCpMHadS6P4ijOldNYdJOcOb7FDCpboHp5s7NWqaaCpfN+GNGHN
-         SwEBpDLuD9psw4i2GND+lg1Y5o38fX2Lcluw/77Fw2OTFj5qykBTMLLJo1l7KSyxiEdp
-         Lfr22du+j6gZ9uhLw4SiNg5IYu6s+w6vDQjWK88MPEBb7N6XD/hsFAeG49tdEZjKLKwB
-         9fG2a4wQ/cjd94aT/sYzhxb9lizSnnTkmgRwwV8rduvf1JmVUxKXYtq7y5878KxNfdv9
-         OIYEmX8QzrAlEX8GDbXQuf4mzWBKikftOd5r9veZEznEcVj8pOlDhyIvW5Vw/odLO7yp
-         TuXA==
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e512ee6so236803e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:36:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789648029; x=1790252829;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=xhI8SzP7IG6+w349oQAHdsKcMYwgaoAFfY9n0UY/I0M=;
-        b=nH6HawOBIkJ8NawdOLGgXIF4mruCZcj9N8nQmJKu74tYF8LrtE3PSNzPCosnc2fnkP
-         y6BiGU0Xp5mtGJZDtIm2iAb6+dQAfeZwbMhZLkdxm4t3nFJ63assPVUmlQAhUCXZ1U3x
-         Lst1WuSfEymPrBAPpSLQFmw5/qGN7JsPeKbdcErCknmgoDtbiJc4yzNyqrjB9pIGEZjt
-         WAj4Eto7J5SLcHPt2uaWucO2ELifhIbq+Mjf+DHofqLuKoUL5TceIY4e7yGC6rKnWsRA
-         6s4v8nAootkWQgRp228bVV6zsQ9cDU9fBv+NItKq+pfNq6UtUBPUKAqXJN1gcL9pHYHq
-         9qJg==
-X-Gm-Message-State: AFuF++nKmMorYQT2xVjVMr9jzWwJ0WWYXJG/Hh0mDZ4yn2RupzNry9+E
-	Mac8oglEmju/BraX+XjvEqjVC/Q+dVCqKvoYo7fqzVkLv/Lo6f8b/mfM
-X-Gm-Gg: AYBFou1RYNPeXUz8F7jLCzdalPqRVhyXK4vV9ZdW2sVv31VI8tB1O7KANA9MyakAG6M
-	ybRiRXGq51ze8/iorTrJkPyYUfCK1x8DGLL2pOLW++t/Hblr5AWLC6ELeSBO/U/ZhnTH4z8p7dY
-	kAxKRzYquX05bpHaGkbB+tsyvLTpRPUr/qIZ3fQGXKApnbpLKxO+NG23WiU0UnltZpQzqjfwDnS
-	ZpZ8dR9bbt9oJnQdVQfCLUBO2qtLnSbfZl2QapapEOJTDqyuh2CKwbmxHHVon+PnkftQtV5/2/x
-	KYuaZEVJLv0+4XkFZtp65R9Ex5xl0KD3bbSXmHNvcspX75vbCNGXptJyrEaoJ4Nxm5Sr6UzAJic
-	+5VXXKUuxvNDN0Y2+SOp486TUddZIFHV4ahprnU3EFFMh97e6KwkBW1PwuHb5Yd8s5OT9U1H4C5
-	ixgFIzjvg1IMpYfYhkAeg9iTzwkopqzAhh7Kgj2r29RXGQ139wGsIitqr5DBExblKGGHRBAhWVj
-	ZnJNOLEWT8nimu4b/BLE+fcEiEvEm5x2tl6PisRgE6vFGUjf4iDQwgoEDH7fsdwy1nWeBVFEUTs
-	4Zn1UrGC1Y+otPLKaFoUbHabGM9c
-X-Received: by 2002:a5d:584c:0:b0:487:d79:7cf7 with SMTP id ffacd0b85a97d-4870d797e09mr8077150f8f.52.1789648028528;
-        Thu, 17 Sep 2026 05:27:08 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:881:57c7:8b8b:8936])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bef766dsm14780947f8f.4.2026.09.17.05.27.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2026 05:27:08 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] arm64: dts: renesas: r9a09g047e57-smarc: Sort nodes alphabetically
-Date: Thu, 17 Sep 2026 13:27:01 +0100
-Message-ID: <20260917122701.160720-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.55.0
+        d=1e100.net; s=20260707; t=1789648559; x=1790253359;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=aDhAcwvSBAcGlBOnGD+Htro9uYMnuj1oYxROHQFN0Ig=;
+        b=Teu6Hd/a0e+xUMFXiXnaezUjPcY0//wsyJLDBKlBAHBk0J0pmUPe+LW7WTrKOMHiy/
+         oAB97MGcHVYU1tnInsyfEiaknCe+Vrdec5u0X8kdhwBI98/+awYpqUWIlVhl7F7x7oNE
+         coWNyNUVFehxvYQSG7jKVygE+aYqnbKLWWW/OMsuh3G1u57JHbPnqxEPhe8ahOlU/ouT
+         7V8c2yfEor68X0o3wUeTj3CWEgG4AglIyJhIhAW7XP7Y/Mvp7nJiNquR2eCBrQiLB2Bo
+         TT8JeJCbUu4NlppQFwjr36xOLftPUY4b+CfdDzGKrP29P7pZKH8EeyuT/kHaC1wxH3g8
+         L6AQ==
+X-Gm-Message-State: AFuF++mQFsRIadF14HRD2Gjq1Gdp3gmw5S0ZxDxHGe1vZ32+mDp2IRfo
+	BoSYm08/TIsoKaZiWjNtl3fKJjUbIbzSD/GyAFYTtMXou7plMEZJFVOphuzgNmWKNp0=
+X-Gm-Gg: AYBFou02oHFPQPM/ROFBOTkvFqjBIf57p2fSBVYsbwsQnJVRPiYinl7vQBftqFF3Ohn
+	f5I3mZho1tEC/hPFbQCkn0ofMH3BKa6hovCx4QNIEfGIRwCOw/CCxUsxwPF7PRawui+jaASOHsj
+	cvrx3hAklAxQUqyCPmJ1PoHVyPyWWNKmf7GlW2t7uqscih+ajaHd1mP8pcExap5RqDxWLu815CB
+	i5LCQ602jVKY/xviKweNZ4ErZs5pAuCueklfIVjDi9qy1hgypJdz3xo4x2mnaut+BVc71DYN7Me
+	a34whrDp2lHFUouE3YgZ3HcDm6loZtt/HDYC2CZ1LniJqRJFJoQYg5peLi9FDosp09GTYNYuZa6
+	ctnw7CuWzwG5TSHMlgMr999xJ/7S9ZJDflYs+HHvlZOw7Pz2WMp/y7MnlwNzpA41zTyW6jM6vG8
+	vowP/GOcPJZo4J7L3uWGIvURjkNP/wGh0IupPtMkA6sxxK4Az/lQXsHoF31hr2epBOtvT8y3R/E
+	zfVV3msbQmo7xuAt5erXMXPDwZCEeYctgEf
+X-Received: by 2002:a05:6122:1d43:b0:5c9:a60d:3277 with SMTP id 71dfb90a1353d-5c9a60d3a1cmr1996725e0c.11.1789648558991;
+        Thu, 17 Sep 2026 05:35:58 -0700 (PDT)
+Received: from mail-vs2-f40.google.com (mail-vs2-f40.google.com. [74.125.227.40])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c9a540ef54sm2435696e0c.13.2026.09.17.05.35.57
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Sep 2026 05:35:58 -0700 (PDT)
+Received: by mail-vs2-f40.google.com with SMTP id ada2fe7eead31-7a03fe69236so280351137.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:35:57 -0700 (PDT)
+X-Received: by 2002:a05:6102:160b:b0:79f:eeb7:d643 with SMTP id
+ ada2fe7eead31-7a028c6cd05mr6743315137.10.1789648557334; Thu, 17 Sep 2026
+ 05:35:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260917111349.52250-1-wsa+renesas@sang-engineering.com> <20260917111349.52250-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260917111349.52250-4-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Sep 2026 14:35:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVcFKZO7GA-nQ-BH-1k127ZAjtUaZqHAbu5FGTmuCmk3Q@mail.gmail.com>
+X-Gm-Features: AcwNN1UeqeHi3FMvuG4r-xFK5-Yd1nEb0E4krEULSwZN0Cf2ZFOfdU8KBvHRK1E
+Message-ID: <CAMuHMdVcFKZO7GA-nQ-BH-1k127ZAjtUaZqHAbu5FGTmuCmk3Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] dt-bindings: rtc: rzn1: add R-Car X5H support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.csengg@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 17 Sept 2026 at 13:14, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The RTC on R-Car X5H is a bit special because interrupts are not wired.
+> Future R-Car Gen5 SoCs will have them wired again. So, create a
+> dedicated entry for X5H without interrupts.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Change since v2:
+> * handle only X5H for now and do not fall back to generic Gen5
 
-Move the sound card node before the vqmmc regulator node to maintain
-alphabetical ordering of the nodes under the root node.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../boot/dts/renesas/r9a09g047e57-smarc.dts      | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 14f5834082fa..8094599cc8e7 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -77,6 +77,14 @@ aliases {
- 		mmc1 = &sdhi1;
- 	};
- 
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
-+
-+		label = "snd-rzg3e";
-+
-+		dais = <&rsnd_port0>;	/* DA7212 */
-+	};
-+
- 	vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
- 		compatible = "regulator-gpio";
- 		regulator-name = "SD1_PVDD";
-@@ -86,14 +94,6 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
- 		gpios-states = <0>;
- 		states = <3300000 0>, <1800000 1>;
- 	};
--
--	sound_card: sound {
--		compatible = "audio-graph-card";
--
--		label = "snd-rzg3e";
--
--		dais = <&rsnd_port0>;	/* DA7212 */
--	};
- };
- 
- &audio_clkb {
+                        Geert
+
 -- 
-2.55.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
