@@ -1,512 +1,293 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013047.outbound.protection.outlook.com [52.101.72.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f11.google.com (mail-pj2-f11.google.com [74.125.227.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8168D4F3EAC;
-	Thu, 17 Sep 2026 20:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789677773; cv=fail; b=R5sWMVmaPEOrS/CnAexoGt0199DyuLZG/QthPwx1lmVa+if22iVgdsIQNwM/z8Ta5UEzD4tmIfmaxQ4dvAuC423YWqqOdCQwHS7aGk9dyyDZHtjWP8ih+26JE+bDqp6dAu6P2lsfTo14kbWCrGwShieWddHp5NOc6rS6rui62Ds=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789677773; c=relaxed/simple;
-	bh=lOULUTfzxVlXnnRc/qDaVFNV9iPKI042EWe6SdQ/+bk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=FseWq4dGdFfzyILGgxdA2lCv1KjVG+pA4E/78/IVFUoovSbV8rnURaIiGup5DP1Z2bxupELRyHIuBd2hSbPGev5qNjByCBF2M+cWZbIBNgmy5S+i0NgPlyE5v7jL8OWyMjhqFpy5dtf8E0IXuwRXqNiw2r+OwesE91wCHlp8Xek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=w+bGqAV5; arc=fail smtp.client-ip=52.101.72.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF39C3A48E2
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 20:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789678031; cv=none; b=ll/BZ9dV+8U1hGdLysH/JOYeyZvauhL2fqKhCuzbll0UyKH0pFRk6sd/O67WGW7bgpEOnJek/2gkCpvR0CqHy4uq4sBfZS361IIgERPVOQR/COt6N93bTTxZ3eReZEw6eUBXfZG0bviMBEQu1FjSC4/sjpNDTwOt5snDgQsQcHw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789678031; c=relaxed/simple;
+	bh=ITE4v+cVNf5Vqe1WATGdEe6WnH0WhMy4sXQ3H3YJEIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P2joMAyMSLiiZo6x+HfnxdW/H2c10T3iEsIn8u+q2hVq7uh4f23ld7a5cmWdaGvhHK/YVCnvXkvPKv1KUTwJcPWEJgquhNhwgJSLgw+VfK+mTDvBipBKrQH7qjZAULXo43//YezIgDnjPl1Se+ZBtVhEDAOKc5OSEAjpmL8HDwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=opOT3KVf; arc=none smtp.client-ip=74.125.227.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="w+bGqAV5"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dOzzMQy5MmXIggJk6yI3ae03zDEZkw1I3XLo5Bvx063ozHBQUDW1tUONgBep3Rh68z0W91lfbaFQvcYYTSjtzC8shlRAv8PwIbOgr6QgYLcpXLT4b9Yhy0XwjcncG3o75VkhXXoYzqa31niDQFXBt0PlIqZo61WeG9KH56VumSavUVNtCMupuf1BBLwMZNKx8tYKPEuNJVGszkb+r58OgGBfRyuuUFLvgZhVY15HuEputahE4UvcgaqDoXcdflOGtrcHli3XynhQHfXbBJcT5cjgvBhIV3TzK5A89JqjasevA7VyC1/9ejKxxZJOSdbo228MUVTnsZ5c7zHRqOjx7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8joHETlr/Oqf2dHoCAttN9gzT5V/GtkVD/aLhuvciYE=;
- b=BXkXTIWLt2ndud5hXN4A2mldMKrF8aZaDHpxkw4PuDMbz0VzPAUP0sfy9uGYJv6Qu1bmVWa1nEk82xdosaoy/ry4lNW6i7mmjLfEGRaxOhnItDeSXD1DdNoTzxMJzxN4/EgzNovoyPeGVZxVam+Af6s+zorFPKZOZXAcjo7O1I8G7yqAB0JX302I8AHP83iyTDjiv/yVXgpQrl6Us3NTt1isOpvN0n+Bv0K2vfF4b3DyqMYMHjxxU5bVf8+puDB93TJSvU+fhTmsxV411Q9LlylWO1Y1VB4jbeZpYcYvbMnWKGjxMNtK5DXXX/gE0zV3k+Ly45t49SBWN15Wpt1DHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8joHETlr/Oqf2dHoCAttN9gzT5V/GtkVD/aLhuvciYE=;
- b=w+bGqAV5zMATM+hx/YmyA96S1gvffY011EL0JK0SbV2fqTqLLiO6qKaoH3jnwCxIryARwqY6K1aazL2inbwEPq5zVUTP/wC3VBVtSNfn7mM9YrVen2uoo8iWEePH3b+EuIh5baUQU+PeFALv57Y+NWVLTsARRI9VAdZcucgeWLhlrXPaTZ0SvwK07R/BMBU+G/gC6OHgSYTCJOEFVZg70ihrZhanikfMjJGmkygrDkiT0Ta9Jo1q/NNqY0XMqo75WyQXHVMuzxAsr1QaPx/beq0GtZLUhvoCWWmt3XRO5Zn8HjpEplZxqFXRBZjfHQxY5CcemkZ7qzrigsKenCf5/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU4PR04MB11791.eurprd04.prod.outlook.com (2603:10a6:10:623::11)
- by DB9PR04MB11511.eurprd04.prod.outlook.com (2603:10a6:10:5df::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Thu, 17 Sep
- 2026 20:42:47 +0000
-Received: from DU4PR04MB11791.eurprd04.prod.outlook.com
- ([fe80::11ca:6b74:3234:d7de]) by DU4PR04MB11791.eurprd04.prod.outlook.com
- ([fe80::11ca:6b74:3234:d7de%5]) with mapi id 15.21.0428.011; Thu, 17 Sep 2026
- 20:42:47 +0000
-From: Frank.Li@oss.nxp.com
-To: Aubin Constans <aubin.constans@microchip.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Cercueil <paul@crapouillou.net>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="opOT3KVf"
+Received: by mail-pj2-f11.google.com with SMTP id 98e67ed59e1d1-398a0a87595so99783a91.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2026 13:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789678028; x=1790282828; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6WSIJ12G6yyEXd84X7xxhSCpXDNFy6p10iieXMp1K6w=;
+        b=opOT3KVftBVg/jDatnOzUvOU5UAXxwUq+xBF5u4iienHU7eRvqdzBLILnHSvIY2bvK
+         BTQJTzUmCFCQ4ztU2/QHXpAcMSbbk5maK1f7wjqmfvEG+3xxaZ/9fDaQwfCN9XQcf7Zp
+         0Csa/PoLxwBYWbsK6tQwsJ6oUf5QFxuADT0T4GW0zmvNY5CRd0LPgYPRX7plRFrp/V/9
+         ySaozPl9aDbmZvSwcCB6EkeYVeQbJdrCOKfh1qldEVmNABxhp6RtSexQXAfZNjMjeDN8
+         YID+eMN8kGUnMT1GOKk3L1hHOTKDXwP3bt6YEOJuZr2R0Loq6lnIIeArG/hvmhJIIvIu
+         omwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789678028; x=1790282828;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6WSIJ12G6yyEXd84X7xxhSCpXDNFy6p10iieXMp1K6w=;
+        b=Upf8NPA7wxse+7KfZPGXAChHDCd8/CTkiczSSQ9Z7tUJSBTUkGuCPmjZ+BPDptMBdp
+         X5TY1IloLLzqJ/wkI+cmmXZUf17vLlOr0H2QAf12FexIZzCDGd0cV2x3RVleHZqV5XyR
+         UtQeRn5tp7+ztiruNo/GZT+qijhGdZ/JVJtjNa2PG1zNEbekMIn3abzA+FGhjhdgyakg
+         4z9bebn7jgif6OYUw/yt4kCtZjwpPRLgeZqmF51M8j+1Se/ntNQdgLDTVpYh8ok/kMdt
+         8PcmTjq+naoUB7aBeyrOt0ddHcM5zU8nsGdVkQCMGVaNJfitCwKgVbox3eFo/aWJLZRx
+         7ZGw==
+X-Forwarded-Encrypted: i=1; AKwUvBzdO0ClARvcsmCHT8C3AaijrbxkcpEdzg9zexxsr11nzzNZ9GMmUS5H/8doH4s5PeQqcYhZIzv/3f9nvtG+vCPVwA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mpQKaidsczX+EVIYLDhSC3UEaKALxhXCfuLkgCh/CF5kbM9PcI
+	HNJpaKPyPJPjAqGHjeDbVxpwM2Aozn8lWGFiCQyN/vhl42NYHz0puKa5
+X-Gm-Gg: AYBFou0hG+LKDwMdNX1ea7tXFQrkeVjaCZWbUefzxAaHQwZiQ3+PUql7lqKycCJOC3O
+	+CfpYgmnAmxnnZCXQNnWS7vOQcmkD8uYWVQ0vRy9zOI0hNDT+7B/nAmMrAfIO59hlUPA62nNbwX
+	uDQIKTm1bA3RwoFhR0X3iqPlSORz+u1NLywBCwcNthWcupQN8+f1cSpVFgsYlujaaachdyMjslF
+	YF/utA82DYZh0twXs+8N4w3f7/aJlinRPvJfFqzHzuibpUF6tmga8+IldlrQGxIYSH5rxRAHakK
+	+A6Bbf5MEH+3cO9Gbja+bYBJxGIY6QJM8ZAv+ByCBLGfs4OiTA074eWc7tKtEBA9yOOoNfptEqB
+	qRNjxR/uzQxWSqkAFFJ8cPDEWxH0vUK/HBLcvCilybdxQUCMysF773zCUYIdtXqJLuXRG/kXRpr
+	8OQOFoscQhjWngANoTzDRgxcZH3F9HAvtzI+os3ouxTN9P2/7pMRCvg+IDF8cpCs5jwugDJg==
+X-Received: by 2002:a17:90b:164a:b0:39e:4d7b:b247 with SMTP id 98e67ed59e1d1-39e54ea66cbmr680543a91.19.1789678028235;
+        Thu, 17 Sep 2026 13:47:08 -0700 (PDT)
+Received: from server.lan ([168.138.199.194])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e50a4bc22sm1232196a91.17.2026.09.17.13.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 13:47:07 -0700 (PDT)
+From: Coia Prant <coiaprant@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Coia Prant <coiaprant@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	Russell King <linux@armlinux.org.uk>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Lars Persson <lars.persson@axis.com>,
-	Fan Wu <fanwu01@zju.edu.cn>,
-	Linus Walleij <linusw@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Zhan Xusheng <zhanxusheng1024@gmail.com>,
-	Pan Chuang <panchuang@vivo.com>,
-	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
-	Ethan Nelson-Moore <enelsonmoore@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Rakuram Eswaran <rakuram.e96@gmail.com>,
-	Khalid Aziz <khalid@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND...),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip (AT91) SoC support),
-	linux-kernel@vger.kernel.org (open list),
-	linux-mips@vger.kernel.org (open list:INGENIC JZ47xx SoCs),
-	linux-omap@vger.kernel.org (open list:OMAP HS MMC SUPPORT),
-	linux-renesas-soc@vger.kernel.org (open list:TMIO/SDHI MMC DRIVER),
-	linux-arm-kernel@axis.com (open list:ARM/ARTPEC MACHINE SUPPORT)
-Cc: imx@lists.linux.dev,
-	vkoul@kernel.org
-Subject: [PATCH 1/1] mmc: use dmaengine_get_dma_device() instead of chan->device->dev
-Date: Thu, 17 Sep 2026 16:42:23 -0400
-Message-ID: <20260917204240.1284796-1-Frank.Li@oss.nxp.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH8P220CA0061.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:2d9::12) To DU4PR04MB11791.eurprd04.prod.outlook.com
- (2603:10a6:10:623::11)
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	David Heidelberg <david@ixit.cz>,
+	netdev@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH net-next v7 00/11] net: pcs: add basic support for RK3568 XPCS
+Date: Fri, 18 Sep 2026 04:46:11 +0800
+Message-ID: <20260917204624.2427486-1-coiaprant@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU4PR04MB11791:EE_|DB9PR04MB11511:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f028c45-8c9e-4e19-5510-08df14fc3b54
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|23010399003|1800799024|376014|7416014|366016|11063799006|56012099006|3023799007|10067099003|921020|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	+DhAMF6YozFW5Xz+3jMqiiuL0g+EqHvJD52D+YO+EeaxOv9QIJwJl3omwfWZZNmgu0LpanpPcR2G6tcsmknIvrSog7P/MPgX/Mdgir4D7UNYNc9Ix7epVm+lbL8aQE9i+KsXD6xZsiglJW8RrBQT+T+iV2/WpgPAu/mbWMr2a2yqwUDzxJaEY4Hd4kslhmOwerATEuQDJ9Z3T43fq8As43IdWfJGJU1mlSuUr9e2g+bvyAWnFeNuLAeQvOjN+IGQVpR7+RST8IAs/emkkbLpq69bSTau3MykZ8MwkvdcAqsYrIuxZ25tCDBTFndavlv5BjeS0P7gMm3z9dhZNgglL31+re2aWlTot3o8tgdkJM1jxxupANMxWJCQSgZFd6736BDfjCmwnP6m5TIPqgQPDWdkPimpAjnVuEgC4u1V5wO572MDybkIb0N3royLTzGdZ8JsxppVpzl17pBcBHGbYv0UiRjc7kuFsvj58SpF/PhviWhCJHsBGHuD0KJO6raIFyTfzIJCukniacdPTxBalW+FrQR5gE+BLYCAWsMa6gJuELOgp2dJBsHVv/l52YZWXQ1vj/tdkmAEXTcT7uiHRYp3PzTv/NGra02/J/l73eZjURboVE3vit4JO8/OGn5+QMeKhlSgFAWzR+asdq3p1zca1po98ZSOVzC8Fe4NCyrSXjfy8IXTjlaLY2kqQllvn9919Kd1841qUUkdVnwcQw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU4PR04MB11791.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(1800799024)(376014)(7416014)(366016)(11063799006)(56012099006)(3023799007)(10067099003)(921020)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M7vbtDymwTCLT8WJD+SKkOiU507QPgGRW5bQsykyl5r+GyvTuGboOmnkGxa1?=
- =?us-ascii?Q?+Sgrej6m30Rdm/qhW7rkUL0RqqeSq2Y9zPJk8WvxraamJEYuSn+U7QFKpNTG?=
- =?us-ascii?Q?9yn8VRom4/29A7KOsICagD3VJUCe+xukG2g1p2V/nNGsKG3ibugv6liku4WI?=
- =?us-ascii?Q?bIxP2CexG17TcE4UmBm/tya3b/UCb46n6kwJ1A0qmo44p9RXg4MHcJspPNt3?=
- =?us-ascii?Q?uQIQ+R/cY2SG8hViOwGVtsttxpQB7qwSFPpZGlvJXe2TMQXOrH1r/hIKlyp6?=
- =?us-ascii?Q?y6EQVtqAi5KdXrg4gCFlWj7I6OTX7DpSZmhegI9Z47VKLGESMGgdB/usovSb?=
- =?us-ascii?Q?laVerOapEUvhEFYPzcK3FhRGoSPCggcAeHfggYs2ddoED0zfGKvC3zr2WCDG?=
- =?us-ascii?Q?WUpE84hd36CWi1aaTp0LSECqE4CzTbKSAfuQe8khUxfoSGp4aHLwTqJdr2ct?=
- =?us-ascii?Q?Vu+VXC19BuBTQeUK5rjz652GGEai2FiAS8c4YTLtWH8goUWII75FBGKv9jlW?=
- =?us-ascii?Q?VEbvpyvcm0s02qdGMAze8CEiuDP1nv8BuHoXJtdwsBEuWljvFYqbqzRjBu8F?=
- =?us-ascii?Q?ge4mSGPTFjC42GRN6i1sYJZ1rjJCW6oTeAjoAFfaMcpuS7NVLuIh55H+Jd6b?=
- =?us-ascii?Q?yhojMuvlehjSiBep7wtlw7S3d4MEernKPNipNHWouuK0ka5cLnlyqUM0x+cH?=
- =?us-ascii?Q?2kjKUHw9hzzWR/UHuunHxr1zR0RuNDVFdgLB4i+e4a7SEv0JV3SSpDfVupuN?=
- =?us-ascii?Q?w7kT8sO4tbBzZ5+nc0d1IDN7BB4PaDCJkK7Re/6OWKU9DFiRr8SqU/sWqknc?=
- =?us-ascii?Q?HA6JQLSHBaI4IPWrFCmI8zA4xpxNH8qbicjOT16l58286NLua/NUxxHXgBle?=
- =?us-ascii?Q?teSfQeTvr8MNTbibJ0Ma8GZ8ssA6WqGt4DtPqAlQnu+G3DU7janoPhYZYl3t?=
- =?us-ascii?Q?F+fcGnzBiyqcz0urqTc0kbDYkKgo1Qw5AbwBdsISp7MDJ1+sdTeBcE0+Dcgu?=
- =?us-ascii?Q?1A7qPbfJfH25FB1IRzeXQjEFreDZwnPmXqL+JCXm74zaS8MVJl3xjqs3eT0Z?=
- =?us-ascii?Q?o6mYqLJhvXS2a93JBPCckKX2l3JBFy9tqWBwlVrYso05O/ont1s+RD3w+AGy?=
- =?us-ascii?Q?pyBz9JezJftvSdJbQ/JOO5dCU6/C0Q225eusv4N4a3cYNdE9QmISuCuqMWiA?=
- =?us-ascii?Q?GfDFDIIEBnns4U7d1RZSu3cpIAmeAf064FUwu8+TrBYuiQOaWvZoY3JtI9oL?=
- =?us-ascii?Q?o70akAQLhmys/lSIuf9JjySCRDwHjRNSZcWOGhnx5i4charZ72jbtgfIOgLf?=
- =?us-ascii?Q?JF5auyiKRr149RxvvqUg7rMEOQelPOvt7as0X3QaQlaPtXjAVjQBfpYO0sk5?=
- =?us-ascii?Q?sHLQMkXVg4ihyF0ywCJx7D8NCCpBG87kwN/5R33hviFbju0Sxc3Y+n/6LlSK?=
- =?us-ascii?Q?LTIYAzA143/H+qwDrDbLwjD5vcWLX6a88hG3u2vIPOvy/a6M60qcDraCHkjM?=
- =?us-ascii?Q?x9dNVBGU76SQ4uAu2m7cFwNooVG0Cgyj8uzEGA5MDXBQrMlMfQKSDfU14CdR?=
- =?us-ascii?Q?prZA7bpHBeegRn/HeK+cMb3ETWZyUyboRS51BWGWEgGwu7N9eeJVQBaoYAa0?=
- =?us-ascii?Q?L7A1xFfdNgHLh8Pw68gk+agQw4ZT/nEj9n3T6Cwy4mwSSC0aBFO7AGZZPooi?=
- =?us-ascii?Q?s6/V6dog+/MAeoGIpSDQgYOKbvtmGbPYiR0vr9smYxaXXi1Yd8z16QkuFu24?=
- =?us-ascii?Q?GtQaCZIEggNRpIETUwmIEJTnwLqIfaHAl30xjMo2OL+pNqwN1e7k?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f028c45-8c9e-4e19-5510-08df14fc3b54
-X-MS-Exchange-CrossTenant-AuthSource: DU4PR04MB11791.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2026 20:42:47.0715
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Co3qgeCl/qFALPq4dZxmPNiaaNjBvYJhT3YAPu9Y3+6xq3W7xbhUFtJdZFPoVFa3b66kBMQRT+eR056MWnt+jkVUIn/bH89agr3JuJAZhn5br2HAV/EnplbUYOP3RuoL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB11511
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Frank Li <Frank.Li@nxp.com>
+This series adds proper SGMII support for the Rockchip RK3568 SoC
+using the integrated Synopsys DesignWare XPCS, along with necessary
+fixes and refactoring in the stmmac core and XPCS driver.
 
-Replace direct dma_chan::device::dev access with the proper
-dmaengine_get_dma_device() for consumer API
+Motivation
+==========
+The RK3568 integrates a DW XPCS accessed via APB3 and connected to
+a Naneng Combo SerDes PHY.  Several boards (e.g., Ariaboard
+Photonicat) use this interface for Gigabit Ethernet.  However, the
+current upstream stmmac driver does not support this configuration,
+and the XPCS driver has issues in SGMII poll mode that cause the
+link to be reported incorrectly.
 
-chan->device->dev is not always the device used for DMA mapping.
-Some DMA engines support per-channel IOMMU mappings, so different
-channels may use different DMA devices.  dmaengine_get_dma_device()
-returns the correct device for each channel.
+This series addresses these issues by:
+- Refactoring stmmac PCS lifetime management to allow platform drivers
+  full control over PCS creation/destruction
+- Fixing the XPCS driver's SGMII link recovery
+- Adding a Rockchip XPCS platform glue driver and wiring it up in
+  dwmac-rk
 
-This also prepares for making the DMA engine provider data structures
-private. DMA consumers should not access DMA engine internals directly.
+Series overview
+===============
 
-Assisted-by: LLM
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Generic:
+  Patch 1: move XPCS lifetime management to platform drivers
+
+PHY:
+  Patch 2: DT binding for Naneng Combo PHY SGMII MAC selection
+  Patch 3: implement the PHY SGMII MAC selection in driver
+
+RK3568 XPCS/SGMII:
+  Patch 4: DT binding for Rockchip RK3568 XPCS
+  Patch 5: add XPCS and fixed-clock nodes to rk3568.dtsi
+  Patch 6: add ANRESTART support for SGMII link recovery
+  Patch 7: implement the Rockchip XPCS platform glue driver
+  Patch 8: DT binding for Rockchip DWMAC PCS
+  Patch 9: wire up SGMII support in dwmac-rk
+  Patch 11: update MAINTAINERS
+
+Board enablement:
+  Patch 10: enable SGMII LAN port on Photonicat board
+
+Changelog
+=========
+
+Changes since v6:
+
+Patch 1 (net: stmmac: move XPCS lifetime management to platform drivers)
+- Reworded "the created XPCS is never used" to acknowledge that
+  priv->hw->xpcs is still consulted by stmmac_phylink_setup() and
+  stmmac_init_phy() even without select_pcs()
+- Added a note that the generic "pcs-handle" parsing is removed, and
+  that no in-tree platform relies on it
+
+Patch 4 (dt-bindings: net: pcs: add rockchip,rk3568-xpcs support)
+- Documented which patches consume the ethernet-pcs-mii@N child nodes
+- Documented that phys/phy-names are provided at board level because
+  dtbs_check skips disabled nodes and the SerDes link is board-specific
+- Documented that the CRU reset lines are intentionally left out
+
+Patch 5 (arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes)
+- Fixed the changelog to use the actual node names (clock-xpcs-gmac0
+  and clock-xpcs-gmac1), and noted that clock-output-names matches the
+  CRU mux parent names in clk-rk3568.c
+- Noted that phys/phy-names are supplied at board level
+
+Patch 6 (net: pcs: xpcs: add ANRESTART support)
+- Documented why the restart cannot go through the .pcs_an_restart op
+  (phylink only calls it for 802.3z, and SGMII is not one)
+- Documented why the latch is cleared before issuing the restart
+
+Patch 7 (net: pcs: xpcs: add Rockchip RK3568 platform glue driver)
+- Removed the device_link_remove() calls on the failure paths:
+  DL_FLAG_AUTOREMOVE_CONSUMER is a managed link, and dropping it
+  manually triggers a WARN in device_link_put_kref()
+- Updated the commit message for the Kconfig and EEE multiplier changes
+- Change xpcs_rk_create() to return -EPROBE_DEFER instead of -ENOMEM
+  when device_link_add() fails, so the MAC probe retries if the XPCS
+  supplier is not bound yet
+
+Patch 8 (dt-bindings: net: rockchip-dwmac: document pcs-handle)
+- Reworded the commit message to future tense, since rk_pcs_init()
+  arrives in the next patch
+- Gated the new required-property conditional on
+  rockchip,rk3568-gmac, and marked pcs-handle as invalid for the
+  other variants
+
+Patch 9 (net: stmmac: dwmac-rk: add SGMII support for RK3568)
+- Removed SGMII from rk_get_interfaces(): it is supplied by the XPCS's
+  supported_interfaces, merged by stmmac_phylink_setup()
+- Added a note in the commit message explaining why the SerDes is
+  managed by the XPCS driver rather than through the legacy stmmac
+  serdes_poweron/serdes_poweroff callbacks
+- Noted that PCS_XPCS is already selected by STMMAC_ETH and PM by
+  ARCH_ROCKCHIP
+
+Patch 10 (arm64: dts: rockchip: rk3568-photonicat)
+- Noted in the commit message that RK3568 has three Combo PHYs that
+  can carry SGMII, and that using combphy2 is a board-level choice
+
+Key design decisions
+====================
+- The stmmac core now delegates XPCS creation entirely to platform
+  drivers via pcs_init/pcs_exit.  This is necessary because the
+  generic XPCS creation logic would override any XPCS set up by the
+  platform driver.
+
+- The Rockchip XPCS driver creates a virtual MDIO bus over the APB3
+  registers and implements address remapping.  The generic XPCS core
+  handles all PCS configuration via phylink_pcs_ops.
+
+- On RK3568 in SGMII mode, the MAC clock is fixed at 125 MHz and
+  cannot be dynamically changed.  In-band mode is used, and the
+  generic stmmac set_clk_tx_rate callback is disabled to prevent
+  incorrect clock updates that would break RX.
+
+- The SerDes and power domain are attached to the XPCS device tree
+  node rather than the MAC node. This reflects the actual hardware
+  topology and simplifies the dwmac-rk driver by keeping all PCS-related
+  resources self-contained. It also prepares for possible future QSGMII
+  support, where a single SerDes serves multiple MACs and would be
+  more naturally managed under the XPCS node.
+
+Testing
+=======
+Board: Ariaboard Photonicat (RK3568)
+OS: Armbian (trixie)
+Kernel: 6.18 (backports)
+Result: The SGMII interface obtains an IP address, SSH works, and
+        ping traffic passes without loss.
+
+Notes
+=====
+- When testing out-band mode with set_clk_tx_rate, only 1000Mbps
+  works on both TX/RX; 10/100Mbps only works on TX side.
+
+Dependencies
+============
+None. All patches apply cleanly on top of torvalds master tree (v7.3).
+
+Acknowledgments
+===============
+This work was inspired by and builds upon the excellent work of others:
+- Serge Semin's Synopsys DesignWare XPCS platform driver (pcs-xpcs-plat.c)
+- Clément Léger's Renesas MIIC driver (pcs-rzn1-miic.c)
+- The Rockchip TRM and downstream OEM drivers
+
+Thanks in advance,
+Coia Prant
 ---
-Cc: imx@lists.linux.dev
-Cc: vkoul@kernel.org
----
- drivers/mmc/host/atmel-mci.c             |  8 +++++---
- drivers/mmc/host/jz4740_mmc.c            |  8 ++++----
- drivers/mmc/host/mmci.c                  |  6 +++---
- drivers/mmc/host/moxart-mmc.c            | 10 ++++++----
- drivers/mmc/host/omap_hsmmc.c            | 12 ++++++------
- drivers/mmc/host/pxamci.c                |  4 ++--
- drivers/mmc/host/renesas_sdhi_sys_dmac.c |  8 ++++----
- drivers/mmc/host/sh_mmcif.c              |  8 ++++----
- drivers/mmc/host/usdhi6rol0.c            |  6 +++---
- 9 files changed, 37 insertions(+), 33 deletions(-)
+Coia Prant (11):
+  net: stmmac: move XPCS lifetime management to platform drivers
+  dt-bindings: phy: rockchip: naneng-combphy: add rockchip,sgmii-mac-sel
+    property
+  phy: rockchip: naneng-combphy: add SGMII MAC selection for RK3568
+  dt-bindings: net: pcs: add rockchip,rk3568-xpcs support
+  arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes
+  net: pcs: xpcs: add ANRESTART support for SGMII link recovery
+  net: pcs: xpcs: add Rockchip RK3568 platform glue driver
+  dt-bindings: net: rockchip-dwmac: document pcs-handle
+  net: stmmac: dwmac-rk: add SGMII support for RK3568
+  arm64: dts: rockchip: rk3568-photonicat: enable SGMII LAN port
+  MAINTAINERS: add entry for Rockchip XPCS driver
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index 8f4df250a77a0..fb756e8858db3 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -961,7 +961,7 @@ static void atmci_dma_cleanup(struct atmel_mci *host)
- 	struct mmc_data                 *data = host->data;
- 
- 	if (data)
--		dma_unmap_sg(host->dma.chan->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->dma.chan),
- 				data->sg, data->sg_len,
- 				mmc_get_dma_dir(data));
- }
-@@ -1116,6 +1116,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
- 	unsigned int			sglen;
- 	u32				maxburst;
- 	u32 iflags;
-+	struct device *dma_dev;
- 
- 	data->error = -EINPROGRESS;
- 
-@@ -1145,6 +1146,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
- 		return -ENODEV;
- 
- 	chan = host->dma.chan;
-+	dma_dev = dmaengine_get_dma_device(chan);
- 	host->data_chan = chan;
- 
- 	if (data->flags & MMC_DATA_READ) {
-@@ -1161,7 +1163,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
- 		atmci_writel(host, ATMCI_DMA, ATMCI_DMA_CHKSIZE(maxburst) |
- 			ATMCI_DMAEN);
- 
--	sglen = dma_map_sg(chan->device->dev, data->sg,
-+	sglen = dma_map_sg(dma_dev, data->sg,
- 			data->sg_len, mmc_get_dma_dir(data));
- 
- 	dmaengine_slave_config(chan, &host->dma_conf);
-@@ -1177,7 +1179,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
- 
- 	return iflags;
- unmap_exit:
--	dma_unmap_sg(chan->device->dev, data->sg, data->sg_len,
-+	dma_unmap_sg(dma_dev, data->sg, data->sg_len,
- 		     mmc_get_dma_dir(data));
- 	return -ENOMEM;
- }
-diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-index 6a3c26b7c82d8..3343c8aa1bffe 100644
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -256,7 +256,7 @@ static int jz4740_mmc_acquire_dma_channels(struct jz4740_mmc_host *host)
- 	 * the parameters of the DMA engine device.
- 	 */
- 	if (host->dma_tx) {
--		struct device *dev = host->dma_tx->device->dev;
-+		struct device *dev = dmaengine_get_dma_device(host->dma_tx);
- 		unsigned int max_seg_size = dma_get_max_seg_size(dev);
- 
- 		if (max_seg_size < host->mmc->max_seg_size)
-@@ -264,7 +264,7 @@ static int jz4740_mmc_acquire_dma_channels(struct jz4740_mmc_host *host)
- 	}
- 
- 	if (host->dma_rx) {
--		struct device *dev = host->dma_rx->device->dev;
-+		struct device *dev = dmaengine_get_dma_device(host->dma_rx);
- 		unsigned int max_seg_size = dma_get_max_seg_size(dev);
- 
- 		if (max_seg_size < host->mmc->max_seg_size)
-@@ -289,7 +289,7 @@ static void jz4740_mmc_dma_unmap(struct jz4740_mmc_host *host,
- 	struct dma_chan *chan = jz4740_mmc_get_dma_chan(host, data);
- 	enum dma_data_direction dir = mmc_get_dma_dir(data);
- 
--	dma_unmap_sg(chan->device->dev, data->sg, data->sg_len, dir);
-+	dma_unmap_sg(dmaengine_get_dma_device(chan), data->sg, data->sg_len, dir);
- 	data->host_cookie = COOKIE_UNMAPPED;
- }
- 
-@@ -307,7 +307,7 @@ static int jz4740_mmc_prepare_dma_data(struct jz4740_mmc_host *host,
- 	if (data->host_cookie == COOKIE_PREMAPPED)
- 		return data->sg_count;
- 
--	sg_count = dma_map_sg(chan->device->dev,
-+	sg_count = dma_map_sg(dmaengine_get_dma_device(chan),
- 			data->sg,
- 			data->sg_len,
- 			dir);
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 416bdb184ed4c..5d81c96ca4f37 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -893,14 +893,14 @@ int mmci_dmae_setup(struct mmci_host *host)
- 	 * the parameters of the DMA engine device.
- 	 */
- 	if (dmae->tx_channel) {
--		struct device *dev = dmae->tx_channel->device->dev;
-+		struct device *dev = dmaengine_get_dma_device(dmae->tx_channel);
- 		unsigned int max_seg_size = dma_get_max_seg_size(dev);
- 
- 		if (max_seg_size < host->mmc->max_seg_size)
- 			host->mmc->max_seg_size = max_seg_size;
- 	}
- 	if (dmae->rx_channel) {
--		struct device *dev = dmae->rx_channel->device->dev;
-+		struct device *dev = dmaengine_get_dma_device(dmae->rx_channel);
- 		unsigned int max_seg_size = dma_get_max_seg_size(dev);
- 
- 		if (max_seg_size < host->mmc->max_seg_size)
-@@ -940,7 +940,7 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
- 	else
- 		chan = dmae->tx_channel;
- 
--	dma_unmap_sg(chan->device->dev, data->sg, data->sg_len,
-+	dma_unmap_sg(dmaengine_get_dma_device(chan), data->sg, data->sg_len,
- 		     mmc_get_dma_dir(data));
- }
- 
-diff --git a/drivers/mmc/host/moxart-mmc.c b/drivers/mmc/host/moxart-mmc.c
-index 28aed13549a64..6c0974c494207 100644
---- a/drivers/mmc/host/moxart-mmc.c
-+++ b/drivers/mmc/host/moxart-mmc.c
-@@ -262,6 +262,7 @@ static void moxart_transfer_dma(struct mmc_data *data, struct moxart_host *host)
- 	u32 len, dir_slave;
- 	struct dma_async_tx_descriptor *desc = NULL;
- 	struct dma_chan *dma_chan;
-+	struct device *dma_dev;
- 	long timeout;
- 
- 	if (host->data_len == data->bytes_xfered)
-@@ -275,7 +276,8 @@ static void moxart_transfer_dma(struct mmc_data *data, struct moxart_host *host)
- 		dir_slave = DMA_DEV_TO_MEM;
- 	}
- 
--	len = dma_map_sg(dma_chan->device->dev, data->sg,
-+	dma_dev = dmaengine_get_dma_device(dma_chan);
-+	len = dma_map_sg(dma_dev, data->sg,
- 			 data->sg_len, mmc_get_dma_dir(data));
- 
- 	if (len > 0) {
-@@ -306,7 +308,7 @@ static void moxart_transfer_dma(struct mmc_data *data, struct moxart_host *host)
- 	data->bytes_xfered = host->data_len;
- 
- unmap:
--	dma_unmap_sg(dma_chan->device->dev,
-+	dma_unmap_sg(dma_dev,
- 		     data->sg, data->sg_len,
- 		     mmc_get_dma_dir(data));
- }
-@@ -642,8 +644,8 @@ static int moxart_probe(struct platform_device *pdev)
- 		dmaengine_slave_config(host->dma_chan_rx, &cfg);
- 
- 		mmc->max_seg_size = min3(mmc->max_req_size,
--			dma_get_max_seg_size(host->dma_chan_rx->device->dev),
--			dma_get_max_seg_size(host->dma_chan_tx->device->dev));
-+			dma_get_max_seg_size(dmaengine_get_dma_device(host->dma_chan_rx)),
-+			dma_get_max_seg_size(dmaengine_get_dma_device(host->dma_chan_tx)));
- 	}
- 
- 	if (readl(host->base + REG_BUS_WIDTH) & BUS_WIDTH_4_SUPPORT)
-diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-index de5a3b70107d8..44c326fd2a9b2 100644
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -915,7 +915,7 @@ static void omap_hsmmc_dma_cleanup(struct omap_hsmmc_host *host, int errno)
- 		struct dma_chan *chan = omap_hsmmc_get_dma_chan(host, host->data);
- 
- 		dmaengine_terminate_all(chan);
--		dma_unmap_sg(chan->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(chan),
- 			host->data->sg, host->data->sg_len,
- 			mmc_get_dma_dir(host->data));
- 
-@@ -1170,7 +1170,7 @@ static void omap_hsmmc_dma_callback(void *param)
- 	data = host->mrq->data;
- 	chan = omap_hsmmc_get_dma_chan(host, data);
- 	if (!data->host_cookie)
--		dma_unmap_sg(chan->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(chan),
- 			     data->sg, data->sg_len,
- 			     mmc_get_dma_dir(data));
- 
-@@ -1204,7 +1204,7 @@ static int omap_hsmmc_pre_dma_transfer(struct omap_hsmmc_host *host,
- 
- 	/* Check if next job is already prepared */
- 	if (next || data->host_cookie != host->next_data.cookie) {
--		dma_len = dma_map_sg(chan->device->dev, data->sg, data->sg_len,
-+		dma_len = dma_map_sg(dmaengine_get_dma_device(chan), data->sg, data->sg_len,
- 				     mmc_get_dma_dir(data));
- 
- 	} else {
-@@ -1390,7 +1390,7 @@ static void omap_hsmmc_post_req(struct mmc_host *mmc, struct mmc_request *mrq,
- 	if (host->use_dma && data->host_cookie) {
- 		struct dma_chan *c = omap_hsmmc_get_dma_chan(host, data);
- 
--		dma_unmap_sg(c->device->dev, data->sg, data->sg_len,
-+		dma_unmap_sg(dmaengine_get_dma_device(c), data->sg, data->sg_len,
- 			     mmc_get_dma_dir(data));
- 		data->host_cookie = 0;
- 	}
-@@ -1912,8 +1912,8 @@ static int omap_hsmmc_probe(struct platform_device *pdev)
- 	 * increase this figure here, we get warnings from the DMA API debug.
- 	 */
- 	mmc->max_seg_size = min3(mmc->max_req_size,
--			dma_get_max_seg_size(host->rx_chan->device->dev),
--			dma_get_max_seg_size(host->tx_chan->device->dev));
-+			dma_get_max_seg_size(dmaengine_get_dma_device(host->rx_chan)),
-+			dma_get_max_seg_size(dmaengine_get_dma_device(host->tx_chan)));
- 
- 	/* Request IRQ for MMC operations */
- 	ret = devm_request_irq(&pdev->dev, host->irq, omap_hsmmc_irq, 0,
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index f8427f071c009..c3edd98376bcc 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -201,7 +201,7 @@ static void pxamci_setup_data(struct pxamci_host *host, struct mmc_data *data)
- 		return;
- 	}
- 
--	host->dma_len = dma_map_sg(chan->device->dev, data->sg, data->sg_len,
-+	host->dma_len = dma_map_sg(dmaengine_get_dma_device(chan), data->sg, data->sg_len,
- 				   host->dma_dir);
- 
- 	tx = dmaengine_prep_slave_sg(chan, data->sg, host->dma_len, direction,
-@@ -337,7 +337,7 @@ static int pxamci_data_done(struct pxamci_host *host, unsigned int stat)
- 		chan = host->dma_chan_rx;
- 	else
- 		chan = host->dma_chan_tx;
--	dma_unmap_sg(chan->device->dev,
-+	dma_unmap_sg(dmaengine_get_dma_device(chan),
- 		     data->sg, data->sg_len, host->dma_dir);
- 
- 	if (stat & STAT_READ_TIME_OUT)
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index c7df4da9e865b..bf2b32cfbec6c 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -134,11 +134,11 @@ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
- 		goto out;
- 
- 	if (host->data->flags & MMC_DATA_READ)
--		dma_unmap_sg(host->chan_rx->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->chan_rx),
- 			     host->sg_ptr, host->sg_len,
- 			     DMA_FROM_DEVICE);
- 	else
--		dma_unmap_sg(host->chan_tx->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->chan_tx),
- 			     host->sg_ptr, host->sg_len,
- 			     DMA_TO_DEVICE);
- 
-@@ -188,7 +188,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 		sg = host->sg_ptr;
- 	}
- 
--	ret = dma_map_sg(chan->device->dev, sg, host->sg_len, DMA_FROM_DEVICE);
-+	ret = dma_map_sg(dmaengine_get_dma_device(chan), sg, host->sg_len, DMA_FROM_DEVICE);
- 	if (ret > 0)
- 		desc = dmaengine_prep_slave_sg(chan, sg, ret, DMA_DEV_TO_MEM,
- 					       DMA_CTRL_ACK);
-@@ -264,7 +264,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 		sg = host->sg_ptr;
- 	}
- 
--	ret = dma_map_sg(chan->device->dev, sg, host->sg_len, DMA_TO_DEVICE);
-+	ret = dma_map_sg(dmaengine_get_dma_device(chan), sg, host->sg_len, DMA_TO_DEVICE);
- 	if (ret > 0)
- 		desc = dmaengine_prep_slave_sg(chan, sg, ret, DMA_MEM_TO_DEV,
- 					       DMA_CTRL_ACK);
-diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
-index a205c222a821d..e8d2bd1491eee 100644
---- a/drivers/mmc/host/sh_mmcif.c
-+++ b/drivers/mmc/host/sh_mmcif.c
-@@ -289,7 +289,7 @@ static void sh_mmcif_start_dma_rx(struct sh_mmcif_host *host)
- 	dma_cookie_t cookie = -EINVAL;
- 	int ret;
- 
--	ret = dma_map_sg(chan->device->dev, sg, data->sg_len,
-+	ret = dma_map_sg(dmaengine_get_dma_device(chan), sg, data->sg_len,
- 			 DMA_FROM_DEVICE);
- 	if (ret > 0) {
- 		host->dma_active = true;
-@@ -339,7 +339,7 @@ static void sh_mmcif_start_dma_tx(struct sh_mmcif_host *host)
- 	dma_cookie_t cookie = -EINVAL;
- 	int ret;
- 
--	ret = dma_map_sg(chan->device->dev, sg, data->sg_len,
-+	ret = dma_map_sg(dmaengine_get_dma_device(chan), sg, data->sg_len,
- 			 DMA_TO_DEVICE);
- 	if (ret > 0) {
- 		host->dma_active = true;
-@@ -1173,11 +1173,11 @@ static bool sh_mmcif_end_cmd(struct sh_mmcif_host *host)
- 							 host->timeout);
- 
- 	if (data->flags & MMC_DATA_READ)
--		dma_unmap_sg(host->chan_rx->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->chan_rx),
- 			     data->sg, data->sg_len,
- 			     DMA_FROM_DEVICE);
- 	else
--		dma_unmap_sg(host->chan_tx->device->dev,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->chan_tx),
- 			     data->sg, data->sg_len,
- 			     DMA_TO_DEVICE);
- 
-diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-index 8d9d4f362999f..74888260e85c5 100644
---- a/drivers/mmc/host/usdhi6rol0.c
-+++ b/drivers/mmc/host/usdhi6rol0.c
-@@ -539,10 +539,10 @@ static void usdhi6_dma_stop_unmap(struct usdhi6_host *host)
- 	host->dma_active = false;
- 
- 	if (data->flags & MMC_DATA_READ)
--		dma_unmap_sg(host->chan_rx->device->dev, data->sg,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->chan_rx), data->sg,
- 			     data->sg_len, DMA_FROM_DEVICE);
- 	else
--		dma_unmap_sg(host->chan_tx->device->dev, data->sg,
-+		dma_unmap_sg(dmaengine_get_dma_device(host->chan_tx), data->sg,
- 			     data->sg_len, DMA_TO_DEVICE);
- }
- 
-@@ -583,7 +583,7 @@ static int usdhi6_dma_setup(struct usdhi6_host *host, struct dma_chan *chan,
- 		return -EINVAL;
- 	}
- 
--	ret = dma_map_sg(chan->device->dev, sg, data->sg_len, data_dir);
-+	ret = dma_map_sg(dmaengine_get_dma_device(chan), sg, data->sg_len, data_dir);
- 	if (ret > 0) {
- 		host->dma_active = true;
- 		desc = dmaengine_prep_slave_sg(chan, sg, ret, dir,
+ .../net/pcs/rockchip,rk3568-xpcs.yaml         | 110 ++++
+ .../bindings/net/rockchip-dwmac.yaml          |  18 +
+ .../phy/phy-rockchip-naneng-combphy.yaml      |  13 +
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/rockchip/rk3568-photonicat.dts   |  74 ++-
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi      |  45 ++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c |  44 +-
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      |   7 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 130 +++-
+ .../net/ethernet/stmicro/stmmac/dwmac-rzn1.c  |   7 +-
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |   7 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_mdio.c |  39 +-
+ drivers/net/pcs/Kconfig                       |  25 +
+ drivers/net/pcs/Makefile                      |   5 +-
+ drivers/net/pcs/pcs-xpcs-rk.c                 | 582 ++++++++++++++++++
+ drivers/net/pcs/pcs-xpcs.c                    |  35 +-
+ .../rockchip/phy-rockchip-naneng-combphy.c    |   8 +
+ include/linux/pcs/pcs-xpcs-rk.h               |  11 +
+ 19 files changed, 1098 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/rockchip,rk3568-xpcs.yaml
+ create mode 100644 drivers/net/pcs/pcs-xpcs-rk.c
+ create mode 100644 include/linux/pcs/pcs-xpcs-rk.h
+
 -- 
-2.43.0
+2.47.3
 
