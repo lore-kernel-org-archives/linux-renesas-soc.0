@@ -1,73 +1,85 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4F836195A
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 01:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D763A9D83;
+	Fri, 18 Sep 2026 01:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789695397; cv=none; b=nTvnOMM0SfrmI4uUYVYj1Cmdw64oJqqJFF5IifQaW4z4uJK5ZMuMlaR7fnpMZY4XYlYnxZTjNOHMMZ7NOcEoBQgOTRCqdJDklCrdOKF7Cy1Ze3HrCzvLbophFUIS5zSpQkXjARGbf5V1KDQhLkiKnf+VO/MCgdQ+76pYWU+6TTA=
+	t=1789696203; cv=none; b=fZ/YnQdQuuDmyfx228Wj6O8Dvt9VIfb1/PqpnSSwuYFLjIxMCrXZCOckKMXh2wzbySIXzTixSZLsirsYlwKalNCI28NUJe+SM6+YNsEEU+TqFj2ksyFu0KbHYB+FVCWvOSlVmPF8NSW/SW1yr48aMiV+ayv+A8jihjvRoKdI0cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789695397; c=relaxed/simple;
-	bh=dntS7yanl78iZm8RJAKu4itCeBTjtAM1ZldhmyYTIXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yp+vbwaUBDyfz/943Ibisd4JzXiN3E9jGO0tHkotO4BesEDoHEsXB7w0xvSZmRSC/54bCVx5H8xDGGrcA/1P2+mmnV0BG6+G249m5Q3q52HiW/BwrZoEhasGnfKnNfkS/FvTCV/uX5m7QTeRnQnyqI1lhkCBKecGi/i/++IMBok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sHkw46pS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789696203; c=relaxed/simple;
+	bh=iDcjO7SQOM0BL8BXFxOYfo8RpBFZmH8NcvcYto9LC98=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AyAoonCppJmQ3KBfUig/hXj7ApSRYmKRtPLQ2xSuJRJQ62xkOKgH5ND8MDmC9dT41QVO6fBj5+F4M3gaY7nKc5ox37C3O+fiZdP/qIlIdbr2F+mUFAs8PEfkIBzIOCQfSfHP3F/LYc2B+M7p6deLGqGKVqCrSKTPskoMb0Z9XJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAANUbdt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sHkw46pS"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 71B5E4DC;
-	Fri, 18 Sep 2026 03:34:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789695290;
-	bh=dntS7yanl78iZm8RJAKu4itCeBTjtAM1ZldhmyYTIXo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sHkw46pS4f/uBE7eFjDInjLpn2f7tBN861tgPTItCuHQvFjA6z0hwbUvzVV9VSmvJ
-	 CFrzCvDjwgTWmbprNl/F60UcvPurHm/WPmcECPyEIsyqSPX90p5ck+gyMWrWwmFjpB
-	 /lQ8j1uACbDBMOnEkmBUUDOwCch2C9yZwwuC8uSE=
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Paul Elder <paul.elder@ideasonboard.com>
-Subject: [vsp-tests] [PATCH] vsp-tests: Fix location of CLU input data
-Date: Fri, 18 Sep 2026 04:36:31 +0300
-Message-ID: <20260918013631.735399-1-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAANUbdt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8029E1F000FF;
+	Fri, 18 Sep 2026 01:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789696195;
+	bh=HjlJkfWxEJHuY15pqHOvaOL0dZgn3vW47MuqmveYFyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=WAANUbdt77eHtm/ALgZAq0ESgwRqRCS/9O9xT04+vNooxbA2dGpqAahq23WFKLO/s
+	 m3yFwJViXzPC59wIEmfCw3l7LHN8bpv+gBUfxqss/tgs7D1X63N10HCnuX3evEg7oM
+	 B8aLvRadheVX7JmJOrxVGo0jIbTAxr6PLPHJuAPg9gepPw0uct0yXOh5JcgF1DusOk
+	 vxaFWpBvtLRtIR6U6dOEZE9Iht6NvTi2cXhPvlMiBfXQQspicZDvUVCneQ8CLGnwfb
+	 kdXwb1L28bg8JTyhEm8OmqwOuGBnQo+Q+uYgNSgMJ6WySxAsP21GqcMboXTKxuLIkz
+	 k59CDLxL3qplg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Brian Masney <bmasney@redhat.com>
+Cc: driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/4] driver: core: add subsys_platform_driver() to reduce boilerplate code in drivers
+Date: Thu, 17 Sep 2026 20:49:44 -0500
+Message-ID: <178969618825.1582337.11100417882754456102.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
+References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Since commit cd7de9f4e613 ("Install in FHS-compatible locations"), data
-files have been moved to datadir and are accessed relatively to the
-libexec directory. The vsp-unit-test-0010.sh test hasn't been updated
-and still references CLU input data files from the current directory.
-Fix it.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- tests/vsp-unit-test-0010.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 08 Sep 2026 13:47:17 -0400, Brian Masney wrote:
+> There are a fair number of clk drivers that are registered at the
+> subsys_initcall level since some clk drivers need to be initialized
+> early for other drivers. Let's add a new macro
+> subsys_platform_driver() similar module_platform_driver() to eliminate
+> some boilerplate code in the drivers.
+> 
+> This series converts the Qualcomm and Renesas clk drivers to show the
+> code savings that can be achieved. Once this lands, I'll convert the
+> remaining clk drivers this development cycle if all of this can go
+> through the clk tree.
+> 
+> [...]
 
-diff --git a/tests/vsp-unit-test-0010.sh b/tests/vsp-unit-test-0010.sh
-index 1878e6a809c2..c187b2101715 100755
---- a/tests/vsp-unit-test-0010.sh
-+++ b/tests/vsp-unit-test-0010.sh
-@@ -27,7 +27,7 @@ test_lut() {
- 
- 	test_start "$(echo $lut_type | tr [:lower:] [:upper:]) in $format with $config configuration"
- 
--	local config_file=frames/${lut_type}-${config}.bin
-+	local config_file=${in_frames_dir}/${lut_type}-${config}.bin
- 
- 	pipe_configure rpf-${lut_type}
- 	format_configure rpf-${lut_type} $format 1024x768
+Applied, thanks!
 
-base-commit: b7bbca0dd187d85428edaecfc08c948bba72152d
+[1/4] driver: core: add subsys_driver() macro
+      commit: 255a14e7c16569f75248640dbd854c632b9d4bee
+[2/4] driver: core: platform: add subsys_platform_driver() macro
+      commit: 5065ca1325639b0341521f2057e6e2f3b52241a6
+[3/4] clk: qcom: convert drivers over to use subsys_platform_driver()
+      commit: 51c6b675682a9cf5546fb057fed8f99361b56cf2
+[4/4] clk: renesas: convert drivers over to use subsys_platform_driver()
+      commit: d11a91e088cefa4b56d7877b49492d8e1dc818dc
+
+Best regards,
 -- 
-Regards,
-
-Laurent Pinchart
-
+Bjorn Andersson <andersson@kernel.org>
