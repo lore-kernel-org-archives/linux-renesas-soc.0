@@ -1,185 +1,203 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F16843A81A;
-	Fri, 18 Sep 2026 11:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07EC4DA9BE;
+	Fri, 18 Sep 2026 11:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789729800; cv=none; b=exG9LtiuFjBdmLX7+K0Yqlpik5M3rKUKtlOm+Q0V4+ycraQUhG8GiXOYjaGR10PNetJ8jzgcVd6BccIDjZAla43x/5DzNA9bDdzk6Zdl4tby7/+xDtQ0TpGehTSAPS5WDRFoBZa56nMROWvVkdLCsE09GrIMpojgOCDoK2YMFTU=
+	t=1789729886; cv=none; b=uhgbh8gSZJw1r4MZKsI7rUnWA8nk09st1nBQ/aYO97rQVSHNZMLPXp37imwGhOJBnejNijQnNWpzMxbDN9hbvnz6FQvUviaLM06vp2Mba82eYdQzFnLQ0+wLTSLckq8wSUOOSdAMyR2jvkvJ0NFLxnlyqtDTSsRl92oATxoblGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789729800; c=relaxed/simple;
-	bh=pd+OS3tBP8CJ9F0+if3g0L9XTiTjKyDAlPFk7sYS0Cg=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=cgfcFJ9RjRbtnyxrL0qZ1JlMxeIPYy3330KnB3DtTGRVLJcnA+ga71QD811Y/ZLYUywfnQ7Fn/sfv5bAHERFQGCRmB9GNiNTWezJvRlPWwvq6FzuEdeQvUkC8425sHVSY3zAVT9rwG81bbk1pvY1SWSa4i50I/zAAAdxZSxny5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jxOa3RnE reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
+	s=arc-20240116; t=1789729886; c=relaxed/simple;
+	bh=Yqmtu8M6h+BczEI0nt80sCS0j7rs6+dg+w7G6hRCWxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkW2HNEdSa8beCWTRbJ0UDBqSKTrdA21WzOkhPgOS8M25m6xQ6N5jCsEqZtOIgbM8aelg5Yg+wHU6MlbnyVAit9rdxQTvvTfF9hzdy6khRkaHdH3JZCuD2xwB9GiUnP5fWlm7eSl12vFiG01AFA7olSYxuwXiTPJx6if4gS/KVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bAQP8VJe; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jxOa3RnE"
-Received: from monstersaurus.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B1D6B1F8;
-	Fri, 18 Sep 2026 13:08:11 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bAQP8VJe"
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2CBD84FF8;
+	Fri, 18 Sep 2026 13:09:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789729691;
-	bh=pd+OS3tBP8CJ9F0+if3g0L9XTiTjKyDAlPFk7sYS0Cg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jxOa3RnEq2/CNxX0bfR1kunUgikbVV//SkHNMNfoRZorxeiHSqlD/OAOpbwivtvav
-	 Ss3ClSRi+SGjDqFsdOHunjq21sBvn+l6vcL7XA4PZJtbw/CIofCZGd9tP3WmyTqmZz
-	 IcBATwYWqSR9FPPPmRwDQmdmq/LgcbVR0zFsmoos=
-Content-Type: text/plain; charset="utf-8"
+	s=mail; t=1789729778;
+	bh=Yqmtu8M6h+BczEI0nt80sCS0j7rs6+dg+w7G6hRCWxA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bAQP8VJe9J4RgCmYFfZbtrtA5FJuLckeuKuODWAqDFwQ9t3jVcevdRNNAND2mkNmk
+	 Rz5Bd8Nd0vkepfidLjwZYmMPJ01B7gKBv3WvLZJ2KlZey0PozUVQ1qyIk3oVltIEga
+	 AHrMR4lIgTrnPORwvkTIcRNoKsOfUDUP571X9pqg=
+Date: Fri, 18 Sep 2026 14:11:19 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"magnus.damm" <magnus.damm@gmail.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 07/10] media: rcar-fcp: Handle resets
+Message-ID: <20260918111119.GF59058@killaraus.ideasonboard.com>
+References: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
+ <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-7-4c72d4e086dd@ideasonboard.com>
+ <TY3PR01MB113464309AC8B77BA471A31DC86872@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260918-kbingham-orientation-v6-2-5e8b1f01be29@ideasonboard.com>
-References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com> <20260918-kbingham-orientation-v6-2-5e8b1f01be29@ideasonboard.com>
-Subject: Re: [PATCH v6 2/6] arm64: dts: qcom: Convert to new media orientation definitions
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, David Heidelberg <david@ixit.cz>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Daniel Scally <dan.scally@ideasonboard.com>, Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>, Jimmy Su <jimmy.su@intel.com>, Jonathan Hunter <jonathanh@nvidia.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>, Martin Kepplinger <martin.kepplinger@puri.sm>, Matthias Fend <matthias.fend@emfend.at>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Riesch <michael.riesch@collabora.com>, Mikhail Rudenko <mike.rudenko@gmail.com>, Paul Elder <paul.elder@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Quentin Schulz <quentin.schulz@theobroma-sy
- stems.com>, Richard Acayan <mailingradian@gmail.com>, Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sascha Hauer <s.hauer@pengutronix.de>, Svyatoslav Ryhel <clamor95@gmail.com>, Sylvain Petinot <sylvain.petinot@foss.st.com>, Thierry Reding <thierry.reding@kernel.org>, Tommaso Merciai <tomm.merciai@gmail.com>
-Date: Fri, 18 Sep 2026 12:09:51 +0100
-Message-ID: <178972979131.1723501.9444120486527129452@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113464309AC8B77BA471A31DC86872@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-Quoting Kieran Bingham (2026-09-18 11:44:14)
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->=20
-> The orientation property for video interface devices now has definitions
-> to prevent hardcoded integer values for the enum options.
->=20
-> Update the users throughout the qualcomm device trees to use the new
-> definitions.
->=20
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Reviewed-by: David Heidelberg <david@ixit.cz>
+On Fri, Sep 18, 2026 at 11:03:25AM +0000, Biju Das wrote:
+> On 17 September 2026 13:05, Paul Elder wrote:
+> > 
+> > [You don't often get email from paul.elder+renesas@ideasonboard.com. Learn why this is important at
+> > https://aka.ms/LearnAboutSenderIdentification ]
 
-Sashiko has noted that there is another new dts added in dts/qcom since
-I wrote this patch.
+Don't worry, we plan to work on VCON support for X5H, you will get more
+e-mails from Paul :-)
 
-I don't want to invalidate the above reviews by adding another change,
-so I will send the single update to the new file separately as the core
-definitions are already accepted now.
+> > On some versions of the FCP, such as the one on the X5H, reset
+> > control is required to operate the FCP.
+> > 
+> > Add support for handling resets optionally, to continue supporting
+> > versions that do not require it.
+> > 
+> > Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/renesas/rcar-fcp.c | 34 +++++++++++++++++++++++++++++--
+> >  1 file changed, 32 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/renesas/rcar-fcp.c b/drivers/media/platform/renesas/rcar-fcp.c
+> > index d99b3ff976e80f275af19e5dc02c6e1de98c38a3..15bcbbda3b853f71780aae876f6440b33addf193 100644
+> > --- a/drivers/media/platform/renesas/rcar-fcp.c
+> > +++ b/drivers/media/platform/renesas/rcar-fcp.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/property.h>
+> > +#include <linux/reset.h>
+> >  #include <linux/slab.h>
+> > 
+> >  #include <media/rcar-fcp.h>
+> > @@ -63,6 +64,8 @@
+> >  #define RCAR_FCP_REG_BA_REF_Y2                 0x0118
+> >  #define RCAR_FCP_REG_BA_REF_C                  0x011c
+> > 
+> > +struct reset_control;
+> > +
+> >  enum rcar_fcp_type {
+> >         RCAR_FCPF,
+> >         RCAR_FCPV,
+> > @@ -73,6 +76,7 @@ struct rcar_fcp_device {
+> >         struct device *dev;
+> >         void __iomem *base;
+> >         enum rcar_fcp_type type;
+> > +       struct reset_control *rstc;
+> 
+> You could drop this global variable. Please
+> See below.
+> 
+> >  };
+> > 
+> >  static LIST_HEAD(fcp_devices);
+> > @@ -262,12 +266,19 @@ static int rcar_fcp_probe(struct platform_device *pdev)
+> >         fcp->dev = &pdev->dev;
+> >         fcp->type = (enum rcar_fcp_type)device_get_match_data(&pdev->dev);
+> > 
+> > +       platform_set_drvdata(pdev, fcp);
+> 
+> This can be moved after the user.
+> > +
+> >         fcp->base = devm_platform_ioremap_resource(pdev, 0);
+> >         if (IS_ERR(fcp->base))
+> >                 return PTR_ERR(fcp->base);
+> > 
+> >         dma_set_max_seg_size(fcp->dev, UINT_MAX);
+> > 
+> > +       fcp->rstc = devm_reset_control_get_optional(&pdev->dev, NULL);
+> 
+> rstc = devm_reset_control_get_optional(&pdev->dev, NULL);
+> 
+> > +       if (IS_ERR(fcp->rstc))
+> > +               return dev_err_probe(&pdev->dev, PTR_ERR(fcp->rstc),
+> > +                                    "failed to get reset control\n");
+> 
+> 
+>        platform_set_drvdata(pdev, rstc);
 
-If someone /really/ wants me to add the change to
-arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi in this patch,
-please let me know.
+I'd rather keep the rcar_fcp_device structure. When we'll add
+compression support to the FCP driver, we will need to access registers
+and other fields of rcar_fcp_device.
 
-it looks like this:
+> > +
+> >         pm_runtime_enable(&pdev->dev);
+> >         ret = pm_runtime_resume_and_get(&pdev->dev);
+> >         if (ret < 0)
+> > @@ -283,8 +294,6 @@ static int rcar_fcp_probe(struct platform_device *pdev)
+> >         list_add_tail(&fcp->list, &fcp_devices);
+> >         mutex_unlock(&fcp_lock);
+> > 
+> > -       platform_set_drvdata(pdev, fcp);
+> > -
+> >         return 0;
+> > 
+> >  error_pm_put:
+> > @@ -305,11 +314,32 @@ static void rcar_fcp_remove(struct platform_device *pdev)
+> >         pm_runtime_disable(&pdev->dev);
+> >  }
+> > 
+> > +static int fcp_pm_runtime_suspend(struct device *dev) {
+> > +       struct rcar_fcp_device *fcp = dev_get_drvdata(dev);
+> 
+> struct reset_control *rstc = dev_get_drvdata(dev);
+> 
+> > +
+> > +       reset_control_assert(fcp->rstc);
+> > +       return 0;
+> 
+> > +}
+> > +
+> > +static int fcp_pm_runtime_resume(struct device *dev) {
+> > +       struct rcar_fcp_device *fcp = dev_get_drvdata(dev);
+> > +
+> > +       reset_control_deassert(fcp->rstc);
+> 
+> Assert the reset in case of failure.
+> 
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops fcp_pm_ops = {
+> > +       RUNTIME_PM_OPS(fcp_pm_runtime_suspend, fcp_pm_runtime_resume,
+> > +NULL) };
+> > +
+> >  static struct platform_driver rcar_fcp_platform_driver = {
+> >         .probe          = rcar_fcp_probe,
+> >         .remove         = rcar_fcp_remove,
+> >         .driver         = {
+> >                 .name   = "rcar-fcp",
+> > +               .pm = pm_ptr(&fcp_pm_ops),
+> >                 .of_match_table = rcar_fcp_of_match,
+> >                 .suppress_bind_attrs = true,
+> >         },
 
------------ arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi ------=
------
-index 945127dacc82..f86d3e0d51a6 100644
-@@ -3,10 +3,11 @@
-  * Copyright (c) 2022-2024 Jianhua Lu <lujianhua000@gmail.com>
-  */
+-- 
+Regards,
 
- #include <dt-bindings/arm/qcom,ids.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/phy/phy.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- #include <dt-bindings/usb/pd.h>
- #include "sm8250.dtsi"
- #include "pm8150.dtsi"
-@@ -571,11 +572,11 @@ camera_front: camera@10 {
- 		reset-gpios =3D <&tlmm 109 GPIO_ACTIVE_LOW>;
-
- 		pinctrl-0 =3D <&cam_mclk3_default &camera_front_active>;
- 		pinctrl-names =3D "default";
-
--		orientation =3D <0>; /* Front facing */
-+		orientation =3D <MEDIA_ORIENTATION_FRONT>;
- 		rotation =3D <270>;
-
- 		port {
- 			ov8856_front_ep: endpoint {
- 				data-lanes =3D <1 2>;
-
-
---
-Kieran
-
-
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts         | 3 ++-
->  arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 3 ++-
->  arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi         | 3 ++-
->  3 files changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/ar=
-m64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> index f41ad446a39e..e2b7f1bd05ab 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> @@ -13,6 +13,7 @@
->  #include <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
->  #include <dt-bindings/leds/common.h>
->  #include <dt-bindings/media/video-interfaces.h>
-> +#include <dt-bindings/media/video-interface-devices.h>
->  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->  #include <dt-bindings/sound/qcom,q6asm.h>
-> @@ -701,7 +702,7 @@ camera@10 {
->                 pinctrl-0 =3D <&cam_mclk3_default>;
->                 pinctrl-names =3D "default";
-> =20
-> -               orientation =3D <0>; /* Front facing */
-> +               orientation =3D <MEDIA_ORIENTATION_FRONT>;
->                 rotation =3D <270>;
-> =20
->                 port {
-> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b=
-/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> index 218573a97785..3b5f6a29e969 100644
-> --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> @@ -11,6 +11,7 @@
->  #include <dt-bindings/input/gpio-keys.h>
->  #include <dt-bindings/input/input.h>
->  #include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/media/video-interface-devices.h>
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> =20
->  #include "sc8280xp.dtsi"
-> @@ -683,7 +684,7 @@ camera@10 {
-> =20
->                 clocks =3D <&camcc CAMCC_MCLK3_CLK>;
-> =20
-> -               orientation =3D <0>;      /* Front facing */
-> +               orientation =3D <MEDIA_ORIENTATION_FRONT>;
-> =20
->                 avdd-supply =3D <&vreg_l6q>;
->                 dvdd-supply =3D <&vreg_l2q>;
-> diff --git a/arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi b/arch/ar=
-m64/boot/dts/qcom/sdm670-google-common.dtsi
-> index b4854801a5f5..7880d85b52fe 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
-> @@ -9,6 +9,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
->  #include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/media/video-interface-devices.h>
->  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
->  #include <dt-bindings/power/qcom-rpmpd.h>
->  #include "sdm670.dtsi"
-> @@ -460,7 +461,7 @@ camera@1a {
->                 pinctrl-names =3D "default";
-> =20
->                 rotation =3D <270>;
-> -               orientation =3D <0>;
-> +               orientation =3D <MEDIA_ORIENTATION_FRONT>;
-> =20
->                 port {
->                         cam_front_endpoint: endpoint {
->=20
-> --=20
-> 2.52.0
->
+Laurent Pinchart
