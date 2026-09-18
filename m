@@ -1,83 +1,78 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD5C519DE9
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 16:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14262513545
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789749922; cv=none; b=ZvR2Vl4QDgdbL7QitBzVVZjBUKJ8+Q/3OJPqkioOcmQyhu+OYzI8EngN5wyr4+NhXZDAXqADVbqSzTxy4w0GFlS/4sO6oiuxvc3BRcd9B71vSERMz3ixSm3VRDxIGM2siLu0FyiplUv9t8UIMU7Mn+CGS22TAGEtbm32GMj/Hyk=
+	t=1789750985; cv=none; b=pkBpKHRMvSVJMy6mvdolrJT7TudfUc6CHRR34F9a3nOweRsCjSd9OqlC29imH9HL+4dlphL0b5eiXof3+NShD7yWgVy2zvaUa97cKj0R9DVOlb9HKIS8AhZO3noiOfO2hbHrb3+e5MNBCvCq+b5mCIvNQ6bdUcQwpy5t+/UHWAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789749922; c=relaxed/simple;
-	bh=rxxDGyuBUjCghU61l2Y/esKJdU86vBGusi79Xr0hBL0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=V30Q+h6c+k7DY0IkKpaMTVx+yiUOi3DNeM2+7TAUrYu5AHNQvODp2UjHUvs4BXQI7J5sfPdwjGUfgU+XCYkaBb6jA0s3PmU0Nu+5CMZUux0KWOi9tp1SHO6xs2460zwlI6WMIyLV3G8phDyLEJjZ7JBGAoas5VP/WNr7E1p128s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=u5/coWek; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789750985; c=relaxed/simple;
+	bh=17uQ+yO5/vz4UcZzSqXQag7gHUU7Rc7fH5GxComNvNc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H9t/nRDcw4KpCO63oj3Fu6vgRdvxADqsCb+dmLRICFZL25uJQaamklhInx8vkuEFfPAbeIRIbpLcqJOe1Lsc/qmlPtvq0B/LDMj3vEEAUcKTOc+5NHhYsWpOuhl+pdMdSvZ3tsxOl5AfQJl2DJf/oVVqz6s+v1c5KesamcW1zig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czJiOy6Z; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="u5/coWek"
-Received: from neptunite.rasen.tech (unknown [IPv6:2400:2411:160:2f00:e327:a298:3a5b:4b08])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AAD2C4F09;
-	Fri, 18 Sep 2026 18:43:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789749815;
-	bh=rxxDGyuBUjCghU61l2Y/esKJdU86vBGusi79Xr0hBL0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=u5/coWekDOVc/spsBoxUcvfGSLwERq4kH3UPcvJO1GbYz+yySXvhpj0BwKF7yg5OM
-	 RmaEkrHwmP9NMCOKji+xFYUMQLXXtJ70CggbOP7If8l/iGb+RrrbqLsZx4kg6elV7g
-	 N8mM2rWCvZzI8Fp4c06LuP7caqDzXaSdmcglPw98=
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czJiOy6Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A741F00898
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 17:03:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789750983;
+	bh=+Hx8TUHfipaWnDtJX6/JgWHh5O9BJzp4K+XyTrG+P9Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=czJiOy6ZfFKkXJ+Al7FVaMQ9OMsMHNbSZloSX8p7ZqzFVscwYak5kBbj3VslbNfMS
+	 eScIp4paKxYMgp71+IzlqdmXnKXrvXxg7RFI8nnhfpE3TMIAyYhwCwoq8wKbjWHay2
+	 sYWvXG6Jw2lmebf9+9OyWdwIoLrlZLuJIAwB8WOyoXjXp4rBKnxDIuvOXS6UR48XZA
+	 2T4+7fbdqbKnpz8KyleK2ajUuL0b5GwEEODcmI7IaI8iCRUQYL+evcbgpfTp7dxPbF
+	 rm9KLoaDWwRZcjnd69T63pycc/oLJxOxOU2xn4DsPtqopEBlIEJXoYIoOZCJOzRgjy
+	 3lu1iDUDdRSmg==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f13d7aso1336722e87.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 10:03:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy6+LveFZAvxdiqzFNMN02fwfdrOypPdKSlKWoGPpR/tAOGZRvSGNoQztNFBVSnDVMWU6lT1kunME9aG3ngVmm1uw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nT0wzm0sn20j4ylj8jT+7hMm3GI7Qmo4CpeZo9RaBwCSwedzrB
+	s7+6StQEqrkC18iGIwnrKIRYDDbsDWZLNVGTQQYedDTzfl5mN+k8sWvcXwUjEfSEuDWrzPCi1KU
+	ayVViR8ixGFfGqitDJfFwbpB9Hef3Xw4=
+X-Received: by 2002:a05:6512:2355:b0:5b7:6735:260f with SMTP id
+ 2adb3069b0e04-5b8c19705bdmr976732e87.67.1789750982552; Fri, 18 Sep 2026
+ 10:03:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1789723325.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1789723325.git.geert+renesas@glider.be>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 18 Sep 2026 19:02:50 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkUY4eBrqp9HmG2hhe_1_HSQvXRTR5jg1-m9DsKoMsjHg@mail.gmail.com>
+X-Gm-Features: AcwNN1XCRyP9KGiuX7L_eN92AfFe_LIbTq2nAFk7kjN9IFCJYIBvQF62EjEeGas
+Message-ID: <CAD++jLkUY4eBrqp9HmG2hhe_1_HSQvXRTR5jg1-m9DsKoMsjHg@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v7.4
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260918013631.735399-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20260918013631.735399-1-laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [vsp-tests] [PATCH] vsp-tests: Fix location of CLU input data
-From: Paul Elder <paul.elder@ideasonboard.com>
-Cc:
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
-Date: Sat, 19 Sep 2026 01:45:12 +0900
-Message-ID: <178974991210.52643.8747414616972717294@neptunite.rasen.tech>
-User-Agent: alot/0.0.0
 
-Quoting Laurent Pinchart (2026-09-18 10:36:31)
-> Since commit cd7de9f4e613 ("Install in FHS-compatible locations"), data
-> files have been moved to datadir and are accessed relatively to the
-> libexec directory. The vsp-unit-test-0010.sh test hasn't been updated
-> and still references CLU input data files from the current directory.
-> Fix it.
->=20
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
-m>
+On Fri, Sep 18, 2026 at 11:38=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Reviewed-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-
-> ---
->  tests/vsp-unit-test-0010.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tests/vsp-unit-test-0010.sh b/tests/vsp-unit-test-0010.sh
-> index 1878e6a809c2..c187b2101715 100755
-> --- a/tests/vsp-unit-test-0010.sh
-> +++ b/tests/vsp-unit-test-0010.sh
-> @@ -27,7 +27,7 @@ test_lut() {
-> =20
->         test_start "$(echo $lut_type | tr [:lower:] [:upper:]) in $format=
- with $config configuration"
-> =20
-> -       local config_file=3Dframes/${lut_type}-${config}.bin
-> +       local config_file=3D${in_frames_dir}/${lut_type}-${config}.bin
-> =20
->         pipe_configure rpf-${lut_type}
->         format_configure rpf-${lut_type} $format 1024x768
->=20
-> base-commit: b7bbca0dd187d85428edaecfc08c948bba72152d
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
+> The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b9=
+35:
 >
+>   Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-pinctrl-for-v7.4-tag1
+>
+> for you to fetch changes up to 0cd4a7b3a4883970df3ae8814d9aabdecf65a81e:
+>
+>   pinctrl: renesas: rzt2h: Add a helper for reading PFC (2026-09-15 10:49=
+:07 +0200)
+
+Pulled in, thanks!
+
+Yours,
+Linus Walleij
