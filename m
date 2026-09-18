@@ -1,28 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7C2547041;
-	Fri, 18 Sep 2026 09:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B50B3DFC8F;
+	Fri, 18 Sep 2026 09:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789722842; cv=none; b=sS/qDL0F275aD9gd4nLnvi7Ntw8qvEnMGHcMBRoyLDE9+ynTshV1kLSNuAkShAfTHBxofCsVCpA3SWdawv59Q/mHwlySc0mE6b2INQGV6DVg83jWBlQ8FOlHfR1fY+q8Xl57hrfyfJoYvhRX15yqJECm1DoRwDahDtoi49SkNUc=
+	t=1789724236; cv=none; b=FRKVVgvlLwD7zIv1evkp1cHGTirxp3dvGQUZrFnWSitZupeTZK5ppo4Lgpggzmf1jGU8tsWrwKeXO2fMpCZjL8DaJFqakNCCyIshPz/TXaqz6leQTk/Bb4P6sHBQrN8eppMU5i8sV7Ex5xCAWf65dmFApk+1CacBY58XNpOqfOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789722842; c=relaxed/simple;
-	bh=2lRJQCSIl2HaQ4DXKrk8rEe0SLjzJDia0AC0r8PGRPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gmQeNuQZoUG6w0y1I2A1cejSLS0w2sgApGPOhBzee+KARvx7AQ47Yq1T1Y3YKAPDOEDVjpJfq3dv4qZUJkXA81dZEDm6dbrnj8nfZxzKS5nnkTcNhXhO7+C2CkA3mnfJRzuUllT1PgEWp3r9nNlpx3aBnJHsWECz9wgHySrDc84=
+	s=arc-20240116; t=1789724236; c=relaxed/simple;
+	bh=fM7l5RaZ8dadMj8h+qydP5X0015oqsxUPr6nE7Skrx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fklnYlrxMW/5Qnza6Q1pIpLob7/h35I53gmTKqRcGeAYGMAMrnTaNQtmPwLV/uHIP9jzcNBE7MGluIO+G8Ki8zwYS1E67Q6HFUIXPT+zebWME3ujd9PRrSMgkGjdL1xYI+bhhRoPdp66XaTiQoZCMGM3ZGrcpknhuV5V71iMvkQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB951F000FF;
-	Fri, 18 Sep 2026 09:13:55 +0000 (UTC)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230621F000FF;
+	Fri, 18 Sep 2026 09:37:13 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: soc@lists.linux.dev,
 	soc <soc@kernel.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] Renesas SoC fixes for v7.3 (take two)
-Date: Fri, 18 Sep 2026 11:13:52 +0200
-Message-ID: <cover.1789722755.git.geert@linux-m68k.org>
+Subject: [GIT PULL 0/3] Renesas SoC updates for v7.4
+Date: Fri, 18 Sep 2026 11:37:02 +0200
+Message-ID: <cover.1789722868.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -32,35 +32,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
 	Hi SoC folks,
 
-The following changes since commit 2ac7bad110be6ebe478d6bd57821f7f5259a1f54:
+This is my first pull request for the inclusion of Renesas SoC updates
+for v7.4.
 
-  arm64: dts: renesas: r9a09g087: Switch GBETH TX queue scheduling to WRR (2026-09-02 14:32:37 +0200)
+It consists of 3 parts:
 
-are available in the Git repository at:
+  [GIT PULL 1/3] Renesas ARM defconfig updates for v7.4
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v7.3-tag2
+    - Refresh the ARM SH-Mobile defconfig for v7.3-rc1.
 
-for you to fetch changes up to 8dc2615d5702059b2b71fca6f93c0d7d10ae54cb:
+  [GIT PULL 2/3] Renesas driver updates for v7.4
 
-  arm64: dts: renesas: r8a779f0: Set UFS lane count (2026-09-14 10:07:09 +0200)
+    - Register the SYSC power sequencer on RZ/G2L,
+    - Add hwspinlock support for R-Car V4H, V4M, and X5H,
+    - Add initial support for RZ/G2M v3.0,
+    - Miscellaneous fixes and improvements.
 
-----------------------------------------------------------------
-Renesas fixes for v7.3 (take two)
+  [GIT PULL 3/3] Renesas DTS updates for v7.4
 
-  - Fix UFS regression on R-Car S4.
+    - Add GPU and display support for the RZ/G3L SoC,
+    - Add display and RTC support for the RZ/T2H and RZ/N2H SoCs, and
+      their EVK development boards,
+    - Add I3C support for the RZ/G3S SMARC SoM,
+    - Specify ethernet PHY reset timings on various ARM32 boards,
+    - Add Clock Pulse Generator (CPG) and Module Controller (MDLC) support
+      on the R-Car X5H SoC,
+    - Add GICv3 Interrupt Translation Services (ITS) support on the R-Car
+      V4H, V4M, and S4-8 SoCs,
+    - Add GPIO support for the RZ/N1D-EB Expansion Board,
+    - Add Display Stream Compressor (DSC) and (more) DisplayPort support
+      for the R-Car V4H SoC and the Sparrow Hawk and White Hawk
+      development boards,
+    - Add WaveShare dual-channel CANFD HAT support for the Sparrow Hawk
+      development board,
+    - Miscellaneous fixes and improvements.
+
+Note that the third PR is based on renesas-fixes-for-v7.3-tag2, for
+which I have just sent a PR.
 
 Thanks for pulling!
-
-----------------------------------------------------------------
-Koichiro Den (1):
-      arm64: dts: renesas: r8a779f0: Set UFS lane count
-
- arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 1 +
- 1 file changed, 1 insertion(+)
 
 Gr{oetje,eeting}s,
 
