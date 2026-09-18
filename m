@@ -1,29 +1,26 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226803F5BFC;
-	Fri, 18 Sep 2026 09:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4013AB5DA;
+	Fri, 18 Sep 2026 09:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789724284; cv=none; b=uc5Uov4BQubiLuf0tYiCPTJFEk7HYPM2wGCTLYFRzd+vVwej056As8QnU9dXn05EqseQZmGXZDlrOI/AeWIWbZ0YucUno9mJSnBjfNhXBBBCY6jMeg4BvgXFabRrl7NV+yt2V7OM3zb+vI9kFGMuvDzy/y8Lj/73dgGXjFM4zDI=
+	t=1789724292; cv=none; b=CQgOEWPmOifK4sj8uEBgQT2JKxgZJSPGmi577NtAzlpMGmWoLOk2kWljivXSxSs2O9AhqjWv7U6PV0DWmUSd3bLzKypMeXbM2sXFZHACjbZ7nryptWoJE7chZvwLo+7epWUVcN13xWL8ngytxIQnB4tnmQa1JRoVJQzzPYgF500=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789724284; c=relaxed/simple;
-	bh=dLRgCHYBYt6zAVgzesW0L9ayGOHX0Es+F9XcsZwOjdE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nHSh7sue4IhE4/SCblwdZNOeBjmRt74VvfHg4jQU6roslXqufqX0xkeaN/kcB1QZiJZnp53LsoBpeW6mZj146vNfXsGNA3njCZ0fKXTE6ud66IysVdFpowg9GlS167w95aYHeLZFy/PXhfHxR5lzTzLqm22slUlpXAbHyBgu0n0=
+	s=arc-20240116; t=1789724292; c=relaxed/simple;
+	bh=514CWGMpspXGhpSoI23KtukaddntqJsVm/wLht4BqcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Chhs3UwkmSXX+RsCQ3Fqio2edQ1+lvM4syhYgrRAMyqhdkYTVu5diNqf9pHprtPmeQPTq5VBoNy/eD4xfjKMZ4cBweFzKIqr1q05iIHzRPdWX8utLO6e6z5ivmJBpHDhCM2vT47ZBGXeTpKiwrgvUIitaB3C1TOnKniFppCX3l4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 523281F000FF;
-	Fri, 18 Sep 2026 09:38:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68141F000FF;
+	Fri, 18 Sep 2026 09:38:10 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-clk@vger.kernel.org,
+To: Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v7.4
-Date: Fri, 18 Sep 2026 11:37:46 +0200
-Message-ID: <cover.1789723268.git.geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Updates for v7.4
+Date: Fri, 18 Sep 2026 11:38:08 +0200
+Message-ID: <cover.1789723325.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -31,10 +28,9 @@ List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-	Hi Stephen, Brian, Jérome,
+	Hi Linus,
 
 The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
@@ -42,63 +38,49 @@ The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.4-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v7.4-tag1
 
-for you to fetch changes up to 8d90c0eeef104553d6b9137becd7f58b468aaa0b:
+for you to fetch changes up to 0cd4a7b3a4883970df3ae8814d9aabdecf65a81e:
 
-  clk: renesas: r9a09g077: Register SYSC regmap (2026-09-14 09:47:33 +0200)
+  pinctrl: renesas: rzt2h: Add a helper for reading PFC (2026-09-15 10:49:07 +0200)
 
 ----------------------------------------------------------------
-clk: renesas: Updates for v7.4
+pinctrl: renesas: Updates for v7.4
 
-  - Add display and PCIe clocks and resets on RZ/G3L,
-  - Make sure clk_init_data is fully initialized,
-  - Convert RZ/V2H to the clk_hw-based provider API,
-  - Add syscon regmap support for the System Controller (SYSC) on RZ/T2H
-    and RZ/N2H,
+  - Add SD power source support on RZ/G3L,
+  - Add I3C power source support on RZ/G3S,
   - Miscellaneous fixes and improvements.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Biju Das (10):
-      clk: renesas: rzg2l: Add DSI divider clock support for RZ/G3L
-      clk: renesas: rzg2l: Add PLL7 DSI clock support for RZ/G3L
-      clk: renesas: rzg2l: Rename cpg_core_clk::flag to core_flags
-      clk: renesas: rzg2l: Add support for divider flags
-      clk: renesas: rzg2l: Add support for LVDS fixed-factor divider with 4:7 duty cycle
-      clk: renesas: rzg2l: Add support for RZ/G3L DSI mux
-      clk: renesas: r9a08g046: Sort macro definitions alphabetically
-      clk: renesas: r9a08g046: Add MIPI DSI and LCDC clock/reset entries
-      clk: renesas: r9a08g046: Add clock and reset entries for LVDS
-      clk: renesas: r9a08g046: Add PCIe clocks and reset
+Biju Das (1):
+      pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
 
-Geert Uytterhoeven (2):
-      clk: renesas: Make sure clk_init_data is fully initialized
-      clk: renesas: rcar-gen3: Use FIELD_GET()
+Claudiu Beznea (5):
+      pinctrl: renesas: rzg2l: Generalize power source code
+      pinctrl: renesas: rzg2l: Drop defines present in struct rzg2l_hwcfg
+      pinctrl: renesas: rzg2l: Unify power source handling
+      dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document missing I3C power source option
+      pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting I3C power source
 
-Jerome Brunet (1):
-      clk: renesas: Clean-up simple provider misuse of the consumer API
+Cosmin Tanislav (8):
+      pinctrl: renesas: rzt2h: Fix used_irqs indexing in clear path
+      pinctrl: renesas: rzt2h: Wire up struct gpio_chip::set_config
+      pinctrl: renesas: rzt2h: Remove unused struct rzt2h_pinctrl::gpio_range
+      pinctrl: renesas: rzt2h: Restore correct pin mode on IRQ free
+      pinctrl: renesas: rzt2h: Setup IRQ in .irq_{request,release}_resources()
+      pinctrl: renesas: rzt2h: Fix reading pin value in IRQ function
+      pinctrl: renesas: rzt2h: Reuse helpers
+      pinctrl: renesas: rzt2h: Add a helper for reading PFC
 
-John Madieu (2):
-      clk: renesas: rzv2h: Drop duplicated parent lookup in fixed_mod_status_clk_register()
-      clk: renesas: rzv2h: Convert to clk_hw based provider API
+Josua Mayer (1):
+      dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow input/output-disable
 
-Lad Prabhakar (1):
-      clk: renesas: r9a09g077: Register SYSC regmap
-
- drivers/clk/renesas/Kconfig            |   2 +
- drivers/clk/renesas/r9a06g032-clocks.c |   2 +-
- drivers/clk/renesas/r9a08g046-cpg.c    |  92 +++++-
- drivers/clk/renesas/r9a09g077-cpg.c    | 142 +++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c    |  15 +-
- drivers/clk/renesas/rcar-gen3-cpg.h    |   3 +-
- drivers/clk/renesas/renesas-cpg-mssr.c |   3 +
- drivers/clk/renesas/renesas-cpg-mssr.h |   1 +
- drivers/clk/renesas/rzg2l-cpg.c        | 554 ++++++++++++++++++++++++++++++++-
- drivers/clk/renesas/rzg2l-cpg.h        |  51 ++-
- drivers/clk/renesas/rzv2h-cpg.c        | 164 +++++-----
- 11 files changed, 898 insertions(+), 131 deletions(-)
+ .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    |   4 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c            | 410 ++++++++++++++-------
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c            | 182 +++++----
+ 3 files changed, 403 insertions(+), 193 deletions(-)
 
 Gr{oetje,eeting}s,
 
