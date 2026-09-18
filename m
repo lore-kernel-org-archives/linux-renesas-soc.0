@@ -1,123 +1,140 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
+Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com [74.125.231.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569764A4F17
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 07:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C94C31328E
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 07:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789716944; cv=none; b=Wn9d1gVErxtqLYmSKIEQDWR9Q1kJWOfh1sxTzT55dNZgxOyGpdJTHcG183l8d19cbBr7qfIg//1tAlzQIiER67zXUknRGQHjJim/S9P2WWDdqpvHDSueuCgXk6gXDde2OdnJI1s287tK69dWCNLBTbOslfUhj/Y+fj7Qwd+VjGs=
+	t=1789717918; cv=none; b=GzB8FZmv59TQ3BmMlWo3EGbOqk60e7fZVT1DkrUyBOBBhiiFyDR4OevlxYgzeOLWhC5dpmwQ7jhKjCWyY8KZOXlmYw4A4ctK+T/Vk0OXxz8g1rK9YNcSqoL/RReu/nRcKhJM498/E6/o6U7/2gryiHaKSumKYaULO1zKTC6k2Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789716944; c=relaxed/simple;
-	bh=cHVPOWKKfhZVIB7cWuXyuW2OrGOIzBYJeXQE3IvAcLo=;
+	s=arc-20240116; t=1789717918; c=relaxed/simple;
+	bh=wTlung53wgG0U6uz6ynHrcjwVaYOb0YK4Nvyasm8+go=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pr3O15lkBaIGrUIvU7A5M4zMRKCZLzhhQyYYCZqGm5UCcvp9qp+W7bObRDmCKpEqYqHVHEZhYW7ODlHae4RxFTNyXoLsHJ0FT2f04xK7WVsVu5Scf0Xoc+prig3rae+f9a52w/KBV7qNcK2vx9SS8bg9yKr26g40wHCkjwGu2p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+	 To:Cc:Content-Type; b=UOVlP4gHq4NkUPgK62s6DkVxv03v8oQrkglKPpgNBJOc3/JgAvo81uiOB2bGOHaLVvVn3lgHlPnHgPXEj+8idjHUlC8at7JuLFgJ69St/3Dbctlg/BAEr6KOb8m5zSYc/zJQC27FNw9TK7btpmBeQKKUrUSiw97sZWZmAXfIzS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.231.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e4d8d8aso268674e0c.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 00:35:37 -0700 (PDT)
+Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4c2c08ff3f8so348864b6e.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 00:51:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789716935; x=1790321735;
+        d=1e100.net; s=20260707; t=1789717916; x=1790322716;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=0WtucTJYH5u+SsiRL/3DRg9hQeKGo+JDwDdtR43iO30=;
-        b=OnTVRwJmkx3N342fkTPPsX5lyfBSZsncyCV3adj+4we/4qI/4q0a5iUGcKll6c0IPA
-         mTNPmrwtXLsOHhYBgppCe5Xh9M6eHyiA7QuDPaRVnf1iQhj9bZjmINs8eRXDy4gm3Hvb
-         jc4qZZgAWbDZ8f+SjB7I6V8P0yKITYqDttKfMNiy91nsAgG8kHB/5+8HrXpSSGQctNXc
-         VTx5rO1y4Q6xp3mecNQkAddurf1Y7GGYK4TwCbleNHJ9hubyEwvxaLmr6OiTetauwhoM
-         DtJzkkb2nNP/6ovjK9UKkymr1TPNpGArQKG6pKG5yC4f0uNAVo+uxUY3Od6UNtOVmGRP
-         jGQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxbB9D3BoWdcp3iqiXXj25LJ6gnBrmBcBj2/DxGVYukV6tsf62eKleVeeBkcqBriRqCMLC/jShsgcz3afpBmJ+ayw==@vger.kernel.org
-X-Gm-Message-State: AFuF++k4i4zOwvCieRV6pHdbAse5SURbYUyTcuf527cPuVcx7wdeLZ1N
-	hxmLM/PlmusPNLkmcjPlgK7wJXvUS+bpJp52/M49qzhVqW2+muqyamxtlzCS+DMF
-X-Gm-Gg: AYBFou17TjogSsm8oIHICR9OB4dtPdKrCHg64lKAdzxfYfnVKvQiNw0Kzx+fUM1vy/q
-	T81qFshvyYYXYRFcvGMJouFHOMJ7xF8M7ajGgUEJINQdhafVvj+qGDoLRK3sEj5Xjr3mOOnq4+S
-	I42utlhy4+2KopbQhp59bzp5en+V4QCt6bC9/ozqPKLgnGPWye/R517TPzfpJi3yLUMord8/y2X
-	S1NZVT/N8YE8p4BtjEnxN4QhcrDbKG7VeHOYJbL2gSx/d2edpq0f1fXxzANwc8ezTFqHghJn7HB
-	hEnTryXCrt1valQrblaM8msefvRoRH0IoydnmWh1JE3sl2o4kx7FahcennQElWgExQ69T2ctSyU
-	kN8jfDKiTJFXkt+ooAEnVf6F9vABX3fQMtq2j5JIXdv7l9j166jfV8SBTe+8H43Wnk6JaIYYUh9
-	KwRVnauBN4LL886hhHYxepGLBp9x0ESFLnc+bjZITM/W7uAYucUPObYlRIe9tZ4V36B798Nlfa3
-	xfciFXz1QddEgiaYdBkatkJrUFfKARwW+gg
-X-Received: by 2002:a05:6122:400c:b0:5c9:a60c:273f with SMTP id 71dfb90a1353d-5c9b59f02c4mr563864e0c.23.1789716935125;
-        Fri, 18 Sep 2026 00:35:35 -0700 (PDT)
-Received: from mail-vs2-f42.google.com (mail-vs2-f42.google.com. [74.125.227.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c9b8367082sm804955e0c.10.2026.09.18.00.35.32
+        bh=y+tYCkkvzZJmFoYOhTQyYw6fM+qA/usgZs/lU8fn+ao=;
+        b=T1k1BIEKJyFla+wvxy6ludVPjjNQvA2R3Ukb66AcwumftTXZlVPoYwnwQdAMxogbEN
+         hrSFoZ2/mjZDHnPzfAP4k+KOHAv68M1w2ZL4wOAh5qYlhaNgQKec64QYGyddc8zkKo//
+         beCg/WQm1OtJI6bzC7DI5LMu3zjsoGhodw2wpch9tlz+Fx1NUVbQepMsgCe4bdun8T/4
+         s9hfZlTNAWKGiCDAO+PTUMOSWbmTt5XOT4IC1ivaEVg1j3gUsXWSifpeVKoR+9rMiLq1
+         pwCJx5yNDJg9JAaFrnM1tul1E0gsQJL01AwnaCr4OR9KbxlumLqVUscNjdaCJDsNNf29
+         TXsA==
+X-Forwarded-Encrypted: i=1; AKwUvBx2xeLj4cAJhpzcZYonnN2dwJZSyY/0bZvZlV7TqURNdwyxLaDVg2F2YJbpmxA0jfPFTcQVJgmxpW9syULl6XpRgA==@vger.kernel.org
+X-Gm-Message-State: AFuF++nwM0r+05mfvtjwDGM6W8Ef5x8s3Dm3jgvYn4PKiENMTDnwWhzW
+	kRa4xxbdlxC+PWuCECfcLvUrGpGVhCBuzb897BV8eR5+OUt1bXdmpXEVClK9hDJk
+X-Gm-Gg: AYBFou2Y5om3YIOHmjG7J1VAOEMY7rVGGn1cv3h9WdE7bzmZcfzKvcXpGdSmO7Ox4j8
+	Gie+ThCr4ofQMg3DjbLAGQtnBngrzd0DpCBmLcuhaEM+vp1fI0loTfFKbyKUX1O+VGnYur1/mgt
+	mtdhTWXkXluwZW6RS/6+Dr/fncwiD2sleMR9wb5uXNrFuklurGNVUN+Z1UAuO3c3aBUHkm3uSmk
+	RkIeX4HT7CY5gOGEcAPKIujFMPyyFCgSIcJjKUIxwZu2oEbIWci0GPFG3S0RzNE86Td1ocXfNfK
+	O5gQ9eDz6jrrrB59/vZmltZ6UPaFq1+b1mippdKfwkI4n4vwGn5DbClI791n27997bsNOW27Rot
+	Ndm/ff8ZutrCggJSYIFFsIcuY4141dm2+bhikdRKHXNJGaZuTfMWYSDeUmqb0nWuqYLibNv3kKC
+	dHZRYWkMqIn6VLNRvdCGgnDvyQVe0ErObz51MfCaudEw4HIBrzd9ShjtAJH1WRFtHcPQAg2R8nq
+	zetMUby4FyaBVNhL6gC3RbqrwBHVuxMDQYq
+X-Received: by 2002:a05:6808:3087:b0:4b9:a829:f01e with SMTP id 5614622812f47-4ccf7df51damr2355919b6e.42.1789717916026;
+        Fri, 18 Sep 2026 00:51:56 -0700 (PDT)
+Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com. [74.125.231.76])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4cd691976b9sm483773b6e.3.2026.09.18.00.51.55
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Sep 2026 00:35:32 -0700 (PDT)
-Received: by mail-vs2-f42.google.com with SMTP id ada2fe7eead31-79028ca939aso236270137.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 00:35:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzVQyjHLKRRLyLeQSbJoWh4omZuGn9UGL49IKyQ2PH+s/bnJGG8r5igAeGUXmyknYZue3CVVh0DrcAqFdRkx1CkAA==@vger.kernel.org
-X-Received: by 2002:a05:6102:91c:b0:7a3:2e52:1163 with SMTP id
- ada2fe7eead31-7a55da9b0damr516237137.26.1789716931735; Fri, 18 Sep 2026
- 00:35:31 -0700 (PDT)
+        Fri, 18 Sep 2026 00:51:55 -0700 (PDT)
+Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-46a63c34533so514862fac.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2026 00:51:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzf5hzN0fiTXyvyR/ns+HozOcJYwdElDb6wmSG90gka1mcjcWM+mBNygfGXvR4siUnuKh2TbNKX2iUrzBfAymQuMA==@vger.kernel.org
+X-Received: by 2002:a05:6102:358d:b0:79f:e8ce:27f2 with SMTP id
+ ada2fe7eead31-7a55af2df71mr547985137.4.1789717606396; Fri, 18 Sep 2026
+ 00:46:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
- <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-2-4c72d4e086dd@ideasonboard.com> <20260918011156.GB145152@killaraus.ideasonboard.com>
-In-Reply-To: <20260918011156.GB145152@killaraus.ideasonboard.com>
+References: <cover.1788338320.git.geert+renesas@glider.be> <1d5c56c80291e447208ac8777aaf90ad6f0a4f4d.1788338320.git.geert+renesas@glider.be>
+ <20260917221647.GA4038349-robh@kernel.org>
+In-Reply-To: <20260917221647.GA4038349-robh@kernel.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 18 Sep 2026 09:35:20 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUWwCLiQASDhr3yY6XFY1704W3tAWEPgYw77evrK9ECRg@mail.gmail.com>
-X-Gm-Features: AcwNN1Uhv0ZzlOO0pTf4pD3p_OGSBmogWfpHa_8PkhuJrVnrMv3c15ALo4pMZkM
-Message-ID: <CAMuHMdUWwCLiQASDhr3yY6XFY1704W3tAWEPgYw77evrK9ECRg@mail.gmail.com>
-Subject: Re: [PATCH 02/10] clk: renesas: r8a78000: Add clock for FCPV and VSP
- for SCP FW SDKv4.36
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org
+Date: Fri, 18 Sep 2026 09:46:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXCFY7-SEGLjhaO1uCDwsvogc0ocdqSz=1C_gsWX6T_tA@mail.gmail.com>
+X-Gm-Features: AcwNN1XFZho-l6FTtqXfFYSmbjO5DpuymjytNtvp4sOSdCdr5EidSrnlACqjwyk
+Message-ID: <CAMuHMdXCFY7-SEGLjhaO1uCDwsvogc0ocdqSz=1C_gsWX6T_tA@mail.gmail.com>
+Subject: Re: [PATCH v3 04/12] of: property: fw_devlink: Add support for renesas,scmi-firmware
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
+	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Laurent,
+Hi Rob,
 
-On Fri, 18 Sept 2026 at 03:12, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thu, Sep 17, 2026 at 09:04:41PM +0900, Paul Elder wrote:
-> > Add clocks for the FCPV{B,I,D} and VSP{B,I}. They each have one clock
-> > from an option of two: a 1066MHz and a quarter-divided 266MHz. As we
-> > already have support for the 266MHz one, add just those for now.
+On Fri, 18 Sept 2026 at 00:16, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Sep 02, 2026 at 01:29:20PM +0200, Geert Uytterhoeven wrote:
+> > Let fw_devlink create device links between consumers and suppliers of
+> > SCMI firmware on Renesas platforms, and enforce these dependencies.
 > >
-> > Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+> > This prevents probing of drivers before the firmware they depend on
+> > becomes available, thus avoiding unneeded probe deferrals.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > > ---
-> >  drivers/clk/renesas/r8a78000-cpg.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a78000-cpg.c
-> > index b820d09e1a195068debe8a6eea7a01c534a97b23..17792ff6ab8ae2f7eb5c8f7e3d581b43177e195d 100644
-> > --- a/drivers/clk/renesas/r8a78000-cpg.c
-> > +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> > @@ -326,6 +326,8 @@ static const struct clk_map_in r8a78000_cpg_fw_4_31_0[] = {
-> >       { R8A78000_CPG_SGASYNCD16_PERW_BUS,     FIXED_CLK(66M) },
-> >       { R8A78000_CPG_S0D4_PERE_MAIN,          FIXED_CLK(200M) },
-> >       { R8A78000_CPG_MSOCK_PERW_BUS,          1667 },
-> > +     { R8A78000_CPG_SGD4_VIO_DP_TX,          FIXED_CLK(266M)},
-> > +     { R8A78000_CPG_SGD4_VIO_DP_OTHER,       FIXED_CLK(266M)},
->
-> Same comment as for 01/10. I think the two patches can be squashed
-> together actually (unless Geert disagrees).
+> > v3:
+> >   - s/firmware/renesas,scmi-firmware/,
 
-DT binding definitions are shared by driver and DT sources.
-Please keep them separate, so I can apply them to the shared
-renesas-r8a78000-dt-binding-defs branch.
+> > +++ b/drivers/of/property.c
+> > @@ -1417,6 +1417,7 @@ DEFINE_SIMPLE_PROP(power_supplies, "power-supplies", NULL)
+> >  DEFINE_SIMPLE_PROP(mmc_pwrseq, "mmc-pwrseq", NULL)
+> >  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+> >  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
+> > +DEFINE_SIMPLE_PROP(renesas_scmi_firmware, "renesas,scmi-firmware", NULL)
+> >
+> >  static struct device_node *parse_pinctrl_n(struct device_node *np,
+> >                                          const char *prop_name, int index)
+> > @@ -1574,6 +1575,7 @@ static const struct supplier_bindings of_supplier_bindings[] = {
+> >       { .parse_prop = parse_regulators, },
+> >       { .parse_prop = parse_gpio, },
+> >       { .parse_prop = parse_gpios, },
+> > +     { .parse_prop = parse_renesas_scmi_firmware, },
+>
+> This is going to be a catch-22, we can't have vendor specific properties
+> here. If we need this, we need to come up with a distributed way to
+> declare them. Linker section tricks is one way. Maybe something in the
+> driver struct would work?
+
+Quoting myself:
+"I still think the vendor prefix should be dropped, or replaced by "arm".
+
+> Can you just avoid a property altogether? Why can't you check for the
+> presence of SCMI at runtime?
+
+A system can have multiple SCMI providers, so
+of_find_compatible_node(..., "arm,scmi") is not sufficient to find
+the right one.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
