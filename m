@@ -1,303 +1,254 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f7.google.com (mail-pj2-f7.google.com [74.125.227.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6452DC76A;
-	Sat, 19 Sep 2026 12:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67382370D43
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 19 Sep 2026 12:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789819509; cv=none; b=edUCkC+niN0LUPNxHM7JCj5Fhnz4JVARZAv7LBG6Tyv9gD8butFQb9jnpvTofgh8vn36C6PwiP3FXFTvUUiVqfdcvtJte2CIHDhXYvRj/g4LZIm/xS2flysa+hJTu5vtllXw8l5OOM4ZqvtYriiymMTfvzX1CgP2Ra0zeGflgQU=
+	t=1789822308; cv=none; b=Fr9gPOlxmOGCjc+F0rU0exAzs3U7pDGA9hLL4OpaEJLtj9QDEegVOgk5QyK3iZ26q1T++LBb48jkbWajIx6juTg0ULEVZLA4P4PcMLLC2ckmxOFvGkSgSyso1T7EcAinyh/hFI7Bjv5Kubrm6td4603WOPFJgewcp2Prxw70hXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789819509; c=relaxed/simple;
-	bh=qT0uHq50xuDhbsDO5hHlQBOwDv2Zr0eCRbEkzMG7I3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rxk3rLX8x8njHUjzAfCqwdQr0Icovbg83fCJvHgYgmVlN+FNGPdAofmt2CCA2qh8w89yIe7fSOq4XzQrLHM7rakxWQCN8JoGRTBMmmXRHUaIck/Wt+z4KUXF8LakFYpwDMvM5V6NsFJaX4R2AiHhXv5BkIIBveMw87fCYih0i3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i6MQZccq; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1789822308; c=relaxed/simple;
+	bh=NIJkPdrb34c+GXUZql5gIGKgt46vdTtKGO6ZMghyykQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=omGzZ6XKovmoL3ZeHt0t1SY92DZYLOBjE2uFECCv6gbzMnEtODV6gATMwSWWSv7g3mEFHhG2iey+u8+KGp6piSLQk9cWp6Oy9Hdzd6P5n6aR8WdNY2CDvqE165CNkMzr2YWMZnuvZWN7qRRb2ax+teR2HbYpjv59v4sl7I5Mw6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bI/zaacI; arc=none smtp.client-ip=74.125.227.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i6MQZccq"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 78AA14E40589;
-	Sat, 19 Sep 2026 12:05:04 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DB431606CA;
-	Sat, 19 Sep 2026 12:05:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1195E1032802B;
-	Sat, 19 Sep 2026 14:04:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1789819500; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=SFMPcolUh4zpvmGrKEAW5fnqAUuQ8Gy43QODCsF/j7o=;
-	b=i6MQZccqtvleTOJOc2xjeW74ER3MJIHhkShL13MtzMohMMbitlY+MYOeRapQZv1FRiszrs
-	zsf1Pv/lOh5OT6jSrSMJ4+EokPhsjhR2nNW0DzbFOFsB7Cz6h7q8KceiPVEr8c/hVjzTQE
-	nqWaJ3jUnxndGN+Av5Y/zTKlPIozQ9H0inoQiaosndiodGrV9KAbI4uoJd7zMc8ncYo6Zk
-	P6PzdTlsRqie0aGyDM4ExXIMsVaonLvOTTS6NvT3XEezxcxgwTD/wUnrR/f5DLEmh6snZn
-	cRuCQZNwoa0sUcWwmZASNz92J0cRcRQihCO++rAu2wDZgfruuPhVucTt1phM4g==
-Message-ID: <7b0a957d-f770-4bad-b3b9-aeb7a61bfb49@bootlin.com>
-Date: Sat, 19 Sep 2026 14:04:43 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bI/zaacI"
+Received: by mail-pj2-f7.google.com with SMTP id 98e67ed59e1d1-39e37c430bbso686515a91.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 Sep 2026 05:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789822306; x=1790427106; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WeS5LqLOuIKT4KDWIZgKWwOtuHWnT7hUVImYY975124=;
+        b=bI/zaacIqyY3JPP921Jr3f3kTHtIMpjWqDZafaaZ+/btLyXs/qCh4VdYj7PLblAhFX
+         wNugegYlPFRZxNQXqnX1Uu92pAo9HRCod4uesoaJa5uTOMkSrUftkoqMd1TYvMsBn52L
+         SviSRHlNij0c73Uvnl2e1gzDVbSdMR0o1DnYAN5wLZTQ8ij1nrWoMC/PkCRFNw2BvtOL
+         XVqHnBlN5W5Fq3AKY2mbThGOP+FSJ7A2MzQFs8C/cYPH/kFbkmn5IKIWlemeDPvelRH+
+         +ql7QgssUoNFtekVLASq9ycb6fVimZl9uFu9ydryibyqwgOh2p9/MLwLdAFczuAMEpOs
+         bEBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789822306; x=1790427106;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WeS5LqLOuIKT4KDWIZgKWwOtuHWnT7hUVImYY975124=;
+        b=tLWKI1ckdZTRwMFeUMDwMXVENGwJOPcoO0khH6TI2nWao6Pf3jQwBkOpd11yLZUtMN
+         4sMNPcffoQJThMxg4kfEZywM9x6NTi4TdEhE1DrGko6LA6dbtwIh0lU6YFFxWoXalYhy
+         no93SCrNNA4Bjn92Czl9P4kgXA8r/s4ofATVo9GwlG9CU0ATxJ43lTTn+CuDgCMNDdz8
+         ag3aGpLu+publsrd8TI/ZAxYOgQsMjyhdBW8A45nsbPPtObfmc2anqjfrPIVvewdXosD
+         w9Xixjvj7JXspvsBaxycJSqt62UXKa4dZ6Z/ZUQ1OBHInwEi662eesdgVCRHzFWnxIhi
+         i6fQ==
+X-Forwarded-Encrypted: i=1; AKwUvByAFXuLAzywOMJ8LyOejCa+6dfYmbBk7NDkUR9nx0QwY+IX9K7OuZS/OKyiCZGaTGKOzBTkfRQhL69tTd2ThDO7bg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nni3nLwqPWHe1iAQ3SvxzEBrPTBPSbKLgMI2jTsDVZ1ZuVFnd4
+	yvOk6n3MpMxyUpmNbqCQqASpsSofWou1leOPlEJ8RNUw7d9FxdQY4yyOgj/dHcV6tg1oDQ==
+X-Gm-Gg: AYBFou2WhR44YHhzqmVmz1qtrVabhxNF8/g0Ynbo/lmzUBa0IZIs82NGda/XmrPKFbJ
+	fAFsYSSt3oQ7qS9I/fO4sL+r3oIgmXBwtBu7B7Ne53QN7XXd7wh6PVEy79laZGWh9zokzm9gDpU
+	paTUUdVbB+SiMTjJ/H6BBBOnwsY1HZoSjqidP3kKg18CzadQhtPzJ6P48ynwK01YcDPMINT8sc6
+	BZPgx2uYeUH4gSVlf4/2v7iSMo2OKQoiDu5gtVvkGuYHSPBl/9TATGOq8WGmDtR/z9k6VDnpZmD
+	ORx8oAwBN4U/hZt8wUPJdwCYe6esU01NjJpUZskDT8EstDiOnvxschP5pFkHN7yeCFq4LhY6YOa
+	qryDrIIFsoIjCJkvDl5TAC3ImclwT7boB90IA8uV3ZqNxePHc22aelFi67fHm6LR4ilCnwc14gw
+	hLPlghocQg1vKs3239U77a8GSsOOtYSuDsCWPTYZRGnMAMutfx3RiKTOtUEEF9LZ8LtDSCIg==
+X-Received: by 2002:a05:6a00:4309:b0:874:708d:b636 with SMTP id d2e1a72fcca58-874df60bf54mr9495073b3a.34.1789822305666;
+        Sat, 19 Sep 2026 05:51:45 -0700 (PDT)
+Received: from server.lan ([168.138.199.194])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-877aa0026b2sm991805b3a.44.2026.09.19.05.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Sep 2026 05:51:44 -0700 (PDT)
+From: Coia Prant <coiaprant@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Coia Prant <coiaprant@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	David Heidelberg <david@ixit.cz>,
+	netdev@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH net-next v8 00/11] net: pcs: add basic support for RK3568 XPCS
+Date: Sat, 19 Sep 2026 20:51:07 +0800
+Message-ID: <20260919125119.2107089-1-coiaprant@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 07/12] net: stmmac: dwmac-s32: Add SGMII support
-To: jan.petrous@oss.nxp.com,
- Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
- NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Bogdan Hamciuc
- <bogdan.hamciuc@nxp.com>, Ionut Vicovan <ionut.vicovan@nxp.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Clark Wang <xiaoning.wang@nxp.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-pci@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Vincent Guittot <vincent.guittot@linaro.org>
-References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
- <20260919-s32g_serdes-v3-7-9d68868c1e89@oss.nxp.com>
-Content-Language: en-US
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-In-Reply-To: <20260919-s32g_serdes-v3-7-9d68868c1e89@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi Jan,
+This series adds proper SGMII support for the Rockchip RK3568 SoC
+using the integrated Synopsys DesignWare XPCS, along with necessary
+fixes and refactoring in the stmmac core and XPCS driver.
 
-On 9/19/26 08:54, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> Wire the NXP S32G SerDes XPCS PCS into the dwmac-s32 glue layer so the
-> MAC can run SGMII over a SerDes lane.
-> 
-> Changes:
-> - s32_gmac_write_phy_intf_select: replace the hard-coded RGMII selector
->   with a switch on phy_interface so SGMII (0x01), RGMII, RMII and MII
->   all programme the SoC control register correctly.
-> - Add s32_gmac_pcs_init: obtain the phylink_pcs handle from the SerDes
->   subsystem via s32g_serdes_pcs_create(), keyed by the standard
->   pcs-handle property on the GMAC node pointing at the SerDes XPCS lane
->   child. Propagates -EPROBE_DEFER if the SerDes driver has not probed
->   yet. There is no matching exit hook: the device link created by
->   s32g_serdes_pcs_create() covers the lifetime.
-> - Add s32_gmac_select_pcs: return the stored PCS handle when the
->   negotiated interface is SGMII.
-> - Hook pcs_init and select_pcs into plat_stmmacenet_data.
-> 
-> Note that installing a select_pcs callback suppresses the core's
-> integrated_pcs fallback, because stmmac treats a NULL return from
-> select_pcs as "no PCS" rather than "fall through". This matches what
-> dwmac-rzn1 and dwmac-intel already do.
-> 
-> Both negotiation modes are supported by the PCS. The board device
-> trees added later in this series describe the MAC-side link as fixed,
-> so they exercise the out-of-band path.
-> 
-> The XPCS header guards its s32g_serdes_pcs_create() declaration with
-> IS_REACHABLE(CONFIG_PHY_S32G_SERDES) and provides a static-inline stub
-> returning -ENODEV otherwise. IS_REACHABLE is false both when the SerDes
-> driver is disabled and in the built-in-consumer / modular-provider case
-> (DWMAC_S32=y with PHY_S32G_SERDES=m), so this driver links in all four
-> combinations of the two symbols.
-> 
-> Linking is not sufficient on its own, though. In the DWMAC_S32=y with
-> PHY_S32G_SERDES=m case the stub makes s32_gmac_pcs_init() return
-> -ENODEV, and stmmac treats a failing plat->pcs_init() as fatal, so a
-> built-in MAC would refuse to probe on any device tree describing
-> pcs-handle. Add a Kconfig dependency forbidding that combination
-> rather than letting it build into a MAC that cannot probe.
-> 
-> Tested on an S32G3-VNP-RDB3 board: GMAC0 links at 1G over SGMII and
-> passes traffic, both in SerDes mode 1 (alongside two active PCIe root
-> complexes) and in mode 3.
-> 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/Kconfig     |  6 ++
->  drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c | 74 ++++++++++++++++++++++++-
->  2 files changed, 78 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> index e3dd5adda5ac..1443ff4149b4 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> @@ -192,6 +192,12 @@ config DWMAC_S32
->  	tristate "NXP S32G/S32R GMAC support"
->  	default ARCH_S32
->  	depends on OF && (ARCH_S32 || COMPILE_TEST)
-> +	# SGMII needs the PCS from the SerDes driver. The header falls back
-> +	# to a stub returning -ENODEV when that driver is not reachable, and
-> +	# stmmac makes a failing plat->pcs_init() fatal, so a built-in MAC
-> +	# with a modular SerDes would refuse to probe on any DT describing
-> +	# pcs-handle. Forbid that combination instead.
-> +	depends on PHY_S32G_SERDES || PHY_S32G_SERDES=n
+Motivation
+==========
+The RK3568 integrates a DW XPCS accessed via APB3 and connected to
+a Naneng Combo SerDes PHY.  Several boards (e.g., Ariaboard
+Photonicat) use this interface for Gigabit Ethernet.  However, the
+current upstream stmmac driver does not support this configuration,
+and the XPCS driver has issues in SGMII poll mode that cause the
+link to be reported incorrectly.
 
-select PHY_S32G_SERDES ? This is what other glues that require PCS do,
-or there's a catch that prevents using it ?
+This series addresses these issues by:
+- Refactoring stmmac PCS lifetime management to allow platform drivers
+  full control over PCS creation/destruction
+- Fixing the XPCS driver's SGMII link recovery
+- Adding a Rockchip XPCS platform glue driver and wiring it up in
+  dwmac-rk
 
->  	help
->  	  Support for ethernet controller on NXP S32CC SOCs.
->  
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
-> index 024d8e10e918..a3a56b21181a 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
-> @@ -16,12 +16,14 @@
->  #include <linux/of_mdio.h>
->  #include <linux/of_address.h>
->  #include <linux/phy.h>
-> +#include <linux/phy/nxp-s32g-serdes.h>
->  #include <linux/phylink.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/stmmac.h>
->  
->  #include "stmmac_platform.h"
-> +#include "stmmac.h"
->  
->  #define GMAC_INTF_RATE_125M	125000000	/* 125MHz */
->  
-> @@ -40,23 +42,89 @@ struct s32_priv_data {
->  	phy_interface_t *intf_mode;
->  	struct clk *tx_clk;
->  	struct clk *rx_clk;
-> +	/* SGMII PCS provided by the SerDes subsystem (NULL if not SGMII) */
-> +	struct phylink_pcs *pcs;
+Series overview
+===============
 
-There's already a phylink_pcs pointer in priv->hw, you shouldn't have to
-store your own here.
+Generic:
+  Patch 1: move XPCS lifetime management to platform drivers
 
->  };
->  
->  static int s32_gmac_write_phy_intf_select(struct s32_priv_data *gmac)
->  {
-> +	u32 intf_sel;
->  	int ret = 0;
->  
-> +	switch (*gmac->intf_mode) {
-> +	case PHY_INTERFACE_MODE_SGMII:
-> +		intf_sel = S32_PHY_INTF_SEL_SGMII;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +	case PHY_INTERFACE_MODE_RGMII_ID:
-> +	case PHY_INTERFACE_MODE_RGMII_RXID:
-> +	case PHY_INTERFACE_MODE_RGMII_TXID:
-> +		intf_sel = S32_PHY_INTF_SEL_RGMII;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RMII:
-> +		intf_sel = S32_PHY_INTF_SEL_RMII;
-> +		break;
-> +	case PHY_INTERFACE_MODE_MII:
-> +		intf_sel = S32_PHY_INTF_SEL_MII;
-> +		break;
-> +	default:
-> +		dev_err(gmac->dev, "Unsupported phy interface mode: %s\n",
-> +			phy_modes(*gmac->intf_mode));
-> +		return -EINVAL;
-> +	}
+PHY:
+  Patch 2: DT binding for Naneng Combo PHY SGMII MAC selection
+  Patch 3: implement the PHY SGMII MAC selection in driver
 
-We go from supporting RGMII only to RGMII + RMII + MII + SGMII.
+RK3568 XPCS/SGMII:
+  Patch 4: DT binding for Rockchip RK3568 XPCS
+  Patch 5: add XPCS and fixed-clock nodes to rk3568.dtsi
+  Patch 6: add ANRESTART support for SGMII link recovery
+  Patch 7: implement the Rockchip XPCS platform glue driver
+  Patch 8: DT binding for Rockchip DWMAC PCS
+  Patch 9: wire up SGMII support in dwmac-rk
+  Patch 11: update MAINTAINERS
 
-Are RMII and MII actually supported on that platform ? if so, can you split
-that into 2 commits : one for proper inft_sel support with RMII + MII added,
-the another one for SGMII ? 
+Board enablement:
+  Patch 10: enable SGMII LAN port on Photonicat board
 
-> +
->  	if (gmac->ctrl_sts)
-> -		writel(S32_PHY_INTF_SEL_RGMII, gmac->ctrl_sts);
-> +		writel(intf_sel, gmac->ctrl_sts);
->  	else
->  		ret = regmap_write(gmac->sts_regmap, gmac->sts_offset,
-> -				   S32_PHY_INTF_SEL_RGMII);
-> +				   intf_sel);
->  
->  	dev_dbg(gmac->dev, "PHY mode set to %s\n", phy_modes(*gmac->intf_mode));
->  
->  	return ret;
->  }
->  
-> +static int s32_gmac_pcs_init(struct stmmac_priv *priv)
-> +{
-> +	struct s32_priv_data *gmac = priv->plat->bsp_priv;
-> +	struct device_node *pcs_node;
-> +
-> +	/*
-> +	 * pcs-handle points at the SerDes XPCS lane child node; its
-> +	 * nxp,xpcs-instance property is what identifies the XPCS instance.
-> +	 */
-> +	pcs_node = of_parse_phandle(gmac->dev->of_node, "pcs-handle", 0);
-> +	if (!pcs_node) {
-> +		dev_dbg(gmac->dev, "no 'pcs-handle' property, SGMII PCS unavailable\n");
-> +		return 0;
-> +	}
-> +
-> +	gmac->pcs = s32g_serdes_pcs_create(gmac->dev, pcs_node);
-> +	of_node_put(pcs_node);
-> +
-> +	if (IS_ERR(gmac->pcs)) {
-> +		int err = PTR_ERR(gmac->pcs);
-> +
-> +		gmac->pcs = NULL;
-> +		/* SerDes may not be probed yet - defer probe. */
-> +		return err;
-> +	}
-> +
-> +	dev_dbg(gmac->dev, "SGMII PCS created via SerDes XPCS\n");
-> +	return 0;
-> +}
-> +
-> +static struct phylink_pcs *s32_gmac_select_pcs(struct stmmac_priv *priv,
-> +					       phy_interface_t interface)
-> +{
-> +	struct s32_priv_data *gmac = priv->plat->bsp_priv;
-> +
-> +	if (interface == PHY_INTERFACE_MODE_SGMII && gmac->pcs)
-> +		return gmac->pcs;
+Changelog
+=========
 
-No need for the && gmac->pcs here, if it's NULL we return NULL anyway so you
-can return priv->hw->phylink_pcs
+Changes since v7:
 
-> +
-> +	return NULL;
-> +}
-> +
->  static int s32_gmac_init(struct device *dev, void *priv)
->  {
->  	struct s32_priv_data *gmac = priv;
-> @@ -204,6 +272,8 @@ static int s32_dwmac_probe(struct platform_device *pdev)
->  
->  	plat->init = s32_gmac_init;
->  	plat->exit = s32_gmac_exit;
-> +	plat->pcs_init = s32_gmac_pcs_init;
-> +	plat->select_pcs = s32_gmac_select_pcs;
->  
->  	plat->clk_tx_i = gmac->tx_clk;
->  	plat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
-> 
+Patch 7 (net: pcs: xpcs: add Rockchip RK3568 platform glue driver)
+- Fix a use-after-free window in xpcs_rk_create(): device_link_add()
+  does not fail on a supplier that is unbinding (it creates the link in
+  DL_STATE_SUPPLIER_UNBIND), so the drvdata could be freed between the
+  link creation and the platform_get_drvdata() call. Read the drvdata
+  under the supplier's device_lock with a device_is_bound() check, so
+  a concurrent unbind is detected and the probe defers.
+- Correct the comment above device_link_add(): the link does not keep
+  the supplier alive by itself; device_lock() plus device_is_bound() is
+  what protects the drvdata read.
+- Change the Kconfig select to "select PM_GENERIC_DOMAINS if PM" so a
+  COMPILE_TEST build with CONFIG_PM=n does not force PM_GENERIC_DOMAINS
+  on against its own dependency.
 
-Thanks,
+Key design decisions
+====================
+- The stmmac core now delegates XPCS creation entirely to platform
+  drivers via pcs_init/pcs_exit.  This is necessary because the
+  generic XPCS creation logic would override any XPCS set up by the
+  platform driver.
 
-Maxime
+- The Rockchip XPCS driver creates a virtual MDIO bus over the APB3
+  registers and implements address remapping.  The generic XPCS core
+  handles all PCS configuration via phylink_pcs_ops.
+
+- On RK3568 in SGMII mode, the MAC clock is fixed at 125 MHz and
+  cannot be dynamically changed.  In-band mode is used, and the
+  generic stmmac set_clk_tx_rate callback is disabled to prevent
+  incorrect clock updates that would break RX.
+
+- The SerDes and power domain are attached to the XPCS device tree
+  node rather than the MAC node. This reflects the actual hardware
+  topology and simplifies the dwmac-rk driver by keeping all PCS-related
+  resources self-contained. It also prepares for possible future QSGMII
+  support, where a single SerDes serves multiple MACs and would be
+  more naturally managed under the XPCS node.
+
+Testing
+=======
+Board: Ariaboard Photonicat (RK3568)
+OS: Armbian (trixie)
+Kernel: 6.18 (backports)
+Result: The SGMII interface obtains an IP address, SSH works, and
+        ping traffic passes without loss.
+
+Notes
+=====
+- When testing out-band mode with set_clk_tx_rate, only 1000Mbps
+  works on both TX/RX; 10/100Mbps only works on TX side.
+
+Dependencies
+============
+None. All patches apply cleanly on top of torvalds master tree (v7.3).
+
+Acknowledgments
+===============
+This work was inspired by and builds upon the excellent work of others:
+- Serge Semin's Synopsys DesignWare XPCS platform driver (pcs-xpcs-plat.c)
+- Clément Léger's Renesas MIIC driver (pcs-rzn1-miic.c)
+- The Rockchip TRM and downstream OEM drivers
+
+Thanks in advance,
+Coia Prant
+---
+Coia Prant (11):
+  net: stmmac: move XPCS lifetime management to platform drivers
+  dt-bindings: phy: rockchip: naneng-combphy: add rockchip,sgmii-mac-sel
+    property
+  phy: rockchip: naneng-combphy: add SGMII MAC selection for RK3568
+  dt-bindings: net: pcs: add rockchip,rk3568-xpcs support
+  arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes
+  net: pcs: xpcs: add ANRESTART support for SGMII link recovery
+  net: pcs: xpcs: add Rockchip RK3568 platform glue driver
+  dt-bindings: net: rockchip-dwmac: document pcs-handle
+  net: stmmac: dwmac-rk: add SGMII support for RK3568
+  arm64: dts: rockchip: rk3568-photonicat: enable SGMII LAN port
+  MAINTAINERS: add entry for Rockchip XPCS driver
+
+ .../net/pcs/rockchip,rk3568-xpcs.yaml         | 110 ++++
+ .../bindings/net/rockchip-dwmac.yaml          |  18 +
+ .../phy/phy-rockchip-naneng-combphy.yaml      |  13 +
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/rockchip/rk3568-photonicat.dts   |  74 ++-
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi      |  45 ++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c |  44 +-
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      |   7 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 130 +++-
+ .../net/ethernet/stmicro/stmmac/dwmac-rzn1.c  |   7 +-
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |   7 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_mdio.c |  39 +-
+ drivers/net/pcs/Kconfig                       |  25 +
+ drivers/net/pcs/Makefile                      |   5 +-
+ drivers/net/pcs/pcs-xpcs-rk.c                 | 599 ++++++++++++++++++
+ drivers/net/pcs/pcs-xpcs.c                    |  35 +-
+ .../rockchip/phy-rockchip-naneng-combphy.c    |   8 +
+ include/linux/pcs/pcs-xpcs-rk.h               |  11 +
+ 19 files changed, 1115 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/rockchip,rk3568-xpcs.yaml
+ create mode 100644 drivers/net/pcs/pcs-xpcs-rk.c
+ create mode 100644 include/linux/pcs/pcs-xpcs-rk.h
+
+-- 
+2.47.3
+
