@@ -1,337 +1,244 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2743B7B7F;
-	Sat, 19 Sep 2026 06:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8195432695F;
+	Sat, 19 Sep 2026 09:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789800883; cv=none; b=H980DtLNyhCy6prBS4DX3Rrpp3LAl6bkGccS6Cap53wFBcwguitxU6hq4NbqKdsVRGuQCnhWzqzQCbq+7/Xdlh8DdNv8Wi0pOIK4vmujXNWEEv6J559ZD+Vjhv3G3GTo639MgPzvYG4l/69tQHa1+/VBsWZUcbEUPItUo31O85c=
+	t=1789809668; cv=none; b=CMa+4Dj6y9mLZaEJfwLDi2C2cBs9sLvKD31FZtSWhuWHv6DOucCwrwnbPlb4KnHrUhvclT5dn/MRLF8cpXAD9ic2mle8fPHvfgMTBIFpw69orE4rDL0LtFK4fXvnHfEBNsHA6wPdY7VfvHRpTBkg5JScwWTAuzGHgGaA/y/u9CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789800883; c=relaxed/simple;
-	bh=3wqIoKnxzRv6NG1iYEc1jel8X2fnx1q1bi/NgWU7sHk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Got+tS2fyOkJMiVNhkynmNVSK0qQyyLIIpq/sHso5OL5uNUPoQHc+0MvJId4I1TjlYTuWnJjhPJHbtZEq81xtPytahRH78r5YylWwH7wCdRg8L1cyZ0ofF0ICSYmWX4OLXMz0iQxWeZzw89Zvo1Kq4XzW43DgVu1G85zWmjbf6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+b3+jMI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1789809668; c=relaxed/simple;
+	bh=pzApuuerjL8qD/Zos8LlmaW4d6yJGkOH9sOp2iu4cVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gWHKSQYNLvS0iYHnr6n6piK8dj1SEFbAj09nmtYOfgHiGMWw5Ye0+g1MN1fkdh+K6JhDbblQhb4EQTBqxU/x6dkFFqnSyHgeLsQgfSy6orqyikLtcUZA4h8E1JLoHsm8BK5NNWHZBbxS6SzwhXdADIE9PAKeaxY1CyxN8Cr/FvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=KKJxgAPq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wLA7xh2o; arc=none smtp.client-ip=103.168.172.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+b3+jMI"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E5205C4AF12;
-	Sat, 19 Sep 2026 06:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1789800883;
-	bh=3wqIoKnxzRv6NG1iYEc1jel8X2fnx1q1bi/NgWU7sHk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=T+b3+jMI3itMaw1dhoghBrenS0EJPXlGzjSggjX32kNR6tB4BgYe5wZsTcVE+945E
-	 Enfo1lKQ9ADTGggqrK1i2po3QixpaOd8GL6P30QgQZdO5/Me3P3QfP1/4Q+mtJ2ue+
-	 hhgGmh7QeOCTGMP+Ux4P6tkDF91kTGEkhYUEqlBgBfElgM9cqZh0FG29/epBM1T7uy
-	 qh385QSWJsrp9NBDGk4+/mF6aJif4wGTJuXGiZ5P4kEu3+GTUtIz98ejPTMW4FPN24
-	 S/VGcq8/2jR1hQVRR8djuePEA2fn5kimHkW3ej5LZ7bTOdyRmxhXvBfzeLqT8cwwWq
-	 CtgM/Ynmmldug==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD23DC982E1;
-	Sat, 19 Sep 2026 06:54:42 +0000 (UTC)
-From: Jan Petrous via B4 Relay <devnull+jan.petrous.oss.nxp.com@kernel.org>
-Date: Sat, 19 Sep 2026 08:54:40 +0200
-Subject: [PATCH RFC v3 12/12] arm64: dts: s32g: Add S32G3-RDB3 SerDes
- routing variants
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="KKJxgAPq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wLA7xh2o"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id 7A4A71380CC3;
+	Sat, 19 Sep 2026 05:21:04 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sat, 19 Sep 2026 05:21:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1789809664;
+	 x=1789816864; bh=MGYptzQitBqvlBeqfLUR1pvxKBwqhA+k9O947J2Uzs4=; b=
+	KKJxgAPqGf8ffn9cEzGN/lmRPaI84KnadpYFXzKCX9hE2ejUIq68mi4u49PvWfgc
+	Itlb19ZH3qr7BojbMyQRo+ba2NPVuxshKxNHPNc1n0WoFm2P82SdvXVe/ozusaqU
+	UUuNFmN3pT+MAIOXefE4Sv9U8sKTnAH69sCP1ZzXN2aKc8adbqjGCZ5y3vHL5yUn
+	DebvNQKunanNCX2bmcP83jS/V3bgaOaMTSMerlAWCQ2EgFBXQ1ZRTTrcYTU71eEv
+	lbzAJDJUW1lP7r0QDdMJOaObYpwLv8jsh3ZCwwwsKuWBDf/iXMBIEia/Vxnb/8S7
+	nxGJsoWmFpCeajtr5MutCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789809664; x=
+	1789816864; bh=MGYptzQitBqvlBeqfLUR1pvxKBwqhA+k9O947J2Uzs4=; b=w
+	LA7xh2o3RY19SYTpHtjFoN2bWuBr9Jl0X822TEzfg09UxehR9IxivJ/PPDbEq5vh
+	xknj+g7mVbq0BrIyxwjz7mQPl76Es0GLU76nsl2Jc5PWQZ2aYnu4tSWX2U+CEbOU
+	duXnb8byYslI35rhb9G1P41C+PXcxQA0LTyXYnfwnUdPfuutf27xS+i0HNDcYlJc
+	mgqWClJS3odJaqniOPApq6NW3P2YBAq8VK9RlSsIgQ3yQUFHVbKCGOJnK9XiOEZD
+	XKwatuiR9o5xSppMVRA8v/P+uFKq6qikqTrSgLJnHtuSO/CDe3DZZJW23Dy/fkvD
+	ZW547r14CEX+ogHG402fg==
+X-ME-Sender: <xms:_VOuaoMc3T-ITDLbcqgHBdCUnJzWxvJ2B31OHOBqLt2R6J_GHk_kgg>
+    <xme:_VOuaqs_CdaHWRrECVh8zBB_Oyed8sjnn2zi8cyFPVs8HxgcW-AM-CDenZ6BvPCg9
+    zlQ4TZCJOVtaZNgCLdbweoHYhCfqfMC5hHqD0aLFaBIweeaNQUjKTmY>
+X-ME-Received: <xmr:_VOuan099myfjV70XEVtLI9rCteLcp3wwc72aBYnA1KSo0aM_0JVaFlzyhM1LK5r-Kar73jmByYogctH37tNWYeVENTK3UI>
+X-ME-Proxy-Cause: dmFkZTEHzaPBOkzhEZKtlcJiHuaR/8A9YwcvLFmST50NgBICej+vTp5vMhNNvAsQoG90/2
+    Jm0kDSLPlHjTl32jVWjbcwmLDSqw4GyHFeDhV0053Ev7hF2r8HtYhx1OQFrcFYUvp22zhD
+    bwa3p77dJnCDUtHCllEbqhJvrcmU7/C1lASmVI5bvK/T4qtdpnBur25H1DkP7UkKXPQC/j
+    elUdagyi5wVvBIc8Nks2/9BjgcJJqa08jQYX7fGyZhY2tU8D8FNMzrqNvQRW4UOnqv29DO
+    Z3Z15oIGz+UspWal/6k8HrhYZj+XVKhxeKCuy8RhfhaOSuu8zlDB0q69H/9Oe3rv7hs/Wn
+    ZGWF+6lY0YfPnQu0pkLeDFn6uVWRwRv3tWt2cnBI8Mig3THTVbziWZT3hx0FavRU1Rblw2
+    5GJ1NCrct8YFcaHTUsLESEIG9dn4bGZyc3OuX6C4ucocsN5peK2laUn1i/p649xuZe4yDu
+    V9gsVPzHsvP7DCumtstJA6KfKFLICxe7Ru/+RiSUSIleLOGD4tyf6+IMKgLo2rk4eyaZo+
+    A7NyVb8ONLKLmtm+YaDKnf1kykpl1RplpJr0gIHd9q1fENpv+FWekqgFQI2/j8Oy2+G7o+
+    pftD3dpMRQhb9hVe3tAsXetfhuC7wxDXeMfAKz0fypwUl3oZ3oPUXI0wHjNg
+X-ME-Proxy: <xmx:_VOuah2y4LFz1PpadpumYBxfc98D0-tdHUeGo910UPdHnB2MAwoLcw>
+    <xmx:_VOuaqq125S6Unzcn9Y0ECrr5LgGIJIXBZEy27KqgbK5ukiGRB_g-w>
+    <xmx:_VOuai0UYZvkkFR3qjdiC9hpdOm_mE8nabOFF-wFotoZzh3c314HmA>
+    <xmx:_VOuaj0j1IjBEGZ5neb_ubNG80H_nWXeTS--3M-4wyMouLo54xV9WA>
+    <xmx:AFSuakOZvT35vQTN-w2q-qm0NMqiAOAQOnWSEbPNjOLlAV8dYkNEXA1S>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 19 Sep 2026 05:21:00 -0400 (EDT)
+Date: Sat, 19 Sep 2026 11:20:57 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,	Jacopo Mondi <jacopo@jmondi.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jimmy Su <jimmy.su@intel.com>,	Matthias Fend <matthias.fend@emfend.at>,
+	Mikhail Rudenko <mike.rudenko@gmail.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Michael Riesch <michael.riesch@collabora.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Martin Kepplinger <martin.kepplinger@puri.sm>,
+	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Richard Acayan <mailingradian@gmail.com>,	Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,	linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v6 3/6] arm64: dts: renesas: Convert to new media
+ orientation definitions
+Message-ID: <20260919092057.GA1099675@ragnatech.se>
+References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
+ <20260918-kbingham-orientation-v6-3-5e8b1f01be29@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260919-s32g_serdes-v3-12-9d68868c1e89@oss.nxp.com>
-References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
-In-Reply-To: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>, 
- NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Bogdan Hamciuc <bogdan.hamciuc@nxp.com>, 
- Ionut Vicovan <ionut.vicovan@nxp.com>, Andrew Lunn <andrew@lunn.ch>, 
- Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, Clark Wang <xiaoning.wang@nxp.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Richard Cochran <richardcochran@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
- netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- imx@lists.linux.dev, linux-pci@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789800879; l=8208;
- i=jan.petrous@oss.nxp.com; s=20240922; h=from:subject:message-id;
- bh=5z4a13gWRMykKe+seCCTumv26V+4peuuuGKtho0kPws=;
- b=uo7Rz77sFsHHFKZLKP/otnbvVqBAA1sIeo+ZnR8YMNnaZwcWyUEXjmlvCvdHtffRIullQ+XMA
- 0SQbpctcZToAc8EoLHdVwO9wAOcLd2M8Z+KmOlBJsVxfOl1saOMGMJg
-X-Developer-Key: i=jan.petrous@oss.nxp.com; a=ed25519;
- pk=Ke3wwK7rb2Me9UQRf6vR8AsfJZfhTyoDaxkUCqmSWYY=
-X-Endpoint-Received: by B4 Relay for jan.petrous@oss.nxp.com/20240922 with
- auth_id=217
-X-Original-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-Reply-To: jan.petrous@oss.nxp.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260918-kbingham-orientation-v6-3-5e8b1f01be29@ideasonboard.com>
 
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+Hi Kieran,
 
-The S32G3-VNP-RDB3 board wires GMAC0 to an on-board KSZ9031 RGMII PHY by
-default. Add two device tree variants that reroute GMAC0 over the
-SerDes_0 XPCS lane for SGMII, matching the two SerDes lane layouts:
+Thanks for your work.
 
-  - Mode 1: PCIe x1 root complex on lane 0 plus 1G SGMII via GMAC0
-    (XPCS0) on lane 1.
-  - Mode 3: dual SGMII, GMAC0 (XPCS0) on lane 0 and PFE_EMAC_2 (XPCS1)
-    on lane 1.
+On 2026-09-18 11:44:15 +0100, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The orientation property for video interface devices now has definitions
+> to prevent hardcoded integer values for the enum options.
+> 
+> Update the users throughout the renesas device trees to use the new
+> definitions.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Reviewed-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The SerDes SUBSYS_MODE is derived from the lane child nodes present, so
-each layout requires its own board device tree. The Mode 1 variant
-enables both PCIe root complexes and extends their root ports by label
-(pcie0_rp, pcie1_rp), matching the RDB3 wiring: PCIe_0 reaches the M.2
-slots when board switch SW17-2 is ON, PCIe_1 the PCIe card slot.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-The GMAC references its PCS with the standard pcs-handle property. On
-this board the SGMII lane runs back-to-back to the on-board SJA1110
-switch, so there is no PHY on the segment and nothing for phy-handle to
-point at - the link partner is a switch port. The MAC-side link is
-therefore described as a fixed 1G link and phylink uses out-of-band
-negotiation. The SJA1110 itself is not described by these overlays.
-
-Verified on the board:
-
-  - Mode 3: GMAC0 links at 1G and passes traffic.
-  - Mode 1: GMAC0 SGMII path up, and both PCIe root complexes come up -
-    PCIe_1 enumerates the card-slot NIC and passes traffic at full line
-    rate, PCIe_0 enumerates the M.2 slot with SW17-2 ON.
-
-Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
----
- arch/arm64/boot/dts/freescale/Makefile             |   6 ++
- .../dts/freescale/s32g399a-rdb3-serdes-mode1.dtso  | 111 +++++++++++++++++++++
- .../dts/freescale/s32g399a-rdb3-serdes-mode3.dtso  |  60 +++++++++++
- 3 files changed, 177 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 95ae85ab4adf..3f68f36ac2be 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -786,5 +786,11 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mm-phygate-tauri-l-rs232-rs485.dtb
- dtb-$(CONFIG_ARCH_S32) += s32g274a-evb.dtb
- dtb-$(CONFIG_ARCH_S32) += s32g274a-rdb2.dtb
- dtb-$(CONFIG_ARCH_S32) += s32g399a-rdb3.dtb
-+dtb-$(CONFIG_ARCH_S32) += s32g399a-rdb3-serdes-mode1.dtb
-+dtb-$(CONFIG_ARCH_S32) += s32g399a-rdb3-serdes-mode3.dtb
-+s32g399a-rdb3-serdes-mode1-dtbs := s32g399a-rdb3.dtb s32g399a-rdb3-serdes-mode1.dtbo
-+s32g399a-rdb3-serdes-mode3-dtbs := s32g399a-rdb3.dtb s32g399a-rdb3-serdes-mode3.dtbo
-+dtb-$(CONFIG_ARCH_S32) += s32g399a-rdb3-serdes-mode1.dtbo
-+dtb-$(CONFIG_ARCH_S32) += s32g399a-rdb3-serdes-mode3.dtbo
- dtb-$(CONFIG_ARCH_S32) += s32n79-rdb.dtb
- dtb-$(CONFIG_ARCH_S32) += s32v234-evb.dtb
-diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3-serdes-mode1.dtso b/arch/arm64/boot/dts/freescale/s32g399a-rdb3-serdes-mode1.dtso
-new file mode 100644
-index 000000000000..43219d9bb6eb
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3-serdes-mode1.dtso
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/*
-+ * Copyright 2021-2026 NXP
-+ *
-+ * NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3),
-+ * SerDes_0 Mode 1: PCIe x1 (lane 0) + 1G SGMII via GMAC0 (XPCS0, lane 1).
-+ *
-+ * Overlay applied on top of s32g399a-rdb3.dtb. It reroutes GMAC0 from the
-+ * on-board RGMII PHY to the SerDes_0 XPCS0 lane and brings up the PCIe
-+ * controllers as root complexes. The lane layout present here selects
-+ * SerDes SUBSYS_MODE 1.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&serdes0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	/* Mode 1 lane layout: PCIe on lane 0, GMAC SGMII (XPCS0) on lane 1. */
-+	serdes0_pcie0: phy@0 {
-+		reg = <0>;
-+		compatible = "nxp,s32g-serdes-pcie-phy";
-+		#phy-cells = <0>;
-+	};
-+
-+	serdes0_xpcs0: phy@1 {
-+		reg = <1>;
-+		compatible = "nxp,s32g-serdes-xpcs";
-+		nxp,xpcs-instance = <0>;
-+	};
-+};
-+
-+&serdes1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	/*
-+	 * SerDes_1 Mode 1 lane layout: PCIe on lane 0, SGMII (PFE_MAC0
-+	 * via XPCS0) on lane 1.
-+	 *
-+	 * Both lanes must be described: the SerDes driver derives the
-+	 * SUBSYS_MODE from the full lane mux, so lane 1 has to be present
-+	 * as XPCS instance 0 (PFE_MAC0) for the mode-1 match to succeed.
-+	 * PFE is not modeled as a MAC consumer in this upstreaming device
-+	 * tree, so the XPCS lane is only brought up by the SerDes driver
-+	 * and left without a pcs-handle user.
-+	 */
-+	serdes1_pcie0: phy@0 {
-+		reg = <0>;
-+		compatible = "nxp,s32g-serdes-pcie-phy";
-+		#phy-cells = <0>;
-+	};
-+
-+	serdes1_xpcs0: phy@1 {
-+		reg = <1>;
-+		compatible = "nxp,s32g-serdes-xpcs";
-+		nxp,xpcs-instance = <0>;
-+	};
-+};
-+
-+/*
-+ * Both PCIe root complexes are wired on the RDB3:
-+ *  - PCIe_0 reaches the M.2 slots (M-key or E-key) when board switch
-+ *    SW17-2 is set to ON. It consumes SerDes_0 lane-0 PCIe phy.
-+ *  - PCIe_1 reaches the PCIe card slot. It consumes SerDes_1 lane-0 PCIe phy.
-+ */
-+&pcie0 {
-+	status = "okay";
-+};
-+
-+&pcie0_rp {
-+	num-lanes = <1>;
-+	phys = <&serdes0_pcie0>;
-+};
-+
-+&pcie1 {
-+	status = "okay";
-+};
-+
-+&pcie1_rp {
-+	num-lanes = <1>;
-+	phys = <&serdes1_pcie0>;
-+};
-+
-+&gmac0 {
-+	/delete-property/ phy-handle;
-+	clocks = <&clks 24>, <&clks 17>, <&clks 16>, <&clks 15>;
-+	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-+	phy-mode = "sgmii";
-+	pcs-handle = <&serdes0_xpcs0>;
-+	status = "okay";
-+
-+	/*
-+	 * GMAC0 is wired back-to-back to the on-board SJA1110 switch over
-+	 * this SGMII lane. There is no PHY on the segment, so there is
-+	 * nothing to reference with phy-handle: the link partner is a
-+	 * switch port. Describe it as a fixed 1G link; phylink then uses
-+	 * out-of-band negotiation. The switch itself is not described by
-+	 * this overlay. The PCS also supports in-band negotiation, for
-+	 * boards whose link partner is described.
-+	 */
-+	fixed-link {
-+		speed = <1000>;
-+		full-duplex;
-+		pause;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3-serdes-mode3.dtso b/arch/arm64/boot/dts/freescale/s32g399a-rdb3-serdes-mode3.dtso
-new file mode 100644
-index 000000000000..195c8043c18a
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3-serdes-mode3.dtso
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/*
-+ * Copyright 2021-2026 NXP
-+ *
-+ * NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3),
-+ * SerDes_0 Mode 3: dual SGMII, GMAC0 (XPCS0, lane 0) + PFE_EMAC_2
-+ * (XPCS1, lane 1), both 1G.
-+ *
-+ * Overlay applied on top of s32g399a-rdb3.dtb. It reroutes GMAC0 from the
-+ * on-board RGMII PHY to the SerDes_0 XPCS0 lane. The lane-1 XPCS1
-+ * (PFE_EMAC_2) is described so the mode is derivable and both XPCS
-+ * instances are initialised; it has no upstream MAC consumer in this
-+ * device tree. The lane layout present here selects SerDes SUBSYS_MODE 3.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&serdes0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	/* Mode 3 lane layout: GMAC SGMII (XPCS0) on lane 0, PFE2 (XPCS1) on lane 1. */
-+	serdes0_xpcs0: phy@0 {
-+		reg = <0>;
-+		compatible = "nxp,s32g-serdes-xpcs";
-+		nxp,xpcs-instance = <0>;
-+	};
-+
-+	serdes0_xpcs1: phy@1 {
-+		reg = <1>;
-+		compatible = "nxp,s32g-serdes-xpcs";
-+		nxp,xpcs-instance = <1>;
-+	};
-+};
-+
-+&gmac0 {
-+	/delete-property/ phy-handle;
-+	clocks = <&clks 24>, <&clks 17>, <&clks 16>, <&clks 15>;
-+	clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-+	phy-mode = "sgmii";
-+	pcs-handle = <&serdes0_xpcs0>;
-+	status = "okay";
-+
-+	/*
-+	 * GMAC0 is wired back-to-back to the on-board SJA1110 switch over
-+	 * this SGMII lane. There is no PHY on the segment, so there is
-+	 * nothing to reference with phy-handle: the link partner is a
-+	 * switch port. Describe it as a fixed 1G link; phylink then uses
-+	 * out-of-band negotiation. The switch itself is not described by
-+	 * this overlay. The PCS also supports in-band negotiation, for
-+	 * boards whose link partner is described.
-+	 */
-+	fixed-link {
-+		speed = <1000>;
-+		full-duplex;
-+		pause;
-+	};
-+};
+> ---
+>  .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso | 3 ++-
+>  .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso | 3 ++-
+>  .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso | 3 ++-
+>  .../arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso | 3 ++-
+>  4 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso
+> index 3acaf714cf24..b816382bba0a 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso
+> @@ -12,6 +12,7 @@
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/media/video-interfaces.h>
+> +#include <dt-bindings/media/video-interface-devices.h>
+>  
+>  &{/} {
+>  	clk_cam_j1: clk-cam-j1 {
+> @@ -44,7 +45,7 @@ cam@10 {
+>  		VDIG-supply = <&reg_cam_j1>;
+>  		VDDL-supply = <&reg_cam_j1>;
+>  
+> -		orientation = <2>;
+> +		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+>  		rotation = <0>;
+>  
+>  		port {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso
+> index a19bc0840392..4019b80a88b7 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso
+> @@ -12,6 +12,7 @@
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/media/video-interfaces.h>
+> +#include <dt-bindings/media/video-interface-devices.h>
+>  
+>  &{/} {
+>  	clk_cam_j1: clk-cam-j1 {
+> @@ -46,7 +47,7 @@ cam@1a {
+>  		vdda-supply = <&reg_cam_j1>;
+>  		vddd-supply = <&reg_cam_j1>;
+>  
+> -		orientation = <2>;
+> +		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+>  		rotation = <0>;
+>  
+>  		port {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso
+> index 512810b861aa..fea1ef4a1178 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso
+> @@ -12,6 +12,7 @@
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/media/video-interfaces.h>
+> +#include <dt-bindings/media/video-interface-devices.h>
+>  
+>  &{/} {
+>  	clk_cam_j2: clk-cam-j2 {
+> @@ -44,7 +45,7 @@ cam@10 {
+>  		VDIG-supply = <&reg_cam_j2>;
+>  		VDDL-supply = <&reg_cam_j2>;
+>  
+> -		orientation = <2>;
+> +		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+>  		rotation = <0>;
+>  
+>  		port {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso
+> index a31524b59834..177201a8a6d2 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso
+> @@ -12,6 +12,7 @@
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/media/video-interfaces.h>
+> +#include <dt-bindings/media/video-interface-devices.h>
+>  
+>  &{/} {
+>  	clk_cam_j2: clk-cam-j2 {
+> @@ -46,7 +47,7 @@ cam@1a {
+>  		vdda-supply = <&reg_cam_j2>;
+>  		vddd-supply = <&reg_cam_j2>;
+>  
+> -		orientation = <2>;
+> +		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+>  		rotation = <0>;
+>  
+>  		port {
+> 
+> -- 
+> 2.52.0
+> 
+> 
 
 -- 
-2.55.0
-
-
+Kind Regards,
+Niklas Söderlund
