@@ -1,98 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5064582E8;
-	Sun, 20 Sep 2026 17:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE63D3D11;
+	Sun, 20 Sep 2026 18:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789925996; cv=none; b=WDofC6J0FjqdujO1RFZ18OGozgN2yQbCwbvKZS33b31SmjWhtbeXQaHDQsI8BgqEbjYPMRUzskQ4ZdPi6znhjzCVzsMXorLA4hj/hwJbs8n3S6Ch+kQMRF/RRV1bYsSi1dkp0airjxawcZSgT7iYMdD5dtZJLX5D2Nz72vo6Fr8=
+	t=1789929590; cv=none; b=F9s5OmOwfs5ZBiXas2tGezgBSLx4iPdr9wb+h6RGBLydGse887h1yOskLBbuVtjm69TQTBENfTb5ZERGofg0X4F2i7X34eFG7i8ZJ6IUyCD0LUCPzUC/mlEQDUQCnlMcRHsXzSyglMb/KGVqjkAc5GofDoJ6wiP8+AzzkxtFCG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789925996; c=relaxed/simple;
-	bh=UuLrSrIlFQ9JehvKhIf/e7djgtsY/z46hmjOd1vl6CE=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=FzG9pycZWwXMiycpPDrqXGQ2ZynPqc0V37BlzcBoqVi0mN1ekH0YNVUj6e5y4JL48Y/TUT0V1A3s29l6YS/eboxkfeJWtWeedvipFodF/AW2aA/SOZ1/mZpIqga5dKpfoiDwOAHsYhl/+/T+ycLsF66o85ux3vEos7G1HOlgrbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+Hlmsqb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789929590; c=relaxed/simple;
+	bh=XsddRJKzdkiZUyWrpHpYyW361f4IBlV6GQp+muynYOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5zMsuffSTo3voBoa8CpAraVvTc8qweXt3ObHjhAaLhfPblBYKXU7H2W9WHJO4hV6gzykm4+sTsv/Xitl4PBlaui2KgVW89nbN7heJrba6eL4efv6+KGA8g3NdW17BmBISCUIrcoPrLnRtzlKq6xTNemKdVy1S2FZZ43ktJJZBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nzvzsbyS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+Hlmsqb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92CAE1F0089B;
-	Sun, 20 Sep 2026 17:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789925994;
-	bh=r49z117kGKVvD9l7cQffPVPF1FdJw4+tF4s9KCbObss=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=O+HlmsqbwvQZ85iabVwfjHtbApvorpN93buCWdBQNCNaJ5D3EgIQbmIjnLMqzKgeE
-	 9pGmsDgSrDKR+hO15ocOy45WsldMFBZCBVCPqz+nu73i+ObxxCPEtb9J1f0PQR789x
-	 Np5r4BXh5r2iwr3p97aXfab+OBnrYHifPkEM+C376lq9nHoPKhEv4pc/thOjMsT+Ub
-	 PODDuARJP57PMuP3kiLWDhOILWSjLjjO/Tc79KFMG1h8XuZnbzRV8k+Q7xaPfuq0kV
-	 Ic+zVx2QEJDgbjyZ7rncozcoYprVW4BaUPWk3VGv2XfXMxpGoNIpv0Yl2CHMPtRw/U
-	 nncbMf6/Gn/yg==
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nzvzsbyS"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=PGAGqvFCwHGZEk2NRMEY90gRI3koAV1XWGGTvnMRxnw=; b=nzvzsbySuWS+Cjkysz0gvo9x8A
+	eFoyFLn9Vu+yHmiXhkGUXAdnng8/b8TpZl6eDNE11GUy7ArHm2wCTXud+T/QqXAAMbxZRy747HVCX
+	tgMMMjg9k4X9uehfknX8sZcYVaQVhDX352A9jRHw2DL++Ylhn785LLuj8zgZBnuyhP9w=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1x8MRi-006BXd-VL; Sun, 20 Sep 2026 20:39:26 +0200
+Date: Sun, 20 Sep 2026 20:39:26 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: jan.petrous@oss.nxp.com
+Cc: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ionut Vicovan <ionut.vicovan@nxp.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	imx@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH RFC v3 04/12] net: pcs: add NXP SerDes XPCS shared core
+Message-ID: <07c5ed86-755a-4094-b45a-6316d10f4515@lunn.ch>
+References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
+ <20260919-s32g_serdes-v3-4-9d68868c1e89@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 6/8] dt-bindings: iio: adc: renesas,rzg2l-adc:
- Document RZ/G3L ADC for TSU
-From: Jonathan Cameron <jic23@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, linux-pm@vger.kernel.org, 
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, 
- Biju Das <biju.das@bp.renesas.com>
-In-Reply-To: <20260918150730.122056-7-biju.das.jz@bp.renesas.com>
-References: <20260918150730.122056-1-biju.das.jz@bp.renesas.com>
- <20260918150730.122056-7-biju.das.jz@bp.renesas.com>
-Date: Sun, 20 Sep 2026 18:39:26 +0100
-Message-Id: <178992596604.706584.10451227613547984363.b4-review@b4>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=789;
- i=jonathan.cameron@oss.qualcomm.com; h=from:subject:message-id;
- bh=UuLrSrIlFQ9JehvKhIf/e7djgtsY/z46hmjOd1vl6CE=;
- b=owEBfwKA/ZANAwAKAVSFNJnE9BaIAcsmYgBqsBpoUK3bnfohIeRE/l9QuB627gyf68nHxI4+9
- OnK0CKtmXGJAkUEAAEKAC8WIQRuKWazh4QGUpEmgbFUhTSZxPQWiAUCarAaaBEcamljMjNAa2Vy
- bmVsLm9yZwAKCRBUhTSZxPQWiMs8D/4pPJrGB14Q+9HwJmYiKqgBUDky/vQsiSQd9UVBhswXowa
- X5Yz2bm9cHfQ0Kbxr6eCFcJhyTXE6G2zZhHHvd57Jl2VNMbq57FcSCOU5TpvMBMpPyVaH40J6+F
- EdbOns6u2su6hScaIUnAk7SVCcoLMEn5p4gNe/dqx7LpSMJii/Du1qrizGCEny3ipa5JlpMxdu/
- hqZu9moKrzS6Se7k9pX7uhOaLxIf/hIo899sOnPIb5j/K7vWBVZL1IKQWL9wFW6ZN/Y1kSHuF9C
- mR04/r2wYAJpd226NUeMbg/CXEVvJwJg43RyURulUv+jnku75vv56cUo2nNAW3fDpHBb9UvxKmr
- 9Fy7cyI2P8BdSnecuwh66HmYJWR6J0nZ3b9KT1aM/4NxJ1/I/c/QtOl6qCuT5mTgRdth9XrgoaW
- NqORlRXctnn+t26Hn5T9xOFDHNLcmG4naMkvhvn+pryXZXKIPHfQ3GiFFgn2+KIu2f4CT4b7G08
- t866JuBtdXILR5J90nos3ll+mfLg3ly5udd7z7mCx1LUjy9ocbyBQhJdhOEGX6xN+KeuEY4Om5P
- TnbBU80KPOFnGvL5H+X55hYe479yxGhk9dnmBgtP3F3gFOJkotbU34k0JasIfd+FqWJCVucMTKc
- abiKMGtKDbpBFJTayUQKLPYRDd6Df3ACLaWtCmg==
-X-Developer-Key: i=jonathan.cameron@oss.qualcomm.com; a=openpgp;
- fpr=6E2966B387840652912681B154853499C4F41688
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260919-s32g_serdes-v3-4-9d68868c1e89@oss.nxp.com>
 
-> Add renesas,r9a08g046-adc1 compatible string and its hardware
-> parameters for the ADC1 IP on RZ/G3L, which is dedicated to
-> the on-chip TSU (thermal sensor unit).
+On Sat, Sep 19, 2026 at 08:54:32AM +0200, Jan Petrous via B4 Relay wrote:
+> From: Clark Wang <xiaoning.wang@nxp.com>
 > 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
->
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index 408fbf8c29cc..35eaebfbdd77 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -500,8 +500,17 @@ static const struct rzg2l_adc_hw_params rzg3s_hw_params = {
->  	.adint_inten_mask = GENMASK(11, 0),
->  };
->  
-> +static const struct rzg2l_adc_hw_params rzg3l_adc1_hw_params = {
-> +	.num_channels = 9,
+> The SerDes subsystems found on NXP S32G and i.MX SoCs integrate a
+> Synopsys DesignWare Ethernet XPCS and an Ethernet PHY (PMA) with an
+> identical register layout. Only the register transport differs: indirect
+> memory mapped access on S32G, Clause 45 MDIO on i.MX.
+> 
+> Add a transport agnostic phylink PCS core which operates on regmaps
+> provided by the platform glue.
 
-This maybe needs a comment that only channel 8 actually goes anywhere.
+What is not transport agnostic with the current code.
 
--- 
-Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+Think carefully about that, before you answer.
+
+	Andrew
