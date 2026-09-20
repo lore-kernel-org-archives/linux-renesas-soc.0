@@ -1,126 +1,84 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF9746E005;
-	Sun, 20 Sep 2026 17:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B28343E09A;
+	Sun, 20 Sep 2026 17:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789924061; cv=none; b=ioQYfqSNKCB9SJ2tmaUXr1jgT+NMalrmreWxWdVRjjacExqpld3O/5PzNbzzJtyuUjykPu/y0JPpL5uud11eFq7ECKRl6VSrcx+Q7EIJA9dr7QYpShe6J6LlvdCMpLWPw/NZ/lBLGLgzmzrgQcCj1l+7zXMuBuOPwnx3dfCTgGc=
+	t=1789925995; cv=none; b=WY352B1p/ERea3IWzZuID9n8toJfNqMTr97u3/SbUBlaTZrY/yOzJ5EghLME2sP6lGvfGPTb3CGbQLbvPS02sXcT+aqfG8UTfjr6QzjJOmZZKvADWMUyASpiAc1bMGfBJld0Gy9tMgwipwCD6NCZmqF3q36NvOYcToKXCeQh9GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789924061; c=relaxed/simple;
-	bh=++7cKn5dPLEoCOGhGWoB/T8i+KYlJXPfpJyNEaynf8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6pXj6xHJUcMeoz3fNeHN0LDQo+dHy7EWitRleDhQa79rbAmWoQaEvwyVCETQOxi9Wlz6W+5QwbS3L2Dyxa0tLpWzbXxbr2Y5I5pEUxrKTNSktj/n2dYgZy46UdjppeHnbwEwuSKZPVc+wFnW82qg6nT9D3XkhmREVtpozk1E+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LswdCCLG; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1789925995; c=relaxed/simple;
+	bh=8+H+gL1/Hzq0lYQaO8eMja+G+7FfFOglvKku6QLivc4=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=O7d4uTje7Q9/9Bszn7YTvRV4AXdNJwNQS9fSap+1n8bQm83bLU3Mtr8QrBeYZxVYCLbA6iOc7L6F+unjpVEK5BdjUZaRFlD4drIbaEc7ZaBSVqYDCzxwteXicZEh0XK2Zu42D/x7/TDn2sBLDQH3zWXYnxs4MK/wVTPxTNLvtVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIWwfVH2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LswdCCLG"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=SRR6GWm8VvaCpKgQykY2MiSoqyYUd1GFMV1rrWkJ4JI=; b=LswdCCLGZ/fMTQ3fP37RE0xKmP
-	tWLPS26CI1aHU7OSJLo4czeq1buGrq1SP4843QH/8q7GydxdJRJ5FarpIzBqSKJ98gU2TQc0oQwGy
-	FY+BYRxWt7Lee6y7s9AFMUxX5aVGPlNmmDATqZIjBxpHEmBB2Dit1Azv1/G9/Qn+g4cQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1x8L0d-006BGL-FN; Sun, 20 Sep 2026 19:07:23 +0200
-Date: Sun, 20 Sep 2026 19:07:23 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: jan.petrous@oss.nxp.com
-Cc: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
-	Ionut Vicovan <ionut.vicovan@nxp.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>,
-	Bogdan Roman <bogdan-gabriel.roman@nxp.com>
-Subject: Re: [PATCH RFC v3 05/12] net: pcs: Add NXP S32G XPCS driver
-Message-ID: <c2c4dbc4-e6b4-47a0-9852-d116c6d21f89@lunn.ch>
-References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
- <20260919-s32g_serdes-v3-5-9d68868c1e89@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIWwfVH2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E061F0089C;
+	Sun, 20 Sep 2026 17:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789925994;
+	bh=9rx7oMky/f3emHeZ1IYk3kY41jLebnsAhERuxEXFF7c=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=MIWwfVH2YbmAyaZQ7wXtH4Lh4lOocbyKBG1Lz3zChQZUC9NcQ8Auh+Err/4cETBOI
+	 dFjJqu1GozrKpzSqeGTP9nmjBkwqdGZR0mhJnq38EJw4r+SGzzFlQd/FqL8Zw2SCUo
+	 IEtyoVxrSUH3C3V6LxkRxLVojigRxGSh4jAZyd4Mf4TfYI2GBVZ3bvUA/Xt1uTMuT8
+	 V0KJ8FBkNojzQBxniplTHPulyXzcM5yYs61elpm2dTPLUJCIRQcnem12K0SYH/Mc1L
+	 Tb94J+IEXbVaZ+16SoL+qxcLDOqawhPk8GmtRgjd2BSyBxSNt5B4pIAVrW0zHhArtk
+	 dSCPsDgJxcyvw==
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260919-s32g_serdes-v3-5-9d68868c1e89@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 3/8] thermal/drivers/renesas/rzg3s: Convert
+ calibration defaults to per-SoC match data
+From: Jonathan Cameron <jic23@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Chris Paterson <Chris.Paterson2@renesas.com>, 
+ Biju Das <biju.das@bp.renesas.com>, 
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260918150730.122056-4-biju.das.jz@bp.renesas.com>
+References: <20260918150730.122056-1-biju.das.jz@bp.renesas.com>
+ <20260918150730.122056-4-biju.das.jz@bp.renesas.com>
+Date: Sun, 20 Sep 2026 18:39:26 +0100
+Message-Id: <178992596602.706584.9614398230910896614.b4-review@b4>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=353;
+ i=jonathan.cameron@oss.qualcomm.com; h=from:subject:message-id;
+ bh=8+H+gL1/Hzq0lYQaO8eMja+G+7FfFOglvKku6QLivc4=;
+ b=owEBfwKA/ZANAwAKAVSFNJnE9BaIAcsmYgBqsBpnGkXbqBVQJx7Y/qhyo1BdFx1NFtKDhlEwX
+ G1VfiZKKOqJAkUEAAEKAC8WIQRuKWazh4QGUpEmgbFUhTSZxPQWiAUCarAaZxEcamljMjNAa2Vy
+ bmVsLm9yZwAKCRBUhTSZxPQWiB0AD/wNueQzh1sC6QzKVFiwy7gq+KJZZxiHmXHmnelHd2Hm0mm
+ OxLBBIcndN2AflaCAkjOmeDndknfbnAFWRalUNwyQZOFvXSjLWe2+0Iq5ZepXfoKn2Umq8qsqIe
+ Y2fccwBnMPUeZsu4k1DwtnQI0VqHrmzPv7zVAvMHDI7el5hiZmPxRFb/gptH311LYCdLIwfcf8l
+ k1Xm5Yq7jkuGkfLBtT6X6zY7ZetX4HrJhTYR0nQQF+lkDiqLCPOx5zKS8A/vH7TaGKLvJ/Ofni+
+ BAc2woAl/yLM/F86vnRxcyTrtcrtvTi7WR7uLOOEgHueBnJT6YFVlHcfCruO3ULYVXLT7ENY9pL
+ L5THsAFnJlvTxL3BZtqkOSZs3YGYa/CF/dCW+nGt9Dhyc7k3kyb3Gjnr8Tc1YO02P3U3AYrcl4X
+ Kf0odrqGP0VXnq5kMohmBFRf/TyCb8JzapbpPB2Ah+qziETssJE6dwU58klzJNPN8tfQAIFLGvb
+ 94IFBOevIbpe1lSecd1gojWrFQHwVJ09HKa0Om0BDXIZEZi+lar4r4U0gNyZqpg6RMgrxU3yol/
+ ZbsFlcWXNeDdhD64g0NybxJZ1tdB4o4U19FwcxFyQv1rdiCmckYc4EHkCrJKIwENiurGG5Cc7Ly
+ C3oMcDX42hvbRs8lwAykB2PIRqjPrWJt3odPUkQ==
+X-Developer-Key: i=jonathan.cameron@oss.qualcomm.com; a=openpgp;
+ fpr=6E2966B387840652912681B154853499C4F41688
 
-> +#define SR_MII_CTRL				0x1f0000
+> Add the renesas,r9a08g046-tsu compatible string and its default
+> (software) calibration constants for RZ/G3L, used when FUSE
+> calibration values are missing.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
 
-This is 0x1f0000 + MII_BMCR
-
-> +#define   SS13					BIT(13)
-
-#define BMCR_SPEED100           0x2000  /* Select 100Mbps              */
-
-> +#define   AN_ENABLE				BIT(12)
-
-#define BMCR_ANENABLE           0x1000  /* Enable auto negotiation     */
-
-> +#define   RESTART_AN				BIT(9)
-
-#define BMCR_ANRESTART          0x0200  /* Auto negotiation restart    */
-
-> +#define   DUPLEX_MODE				BIT(8)
-
-#define BMCR_FULLDPLX           0x0100  /* Full duplex                 */
-
-> +#define   SS6					BIT(6)
-
-#define BMCR_SPEED1000          0x0040  /* MSB of Speed (1000)         */
-
-> +#define SR_MII_STS				0x1f0001
-
-This is 0x1f0000 + MII_BMSR
-
-> +#define   LINK_STS				BIT(2)
-
-#define BMSR_LSTATUS            0x0004  /* Link status                 */
-
-Please go through all these register definitions and throw out all the
-ones which follow 801.3 and use the values from include/uapi/linux/mii.h
-
-    Andrew
-
----
-pw-bot: cr
+-- 
+Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
