@@ -1,155 +1,154 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012032.outbound.protection.outlook.com [52.101.48.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78683B3C10;
-	Mon, 21 Sep 2026 07:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789975015; cv=fail; b=AH9+GY1Z/Uf2UKWRWuEIXMXZLFOrgp3WmuGzNaHBxwiCgz/CzHAJYzxQx4zwCkeDSU+933u3a72RyCqV31IgbjPWsJ3f8RbuvCfkgbtZ2toeTe8Z/3KMr6TeYKOnM9oZwy69BrTNGu0xqeRY41baztHWYXtQZFpSzbh2dNUboSc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789975015; c=relaxed/simple;
-	bh=sEinfxk898LehliEWdFU6tdiEsWQMQPmKaHpJuIx0nU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=IdtliYAXorSjbOrDJkXnd1jRpmX/EuRI14ZZVYomy0ECaD3wimtHHn8tBF76/Z7FO7v7hzfv8GoNQ04lD7qZfUI1JwVnlDC+Ko6wgVbBsFsgsHYasI7gWW5gimx/qg1vM6UaZGmBPiHv4oEcL/atPn7tG/L2LjypTfYqyPl2gCU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=amdcloud.onmicrosoft.com; dkim=pass (2048-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b=zuJ10hK5; arc=fail smtp.client-ip=52.101.48.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amdcloud.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="zuJ10hK5"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jc+aMMJIQJa3WCTrwXow1syn1Jku/vb6akv9+v0vukXG+84nQyPPrlTwcYDUk1HQLW4pGkMMalkhEIxUARiWsbOeTLbk7ZsbJ0zEKPYCvkO/X0ocKo5L4e3L+k67OGTXdvFiwvePuMgmc1BWhaCHcQT4x7yV5CBipyMszOroGAOSoWV/kSgHbFXiU5Mwu+pTp3TMJkYRpGPxcBz5guj6FV9APr2xZMerxmjGzA/eCPjjdxRwcBhip4KLygirmZ9qbffDH9byK+bqq7YjXjwJIAuyyde1bubQQmoP361RGmby33za8iCey2ZFknqtfCXoeXEY2XFFKxKHiQpnKRi4Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z1LBZy08p3SWUhdwqQgGx5tXrt9iJLLTdnDMmzuJZJg=;
- b=fv64SclcA1UfPvC+RGvKEPbj4nGiQykuJftP+nBASq+wQUt6LlbVR+o6fhL0NqqKaMx0MDKvKwieQCF7YuqX7saWsHl+SxDXiIwQd2syARhYRj0fzk02cSOSzOZZjvxUZ/SqD3CajmtXVae7Iz98eP0i1NjSkPRFtXGAxOLUjfGUZ19Si8WI9ITeuZA68P04ZVf8hTdzv9eMmUs7TlKuv37Kjpfo9nGyVJS1WEV90HVq7t5sxjDWjmG+q1BITJkAMEAKlV7o4YIuHEO/PI481MhmvYfdlq1sXVcMq4PGX8Rs6qeIrq5l3QKwemty48zRrTold8hp385T1Ze+L7GNUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=gmail.com;
- dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z1LBZy08p3SWUhdwqQgGx5tXrt9iJLLTdnDMmzuJZJg=;
- b=zuJ10hK5nyFzOuz1KYBkkP/g+0OSeLBGrfCuzoWSHxLKBs/0R8nLiEMlqyLI5NIP89kuDxjx5MYHDLh7xeciYGq1ZoZmDJdLHqCwbFQtxpo0N3U/iItnw9j67FH28/xMUCji3UGIrQuAqc7XduR1hCpw+SubzXa/IenSkb2OsHWbVytAlwxms04SwYRiJXjDvql3rhWhlSAzT9UkEnxrnxBPpArqunjkuFLN7y2TezMdVYO/8QYU2hb9Kx11Q17izOeOxOOB9NhdnDkqZJ8uZ1uoUyoK++CPgNkMuzSWcHo9sUvhjgpz7FBKvSLg8uXqws0xXQ5Xi60LRJ7KS7By+A==
-Received: from DS3P221CA0014.NAMP221.PROD.OUTLOOK.COM (2603:10b6:8:45e::18) by
- MW4PR12MB6923.namprd12.prod.outlook.com (2603:10b6:303:208::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
- 2026 07:16:49 +0000
-Received: from DS2PEPF000061C1.namprd02.prod.outlook.com
- (2603:10b6:8:45e:cafe::82) by DS3P221CA0014.outlook.office365.com
- (2603:10b6:8:45e::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Mon,
- 21 Sep 2026 07:16:49 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
- 165.204.84.17) smtp.mailfrom=gmail.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- gmail.com discourages use of 165.204.84.17 as permitted sender)
-Received: from satlexmb08.amd.com (165.204.84.17) by
- DS2PEPF000061C1.mail.protection.outlook.com (10.167.23.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.451.8 via Frontend Transport; Mon, 21 Sep 2026 07:16:48 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 21 Sep
- 2026 02:16:48 -0500
-Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
- Transport; Mon, 21 Sep 2026 02:16:45 -0500
-From: Colin Huang <u8813345@gmail.com>
-Date: Mon, 21 Sep 2026 15:16:36 +0800
-Subject: [PATCH v3 2/2] hwmon: (pmbus/isl68137): Add Renesas RAA229639 and
- RAA229640
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122F03BBA0A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 07:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789975533; cv=none; b=smAGITjpXN3e1tdSqK32WpcRwlFnu/PqPN22tsmiZ7bI/MzJpxUff6qAFCSDn/sVHZrGHKfSxmJl0r4khz8kVygzRyYKAXKRNVnm5jn237+5PKcIfNucJNKNpDubQnLmbrHfR6zDjDoAoN94+CCUB3vvqquJnr5tu5vWPKXZLvI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789975533; c=relaxed/simple;
+	bh=6tKTGDS6JtG90Il7+2qAPduVfkvtwUyKRtM8IGgWrL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UQIr9VDEzal7gmFtqL0AVO7dE/alW3yWdYkLs4mjTYhuaJZBa2cWFKWtFv7b7+mQgAAvFR8nOLCcYC6K2MEDn0KalENBpnALUeG83IivelBwKWWjm10V/jdlrj/TF4vGns+myXZB4qrtQ0DF86c9K+2F7M9hAHr/ph1loS4nlDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c83be8db39so1527542e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 00:25:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789975531; x=1790580331;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/Z1SbtUTgxZShJMFyPJ1MYGOC5nK1asEC/Nf/hEw6KQ=;
+        b=G1r1L4td+4vVqSJVn2xdzHymdiPk2eBhjKFnlSZvSj/9hAxTUf8jLDLVcJNPT0ApHi
+         NGQi8Pbrd5Y62LIes8taMZ+sXBWeyxbLP4PP09xixHGzHp7QzEpvz2fqR+qFXDwf315c
+         qxhFat2Ll/ctDYw5aWyYj4aA6bSNWL6ZyB4Ny6PooGGSH7ll0I0rwuqrNjngMXWrWWxG
+         svvp/Tla6tUOrgKmzMlejW4iDyFaukQWkgYUtzGvy3esHCn3PhwMqYRWqpTvyFhuIq+j
+         Z1c9bxFquHpz3D0xzMjgGHL7VaJ7m0V2v/Tz1DuZDZQeulyd1Slag7YjbOoX/PTBrUcW
+         UqWg==
+X-Forwarded-Encrypted: i=1; AKwUvBxSS+Jm5HTL1i/dr71vaFwlBfjQb35wBPZzEfIt8s751P/4gZxbop4z6iQMQ1whz4867ENjNJRFrz/h2l4SajXB5w==@vger.kernel.org
+X-Gm-Message-State: AFuF++lhF4GKKbTntQr15HtOSBbsnlGrqa6h/u3Gv4HkofpaRMlgAFrY
+	fUwoG6TldlbqYZlTD1sxRhVsa4JJ0UI1oA/S9Ad56QQq8Z+lYw/qmizV34owukwv
+X-Gm-Gg: AYBFou22/APoYMwwH+2vASdUoaVVICzIHlNIQ/NEFp1v4/xMqTbVYPfH/2XfpBNz6nd
+	r0Qb2t2GM5DYiyf0yv/bG24TBcn0SZnEojzNjkCCPaY+E7JsViXlnX9pdov3R6Qt8LgwK6siKDh
+	Qm/dNPkF5OvCln3y2rNn3UrD58HNYCkkiDubpvH0qss9pO6ClJRsGMjf5y+EewudeHN24c19t3w
+	+yeT1LrVcLzjfcgqgOCOKzc8hxWFCJm2JBhXvyU6171jRttosNsred6tTaEPZw95qvG5o5TmRnp
+	h+U/Oe7DVSnc2abPzI+nP6fzxFTy5Wqw9C+BzikTBGnPzerfYv/RJWgxYcBN0c0OCRHlCJo311L
+	MWOAuJCh40hK6GHLHBkOxz2RteZmeKvN/BvLWNaEJdkMdSLwK1X/uIK0x4d2X0Ndo4MdvTzJwzO
+	5k5MOmK7wcRGNHyAUE3H6Kk2O0q9CzFjeBshBO4E+SD8VNDhmCLPs19XkDZiizxAHonUwjL0tMa
+	GS5DxmmCGKV51etcvKUIKalx+Yv9dTn+4/kTYWczCP0X3o=
+X-Received: by 2002:a05:6122:400c:b0:5c9:a60c:273f with SMTP id 71dfb90a1353d-5c9b59f02c4mr4205554e0c.23.1789975530697;
+        Mon, 21 Sep 2026 00:25:30 -0700 (PDT)
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c9c40a44d1sm5639215e0c.10.2026.09.21.00.25.30
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Sep 2026 00:25:30 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-78569cf871bso1704467137.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 00:25:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxTCAOIKXEliTsdkK0zmATKZD/jBIkwK5ks8llRGUAjYDKH+/rYCQi1ANZ/HHf6PeuSRaGiK9vZg6d6U+vV3YcqKw==@vger.kernel.org
+X-Received: by 2002:a05:6102:41ac:b0:7a4:e550:eeb9 with SMTP id
+ ada2fe7eead31-7a55d28bba5mr3601642137.22.1789975530039; Mon, 21 Sep 2026
+ 00:25:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20260921-add-raa229639-and-raa229640-v3-2-b104ee8a70b2@gmail.com>
-References: <20260921-add-raa229639-and-raa229640-v3-0-b104ee8a70b2@gmail.com>
-In-Reply-To: <20260921-add-raa229639-and-raa229640-v3-0-b104ee8a70b2@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
-	<magnus.damm@gmail.com>, Grant Peltier <grant.peltier.jg@renesas.com>
-CC: <linux-hwmon@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	<colin.huang2@amd.com>, Colin Huang <u8813345@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789975000; l=1519;
- i=u8813345@gmail.com; s=20260202; h=from:subject:message-id;
- bh=sEinfxk898LehliEWdFU6tdiEsWQMQPmKaHpJuIx0nU=;
- b=JTkTj9mnO3pVlr8zWz9hdCaCYeuagjewZUtKLx3ZUvSmRTlf7dSahBI2tfuiSFLqQwpEZpIdm
- 3kk+CNC+cgiCQ0yR3/aTLvosAgc5TQj+G5TglSuSTKwawwFpnWRhnd0
-X-Developer-Key: i=u8813345@gmail.com; a=ed25519;
- pk=Zlg0WqpCw4qbswOqamTBTXIchwR/3SnYZpy7rjaGMdQ=
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF000061C1:EE_|MW4PR12MB6923:EE_
-X-MS-Office365-Filtering-Correlation-Id: f80ec62d-837e-44fb-b921-08df17b04d56
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35950700016|376014|7416014|61400799027|48200799018|7093399015|82310400026|4128699003|10067099003|56012099006|11063799006|22082099003|16102099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	MDAhU8Ur9GhNplPKnkRn7MWOshqmFGXI+23o+GNa2PEPPizZAXiJ49/rlvYcJ0xXoNR//FAt8QiAHybQ/jzM4DQDvTLJ3bxR3u9u19KTdkmaGQjHIAY8y1O3CrK1tv3bWGt7q7A9dgsm48NF94PZyiL2wfqE2iMS9N1ETCBzpNgIaRsn/ZmLd3bAMhl1LMTWyMY7x1yHy3fttZsu4duuZh5thwngOLcqs9RvrS0q1vKjFcjUoEqT1R7NShcyyg54QKMzWGkN1G05bDaKgm8GOzkwpXp4xJhwdRvfiD86utyyJCk1SNTNdz8DOTSaNyzor3zY+Zz4qG7dHtt90IY4yN5Rwt48JPHFGbUxtYpdqE6WN4h6r4zCwaqtCeN3BEy/KAdIo/HdS2g19dL2XuI7dD8LZx/mTAtHnZnuaD6/wr8kClI+3gGU4p2yq4gik5Kg1zKo+d1dB+M2i8iMJe9cUNoRV2rBRh6XLygYhqAZ7ECL9ZKVuRloM6y/9aZRF5Xk5nbdmHq2CBt7BZxhpC1E0Cyc/hysEJlQDLc21udVUSCnaLItBlgrz9txDHrtDUFJdlde+ImRC+NYTn+ZPno9T9OC+dq09qwbBNVihaDHpeYQ0C37RDNFwN629QZpLyIHCNbtGlweWeR+Rq+DbYTk3rrLS2q4wyv1+aJq0EBF3w6FQJIWqPV2Y6qqGqX/P5uTP5CSMT5PjUXP513v+CBUhg==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35950700016)(376014)(7416014)(61400799027)(48200799018)(7093399015)(82310400026)(4128699003)(10067099003)(56012099006)(11063799006)(22082099003)(16102099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	wE1GuZJyGtlGUWr7NYuV7M89+Ys78Flus1dng25KhJ+T+2gKArI/ovGQXpKwUXafC2DA1obLSbVVfzYF9W51kLX1AuZf2awHki3PtjpXBAdANuVzpFxKDynRpy1AmzyZG+16rCgY6Bj0vnA9sOKW3xOamH3oz8JcpWwo2jZzDdJpbtT4TkQo8hMafV5Gtjc+IQchhrA+0bpIQNTYZ/H0KoA1xuPlL9el4fzRbYiv9AnK2is0ASay/JvbYFy0IRZH+DY3EvAtOEQ18+YUMRbVcbpIB2WchYY1VFxVhRN7jQCn1x8sINaVK/6fgXpUnlsUpsG/Wc37gZMqlSaofSyaKu7Cr0CFzf5upG3ggDtaeUTQp2CifWLiMWBJ2M2oW6iZ7DjXFbT3qy+MqszzNWC1DGMYy8rVc1mzA2HPv+0vT53GUeaAoI8kFDJmIHq2lE/i
-X-OriginatorOrg: amdcloud.onmicrosoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 07:16:48.8231
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f80ec62d-837e-44fb-b921-08df17b04d56
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF000061C1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6923
+References: <60988ce9c4913014e255ecbe127e93374f6a2295.1789570538.git.geert@linux-m68k.org>
+ <20260918200033.GA1667835-robh@kernel.org>
+In-Reply-To: <20260918200033.GA1667835-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 21 Sep 2026 09:25:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXDmZs1f+co7EcC8+yp4BU8iNo-1c-TNg6Xe8nYLeXOpg@mail.gmail.com>
+X-Gm-Features: AcwNN1U9s09WD_Fc6q3FVUM3sMCtDOgMMGz5EOC-0K6lXxufMm3wQwxnxJmg5fk
+Message-ID: <CAMuHMdXDmZs1f+co7EcC8+yp4BU8iNo-1c-TNg6Xe8nYLeXOpg@mail.gmail.com>
+Subject: Re: [PATCH] spi: dt-bindings: Relax node name suffixes again
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for the Renesas RAA229639 and RAA229640 PMBus
-voltage regulator devices.
+Hi Rob,
 
-Both devices are supported by the existing raa_dmpvr2_2rail_nontc
-driver variant, so no functional changes are required beyond
-adding the corresponding device IDs and OF match entries.
+On Fri, 18 Sept 2026 at 22:00, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Sep 16, 2026 at 05:18:27PM +0200, Geert Uytterhoeven wrote:
+> > From: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > An SPI bus node name can have either a unit address, or a suffix.
+> > Commit c4fb6880edc15866 ("spi: dt-bindings: restrict node name
+> > suffixes") restricted these suffixes to decimal numbers.
+> > However, SPI bus node names with suffixes are typically used for
+> > board-level bit-banged SPI busses ("spi-gpio"), which live at the root
+> > of the device tree.  Limiting their node names to numbers is prone to
+> > conflicts, and may cause silent overwrites, especially when a stack of
+> > sub-boards or expansion boards is involved.
+>
+> How is that commit an issue 3 years later?
 
-Signed-off-by: Colin Huang <u8813345@gmail.com>
----
- drivers/hwmon/pmbus/isl68137.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Because no one cared about avoiding future conflicts and/or no one
+noticed any conflicts?
 
-diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
-index 2f7f825bfb69..15b4e3f15f11 100644
---- a/drivers/hwmon/pmbus/isl68137.c
-+++ b/drivers/hwmon/pmbus/isl68137.c
-@@ -456,6 +456,8 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
- 	{ .name = "raa229004", .driver_data = raa_dmpvr2_2rail },
- 	{ .name = "raa229141", .driver_data = raa_dmpvr2_2rail_pmbus },
- 	{ .name = "raa229621", .driver_data = raa_dmpvr2_2rail },
-+	{ .name = "raa229639", .driver_data = raa_dmpvr2_2rail_nontc },
-+	{ .name = "raa229640", .driver_data = raa_dmpvr2_2rail_nontc },
- 	{ }
- };
- 
-@@ -506,6 +508,8 @@ static const struct of_device_id isl68137_of_match[] = {
- 	{ .compatible = "renesas,raa229001", .data = (void *)raa_dmpvr2_2rail },
- 	{ .compatible = "renesas,raa229004", .data = (void *)raa_dmpvr2_2rail },
- 	{ .compatible = "renesas,raa229621", .data = (void *)raa_dmpvr2_2rail },
-+	{ .compatible = "renesas,raa229639", .data = (void *)raa_dmpvr2_2rail_nontc },
-+	{ .compatible = "renesas,raa229640", .data = (void *)raa_dmpvr2_2rail_nontc },
- 	{ },
- };
- 
+> I've commented on the case which I guess prompted this patch.
+
+Yeah, "spi-ws-2ch-canfd" referred in the Closes-tag below.
+
+> BTW, "spi-gpio" or "i2c-gpio" are not good names because you can have
+> more than 1 instance.
+
+Yes they are bad names for node names.
+I was referring to the compatible value; sorry if that wasn't clear.
+
+> > Hence relax node name suffixes to alphanumerical characters, so users
+> > can write more descriptive SPI bus names, which are less prone to
+> > conflicts.
+> >
+> > While at it, reject empty unit addresses.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202609150228.Nh4nZzbQ-lkp@intel.com
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Other subsystems (regulator, i2c) had similar issues, and numbered
+> > regulators caused conflicts before, see e.g. commit 45f5d5a9e34d3fe4
+> > ("arm64: dts: renesas: r8a77995: draak: Fix backlight regulator name").
+>
+> I2C was a case of "too many to fix". Maybe time to revisit that.
+> Regulator binding is a unicorn and not a bus. I really want standard
+> names for buses given that's the only way to identify them generically.
+
+Aren't "spi-gpio" or "i2c-gpio" (compatible :-) nodes unicorn buses? ;-)
+
+The issue is that they all live at the root node. How do you name
+them in a conflictless way using numerical suffixes?
+  - On the SoM: spi-1,
+  - On the SoM carrier: spi-2, spi-3,
+  - On the expansion board (hat): spi-4?
+
+What if your carrier board supports more than one SoM model, with
+a different number of spi-gpio buses? Oh, let's start at 10 on the
+carrier, and 20 on the hat, like we used to number our lines in CBM
+BASIC V2 before Simon's BASIC gave us RENUMBER ;-)
+
+What if you have multiple hats, each with their own spi-gpio buses?
+Hence node names like "spi-ws-2ch-canfd" make sense, IMO.
+When the WIP connector design is finished, and provides separate name
+spaces for the subboard in a board stack, we can revisit, perhaps...
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
