@@ -1,151 +1,165 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C3C282F16
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13786310779
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790001191; cv=pass; b=B4/HAnYiQpTmAK8wGKsJ5+5S8jufYufUdfyFrH101U7RJjcZ1cvMi19RcMag8v328HfJhAIE4PPIKopYmnJrFnu6Agakv1DmEGAYfs4XMEqKh+QEObgIlMpjqvn7B/olq272xKz+pTqUpSpw1RFGSEUcM/CpbKSz+xlJe9VZ4wM=
+	t=1790001223; cv=pass; b=cjqqFgyMJkE6gbDRedfWQd/aBpmxnCKhd/5+hzUtcqCbtuOYJVtJTbl8cbv5EatvlaIED3On85KvBi6YD5isY/MBQMQUjihLcjr7oDjE1THsMUNFfd1iocFxMnOQ1vElUqsh1HOVYV1cXbJdIcvy4yxMhuwCUbKxb20f2WPuXso=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790001191; c=relaxed/simple;
-	bh=r7lm+CiC9wEa6BgamTUuhlEQwcuYZjSsoJngwi1iaKc=;
+	s=arc-20240116; t=1790001223; c=relaxed/simple;
+	bh=DOLUHzyNbgypNt2Cb2gBz6juJ39hx7bJkNuPsJ+uwUU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n0pc/A3U9bMmETn43ZQVk8I6CK3oaptkVZfMP07XbrqcGkbBG4S+ktziCL49YDmfzwONRTrHF87FJ/um68HhkNYkmGl/G+BeNAR6AC6NUIidPGjYt9fZOs5NgfJdywEvVj/R5FZL2wcPPMBERopBKPrz3sccmCCl9/iQyno0+Ak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PLjFj746; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NwZ7Or+U; arc=pass smtp.client-ip=205.220.168.131
+	 To:Cc:Content-Type; b=QxY1AR3H65eJBJnO7+h6FffKz+yA2C7x8Yp8KxGWWljX0G5Q/Mt8xEfVkjC37QDD97MIIHFmHIzqbvvINdNk63k231L9HzWUkazTwUfMZgAs/SLJ+x4wX+wwy/eRfi7MKl482KdLacHt+D1VwTDQkSStHwdkUYKbH5TJ66JXJGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fz87+HYF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BmgwOCr5; arc=pass smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PLjFj746";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NwZ7Or+U"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68LEGP7i1553104
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:08 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fz87+HYF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BmgwOCr5"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68LEGbjG763717
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=; b=PLjFj746DwgTYYE6
-	F8bg6eKr3tc7fjVnCufAGwWSW6nQHnZFdphyiMUDaJ7Re7G1kv1cmBaC6KV+pHL7
-	Q7mcAejuGclMvGvBA9DgSDpomiaB6RetrcIQLVd4P4GnCH60Sj0ycVyapOVBKylp
-	8nIH77l40LqoNpMmTj9GhEZMZQbTKtPtYRnNqbENC8cowz3OQ5ZWcyLzj+Ih5Rrq
-	Y4Mga/LHN9ltTgvPfJWUOngovFq1Ii6mRjdMrsvcBEoSktA6aCyuc89q3fzxXEAU
-	P+0EF0l3m6MbIN5fJT/+Aplej+jfB1YgK0X/ie7LUULZAS0rQKaAOjxWIEJw/VN7
-	j2F5IA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gu3csgts1-1
+	RN49HaPQGdrm1yb0dZkAMriqXQ6TCvsapV0/mYAPYOs=; b=Fz87+HYFeYV12a3m
+	f+pMsxZZO/xAP7mGdkNmLg9WRgreu4SKgYlWEUyW1olZMk8HDHvixkPBy69Goewc
+	SmTzNAm+yCwwXhxaFAD2ihOBXHTNFtfyPLpQMaRCbeOaAlRRusH1X5Nf9rf1RwXI
+	Bl+YwLDLPPtw1e6wUWkCMPID4zX/jmT+bbKcVEAq6ktXjwOZHvCQ1hasqgUJy3bH
+	EFAhd6vc/qo8ryuk++Iu8sJKR7wKR29WCcjsDK6QdqSC/Tmg/bsz2WRRQlzT/fUW
+	JiqJLh7BqkVtrCIVES12YpVeTq+M+PFwGN//muv/Kcn2gBRMOEWbWZxvQ+/Y1A7a
+	B7tCgg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gu0rj1jxx-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:08 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-cc1b6f65dacso2660643a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 07:33:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790001188; cv=none;
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:40 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-86261e66700so3050837b3a.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 07:33:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790001219; cv=none;
         d=google.com; s=arc-20260327;
-        b=XpraWuF2EN86QOq1ktt/0H1cw4x2jlR56NWD2wT3GBKig67a7Wz3WDUe9cb6wGxmWO
-         6XmhPc/jaBvWoHvOiiJCHF3YVCSGd4ZNMWa47CW3gGEQ82m1Ora+Z+UQcloAPmjAeIq4
-         ExpyD7dx3PztFRyFbqI30c3ykl6CMj05NKszGnxEozRSzjmGg5+M4FUaG2ZqMp9AINDX
-         bKd9sU+wcC8zsPKY/Pvh5d/p5nl+ZoxYzGuQrGXbG1k0Yp5IHN31k4BtswoaHDVy9tlm
-         HdPZ8XdqwwzT0YUBLYncw3RpK8RyyZxwyXSLlU5k5cUFk+blC9aRpParme0M+X8ngLf3
-         FdpQ==
+        b=SV3Eem93NHv8jEbeObOL+8HP3CtD2lOsZVji31HTiWqI8FPdg+F2gBEE0Gm2BWLA1a
+         X+y9zde7fYU3WpqEDTYUTeSwEoV+2NHAxQ6Y4zRrjgthI/1H9bAAvS+fLOTkR/uDMNBf
+         AyMsW/xi2+IsrVaoXY2CH+ZJkUIEzIDy+Twv+pTln2+hPbjais5MgN80izSD5fuooMRN
+         /0GCzo3eWFf8LYWMjmedMjhQqFmdLFnhHLgr7polhuN/hcVWveO5lyLNPzsVODfx6WXC
+         2wyfXA5XkYGSQF+VPvFuMF2K1uW9p2uxHv96fbuvcocEqCuGdnBkIn24dYfUuzAiGqzv
+         0uFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=;
-        fh=0ZSNRtrWdlb1MHBPwuDnnmOTki2uVRDtW0RXxROw4gw=;
-        b=kqOdhy76azbigK1/z/jaVJ8FNt6pyzOtQraystfFBA/pqFp1SNlPupd2WcKJg73T79
-         WkPQTNYFvwZa+20lPRdB5WZeeBqd9h8Joqljc2CDpZVojQTRwanzrfUCyUPotWgYhF5D
-         bFtxTS57odrqHJhGO1bFWYAWTTbm3E8OqetVOdBy0kpOj4ljC6o5auinnAQlKQpoor8p
-         Qw8GRw4Q3D0pSeEtgeUURNUWmIZCcTbQbwiQwrl+xid93WA6dKtpHrn80P1WqyJO3Gkp
-         0372wqidHnY+oL22whmGIobd6tHIket5vwIvhbx+bbbxByK8HIszzrvo/YC1nMxY5WSI
-         7WBw==;
+        bh=RN49HaPQGdrm1yb0dZkAMriqXQ6TCvsapV0/mYAPYOs=;
+        fh=s0l6qhdwem+S/cOr0fu7pNh+o7FpFJWfKN2iK2VQWPQ=;
+        b=SqxdFCO4mUX+Sc1slPBrX7kAxhsBa5At4TXz6zdxFlT7bCY5MN8OaqkkEPAKrjK5hM
+         e5ks8JmNB4UcTs0j3bxxl6F2k6cZHX8Oy+he8UnUtb9w39HrXzXDGKWADHi0yqio8FON
+         W5ThRrSnZUsnBQA3OJ9gT6n/j5JarGE+osPz4q64vFD66HoFdQVvm5QMzEQP1KtxxH2U
+         MyYz0PhTGpRVN7ks6iG5/P9tZWUxBnLjgf+Qv5Y4DZPRf2LDW7aq+om0eZiBTzwpeEIl
+         Ft77/bgIpCTIzxwl+kORJomTUObVRiEPdIYWj4eZf51omk5CrVbJCR5kCS7AmawlJRu/
+         UEwA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790001188; x=1790605988; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1790001219; x=1790606019; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=;
-        b=NwZ7Or+U8p1YsFysVQRk5nPjjSP4wWjl7ViBnnoserHjRX4BSKXqkiP371wFoPNIfP
-         467ofSdLBGadDLW23OrNj8x2mWYb35aQv2xG5RfZNiFFM6AI7hcMhsQn5r0FJmKC6HTv
-         oJHbJWlaQ6WL54nSE+oYs7eXP50dDHMGIu5Ke/13oQtcDqXBCKWqsNZwmB0DcjZDCmvo
-         we9r0VvHgmD8ETYg0EA9jUJCsXWVuItzmNxvAh+pgTiAodxEZvylvSJuZVmdxdIQvH4+
-         3sQOb9h0wxW1F2Iu88/NP2JwNvoMbOauxIiKpP0kzex5bT8zEWXabzqVdK/nJ7JwqHzm
-         YiXQ==
+        bh=RN49HaPQGdrm1yb0dZkAMriqXQ6TCvsapV0/mYAPYOs=;
+        b=BmgwOCr5kdbI8bdXYOA5XiNuJUaFFxDclH0Cuqb2SpnvqJCLYXWhfk+AJfPnEe7gCg
+         g71kVUWsVBYIEF/V7D/ElABN9eFqC876wANi7S/Fwhfpf5lKGWMgWN7gm6g8apkO+kM4
+         D5Ix3R4mkCD9Zk992oWgmOBFJxMhnkGDLwB7chY7nW7AtlmmsVf5kdLiV11zl5EKuJA2
+         CVwPAe1Ma6q1pLNxqALI6xRPihCxM3o5NWJWG6F9HY6bEu+CXbpnoZGSqMKsMw6SZBvS
+         M27b6sYqsLvsGuCHp97eJXQsDpxdHt8B1uGngUniY7nx6Pi+9RYbHeDYTVe2/Yz54mBo
+         nlyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790001188; x=1790605988;
+        d=1e100.net; s=20260707; t=1790001219; x=1790606019;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=;
-        b=fcj3lLDc/QnVqfkzDLkQPyLsIHx0OFTe/Bs06tKE8mbZh9hKlYWkRuzhXG2Zz97/S3
-         ucRjUEeCfDbqTPH5XBjfdt5h27I9LxW42kEnxDHZmKTSIbnxQ4NHlRM0/1rhji3/W+1b
-         N/ojSJAKIKqgLPnXCGtjsgE5/+14HsQSrxEIXSHVahWGv5qPg7J280fwsstMqx+baXW7
-         iMMa7VEkNgT88CGQX5+xmRFMQiEyX7J7K+V3Psn9zMyjY7NpOiStiiCXaVwnVRSvdxpM
-         c67IhBLh7AstPjh138DBHim7ONJ/ksve1PtOqs0W5eGSTLLkGZMM3gIHwwLSVFUbSDpT
-         R48Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwbTzW2MhYcZLvY8XtG0T/GRvaC1K2bbcEsgwzN/iXrph8FaUApeo/M/Q/aHsa9Gn5qKvwlGMxhmj8BvNd/2biYTg==@vger.kernel.org
-X-Gm-Message-State: AFuF++ls4gpwe7LLm9FZK+oS70avG24iJteqAKX7pB7LpY8o/kyho3oM
-	XTWISFfkYgWG++DEWvf2WTsAI0Yaa/2/nZtpcezyTRZTKsgAhHji9A7yT6GOBKQULeBunbO1gEa
-	4Jgf1Ba9nkXhDl09rRy9UZTUfN0wmCHt3jgKNgHwRYicv18zobN0e9eY3EmtLRAyZeF4Gx041JE
-	g3oq5+3/1qaDSriCAdG8Nolx/z3I5UXc6bmp30NTroSFsSecvw
-X-Gm-Gg: AYBFou1hxr8ra9ejPfT1enhgLcBgWoBumD/3Mm+0pSZF/jDnDHiJHxs21YP6aSG3orU
-	6TdA8djLYfqorFoQE2bsVFg/Jl+rcqJmBeHbPhh3MgS1TekW0UBLFW4SWsJP8ffODAhEsnM28d7
-	TnqFgU66K/MM+IxkuZ1wkXlvksz0/7BQFOIIu9b78I4T9jOweCI7xsKyy59g==
-X-Received: by 2002:a05:6a20:6f90:b0:3dd:a195:dd5b with SMTP id adf61e73a8af0-3dda195e52dmr11030332637.61.1790001186031;
-        Mon, 21 Sep 2026 07:33:06 -0700 (PDT)
-X-Received: by 2002:a05:6a20:6f90:b0:3dd:a195:dd5b with SMTP id
- adf61e73a8af0-3dda195e52dmr11030295637.61.1790001185527; Mon, 21 Sep 2026
- 07:33:05 -0700 (PDT)
+        bh=RN49HaPQGdrm1yb0dZkAMriqXQ6TCvsapV0/mYAPYOs=;
+        b=yonxpmQAoUwY/ca2rYaGo5hYZxzRcCwpAMwGUbA2NiCY2S4RSaZP5K/d3Qp4qN7Ong
+         ilxsBSsfJbC4sDhcBjtm1P3xz1G6Hu/6xUQer/rQoF2FzSM8zQjr3X1Z5YfCjIMeHAtb
+         EMruOZ1ZDKfCFHD+D552Astyq6OyaJWgM2tqyc4UqPV7VElU7cn5o3gTyRfjxiIZLi+D
+         bxMbU+Ql9NZSRkczrEOQbjmHxwd+ILvsL2r5EREzRtQoGmZqB1y+ool4cYfoSwAl57o/
+         6WYmLRGqNx602RYeSC8bOOJPE8835K80xN5NCY4Jg9ujqC7yHUoI9t0nq2SDrubq//Dq
+         9odQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzrrtsjOGxl8Jr0QNjG7m1GAByXj+K1RRm0STkcqpGMZ5rXHUNf3gf9Z1JnFFsmN+7X/wQkJYkz0uQWaCV1MUVfLg==@vger.kernel.org
+X-Gm-Message-State: AFuF++mbHablhcPfZZIZfEEXWln/5AZ2t1Vb3yM29a39TMRxLPFMyQHG
+	4l93k6fCWu5YTbsgCj2/a3GRCsK/zTZuc8iMhrvBclsls+pVfSttRaFwPPRb1sqKKDizI9rqEoO
+	Mt7B/dvZRrZshuQwbUaSnOyEiGKnIkI+04+ZSmEnLUE35brH5NveJpM2Sztb13J1icfso0xP4/Z
+	tyCL/7aNQJ2r+BdyrqIB9m39CIc2j8CMQlimv9x1EyqyugAHCdLo6AP8Tp
+X-Gm-Gg: AYBFou1Nr8ocKqMk2MQOlP1nJHZS76cVXDd4CigfL9rlyoDJONVfN2A3t0h1MjyV728
+	kjNYaLSfRTmNtMYEo0O9oY7kzoA8Rci99eX666Qfa8Hwx7xEWwUJo4VuFLhr0hmTTcS7gCjHoBc
+	roB+ZbL4inyYj68nyxpkZzcK8t8cRqhwwhbBAVnibG8PGmKrpxY8Qe446nZA==
+X-Received: by 2002:a05:6a20:6f91:b0:3dd:659e:5db2 with SMTP id adf61e73a8af0-3dd8c4413a7mr18266807637.16.1790001214405;
+        Mon, 21 Sep 2026 07:33:34 -0700 (PDT)
+X-Received: by 2002:a05:6a20:6f91:b0:3dd:659e:5db2 with SMTP id
+ adf61e73a8af0-3dd8c4413a7mr18266769637.16.1790001213920; Mon, 21 Sep 2026
+ 07:33:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fbe8b4a4d90f0b555285cfb4ed18b6a2afc38b74.1788436280.git.geert+renesas@glider.be>
-In-Reply-To: <fbe8b4a4d90f0b555285cfb4ed18b6a2afc38b74.1788436280.git.geert+renesas@glider.be>
+References: <86da16a61c58eb08419f7528237c124e519f0a72.1788791506.git.geert+renesas@glider.be>
+In-Reply-To: <86da16a61c58eb08419f7528237c124e519f0a72.1788791506.git.geert+renesas@glider.be>
 From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Date: Mon, 21 Sep 2026 16:32:53 +0200
-X-Gm-Features: AcwNN1Wm7QptWrQP64KBLoWANiDzhteUPebkkzrS5dFRZNkLVpmRMtVpNjJdPcc
-Message-ID: <CAPx+jO_N5oTL4CvU3NokCRK9QgKbxsEwHfz=JLUTi-rRGhStwA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: renesas: rcar: Make area arrays const
+Date: Mon, 21 Sep 2026 16:33:22 +0200
+X-Gm-Features: AcwNN1Wd_6jxzpMXptAMEPqNJszFTSpjB9lLwhY1vA5MxxJu1fMZtdoj5lA9YJg
+Message-ID: <CAPx+jO8y2Yk1KwAey2nRsjjduGbvfy=rHqsToDHhvf9sfMMNag@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: renesas: r8a78000: Fix lockdep false positive
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulfh@kernel.org>, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDIxMSBTYWx0ZWRfX7gr/Pr8MJaMt
- m5wR/wnW1TXLab3oyVVIWD8K3e1DZhTK8dRJyOaUOK3kPsmhkhI42WGFOCeCDbYYFhjJTwZ9OJ8
- OJIwzGkdSkt1BQh8HliYPKLVjn0zUCY=
-X-Proofpoint-GUID: MAIb6hmhiIBs4DUida8Gp1xrX5i2726u
-X-Authority-Analysis: v=2.4 cv=QovLTlyd c=1 sm=1 tr=0 ts=6ab14024 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDIxMSBTYWx0ZWRfX5Ka+7sJJVeBJ
+ 2UKdSaiFi1VtuJZngan3fASjnub8hNaxZmhhGgugXZxz/hsvGpTrKgqhwSFoVF70FNSVIA+2cZk
+ 8JhJzLZFxN7P8nsWowh3TUXHldXK5Jw=
+X-Authority-Analysis: v=2.4 cv=AsR7T+9P c=1 sm=1 tr=0 ts=6ab14044 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
  a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=yOCtJkima9RkubShWh1s:22 a=H6JtXQTsj1a3jlPKj3wA:9 a=QEXdDO2ut3YA:10
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDIxMSBTYWx0ZWRfX0QR0zmoaqBuA
- 2c9rckvtXZjO4Hcd+yGMLitwmDCjHXiviY31Yn0BYLvaTjE1jK0+kEbl2Xd3pflluqYoUh/iNnl
- aTKKbk/t2wGAN8dOlNyXjCRjZhhgL01YPejV0/pDp5mmiWckW2qbagwSXKMQRLwABxz9fZYUH7u
- 9kUNiJefEDwG3Lzgc1HOTzGq7FAnfi1cXdeDfKpxmsadzQX2dYmOIv5tYG5bXvss9/bE1bWFKIv
- ps94j7BAbO27YGTpE0oHRz5E9SCn35BRPCeaFzEdbtjWNjnzsn0zibs65gJ34WXOlC1Kgri55HU
- TsVZPyw6ekxTef9Z5tzvE9fGowUmkCRnFCWK1CI6nGkLWzbQvXhp2X9FpBbNTegakIVveB/ESCR
- Md8htL2XrtVWnQCTxGR9j2tpDq6IlcNpKqRo6vWp2ls7/b5IOfM1PUyctTcFtJO/adwoeIRZ2rv
- 9RDbV6cWxVLaQ5A+SbQ==
-X-Proofpoint-ORIG-GUID: MAIb6hmhiIBs4DUida8Gp1xrX5i2726u
+ a=yx91gb_oNiZeI1HMLzn7:22 a=ZwIrdqM33KZ6HQH4p9wA:9 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: bi4AD9Y93-p24V9mDB_tflEUySxsiES1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDIxMSBTYWx0ZWRfXzaX7VoUWwvRh
+ K12KV3AtYoZjoJhiFO2u9DLbpuF0eoZezQhH/+Xp8JtbXgLQ9eqqPJOvk2rYfHO3XTOKfmS/6+2
+ U6ubqxmfD2LOnoirqThNm6xYuzRgOFSGzljcuOHnjhMHBOCqz/X1ZjlyNjvd0bp9JiZniDGpGF3
+ mQacX3kReXsA4qy2irltbEZGsw6rhiedfv217ltsAeTb2TCxZ96yrJTy4ySE56x5GAcSsjtGcGC
+ g1i+ZFpQ84bVJhOo7UBjZxKm7/08bgzK/toxF32wSJi/iAbCq/R9tO2C1ntbzpC3Pw9SV6EOBJl
+ 757W9IDzRDUoVqAXZFplXyEHVJPaN5+gmRp87VF9RZVLr9dZbzcZgIbCdvg79XO2pbYAMU3NR91
+ ggoqYzyUi/Hh30bgzg289yH6sDOaY5/qIixsebDYnzfIZaeKJEYsAhEIi4HK64jHrrvOm59NnG9
+ uJEHIt0DCbJnPC78nVQ==
+X-Proofpoint-ORIG-GUID: bi4AD9Y93-p24V9mDB_tflEUySxsiES1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-21_04,2026-09-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609210211
 
-On Thu, Sep 3, 2026 at 1:57=E2=80=AFPM Geert Uytterhoeven
+On Mon, Sep 7, 2026 at 4:32=E2=80=AFPM Geert Uytterhoeven
 <geert+renesas@glider.be> wrote:
 >
-> Arrays of rcar_sysc_area and rcar_gen4_sysc_area items can be const,
-> unless they are modified by quirk handling.
+> Lockdep reports a possible circular locking dependency when attaching
+> devices to an MDLC PM domain:
 >
+>   - During creation of the singleton PM domain:
+>       A. r8a78000_genpd_always_on_singleton() takes r8a78000_mdlc_lock,
+>       B. pm_genpd_init() takes gpd_list_lock.
+>
+>   - During attachment of devices to PM domains:
+>       A. pm_genpd_add_device() takes gpd_list_lock,
+>       B. r8a78000_mdlc_attach_dev() takes r8a78000_mdlc_lock.
+>
+> As the former is done only once, before any devices are attached, such a
+> AB-BA deadlock cannot really happen.  Fix this false positive by
+> introducing a separate lock to protect the creation of the singleton
+> domain.
+>
+> Fixes: 89e6a71b35703f10 ("pmdomain: renesas: Add R-Car X5H MDLC driver")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Applied for next, thanks!
@@ -155,94 +169,40 @@ Uffe
 
 
 > ---
->  drivers/pmdomain/renesas/r8a7795-sysc.c  | 2 +-
->  drivers/pmdomain/renesas/r8a779a0-sysc.c | 2 +-
->  drivers/pmdomain/renesas/r8a779f0-sysc.c | 2 +-
->  drivers/pmdomain/renesas/r8a779g0-sysc.c | 2 +-
->  drivers/pmdomain/renesas/r8a779h0-sysc.c | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
+>  drivers/pmdomain/renesas/r8a78000-mdlc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/pmdomain/renesas/r8a7795-sysc.c b/drivers/pmdomain/r=
-enesas/r8a7795-sysc.c
-> index cbe1ff0fc58393e4..2ed377b58846628d 100644
-> --- a/drivers/pmdomain/renesas/r8a7795-sysc.c
-> +++ b/drivers/pmdomain/renesas/r8a7795-sysc.c
-> @@ -13,7 +13,7 @@
+> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/=
+renesas/r8a78000-mdlc.c
+> index 2668fc2ac9cbd388..1fd71bb3da776eb1 100644
+> --- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
+> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+> @@ -45,8 +45,9 @@ struct r8a78000_mdlc_priv {
+>  };
 >
->  #include "rcar-sysc.h"
+>  static struct generic_pm_domain *r8a78000_genpd_always_on;
+> +
+>  static HLIST_HEAD(r8a78000_mdlc_list);
+> -static DEFINE_MUTEX(r8a78000_mdlc_lock);       /* protects the two above=
+ */
+> +static DEFINE_MUTEX(r8a78000_mdlc_lock);       /* protects the list abov=
+e */
 >
-> -static struct rcar_sysc_area r8a7795_areas[] __initdata =3D {
-> +static const struct rcar_sysc_area r8a7795_areas[] __initconst =3D {
->         { "always-on",      0, 0, R8A7795_PD_ALWAYS_ON, -1, PD_ALWAYS_ON =
-},
->         { "ca57-scu",   0x1c0, 0, R8A7795_PD_CA57_SCU,  R8A7795_PD_ALWAYS=
-_ON,
->           PD_SCU },
-> diff --git a/drivers/pmdomain/renesas/r8a779a0-sysc.c b/drivers/pmdomain/=
-renesas/r8a779a0-sysc.c
-> index 54cdf250f7c2d143..5f84b8d56a3282a7 100644
-> --- a/drivers/pmdomain/renesas/r8a779a0-sysc.c
-> +++ b/drivers/pmdomain/renesas/r8a779a0-sysc.c
-> @@ -11,7 +11,7 @@
+>  static struct generic_pm_domain *r8a78000_genpd_xlate(
+>                         const struct of_phandle_args *spec, void *data)
+> @@ -191,10 +192,11 @@ static void r8a78000_genpd_del_provider(void *data)
 >
->  #include "rcar-gen4-sysc.h"
+>  static int r8a78000_genpd_always_on_singleton(struct device *dev)
+>  {
+> +       static DEFINE_MUTEX(singleton_lock);
+>         struct generic_pm_domain *genpd;
+>         int ret;
 >
-> -static struct rcar_gen4_sysc_area r8a779a0_areas[] __initdata =3D {
-> +static const struct rcar_gen4_sysc_area r8a779a0_areas[] __initconst =3D=
- {
->         { "always-on",  R8A779A0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
->         { "a3e0",       R8A779A0_PD_A3E0, R8A779A0_PD_ALWAYS_ON, PD_SCU }=
-,
->         { "a3e1",       R8A779A0_PD_A3E1, R8A779A0_PD_ALWAYS_ON, PD_SCU }=
-,
-> diff --git a/drivers/pmdomain/renesas/r8a779f0-sysc.c b/drivers/pmdomain/=
-renesas/r8a779f0-sysc.c
-> index 6ed13cd1cb249df5..d22cbc33a6048c9d 100644
-> --- a/drivers/pmdomain/renesas/r8a779f0-sysc.c
-> +++ b/drivers/pmdomain/renesas/r8a779f0-sysc.c
-> @@ -11,7 +11,7 @@
+> -       guard(mutex)(&r8a78000_mdlc_lock);
+> +       guard(mutex)(&singleton_lock);
 >
->  #include "rcar-gen4-sysc.h"
->
-> -static struct rcar_gen4_sysc_area r8a779f0_areas[] __initdata =3D {
-> +static const struct rcar_gen4_sysc_area r8a779f0_areas[] __initconst =3D=
- {
->         { "always-on",  R8A779F0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
->         { "a3e0",       R8A779F0_PD_A3E0, R8A779F0_PD_ALWAYS_ON, PD_SCU }=
-,
->         { "a3e1",       R8A779F0_PD_A3E1, R8A779F0_PD_ALWAYS_ON, PD_SCU }=
-,
-> diff --git a/drivers/pmdomain/renesas/r8a779g0-sysc.c b/drivers/pmdomain/=
-renesas/r8a779g0-sysc.c
-> index 249cf43af45b6445..96d39a3ac46056af 100644
-> --- a/drivers/pmdomain/renesas/r8a779g0-sysc.c
-> +++ b/drivers/pmdomain/renesas/r8a779g0-sysc.c
-> @@ -11,7 +11,7 @@
->
->  #include "rcar-gen4-sysc.h"
->
-> -static struct rcar_gen4_sysc_area r8a779g0_areas[] __initdata =3D {
-> +static const struct rcar_gen4_sysc_area r8a779g0_areas[] __initconst =3D=
- {
->         { "always-on",  R8A779G0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
->         { "a3e0",       R8A779G0_PD_A3E0, R8A779G0_PD_ALWAYS_ON, PD_SCU }=
-,
->         { "a2e0d0",     R8A779G0_PD_A2E0D0, R8A779G0_PD_A3E0, PD_SCU },
-> diff --git a/drivers/pmdomain/renesas/r8a779h0-sysc.c b/drivers/pmdomain/=
-renesas/r8a779h0-sysc.c
-> index e13372cb80eea857..3775735854f29fab 100644
-> --- a/drivers/pmdomain/renesas/r8a779h0-sysc.c
-> +++ b/drivers/pmdomain/renesas/r8a779h0-sysc.c
-> @@ -11,7 +11,7 @@
->
->  #include "rcar-gen4-sysc.h"
->
-> -static struct rcar_gen4_sysc_area r8a779h0_areas[] __initdata =3D {
-> +static const struct rcar_gen4_sysc_area r8a779h0_areas[] __initconst =3D=
- {
->         { "always-on",  R8A779H0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
->         { "c4",         R8A779H0_PD_C4, R8A779H0_PD_ALWAYS_ON },
->         { "a2e0d0",     R8A779H0_PD_A2E0D0, R8A779H0_PD_C4, PD_SCU },
+>         if (r8a78000_genpd_always_on)
+>                 return 0;
 > --
 > 2.43.0
 >
