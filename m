@@ -1,28 +1,28 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011050.outbound.protection.outlook.com [52.101.125.50])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011060.outbound.protection.outlook.com [52.101.125.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66244A7C9E;
-	Mon, 21 Sep 2026 13:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470284A205B;
+	Mon, 21 Sep 2026 13:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.60
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789998340; cv=fail; b=CBfZjcjFpNpxOGRWcB2GdPt/4mN4UhYDRFZaJqrASIvI5QAMS6mtPPuq5iOW54PHBYFxuhwFeOm0Tj/3x1DgUJ75/GPoY7Dz+3FvBjWTS42gP8d7eBEEFn8sQ6PotTrqOM0QmseDAPu7ihI2ObO+aqMBMX0ni0Xjo98FZNcvMlk=
+	t=1789998346; cv=fail; b=plalH9FLKRPJYv8LujLcUOPludqqUQg1Adizh4zgICLqjBmUv8V2NdH8+J8ml0W+WeXyV3/oHdS6uqumrcvWZtLyUTY2Zo5Jzh8aPXywF1RxPgGgbMwl6mTHwGCIJXWmLOCkICOW5tOSELTTnBwbASitso8WutH84cheu5BgfvA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789998340; c=relaxed/simple;
-	bh=HQf0Pg03Kk+rc1Ji4ujYw2k38c2eucUtkXfLX14/NOo=;
+	s=arc-20240116; t=1789998346; c=relaxed/simple;
+	bh=Q8AnuxNnUYEfHEd2XUtCsH9GqBNjwJRXjkJL/cVW+YA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mom8+qUzTFW7ya+LiMTpmT7ZBEVAG0xA8tW3OhPdlm9TujtfN1vgQgncMBmmoyJlnfkLs0ybUZsKOakx0dhC0b4kVZCvGmCxgRHD7ybes4MTdIxVnZw5yimWG6QKzvQFPUulYPa1lyndox5JAop/TdSRVckpLpCPBuUI86ISou8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=qCk+keFE; arc=fail smtp.client-ip=52.101.125.50
+	 MIME-Version:Content-Type; b=Qu9BZN3djykIFNqh5xPJ3V4Yvlayh76A/PZks5T4tUF8PY+fzPa4peg3DJ3Z1UNfWceXVK08wvVx7oO1RrAr5DezM5sGMlawmfLtH9ev0kHOe/lAo3mlxrbUROZrbpeI+lyUtEuvDTYYykUxxnHQxQTLvesWaktRuPc40xbGmsU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=IW1a33N/; arc=fail smtp.client-ip=52.101.125.60
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="qCk+keFE"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="IW1a33N/"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OSzHZcQVMB8TgSATT5Z+vv7nEhHbUlCaD0fer317U162yUqJqr4NFnR5aeNzCn8c4UGasKCt0I46rICrNrGT8AdP8M/YgC4jFZ9pdmPElqKirnYEfH+x76gMc3B5+LOCCeDkb2z8fRZzsVCKLQ2NUe8G058djUo05GxIRNRFZWnnHKJt5zotBMjEljvwsb5Fo/HHuY6yd1SpzEtwztgKCRBIQFwAvgRhg5ZvQRuMdQ42TLGyfHgW/ZHM6H2fqFzrh01jth9tg1YmWQzYwqF3fbPfFK/Davc9QGqpEieUmYtlBlVA7ceaUIsV4j8yGYXoZQzLa8rF8yD3UpMakCUD7Q==
+ b=u8jcRzLT5Shjk5R8pCNQFF6SDtFg5h1yl7sM18C7ipQydwjP7ciYTFvga9Vc4TFfxwLFSVquq5vMUAlJTuyY4SjQohWjCcFp0M6VATeE5kiKEJMoX8ytBi4rmEWCf+oI+ufd2k50DlO8Lv01+cXyPUhoPtMyX3JDqXsIueaxc9D6Wv95Mt1b0F5GFcwmuxx4LBmeZAMut2MeL17XpVIl5DDTbq7kx7S2QDScV2FthtvkrPbLCh8pQwkkz4m3G6zv4i/9rR/tjkdbpENnsaT/JNroGjLg3CleMlhuQOk7KTBXZMPaMMWhxrzQhrxvLFXvhUGaISewNOkC+IEA2E08qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RFVtvqwn3sOLzcbTBBJwtWGZN7+R9+lx65eUt11k1Jo=;
- b=BlO0abLzVoYZsFP2k+mPUvhj7vKAEOfX6rTSi7tBETk/9nIMhozs6NTDrUn0KYozJC6EmZm1k4dIWxrCSIaaHuG+/zYxqM0rkgoaGXnFWNcuvJpV1M1ebNOPbjrZei4LxpAlHcQKrWkg7ifSxkABN1PEUs/b6tEsUvDvFOYheHKE9iVCf5sjbzbEZ+4+n3gtg+IjzacWQT99lNv3BQufSji0MtSC4tLaJJFkY4e3CuvcYr2Ki104E6nKcaOON6K7viOlI2wERApAuyZosRaJJ+MNmpzlpFGC/mII7QWlOLzwJzPUS7QlxCs+amNEBve0RqHQOKNbc19BbRzhtcG+yg==
+ bh=YsIUf/RWsFhX0fdGjc2/G459QQ7r9BgEHjrpEZOgJnM=;
+ b=AnELFUHqCSSHsIUPV/rRBi3IyyBd1rWxOGUqzN2AUElK53x8H39DKS8Wxio/1t8Kw4+z8V7JgevCntzIKKSuK+pu15+sOBy/75cG2E4e7HzJzdqWzvNnlUSIlkhVTKojtIjBbJaIP+I2qZxj2xvuFzCN1sH9KWsXifETdc/+CPt7GWUj/iE4J1g+wHOt8VtQn2Ykef2CATtrNiVoO9UDrI30u2PrfaXofMpVN7T4taytq7IGxQ5QToPplCiGHG4U8EDQ0+22JtxQT+HNc8qPxusn0Xx6asNKvkF42uIm17rfxqi1s06zGuDATP6x4C2Nf0R4ix84wKO3aKsO77tovQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
@@ -30,31 +30,31 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RFVtvqwn3sOLzcbTBBJwtWGZN7+R9+lx65eUt11k1Jo=;
- b=qCk+keFEgXiHbFvSp9ln6gyO+wx90SVeAdIQSaVb2bELuKX/S/1QFiJOf184BFPufPXkdnWaWahOizQ5ZNfXoTUL4XFJw4f1c7yIgUJCyN4/OmAuVRY/m8+oB35SoMtgXSu7Mt3XDBGJEH8LZQS+tmKYiiLU/Lp0MNk80Nun7K8=
-Received: from OS7PR01CA0170.jpnprd01.prod.outlook.com (2603:1096:604:24c::15)
- by OS9PR01MB15830.jpnprd01.prod.outlook.com (2603:1096:604:3ce::11) with
+ bh=YsIUf/RWsFhX0fdGjc2/G459QQ7r9BgEHjrpEZOgJnM=;
+ b=IW1a33N/un4uyEHTV+0ixn2adebeevf3IxYzXWWESHgWvx2lXnqSclkKIvAiZ5ktpr7jZyTeMq4GG24A0YGcI+qom8dd2FPNNyup1r1A8yGZc8PcZ3bgSowJV0g57j4B2IuWzuqNagb6kgl/LIdQrFxDgSiXvGTp7eb+nzYd+oE=
+Received: from TYCPR01CA0188.jpnprd01.prod.outlook.com (2603:1096:400:2b0::20)
+ by TY4PR01MB14588.jpnprd01.prod.outlook.com (2603:1096:405:238::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
- 2026 13:45:34 +0000
-Received: from OS1PEPF0000D216.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:24c:cafe::2d) by OS7PR01CA0170.outlook.office365.com
- (2603:1096:604:24c::15) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 13:45:38 +0000
+Received: from TY1PEPF0000BADA.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b0:cafe::ac) by TYCPR01CA0188.outlook.office365.com
+ (2603:1096:400:2b0::20) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Mon,
- 21 Sep 2026 13:45:34 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 8.62.32.50) smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ 21 Sep 2026 13:45:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
 Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
  8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D216.mail.protection.outlook.com (10.167.240.23) with Microsoft
+ TY1PEPF0000BADA.mail.protection.outlook.com (10.167.240.39) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Mon, 21 Sep 2026 13:45:34 +0000
+ via Frontend Transport; Mon, 21 Sep 2026 13:45:38 +0000
 Received: from laptop.adwin.renesas.com (GBR-5CG34119KX.adwin.renesas.com [10.226.37.103])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 6A3D13000279;
-	Mon, 21 Sep 2026 22:45:30 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 8C8CD300027E;
+	Mon, 21 Sep 2026 22:45:34 +0900 (JST)
 From: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
@@ -69,9 +69,9 @@ Cc: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 8/9] arm64: dts: renesas: Add HiHope RZ/G2M v3.0 SoC main board support
-Date: Mon, 21 Sep 2026 13:44:28 +0000
-Message-ID: <20260921134432.50338-9-ayman.chaudhry.kc@renesas.com>
+Subject: [PATCH v2 9/9] arm64: dts: renesas: Add HiHope RZ/G2M v3.0 SoC sub board support
+Date: Mon, 21 Sep 2026 13:44:29 +0000
+Message-ID: <20260921134432.50338-10-ayman.chaudhry.kc@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com>
 References: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com>
@@ -84,118 +84,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D216:EE_|OS9PR01MB15830:EE_
+X-MS-TrafficTypeDiagnostic: TY1PEPF0000BADA:EE_|TY4PR01MB14588:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 72cfe7f1-38a4-4db9-122b-08df17e69c50
+X-MS-Office365-Filtering-Correlation-Id: d2281467-ae97-456f-6d66-08df17e69ebb
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|23010399003|1800799024|36860700016|22082099003|18002099003|11063799006|56012099006|10067099003;
+	BCL:0;ARA:13230040|36860700016|1800799024|376014|23010399003|82310400026|11063799006|56012099006|10067099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	5faUcBzP2NCpRn9VjwiYqaEYYOzbFzpk30XXw5aGnGHBQEXSZMrYG4+bckegU4FFYb3ODtgaobgRbBsRYbL73gYi5q1iRce2azOn06v+rkDYHnHE+bEPeDfrFgGCqzyC/MA8bkKCv9s0LjJHiXsWhzxPTJenhrEdsbI4O0+8H6IvzUVssfPlMSkfY2Mh0N3B89X7tQN/70gpG08vT81JL6DYp+2qgnPywczRQoZlkXT+Tap1nBh9YX+7OBRA8Hej4rs9qoASCnbNkXkNoceA6k3Mlc7VRQRs81C3xZfpU4RjRxxkpYaKXAOPFqzp15qVYSSwvFsRJ+clihjOKKhtpqxkgsQzbea9faP2THyl4nXerijrNBzw1OOsdEV5VYir73vPWG0aGZgx5fI4PqclSU3K/7boDprhq0CbHVTvu1R3H8uMOjSCgEjG68j+UefKMXYA79nhih6mHe1crTBet9v9nbqyLPjMtQf14HYl9VcYR4E6n87NAOD+bqpnncqHobs28VZ3SuEaFCDGjJkLgbxgnUAFjrAQvmGBiJQ7kJBfVmnJGh+G0yhvjQca288R6xfUx7i4pFpazluPYL8kL0MjYOdfwUzZ5MLpB3hMsCIo+J1Z+chb4O6ZBcRC3xiqryXKdesDC8twQfp78gc/fY8QDjnqrMnqeMUPcrpkYcky6B+LGisWL5y1jqI0jbix+jOq3+aAF5QVCAAtTDfiQw==
+	vpwfMEjlutVJ/+o4xotIf2wEXeCuuI6FrH44q3e8EIILQv73ksvFTIvAH6JU3Lj6a1KIdLCB7uKxBdJugbQDGw0eD9cdolD3M2mgSYFxpei1+Loh1fep3fyxjkMVQDtyAkLVCCKey6LU4AaWbFAsWnhn3ltQJp+iX/IDSAPx5zCg2lXVHLVfh/5o8NcoODJwbLhbc5QkWQWWnDH/T8SbDfTHv5mn6dExk0vxiCvZkve3Ky1SbY+7HZ9tS4yBbXvHAw3z0uOM3aE+UMiPITE0H0z4bzFB1u87+LjQDWx0YiqnuRde7QFw6r/OQCFAnWk6RfU8Ip/GoAhm58ds+nFhRm5YbmRL1lNauOaLU+JGFwjcB0Kf2vLBXKljzHBnLwMrYfK9zJP95d46RV6VV4RjCBfoOICN8K/k/oaGqZy1eWINtWj0iWlp2VV4lylwplpe5u5UN5MZl3X3W+aDyuniL9Wh96qOj6Bv1/Afg+nCJHdaJRdQEw5DmNUdPxTHebXO6yUqedE8Rs0LtIHw3SnQ4EK9PyT2y6d0B7rGJwLGP0wYyCU4OVDOdKQy7lo+Q0DdN2qi4AzgBpeG2To4QKJokViv0PAeRJQu8WSIebppGigP7HTQFg0MiemxSHUc7eEILaz9ZcCie3SoH9e+saFxNCBnOFqMelpJLixJq5uON3bABAlePG+cdi+JU100pZ+9BSJpITAM3ZcOFPIXpUNOEQ==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(23010399003)(1800799024)(36860700016)(22082099003)(18002099003)(11063799006)(56012099006)(10067099003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(376014)(23010399003)(82310400026)(11063799006)(56012099006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	xOBmofB94ULI6AMv4PqU772OeDGSr8K9hsmHZxIdHQZlequjZFBowxOOwbK82xZrLNYybOPFdHJO6zaYbFRsswSzfI0rG6gKAfsAE+0RUeE3fqkTfTm2SUF6AZSWGF1MKqgvBDISL3+Op2hNqv0Bx+d9x1uo8JJlcn+2txjGh6uG9UiX+ziPN0MVIimk/tnRwDnFGUzYojx84+oiWwbMb+fchBEfol7lo0CAb0r7WlnVdJBbHafXHTG77fhpLqADRaCkN8P1Mspy7n4b53XgCjEYOcpNEZLtSPD769UUVY2WzM8Qaq9Fej8LPD3lKsYHiV8/UncnlhimrU/YI5rF6NNNHzuwe0QEyy9C40RKgZ2WlCPpn9HTxMqdyVVMiJEPKXomlkkHIBpv0wh3GQbpdefmi5TxF9NvkiBFWMeA7+fPtDuD71NRgFl1uKuUZrBY
+	PLVThB42gP6zgoYdyhhXXg365PaU8jx+eH2HA92ETTtn3N+AvfJozv5SHfiRCrB/N258z+U6GHbPwH6w7GNOr+L4zTndGkwCwB8PslwDtaK01V5iIbVdjJyLP6gUufjDf93l9MQuNbrGUFLvVr/uGnmiqWQWCvgPwoaPhVW7IAXOiFuI1tB89m7JAhNsrWwd9YFOQWcYeYqAkmf0FFp//bU/bcbhLAhT+cSiUQbUDpcyabR1JtuNV2FtT2m3CvVHAZqaT2YPDz3c+QyLqdN3htdtPr3x5HMf445XiqVK2wVXX/vTyQ0Rwvp/lURRF+IuCSKDywl00z0g3VzlwfDtJeePBXgapythfD61xIoEaK88Zw8Fz5bLqEiIDdYEDL20NKjT+P1DH77X5ZDARTuk1oIORcuxb1jMI9PB6AdOWnkDsKawP6XNxQEkbiL1Bp6g
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 13:45:34.1672
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 13:45:38.2401
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72cfe7f1-38a4-4db9-122b-08df17e69c50
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2281467-ae97-456f-6d66-08df17e69ebb
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D216.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BADA.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB15830
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14588
 
-Add support for the HiHope RZ/G2M v3.0 (a.k.a. R8A774A3) SoC main
-board.
+The HiHope RZ/G2M sub board sits below the HiHope RZ/G2M v3.0
+(a.k.a. R8A774A3) SoC main board.
 
-The RZ/G2M v3.0 SoC main board is similar to the RZ/G2M v1.3 SoC main
+The RZ/G2M v3.0 SoC sub board is similar to the RZ/G2M v1.3 SoC sub
 board, so there are already DTSI files available in the kernel. These
-DTSI files will be included once additional support (e.g. I2C, GPIO
-and sound) is added for the RZ/G2M v3.0 SoC.
+DTSI files will be included once additional support (e.g. CAN, PCIe
+and ethernet) is added for the RZ/G2M v3.0 SoC.
 
 Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 ---
 v1->v2:
-- Dropped bootargs from chosen.
+- Corrected indentation
 - Updated licensing to "GPL-2.0-only OR BSD-2-Clause"
 
- arch/arm64/boot/dts/renesas/Makefile          |  2 +
- .../dts/renesas/r8a774a3-hihope-rzg2m.dts     | 49 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m.dts
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ .../boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts  | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index b742baf509a1..9817f3ada6f9 100644
+index 9817f3ada6f9..10a138216221 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -8,6 +8,8 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
+@@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
  dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex-idk-1110wr.dtb
  
-+dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m.dtb
-+
+ dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m.dtb
++dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m-ex.dtb
+ 
  dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-beacon-rzg2n-kit.dtb
  dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m.dts b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
 new file mode 100644
-index 000000000000..cd46af2a924a
+index 000000000000..d346a4009ec8
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m.dts
-@@ -0,0 +1,49 @@
++++ b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
+@@ -0,0 +1,14 @@
 +// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +/*
-+ * Device Tree Source for the HiHope RZ/G2M v3.0 SoC main board
++ * Device Tree Source for the HiHope RZ/G2M v3.0 SoC sub board
 + *
-+ *Copyright (C) 2026 Renesas Electronics Corp.
++ * Copyright (C) 2026 Renesas Electronics Corp.
 + */
 +
-+/dts-v1/;
-+#include "r8a774a3.dtsi"
++#include "r8a774a3-hihope-rzg2m.dts"
 +
 +/ {
-+	model = "HopeRun HiHope RZ/G2M v3.0 main board based on r8a774a3";
-+	compatible = "hoperun,hihope-rzg2m", "renesas,r8a774a3";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* First 128MiB is reserved for secure area */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x80000000>;
-+	};
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
-+
-+&scif_clk {
-+	clock-frequency = <14745600>;
++	model = "HopeRun HiHope RZ/G2M v3.0 with sub board";
++	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
++		     "renesas,r8a774a3";
 +};
 -- 
 2.34.1
