@@ -1,94 +1,177 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600A844E046;
-	Mon, 21 Sep 2026 07:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789977107; cv=none; b=Wr38JXUy3G+/1ij7BTH399vX6Uh8YXImOg8Zd+h4sXgrzxxhLsK8OGsY7EldTfVyNLUtLETfduDPTp1l1iE0YErilZBmv5DyOQn7qoOEu1SthiGesf+PEpo69lVyF1tb8HWan6WPfgYu9YFzLwS0njYfUDGuMZqR6va1boPy3xI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789977107; c=relaxed/simple;
-	bh=sZlS+5hBTeYamg0dI6hO+fZLWCFBhpnY6tKiaHd8tMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btNTEfa0o4ujZ2I/i7iRwJo8wjvmCq4PQqKkNCPStd+wDYljxJTXYB++uaRm5MZpSG22QKMUqaARDjJlnXIHz/kWamAL1qpY2e8+EolOBv6PFJA5AKJYyk4DVwD5J581j1uFSO/UuL76b3tbltk4im2wx/wKyqFyde8MPG78HCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L+sK7M1R; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD16459AF4
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 08:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789981022; cv=pass; b=YIGgsRosEDKi6btRIQZu5hZOHiGiLNQ7Nf1pUyD/oG0I3h7a0fDmDZtf4nOdL3LV0yjkk3msgr6XPUnX+tTGjnO+dKKzZ413Yhl99IQ9JIG/lQOmcXONAJvEZeXn8lxPzFa3ObyqvNJM82PpOr3Ez87825AKkXs3SiSbQtB6mk4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789981022; c=relaxed/simple;
+	bh=LIMisOFGt0qIn1CPMIveMR4IC+rDqNbpmZfUtuIDlQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g38ApbAgNSqcscbmkb31womYdsv6N4nrBPHg0gclfIekIzwwF/kRP29d00g007tIn+5HVPZtXLPyjc+SOhKMVNXRGu+id+5mwNEiCT0DeRF9WEuYMYS8cTqTXSuu0JV6QU2MinbkBrAo2fcCXKbMIb/M4qWUfbpAPpdciONq4Fc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=r9SmA2aW; arc=pass smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L+sK7M1R"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 282A7153F;
-	Mon, 21 Sep 2026 09:49:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789976998;
-	bh=sZlS+5hBTeYamg0dI6hO+fZLWCFBhpnY6tKiaHd8tMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L+sK7M1R0d3rjmIkUs23v4Y91mzJ9bHr8jjSxwK4aS2qXXoFtQHYCrGWRjnz0Byzx
-	 vNNimR4pBTHeG7SeHma/holVeUOWYrcU/oa6HMGMPLxwPNoAXKe5uYt2P4THeDt+p7
-	 QcgTtPmdb0AhxJaj4n835+aHRKYh3D1CTLc0YuqE=
-Date: Mon, 21 Sep 2026 10:51:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH DNI v2 00/11] media: rcar-fcp, vsp1: Enable on R-Car X5H
-Message-ID: <20260921075141.GF24505@killaraus.ideasonboard.com>
-References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com>
- <CAMuHMdVC2vNp2nTHUi3saTZ8UD4ggeB_aBEvN9XP+EToOr7G2w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r9SmA2aW"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4843cedd129so1583704f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 01:57:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789981018; cv=none;
+        d=google.com; s=arc-20260327;
+        b=LiNTNP3EiYJWAWw4yG11O75YnkgNhTtdHcL5KbvGgPfQkrafpZExFXAXgOIkP3kpk0
+         /uDQpWoEjf+X+yOfpRRCXTmyvfNfB8hRnySGcVLkmaJ1KjZ+IUW/j+rdn++OQvH8uQgQ
+         IeLlKhb08qKsg/8M03/3irZrb7cwm0Z0PorIUdPxEyArYbJNA8HyOTjKwiffc8i8t4aw
+         5a9q681FWu8ri+SueUH9t70S3vQnwGQpnkVPMM+5MgSjDvcwsb28wPXoNEtR/XLlKnuX
+         hKMvVTz6d9yB7WNFBaob9zpUXAzyP+kdcD35XCnckO1LvwCcHkTa0A/tMc3t8R0yiBUR
+         w3FQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=qON0nZ3j82CiOmvFqun6r6qqh5dkAemGnmHmfUfUMgI=;
+        fh=1Vs2ow87PoD0LqVltgA+nrlhzf/8Owp9KLeRoyh/UGg=;
+        b=bK6G375tsZJPY2UpEixWQRVM+nZeFhh+sT+fgDufMGifz6QdeiZRmAbjB3ylPde7mW
+         6sKrEOiZmWz2WOJF+gzL0ngg6YG1kaCa1IQp80tVLo3bQsKdNU6PWhfWxdYh5rRkwvJc
+         kjFnybkpGeIiSOZGuQ0jusRvkJtTh+v8mVcBqsqkcLborRwcbffMkzRXJFC25rDuqe5u
+         k4Xc3BFrxBmm8aj/Iztk1IoAUk3vfzkJa0n3wTIjbqQbJpMnAw/MJbZHUe/O7s2boy1y
+         XnzNB/JonWRwGHNkgry9/w8x+vTn7oc0nxK4afDyX7H5dphBY8g8fwtsvaTmQxc4Si4t
+         gV+g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789981018; x=1790585818; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=qON0nZ3j82CiOmvFqun6r6qqh5dkAemGnmHmfUfUMgI=;
+        b=r9SmA2aWbdtQDOK50ymPvhTVeRUUSayv17P+1q+tWz8l7VTadUph4aJiemMhWNyVHn
+         o9CDznKLNQ3j/hmc977Rg404wDglH1zk9pPC8R7Gyp5q+xq2R8g31HYyXDZkNwGDhiF5
+         ixhHx4puuB9dHflPVvnuIu6Hw1fJKAPrL3fwXKSbBusz06/3GpZYYNCFzo5ginUlyahJ
+         ua/VQW6RaxcBgynx3xaLd5Z+34VZ8Fl7anAK9ziZlugRJFseCBJEj9a6gWDeSgfGLK7q
+         j1FKgDkq/KskJHhoOSwFcVf0GN7iwgdTtmJ6V5GMHu66khVnaHPf5wLL12ZIoCCSDczS
+         XFOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789981018; x=1790585818;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qON0nZ3j82CiOmvFqun6r6qqh5dkAemGnmHmfUfUMgI=;
+        b=HZOMfANZhPzcwnaktgRHYVZXtc1x7RxDvtZyp/w8PKcT4ZaZyh7ye9Y+W+AH716dWG
+         2jUGYMxEYUgtTFwme4uEkHPu2k01j8KB9ODXFZZJ0RovDBeu0n7CWeJLQh2rI8SAZxOh
+         4k/ECxDBe1aLSJSqNgxGLxHBY7YgMq8J9xCzTTMPOpe4FM2i0FAHzrZ9hfXG762kWbcJ
+         R//oK81aTYeNBgB3RFxUZEZFKNIlgg+ygHqVC1qs+naVSFoBI/Qs7gEaE8InuA3DA7xw
+         qMvt6srZ6ei9hbBSUcNR8xM1vV6ZYtQaM7017TRYs2irP/VjY+Mc/D6KOfca8+Oh1vpN
+         JTWQ==
+X-Gm-Message-State: AFuF++m30VMi8j1o5fJ787+QuK6Tn0M+TjG/XBxwx2J8nkCWT6BnxVXJ
+	1CksO5KKOzyUClNwGDuDrobFbWuqpQGyJTCBD7l9zpC+oGVlTsNBo0Obs9u4ZiloaSniOVbkSfI
+	JVe5xlR4VTtfaU2Mt9491T03HQtKP0Wg=
+X-Gm-Gg: AYBFou3ApHwyC5S+PjmJ0nOQySPkTCsS1FpEjWqHYcHxfucFBOMgQcjU5muyXgbIiN+
+	p0a1/+s4JziT1gFotNeLESVqHcYUrS2qAWkjZXVaXWJbKJvmtSSVvWjnjnylSTHB88JAMy423DL
+	CijGM+j1WtyfUtFlATbX8UM3L4n8TY5KTpWaZih8p+1D+2gWgiPDw88HAOcj9LOvNup+lFNFmrb
+	Qhx+nGYfFsu0qON/Q1lNHzwfq1ELssQETr+GkC+waXafGvRV2In6ip5oH/CgFaoT1HeF3h5dOnl
+	uTPOoiKGNBcFqAPuJ7e7g3eAUYud7eMj9mRZRPNPvrZydLcwWHwMZXuxu11eSwK1LdrQmSh71T4
+	e3xkOtB8x+nf7yPoIe0fUoa5mP6GHlDLXxwRvgIiDnYG1854YQwqv6VUaYgDvEP/0ENDaJ+OG
+X-Received: by 2002:adf:e001:0:20b0:487:21a4:f617 with SMTP id
+ ffacd0b85a97d-48721a4f785mr12067196f8f.19.1789981018022; Mon, 21 Sep 2026
+ 01:56:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVC2vNp2nTHUi3saTZ8UD4ggeB_aBEvN9XP+EToOr7G2w@mail.gmail.com>
+References: <20260917185903.61253-6-wsa+renesas@sang-engineering.com> <20260917185903.61253-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260917185903.61253-9-wsa+renesas@sang-engineering.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 21 Sep 2026 09:56:31 +0100
+X-Gm-Features: AcwNN1UuhHZT5-lbDJzHKCaC457x5CxrktdfiOsZEU2bG1XndBnc3Ogxq0Q1bIE
+Message-ID: <CA+V-a8vdkeOP3uh-jObET1oCEOaEsyW4LJ9mxE0tOTqe81Rg_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] dt-bindings: rtc: rzn1: add R-Car X5H support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+On Thu, Sep 17, 2026 at 7:59=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> The RTC on R-Car X5H is a bit special because interrupts are not wired.
+> Future R-Car Gen5 SoCs will have them wired again. So, create a
+> dedicated entry for X5H without interrupts.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>
+> Changes since v3: tag added
+>
+>  .../bindings/rtc/renesas,rzn1-rtc.yaml        | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, Sep 21, 2026 at 09:41:10AM +0200, Geert Uytterhoeven wrote:
-> On Fri, 18 Sept 2026 at 19:07, Paul Elder wrote:
-> > This series is based on Geert's
-> > "topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3" branch [0]. A
-> > branch including this series is available here [1].
-> >
-> > This series enables the FCPV{B,I,D} and the VSP{B,I,D} blocks on the Renesas
-> > R-Car X5H SoC.
-> >
-> > This has been tested on an Ironhide with the vsp-tests test suite [2].
-> > VSPI:
-> > 145 tests: 138 passed, 0 failed, 7 skipped
-> > VSPB:
-> > 115 tests: 104 passed, 0 failed, 11 skipped
-> > VSPD (a):
-> > 114 tests: 99 passed, 0 failed, 15 skipped
-> >
-> > VSPD (b) hangs on the tests, so that needs some investigation.
-> >
-> > The first couple patches add clocks that are used by the FCP and VSP,
-> > but as the upstream X5H CPG driver is barebones at the moment and we
-> > don't yet ensure that the parents are enabled, these are marked as DNI
-> > for the moment.
-> 
-> The DTS patches use DNI definitions of clocks, so they should be DNI, too.
+Cheers,
+Prabhakar
 
-Can we add non-DNI clock definitions in v3, or is that too early in the
-grand scheme of MDLC and SCMI development ?
-
--- 
-Regards,
-
-Laurent Pinchart
+> diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml =
+b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+> index 7ea77cd0bee1..b448725671ec 100644
+> --- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+> @@ -23,6 +23,8 @@ properties:
+>            - const: renesas,r9a09g087-rtc  # RZ/N2H
+>            - const: renesas,r9a09g077-rtc  # RZ/T2H
+>
+> +      - const: renesas,r8a78000-rtc   # R-Car X5H
+> +
+>    reg:
+>      maxItems: 1
+>
+> @@ -52,8 +54,6 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> -  - interrupts
+> -  - interrupt-names
+>    - clocks
+>    - clock-names
+>    - power-domains
+> @@ -66,6 +66,7 @@ allOf:
+>          compatible:
+>            contains:
+>              enum:
+> +              - renesas,r8a78000-rtc
+>                - renesas,r9a09g077-rtc
+>                - renesas,r9a09g087-rtc
+>      then:
+> @@ -75,6 +76,20 @@ allOf:
+>          clock-names:
+>            minItems: 2
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r8a78000-rtc
+> +    then:
+> +      properties:
+> +        interrupts: false
+> +        interrupt-names: false
+> +    else:
+> +      required:
+> +        - interrupts
+> +        - interrupt-names
+> +
+>  unevaluatedProperties: false
+>
+>  examples:
+> --
+> 2.53.0
+>
