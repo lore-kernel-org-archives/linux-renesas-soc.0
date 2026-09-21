@@ -1,164 +1,159 @@
-Received: from mail-wr2-f35.google.com (mail-wr2-f35.google.com [74.125.225.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752513515E6
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 11:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789989863; cv=pass; b=EefX7BBs2FEPOV1wosnxoOM2d7087acANkn7E2GOMXCa0y6LkfQdlknT3uhZhPGYIlE/zrX7LtNx4t1qMcMD31dDj1/pkJwrM3UN0oL0QKO2ISQcDDJdax5+d4iJLEnfkJyFlgRP2E3v9GoUzlG+G4wYwdYg4LBH5ECXp5NyFYs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789989863; c=relaxed/simple;
-	bh=y/eWHTyXoMpFdp4Bz0hrXhzEPnH88xFODm0JNc+iGDo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k4EDOkh27ULh2+WKRRO1ZKO6kBCpiNWaDWQ8ZfCuyGjl/3cjB+TjCWFA3lMJFPiulBAglu4T2Iaj9CijU+32n1gJf009OMK1uegO6GzowkplwqtbgbDMK6WVyieqNst9HXodewey+rNCGo7W53ids8IYOVsXyAcge+gZiyBGXkU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ThX742iP; arc=pass smtp.client-ip=74.125.225.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFADE346E74;
+	Mon, 21 Sep 2026 11:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789990438; cv=none; b=lYqk2hUXOaAP+GJIIl6msViXK+7sb2sPSfS59G6/238in+1TJn4yGYM9CFflCt2s92NAI+N/5gKh/TuvXp7D/mMmi2HjrnLG2j2/KTdlZgvbEu5bWSnYAPn37Cpu2ggp4NP8Z8+VMpRsE22Ql1/cjpgOwEp60xgFHd0HAppECDU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789990438; c=relaxed/simple;
+	bh=4PgdLDiKIVXTWGTu2jsrSR6qx/gSsOj410WrI/Vadek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqOefsOEeP0lVegW0x3DXBFeMCSfvFq57+TnQfepKzt5swUN+8I4zNep4JcIxobzLVxkBMLWipANI2mcZcgUF8WLcAwp4gYiiPKZPl7M2XKzpKBGjPxdt6b3Zwt9nO1SHzaoyTJa9xPhEx+u6L9wedxjXEhRtIMamO/kDDbJY+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdJ1QI3y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThX742iP"
-Received: by mail-wr2-f35.google.com with SMTP id ffacd0b85a97d-482f635552aso2356140f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 04:24:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789989856; cv=none;
-        d=google.com; s=arc-20260327;
-        b=bKnFPVqTySW50/vMP4W4MNPMmhG2whzAZxUPqgDbVbpMYbN436lXpjHYaQcSd9SWaE
-         fASOS+YnexP3l6+RJc88C6cc2jylgn41KQfjJv3eUjSxbBFP2n2ApQvBMOg9rxEbLKup
-         zwYWinMVH/BFxPNIvaLGR0byYQcA38JnHfq00Jr1H/TNYqMKNNkj/t0a4y3JoNHGy3bC
-         RCbmobcawoH1DgvE4lCIfkOXp/2MasQ2njTMb+rwcWoRd2TKEC6enFCH7aJbaCfQr3YV
-         inFIEM3xd9Ep16Gh5yaKUjYAt3nJgVBf9KgZlyV6Ooh36ahgYzD7q2VCdfXH3iwuUcBE
-         QLRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=y/eWHTyXoMpFdp4Bz0hrXhzEPnH88xFODm0JNc+iGDo=;
-        fh=Gf9Yurr5JBrkbPmm7OCTwcOdn4TQdcreHlVG5ZXYo/o=;
-        b=Hq0CmZVRxwJDCb7nypWtns6lLRuZ8kHMBw8kQE84zLD9yIpW28ulzqKsL7FDeCZ6ZE
-         QJtAIa8WrWbwAecR0APRP8pVLcqCfnwlC4LYZ7IHi/zJaHGsor0ec538exYOu47gFwHX
-         5wqd4rKDlgRE35DkBLyWRTPgJEw2wxlI7+RtzkQiwHAHt6fazcPyvPz0mz20M5w9Q3Wb
-         aSsS8UV1qTewRXoU9hw+Kn51oGkwpP4pdaNq3e/e3kZIbaLUXZcfIPnpT+w14jj79eYG
-         OVLaQVd5o43u7558Rz3DTBSkGAObpontEXLAG9RhIG9YAdE2OyMnWLIc52fhzNqSdYS5
-         vP4g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789989856; x=1790594656; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=y/eWHTyXoMpFdp4Bz0hrXhzEPnH88xFODm0JNc+iGDo=;
-        b=ThX742iPETQukFX3BBlsPPA+JqXvvRIUi3buvYb6DHUJ8uhywR7FkPybPC3WtdM2td
-         cw+JZn2MXPLxNJkU1hv/HjhYQbCExqead52s5CZSES4onYM6ZeFng/l1dI4W2aCJ070z
-         sGUIx8WWnCBUSgqZw2OQGQDhU4eYseFbxWM7XOZhjmsVd9hw+zaQJd17FyC+lmjZlng7
-         YrB893St+30OJ3wABghrgJytAqkSKr044EIXFeyfBUmZZurPVJoA7+OODterBi/HYktB
-         K+y+DZZjHv2NV80Cj+p5ANMayWnacg6V/RlXynE4nq+plf2w/FGel/B+E5JwiNU9VlO6
-         LP6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789989856; x=1790594656;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=y/eWHTyXoMpFdp4Bz0hrXhzEPnH88xFODm0JNc+iGDo=;
-        b=0YmOtQj1g6Ju23yUTFkDx6Gd0YgrghzhEhdAQczegS2yX2zISaC4rs2piaJLHfH/L8
-         G8CcIlmY7UyQcCUxt7+Hz+S4IdzAsp+/qyktrLoHuWbO47opgJPASzYCYXHxYapDMKpK
-         tf5GLNvTmC75xms2u0rsotoo3bkxnv/wl1bOk/u4k51xlADeCGvxsLXCkwA3G1rGehTo
-         b6n1SsGlTbZeYBSGuEMCaLrhBvqTE6+wqM+HahUPTc7MHjxVGkGxaZ1N4QPzRM5NSC/5
-         wezw+Nk0CHuzqojW3BXbKLIxfqkOMwFGlgpEXmIkV23haj4XHu3h8FPFzTW2MgYy9H8u
-         3ePw==
-X-Forwarded-Encrypted: i=1; AKwUvBxL/MReT8ZHe+BTeRhPt90dShJ4SaHboaZT2JwDytewyKVPPVkx/BLJIWjE7yMuO+KWxI4ZmFW5r1AwlulXhJAWTQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++kkBdEx9WbWQVbMkXfopAZutv5zcFbMPUiChBd0CSzXJnEGPxo/
-	EbMYmTFBD/pnKOUnjwh8YXWd59jypF+9sguF9IbAPqE/p+H1zQq+0nXz5Rn2p58Wgf3jza6270n
-	jsPgesAu6yvpJbdg5n4R1kFFVn6ppYUw=
-X-Gm-Gg: AYBFou3Tp1H36v2ilwKeh7ocaMBKxAMZR7Aimc3CC2HN8cUIhe+hTPmI+0UEInSdzxs
-	mfk09ZeVSTZCut4DB2JmsYGxiV/3HzAH8BXELB7WJ5bz61Ng8wWOmaZPiH1jjRrsDDiT9JxdwNn
-	M6+tULAZJ0w/c8ZXnQ8TNyPoi1Vg2zVv6apQ+mgUKL3CNmrwmcjM9U+JVbOpKU+HmhlVUTfFY7h
-	mq1XdU1n366XcxzWH9WIC1atrfo+u2YJ93w5i+cmikjZHqLLa3hqEFPieQZK7SHhxM8NTUDtXIu
-	lyflo6b2/hUs0G9bpomU9MSSmtuNNDWqW6cu92HTggwkaw8Cz1DlTnRiQ3unKHXCjTLkquzsRF2
-	39yASFFTqnlOhAjVhY52mP7WfpEV8cpNpvQVRirS3I9bBeomYYci+DX5vUK0G57yf540FFUFz
-X-Received: by 2002:a5d:5d03:0:b0:487:8ef:5303 with SMTP id
- ffacd0b85a97d-4871e394d18mr16926933f8f.34.1789989855856; Mon, 21 Sep 2026
- 04:24:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdJ1QI3y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B591F000FF;
+	Mon, 21 Sep 2026 11:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789990436;
+	bh=MDIUNnJTr3U0Ey9p4etc55PGRbEZi0JsFTUGlPBKo5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=MdJ1QI3yp0m4W6wPjnpOlP/LuYDBBHyHtO6Zn5chWqo6r8O56zfzdu30oPxNYD7eA
+	 6NGIwnlNi7nbYAUpTe1nB9kvVWEiGBLoBvhjAHsDR6BvGuOtqTHJcPSCEiap+Uxct0
+	 XCeDFQD0PyS9iZgRDiVsh2TcunDaQiBgZY/9kjfjGSJr7L8n5Hmu9QWXs9J+wkqaLD
+	 OQSjmUuvVqsmZx1mUngxnmaYWwePogbProrqJV/yU2encACF0F3DNiP/Z86Sez1sve
+	 3bQh5KztIL9br8JUjHdDnn67RbY+tci0wjl5CYZnvUkpF+gfVLiTLCjAdHzsfTJzui
+	 Wb+6X6UdDhHpQ==
+Date: Mon, 21 Sep 2026 13:33:54 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
+	Matthias Fend <matthias.fend@emfend.at>, Mikhail Rudenko <mike.rudenko@gmail.com>, 
+	Daniel Scally <dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Michael Riesch <michael.riesch@collabora.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, Paul Elder <paul.elder@ideasonboard.com>, 
+	Martin Kepplinger <martin.kepplinger@puri.sm>, Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+	Tommaso Merciai <tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	David Heidelberg <david@ixit.cz>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
+Message-ID: <arEVs0FDleyHeeLj@orome>
+References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
+ <CAMuHMdWWOB48AUCbXh=9ZGCK2qZyVH06kJ2paRY-wxkq5NC16A@mail.gmail.com>
+ <CAMuHMdVhK0vm_Ksze_=jG8D_=8Q45v+ezNbxwL7JntTt_v_fkg@mail.gmail.com>
+ <20260921073538.GA1466037@killaraus.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260817192540.423994-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <87577cdb-7f1d-4a9f-8a61-ff1f272234d9@roeck-us.net> <CA+V-a8vVtjALarck6PE3it1si2hNbveZWoGjTaTUW68Q6yYjcQ@mail.gmail.com>
- <a73c5d5d-dd64-4061-83cd-0a1cdcc2db4d@roeck-us.net>
-In-Reply-To: <a73c5d5d-dd64-4061-83cd-0a1cdcc2db4d@roeck-us.net>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 21 Sep 2026 12:23:49 +0100
-X-Gm-Features: AcwNN1VFoJ0rwe68Hi1fMS8HP9OtdClqcRaDuoUukIno7KtW8dqa4XMt5T_ytyQ
-Message-ID: <CA+V-a8tugekX_ykWWMzVkHbEo4huviGYdJuECEfuYVZo6dY5wQ@mail.gmail.com>
-Subject: Re: [PATCH v4 5/7] watchdog: rzv2h: Add syscon support for WDTDCR
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rscvpqrbalagvufr"
+Content-Disposition: inline
+In-Reply-To: <20260921073538.GA1466037@killaraus.ideasonboard.com>
+
+
+--rscvpqrbalagvufr
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
+MIME-Version: 1.0
 
-Hi Guenter,
+On Mon, Sep 21, 2026 at 10:35:38AM +0300, Laurent Pinchart wrote:
+> On Mon, Sep 21, 2026 at 09:07:01AM +0200, Geert Uytterhoeven wrote:
+> > On Mon, 21 Sept 2026 at 09:05, Geert Uytterhoeven wrote:
+> > > On Fri, 18 Sept 2026 at 12:55, Kieran Bingham wrote:
+> > > > Add a new dt-bindings/media/video-interface-devices.h header that
+> > > > initially supports the Orientation types and convert existing users
+> > > > throughout the code base.
+> > >
+> > > Just noticed these are already in since commit 6ab5acfb8dd38729
+> > > ("dt-bindings: media: Add macros for video interface devices") in
+> > > media/master (next-20260903 and later)?
+> > >
+> > > > v3 collects tags, and fixes the typo, but drops all hunks that do n=
+ot
+> > >
+> > > [...]
+> > >
+> > > > v2:
+> > >
+> > > Interesting changelog order ;-)
+> > >
+> > > [...]
+> > >
+> > > > v3:
+> > >
+> > > [...]
+> > >
+> > > > -v4:
+> > >
+> > > [...]
+> > >
+> > >
+> > > > -v5:
+> > > >  - Definitions now accepted in linux-media, rebased to get conversi=
+ons in.
+> > >
+> > > Oh, you say so here ;-)
+> > >
+> > > >       arm64: dts: renesas: Convert to new media orientation definit=
+ions
+> > >
+> > > So it's been safe for me to pick this up since v5?
+> >=20
+> > No it's not, there is a hard dependency.
+>=20
+> The whole series needs to be postponed by one kernel cycle :-/ It's not
+> urgent so it's not a big deal. Kieran will have the priviledge of
+> rebasing and sending a v7 :-)
 
-On Fri, Sep 18, 2026 at 6:39=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> Hi,
->
-> On 9/18/26 08:18, Lad, Prabhakar wrote:
-> > Hi Guenter,
-> >
-> > On Thu, Sep 17, 2026 at 2:12=E2=80=AFAM Guenter Roeck <linux@roeck-us.n=
-et> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On Mon, Aug 17, 2026 at 08:25:38PM +0100, Prabhakar wrote:
-> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>>
-> >>> On RZ/T2H and RZ/N2H SoCs, the WDTDCR (WDT Debug Control Register) re=
-sides
-> >>> in the second register region of the CPG/MSSR block. Since this
-> >>> multi-function block is shared with other peripherals, it is exposed =
-via a
-> >>> syscon regmap interface.
-> >>>
-> >>> Look up the SYSC regmap using the optional "renesas,sysc" property an=
-d
-> >>> derive the WDTDCR offset from the watchdog instance index.
-> >>>
-> >>> Retain the existing MMIO-based access method when the "renesas,sysc"
-> >>> property is absent to preserve compatibility with existing DT's.
-> >>>
-> >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>
-> >> Can I apply this patch without the other patches of the series ?
-> >>
-> > I posted the v5 series here addressing Sashiko's comments.
-> >
->
-> Sorry, I was getting confused. I somehow thought they are different serie=
-s.
->
-> Do you plan to send v6 to address the issues reported in v5 ?
->
-Yes I do plan to post a v6.
+If all platform maintainers Ack this series, they could go through the
+media tree where the shared include was already merged. Alternatively
+the media maintainers could provide a shared branch for everyone to pull
+into their platform trees.
 
-> Note that Sashiko no longer reports pre-existing issues in public,
-> so those will be out of scope.
->
-Thanks for the note.
+But given that this is simply replacing a literal with a preprocessor
+macro, maybe not worth the extra hassle.
 
-Cheers,
-Prabhakar
+Thierry
+
+--rscvpqrbalagvufr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxFiIACgkQ3SOs138+
+s6HA/BAAlTOuxN7hAGKsy7dYRPGn5XonD1CL3PrwL+ma3OlyhbTXIVe+Io6RW7J5
+zKfOah30Mnvem2LLH7Sg0m4pfm8rTX/nF7tQQihKyk5IU0/9OgH8/2J5VeB6WRmb
+7ekKOnFAQw9YQs1vcpGn4Jm1JvkIz1ari2ZXHx2qf3gfSi43gDwZ5ZLZSnL2NyTG
+ZaSMB+Sqiao0Q8YuY0UYuEi4jqGJr6qV0fpJKMaG+LHrPS42UG0PYDSbwLkkXALN
+GOz3A9wsFz58L3s92t3+L030Jl/WJEzrg9b6HzfbuS1YKX0mcG1FWRQB3k6waSQM
+lSVq/HZ2fzW31WglB118JZFVqyBGH8cHxXumpsOkOcPiga0dkUIkfCIdOm1GWP1J
+Q/CMLKNu3phGaXej8wIlhtZxUbhP1DYJmAWtYNSAbOg/Zgomo1Q4y+m2qxkO2VWr
+fq/UoozCz2rYlLcTDYB/ML7e2KZHsh7OTNwIGaJ3eIretaKyI+K9jOfOxLZ83SuJ
+yvkNTOAq9sRKiSQod41cgN4UWLsSEdLn6399hyFGHpcwazrebRKfnnfMUauRflSq
+sLokqJGJrk/Ck2uecD/pNXlBGztCR5Czxyf+R4CHNMKMa8HqYQS9OFvU32QnyD26
+6Nb3cTM0bMwTrWMTJVQnV+SVmqld3xVL6f9i1vImIvJAiEcxJQg=
+=n1ZD
+-----END PGP SIGNATURE-----
+
+--rscvpqrbalagvufr--
