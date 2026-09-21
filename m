@@ -1,151 +1,152 @@
-Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013038.outbound.protection.outlook.com [40.107.201.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7503A9018
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 07:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.140
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789974820; cv=none; b=B8jCgC83FHfSM1U09dvjqBeA8uxQj9cb5x8TKOg3NBBol3obbwI9iYWGxmKar9bdf+F22zdssslqiUvOGbdwwr7N2DCwNBXV3b4/ANQR8TeIg03cGoMFFbvoF+adcqp/dbW+2Q3a/skXi0+DmyjD/SaJfZKQqSv1EJbMlXAYBHU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789974820; c=relaxed/simple;
-	bh=IWy4s88MhDwNpHOdGe3jP1qXGMxg1e08ypz8dpiL9Dc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rwskasKB+Op2zRrYynVL0NNGc2nvw28bg1Z88YhgzRIlxk3iDIW21eqfTv2e6+/uTi36ziuD54f3VQz1ygaG6GXxZ5Vt/1va/uNChaWkCMuLu6tzkr0+RCtc5puKLDH4KIpUgDA1EZ/p/upXi0NGS1IEjWrryxIcDNVqGVnvl0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.230.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-91059280d58so24075626d6.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 00:13:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789974816; x=1790579616;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kOgPfCklfblv+g6nVV8jDyWvhZtKrbscHFmS476/ss4=;
-        b=goZJmf8iuRXMckwBKNrRoAd+TvtedgwUPUh4KKujiFvJCwvDNvx7swNCm2ENcudbre
-         ihTj/MqyvRC0pA3FVtkIoy7+B92RThWd+A7YFDoRfXzfB3Zg+s8MyEd+sYtr9UBQ0ChI
-         j9WsvgCLO1va6ki/tFiYHRFxayMYWecdpXhJpAf9GDpzlWKsjioWyTEsiv2MIOLlNuMI
-         ptASUDBosxyDfZyfC6SC+KUiAdJOx/0yfYN+yNUCk5v6wmYSzk66He9dT5KJsoALjFxN
-         b8m0kChdmI5D2UuKnY6o+4XzF/35AfD78gjKfaNsAnjkMfTX28t4i/g56Uq3rfBd6R3p
-         9OKQ==
-X-Forwarded-Encrypted: i=1; AKwUvBynMOWjyk+RYq5tC5xdbuARYiwtQepuoSjU9aNCBzXewzgU/Iz+g0c72w3diP9xuVKP0tzMvm0wmVTpO97JmFKJEw==@vger.kernel.org
-X-Gm-Message-State: AFuF++kogXMd5k5JJsFzu/+q/SB9B/SbAVAbkTo9dg0K2v0H3+YW5GWw
-	t6XeWhO3mjG0z8/gwXbXJ8eZgWQx/G65mCtkgnb9cf396B4J8t8yLWZAGtMcibiL
-X-Gm-Gg: AYBFou0Bau1eV601gDl8TOQ0YnDQf2NdKOOezqvVvuKUMaVXo1Xjz/AZ2roxOSs8oZd
-	0pOOpsrgil1u5oAzAgu2kw7mK8HOzObRZgE5YXi2nmd0JuLht7UTg0yys1xYOUp/W+Hwhqlibnc
-	QnmUli2HnLLo4PZJoqAinPExYPeMZNFi1uLHWM/Bw1Bprp6VVsTCAoY5mcDIDPcie6sKBOb+eB4
-	GKkfHWKanh6KrNON/P3TU5eZb6080jvQasvpmKB6cKoVd3euUzp3ml4NlO5I69QTiq7VtUsxeKi
-	yZAJuVwS1n8bU8YTeLao6BP2WtfEN0awg8Q9s3YpNAs0IkndDKQqOenTCOwJV/UnVwVsYCb6wyg
-	Crfj8v8WIz5sM++VeAzQczNWKbWt+tYnEv/Lhsnz5rfoHTkvgLTL89dNjaGIRwF2HITHrADUfVV
-	ob4QIKQ57GYzm8l9GqKz+RyCf2mE/ZSZkXY0EBJ7AMUdE+pjaQ7/S2svskywRsoezbS9efh7FTZ
-	8jsm1v7fEzxbpzyu85nf/PNxkeWbuBDZGYvNA==
-X-Received: by 2002:a05:6214:ca8:b0:912:517b:7bcd with SMTP id 6a1803df08f44-912a80178acmr95347506d6.44.1789974816283;
-        Mon, 21 Sep 2026 00:13:36 -0700 (PDT)
-Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com. [74.125.230.205])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91260962cddsm63276486d6.3.2026.09.21.00.13.35
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2026 00:13:36 -0700 (PDT)
-Received: by mail-qk2-f13.google.com with SMTP id af79cd13be357-93910a0cefaso240631285a.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 00:13:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzgLJPsp9PbziqrVNWiDR/uWN009J9Qn3pdcQ0dj/atjjmSW4637aBOYCyqYqi+Bbas3c+HOqc2hYBEtJ5dcwPKXA==@vger.kernel.org
-X-Received: by 2002:a05:6102:c4f:b0:7a7:198b:674e with SMTP id
- ada2fe7eead31-7a7198b70eemr2080779137.35.1789974354429; Mon, 21 Sep 2026
- 00:05:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D43B3C10;
+	Mon, 21 Sep 2026 07:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789975010; cv=fail; b=J5tCtJYQsgqY88tEBwnswD7IMl51CUmj9RYkKBMGmILBrx0QJP6njW3azbszwKAEpWvcdFeEtDUqFemB8/QF6AHq6I42l4ykbx+vkdN0xsKCRXFJ4WURS5uC9z8PYR65sBsKcoGbudY1BNYPn9v7MWF/S9vDu8AHtyI9K6TyEFA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789975010; c=relaxed/simple;
+	bh=YuSdR4wIlcGg1GZxu+tFSk8yYZFGnErE1BHwXOZ6gBc=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=JrHlzruifv1VpwQM5D4taHmT3WZWtwh8UcIaqJybV/wSakR7ROeIbcShER9aMmpuOf9huebJMgQIa+muwP0D+BF3zl3UO9t/diT2/anmbBMhWz27SNyWNwAglvi//rtTqPjAsv6wNQF/7eijazuGlt/31q/0sBbLTVPLMQ+PN14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=amdcloud.onmicrosoft.com; dkim=pass (2048-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b=ya+MOL4t; arc=fail smtp.client-ip=40.107.201.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amdcloud.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ya+MOL4t"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AYTLjsF3WwBRe/TCo6agdYkR5EGiU1Got1kHVF6VgAxPZxouuhOdQkDFQ5agzk4n3j3Ym4gbSORtCwASOQ6NfEhX1dzKerPH3Vx05Vd9qhBp/NfF5KEcMMr0U0MM5VFQ/sV+IAcGrg32cQ7nkagwvFXsRy974Ejwc6i5ElYaZNLWqNEMpB5GfoB0KdVQ7R3vggtgt8XGP6xeJ6dgTqZNVMcH40r6pTp0SYLYj9UHPwnhLNF08/RgrkWMtre3XDITFxVIdvFYTopYqVhswGDmWa3QWsT7hVmas1Zeeh1rEi+0RorXRVZPXISifurpsL9r0xODTBIeoQZ0yJ0+7PqirA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pl0HNCUh+l6v/rXn+m8QshZ8hVHGMN91pooRN6c9Xnc=;
+ b=WVCjd1mFkYR33j1fFGml8qhraiBn8B6lYFhVUdArLOcWzwdFtFlWcwDgKLNEskpoHgHPEMEXs5EGoErY5ZqDc8H7qGuvY979ryuARwyrA9hhhH4iHjxEUAuKeJZCqwZs6hBRFS0vGq1Ji0E9Lf7Gsv11mHW9VZBWKcx7iKzBG8y1+4sMlT7OqdvPOG/JQsewJudXN4Yr5dd9Yp8uGDRHAsic6HCU5OvRgg8J+Dp8gjhLm8cePbk8wDsD2Sf143q++8fwWxrj+AvkhAyNK12oIm/gbSJ1nsZscWKpFhRVpfLRyDMzF2RwWf6GvV5JXJ855w0H4o/2By82lbeTT7H22g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=gmail.com;
+ dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pl0HNCUh+l6v/rXn+m8QshZ8hVHGMN91pooRN6c9Xnc=;
+ b=ya+MOL4txou9X151gFD8EmRJTDSQD5l2FZ7xjFpa1vSfPwMSmDw1q6M+bjKkKo1kA/2Om1rPJU7To7etk6/ZeAEZ0W1Kofxz7s6npprbQHsetqB0lg3/3rZOmbatPVc7Nka2xBlhb3JgpllBj5smf8sNoSP121TiffzJyNim6PcU60t8Ni/2vEX5t8WCgaYtChrjzZErYOF81pwaJ2IVFTzkN86UaA2IklrodDI2NKJ39T6xNO/LTTl9QhTNAGdA7mT5S+JJEgSjBYxC2mPhJm2TWzAxeayYy0UWhj02xWqkDRzcFYrZPCtQNuXs3UJ19dkGPRk5iWHWW3TbGk35EA==
+Received: from CH2PR18CA0024.namprd18.prod.outlook.com (2603:10b6:610:4f::34)
+ by SN7PR12MB6984.namprd12.prod.outlook.com (2603:10b6:806:260::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Mon, 21 Sep
+ 2026 07:16:45 +0000
+Received: from DS2PEPF000061C6.namprd02.prod.outlook.com
+ (2603:10b6:610:4f:cafe::30) by CH2PR18CA0024.outlook.office365.com
+ (2603:10b6:610:4f::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Mon,
+ 21 Sep 2026 07:16:44 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
+ 165.204.84.17) smtp.mailfrom=gmail.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=gmail.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ gmail.com discourages use of 165.204.84.17 as permitted sender)
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS2PEPF000061C6.mail.protection.outlook.com (10.167.23.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.451.8 via Frontend Transport; Mon, 21 Sep 2026 07:16:44 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 21 Sep
+ 2026 02:16:42 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 21 Sep
+ 2026 02:16:42 -0500
+Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
+ Transport; Mon, 21 Sep 2026 02:16:39 -0500
+From: Colin Huang <u8813345@gmail.com>
+Subject: [PATCH v3 0/2] Support RAA229639 and RAA229640
+Date: Mon, 21 Sep 2026 15:16:34 +0800
+Message-ID: <20260921-add-raa229639-and-raa229640-v3-0-b104ee8a70b2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
-In-Reply-To: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 21 Sep 2026 09:05:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWWOB48AUCbXh=9ZGCK2qZyVH06kJ2paRY-wxkq5NC16A@mail.gmail.com>
-X-Gm-Features: AcwNN1WjYVMR8LtQc9Hk29H2mvcKQfYOy_09b_XHHWkw76vwCkEFuElZphsH01o
-Message-ID: <CAMuHMdWWOB48AUCbXh=9ZGCK2qZyVH06kJ2paRY-wxkq5NC16A@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Jimmy Su <jimmy.su@intel.com>, Matthias Fend <matthias.fend@emfend.at>, 
-	Mikhail Rudenko <mike.rudenko@gmail.com>, Daniel Scally <dan.scally@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Michael Riesch <michael.riesch@collabora.com>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Paul Elder <paul.elder@ideasonboard.com>, Martin Kepplinger <martin.kepplinger@puri.sm>, 
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
-	Tommaso Merciai <tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, David Heidelberg <david@ixit.cz>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Quentin Schulz <quentin.schulz@cherry.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANLZsGoC/33NSw7CIBSF4a0YxmLgYgs4ch/GwS2PlsS2BgzRN
+ N27tIlGJx3+Z/CdiSQXg0vktJtIdDmkMA4lxH5HTIdD62iwpQkwqJlmQNFaGhEBdC00xeFbR0a
+ NBI8cuPUKSBHu0fnwXPXLtXQX0mOMr/Us82X9uHLTzZwyqrwErkyDqrLntsdwO5ixJ4ub4ddS2
+ xYsljCyamrOhf6z5nl+AxDZE70SAQAA
+X-Change-ID: 20260902-add-raa229639-and-raa229640-c72fa121df82
+To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+	<magnus.damm@gmail.com>, Grant Peltier <grant.peltier.jg@renesas.com>
+CC: <linux-hwmon@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	<colin.huang2@amd.com>, Colin Huang <u8813345@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789975000; l=1228;
+ i=u8813345@gmail.com; s=20260202; h=from:subject:message-id;
+ bh=YuSdR4wIlcGg1GZxu+tFSk8yYZFGnErE1BHwXOZ6gBc=;
+ b=tWy8I+Y2ffuZdYp4FNLFxf7zxc0UArQfKrXfbcxcAq7cMg0uj67dxNWovT4XLdje9Lf9LzTRu
+ bsXapDz+3HfBxj/Eh1e/j0mwWwaAuFP8AEMLexoJtNAb/FtqWhsw8w0
+X-Developer-Key: i=u8813345@gmail.com; a=ed25519;
+ pk=Zlg0WqpCw4qbswOqamTBTXIchwR/3SnYZpy7rjaGMdQ=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF000061C6:EE_|SN7PR12MB6984:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ffe9ab0-3d66-4ac1-d433-08df17b04aae
+X-MS-Exchange-SenderADCheck: 2
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7093399015|61400799027|48200799018|82310400026|35950700016|7416014|376014|10067099003|11063799006|16102099003|18002099003|56012099006|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	njzdauVQJQbnH7eZmRw8y7HBXkNpnHV96LEwyNZPj3RultNYsjhlpEXaZfe4SbkSwNfkTW/PndmO45IwuYEa2h6JPfuOWC2178vooHrdAnscEclsykwvhlOpCIhzX1F/HVKr3/8GKdxyok1A9ORw/d84HZm0xvKUxz6K4n8FAAStDPBbPaZFzTkB26jdpMokPjO3RH++/wr2WHD2hZNjErHcbTWPlBpkyLweNACYX3fOcLjq4gHuxNRimc9y1zXFGBJ9zutSrpLhHL7+faLUoUKZS7wM1k3zODGQL+qgl0KeQatdkoNCLAsQjvCLD7lhOdFlDi9ShLxgFD5Fw4bq8N8PCrePb8o6Jn6zzbSaWKHEA0ASICEARNopU1qLuK/cUUKtLAdZsoNUOrCE/MaonUqN2iDdtQxbFTUL35QFWa8XvsY+3IRWh7EgfsRFVRIoaYbdT0KsZKSLGHz/5n7bhsMaT6Jic2ARZDPqVTLU91Jhw9Y6QvkBHkeFMyP/tVAtul10XZ/sXJla4+TiC1d6rPwrI/G2YTlzSCTrxeuERbZoXnct3GsvMWXiJKmMwK1dHn0HbotXkHR0ardnfxLwg/yHA4LzidMx51jzxMSKQGYSP52Tz7pAu9/QboyGdSJ9fNdxdIO3nAs8Hd19msXOZw==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7093399015)(61400799027)(48200799018)(82310400026)(35950700016)(7416014)(376014)(10067099003)(11063799006)(16102099003)(18002099003)(56012099006)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	wcir4qgwHg7QiMO2qZ5oyVyvaDODty/dLtJttCiqcAq+SCw9ISyuholROVROptXcqbLIeMLjn6/ZNfRW80vBpx0QRc/wkUPRXNjRD7fsCBOJnDoCvNz9IOpjPqr07n9JDmAKZy85Ze8Pt5xI8UhEAdE6AwlTF3CLjGn851e9NHYFZe5zRQ6zyi9FeMdry6vOCdSWBbwF7Rt9woLSAZ/UeQc50D2SvravABZNliuzkP1wXtdIT2boymVQfcDe3MvBDCXZ/LAMeZ3BDwwakXN7NgUcK9gl62aL5Z5LuyHOa9sECOGY4SGULtvoNzQFp9CCedXcCadA2xqNVe+6yItaTbBE3RthX7eV4CXYyytYUDXDEQLnLjTYJN9V+jaWrgyqBS/27lnfJd9poD29A1NaISDRSMk92plPijs8rzqqcS3fLi8b4ZX6+FXXE6UgC7Tm
+X-OriginatorOrg: amdcloud.onmicrosoft.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 07:16:44.3740
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ffe9ab0-3d66-4ac1-d433-08df17b04aae
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF000061C6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6984
 
-Hi Kieran,
+Signed-off-by: Colin Huang <u8813345@gmail.com>
+---
+Changes in v3:
+- Updated the OF match entries for renesas,raa229639 and renesas,raa229640 to use 
+  raa_dmpvr2_2rail_nontc instead of raa_dmpvr2_2rail.
+- Compatible with existing 2-rail non-TC controllers and use renesas,raa228244 
+  as fallback compatible.
+- Link to v2: https://lore.kernel.org/r/20260908-add-raa229639-and-raa229640-v2-0-83c75b61139d@gmail.com
 
-On Fri, 18 Sept 2026 at 12:55, Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
-> Add a new dt-bindings/media/video-interface-devices.h header that
-> initially supports the Orientation types and convert existing users
-> throughout the code base.
+Changes in v2:
+- Clarify why fallback compatibles are not added in the DT binding.
+- Reword driver commit message to avoid implying DT-level compatibility.
+- Link to v1: https://lore.kernel.org/r/20260907-add-raa229639-and-raa229640-v1-0-8f7218cba85d@gmail.com
 
-Just noticed these are already in since commit 6ab5acfb8dd38729
-("dt-bindings: media: Add macros for video interface devices") in
-media/master (next-20260903 and later)?
+---
+Colin Huang (2):
+      dt-bindings: hwmon: pmbus: isl68137: Add Renesas RAA229639 and RAA229640
+      hwmon: (pmbus/isl68137): Add Renesas RAA229639 and RAA229640
 
-> v3 collects tags, and fixes the typo, but drops all hunks that do not
+ Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml | 2 ++
+ drivers/hwmon/pmbus/isl68137.c                                   | 4 ++++
+ 2 files changed, 6 insertions(+)
+---
+base-commit: f4c3b88983f342d6614cb11b53a0640ec8bc8fd2
+change-id: 20260902-add-raa229639-and-raa229640-c72fa121df82
 
-[...]
-
-> v2:
-
-Interesting changelog order ;-)
-
-[...]
-
-> v3:
-
-[...]
-
-> -v4:
-
-[...]
-
-
-> -v5:
->  - Definitions now accepted in linux-media, rebased to get conversions in.
-
-Oh, you say so here ;-)
-
->       arm64: dts: renesas: Convert to new media orientation definitions
-
-So it's been safe for me to pick this up since v5?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Colin Huang <u8813345@gmail.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
