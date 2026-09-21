@@ -1,92 +1,69 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37124ACC60
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 15:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEBC485936;
+	Mon, 21 Sep 2026 15:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790002939; cv=none; b=YZu+bbW5v+//GS0hZ04fXm7ZzXmgr/B4ht0IGPkMY4j19QdJmaYdTBs9FWWMe2D/NsAfu1jM5ipoeATn/1woJXt9hTwfjZT1rYN6KuAdashdkZN/UJAgcOj/SWKatJF1qP8AXebHN20R0RL57LBWmRUr3IUgbFraCQZK36ITQ6M=
+	t=1790003929; cv=none; b=YUfxYAbA0ARAdweRzgLXJxjSp2zf+HojLhGgIcr9ZVrNwCccbtIzF6rr1C8ddHwD7JdfjUu86A1p94NI2hqmInzFf/Z1bCHv6MnjSm1N5DT8nvCV7GcHDHb6e6SJPk2Xvazec+8v0OBeve60mHQmhTd2JeHpS/yX1AU0RSMg890=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790002939; c=relaxed/simple;
-	bh=q+k41I23EnF+ywwJVp5opoab61DziI9GqC7O+IBIQuY=;
+	s=arc-20240116; t=1790003929; c=relaxed/simple;
+	bh=pizINhi/5mNaLz0JAwNTANHWOBO8EI1Aq4jP0LyIdfE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o0IXSru8+EvhJAwJHoUmL2kBjrFtN1ZR/E5wwuz/ZclbTO1+uPM6Z6k10NG35N4MAdBTv8JWvVvfJ2D6uRX5XmWwjLfzGNZdMyr7oW1teVr26KwPqECnJM+V0xUNmx/j9TFVnrErPZnmjNgsdzn4GbBTt8brtQ/WXX1OPiCz7ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Llj3tjya; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6tVmTKTs70DMVFGOH/ov7Qb4De1bAOxUoNGliXyQHACpnW+Vjf+rzWElmTLGB879RujJLaBCOdof1NyCCxyvrFC8tthNpXE6P5NoT0RPv0HlH/THXz5aUVg36BIj78nDYbhTxRame1EUAatSzvTFpMwli1dcBHxNZfyV7hacUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BR9BYy21; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Llj3tjya"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=q+k4
-	1I23EnF+ywwJVp5opoab61DziI9GqC7O+IBIQuY=; b=Llj3tjyabc9jD3ygIy0d
-	v6IykIHu4O7+DHsAEWfmUSj+SVvqYH+b3iih7E5eG/2oyo1RGWJAllD89u0M+rqQ
-	QB/9TpXWDY1+AQlo1U4gDfNBNEOkflOdGtk7EEI00ghECrjUX5WlXF2M0GtaOePj
-	oZnbTeyYtdjorLwxhj4u8ZtyNFmEg7eKnXTh9x+jtERUdGtzfghvglst+/f4gh3C
-	Law6933BB31Wpnc6c2FbSI1zCra8md3JZNMeTnzDhUy/Ixvg90UIcdrlFoaFnpAu
-	FhDheS9iwK4JLAzWYiHEDOHTvJ3XVk43FDTxLJx4fKR5mvd7g7TxUMzZ1uYpJIDB
-	rw==
-Received: (qmail 3690923 invoked from network); 21 Sep 2026 17:02:02 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2026 17:02:02 +0200
-X-UD-Smtp-Session: l3s3148p1@1sZMiP9boMJQT+F6
-Date: Mon, 21 Sep 2026 17:02:01 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Frank.Li@oss.nxp.com
-Cc: Aubin Constans <aubin.constans@microchip.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Russell King <linux@armlinux.org.uk>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Lars Persson <lars.persson@axis.com>,
-	Linus Walleij <linusw@kernel.org>, Fan Wu <fanwu01@zju.edu.cn>,
-	Vinod Koul <vkoul@kernel.org>, Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Rosen Penev <rosenp@gmail.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Zhan Xusheng <zhanxusheng1024@gmail.com>,
-	Pan Chuang <panchuang@vivo.com>, Khalid Aziz <khalid@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Rakuram Eswaran <rakuram.e96@gmail.com>,
-	Ethan Nelson-Moore <enelsonmoore@gmail.com>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	"open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:INGENIC JZ47xx SoCs" <linux-mips@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
-	"open list:OMAP MMC SUPPORT" <linux-omap@vger.kernel.org>,
-	"moderated list:ARM/ACTIONS SEMI ARCHITECTURE" <linux-actions@lists.infradead.org>,
-	"open list:TMIO/SDHI MMC DRIVER" <linux-renesas-soc@vger.kernel.org>,
-	"open list:ARM/ARTPEC MACHINE SUPPORT" <linux-arm-kernel@axis.com>
-Subject: Re: [PATCH v3 1/1] mmc: use dmaengine_get_dma_device() instead of
- chan->device->dev
-Message-ID: <arFG6UHs3VRifkBq@shikoro>
-References: <20260921144426.1083196-1-Frank.Li@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BR9BYy21"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8C91F000FF;
+	Mon, 21 Sep 2026 15:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790003926;
+	bh=pk8RgAerLX02K5IDYXV0YBEG5EH/caI8Tbt/GNoAy3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BR9BYy21gJRUCW4ls0I/W8NWp5la8oj0rfhdk8UZ0NdyCfV2VjFQmqZnBBVvFdx9S
+	 vjzi5OrXdTUwN1tc2q+m1oESGl0f4z0j72dH7faHlrJubna/X4QKw+ItwpoOHH/BaM
+	 IyWM43E+AN6OLMcICbenqXUe1jYrEvKHKeAWMsIp7PbGEG9zB5+Acl0PsqRvc5HQGH
+	 wdTiZvc80NN7AdZsAreFWrbG53wEKpHop/3sNN5xWCvUDPsou/PzuqsoK6diht9DUU
+	 PKmC1jPbKa+GeWd40SZO7ZcKHa3gyMjqhXe7R1tJYtQ7uIuAFLVnQQZ0itwWIrN8xF
+	 Tped2uhiqc33w==
+Date: Mon, 21 Sep 2026 17:18:38 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Jonathan Corbet <corbet@lwn.net>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar-gen4: Update how to obtain platform firmware
+Message-ID: <2r6amws22eicnj4hxj53wseisgiitrlk2brqvhi3ixzbld4vhn@q2wnmflqswh4>
+References: <20260914032520.99699-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260921144426.1083196-1-Frank.Li@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260914032520.99699-1-marek.vasut+renesas@mailbox.org>
 
+On Mon, Sep 14, 2026 at 05:24:58AM +0200, Marek Vasut wrote:
+> Renesas R-Car V4H (r8a779g0) has PCIe controller, and it requires
+> specific firmware downloading. The firmware is now available via
+> linux-firmware.git repository, update the documentation about how
+> to obtain the firmware and drop the conversion script.
+> 
 
-> eviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+I'm happy to hear that the firmware is now distributed through linux-firmware.
+In this case, we no longer need the documentation as this driver is not special
+anymore :)
 
-Missing 'R' at the beginning. checkpatch would have reported this,
-please put it in your loop.
+Feel free to drop it.
 
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
