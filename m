@@ -1,28 +1,28 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010064.outbound.protection.outlook.com [52.101.228.64])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010028.outbound.protection.outlook.com [52.101.228.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FC64A205D;
-	Mon, 21 Sep 2026 13:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8DD4A1DF5;
+	Mon, 21 Sep 2026 13:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.28
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789998316; cv=fail; b=RGXU8RyipjRAU60/ng5sN7ILyCBOnhGZDRiDpRDr9QRNiKaN0XdN8HyaiT/pWtJgDktshtMkFfFKptHk8omc5M8XahDZdhkuYiDQUgXrcEsY/XnKOMa0ZTLlqYpfSPN9OnY3EvVZO6bSSvVwkrLSEazBCRnULw6LbXTI+ydWAVo=
+	t=1789998320; cv=fail; b=qjGy6gyc6bnZ9Wdnov0pTQPTkfiamaN514CO4ESoKe6hAuehYKHURycrSdik0V772Oq8GcA+CMydrQOoEIiD6lHKAurstEHwxOQk4a1VNYlfyVZdzxAV3Q3mOKhu+MIV1Jc6CPv9yhAadwadrlE/Tkv3cuxNj7HVLmpPycc18bo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789998316; c=relaxed/simple;
-	bh=n0skHPz4Oqo5XrGHqYC63r79XTAJOc3dsMzQWAJ7OTg=;
+	s=arc-20240116; t=1789998320; c=relaxed/simple;
+	bh=HFc0vzTV1fKij1dyZeSeWt8mUa1N+XvgeRipAq/C6Tg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V2nnRVZ7OXtlhbRRO4muT5POyZmQ8KybWrLU4t6gDsDcl9secrMZQw/K8KfL4rfloB3m/kApKyT3O9ddFPYcQqOuH2k1tEgzxAhuAI6MoOBSZ+0thk8sC0fptIT8yYDWA60GDgDvNKNeelbnjZBcS59nvN0d3An+cVssXphZxwQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=MKDZMs+1; arc=fail smtp.client-ip=52.101.228.64
+	 MIME-Version:Content-Type; b=GXdJSOHNMVlBO2S9QdJQYq0vSOVjDjb9OshPBxpHwbTwV86SemQNB3NOLsPMHPopolC9uBuX6D1AbvD+UgdCd0Ivt4dBvcqCqHz8qIJyPIPpehEsnxMKRJYQLkusb2Zb3U6qTyb7aHAYn3tfSI+aoMRVYyj5IxIz5cMS80sZGco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=m6nuVewu; arc=fail smtp.client-ip=52.101.228.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="MKDZMs+1"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="m6nuVewu"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aimhwKofuHnrVqanSfUolR4WVG0Hv1QNMoOdiqmtgWXf/nj4u6ywBzS4ako7gdZvKHou8t/txXAUPPSiqOqsFj3MwzXzLtmUt+VhxPpS0lMgA6iCbX3jiK1bG09ZAFyKJ79QrGjMK6vkx9idInv7Wa17H/Ll7hQg37moONj85tvkvZhg6azPKW2/9Uxsdf3pDzODblDVXx9g/xP/yy5KflcS7twloSChPkZzagyUaXB9FNihi6ELMTKYESqgOFTQOhwcAow44DuP8+HMYuOSetOJEA9pv3ShHc3RDkgi/+FhW9eW9OgNJpJUYQG6uYk5EA64xNffVYKnjg93lkxjaw==
+ b=QVVTr0knOKnlzz/Sna0vlUCtupa+F8ucg2mgeERdgAV5FSRt6rlFyc9C1PHzZUcfhbzYDGDnewtNAOycysuTHHVxD3sHGg/Q/0RpyFrsYYO+jkYl1p7dBBtqU0RTZbgqN8pO1ofUjVuYQPaKPGI6kNkaz25NMKCPLLKm2aWxornoLCv+R3tXE4M+eLMvJAxGENORAO7MAjBtGlcoLK1ffchEju0M0SWAf+QbiaUH0RBFI+da7owNkVdpiLnXCgt7XjS1nQpv/P2BFzWXiZyMwmelDBKNej2+4ZQGlKapBlbs7RMIYxdMn/kariXAtX3OXEAHrETImuUT8lLUDqrRSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p87POCrQ8h3/zE8xfaiJQX/lheKpY3Z9C8m2arFVDME=;
- b=jsRjj8KPk51tA/aTcc1ue86wkXWdrnH3I2Ypaq7oi/kLCg6O7XQ4MRxybSJR3biCqwz2G7PpBn+ShEe+1a4uhePV2sIjJuLiPLl5ifLo9P6FYx4X3Sxg2rnDQs8q+7XDuqyFDCQHxFiPYDJpQcCec2P7p+9kveyinp4l771Yc5l308ralOJEp2+o8O7p5mOw0GHgkf2ZCZ1Vd4K35G+a2I3x/BNFyGexxsty2Vxeu2h9IJxEM56uSmUKzAL1GKLxdgxMcMdtgKIUF7X++MkBjPKMOg+/MdoZIpilH0cUA48ZsbPfUw8E9JmtpqWzw7jpWUM3Qh0hd2LNzcTZD2dS6A==
+ bh=0mxgeug/OKSPx80nm7ww08lCXlxW7hDLdPbf/rtwU7E=;
+ b=u8TVOXgAIHMHMWMk8Vd6Bl8ey9oRSEa0mP9pFXmePQtH8EGzvu6idKko72af81rxFHWJc2V+LbJuqJGAgP/o2/I37ylOgSB0xap/zs9gWQ53htXGNnddAvl2t7GJMRI7wnNLD2upULIIRL8lNJLiIAD5FOCd2JWtjLeaHl/Y2S02btYw4IgJq6JiZins2QOg3TIGUrzuNqdKcgfDU2DdC6/3WaX2BpXL2Jx06CxWLRDwqPsXBgRVWcXf2wXrirSMi/Vptt+djn0WFJ8hutjieNWLTbIx4Mh9qCkOnfVekTMplO036NKRc5VsLLoLHDlUOgS9u7ot4UOzjn8mt62f0g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p87POCrQ8h3/zE8xfaiJQX/lheKpY3Z9C8m2arFVDME=;
- b=MKDZMs+1YDZ5Ii7mJ2DKXSml1/aSBzDcsJ32lc31bEB6COTlPe57TqckU2pedwXPqeCFV+Fd/wOtFuKlKRRsPq7CvHsXYHOcmkypvsHj9S2SvZRVC9vGv0it8d89Hb9z0B7F7u54a4Q+3qvMlRTMkJVDOil/BRPtQa/ZYeVwwOo=
-Received: from TY6P286CA0040.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:3b7::9)
- by OSZPR01MB7035.jpnprd01.prod.outlook.com (2603:1096:604:13c::6) with
+ bh=0mxgeug/OKSPx80nm7ww08lCXlxW7hDLdPbf/rtwU7E=;
+ b=m6nuVewuHwM7wA3ZM8IEDeIgyB2HzfK1YUmGlFpsMntRmVa3n6jALdCfMErOumedpbW9HYLT5IURGhY2qxyxm/c1nPVVUPuvQHjwwcFKFC8SueFgH2TOVLnXLfo+I7/Z872y+YlDcjjDR82ILO9Op1VSo2c1iaP6RcLpJjvrBrs=
+Received: from TYCPR01CA0169.jpnprd01.prod.outlook.com (2603:1096:400:2b2::12)
+ by TYCPR01MB10039.jpnprd01.prod.outlook.com (2603:1096:400:1eb::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
- 2026 13:45:09 +0000
-Received: from TY2PEPF00005622.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:3b7:cafe::29) by TY6P286CA0040.outlook.office365.com
- (2603:1096:405:3b7::9) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 13:45:13 +0000
+Received: from TYO1EPF00005026.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b2:cafe::5c) by TYCPR01CA0169.outlook.office365.com
+ (2603:1096:400:2b2::12) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Mon,
- 21 Sep 2026 13:45:09 +0000
+ 21 Sep 2026 13:45:13 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
@@ -49,29 +49,27 @@ Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
  8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005622.mail.protection.outlook.com (10.167.240.53) with Microsoft
+ TYO1EPF00005026.mail.protection.outlook.com (10.167.240.23) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Mon, 21 Sep 2026 13:45:09 +0000
+ via Frontend Transport; Mon, 21 Sep 2026 13:45:13 +0000
 Received: from laptop.adwin.renesas.com (GBR-5CG34119KX.adwin.renesas.com [10.226.37.103])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 9A837300025F;
-	Mon, 21 Sep 2026 22:45:05 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 35DAF3000279;
+	Mon, 21 Sep 2026 22:45:09 +0900 (JST)
 From: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Ulf Hansson <ulfh@kernel.org>
 Cc: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/9] dt-bindings: power: Add r8a774a3 SYSC power domain definitions
-Date: Mon, 21 Sep 2026 13:44:22 +0000
-Message-ID: <20260921134432.50338-3-ayman.chaudhry.kc@renesas.com>
+Subject: [PATCH v2 3/9] pmdomain: renesas: rcar-sys: Add r8a774a3 support
+Date: Mon, 21 Sep 2026 13:44:23 +0000
+Message-ID: <20260921134432.50338-4-ayman.chaudhry.kc@renesas.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com>
 References: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com>
@@ -84,84 +82,156 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005622:EE_|OSZPR01MB7035:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005026:EE_|TYCPR01MB10039:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2645ca26-67f5-402e-61c2-08df17e68d7f
+X-MS-Office365-Filtering-Correlation-Id: ddd1a0c5-66f8-48aa-f077-08df17e68feb
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|376014|82310400026|36860700016|10067099003|56012099006|11063799006|22082099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|376014|23010399003|36860700016|82310400026|10067099003|56012099006|11063799006|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	1x4XBE1/UnSBmdTUBr/3Y+8DleoGvd2vCcFHxXPS8eAUT9bI+d55VHvMeysRaG3kra6yPFvc/HebrvMcBnnbU5+b8xMcMVezSNmRavRZYx/fLeeYzLx8Kb0+b2rxohK6DB32rTWW0lkTz6RfPdVZvteY4Bz38O4yhuIxH76cJKRX54px9Q6WDFeMQ0s12o2hW6n9pcYbeLPCjJ/971eGCF53jobcCANlgEsWsVv6HNdF2RzfNuzroZjrREm+AFUejMjVxZsxBQjkxdAx/x0xpXL/jwgH5qTjYAkzslXWnOFeVj9NJXqmYLhSm6dD5lxRKbdxLlr/q6zDTo4rHYvEBQt+fGKLiaxl53gdKwOvvGhEc/WwYBHJbdxPEhfN1hA9I8ZvUffRNXajJUOL+dbeps4eG4OjMQ39cMgXGaOmqsZzKTSFJ5LOeseg5nHMRmCPIp3md8LHXx1AlQ63TLMCPpzm+lqAzKvVDGQ8BauN/yIlFInXq1FeQgTtIGuCvoAnMCdiQ1RE1I0WiXJqm/88+LYP1wprF7c7mCACYjq5+F7nhw4JD/0941a7w2W1hjWWcNCbGHmiXNtPARDsKnbfsx3nuvUsZGZz/iSRE995fjmz6QHKhPuqZdNpWZFxjnL0RDKuctqkH9SVyz/aD4M2C432zm54LAwCOktcOztOH6WJbfeGmO6uxhx4omeypUFjI+kvkt1Qs6u4HDWQ/Tx7Vg==
+	vBbbg1oWaeWm5TcEx46S4fw98HKfasZayDMQF4ZWbDOOBjlc6g63temcI2uQg9Fwdach47Q1hcgAHo778xUqTe29Cdg2y3H/4EGHIgHBPR7ng5R/Drj948GZkJZVXSZLDFcuCuI5rV7XFGJ9A0L0x30qoetnUur+nKM5APB5D4Z8Y3yZLs6jEHLRffYRdZH/RktiQvqxBxO1diKfokONmHzvxObdgBhT27yC3+Z6e57e7sCl8Qs+BVFEU0Wv2tyzSSMMbiDsFcfDhY6Uc2Bo71O5m3j8XL+syXP09JUvc5B/bZElEfbIDWFhO8jXepJ1GR+75YbwfM+cbyHHrmi8hzPjzhW44DoPcGEllOIsg+snPEY56hguvnsm6pp7Hz/PIrRXwR5vQrKcJiR6Jc8BWKwVInZOVCDm43fGQNYlVNgMD2l61YJj+k2BfOpbRLHoxMzcvP0EEF0FJ+qKsGdRGnCJinN9+X9r2XJajQ2XbjFtMdPIAn52goonaLNXCdweYYssOgS/HdVGS4BgWPRzs+lr/EK66hhiQohnHiApq3vNgAIsdZAYFKF7uxUjhYxDGTyMeZ3LAhUrVkpIC0pg8Hdi5vAORWrMT7Vt2YqL/1kg5pHw+24nDOpEfPNrIzCBVPCtaPd2txjWfO0iZ+d0ZoJ3PRD3jhdibWcGY7bQcqqtLM+otIFgo187a8ts2IiyFi/Coj/33NnQImccRXRLSQ==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(82310400026)(36860700016)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(36860700016)(82310400026)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	E7u7pkkLs11TkeXFwiom4gRBpUsUPHv/c+Qg2n2CZ+WVTYiRIttgSN8gDCe3s1B4xnCnO5RizFKBCOEM9pBjrxqvS49JaphTAuqDmBRHvns5QCYldWRoy/zgAEpqD0W5UOJTRwVFCWH4UJwjBuXd+JuhBoIQG7ujRnW0nXuujyI5a4lUk0xTx5LBk2n1ppAdXkLNZlUgo985/HNYGmtTLn3yKw/XTOBt/SaVqRbewsUB/sLNG2DlFouXsBqhI1CKOTVrpshej35Vs6B1KVdeIL9vcB4Pj8uiq9mAkk7u090zvXjDSIUsF4sgTelKpAs2lAxr0jLEvMMuq4pGtjs8PT6HfBaIFTngZ2qiWvGXGqwOtYo0b7s/acEqeHi8CwN+rQarlYtcdzZCwlDzcAA0Y6gxRtAQH6tsmN/Ati9MNWaKoT1LDe7NdZrJ0xOgG3wv
+	KlRyJuSmwd2VYCzUOZ5/wKw10VirPB9fAFmgI0KtAI2FUdPrEimNghKp2fXbzO9T3H/ghV/LtI4fEnWQivopqjue/TbpYEhgZgu6uhFfj+r9CawGwjqUKqobKlj4hA9XmJUXoZlZrkp/F6op06Gyzf5GeCptJrYGMNWEZxrsERVbAF+8kxn3BwaIFRCmYXCzqqwdEu5a0tLi9J3tbs3pG0/6+MPT0kHxDyZ7KG03QQp4WItqJeTgUzg80++rR5Ha9uaMa1SASdS+QLYacp7jJlXuDSI9uDREe/MDlNS+4pf3ifIPltbKPbRF50i4DMed5KItPvo+xttWpRfXOMBLmxJTuTsmx+iZhDZqfysIpL1CdCx+702rI8i9ozJx00Z/hu49dddIPr2PQOGN6CRrsvM9MAe/ElyQuctNf0He4lyna/M7Klf8LQIIhdOFp/zj
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 13:45:09.3256
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 13:45:13.3927
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2645ca26-67f5-402e-61c2-08df17e68d7f
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddd1a0c5-66f8-48aa-f077-08df17e68feb
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005622.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005026.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7035
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10039
 
-Add power domain indices for the Renesas RZ/G2M v3.0 (a.k.a. R8A774A3)
-SoC.
+Add support for Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC power areas
+to the R-Car SYSC driver. The RZ/G2M v3.0 SYSC is similar to the RZ/G2M
+v1.3 SYSC, however it lacks the A2VC0 power area.
 
 Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v1->v2:
-- Updated commit message
-- Renamed file to include vendor prefix
-- Added vendor prefix to include macros
+- Added space before closing brace for `ca57-cpu1` area
+- Updated include path to SYSC dt-bindings
 - Added Reviewed-by tag
 
- .../dt-bindings/power/renesas,r8a774a3-sysc.h | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 include/dt-bindings/power/renesas,r8a774a3-sysc.h
+ drivers/pmdomain/renesas/Kconfig         |  4 +++
+ drivers/pmdomain/renesas/Makefile        |  1 +
+ drivers/pmdomain/renesas/r8a774a3-sysc.c | 45 ++++++++++++++++++++++++
+ drivers/pmdomain/renesas/rcar-sysc.c     |  3 ++
+ drivers/pmdomain/renesas/rcar-sysc.h     |  1 +
+ 5 files changed, 54 insertions(+)
+ create mode 100644 drivers/pmdomain/renesas/r8a774a3-sysc.c
 
-diff --git a/include/dt-bindings/power/renesas,r8a774a3-sysc.h b/include/dt-bindings/power/renesas,r8a774a3-sysc.h
+diff --git a/drivers/pmdomain/renesas/Kconfig b/drivers/pmdomain/renesas/Kconfig
+index f2f52d3c29a0..df19b95c4655 100644
+--- a/drivers/pmdomain/renesas/Kconfig
++++ b/drivers/pmdomain/renesas/Kconfig
+@@ -37,6 +37,10 @@ config SYSC_R8A774A1
+ 	bool "System Controller support for R8A774A1 (RZ/G2M)" if COMPILE_TEST
+ 	select SYSC_RCAR
+ 
++config SYSC_R8A774A3
++	bool "System Controller support for R8A774A3 (RZ/G2M v3.0)" if COMPILE_TEST
++	select SYSC_RCAR
++
+ config SYSC_R8A774B1
+ 	bool "System Controller support for R8A774B1 (RZ/G2N)" if COMPILE_TEST
+ 	select SYSC_RCAR
+diff --git a/drivers/pmdomain/renesas/Makefile b/drivers/pmdomain/renesas/Makefile
+index 17849aad37a5..8eda820478e4 100644
+--- a/drivers/pmdomain/renesas/Makefile
++++ b/drivers/pmdomain/renesas/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_SYSC_R8A7743)	+= r8a7743-sysc.o
+ obj-$(CONFIG_SYSC_R8A7745)	+= r8a7745-sysc.o
+ obj-$(CONFIG_SYSC_R8A77470)	+= r8a77470-sysc.o
+ obj-$(CONFIG_SYSC_R8A774A1)	+= r8a774a1-sysc.o
++obj-$(CONFIG_SYSC_R8A774A3)	+= r8a774a3-sysc.o
+ obj-$(CONFIG_SYSC_R8A774B1)	+= r8a774b1-sysc.o
+ obj-$(CONFIG_SYSC_R8A774C0)	+= r8a774c0-sysc.o
+ obj-$(CONFIG_SYSC_R8A774E1)	+= r8a774e1-sysc.o
+diff --git a/drivers/pmdomain/renesas/r8a774a3-sysc.c b/drivers/pmdomain/renesas/r8a774a3-sysc.c
 new file mode 100644
-index 000000000000..ddee6812e9a4
+index 000000000000..58c98700bd55
 --- /dev/null
-+++ b/include/dt-bindings/power/renesas,r8a774a3-sysc.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/pmdomain/renesas/r8a774a3-sysc.c
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
++ * Renesas RZ/G2M v3.0 System Controller
 + * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_POWER_RENESAS_R8A774A3_SYSC_H__
-+#define __DT_BINDINGS_POWER_RENESAS_R8A774A3_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
++ *
++ * Based on Renesas R-Car M3-W System Controller
++ * Copyright (C) 2016 Glider bvba
 + */
 +
-+#define R8A774A3_PD_CA57_CPU0		 0
-+#define R8A774A3_PD_CA57_CPU1		 1
-+#define R8A774A3_PD_CA53_CPU0		 5
-+#define R8A774A3_PD_CA53_CPU1		 6
-+#define R8A774A3_PD_CA53_CPU2		 7
-+#define R8A774A3_PD_CA53_CPU3		 8
-+#define R8A774A3_PD_CA57_SCU		12
-+#define R8A774A3_PD_A3VC		14
-+#define R8A774A3_PD_3DG_A		17
-+#define R8A774A3_PD_3DG_B		18
-+#define R8A774A3_PD_CA53_SCU		21
-+#define R8A774A3_PD_A2VC1		26
++#include <linux/kernel.h>
 +
-+/* Always-on power area */
-+#define R8A774A3_PD_ALWAYS_ON		32
++#include <dt-bindings/power/renesas,r8a774a3-sysc.h>
 +
-+#endif /* __DT_BINDINGS_POWER_RENESAS_R8A774A3_SYSC_H__ */
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a774a3_areas[] __initconst = {
++	{ "always-on",     0, 0, R8A774A3_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
++	{ "ca57-scu",  0x1c0, 0, R8A774A3_PD_CA57_SCU, R8A774A3_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca57-cpu0",  0x80, 0, R8A774A3_PD_CA57_CPU0, R8A774A3_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu1",  0x80, 1, R8A774A3_PD_CA57_CPU1, R8A774A3_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-scu",  0x140, 0, R8A774A3_PD_CA53_SCU, R8A774A3_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca53-cpu0", 0x200, 0, R8A774A3_PD_CA53_CPU0, R8A774A3_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu1", 0x200, 1, R8A774A3_PD_CA53_CPU1, R8A774A3_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu2", 0x200, 2, R8A774A3_PD_CA53_CPU2, R8A774A3_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu3", 0x200, 3, R8A774A3_PD_CA53_CPU3, R8A774A3_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "a3vc",      0x380, 0, R8A774A3_PD_A3VC, R8A774A3_PD_ALWAYS_ON },
++	{ "a2vc1",     0x3c0, 1, R8A774A3_PD_A2VC1, R8A774A3_PD_A3VC },
++	{ "3dg-a",     0x100, 0, R8A774A3_PD_3DG_A, R8A774A3_PD_ALWAYS_ON },
++	{ "3dg-b",     0x100, 1, R8A774A3_PD_3DG_B, R8A774A3_PD_3DG_A },
++};
++
++const struct rcar_sysc_info r8a774a3_sysc_info __initconst = {
++	.areas = r8a774a3_areas,
++	.num_areas = ARRAY_SIZE(r8a774a3_areas),
++	.extmask_offs = 0x2f8,
++	.extmask_val = BIT(0),
++};
+diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
+index bd7bb9cbd9da..3c8a44c6d772 100644
+--- a/drivers/pmdomain/renesas/rcar-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-sysc.c
+@@ -284,6 +284,9 @@ static const struct of_device_id rcar_sysc_matches[] __initconst = {
+ #ifdef CONFIG_SYSC_R8A774A1
+ 	{ .compatible = "renesas,r8a774a1-sysc", .data = &r8a774a1_sysc_info },
+ #endif
++#ifdef CONFIG_SYSC_R8A774A3
++	{ .compatible = "renesas,r8a774a3-sysc", .data = &r8a774a3_sysc_info },
++#endif
+ #ifdef CONFIG_SYSC_R8A774B1
+ 	{ .compatible = "renesas,r8a774b1-sysc", .data = &r8a774b1_sysc_info },
+ #endif
+diff --git a/drivers/pmdomain/renesas/rcar-sysc.h b/drivers/pmdomain/renesas/rcar-sysc.h
+index ef598ecc710a..b264e727883b 100644
+--- a/drivers/pmdomain/renesas/rcar-sysc.h
++++ b/drivers/pmdomain/renesas/rcar-sysc.h
+@@ -61,6 +61,7 @@ extern const struct rcar_sysc_info r8a7743_sysc_info;
+ extern const struct rcar_sysc_info r8a7745_sysc_info;
+ extern const struct rcar_sysc_info r8a77470_sysc_info;
+ extern const struct rcar_sysc_info r8a774a1_sysc_info;
++extern const struct rcar_sysc_info r8a774a3_sysc_info;
+ extern const struct rcar_sysc_info r8a774b1_sysc_info;
+ extern const struct rcar_sysc_info r8a774c0_sysc_info;
+ extern const struct rcar_sysc_info r8a774e1_sysc_info;
 -- 
 2.34.1
 
