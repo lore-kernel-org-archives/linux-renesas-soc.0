@@ -1,166 +1,248 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011060.outbound.protection.outlook.com [52.101.125.60])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470284A205B;
-	Mon, 21 Sep 2026 13:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C3C282F16
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789998346; cv=fail; b=plalH9FLKRPJYv8LujLcUOPludqqUQg1Adizh4zgICLqjBmUv8V2NdH8+J8ml0W+WeXyV3/oHdS6uqumrcvWZtLyUTY2Zo5Jzh8aPXywF1RxPgGgbMwl6mTHwGCIJXWmLOCkICOW5tOSELTTnBwbASitso8WutH84cheu5BgfvA=
+	t=1790001191; cv=pass; b=B4/HAnYiQpTmAK8wGKsJ5+5S8jufYufUdfyFrH101U7RJjcZ1cvMi19RcMag8v328HfJhAIE4PPIKopYmnJrFnu6Agakv1DmEGAYfs4XMEqKh+QEObgIlMpjqvn7B/olq272xKz+pTqUpSpw1RFGSEUcM/CpbKSz+xlJe9VZ4wM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789998346; c=relaxed/simple;
-	bh=Q8AnuxNnUYEfHEd2XUtCsH9GqBNjwJRXjkJL/cVW+YA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qu9BZN3djykIFNqh5xPJ3V4Yvlayh76A/PZks5T4tUF8PY+fzPa4peg3DJ3Z1UNfWceXVK08wvVx7oO1RrAr5DezM5sGMlawmfLtH9ev0kHOe/lAo3mlxrbUROZrbpeI+lyUtEuvDTYYykUxxnHQxQTLvesWaktRuPc40xbGmsU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=IW1a33N/; arc=fail smtp.client-ip=52.101.125.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	s=arc-20240116; t=1790001191; c=relaxed/simple;
+	bh=r7lm+CiC9wEa6BgamTUuhlEQwcuYZjSsoJngwi1iaKc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n0pc/A3U9bMmETn43ZQVk8I6CK3oaptkVZfMP07XbrqcGkbBG4S+ktziCL49YDmfzwONRTrHF87FJ/um68HhkNYkmGl/G+BeNAR6AC6NUIidPGjYt9fZOs5NgfJdywEvVj/R5FZL2wcPPMBERopBKPrz3sccmCCl9/iQyno0+Ak=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PLjFj746; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NwZ7Or+U; arc=pass smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="IW1a33N/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u8jcRzLT5Shjk5R8pCNQFF6SDtFg5h1yl7sM18C7ipQydwjP7ciYTFvga9Vc4TFfxwLFSVquq5vMUAlJTuyY4SjQohWjCcFp0M6VATeE5kiKEJMoX8ytBi4rmEWCf+oI+ufd2k50DlO8Lv01+cXyPUhoPtMyX3JDqXsIueaxc9D6Wv95Mt1b0F5GFcwmuxx4LBmeZAMut2MeL17XpVIl5DDTbq7kx7S2QDScV2FthtvkrPbLCh8pQwkkz4m3G6zv4i/9rR/tjkdbpENnsaT/JNroGjLg3CleMlhuQOk7KTBXZMPaMMWhxrzQhrxvLFXvhUGaISewNOkC+IEA2E08qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YsIUf/RWsFhX0fdGjc2/G459QQ7r9BgEHjrpEZOgJnM=;
- b=AnELFUHqCSSHsIUPV/rRBi3IyyBd1rWxOGUqzN2AUElK53x8H39DKS8Wxio/1t8Kw4+z8V7JgevCntzIKKSuK+pu15+sOBy/75cG2E4e7HzJzdqWzvNnlUSIlkhVTKojtIjBbJaIP+I2qZxj2xvuFzCN1sH9KWsXifETdc/+CPt7GWUj/iE4J1g+wHOt8VtQn2Ykef2CATtrNiVoO9UDrI30u2PrfaXofMpVN7T4taytq7IGxQ5QToPplCiGHG4U8EDQ0+22JtxQT+HNc8qPxusn0Xx6asNKvkF42uIm17rfxqi1s06zGuDATP6x4C2Nf0R4ix84wKO3aKsO77tovQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YsIUf/RWsFhX0fdGjc2/G459QQ7r9BgEHjrpEZOgJnM=;
- b=IW1a33N/un4uyEHTV+0ixn2adebeevf3IxYzXWWESHgWvx2lXnqSclkKIvAiZ5ktpr7jZyTeMq4GG24A0YGcI+qom8dd2FPNNyup1r1A8yGZc8PcZ3bgSowJV0g57j4B2IuWzuqNagb6kgl/LIdQrFxDgSiXvGTp7eb+nzYd+oE=
-Received: from TYCPR01CA0188.jpnprd01.prod.outlook.com (2603:1096:400:2b0::20)
- by TY4PR01MB14588.jpnprd01.prod.outlook.com (2603:1096:405:238::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
- 2026 13:45:38 +0000
-Received: from TY1PEPF0000BADA.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b0:cafe::ac) by TYCPR01CA0188.outlook.office365.com
- (2603:1096:400:2b0::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Mon,
- 21 Sep 2026 13:45:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
-Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TY1PEPF0000BADA.mail.protection.outlook.com (10.167.240.39) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Mon, 21 Sep 2026 13:45:38 +0000
-Received: from laptop.adwin.renesas.com (GBR-5CG34119KX.adwin.renesas.com [10.226.37.103])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 8C8CD300027E;
-	Mon, 21 Sep 2026 22:45:34 +0900 (JST)
-From: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 9/9] arm64: dts: renesas: Add HiHope RZ/G2M v3.0 SoC sub board support
-Date: Mon, 21 Sep 2026 13:44:29 +0000
-Message-ID: <20260921134432.50338-10-ayman.chaudhry.kc@renesas.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com>
-References: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PLjFj746";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NwZ7Or+U"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68LEGP7i1553104
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=; b=PLjFj746DwgTYYE6
+	F8bg6eKr3tc7fjVnCufAGwWSW6nQHnZFdphyiMUDaJ7Re7G1kv1cmBaC6KV+pHL7
+	Q7mcAejuGclMvGvBA9DgSDpomiaB6RetrcIQLVd4P4GnCH60Sj0ycVyapOVBKylp
+	8nIH77l40LqoNpMmTj9GhEZMZQbTKtPtYRnNqbENC8cowz3OQ5ZWcyLzj+Ih5Rrq
+	Y4Mga/LHN9ltTgvPfJWUOngovFq1Ii6mRjdMrsvcBEoSktA6aCyuc89q3fzxXEAU
+	P+0EF0l3m6MbIN5fJT/+Aplej+jfB1YgK0X/ie7LUULZAS0rQKaAOjxWIEJw/VN7
+	j2F5IA==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gu3csgts1-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 14:33:08 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-cc1b6f65dacso2660643a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2026 07:33:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790001188; cv=none;
+        d=google.com; s=arc-20260327;
+        b=XpraWuF2EN86QOq1ktt/0H1cw4x2jlR56NWD2wT3GBKig67a7Wz3WDUe9cb6wGxmWO
+         6XmhPc/jaBvWoHvOiiJCHF3YVCSGd4ZNMWa47CW3gGEQ82m1Ora+Z+UQcloAPmjAeIq4
+         ExpyD7dx3PztFRyFbqI30c3ykl6CMj05NKszGnxEozRSzjmGg5+M4FUaG2ZqMp9AINDX
+         bKd9sU+wcC8zsPKY/Pvh5d/p5nl+ZoxYzGuQrGXbG1k0Yp5IHN31k4BtswoaHDVy9tlm
+         HdPZ8XdqwwzT0YUBLYncw3RpK8RyyZxwyXSLlU5k5cUFk+blC9aRpParme0M+X8ngLf3
+         FdpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=;
+        fh=0ZSNRtrWdlb1MHBPwuDnnmOTki2uVRDtW0RXxROw4gw=;
+        b=kqOdhy76azbigK1/z/jaVJ8FNt6pyzOtQraystfFBA/pqFp1SNlPupd2WcKJg73T79
+         WkPQTNYFvwZa+20lPRdB5WZeeBqd9h8Joqljc2CDpZVojQTRwanzrfUCyUPotWgYhF5D
+         bFtxTS57odrqHJhGO1bFWYAWTTbm3E8OqetVOdBy0kpOj4ljC6o5auinnAQlKQpoor8p
+         Qw8GRw4Q3D0pSeEtgeUURNUWmIZCcTbQbwiQwrl+xid93WA6dKtpHrn80P1WqyJO3Gkp
+         0372wqidHnY+oL22whmGIobd6tHIket5vwIvhbx+bbbxByK8HIszzrvo/YC1nMxY5WSI
+         7WBw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1790001188; x=1790605988; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=;
+        b=NwZ7Or+U8p1YsFysVQRk5nPjjSP4wWjl7ViBnnoserHjRX4BSKXqkiP371wFoPNIfP
+         467ofSdLBGadDLW23OrNj8x2mWYb35aQv2xG5RfZNiFFM6AI7hcMhsQn5r0FJmKC6HTv
+         oJHbJWlaQ6WL54nSE+oYs7eXP50dDHMGIu5Ke/13oQtcDqXBCKWqsNZwmB0DcjZDCmvo
+         we9r0VvHgmD8ETYg0EA9jUJCsXWVuItzmNxvAh+pgTiAodxEZvylvSJuZVmdxdIQvH4+
+         3sQOb9h0wxW1F2Iu88/NP2JwNvoMbOauxIiKpP0kzex5bT8zEWXabzqVdK/nJ7JwqHzm
+         YiXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790001188; x=1790605988;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+QGpMDXbC7yeJzKIVYaJ+2yrvGf7V4gzLzdPmK9D7H4=;
+        b=fcj3lLDc/QnVqfkzDLkQPyLsIHx0OFTe/Bs06tKE8mbZh9hKlYWkRuzhXG2Zz97/S3
+         ucRjUEeCfDbqTPH5XBjfdt5h27I9LxW42kEnxDHZmKTSIbnxQ4NHlRM0/1rhji3/W+1b
+         N/ojSJAKIKqgLPnXCGtjsgE5/+14HsQSrxEIXSHVahWGv5qPg7J280fwsstMqx+baXW7
+         iMMa7VEkNgT88CGQX5+xmRFMQiEyX7J7K+V3Psn9zMyjY7NpOiStiiCXaVwnVRSvdxpM
+         c67IhBLh7AstPjh138DBHim7ONJ/ksve1PtOqs0W5eGSTLLkGZMM3gIHwwLSVFUbSDpT
+         R48Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwbTzW2MhYcZLvY8XtG0T/GRvaC1K2bbcEsgwzN/iXrph8FaUApeo/M/Q/aHsa9Gn5qKvwlGMxhmj8BvNd/2biYTg==@vger.kernel.org
+X-Gm-Message-State: AFuF++ls4gpwe7LLm9FZK+oS70avG24iJteqAKX7pB7LpY8o/kyho3oM
+	XTWISFfkYgWG++DEWvf2WTsAI0Yaa/2/nZtpcezyTRZTKsgAhHji9A7yT6GOBKQULeBunbO1gEa
+	4Jgf1Ba9nkXhDl09rRy9UZTUfN0wmCHt3jgKNgHwRYicv18zobN0e9eY3EmtLRAyZeF4Gx041JE
+	g3oq5+3/1qaDSriCAdG8Nolx/z3I5UXc6bmp30NTroSFsSecvw
+X-Gm-Gg: AYBFou1hxr8ra9ejPfT1enhgLcBgWoBumD/3Mm+0pSZF/jDnDHiJHxs21YP6aSG3orU
+	6TdA8djLYfqorFoQE2bsVFg/Jl+rcqJmBeHbPhh3MgS1TekW0UBLFW4SWsJP8ffODAhEsnM28d7
+	TnqFgU66K/MM+IxkuZ1wkXlvksz0/7BQFOIIu9b78I4T9jOweCI7xsKyy59g==
+X-Received: by 2002:a05:6a20:6f90:b0:3dd:a195:dd5b with SMTP id adf61e73a8af0-3dda195e52dmr11030332637.61.1790001186031;
+        Mon, 21 Sep 2026 07:33:06 -0700 (PDT)
+X-Received: by 2002:a05:6a20:6f90:b0:3dd:a195:dd5b with SMTP id
+ adf61e73a8af0-3dda195e52dmr11030295637.61.1790001185527; Mon, 21 Sep 2026
+ 07:33:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PEPF0000BADA:EE_|TY4PR01MB14588:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d2281467-ae97-456f-6d66-08df17e69ebb
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|376014|23010399003|82310400026|11063799006|56012099006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	vpwfMEjlutVJ/+o4xotIf2wEXeCuuI6FrH44q3e8EIILQv73ksvFTIvAH6JU3Lj6a1KIdLCB7uKxBdJugbQDGw0eD9cdolD3M2mgSYFxpei1+Loh1fep3fyxjkMVQDtyAkLVCCKey6LU4AaWbFAsWnhn3ltQJp+iX/IDSAPx5zCg2lXVHLVfh/5o8NcoODJwbLhbc5QkWQWWnDH/T8SbDfTHv5mn6dExk0vxiCvZkve3Ky1SbY+7HZ9tS4yBbXvHAw3z0uOM3aE+UMiPITE0H0z4bzFB1u87+LjQDWx0YiqnuRde7QFw6r/OQCFAnWk6RfU8Ip/GoAhm58ds+nFhRm5YbmRL1lNauOaLU+JGFwjcB0Kf2vLBXKljzHBnLwMrYfK9zJP95d46RV6VV4RjCBfoOICN8K/k/oaGqZy1eWINtWj0iWlp2VV4lylwplpe5u5UN5MZl3X3W+aDyuniL9Wh96qOj6Bv1/Afg+nCJHdaJRdQEw5DmNUdPxTHebXO6yUqedE8Rs0LtIHw3SnQ4EK9PyT2y6d0B7rGJwLGP0wYyCU4OVDOdKQy7lo+Q0DdN2qi4AzgBpeG2To4QKJokViv0PAeRJQu8WSIebppGigP7HTQFg0MiemxSHUc7eEILaz9ZcCie3SoH9e+saFxNCBnOFqMelpJLixJq5uON3bABAlePG+cdi+JU100pZ+9BSJpITAM3ZcOFPIXpUNOEQ==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(376014)(23010399003)(82310400026)(11063799006)(56012099006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	PLVThB42gP6zgoYdyhhXXg365PaU8jx+eH2HA92ETTtn3N+AvfJozv5SHfiRCrB/N258z+U6GHbPwH6w7GNOr+L4zTndGkwCwB8PslwDtaK01V5iIbVdjJyLP6gUufjDf93l9MQuNbrGUFLvVr/uGnmiqWQWCvgPwoaPhVW7IAXOiFuI1tB89m7JAhNsrWwd9YFOQWcYeYqAkmf0FFp//bU/bcbhLAhT+cSiUQbUDpcyabR1JtuNV2FtT2m3CvVHAZqaT2YPDz3c+QyLqdN3htdtPr3x5HMf445XiqVK2wVXX/vTyQ0Rwvp/lURRF+IuCSKDywl00z0g3VzlwfDtJeePBXgapythfD61xIoEaK88Zw8Fz5bLqEiIDdYEDL20NKjT+P1DH77X5ZDARTuk1oIORcuxb1jMI9PB6AdOWnkDsKawP6XNxQEkbiL1Bp6g
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 13:45:38.2401
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2281467-ae97-456f-6d66-08df17e69ebb
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BADA.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14588
+References: <fbe8b4a4d90f0b555285cfb4ed18b6a2afc38b74.1788436280.git.geert+renesas@glider.be>
+In-Reply-To: <fbe8b4a4d90f0b555285cfb4ed18b6a2afc38b74.1788436280.git.geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Date: Mon, 21 Sep 2026 16:32:53 +0200
+X-Gm-Features: AcwNN1Wm7QptWrQP64KBLoWANiDzhteUPebkkzrS5dFRZNkLVpmRMtVpNjJdPcc
+Message-ID: <CAPx+jO_N5oTL4CvU3NokCRK9QgKbxsEwHfz=JLUTi-rRGhStwA@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: renesas: rcar: Make area arrays const
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDIxMSBTYWx0ZWRfX7gr/Pr8MJaMt
+ m5wR/wnW1TXLab3oyVVIWD8K3e1DZhTK8dRJyOaUOK3kPsmhkhI42WGFOCeCDbYYFhjJTwZ9OJ8
+ OJIwzGkdSkt1BQh8HliYPKLVjn0zUCY=
+X-Proofpoint-GUID: MAIb6hmhiIBs4DUida8Gp1xrX5i2726u
+X-Authority-Analysis: v=2.4 cv=QovLTlyd c=1 sm=1 tr=0 ts=6ab14024 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=yOCtJkima9RkubShWh1s:22 a=H6JtXQTsj1a3jlPKj3wA:9 a=QEXdDO2ut3YA:10
+ a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDIxMSBTYWx0ZWRfX0QR0zmoaqBuA
+ 2c9rckvtXZjO4Hcd+yGMLitwmDCjHXiviY31Yn0BYLvaTjE1jK0+kEbl2Xd3pflluqYoUh/iNnl
+ aTKKbk/t2wGAN8dOlNyXjCRjZhhgL01YPejV0/pDp5mmiWckW2qbagwSXKMQRLwABxz9fZYUH7u
+ 9kUNiJefEDwG3Lzgc1HOTzGq7FAnfi1cXdeDfKpxmsadzQX2dYmOIv5tYG5bXvss9/bE1bWFKIv
+ ps94j7BAbO27YGTpE0oHRz5E9SCn35BRPCeaFzEdbtjWNjnzsn0zibs65gJ34WXOlC1Kgri55HU
+ TsVZPyw6ekxTef9Z5tzvE9fGowUmkCRnFCWK1CI6nGkLWzbQvXhp2X9FpBbNTegakIVveB/ESCR
+ Md8htL2XrtVWnQCTxGR9j2tpDq6IlcNpKqRo6vWp2ls7/b5IOfM1PUyctTcFtJO/adwoeIRZ2rv
+ 9RDbV6cWxVLaQ5A+SbQ==
+X-Proofpoint-ORIG-GUID: MAIb6hmhiIBs4DUida8Gp1xrX5i2726u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-21_04,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609210211
 
-The HiHope RZ/G2M sub board sits below the HiHope RZ/G2M v3.0
-(a.k.a. R8A774A3) SoC main board.
+On Thu, Sep 3, 2026 at 1:57=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Arrays of rcar_sysc_area and rcar_gen4_sysc_area items can be const,
+> unless they are modified by quirk handling.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The RZ/G2M v3.0 SoC sub board is similar to the RZ/G2M v1.3 SoC sub
-board, so there are already DTSI files available in the kernel. These
-DTSI files will be included once additional support (e.g. CAN, PCIe
-and ethernet) is added for the RZ/G2M v3.0 SoC.
+Applied for next, thanks!
 
-Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
----
-v1->v2:
-- Corrected indentation
-- Updated licensing to "GPL-2.0-only OR BSD-2-Clause"
+Kind regards
+Uffe
 
- arch/arm64/boot/dts/renesas/Makefile               |  1 +
- .../boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts  | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 9817f3ada6f9..10a138216221 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex-idk-1110wr.dtb
- 
- dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m.dtb
-+dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m-ex.dtb
- 
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-beacon-rzg2n-kit.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
-new file mode 100644
-index 000000000000..d346a4009ec8
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+/*
-+ * Device Tree Source for the HiHope RZ/G2M v3.0 SoC sub board
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+#include "r8a774a3-hihope-rzg2m.dts"
-+
-+/ {
-+	model = "HopeRun HiHope RZ/G2M v3.0 with sub board";
-+	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
-+		     "renesas,r8a774a3";
-+};
--- 
-2.34.1
-
+> ---
+>  drivers/pmdomain/renesas/r8a7795-sysc.c  | 2 +-
+>  drivers/pmdomain/renesas/r8a779a0-sysc.c | 2 +-
+>  drivers/pmdomain/renesas/r8a779f0-sysc.c | 2 +-
+>  drivers/pmdomain/renesas/r8a779g0-sysc.c | 2 +-
+>  drivers/pmdomain/renesas/r8a779h0-sysc.c | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pmdomain/renesas/r8a7795-sysc.c b/drivers/pmdomain/r=
+enesas/r8a7795-sysc.c
+> index cbe1ff0fc58393e4..2ed377b58846628d 100644
+> --- a/drivers/pmdomain/renesas/r8a7795-sysc.c
+> +++ b/drivers/pmdomain/renesas/r8a7795-sysc.c
+> @@ -13,7 +13,7 @@
+>
+>  #include "rcar-sysc.h"
+>
+> -static struct rcar_sysc_area r8a7795_areas[] __initdata =3D {
+> +static const struct rcar_sysc_area r8a7795_areas[] __initconst =3D {
+>         { "always-on",      0, 0, R8A7795_PD_ALWAYS_ON, -1, PD_ALWAYS_ON =
+},
+>         { "ca57-scu",   0x1c0, 0, R8A7795_PD_CA57_SCU,  R8A7795_PD_ALWAYS=
+_ON,
+>           PD_SCU },
+> diff --git a/drivers/pmdomain/renesas/r8a779a0-sysc.c b/drivers/pmdomain/=
+renesas/r8a779a0-sysc.c
+> index 54cdf250f7c2d143..5f84b8d56a3282a7 100644
+> --- a/drivers/pmdomain/renesas/r8a779a0-sysc.c
+> +++ b/drivers/pmdomain/renesas/r8a779a0-sysc.c
+> @@ -11,7 +11,7 @@
+>
+>  #include "rcar-gen4-sysc.h"
+>
+> -static struct rcar_gen4_sysc_area r8a779a0_areas[] __initdata =3D {
+> +static const struct rcar_gen4_sysc_area r8a779a0_areas[] __initconst =3D=
+ {
+>         { "always-on",  R8A779A0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+>         { "a3e0",       R8A779A0_PD_A3E0, R8A779A0_PD_ALWAYS_ON, PD_SCU }=
+,
+>         { "a3e1",       R8A779A0_PD_A3E1, R8A779A0_PD_ALWAYS_ON, PD_SCU }=
+,
+> diff --git a/drivers/pmdomain/renesas/r8a779f0-sysc.c b/drivers/pmdomain/=
+renesas/r8a779f0-sysc.c
+> index 6ed13cd1cb249df5..d22cbc33a6048c9d 100644
+> --- a/drivers/pmdomain/renesas/r8a779f0-sysc.c
+> +++ b/drivers/pmdomain/renesas/r8a779f0-sysc.c
+> @@ -11,7 +11,7 @@
+>
+>  #include "rcar-gen4-sysc.h"
+>
+> -static struct rcar_gen4_sysc_area r8a779f0_areas[] __initdata =3D {
+> +static const struct rcar_gen4_sysc_area r8a779f0_areas[] __initconst =3D=
+ {
+>         { "always-on",  R8A779F0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+>         { "a3e0",       R8A779F0_PD_A3E0, R8A779F0_PD_ALWAYS_ON, PD_SCU }=
+,
+>         { "a3e1",       R8A779F0_PD_A3E1, R8A779F0_PD_ALWAYS_ON, PD_SCU }=
+,
+> diff --git a/drivers/pmdomain/renesas/r8a779g0-sysc.c b/drivers/pmdomain/=
+renesas/r8a779g0-sysc.c
+> index 249cf43af45b6445..96d39a3ac46056af 100644
+> --- a/drivers/pmdomain/renesas/r8a779g0-sysc.c
+> +++ b/drivers/pmdomain/renesas/r8a779g0-sysc.c
+> @@ -11,7 +11,7 @@
+>
+>  #include "rcar-gen4-sysc.h"
+>
+> -static struct rcar_gen4_sysc_area r8a779g0_areas[] __initdata =3D {
+> +static const struct rcar_gen4_sysc_area r8a779g0_areas[] __initconst =3D=
+ {
+>         { "always-on",  R8A779G0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+>         { "a3e0",       R8A779G0_PD_A3E0, R8A779G0_PD_ALWAYS_ON, PD_SCU }=
+,
+>         { "a2e0d0",     R8A779G0_PD_A2E0D0, R8A779G0_PD_A3E0, PD_SCU },
+> diff --git a/drivers/pmdomain/renesas/r8a779h0-sysc.c b/drivers/pmdomain/=
+renesas/r8a779h0-sysc.c
+> index e13372cb80eea857..3775735854f29fab 100644
+> --- a/drivers/pmdomain/renesas/r8a779h0-sysc.c
+> +++ b/drivers/pmdomain/renesas/r8a779h0-sysc.c
+> @@ -11,7 +11,7 @@
+>
+>  #include "rcar-gen4-sysc.h"
+>
+> -static struct rcar_gen4_sysc_area r8a779h0_areas[] __initdata =3D {
+> +static const struct rcar_gen4_sysc_area r8a779h0_areas[] __initconst =3D=
+ {
+>         { "always-on",  R8A779H0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+>         { "c4",         R8A779H0_PD_C4, R8A779H0_PD_ALWAYS_ON },
+>         { "a2e0d0",     R8A779H0_PD_A2E0D0, R8A779H0_PD_C4, PD_SCU },
+> --
+> 2.43.0
+>
