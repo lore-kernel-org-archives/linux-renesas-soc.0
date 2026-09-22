@@ -1,243 +1,197 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFAE5540BD;
-	Tue, 22 Sep 2026 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA67851588A
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 15:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790088428; cv=none; b=faggQqu2ExE5WZfmay0B/KEaiNgSPzgVhWoONnJ9m68j74rSk05raXow9hCONKeQqYDbYagYw40WRWsKeph7ZJZiKqloZLPW9PjvxOwLPyTdxi9la+Gt2VMog1VMZB/695SYnK6TAO9bjcHcCmFt84sotglKpPcC0BUTj+NOf30=
+	t=1790090062; cv=none; b=QW2xuYkIuCXOC7+M/phsedKXoe/L7r4zfwOgbL6M+iX4t3bGriYRlcgpVIcFX+YifIGK1ppIb7P29KFj59qFPM0ptcFr/t8ARfMzk47QWVUYN/bIGzVXNtAUivLaYcGRDVni0ollSLoiKJcVKKCePe/0stPO1Uk/6enTRqLVPhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790088428; c=relaxed/simple;
-	bh=1Im1ZNFIJrfPREwypW1FsEYCrX+6t9WZt5z+WJz1I+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jJN25j/pFc0qeFOfjl+bh3r6KGkoquRGIYX0mBDomJ+JKtLcZQ+vnWlD1AXwRFWnL5xn3K8PSub8sjxPW4k9UoaRZoNqHH5gytX7304qBi/gHXDK/TT3V+jfH8fBmyQUDB8QVZ3KQ6nA+r4oVVQ6v9k32bo2XYxQJxVW0CAV3bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+m9bqcK; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+m9bqcK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD831F00898;
-	Tue, 22 Sep 2026 14:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790088426;
-	bh=DEEddTTRgzBSKA0H/RopE6I+anHr4ayJ/E3G54xl/zg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=R+m9bqcKpAqgKKUqFefEpFRVG/j9FzKeqdrasfDm7OP9hUsf+FJ3EN4Rv2hHc/Gwi
-	 le4ke/FFDy30BBseC8U1n0770KMK/iN05YULeutV4l7WAJOUMQxVQtJ7YF629oYOK1
-	 QTPDnHrwjy8SpfYqZnzxh28aYm7A+Kh6mfNKNBCG5kvPhYVdSJD7Z0j7utI+1C29/n
-	 /UGyHsQNaVizRqtXIhOaXl1I82DofZCSRXQ8f68Aq8SLSc+Z3VCHJr3bnrr44XbnVe
-	 N/7YbgVKwrYnlTBlw2ETDKcL24wmqFCzd8YxZ5cUtzOs3gMnBLkXxQgY38zo8ZINNo
-	 a8js4vQywFW6g==
-From: Claudiu Beznea <claudiu.beznea@kernel.org>
-To: lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 8/8] PCI: rzg3s-host: Add bridge::reset_root_port()
-Date: Tue, 22 Sep 2026 17:46:28 +0300
-Message-ID: <20260922144629.586997-9-claudiu.beznea@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260922144629.586997-1-claudiu.beznea@kernel.org>
-References: <20260922144629.586997-1-claudiu.beznea@kernel.org>
+	s=arc-20240116; t=1790090062; c=relaxed/simple;
+	bh=mKPAm9lSrRcV08N0bMDOn/x6I0AzKpQyWCO4ViNMFDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XWfo33Aq03XiZ0SNJUaLa5qe/hXBjQwjvdWj733Fzg4j4ShUQBrX2yBXYYM2ZFfRALXLbLVArxRSkOy3fFAI8SGgnRkZG8R5kr1M9VLG9w++G+IlWOntdXhr5b3iWLkkcNwMMZB6hS8yUyAUjd6zlmUk8Xs726alF5Whkgkxb24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c72bfebso970307241.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 08:14:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790090059; x=1790694859;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=xGvRLKavNp07IDObK0x4MyNXPYCHC6J8E0NCLAikfuA=;
+        b=yAwmu2uGDE/eItPbPgMq7q+od3GxoRUQCNmDcpWk+kA/2Qj7Bffe+5bYGiDC1DqzVh
+         K1uedEbBDjOu4HpvfeUUi9RV+wt769nOgvgoG8fhet4QrqjIom69Nn1Ng+Bfptl/yjXx
+         mXEXfMXnKT7JyuKY49MbrScReKIFs20aPb619IinFPhoS0MJCQlnh8SIDiXOX7ru2Ul9
+         iNWKE6Yy0hv2G5WZcYiYBdwxZMIJ/61Cvzw0w95Mj9RuD236gK/Lza6uKcKYXwN1K39X
+         hisjyFCZ8o/GEQITtJwUFedXbZqd9gF9GkJsIAxukUYgIMmtwscGVyQa9pp8WbURuJ8j
+         kzhw==
+X-Forwarded-Encrypted: i=1; AKwUvBzv15A1d6ZL4e0NP8nMMuRsmC/MA2iW5d4+/z9VBrDaHTNm7qRpoXS4v8sPDbRU4pYr+DpshCGLro6LGlsutNSr0Q==@vger.kernel.org
+X-Gm-Message-State: AFuF++mpNwOkVdMjWvRpDhMAvKYTfDfuEzU6a9Nj4+NSJg78c5wuvwPB
+	tM2VcJh4CftsgT56SJdCT9vyE5KPEyokgoADPRtB1WG4HeRjfvwzyhILrVDq98uj
+X-Gm-Gg: AYBFou3H7kuodq0iLsXY/JsyGfwjpCR7DUk6hUQRZ6BZJ0O8CN0l7KA4zT/WmrDvqc3
+	/VRkHH438Wsvu+KhIAU+pd/y8TDpzF6dzOLpbZurNuyBJJAiAXcFizTBqBJpIR84FvMaqR60evt
+	AYuMjJr/WFhX3avVlUbDr3YegxRTRjSQPDVs6H8HyPqKPfJqa5a2dnaeF79/+sXu0eLDrdE8rQR
+	TqWWiyoA8MZUpE6aApK6vCHhgmkJK+GQjQIM66AsD7oyDLjXZaAOAnyTn2fJYsroYZ0GIqM7n5n
+	iyRwYXlhLqZqYK6SSUfeN2o5aBYnoASHqtNS62IpFIowMfg8Rpp55Mtt98XbxFBX8+MMg5Wb53D
+	eLlaWdTh4q+v2cUSDscJ8eKo3TFM3JnaOnsrLuAW67WllWhkhsec0DoSx+68ZD/Ra9tSrV6P/Tr
+	IbQuObrZKC5WoD04wm/ytdgMFw8bbxPhzVeg974MCO1eecZYWXNwDCNBmIrBcVyNSVusCYuJY0u
+	77eX11hdmL6N2PQQiwf04d+Ts73aeXQEA5JNIiSap/Xybw=
+X-Received: by 2002:a05:6122:8604:b0:5c9:c60a:e9b6 with SMTP id 71dfb90a1353d-5c9c60af813mr7373275e0c.22.1790090059503;
+        Tue, 22 Sep 2026 08:14:19 -0700 (PDT)
+Received: from mail-vs2-f28.google.com (mail-vs2-f28.google.com. [74.125.227.28])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-985169f5783sm17533241.5.2026.09.22.08.14.18
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2026 08:14:19 -0700 (PDT)
+Received: by mail-vs2-f28.google.com with SMTP id 71dfb90a1353d-5c9031e714dso1648947e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 08:14:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxNWYO72mNm62yy2CXyaFl5yZywSfn5vONhU7ciQ+ufMloy8r19GbadZ0e7FNk8/9xq0pPFNXnqr7gaGV08XcxoQw==@vger.kernel.org
+X-Received: by 2002:a05:6122:6b0d:b0:5c9:c60a:e9b7 with SMTP id
+ 71dfb90a1353d-5c9c60af4fbmr7493050e0c.23.1790090058750; Tue, 22 Sep 2026
+ 08:14:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260921131951.187981-1-biju.das.jz@bp.renesas.com> <20260921131951.187981-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260921131951.187981-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 Sep 2026 17:14:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUx5-P97CFEH3Dif1g4K=NPfkDkE=3vrzjZB-TsyxqO8Q@mail.gmail.com>
+X-Gm-Features: AclHuK-rCbm16AlWI6NRQzJvntZXC9gv_oZQlkAlsfHFavMScH5L1qYsY-ROQQE
+Message-ID: <CAMuHMdUx5-P97CFEH3Dif1g4K=NPfkDkE=3vrzjZB-TsyxqO8Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] dt-bindings: can: renesas,rcar-canfd: Document RZ/G3L SoC
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Biju,
 
-Add bridge::reset_root_port(). This allows, on some devices, performing
-reads and writes to an NVMe endpoint after a link down/link up cycle
-without failures.
+On Mon, 21 Sept 2026 at 15:20, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Document the RZ/G3L (R9A08G046) SoC support, which reuses the
+> RZ/G3S (R9A08G045) CANFD bindings as a fallback compatible.
+>
+> RZ/G3L has 11 interrupts and 3 CANFD channels compared to 8 interrupts
+> and 2 CANFD channels on RZ/G3S.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-The implementation of struct pci_host_bridge::reset_root_port() masks all
-enabled interrupts and synchronizes them before resetting the controller
-to prevent asynchronous events from interfering with the reset operation.
+Thanks for your patch!
 
-struct rzg3s_pcie_host::started boolean was added to keep track of the
-controller state, since rzg3s_pcie_host_start() and rzg3s_pcie_host_stop()
-are called from multiple paths: .reset_root_port(), .suspend_noirq() and
-.resume_noirq(). The flag prevents double start/stop and breaking
-reference counters for clocks and resets.
+> --- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+> @@ -47,6 +47,10 @@ properties:
+>                - renesas,r9a07g054-canfd    # RZ/V2L
+>            - const: renesas,rzg2l-canfd     # RZ/G2L family
+>
+> +      - items:
+> +          - const: renesas,r9a08g046-canfd  # RZ/G3L
+> +          - const: renesas,r9a08g045-canfd
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+I am not sure it is a good idea to use RZ/G3S as a fallback
 
-Changes in v4:
-- this patch is new and is a split from patch 7 of v3
-- use a boolean to keep track of the controller start state; with this
-  the state management code from patch 7 of v3 was dropped 
+RZ/G3S:
+  - Selects receive message according to 128 receive rules,
+  - Sets the number of receive rules (0 to 128) for each channel.
+RZ/G3L;
+  - Selects receive message according to 384 receive rules,
+  - Sets the number of receive rules (0 to 256) for each channel.
+These differences are not explained just by the different number
+of channels.  However, it's not clear to me what is the real impact.
 
- drivers/pci/controller/pcie-rzg3s-host.c | 77 +++++++++++++++++++++++-
- 1 file changed, 75 insertions(+), 2 deletions(-)
+> @@ -270,6 +283,11 @@ allOf:
+>                - renesas,r9a09g077-canfd
+>                - renesas,rcar-gen3-canfd
+>                - renesas,rzg2l-canfd
+> +      not:
 
-diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-index 1c0353598b59..9cba898a9536 100644
---- a/drivers/pci/controller/pcie-rzg3s-host.c
-+++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -328,6 +328,7 @@ struct rzg3s_pcie_port {
-  * @intx_irqs: INTx interrupts
-  * @max_link_speed: maximum supported link speed
-  * @controller_id: PCIe controller identifier, used for System Controller access
-+ * @started: The PCIe controller state (started or not)
-  * @num_lanes: The number of lanes
-  */
- struct rzg3s_pcie_host {
-@@ -346,6 +347,7 @@ struct rzg3s_pcie_host {
- 	int intx_irqs[PCI_NUM_INTX];
- 	int max_link_speed;
- 	enum rzg3s_pcie_controller_id controller_id;
-+	bool started;
- 	u8 num_lanes;
- };
- 
-@@ -1110,6 +1112,11 @@ static void rzg3s_pcie_link_event(struct rzg3s_pcie_host *host)
- 
- 		dev_info(host->dev, "PCIe link down, removing devices\n");
- 
-+		for_each_pci_bridge(dev, bridge->bus) {
-+			if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT)
-+				pci_host_handle_link_down(dev);
-+		}
-+
- 		pci_lock_rescan_remove();
- 		list_for_each_entry_safe_reverse(dev, tmp, &bus->devices,
- 						 bus_list)
-@@ -1855,6 +1862,9 @@ static int rzg3s_pcie_host_stop(struct rzg3s_pcie_host *host)
- 	struct rzg3s_sysc *sysc = host->sysc;
- 	int ret;
- 
-+	if (!host->started)
-+		return 0;
-+
- 	clk_disable_unprepare(port->refclk);
- 
- 	/* SoC-specific de-initialization */
-@@ -1876,6 +1886,8 @@ static int rzg3s_pcie_host_stop(struct rzg3s_pcie_host *host)
- 	if (ret)
- 		goto power_resets_restore;
- 
-+	host->started = false;
-+
- 	return 0;
- 
- 	/* Restore the previous state if any error happens */
-@@ -1891,12 +1903,15 @@ static int rzg3s_pcie_host_stop(struct rzg3s_pcie_host *host)
- 	return ret;
- }
- 
--static int rzg3s_pcie_host_start(struct rzg3s_pcie_host *host)
-+static int rzg3s_pcie_host_start(struct rzg3s_pcie_host *host, bool set_started)
- {
- 	const struct rzg3s_pcie_soc_data *data = host->data;
- 	struct rzg3s_sysc *sysc = host->sysc;
- 	int ret;
- 
-+	if (host->started)
-+		return 0;
-+
- 	ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_MODE, 1);
- 	if (ret)
- 		return ret;
-@@ -1929,6 +1944,9 @@ static int rzg3s_pcie_host_start(struct rzg3s_pcie_host *host)
- 	if (ret)
- 		goto assert_power_resets;
- 
-+	if (set_started)
-+		host->started = true;
-+
- 	return 0;
- 
- 	/*
-@@ -1942,6 +1960,58 @@ static int rzg3s_pcie_host_start(struct rzg3s_pcie_host *host)
- 	return ret;
- }
- 
-+static int rzg3s_pcie_host_reset_root_port(struct pci_host_bridge *bridge,
-+					   struct pci_dev *pdev)
-+{
-+	struct rzg3s_pcie_host *host = pci_host_bridge_priv(bridge);
-+	u32 irqs;
-+	int ret;
-+
-+	/* Mask link up/down interrupts. */
-+	writel(0, host->axi + RZG3S_PCI_PEIE0);
-+
-+	/* Mask INTx and MSI interrupts. */
-+	irqs = readl_relaxed(host->axi + RZG3S_PCI_PINTRCVIE);
-+	writel(0, host->axi + RZG3S_PCI_PINTRCVIE);
-+
-+	/*
-+	 * Make sure the next operations are not disturbed by any pending
-+	 * IRQs.
-+	 */
-+	synchronize_irq(host->msi.irq);
-+	for (unsigned int i = 0; i < PCI_NUM_INTX; i++)
-+		synchronize_irq(host->intx_irqs[i]);
-+
-+	ret = rzg3s_pcie_host_stop(host);
-+	if (ret) {
-+		dev_err(host->dev, "Failed to stop the host!\n");
-+		goto unmask_irqs;
-+	}
-+
-+	ret = rzg3s_pcie_host_start(host, false);
-+	if (ret) {
-+		dev_err(host->dev, "Failed to start the host!\n");
-+
-+		/*
-+		 * Don't unmask IRQs. We are in a bad state here and we
-+		 * can recover only through a suspend/resume cycle. Just
-+		 * return and preserve the stop state.
-+		 */
-+		return ret;
-+	}
-+
-+unmask_irqs:
-+	/* Unmask INTx and MSI interrupts. */
-+	writel_relaxed(irqs, host->axi + RZG3S_PCI_PINTRCVIE);
-+
-+	/* Unmask link up/down interrupts. */
-+	writel(RZG3S_PCI_PEIE0_DL_UPDOWN, host->axi + RZG3S_PCI_PEIE0);
-+
-+	host->started = true;
-+
-+	return ret;
-+}
-+
- static int rzg3s_pcie_get_controller_id(struct rzg3s_pcie_host *host)
- {
- 	struct device_node *np = host->dev->of_node;
-@@ -2104,9 +2174,12 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto power_resets_assert;
- 
-+	host->started = true;
-+
- 	bridge->sysdata = host;
- 	bridge->ops = &rzg3s_pcie_root_ops;
- 	bridge->child_ops = &rzg3s_pcie_child_ops;
-+	bridge->reset_root_port = rzg3s_pcie_host_reset_root_port;
- 	ret = pci_host_probe(bridge);
- 	if (ret)
- 		goto host_probe_teardown;
-@@ -2156,7 +2229,7 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
- 	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = rzg3s_pcie_host_start(host);
-+	ret = rzg3s_pcie_host_start(host, true);
- 	if (ret)
- 		return ret;
- 
+Can you really stick a "not" here? Yes, apparently you can.
+Still, I find this hard to read.
+
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              const: renesas,r9a08g046-canfd
+>      then:
+>        patternProperties:
+>          "^channel[2-7]$": false
+> @@ -292,6 +310,46 @@ allOf:
+>        patternProperties:
+>          "^channel[6-7]$": false
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a08g045-canfd
+> +      not:
+
+Likewise.
+This one can easily be restructured like
+
+    if: ... renesas,r9a08g046-canfd
+        ...
+    else: if: ... renesas,r9a08g046-canfd
+        ...
+
+to improve readability.
+
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              const: renesas,r9a08g046-canfd
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 8
+> +          maxItems: 8
+> +
+> +        interrupt-names:
+> +          minItems: 8
+> +          maxItems: 8
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a08g046-canfd
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 11
+> +          maxItems: 11
+> +
+> +        interrupt-names:
+> +          minItems: 11
+> +          maxItems: 11
+> +
+> +      required:
+> +        - channel2
+> +      patternProperties:
+> +        "^channel[3-7]$": false
+> +
+>    - if:
+>        properties:
+>          compatible:
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
