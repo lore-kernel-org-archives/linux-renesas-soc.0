@@ -1,64 +1,63 @@
-Received: from mail-pj2-f0.google.com (mail-pj2-f0.google.com [74.125.227.128])
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD214AEBD0
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 20:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998994CDA0E
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 20:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790107482; cv=none; b=FAiEouF0Qt2MmbSEy1rPUZ57y4nlKReyaWmirovJFvSx3kExmfP8ZXPGQMC2VnhRyFl/wE2PXzwFdVjzqHgwTbHDSAchWLwXrT1SChVOOQuF9IpLtqYwtfEsL0w37+Xyk1fh4HbdyWSr9DhefYw9UTzH6V5ixs72UIPLVped0Eg=
+	t=1790107482; cv=none; b=bRRQeL2RydIo1HOgfkJ0XrzeiBFZPScxeG/GWVDOGkFqPeDBUkI64jRUNkXycURFXN9wVTp/WLmWV5bw8P2qyJPfcIfytNRp3DM2FXPB/3nj1cWyTje4rK/jEnDDWmwzcdtPrIZWBc9qrUA9XMOy6+6gk/a4Xa8UEOg+nVtSOps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790107482; c=relaxed/simple;
-	bh=xsSc6ydPheU6yQKTsn8eVtJAu8IiKQ9vJAoJqkKw3sg=;
+	bh=k9eLD1ZrXZD1iMizDWP4jTUk+ML36ocfJ7jazjazAIs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IYIxf0aMHEai99ADyVXb8w6AMrRCYgAEriqx8fBa9d4i9hndqaCi4VpRN8o6gHPPuQYdrSEAz/WZEp8AYR7Njl1Ap4bx5llqO54WClHLZb+Ofx9QOwuCRsIa3O1gcpVoUuLFAJfzM3XzplvTfeytDgDXHA+JuO/G2fyfktNm8Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOeRIH6g; arc=none smtp.client-ip=74.125.227.128
+	 MIME-Version; b=DgyIMGqX7uR4wVXItTo7gQxB2vVT/GbX/P/UQpoYwxndRlmNrR3wA5TKegn1ESYw4D6JT2HAl8MMXG5O+kKHKB/ah3brUfmgMT67/1WO19NWbsHZMLt89Nyqrdmp3e3P6lko9pYaMTJ90AlCq0ajjLe8LIDoFkVsQz9GNkm2Nzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeAb1uHQ; arc=none smtp.client-ip=209.85.214.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOeRIH6g"
-Received: by mail-pj2-f0.google.com with SMTP id d9443c01a7336-2df5ab2f7b4so756235ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 13:04:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeAb1uHQ"
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2caced6038eso1810315ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 13:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790107466; x=1790712266; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790107474; x=1790712274; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=pIbZ2Qb+jhg9YxUorYRFCm5h/dMc9oDQD6qvJFZg4XI=;
-        b=aOeRIH6gNBwyXu7l5Z7cO83FPF3dKeNG2iYUnz4jNWJ+QrtDFFr1SywQRo4Im44NAd
-         jV6snxM7C3DUvwoaIcpczNOg0FkwRM9QqaCceb+M20bu+xstqgWUWFof33epYjOkUPt5
-         arxga6ZgJoiM8ETG4kbK5wsBHpmmgGAomKI2h6kp6zeX64cjJTbyE15Fx64hK9+p/O0z
-         UQlJSVkLF4NK1tWhL9v4eWPrwGVUAo8gP0jhacLug1Z7hNBPp+hWA4xdn4jlHKCEMvzf
-         uwv6WuxINhUXD6hfD+Ve+VZorPK38h2wz+KyYIwCT8cvKyuKvW7943TuNJCF54CADEQ3
-         7LHg==
+        bh=s/eBjsMbUu4KmQPd6dfybXXRKRWzlAuXWPZqO5pNdlA=;
+        b=LeAb1uHQ/QEIx5DWr68k/8/JzDe5qrf1AnKNJ/S8U2S/xNTt7Vu6iiHAY8H802PwLT
+         6Qh1VHdaTNdXVbWJLu65mIIKngtxIjJXXE4ESzchdCLlycBZrvFBN1tsx/SWVLBSXpC9
+         unelFI+6rqtJyp8wu0Zep9dop7wetSHx2pKcvTDeUfixbeMUSCT0Uw7CE2UZOn17Vaid
+         eLQrJABKKEj9ZTV1BkPYbZO+Q2ozAx7rpKh38vfaApkzYEs0vdCBCPohW8B6wrCI9mfa
+         iLyJApwBPIZwrFDKU0DwsAfF3EvpvuBvFyTC2MIzHlvG4xcIYSB6ut3TT7BZFlxpQcVw
+         gqrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790107466; x=1790712266;
+        d=1e100.net; s=20260707; t=1790107474; x=1790712274;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pIbZ2Qb+jhg9YxUorYRFCm5h/dMc9oDQD6qvJFZg4XI=;
-        b=afwP95Rdos1x1HeASvxX4Bsj+6elPdXoKpkNN8uScxslXaatQGfU8xkzrBFDwGVSyU
-         074NpBNoYiPoWDufxNfzDb9qEEYDMt0jXSALIPE6+qfjQN2b5mekIIqJOjt6Do4gZ40F
-         vszKIvouBBlcR8Fa7nT+kRBeL1THuyKTjg+GuHcwZv8bD1nVs/3u5Mzld/R12hmFiNJl
-         ccB+/F+ant1uJr03aV65LPyXMxo5Wl3vD5q75aqMYs+R+8bRTEWdqN62qUKp4XHZHusc
-         2LjK221Fs5APKpg8nVgKP3mNYbScJRtezBUlHBSXfJRuR7/b9dLL38idbg0eE/rGhJSl
-         J3Kw==
-X-Forwarded-Encrypted: i=1; AKwUvBygTBdfF2k83YE1CVzBrP8WMmi5OFQAw3DuM5m5k+P1hfIxTAJbvU2Sxa62mFQM1BJ+sdnWRIJId4UbjQTuHsPb1Q==@vger.kernel.org
-X-Gm-Message-State: AFuF++n7wZnpliLZKyreCuZPsk5pm6atIxh9hJkWUosz7OcgHIgaH9nI
-	ZF0CIIvs0fCHpVMgSpGgXsPUlzzn22EOLLSTzWjII+10m6OD2s1sLRjz
-X-Gm-Gg: AYBFou2gvR9wJcjclHnNNop6kgqSfGLYMjXFHLPtvR600tT3NEMErWo9K6rm2vUSXoC
-	BUAQDhT73PipMbVOqhx7+i1lwAdwKZqjDFwTmV0CXnHFrwbyx9zk2TV3SnVblHgPxZOzD9M53+S
-	uJgplSvKUogcF4zu+WgvDNCrrbd6PV4s0Xb+MYwNvtSrlbSDgMWEGMR1Adp09ubbQb/tg59cTAd
-	ckDVO37gq7gEEBQkurwMzxjQvrmFDtGk8AMhymPld8Y88d970BODCkgSY2VdtOqC0ziBLLx7EsS
-	q3yJuNaI3qj6/CxyVfGsbkIR1VUQPgX/nO+AEZuyW9Pg4zp8grb11pTPeh5KhyiWTiBnKGu5UTn
-	xBVxQe59W44Fbw7vwax6wk7iwthmHR8GKmI/CoCegVciiSGiXcQ9bk14Cu+Rqc3GQ3djfbiDH8p
-	WrscouDY18qefwJbmpwfW4cgM7j1bpVCLdqOsrFjTohk2OO+NGlsTevcHZHyvY9u3jxtq3d2kXN
-	IIchC4=
-X-Received: by 2002:a17:903:3245:b0:2d9:438e:b70d with SMTP id d9443c01a7336-2df69d0cfd9mr4017475ad.1.1790107465799;
-        Tue, 22 Sep 2026 13:04:25 -0700 (PDT)
+        bh=s/eBjsMbUu4KmQPd6dfybXXRKRWzlAuXWPZqO5pNdlA=;
+        b=N/O3H/YL2dmyT7cWfnWjz2NLgpXCGaZQT2oQV3JWYoopVIYuoz9LFRvLiz1cxuvF4l
+         z5dA8dGUkcUGaoCMTxQMcbTJEWlXrVfnRzISpDqyFDDG9vFhxMZU/aMygJN1XL+NakE7
+         aHrvR5nTYBxlneIad98d7kdIrJJvDCo7aQTKy9+gawjotZtZMPRquM1CgI+P9eC5Il11
+         cJc8T8X0XVCZmERCvmJrKN528lVyxdHgkOp22OVpE5sX5EcNkqi7ou0KkQC2BkC5Nd68
+         HEx3nGV6BfYpl/sr7+EsXwL+zcY2giduvA6ecfZeBHfakmxXJ20TtDI++xsWJ4ihZI7y
+         AkEg==
+X-Forwarded-Encrypted: i=1; AKwUvBzs6OWELfIRnS6pfPVSqtXVsdE6N5G1In1UturSWopwx78dfP98YdIzSFXaZsluscWe575WkN7lOGZeSvqDUvWJBQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++m27rq6TqF0Y4xzs0rPpdXdZnx1Fk+fMxXUoY9Wd/TPHN6ew4uc
+	pbnEyzbCGeQM/qme2KAmlUHE5VlP232uIqchSNCa/3Xer5Xrsz2SaLlc
+X-Gm-Gg: AYBFou05WWVNbpSNKwdPWuvjSHy/sSal5QsWlMIgohzMpCdG06eeiUrzFGZE90Oo9Mu
+	xrishsSVva0Clu1tJLb70Xa1m3uFHmlS1sFcIAVgTcYXFkR6w/IjrPVTR/9JXeH05U78VhunYH6
+	P1m+EAfUCCv4NwBA4yxTpKm2+jEB/qN1tAqDHaQSwI/uGUngwS8803KjcEVvjlFKLRtkDuI9wAk
+	5Cd5RqDYeIrCZZN9cMvDBnEsiULFCWKr5nExz4To8/PaTZRtCSPtCgmRmlEm4Enf0Y2Jo3+hdER
+	J94/4xH9/kiejAFpCKvWt1qbK7cfhgE8/o2Fud/ZtiSSEgVKLSrqfN4rVT8+vwTNq6dWU0zZhxw
+	2KD/D1Wmia/tSrS70Zx1hV2OIYUy8XfAGlrPNkAoplv0MVHz2nwS2A/tAKxpBY/6meOFGTjns7b
+	sDTj1WDyhZj+hgut+WAmJgkBeTL1T9v2545L7HkB2PZWFp5EpBMe/UL6iE030zXVcgMiA5
+X-Received: by 2002:a17:903:1b30:b0:2df:5c13:b37c with SMTP id d9443c01a7336-2df60b6920emr18526165ad.26.1790107473545;
+        Tue, 22 Sep 2026 13:04:33 -0700 (PDT)
 Received: from server.lan ([168.138.199.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df6a5eea15sm654515ad.64.2026.09.22.13.04.18
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df6a5eea15sm654515ad.64.2026.09.22.13.04.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 13:04:25 -0700 (PDT)
+        Tue, 22 Sep 2026 13:04:32 -0700 (PDT)
 From: Coia Prant <coiaprant@gmail.com>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S . Miller" <davem@davemloft.net>,
@@ -87,10 +86,11 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-phy@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v10 05/11] arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes
-Date: Wed, 23 Sep 2026 04:03:29 +0800
-Message-ID: <20260922200336.2201212-6-coiaprant@gmail.com>
+	linux-renesas-soc@vger.kernel.org,
+	Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH net-next v10 06/11] net: pcs: xpcs: add ANRESTART support for SGMII link recovery
+Date: Wed, 23 Sep 2026 04:03:30 +0800
+Message-ID: <20260922200336.2201212-7-coiaprant@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260922200336.2201212-1-coiaprant@gmail.com>
 References: <20260922200336.2201212-1-coiaprant@gmail.com>
@@ -102,103 +102,119 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RK3568 SoC integrates a Synopsys DesignWare XPCS that provides
-the Physical Coding Sublayer for 1000BASE-X, SGMII, and QSGMII
-interfaces via its four MII ports.  Add the XPCS device node and
-its pcs-mii sub-nodes to the SoC device tree.
+On some hardware using the DesignWare XPCS IP (e.g., RK3568 MAC side
+SGMII), the PCS does not automatically restart auto-negotiation when the
+link goes down and comes back up. Without an explicit ANRESTART, the link
+stays down forever.
 
-The XPCS device is accessed via the APB3 bus at 0xfda00000 and
-requires the CSR clock (PCLK_XPCS) for register access and the EEE
-clock (CLK_XPCS_EEE) for Energy Efficient Ethernet operation.  The
-PD_PIPE power domain must be enabled before any register access.
+Add BMCR_ANRESTART in two places:
+1. In xpcs_config_aneg_c37_sgmii(), when starting AN, set ANRESTART
+   alongside ANENABLE to initiate a fresh negotiation.
+2. In xpcs_get_state_c37_sgmii(), when link is down and AN completion is
+   detected, clear the interrupt and trigger ANRESTART to restart the
+   negotiation process. Propagate the return value of the restart so
+   errors are not silently ignored.
 
-Also add two fixed-clock nodes (clock-xpcs-gmac0 and clock-xpcs-gmac1,
-labelled clk_gmac0_xpcs_mii and clk_gmac1_xpcs_mii) providing the
-125 MHz reference clock for the GMACs when operating with XPCS.  Their
-clock-output-names match the CRU mux parent names in clk-rk3568.c, so
-boards can reparent SCLK_GMAC0_RX_TX / SCLK_GMAC1_RX_TX through
-assigned-clock-parents.
+The restart cannot go through the .pcs_an_restart op: phylink only
+calls it for 802.3z interfaces, and SGMII is not one. Changing hardware
+state from pcs_get_state() is already done elsewhere in this driver
+(xpcs_get_state_c73() calls xpcs_soft_reset() and xpcs_do_config()),
+so the same pattern is used here.
 
-The XPCS node and its mii sub-nodes are disabled by default and
-must be enabled at the board level when 1000BASE-X/SGMII/QSGMII is
-in use.  The fixed-clock nodes are always present and do not have a
-status property, as they are static clock sources.
+The latch is cleared before issuing the restart, not after: clearing it
+afterwards would discard a freshly latched ANCMPLT from the new
+negotiation. If an MDIO access fails at this point, it indicates an
+unrecoverable hardware condition until reset.
 
-The XPCS node requires a reference to the appropriate Naneng Combo PHY
-via the phys property.  dtbs_check only validates required properties
-for enabled nodes, so the SoC dtsi does not provide phys/phy-names:
-boards that enable the XPCS must supply them, since the SerDes link is
-a board-level design choice (combphy1 on some boards, combphy2 on
-others).
+Also clear DW_VR_MII_AN_INTR_STS in xpcs_config_aneg_c37_sgmii() before
+starting AN, matching what xpcs_config_aneg_c37_1000basex() already does.
+On the non-inband path the function now returns the result of that write
+instead of the DIG_CTRL1 modify.
 
+Update the comment in xpcs_config_aneg_c37_sgmii() to note that although
+the DesignWare databook says AN restart is not needed for MAC side SGMII,
+some implementations (e.g. Rockchip RK3568) require it to recover the
+link after a disconnect.
+
+This is not a fix for an existing mainline platform: the affected
+platform (RK3568 XPCS) is introduced later in the same series.
+
+Tested-by: Jiawen Wu <jiawenwu@trustnetic.com>
+Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: Coia Prant <coiaprant@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3568.dtsi | 45 ++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/net/pcs/pcs-xpcs.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-index 3bc653f027f1f..2cea108b31a4e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-@@ -8,6 +8,20 @@
- / {
- 	compatible = "rockchip,rk3568";
+diff --git a/drivers/net/pcs/pcs-xpcs.c b/drivers/net/pcs/pcs-xpcs.c
+index 0337e2bcc0125..8c3875b6985b9 100644
+--- a/drivers/net/pcs/pcs-xpcs.c
++++ b/drivers/net/pcs/pcs-xpcs.c
+@@ -761,7 +761,9 @@ static int xpcs_config_aneg_c37_sgmii(struct dw_xpcs *xpcs,
+ 	 *    DW xPCS used with DW EQoS MAC is always MAC side SGMII.
+ 	 * 4) VR_MII_DIG_CTRL1 Bit(9) [MAC_AUTO_SW] = 1b (Automatic
+ 	 *    speed/duplex mode change by HW after SGMII AN complete)
+-	 * 5) VR_MII_MMD_CTRL Bit(12) [AN_ENABLE] = 1b (Enable SGMII AN)
++	 * 5) VR_MII_AN_INTR_STS = 0x0 (Clear CL37 AN complete status)
++	 * 6) VR_MII_MMD_CTRL Bit(12) [AN_ENABLE] = 1b (Enable SGMII AN)
++	 *    VR_MII_MMD_CTRL Bit(9) [AN_RESTART] = 1b (Restart SGMII AN)
+ 	 *
+ 	 * Note that VR_MII_MMD_CTRL is MII_BMCR.
+ 	 *
+@@ -769,7 +771,14 @@ static int xpcs_config_aneg_c37_sgmii(struct dw_xpcs *xpcs,
+ 	 *	 SR_MII_AN_ADV. MAC side SGMII receives AN Tx Config from
+ 	 *	 PHY about the link state change after C28 AN is completed
+ 	 *	 between PHY and Link Partner. There is also no need to
+-	 *	 trigger AN restart for MAC-side SGMII.
++	 *	 trigger AN restart for MAC-side SGMII on most devices.
++	 *
++	 * Note: While the DesignWare databook states that AN restart is
++	 *	 not needed for MAC side SGMII, some implementations (e.g.
++	 *	 Rockchip RK3568) exhibit a timing quirk when integrated with
++	 *	 phylink and do not restart AN automatically when the link
++	 *	 comes back up. An explicit AN restart is required on those
++	 *	 parts to recover the link after a disconnect.
+ 	 */
+ 	mdio_ctrl = xpcs_read(xpcs, MDIO_MMD_VEND2, MII_BMCR);
+ 	if (mdio_ctrl < 0)
+@@ -816,9 +825,14 @@ static int xpcs_config_aneg_c37_sgmii(struct dw_xpcs *xpcs,
+ 	if (ret < 0)
+ 		return ret;
  
-+	clk_gmac0_xpcs_mii: clock-xpcs-gmac0 {
-+		compatible = "fixed-clock";
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_gmac0_xpcs_mii";
-+		#clock-cells = <0>;
-+	};
++	/* Clear CL37 AN complete status */
++	ret = xpcs_write(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_INTR_STS, 0);
++	if (ret < 0)
++		return ret;
 +
-+	clk_gmac1_xpcs_mii: clock-xpcs-gmac1 {
-+		compatible = "fixed-clock";
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_gmac1_xpcs_mii";
-+		#clock-cells = <0>;
-+	};
-+
- 	cpu0_opp_table: opp-table-0 {
- 		compatible = "operating-points-v2";
- 		opp-shared;
-@@ -110,6 +124,37 @@ sata0: sata@fc000000 {
- 		status = "disabled";
- 	};
+ 	if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED)
+ 		ret = xpcs_write(xpcs, MDIO_MMD_VEND2, MII_BMCR,
+-				 mdio_ctrl | BMCR_ANENABLE);
++				 mdio_ctrl | BMCR_ANENABLE | BMCR_ANRESTART);
  
-+	xpcs: ethernet-pcs@fda00000 {
-+		compatible = "rockchip,rk3568-xpcs";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x0 0xfda00000 0x0 0x200000>;
-+		clocks = <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
-+		clock-names = "csr", "eee";
-+		power-domains = <&power RK3568_PD_PIPE>;
-+		status = "disabled";
+ 	return ret;
+ }
+@@ -1093,9 +1107,18 @@ static int xpcs_get_state_c37_sgmii(struct dw_xpcs *xpcs,
+ 		return 0;
+ 	}
+ 
+-	/* Clear AN complete status or interrupt */
+-	if (state->an_complete)
+-		xpcs_write(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_INTR_STS, 0);
++	if (state->an_complete) {
++		/* Clear AN complete status or interrupt */
++		ret = xpcs_write(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_INTR_STS, 0);
++		if (ret < 0)
++			return ret;
 +
-+		xpcs_mii0: ethernet-pcs-mii@0 {
-+			reg = <0>;
-+			status = "disabled";
-+		};
-+
-+		xpcs_mii1: ethernet-pcs-mii@1 {
-+			reg = <1>;
-+			status = "disabled";
-+		};
-+
-+		xpcs_mii2: ethernet-pcs-mii@2 {
-+			reg = <2>;
-+			status = "disabled";
-+		};
-+
-+		xpcs_mii3: ethernet-pcs-mii@3 {
-+			reg = <3>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	pipe_phy_grf0: syscon@fdc70000 {
- 		compatible = "rockchip,rk3568-pipe-phy-grf", "syscon";
- 		reg = <0x0 0xfdc70000 0x0 0x1000>;
++		/* Initiate the next round of AN */
++		ret = xpcs_modify(xpcs, MDIO_MMD_VEND2, MII_BMCR, BMCR_ANRESTART,
++				  BMCR_ANRESTART);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.47.3
 
