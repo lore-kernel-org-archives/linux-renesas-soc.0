@@ -1,104 +1,261 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f1.google.com (mail-pj2-f1.google.com [74.125.227.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46B34825DB;
-	Tue, 22 Sep 2026 18:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ADF4A842E
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 20:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790100483; cv=none; b=Z1L9pUIkLJTaTsmjGdnf7wjqwPiV3+7xT95lfHAxmdo9Hj+JHt2hw1a+fVBmq8ucqy7bTtsWmYzl6x+OmkiFq2O6lAQ5vz032PvkhYHDNJP5xxU/gDS1XWDsEf8UpmSBaGae1OCVdQgEE3svtLoy3XRaieGLrp7aiTWssQKXapA=
+	t=1790107442; cv=none; b=cYv14RpploPDPc018TwAbZoIQBpTMltIew3Cp8gM0mopQVPLNsHMQxrrysTrAOua/Mddwl7k1tGLmskprJDjgvgzRJp+tNKvuBRhqDKZ01K0XUF8jMhEfguN+CNtu8V+IVKTxk0scxXr5a6wIezu9NtCBXsjDbL4P7UjItLXe5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790100483; c=relaxed/simple;
-	bh=sziaRl8DH9oeu7BAzibbtxWV4XuPfFufnQy3wBNUh8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FR1Wc5juMrtD0Lh+Cb7Qj45De1+7zQTC+TMAUj8hNsVuaUU+Sm5EMX3vLCp0Ei/5hp1xQf9ZMwSI7K7Wu224X8xoK7/f4amI4OtvN3H2uivUa2SFllhlPX9N3/6avHpCcFMmN8n0l4shhGvP63Lumq1dHQZ13ptdPgMMJhtTvdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XulreWxD; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1790107442; c=relaxed/simple;
+	bh=U+Ef+njUhKSDrdsVjIV/jZGXnWIx3qurrLz00hATNN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LSJVA9X2jU3qTkUU012lc1FB5zyChE3AwOEELtGHqJkXDoTy/9yJtXoeKvBSsPX61UqO162Ge+ZexaRNMOcXdENzuPUkn5D4MYZE+ikMPBzF0zkzmpoZubdfEIHZtd6blF/dosxQzqFI5mZx+AxDPc/9/RlXS75H7ztB/0fCnFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNOR05T8; arc=none smtp.client-ip=74.125.227.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XulreWxD"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hq7P85BMKz8txm;
-	Tue, 22 Sep 2026 20:07:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1790100476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RaKFAHmXI7vtT5VTgEWEeXIFQqBaYJ+1PFKMoKFOdAA=;
-	b=XulreWxDr7BSQ2g57ETcFHMnIC5a5+25szqD/50iKK3TD65ZIbiusjQouGR0MDFu/I9HeE
-	SW+q/kGbpLX4glJ8q33Q5A78QK0a23R5ekoh4FFzt30NeSz6m8HmccN9GsRyJ7xuR8X0pp
-	jmwwuibVEov/C50QDFiT+N2t/1nxFF7ioiyo+rlCfNwmmh5vovKxvG5PoAZSzRJXakSzOP
-	TwsP8xaFSkwirAeM8zIMq60axcIEEzCWmn8ogOg5gTpe8NSOMQwB2be/qDiETN1Gmrwsce
-	XPgy/GzcENQRQcPPS9/stDeDwrBF0DE6SUB82zKgmBgj8ZlL9qGcmnPzrCoGIg==
-Message-ID: <61488ddc-b346-4ba3-b32a-e972a3bd75a4@mailbox.org>
-Date: Tue, 22 Sep 2026 20:07:52 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNOR05T8"
+Received: by mail-pj2-f1.google.com with SMTP id d9443c01a7336-2cb3f5bb19aso497675ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Sep 2026 13:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790107428; x=1790712228; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tLf44y0wjXekRKRabcqObNjHMHH8+Vthi1ry2XuMnz0=;
+        b=lNOR05T8az3xETlzdh1sV+1XBAIwmnE0hhuXGdy47J1hjpX8TJwxTabCtQSgnvDhhR
+         QT1yc6QaYV46Bqgzb6tS6vXrFzt3Qugokk0Om7EvmihwV7zWixML9bZmYtkaugGoWL6M
+         sZ3oYmH/w/aSVsnyuG7XtbSWY+rqMMtCSNDIeKsUC3YSIBtSsF9su2qDTEQvO9dP8WNn
+         OKeNoJyj7FMS+qoJsJJ7MaJqG2GtbXgIa4VOhrcF8+pEFAwtfnkLOxeUl3ypQIT2GgaI
+         kWu8FDu9C/SmRXJr87H1XNApHRFZ3IXUgcjq3GGWYlUyXCQcVrfUGZ1JXQWySRvaIRku
+         075Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790107428; x=1790712228;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tLf44y0wjXekRKRabcqObNjHMHH8+Vthi1ry2XuMnz0=;
+        b=ckvwqBf9nR4XUH0lxfiURSBxZi8hzshNClghDKU/sejykiURInJxkfCeSU+oWw02Zq
+         Objxfb5J6EENuDabnXz0L+m8SAw4kH7bVx+SFzBk+dxppe7QQit1ZcStGRYGFad/X1iG
+         ENl5u5OTWkgWxgbf/IX16TW/yXZH2m8t1m6bAFY6XWseE3L82L+PM0bkuW9FtMOiG1rf
+         4QDu48+UebvawJezGNYYbULa0FhocIEpL2a5+JI8d43VLngt43LNG0Ck/m+IazkCcx6Y
+         3PMoweo9Fkc0yB9tHp+x7Dn14BI/nKImw3WoDW2jS/OgeC13CE2/Asjrs2WnHHYkpPM3
+         rd4A==
+X-Forwarded-Encrypted: i=1; AKwUvBzJ3gGKds/pe0zBWFPSIkng1gStQtTLS80g9PUvY+guXQqS2v1y9WXPpcTJC6V5OmWzcp66J6mxSoSIfPIrZO4TZQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mHiS+Pb331DmnTJN2xlBAex7KlvCVA3ysJYtoSILFOc5PyyyVj
+	ZQUiwI0ES15JYOBIB2abZGtRUv1tUyj3RHIu43u99bptF9hs3gbIfe6A
+X-Gm-Gg: AYBFou1A6ovBTb5I9rrCYYSUNTAjfSdh8iuydkH7pnPjJw6LIcS3OkrpLHa4ZtDYgoz
+	mqJKeJOl9OU/rSMLFXuIYfWYMaZgIU+Y60Q3MniTJt5/cICUZP71UzvuvhoMVc2N+GWK/2IVp0e
+	xD0tcG8Oa1Yv3YhKbJ+yZMWcIP3rmicAJMMWP1Wl9JGBlp3NKbc3AWQSAfimdmDg7wc9SVsvKAi
+	tRJ7I5XyaYWfMuDWz8NiKnzVCBTA0pLW1TZVHcDpwztnRdq9HisUjggG5PgJXESoEQzpkiTE2z3
+	JCqhx6cVLjvlYw/TcBdE6RADt6okhDOyroFHxMe6BSXEjHAMAzVyPke6H6TWab2DAfjJ5vtKcVf
+	m5I2zXNQTizH+Jz+P7RkuqialJQVQC3OCYW6oknEDCIYSW9Bixik5LQ9enwfHA02hWF5oDLIFdh
+	0mo0RSH931GLcod3rG0oSOv1uvsZxVI+FkOViGTB/iIcJlyPKan0HcA7fdM8Irn45llwvQP8MoN
+	4l1wY3S1zaqSKvZxw==
+X-Received: by 2002:a17:902:fc4c:b0:2dd:c053:e0f7 with SMTP id d9443c01a7336-2df69ddf21cmr4274665ad.38.1790107427896;
+        Tue, 22 Sep 2026 13:03:47 -0700 (PDT)
+Received: from server.lan ([168.138.199.194])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df6a5eea15sm654515ad.64.2026.09.22.13.03.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 13:03:47 -0700 (PDT)
+From: Coia Prant <coiaprant@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Coia Prant <coiaprant@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	David Heidelberg <david@ixit.cz>,
+	netdev@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH net-next v10 00/11] net: pcs: add basic support for RK3568 XPCS
+Date: Wed, 23 Sep 2026 04:03:24 +0800
+Message-ID: <20260922200336.2201212-1-coiaprant@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] PCI: rcar-gen4: Fix device_node leak in
- rcar_gen4_pcie_host_msi_addr()
-To: Fuad Tabba <fuad.tabba@linux.dev>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>
-References: <20260918091052.2825315-1-fuad.tabba@linux.dev>
- <95685b0e-21dd-4446-8fef-c5664cea4057@mailbox.org>
- <20260922063830.472642-1-fuad.tabba@linux.dev>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20260922063830.472642-1-fuad.tabba@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 886995ffb021cb24019
-X-MBO-RS-META: ebiyoia9aickktfd3uyz7yhiyimu1jgc
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 9/22/26 8:38 AM, Fuad Tabba wrote:
+This series adds proper SGMII support for the Rockchip RK3568 SoC
+using the integrated Synopsys DesignWare XPCS, along with necessary
+fixes and refactoring in the stmmac core and XPCS driver.
 
-Hello Fuad,
+Motivation
+==========
+The RK3568 integrates a DW XPCS accessed via APB3 and connected to
+a Naneng Combo SerDes PHY.  Several boards (e.g., Ariaboard
+Photonicat) use this interface for Gigabit Ethernet.  However, the
+current upstream stmmac driver does not support this configuration,
+and the XPCS driver has issues in SGMII poll mode that cause the
+link to be reported incorrectly.
 
-> On Mon, 21 Sep 2026 22:47:30 +0200, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> 
-> [...]
-> 
->> I think you have to call of_node_put() on msi_node(), so what about this
->> instead ?
-> 
-> The __free(device_node) is that call: it puts msi_node on every return from the function, the success path included, so no goto is needed. It's the same scoped cleanup pci-imx6.c and pcie-rzg3s-host.c use for their device_node lookups.
+This series addresses these issues by:
+- Refactoring stmmac PCS lifetime management to allow platform drivers
+  full control over PCS creation/destruction
+- Fixing the XPCS driver's SGMII link recovery
+- Adding a Rockchip XPCS platform glue driver and wiring it up in
+  dwmac-rk
 
-Oh, this is very nice, TIL, thank you.
+Series overview
+===============
 
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Tested-by: Marek Vasut <marek.vasut+renesas@mailbox.org> # Retronix 
-R-Car V4H Sparrow Hawk
+Generic:
+  Patch 1: move XPCS lifetime management to platform drivers
 
->> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-> 
-> [...]
-> 
->> "
->>
->> Also, I think drivers/pci/controller/pcie-iproc.c
->> iproc_pcie_msi_enable() needs similar fix ?
-> 
-> I don't think so: iproc_pcie_msi_enable() already puts the node at out_put_node, on the steer failure and the success paths alike.
+PHY:
+  Patch 2: DT binding for Naneng Combo PHY SGMII MAC selection
+  Patch 3: implement the PHY SGMII MAC selection in driver
 
-Could you maybe send similar simplification patch ?
+RK3568 XPCS/SGMII:
+  Patch 4: DT binding for Rockchip RK3568 XPCS
+  Patch 5: add XPCS and fixed-clock nodes to rk3568.dtsi
+  Patch 6: add ANRESTART support for SGMII link recovery
+  Patch 7: implement the Rockchip XPCS platform glue driver
+  Patch 8: DT binding for Rockchip DWMAC PCS
+  Patch 9: wire up SGMII support in dwmac-rk
+  Patch 11: update MAINTAINERS
 
-Thank you !
+Board enablement:
+  Patch 10: enable SGMII LAN port on Photonicat board
+
+Changelog
+=========
+
+Changes since v9:
+
+Patch 5 (arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes)
+- Move the two fixed-clock nodes (clk_gmac0_xpcs_mii and
+  clk_gmac1_xpcs_mii) from between the XPCS node and pipe_phy_grf0 to
+  the top of the root node, alongside the other non-reg nodes, and
+  sort them alphabetically. This addresses a DT coding style violation
+  reported by the Sashiko AI review. No functional change.
+
+Patch 7 (net: pcs: xpcs: add Rockchip RK3568 platform glue driver)
+- Add system suspend/resume callbacks and switch from
+  DEFINE_RUNTIME_DEV_PM_OPS to _DEFINE_DEV_PM_OPS so that system
+  suspend and runtime suspend can use different callbacks.
+- Mark the XPCS as part of the wakeup path in system suspend via
+  device_set_wakeup_path(). PD_PIPE is shared with SATA and PCIe;
+  without this, genpd would power the domain down once every consumer
+  is suspended, killing the SerDes and breaking MAC WoL. Runtime PM
+  behaviour is unchanged: the runtime callbacks only gate the CSR
+  clock, and dev_pm_genpd_rpm_always_on() already keeps PD_PIPE on at
+  runtime.
+- Clarify the comment above the power domain access: the XPCS lives in
+  PD_PIPE, and the domain must be powered before any register access.
+
+Key design decisions
+====================
+- The stmmac core now delegates XPCS creation entirely to platform
+  drivers via pcs_init/pcs_exit.  This is necessary because the
+  generic XPCS creation logic would override any XPCS set up by the
+  platform driver.
+
+- The Rockchip XPCS driver creates a virtual MDIO bus over the APB3
+  registers and implements address remapping.  The generic XPCS core
+  handles all PCS configuration via phylink_pcs_ops.
+
+- On RK3568 in SGMII mode, the MAC clock is fixed at 125 MHz and
+  cannot be dynamically changed.  In-band mode is used, and the
+  generic stmmac set_clk_tx_rate callback is disabled to prevent
+  incorrect clock updates that would break RX.
+
+- The SerDes and power domain are attached to the XPCS device tree
+  node rather than the MAC node. This reflects the actual hardware
+  topology and simplifies the dwmac-rk driver by keeping all PCS-related
+  resources self-contained. It also prepares for possible future QSGMII
+  support, where a single SerDes serves multiple MACs and would be
+  more naturally managed under the XPCS node.
+
+Testing
+=======
+Board: Ariaboard Photonicat (RK3568)
+OS: Armbian (trixie)
+Kernel: 6.18 (backports)
+Result: The SGMII interface obtains an IP address, SSH works, and
+        ping traffic passes without loss.
+
+Notes
+=====
+- When testing out-band mode with set_clk_tx_rate, only 1000Mbps
+  works on both TX/RX; 10/100Mbps only works on TX side.
+
+Dependencies
+============
+None. All patches apply cleanly on top of torvalds master tree (v7.3).
+
+Acknowledgments
+===============
+This work was inspired by and builds upon the excellent work of others:
+- Serge Semin's Synopsys DesignWare XPCS platform driver (pcs-xpcs-plat.c)
+- Clément Léger's Renesas MIIC driver (pcs-rzn1-miic.c)
+- The Rockchip TRM and downstream OEM drivers
+
+Thanks in advance,
+Coia Prant
+---
+Coia Prant (11):
+  net: stmmac: move XPCS lifetime management to platform drivers
+  dt-bindings: phy: rockchip: naneng-combphy: add rockchip,sgmii-mac-sel
+    property
+  phy: rockchip: naneng-combphy: add SGMII MAC selection for RK3568
+  dt-bindings: net: pcs: add rockchip,rk3568-xpcs support
+  arm64: dts: rockchip: rk3568: add XPCS and fixed-clock nodes
+  net: pcs: xpcs: add ANRESTART support for SGMII link recovery
+  net: pcs: xpcs: add Rockchip RK3568 platform glue driver
+  dt-bindings: net: rockchip-dwmac: document pcs-handle
+  net: stmmac: dwmac-rk: add SGMII support for RK3568
+  arm64: dts: rockchip: rk3568-photonicat: enable SGMII LAN port
+  MAINTAINERS: add entry for Rockchip XPCS driver
+
+ .../net/pcs/rockchip,rk3568-xpcs.yaml         | 110 ++++
+ .../bindings/net/rockchip-dwmac.yaml          |  18 +
+ .../phy/phy-rockchip-naneng-combphy.yaml      |  13 +
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/rockchip/rk3568-photonicat.dts   |  74 ++-
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi      |  45 ++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c |  44 +-
+ .../stmicro/stmmac/dwmac-renesas-gbeth.c      |   7 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 130 +++-
+ .../net/ethernet/stmicro/stmmac/dwmac-rzn1.c  |   7 +-
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |   7 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_mdio.c |  39 +-
+ drivers/net/pcs/Kconfig                       |  25 +
+ drivers/net/pcs/Makefile                      |   5 +-
+ drivers/net/pcs/pcs-xpcs-rk.c                 | 619 ++++++++++++++++++
+ drivers/net/pcs/pcs-xpcs.c                    |  35 +-
+ .../rockchip/phy-rockchip-naneng-combphy.c    |   8 +
+ include/linux/pcs/pcs-xpcs-rk.h               |  11 +
+ 19 files changed, 1135 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/rockchip,rk3568-xpcs.yaml
+ create mode 100644 drivers/net/pcs/pcs-xpcs-rk.c
+ create mode 100644 include/linux/pcs/pcs-xpcs-rk.h
 
 -- 
-Best regards,
-Marek Vasut
+2.47.3
+
