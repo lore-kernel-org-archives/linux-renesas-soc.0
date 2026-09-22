@@ -1,245 +1,178 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011027.outbound.protection.outlook.com [40.107.74.27])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051003ED3D8;
-	Tue, 22 Sep 2026 04:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790051320; cv=fail; b=X28nsoY+JgQ/jrmprBHGcJWhiQIG78g4C2pltEqCbSG9Rrgvpv2BYvwm0WNWiO7dfZNyCfuAb/etlVYU5HrbiyuBr4b7Err76xt/IArJQCabfW25ZI7VyXa/8XkntbVUmMLG+Aky5+46cKIVY/f/aeiq/OjkfhWU7m9t7YHWZEc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790051320; c=relaxed/simple;
-	bh=+n58LnchrGYvW0dcTwlaT4JGYCOnUzrXjAHFREZ5LfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NO7Nmw3+XmIRAvVKMXzKRw/TqMhGzqAIWGCoFI3ibKUPOOnQrKSQ/W4IW/upCrxZWUvuN+X2JcNnLkiYcBaXlFp0dQ+neXJpa06/mU9fvrg24DnLTghOyN3UGL4RWFlYCEThpTcbeMvTInyfeREkflOW6/D9RNN52IoNVwQS0Fc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=iOhQWtad; arc=fail smtp.client-ip=40.107.74.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B95B360EDC;
+	Tue, 22 Sep 2026 04:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790052592; cv=none; b=jteH+nM0Oubu7B1GZnSrjeYdzF7+BEZpJ+soPvcVePS15n/o/0iyvwY4V7AO//5OvuxkpUV/CDDNJaer+2doCEjIYHfO8LjS5TGbQahOQG7AYFaVS5JIHw7vaGPMG+1LIYmAvhkwP/eSarWcgxFRKTeqSeqwECQ1c/ovQFKY7Uw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790052592; c=relaxed/simple;
+	bh=LE3ktMvn8f20wey7b96+iSHLbZJasRdXGgoFtYTRWfs=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l6asmGmyRMsx1u8OVhTV15DF+2CHVga5cKldEppOgomuHtr0Haa+e0GYmE2nUuILlMwT0JZth84BXiLEE2NjnSmt0blD+eO1OaEEw2OBl3C8USFiiP+/IrNeLdaAODY2FwtDVu/DXb+vpKhglr1emzkkK/lDUARFtKsMTd5sV1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfbtMN/S; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="iOhQWtad"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N3yoTVLSnQ+8w9U6TAYThCe5YzIgwaP2gpYYqDU5QVXsCUD2qSUM14AmYgQsQWF6ueq4Mg97u94YpVpzC+SQdg6sN4aII2cQ3gL0ALq80UuAqlcaee1s+rhDoSG/zDyNrb+WEeCIjI+jY5rm/IQlGlYN/9izk+DBuWMsY2UheTIEUt1JXM4GPlRRtitUz0KBV6YG4EkoqlXLbBH4kF0HPLxoA+5m6g3iGxnDFEglX5cnvkOubbODFhIQMgreMFSmcX1sjO8PLLzijYdMzzV0tXYBXe0aIfHSJJGeOR2Kt3Fl0zzxmTGrmq/d4Y/osGGcu6elLVUBNZEojbwyI/Hr1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7Too+ZRngputDjsXJnKUXq2ai1fjEhgHsT+UWpCbCIM=;
- b=tOqZBO4lNjDd5YrHcd6Qv0ZiBIZT6XaNLpIJ0e/LVu5DoPKmdYhrG/A1vP1A0JgESnq9x6/aO+b721Z/B2VFQv1RgKgymjsitkMPZrGUziQiu39WzhavLHp4bIvX5+o/5BWcy7qwsxUz9MFwk+LSCMBNEXTHwVaWouub/M+DL2329fz+2zZEXDaJtrQyH1f7H4pnjN+E46BSggpclb3XsTWA/tVi6VFoGIX88jg1megcdAcfR9EoqySFKnkecYUKwYw5H9suz72lS9o5BbWozj0fbBm+8siZlkvFMsf63VAYWuAJ5WQ64z4Ldw2CrWsVfI42fq7TXfLuljsR4MylsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=bp.renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Too+ZRngputDjsXJnKUXq2ai1fjEhgHsT+UWpCbCIM=;
- b=iOhQWtadYwQFCGc37ev4YEBLMVObm4Wfpb+wP3meM2hLnhfU6esXRUxdZDVAYAeMeDBuxvhO6PiC1xIXa8qSqyXsL1uWevgr/TF8GzbkKxiQrq2yzpmM20DIQoKSAXAGCL/a0SqKJSKZqUSJ9B0iIvPAmuB1Lgk9XG2qaUcmHTo=
-Received: from TY4P286CA0040.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:2b2::19)
- by OS7PR01MB18350.jpnprd01.prod.outlook.com (2603:1096:604:4c4::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.13; Tue, 22 Sep
- 2026 04:28:35 +0000
-Received: from TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:2b2:cafe::81) by TY4P286CA0040.outlook.office365.com
- (2603:1096:405:2b2::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Tue,
- 22 Sep 2026 04:28:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
- designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005621.mail.protection.outlook.com (10.167.240.52) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Tue, 22 Sep 2026 04:28:35 +0000
-Received: from biju-VirtualBox.adwin.renesas.com (ree-0065939.adwin.renesas.com [10.226.92.1])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 3769A300028B;
-	Tue, 22 Sep 2026 13:28:26 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 8/8] arm64: dts: renesas: r9a08g046: Enable TSU
-Date: Tue, 22 Sep 2026 05:27:00 +0100
-Message-ID: <20260922042707.116378-9-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260922042707.116378-1-biju.das.jz@bp.renesas.com>
-References: <20260922042707.116378-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfbtMN/S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 708931F000FF;
+	Tue, 22 Sep 2026 04:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790052591;
+	bh=qC/scIJ0wq4RMXDVdwbaYlepxpTiRdoR45/xM5+kulM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=AfbtMN/S5YuBrDLCgvQ+s3VacCte4ChmcAdZre0KaXjG3gIl2gmqtOU4oF3jfpD3x
+	 XVE+vYYEZzZsuPYnsSu6cF0Hk35/QDYIv7SEnvMJxgXVlKZfxzi152/jaZbLjG+uz4
+	 STH03j8TsJ9A10TFWFAzlEIZgcZmDDPSA5kO7VQbU1rk58ZViSB+on/nH2Buw3I8Id
+	 VP+CNRLFNIn+4E7vuWXSuCyCLEuLpLhbXQYR31fkKhY66g8+nlFOw6liQTR1DvB3uP
+	 KxfOY8hBbmVuwd0AqR9I/Hyw7Uv16Tio3gm9euqFOaiwhdr/WC9x+rcMGkV6jNDLQz
+	 Ah1VvTespjzRg==
+Subject: Re: [PATCH net v3] net: pcs: rzn1-miic: Reset PRCMD state before
+ unprotect sequence
+From: netdev-bot+sashiko@kernel.org
+To: yoshihisa.yamamoto.xn@renesas.com
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 22 Sep 2026 04:49:49 +0000
+Message-ID: <179005258996.2160803.11359360903588205993@kernel.org>
+In-Reply-To: =?utf-8?q?=3CTYCPR01MB7481CE8351FDB2CDCA229955A4872=40TYCPR01MB?=
+ =?utf-8?q?7481=2Ejpnprd01=2Eprod=2Eoutlook=2Ecom=3E?=
+References: =?utf-8?q?=3CTYCPR01MB7481CE8351FDB2CDCA229955A4872=40TYCPR01MB7?=
+ =?utf-8?q?481=2Ejpnprd01=2Eprod=2Eoutlook=2Ecom=3E?=
+X-sashiko-severity: Medium
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005621:EE_|OS7PR01MB18350:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 13953917-491f-4505-d5a8-08df1861f7a1
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|23010399003|36860700016|1800799024|82310400026|56012099006|11063799006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	Y6rwRlfliUnPr22Jm0MZSEfzbFNENEQgQ2XYj30WtDZbLeagwng5DxtoIejCKuePuy3p3U11vpkKbB+5she+31KnvrMdzipum5lhG5/jNCVkVfS+c8vb23c3Ccj8ypuHhFrqPapvC4cq3JiZxMGCEwfGTJOjvOFqaUEuLsu1LsWH7oWoDHuJGoQaUFhbXvYkRJhc+gAiOedApu2X60WXCxnSETBlDpxNNBOulu8F7B1XlgTNyFTarr8x111ZxFbv+lP9WwWsbRg6T+ir9h34q/1lJ8w75Emj4EjydLVjOT+NeZzl+26S4OehC8sz2eoJ50yf8WJSFZtlojFW+40q/1VjOnud+C+qT46Qh0IAxjc09gKG6Cu8UYcJe35YJFzdKB81h7J8IS6Gbc6xS96dGM/xemuqWzjsQjdRVw8BoiFw/1YbRn+4pYAuS/ZSe1MOnWTaRgIKihcShnTlLz6dJccbDVQCiTzZzXbZssDNgRsnl10+ZAACgilPl/daP4ZjeAs/xcpsWdy+g0aX1ARXe/S7SADmpzVxUaF3DreBVoIjjTeH0LYyhLM2YJCpEJ+qjheXs4hsofg3ps6GUIODC96VuPVqf0oPcAJogtDl8OnjWTj9cUDI9IRvOR5n612V1ZiclPb5Ht0SJZxTSBtOSS9WM//ezAkzG5B4MnVucZjSWNeCKGvatij93B0ka+MRd+2mWphCMlMUojjcYKDxIg==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(23010399003)(36860700016)(1800799024)(82310400026)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	9qPHzNBqCaY9URFo6DLLM+2ja4l6Rj8dRz7mNQG9cEyRvRNgtLVfUHzQ7jHiCFSdNZe8R5Zj7xZ0Zj6e0Z1o0yCvh22in5NMZxxsPDEGQZETDC2ggyQHG2rL7gEqND95GHMM9BzFUhJ4xKu36sBoRdx4rv6l5Pd1uUunK/eYsgNn6vDoEdnvMt9DKwLXUHzyZudOkmnWTo3eWhC/O+Xm9oT229RDYkkyp8iI118UtCFGHrjMbJgAVTo6r4h/cWq2RK0K91wqE7DuTFqggyr28A4gdvpRP/XnCjylobl2ZHkkrUMMQMMRx9KrarB80cAuGeZDotFqjww/ctsxglSL5/TYNS3hdzAnzJabqWa6Ixt8sI4an+HhPALt5WyaloSvTE5+3V5NSNhusGoN0Y1K2tvbVTi9TCrHoT4zNk77v6eLwGvfnkqHgFVos+6ZBRNp
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2026 04:28:35.4872
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13953917-491f-4505-d5a8-08df1861f7a1
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB18350
 
-Add #cooling-cells to the CPU nodes, and describe the ADC1 (used
-exclusively by the TSU) and TSU nodes along with a CPU thermal zone
-using passive and critical trip points, with CPU frequency cooling
-maps for thermal mitigation.
+Thank you for your contribution! Sashiko AI review found 2 potential
+issue(s) to consider.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * No Change.
-v1->v2:
- * No Change.
----
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 66 ++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+Critical: 0 · High: 0 · Medium: 2 · Low: 0
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index 53e68b1c3258..29ce1ab2a57f 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -179,6 +179,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -189,6 +190,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -199,6 +201,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -209,6 +212,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -374,6 +378,37 @@ scif5: serial@1004e000 {
- 			status = "disabled";
- 		};
- 
-+		adc1: adc@108c0000 {
-+			compatible = "renesas,r9a08g046-adc1";
-+			reg = <0 0x108c0000 0 0x10000>;
-+			interrupts = <GIC_SPI 378 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&cpg CPG_MOD R9A08G046_ADC1_ADCLK>,
-+				 <&cpg CPG_MOD R9A08G046_ADC1_PCLK>;
-+			clock-names = "adclk", "pclk";
-+			resets = <&cpg R9A08G046_ADC1_PRESETN>,
-+				 <&cpg R9A08G046_ADC1_ADRST_N>;
-+			reset-names = "presetn", "adrst-n";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#io-channel-cells = <1>;
-+
-+			channel@8 {
-+				reg = <8>;
-+			};
-+		};
-+
-+		tsu: thermal@108d0000 {
-+			compatible = "renesas,r9a08g046-tsu";
-+			reg = <0 0x108d0000 0 0x10000>;
-+			clocks = <&cpg CPG_MOD R9A08G046_TSU_PCLK>;
-+			resets = <&cpg R9A08G046_TSU_PRESETN>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			io-channels = <&adc1 0>;
-+			io-channel-names = "tsu";
-+		};
-+
- 		i2c0: i2c@100ae000 {
- 			compatible = "renesas,riic-r9a08g046", "renesas,riic-r9a09g057";
- 			reg = <0 0x100ae000 0 0x400>;
-@@ -1570,6 +1605,37 @@ stmmac_axi_setup: stmmac-axi-config {
- 		snps,blen = <16 8 4 0 0 0 0>;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
-+							 <&cpu2 0 3>, <&cpu3 0 3>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+If you believe none of the issues are legitimate, please reply to each
+issue of Medium severity or higher and explain why the AI is wrong.
+If any of them are legitimate and you plan to respin, please let patchwork
+know by including "pw-bot: cr" as a separate line at the end of your reply
+(one such reply per series is enough).
+
+- [Medium] SoC-specific PRCMD semantics are applied unconditionally in a
+  shared helper: the new `writel(0x0000, miic->base + MIIC_PRCMD)` is…
+- [Medium] Fixes-tag mis-attribution and a changelog that names no
+  failure mode.
+
+--
+
+net: pcs: rzn1-miic: Reset PRCMD state before unprotect sequence
+
+This adds a writel(0x0000, MIIC_PRCMD) ahead of the existing
+0x00A5/0x0001/0xFFFE/0x0001 unprotect key sequence in miic_unlock_regs(),
+so that the sequence starts from the IDLE state of the PRCMD command state
+machine as documented for RZ/T2H.
+
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+> index cb74861e823c..4a2a50827338 100644
+> --- a/drivers/net/pcs/pcs-rzn1-miic.c
+> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> @@ -270,6 +270,9 @@ static struct miic_port *phylink_pcs_to_miic_port(struct phylink_pcs *pcs)
+>  
+>  static void miic_unlock_regs(struct miic *miic)
+>  {
+> +	/* Reset PRCMD state before unprotect sequence */
+> +	writel(0x0000, miic->base + MIIC_PRCMD);
+> +
+
+[Severity: Medium]
+Should this write be gated on the SoC it is documented for?
+
+miic_unlock_regs() has two consumers, and they belong to different SoCs:
+
+  miic_reg_writel_locked()   /* only rzt2h_miic_of_data.miic_write */
+      miic_unlock_regs()
+      writel(value, ...)
+      miic_lock_regs()
+
+  miic_init_hw()             /* only rzn1_miic_of_data sets the flag */
+      if (miic->of_data->init_unlock_lock_regs)
+              miic_unlock_regs();
+
+rzn1_miic_of_data carries .init_unlock_lock_regs = true and
+.miic_write = miic_reg_writel_unlocked, while rzt2h_miic_of_data carries
+.miic_write = miic_reg_writel_locked and does not set the flag. So the new
+un-keyed PRCMD write is now also emitted on RZ/N1 (r9a06g032), where the
+driver has so far only ever written the documented key sequence to this
+write-protected register.
+
+The changelog justifies the write with RZ/T2H documentation only:
+
+  "On RZ/T2H MIIC, writing 0x0000 to PRCMD resets the command state
+  machine to the IDLE state."
+
+If the RZ/N1 protect block instead treats a bare 0x0000 as an
+out-of-sequence command of the A5/data/~data/data protocol, does the
+following unprotect sequence still release protection?
+
+In that case every write that miic_init_hw() issues afterwards, MODCTRL,
+CONVRST via miic_converter_enable(), SWCTRL and SWDUPC, would be dropped by
+the hardware. There is no read-back of a protected register and
+miic_init_hw() ends with:
+
+	return 0;
+
+so probe would still succeed and the only visible symptom would be a
+mis-muxed or dead Ethernet path on RZ/N1.
+
+Would it make sense to scope the reset write to RZ/T2H, either via
+of_data->type == MIIC_TYPE_RZT2H, a new of_data flag, or by doing it inside
+miic_reg_writel_locked(), or alternatively to state in the changelog that
+the extra PRCMD write was verified harmless on RZ/N1?
+
+[Severity: Medium]
+Does the Fixes tag point at the right commit?
+
+  Fixes: 419747319e3a ("net: pcs: rzn1-miic: Add per-SoC control for MIIC
+  register unlock/lock")
+
+git blame shows 419747319e3a only moved the pre-existing RZ/N1 four-write
+sequence into miic_unlock_regs(); at that point the helper was reachable
+only from the RZ/N1 miic_init_hw() path. The RZ/T2H side the changelog
+relies on came from the later commit 08f89e42121d4, which added
+miic_lock_regs(), miic_reg_writel_locked() and rzt2h_miic_of_data.
+
+A backport driven by this tag would therefore land the write on kernels
+that have no RZ/T2H support at all, where its only effect is an extra
+PRCMD write on RZ/N1. Should the tag reference 08f89e42121d4 instead?
+
+Also, which condition actually leaves PRCMD in a non-IDLE state?
+
+On RZ/T2H every register write goes through
+unlock, write, miic_lock_regs(), and miic_lock_regs() already does:
+
+	writel(0x0000, miic->base + MIIC_PRCMD);
+
+so PRCMD is 0x0000 after any driver-initiated access. On RZ/N1
+miic_unlock_regs() runs once during probe on a freshly reset block. The
+remaining source of unknown state would be pre-kernel firmware or the other
+master mentioned in miic_init_hw():
+
+	/* Unlock write access to accessory registers (cf datasheet). If this
+	 * is going to be used in conjunction with the Cortex-M3, this sequence
+	 * will have to be moved in register write
+	 */
+
+but the changelog does not mention it. And against a concurrent external
+agent, does one extra leading write really give the stated property,
+"always starts from a known state, regardless of any previous PRCMD
+activity", given the five writes are not atomic as a group?
+
+Could the changelog name the observed symptom or the condition that
+produces the stale PRCMD state?
+
 -- 
-2.43.0
-
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/TYCPR01MB7481CE8351FDB2CDCA229955A4872%40TYCPR01MB7481.jpnprd01.prod.outlook.com
