@@ -1,35 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202E655C307;
-	Tue, 22 Sep 2026 13:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A1254A7C5;
+	Tue, 22 Sep 2026 14:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790084054; cv=none; b=fp/a7kDZGQcTEB3Wse7Tj6hhfmY7Vj1kHEBDRqlYhvRQYjULAuUC46eb44achQuILLqkdMna4FkLU3WRRp5bj/e2rxZyTxTqRisAHWGQoQGIDabuTlHzea95xJGMB7m5PoX8wcMU/SZQylsjF1bf8vrI1tvuoxNbz/aq9OQjZBM=
+	t=1790086872; cv=none; b=Ndg/a73ik9zCEs+lfLZug6KYLO0oc1GN57WtHFFG9O7PQqRjHJH4mZpODdgb9cuWLLD+TLHCDhdfIjzBoGXeqkpeKt8LJvqt1OMtKzXO/RKnTL7ie3phoEUSuh/dfIvUz+HlRSmAk/0oHeRMxY2nsSsOghlMGkMrgswpFTTPpAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790084054; c=relaxed/simple;
-	bh=AHSHaRam3VMD/yNqBolUcp4H09ueLegNu5acPLN9GTc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dGQk7bbJE15ZZYAmATKF/oVVq/2vFRS0nQuD1eKDu/8bP0HUKzrPl1KDAfjzEfQ6dKBalYOpIa0gWJAy5Frgk8kcQvvtIGXOEnWBbDpF6xIx+bFYTVE/ERu5RH7gkH3xn+iie0D59NRUt7Q2BmW5aVeCc9xp8aFCsGt3NWgqdUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjFUrtQK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790086872; c=relaxed/simple;
+	bh=lm0b8arJr3U/C35gumC0QuLjh3bHoL/gLPcFf9UQRAs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IlvWQt1+Zbk5uObOpQi3VKbqaQjk2tsfmJBOTsAn/DZbCgbctQ+RM1PQxMQ3SK/RmhvH3YTM3zfc9L69dmBQQopkkdcp1oe98llx6NnqnHUz+QH/TotmdQubXIWQpvkeb3L8iNkphwHUfeX8ZPX8E2nOs/1ZF7xhW6RP/PwiUUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jfh+n3FK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjFUrtQK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298D51F000FF;
-	Tue, 22 Sep 2026 13:34:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jfh+n3FK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CADC1F000FF;
+	Tue, 22 Sep 2026 14:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790084051;
-	bh=+GdK6pvcgWilvifm77f5f7Er+eZFy0j70nbF6Poz82E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=kjFUrtQK451Ff80i9fopWt+Sz06531eTQLgjDNYF3lcBiceq7T8EhueLNBE+0PPGX
-	 854i5bsSmiltE2pdgg3aYmXgul25h+Ce6vF2ccke6XHAjPGfez63pCeJvQL68nQ49R
-	 ZC9MkPxLF9JIIlv1btUpzcojHkCoKhkaoZUapukyZ2QonX4NxGUoVBCfv7C83k5ql9
-	 MixCUitgDS9w8eAhpnnSsJfARhC/ZRQPGTESNE2K7jHNbilSEo395XT74s1KApMDAz
-	 7qyzeL9HBGXvwv40D3Bokn57DbiyJzdwcDYN4p0Hq+rrzEpiJnpFSr6KxrXJBy4cyu
-	 IkVd93eS5dT0g==
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 22 Sep 2026 15:34:01 +0200
-Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add ISP
- and IVC nodes
+	s=k20260515; t=1790086871;
+	bh=WbXEkPbd96PFMsC5IPy02gg3t0HDAYUBkTAyykgN0ns=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=jfh+n3FKHzmnQZnQumFfvm3l0WrXmlVZ5nkjwRjM9s2mblULrrDaFHaKvsbGeCUeT
+	 Ja+iPSlQRbh3eV8GEjQjXawVIKi06qZ6no/oCeElwzqMw4j8rPUi18fh1nYW3HBFkj
+	 sz1oLjjF4DytriUUdTAG5Bp7c1AJOfUFDJV08uGv5OD0VEf6Ig2o4kRZcnhoLqZoGJ
+	 Rqye7ruytn7rFzPtTHUaTmR1TQrXu/Hc1p1dF9x6Pj2GSoSqj+mnxfBBrl4eSuYmLo
+	 2H1298oDwe6RLQJTzFK3caOcF4GPBTTgqAmPKGVTt4eoZOfoOqBNLhIIdcHqfmh5Fi
+	 VRJQpjzcCR3GA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: linux-pci@vger.kernel.org, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20260921202823.72620-1-marek.vasut+renesas@mailbox.org>
+References: <20260921202823.72620-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH v5 0/6] PCI: dwc: rcar-gen4: Add support for R-Car X5H
+ PCIe4
+Message-Id: <179008686672.45568.9383539899485486007.b4-ty@b4>
+Date: Tue, 22 Sep 2026 16:21:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -37,52 +50,37 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260922-mali-c55-renesas-dts-v1-2-cd63cdb51033@kernel.org>
-References: <20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org>
-In-Reply-To: <20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
- Daniel Scally <dan.scally@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Linus Walleij <linusw@kernel.org>
-X-Mailer: b4 0.16.0
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15.2
 
-From: Daniel Scally <dan.scally@ideasonboard.com>
 
-Add nodes to devicetree enabling the ISP and IVC that are found on
-the RZ/V2H(P) SoC.
+On Mon, 21 Sep 2026 22:27:42 +0200, Marek Vasut wrote:
+> Add support for R8A78000 (R-Car X5H) PCIe4.
+> 
+> This driver previously supported R-Car Gen4 S4/V4H/V4M. PCIe features
+> of R-Car X5H PCIe4 are almost all the same, except for different PHY
+> which has its own driver, slightly different initialization code and
+> the DMA is no longer eDMA but HDMA.
+> 
+> [...]
 
-[Rebase onto v7.3-rc1 and sort the board overrides by label.
- - Linus Walleij]
+Applied, thanks!
 
-Assisted-by: LLM
-Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-Signed-off-by: Linus Walleij <linusw@kernel.org>
----
- arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+[1/6] dt-bindings: PCI: rcar-gen4-pci-host: Add R-Car X5H PCIe4 compatible
+      commit: 5b555a496160914394c330748fc95e46a1d71800
+[2/6] PCI: dwc: rcar-gen4: Rework rcar_gen4_pcie_drvdata .additional_common_init into .init
+      commit: 0bc55fc989ea7933672004416ebf5b92e4e1fa5b
+[3/6] PCI: dwc: rcar-gen4: Add .deinit callback
+      commit: 038c1e5dea1d38227ffbd4fa27a1e544d0c3d1ef
+[4/6] PCI: dwc: rcar-gen4: Split .start_link into ltssm_control and speed_control
+      commit: 0505c5214a59a0e970000ef1613572a46e601ebe
+[5/6] PCI: dwc: rcar-gen4: Handle PERST via reset subsystem
+      commit: 66b25d01f59250dd96dc8789bdbdfa77cfdf668b
+[6/6] PCI: dwc: rcar-gen4: Add support for R-Car X5H PCIe4
+      commit: c02d41758316b324cf938c452cf51afe85fd0c90
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 637fc92dcc26..74b75be599ae 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -305,6 +305,14 @@ versa3: clock-generator@69 {
- 	};
- };
- 
-+&isp {
-+	status = "okay";
-+};
-+
-+&ivc {
-+	status = "okay";
-+};
-+
- &mdio0 {
- 	phy0: ethernet-phy@0 {
- 		compatible = "ethernet-phy-id0022.1640";
-
+Best regards,
 -- 
-2.55.0
+மணிவண்ணன் சதாசிவம்
+
 
