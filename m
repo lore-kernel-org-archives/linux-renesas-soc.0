@@ -1,144 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D0C51A13F;
-	Mon, 21 Sep 2026 23:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351B429B78F;
+	Tue, 22 Sep 2026 01:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790034242; cv=none; b=b6JuHhKHHSYGYEKN5HSmJPw1n47qKu/x7gJPeNR5695RbA43ku0NdB6TGEQkl4sm6MjKDBUfDBU0daH+qRKqscm3TcqqJInKFuWIV7itqpYhLk9F+50tMvEpKG4152svW35WeCQAdQgc/LG70AUbHEUIdf90IYDuKvmz1XwgLzY=
+	t=1790039878; cv=none; b=bk++XYXCGtJbH3TsY1JuCpb8sMXWYGjHuHiwWMhWK/0+7UppnwvnLG8QeIQvM74PqrWgNpeb+ui+eo8Qud/03U9MPaV1i0XpMotIqZpaxPC2Dirg5BQF0M8AwykLqkC7koYRy75PBJwguNkSFgf+8oWF1Bj9eN9lpsmNY1AWAQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790034242; c=relaxed/simple;
-	bh=I+VfiP8hGoJQQOdgUTc7/x7yfC/MnLJ0hRhTIx/inrI=;
-	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PD//cADC/VJyrvEmtcjXSk8tB8ZZHFRugQ48O31rjaYOlQayLC6ZtWW3ZEYUumdxrV6h/zF7kIM0uIRSEX8ufQkA26A8VVaSwN7h1BvNSBQV1eKHMcCtJqEHngqY1qUc+KfSTRo9KMRN48CfeSB2SdnzQN6Uj4PJGbvc9STcNGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kN2kcqeg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790039878; c=relaxed/simple;
+	bh=ZHVb45XCWO9w58LLzRNKyyIHjXI2eN1KtCPkmd2PO/g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RItw+6m0bVaCHXgV4QNDEPFFwqccJMChzEdBSV3D0l5z34GCFKd8al475wfhgAJjNp4tlgV2GalRmmAdy2H4ecY5F2mz9SSMShVvSgKcantEBrVBzGyFAavhNSEOw8MNGTuGE5qC6N1y0ttnEUuVmfdArYg0you+0+hkuKMs/8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c11bYG53; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kN2kcqeg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2B41F00893;
-	Mon, 21 Sep 2026 23:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790034236;
-	bh=ZG4q1bWR2eMGYdwDsubP8MPzWiDbvYTpOk4BFn7wEjk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=kN2kcqegqTrBXWD/LP2j0qpShjoMhypaQ04GgiCeWD/cTHdjADw7IgIxgUCBUpSrJ
-	 HIUKVpRQAECQ3rnpwScVKxCNzCzfYKJ1CfG2sYvvYGAfWUvTzpv7DUZhoeUhbmkU36
-	 OU7PMMYWLGmZEf15yOx7qdoxqLLuJkOXBUMLtNnjfe7sUe91tbTzFHq1DROx+sZe3I
-	 mQH6j5tPUvb/1Q8MbwVEqW291mEa1TGMzy+3NtxOn5nUVrkaufWAQFnWAyayA0MVCI
-	 l0yG5qwCy1TJCRlSX3FJOTXvKT8qMj9zPlM2UqZKxvoU759FW2nWTnQXI74cFI2y/9
-	 Sk/mcIkUcFIPw==
-Subject: Re: [PATCH net-next v7 10/11] arm64: dts: rockchip:
- rk3568-photonicat: enable SGMII LAN port
-From: netdev-bot+sashiko@kernel.org
-To: coiaprant@gmail.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, vkoul@kernel.org,
- maxime.chevallier@bootlin.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- romain.gantois@bootlin.com, hkallweit1@gmail.com, neil.armstrong@linaro.org,
- linux@armlinux.org.uk, shawn.lin@rock-chips.com, david@ixit.cz,
- netdev@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-renesas-soc@vger.kernel.org
-Date: Mon, 21 Sep 2026 23:43:54 +0000
-Message-ID: <179003423458.2160803.7280358019218159785@kernel.org>
-In-Reply-To: <20260917204624.2427486-11-coiaprant@gmail.com>
-References: <20260917204624.2427486-11-coiaprant@gmail.com>
-X-sashiko-severity: Low
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c11bYG53"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9E82C2BCB3;
+	Tue, 22 Sep 2026 01:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1790039877;
+	bh=ZHVb45XCWO9w58LLzRNKyyIHjXI2eN1KtCPkmd2PO/g=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=c11bYG53PqIeUNnE+PqljmY33Dxj4ecdevKrpwpUJnHv7q0jJzEPWwIkEvQId7ceC
+	 lKjxiXu49lJ3gby9d+hoGuVqCE8QsCd1M03WvjOpURXdRUOupHzLiuSccjKuRkbsbV
+	 Zjz4dPh7oStU3b9YzLOMpPgwD2Kt0LzGeVVDcoV3UbjKTeuV4nRDwbnfK1MDkkk0ON
+	 1SGlCyA6Jkt10QAZRdgnXQA2EXv1LVXsrPHhUXS7LOJC/zjNVe3ilYG/p2fYY7qXAo
+	 XuxoIhfp9T4wztp6Lc/i8PWYmXdbCxpY9Z3mMZD/oCoxV12FQrFeU0BUvAAno9xZo6
+	 0GeOZu3PuMl0g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AB0C982F0;
+	Tue, 22 Sep 2026 01:17:57 +0000 (UTC)
+From: Jaidev Shastri via B4 Relay <devnull+jaidevshastri.vt.edu@kernel.org>
+Date: Mon, 21 Sep 2026 21:17:55 -0400
+Subject: [PATCH] pmdomain: renesas: rcar-sysc: publish the external request
+ mask
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260921-mb-rcar-sysc-v1-1-fb25996bb2f4@vt.edu>
+X-B4-Tracking: v=1; b=H4sIAELXsWoC/yXM0Q6CMAyF4VchvbYGBg7wVQwX66gyE6dphWgI7
+ +6Gl1/T86+gLIEVzsUKwkvQ8IwJ1aEAP7l4YwxjMpjS2LI3FT4IxTtB/apHy62lbuybrj5Bmry
+ Er+Gz5y7D3zrTnf07N/IHOWUkcdFP+bRzaY91ijawbT+Df2GbkAAAAA==
+X-Change-ID: 20260921-mb-rcar-sysc-6e76b8d94835
+To: Ulf Hansson <ulfh@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jaidev Shastri <jaidevshastri@vt.edu>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790039877; l=2526;
+ i=jaidevshastri@vt.edu; s=20260921; h=from:subject:message-id;
+ bh=/J+UZmfWmy/IxE0tQAJ0EO14IUIFzykt/G670AOHT38=;
+ b=PEN1vUv1FyPiUHVzj+GEzwZkWrshu6uVQzCS8Oh3jmo/jMz+3NIHX13ht9OgFEhnOwxgbOYrU
+ 4mJIv8BfmPECUc5oJ/dDTQnanqIaT5P44PbJfshWBGFaFSHYakXXXBp
+X-Developer-Key: i=jaidevshastri@vt.edu; a=ed25519;
+ pk=J7+xYJRlTPds+pv5hbqFFRqGCpDeJDzmZT1ggRwj7/0=
+X-Endpoint-Received: by B4 Relay for jaidevshastri@vt.edu/20260921 with
+ auth_id=1044
+X-Original-From: Jaidev Shastri <jaidevshastri@vt.edu>
+Reply-To: jaidevshastri@vt.edu
 
-Thank you for your contribution! Sashiko AI review found more severe
-issue(s) in other patches of this series. This mail is only an FYI, in case
-you want to address the nit picks below when you respin.
+From: Jaidev Shastri <jaidevshastri@vt.edu>
 
-Low priority / nit picks for your consideration:
+rcar_sysc_pd_init() maps the SYSC registers and stores rcar_sysc_base,
+rcar_sysc_extmask_offs and rcar_sysc_extmask_val with plain stores,
+before it registers the power domains. rcar_sysc_power() tests
+rcar_sysc_extmask_val and then writes through rcar_sysc_base at that
+offset, from genpd on any CPU.
 
-- [Low] Unrelated functional DT change bundled into an "enable SGMII LAN
-  port" patch: the hunk under `&mdio1` adds a `leds { led@1; led@2; }`…
+Publish the mask value last with smp_store_release() and read it once
+with smp_load_acquire() in rcar_sysc_power().
 
---
+Found with MBCheck, a static herd7-based memory consistency checker.
 
-arm64: dts: rockchip: rk3568-photonicat: enable SGMII LAN port
+Signed-off-by: Jaidev Shastri <jaidevshastri@vt.edu>
+---
+ drivers/pmdomain/renesas/rcar-sysc.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-This enables GMAC0 on the Ariaboard Photonicat by adding the XPCS SGMII
-plumbing (combphy2 mac-sel, xpcs/xpcs_mii0, gmac0 properties) and describing
-the Motorcomm YT8521SC PHY on a new mdio0 node.  It also adds a PHY LED
-description to the existing RGMII PHY on mdio1.
+diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
+index bd7bb9cbd..d0eaaeeb9 100644
+--- a/drivers/pmdomain/renesas/rcar-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-sysc.c
+@@ -106,15 +106,19 @@ static int rcar_sysc_power(const struct rcar_sysc_pd *pd, bool on)
+ 	unsigned int chan_mask = BIT(pd->chan_bit);
+ 	unsigned int status, k;
+ 	unsigned long flags;
++	u32 extmask_val;
+ 	int ret;
+ 
+ 	spin_lock_irqsave(&rcar_sysc_lock, flags);
+ 
++	/* Pairs with the smp_store_release() in rcar_sysc_pd_init(). */
++	extmask_val = smp_load_acquire(&rcar_sysc_extmask_val);
++
+ 	/*
+ 	 * Mask external power requests for CPU or 3DG domains
+ 	 */
+-	if (rcar_sysc_extmask_val) {
+-		iowrite32(rcar_sysc_extmask_val,
++	if (extmask_val) {
++		iowrite32(extmask_val,
+ 			  rcar_sysc_base + rcar_sysc_extmask_offs);
+ 	}
+ 
+@@ -157,7 +161,7 @@ static int rcar_sysc_power(const struct rcar_sysc_pd *pd, bool on)
+ 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
+ 
+  out:
+-	if (rcar_sysc_extmask_val)
++	if (extmask_val)
+ 		iowrite32(0, rcar_sysc_base + rcar_sysc_extmask_offs);
+ 
+ 	spin_unlock_irqrestore(&rcar_sysc_lock, flags);
+@@ -381,7 +385,12 @@ static int __init rcar_sysc_pd_init(void)
+ 
+ 	/* Optional External Request Mask Register */
+ 	rcar_sysc_extmask_offs = info->extmask_offs;
+-	rcar_sysc_extmask_val = info->extmask_val;
++	/*
++	 * rcar_sysc_power() tests rcar_sysc_extmask_val and then uses
++	 * rcar_sysc_base and the offset, so publish the value last, with
++	 * release semantics.
++	 */
++	smp_store_release(&rcar_sysc_extmask_val, info->extmask_val);
+ 
+ 	domains = kzalloc_obj(*domains);
+ 	if (!domains) {
 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
-> index 58c1052ba8ef3..fdaa4a2a4328b 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+---
+base-commit: 93f51579e7df248780214094418f205253383cc5
+change-id: 20260921-mb-rcar-sysc-6e76b8d94835
 
-[ ... ]
+Best regards,
+--  
+Jaidev Shastri <jaidevshastri@vt.edu>
 
-> @@ -350,6 +391,25 @@ rgmii_phy: ethernet-phy@3 {
->  		reset-gpios = <&gpio4 RK_PC0 GPIO_ACTIVE_LOW>;
->  		rx-internal-delay-ps = <1500>;
->  		tx-internal-delay-ps = <1500>;
-> +
-> +		leds {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			led@1 {
-> +				reg = <1>;
-> +				color = <LED_COLOR_ID_AMBER>;
-> +				function = LED_FUNCTION_WAN;
-> +				default-state = "keep";
-> +			};
-> +
-> +			led@2 {
-> +				reg = <2>;
-> +				color = <LED_COLOR_ID_GREEN>;
-> +				function = LED_FUNCTION_WAN;
-> +				default-state = "keep";
-> +			};
-> +		};
->  	};
->  };
 
-[Severity: Low]
-
-This isn't a bug, but could this hunk go into a separate patch?  It changes
-the pre-existing RGMII WAN PHY (rgmii_phy under &mdio1), which is already
-enabled and working before this patch:
-
-arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts:
-	&gmac1 {
-		phy-handle = <&rgmii_phy>;
-		phy-mode = "rgmii-id";
-		status = "okay";
-	};
-
-None of the SGMII enablement in this patch (&combphy2
-rockchip,sgmii-mac-sel, &gmac0, &mdio0/sgmii_phy, &xpcs, &xpcs_mii0)
-depends on the mdio1 leds node.
-
-It is also not purely descriptive - drivers/net/phy/motorcomm.c implements
-the LED callbacks for this PHY (yt8521_led_hw_is_supported(),
-yt8521_led_hw_control_set(), yt8521_led_hw_control_get()), so PHY LED class
-devices get instantiated for the WAN PHY as a result of this change.
-
-Split into its own patch, the WAN LED description and the LAN port
-enablement can be bisected and reverted independently, and the subject line
-would reflect that the WAN PHY description changed too.  The commit message
-mentions it:
-
-    Also add LED configuration for the existing RGMII PHY on mdio1 for
-    consistency.
-
-but the subject only mentions the SGMII LAN port.
-
-[ ... ]
-
--- 
-Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260917204624.2427486-1-coiaprant%40gmail.com
