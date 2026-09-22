@@ -1,42 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE545632A4;
-	Tue, 22 Sep 2026 15:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA4B560AB8;
+	Tue, 22 Sep 2026 16:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790092431; cv=none; b=Sd7QHKbOzfOvtWSUX45rHlX3k3d02W97pRUmv+U3hHKNhWd9gUeIS8Ds7FsUkhFu8S8XkQMJymT+vF91OszMU7/DW4p0EEXzOpJBZziZQg4Vf/o/8Qmva/IkKEw4/rUzozy0dHnuO39tQBTO5343LQ8/kQAogvLb1F3I9nNyp98=
+	t=1790093395; cv=none; b=UqRCnO2nQJM0cvQ9QPieFOPWiCeY5+y/dCb+uI89QQJHhJbr8AL083HxLg/NiTEDGC5m9puTfhAqjzO8O2IIQxgT6NQ/ThgP/hNyWVraBW2BjJc7ll2tmPp2k+BuWBKSGOUC8gv5jm7WC4YDyrBlX8iuwSDKwIz0Rn4byR+X2Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790092431; c=relaxed/simple;
-	bh=uy4WH0w/V8fjO5KV1dH4paOiSlECTwqiGH2t8k7HDZ8=;
+	s=arc-20240116; t=1790093395; c=relaxed/simple;
+	bh=gmcmjLXZtGV5GjIMchJUOZ83Hywm7qIGg6SsnTJ0MNo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BrlWc7cvRVuay1A9SOntqLVNwnEIf99NhyzVEPWvrlLM+OjdB/Bv1xKjgOhSATDB5cryt9xv9Q5EhBRwgLIqZScsflHOH79Y4PhpeL2REm1zHsl7hWBgBTJpVePwgWqSCpXtqoqi9f1Q5Qn52oE64hC0fXznOPF6Mc3AXDvn1/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhEm0OPu; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=Qv2ew2vhFpqhz+VfhWyQBu+x5C2KFDrQrssFzzsWjAb4ODMCK2NVmjqr5jUQpbp+jnyiPK0bRTa3f2vWHCigbOYDFw3hWuVwOZz4rLr2v/dsW8BpPz/KXkzgI41CRkwScImFXIt32raWsawH3bZPeCrykJ2lyv6Oms/A5/WlggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxJjTmCN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhEm0OPu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE0451F00893;
-	Tue, 22 Sep 2026 15:53:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxJjTmCN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE0E1F000FF;
+	Tue, 22 Sep 2026 16:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790092430;
-	bh=mLP7ngSOOjFnQa/m4wcizjk0PfUojtkYKtIjNhEq640=;
+	s=k20260515; t=1790093394;
+	bh=DttfrClc2jxogD0qkYNCDlF69QPH9+8rs4HH/0QpjLk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=AhEm0OPubyvBPwd/4JPSIPlUyyyOhl/9qByucpJ/RwDNZyJ5euY4HHbYVek06QflC
-	 qZKcZ/ixu0Wsl0kI8+Up28yCGJayUs9zS2lKvc0dyZiqHrSf1zccEl2/AaKaojY+F8
-	 cEt/B3/QoGyPkljOWj/2CCdNjqLUFTGUZ5WYFj0/lNqx/I/axS0ft0X57EaQJY4dIG
-	 Q1kNLbNF/3B28C41TsBjoKlufCNznaMqaDQYXH65fgHqXcrRps9iIxD6HMorbFp1J5
-	 KnaFQLDhqKUd2JTp/txiJweq/kUrG19FechWTnQFfbAPlzpRoDiRE0q1KGLTpkxje9
-	 Ip5OYjZhBCXgA==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	b=FxJjTmCND2lWpGe6+UpeqycA/5aY2yeuUL4byA1AaumfIBuWjl55HbJQ8bKj9YRui
+	 JPtvfmHPA8M+/KhbkTzFizTWbh4dnMySwscQ1/181lYGd0hF1KHjOds7FOgQmDckB4
+	 WkndRLySCl+DeG4o+gVGw+ja9idN0unH4upJB17pFb1Uhea4N0xFRKdEd52ZhkaIWc
+	 avWvPl9k1YB6YJaTU58ajvmKw0bypprfNmEzu5iTydbAnKmLFGxwokTCAZBSA4VdWb
+	 B/azxXaZmwvLaAr88b+pW9xCeoMacXFQyd+loS6/Bfn8NOlkGNqQ5oP4pmHz3MCRLA
+	 gtkzc5OjK4UAA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: linux-pci@vger.kernel.org, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Koichiro Den <den@valinux.co.jp>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-renesas-soc@vger.kernel.org
-In-Reply-To: <cover.1790065451.git.geert+renesas@glider.be>
-References: <cover.1790065451.git.geert+renesas@glider.be>
-Subject: Re: [PATCH 0/2] spi: sh-msiof: Add support for R-Car X5H
-Message-Id: <179008178775.322763.16248581785473182715.b4-ty@b4>
-Date: Tue, 22 Sep 2026 14:56:27 +0200
+In-Reply-To: <20260903205153.283553-1-marek.vasut+renesas@mailbox.org>
+References: <20260903205153.283553-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: (subset) [PATCH 1/6] dt-bindings: PCI: rcar-gen4-pci-host:
+ Document Application/Local register reset
+Message-Id: <179009338958.48174.16454140057787464416.b4-ty@b4>
+Date: Tue, 22 Sep 2026 18:09:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,58 +51,27 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1456; i=broonie@kernel.org;
- h=from:subject:message-id; bh=uy4WH0w/V8fjO5KV1dH4paOiSlECTwqiGH2t8k7HDZ8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqsqSJGplXnfIZhDDsHPhQbn2HWMTa0MHSL6KVi
- D4GGNdxfguJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCarKkiQAKCRAk1otyXVSH
- 0GcxB/9hAnAH6q/Vczro0N+1aBnFhwe7vi56Jk9AMar9oxUFqLlmKKDTBfol3BOGrVFsatX6T2S
- C/LC/2fd04jsxPmPKF2FhYK5IrkIGYU5QMrQjJ1Dm1uJrGcY3TlUYP5U98+q2qKIog/y9kKVjGw
- z4N6ctXXSHT5+t0SJAlniopeS8vBkgZlWudF4rl5dm7nbm6yaF/q43Bz4vFXynK+RpEoTX5+6oh
- v28a0amadGMYOocrIONp+9UTe0C4yab/bCw5K9D7XBVFvfLfREWXlFNQ9enDLxsABMvVLoG4vuB
- w4M3uEhmJI1y7CVzBC0JvlSbd8kZ+n1v8+GFnCiP6uRRA4Ej
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15.2
 
-On Tue, 22 Sep 2026 10:26:59 +0200, Geert Uytterhoeven wrote:
-> spi: sh-msiof: Add support for R-Car X5H
-> 
-> 	Hi all,
-> 
-> This patch series adds support for the Clock-Synchronized Serial
-> Interfaces with FIFO (MSIOF) in the Renesas R-Car X5H (R8A78000) SoC,
-> which is the first member of the R-Car Gen5 family.
-> 
-> [...]
 
-Applied to
+On Thu, 03 Sep 2026 22:50:52 +0200, Marek Vasut wrote:
+> The R-Car Gen4 PCIe controller does contain core reset, which puts
+> the controller back into well defined state, but it does also tear
+> down the PCIe link. This is called Application/Local register reset
+> in the documentation. Document this reset.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.4
+Applied, thanks!
 
-Thanks!
+[1/6] dt-bindings: PCI: rcar-gen4-pci-host: Document Application/Local register reset
+      commit: 8df20a9670745364b645b3eee0729cdec8766148
+[2/6] dt-bindings: PCI: rcar-gen4-pci-ep: Document Application/Local register reset
+      commit: 5dad3af6518990506fe486bdf2165f55a86ae86d
+[3/6] PCI: rcar-gen4: Add Application/Local register reset control
+      commit: 66cbc9ab5b39ff0f4303119e34ebfaf00044b6c6
 
-[1/2] dt-bindings: spi: renesas,sh-msiof: Add support for R-Car X5H
-      https://git.kernel.org/broonie/spi/c/51e04054e299
-[2/2] spi: sh-msiof: Add support for R-Car Gen5
-      https://git.kernel.org/broonie/spi/c/8157bb8232a4
+Best regards,
+-- 
+மணிவண்ணன் சதாசிவம்
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
