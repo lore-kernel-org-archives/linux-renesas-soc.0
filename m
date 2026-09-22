@@ -1,34 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3275655C1C2;
-	Tue, 22 Sep 2026 13:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202E655C307;
+	Tue, 22 Sep 2026 13:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790084051; cv=none; b=F5KauRzftTocSSJ64pZViE3MsGEyzTl48mjelbZfMWiX1Uwshk4rwo5GKo6RVqOH9IjWTI0iUtkSyhWCJVH+T7JzOWQ+PVGIVxBDL0m1TyYQ0ODjUcAWcxK9f65oFA/i8W6+88qHisqnEUlvYFONexmizxcMDo8xnj20g7imnRY=
+	t=1790084054; cv=none; b=fp/a7kDZGQcTEB3Wse7Tj6hhfmY7Vj1kHEBDRqlYhvRQYjULAuUC46eb44achQuILLqkdMna4FkLU3WRRp5bj/e2rxZyTxTqRisAHWGQoQGIDabuTlHzea95xJGMB7m5PoX8wcMU/SZQylsjF1bf8vrI1tvuoxNbz/aq9OQjZBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790084051; c=relaxed/simple;
-	bh=9PASmedYE30VNgrBowwT4Yu9YyaFRLuOcYf71lILzYw=;
+	s=arc-20240116; t=1790084054; c=relaxed/simple;
+	bh=AHSHaRam3VMD/yNqBolUcp4H09ueLegNu5acPLN9GTc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A0Mm5M/XT/rrkEuIyuz1KHCC7rf7kFCfDNqjWAP4a093FJ5O6Q5i0r6l2iIfxVfC72z1AWkFankf0+RDx7K8Ugs1JNtWn3A262pUXJrqo7IgrEr0iGYrkhjQJokvrZTgCMDMaysDdUG225BHGTlPe0K4J4UuKRjqY0uOejn4u9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSr3+o9C; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:To:Cc; b=dGQk7bbJE15ZZYAmATKF/oVVq/2vFRS0nQuD1eKDu/8bP0HUKzrPl1KDAfjzEfQ6dKBalYOpIa0gWJAy5Frgk8kcQvvtIGXOEnWBbDpF6xIx+bFYTVE/ERu5RH7gkH3xn+iie0D59NRUt7Q2BmW5aVeCc9xp8aFCsGt3NWgqdUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjFUrtQK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSr3+o9C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC491F00899;
-	Tue, 22 Sep 2026 13:34:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjFUrtQK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298D51F000FF;
+	Tue, 22 Sep 2026 13:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790084048;
-	bh=rbhnIX0LPgAXdQzxD3mczZeY/HFs3iKi7JECXxezbkc=;
+	s=k20260515; t=1790084051;
+	bh=+GdK6pvcgWilvifm77f5f7Er+eZFy0j70nbF6Poz82E=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=KSr3+o9CspX4V96LrzeFak2AXcrzj4Pu6unetSfSxwNP2EgsI3PUCuli4cF8KA+5E
-	 k7CzRR9FLQ46foTWcduGz2O6VxyZHaU0LyWgTfrJIDQk9smjqMysXRAMtmp/s31pBx
-	 o6olwU16qK/y+v+tM3+IyuzZN+q2S7DTjyITRMVVXoygwpX5tnLe6vptHQmaz5ZUDW
-	 zFqWJRYkvhfyC7Q26v2b+wRb/6QIhyBZAPL1ukLTwJJFF7qzXBwdHbrTDOS6rXb5wO
-	 /1O3Hz8bvPd9jw2Q3LOXeQnSlc2bFS/v4fuCIFwn0GJEvlAgbyiOg/BLvE45D0tDuI
-	 Gg94boNpqEGgg==
+	b=kjFUrtQK451Ff80i9fopWt+Sz06531eTQLgjDNYF3lcBiceq7T8EhueLNBE+0PPGX
+	 854i5bsSmiltE2pdgg3aYmXgul25h+Ce6vF2ccke6XHAjPGfez63pCeJvQL68nQ49R
+	 ZC9MkPxLF9JIIlv1btUpzcojHkCoKhkaoZUapukyZ2QonX4NxGUoVBCfv7C83k5ql9
+	 MixCUitgDS9w8eAhpnnSsJfARhC/ZRQPGTESNE2K7jHNbilSEo395XT74s1KApMDAz
+	 7qyzeL9HBGXvwv40D3Bokn57DbiyJzdwcDYN4p0Hq+rrzEpiJnpFSr6KxrXJBy4cyu
+	 IkVd93eS5dT0g==
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 22 Sep 2026 15:34:00 +0200
-Subject: [PATCH 1/2] arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
+Date: Tue, 22 Sep 2026 15:34:01 +0200
+Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add ISP
+ and IVC nodes
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -37,7 +38,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260922-mali-c55-renesas-dts-v1-1-cd63cdb51033@kernel.org>
+Message-Id: <20260922-mali-c55-renesas-dts-v1-2-cd63cdb51033@kernel.org>
 References: <20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org>
 In-Reply-To: <20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -49,82 +50,38 @@ X-Mailer: b4 0.16.0
 
 From: Daniel Scally <dan.scally@ideasonboard.com>
 
-Add the Input Video Control Block and Arm Mali-C55 ISP to the device
-tree file for the RZ/V2H(P) SoC.
+Add nodes to devicetree enabling the ISP and IVC that are found on
+the RZ/V2H(P) SoC.
 
-[Rebase onto v7.3-rc1, place the nodes in address order, and sort
- the interrupt properties. - Linus Walleij]
+[Rebase onto v7.3-rc1 and sort the board overrides by label.
+ - Linus Walleij]
 
 Assisted-by: LLM
 Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
 Signed-off-by: Linus Walleij <linusw@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 52 ++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index 639693d464a7..beba6c053a40 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -1839,6 +1839,58 @@ queue3 {
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+index 637fc92dcc26..74b75be599ae 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+@@ -305,6 +305,14 @@ versa3: clock-generator@69 {
+ 	};
+ };
  
-+		ivc: isp-input@16040000 {
-+			compatible = "renesas,r9a09g057-ivc";
-+			reg = <0 0x16040000 0 0x230>;
++&isp {
++	status = "okay";
++};
 +
-+			clocks = <&cpg CPG_MOD 0xe3>,
-+				 <&cpg CPG_MOD 0xe4>,
-+				 <&cpg CPG_MOD 0xe5>;
-+			clock-names = "reg", "axi", "isp";
++&ivc {
++	status = "okay";
++};
 +
-+			interrupts = <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>;
-+
-+			power-domains = <&cpg>;
-+
-+			resets = <&cpg 0xd4>,
-+				 <&cpg 0xd1>,
-+				 <&cpg 0xd3>;
-+			reset-names = "reg", "axi", "isp";
-+
-+			status = "disabled";
-+
-+			port {
-+				ivc_out: endpoint {
-+					remote-endpoint = <&isp_in>;
-+				};
-+			};
-+		};
-+
-+		isp: isp@16080000 {
-+			compatible = "arm,mali-c55";
-+			reg = <0 0x16080000 0 0x200000>;
-+
-+			clocks = <&cpg CPG_MOD 0xe2>,
-+				 <&cpg CPG_MOD 0xe4>,
-+				 <&cpg CPG_MOD 0xe5>;
-+			clock-names = "vclk", "aclk", "hclk";
-+
-+			interrupts = <GIC_SPI 859 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			resets = <&cpg 0xd2>,
-+				 <&cpg 0xd1>,
-+				 <&cpg 0xd3>;
-+			reset-names = "vresetn", "aresetn", "hresetn";
-+
-+			status = "disabled";
-+
-+			port {
-+				isp_in: endpoint {
-+					remote-endpoint = <&ivc_out>;
-+				};
-+			};
-+		};
-+
- 		dsi: dsi@16430000 {
- 			compatible = "renesas,r9a09g057-mipi-dsi";
- 			reg = <0 0x16430000 0 0x20000>;
+ &mdio0 {
+ 	phy0: ethernet-phy@0 {
+ 		compatible = "ethernet-phy-id0022.1640";
 
 -- 
 2.55.0
