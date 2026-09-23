@@ -1,87 +1,89 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7122153445D
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 15:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B058653C3D1
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 15:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790176501; cv=none; b=CsMKLnmyUK0kMQG3dp+08yeXKq1W2iFhaX819dWGsrGyXXSZh1S2RbsFPszj24iiBwVc1HV/hfc+PikEkWtDjLCUfDKPUedUCT/ghMafc8Ep9cDSUniTXq6Wh6fH/3CKsn9xAS9jLVzHoysOqGTqjmK9brQYU73b1Uod+UlQeNo=
+	t=1790176506; cv=none; b=IpHeio/AYXlL8mrfikRV6jP9gTHt3H/rB4kCXdF14itBoAkewKZOSmlIf9PtqteBlTowKodXE08ZDFl0Kapzzlf1lB9EkbN9RerdrpquhZSoDvC6rAqhDLQdat0hCDZvwah7nvE3EdJEYOb2A6idjiDfuNINd0fNO0Bi4/aWk8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790176501; c=relaxed/simple;
-	bh=vnN+T2XbeWk5toset9VU4nTIVfbU8DZj0FMpypnlf4Y=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EifTLM192HL3hXFdutI/1iIepAXvd2C6Md0A9jcT1rYUGA0schSy4w72QW13TlZ+cNiuSfTNFTaBU0vp3Ha5Tl2VE0wW+bkGsk4HiUspjSatj0ub6MBjt/uwM7M63x/9lbD4eehBJLIHLjQM1tZLISGNxTx05Bvr6Jg9b1DQRbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XA6Z8BcT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IHyF3hLT; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1790176506; c=relaxed/simple;
+	bh=48a0yspdUEk3xwkcjvTbhXXEU17F+t29neQdikkIdcE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=E0vvyuWrrYusr3L6+ELNQjaNjZKWjAvONgmGefNZcv/J++7IrSfMvfkUptYOIR01IXKEHSmf13uz+3jTXNFKC+0C2QW6jU++Wazql9WpxiYwl9gXkLE8Y+uMWhgiVGBj4+gBWrc9dfC1/Z9TQrBtXCIbt+aX/skOAcvbQWyWvi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N6R11wVD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BdITwPET; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XA6Z8BcT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IHyF3hLT"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68NBba0V3295729
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 15:14:58 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N6R11wVD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BdITwPET"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68NDKe2h322123
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 15:15:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=yi7zkx2L2x0jJucRLt+eu9
-	FDB7gUieAYrIxOpUP9teg=; b=XA6Z8BcTaN0A6k1aAMtxd/aKKzO7tbM0pwqiEC
-	AXHemIQF6kAS1tFES7qtTdtc+LEHLr45wdBN7BTspcMdYoJaTB4Ixc5mOisRQjvd
-	uXHsCAiP/Uj+OiVJhVShIWfgNjry7glMbw2qdPSRypXylyZVjRwf+FboNcobuJ34
-	R9oMIAtsx9gwKSH7qcoGQQONfdTHHrpDn3ToJEGJqG13wuuyOJ2iBAEND5AdHRHR
-	BS3rBu58u2lp/GtiVzRp0wc8RGpUBWiCllTq9zM8rJIHwV6xuPbtYdE84ffG5oBq
-	Wzjh6uh6cAk6NZTPQKd0A4bm3CpAPoo/hLgvfeqqVVejOMCg==
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gvbwm9gws-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L9UR2dTT1MgkrWsYz4e8MugIDq9vhO6USeCZW8zDLR4=; b=N6R11wVDDRegxGy8
+	zyMG7bN81RYwU3rXgmPicR8oDXcCtY8JyyUggDfZSfhdKPkwuVHhi/530+B9Ob0U
+	oLDa4tcmSeYyDmcq91IqcbpQCsjvSltj1ZoTMtStLasx00kYxlvwdbmbd1JomxPB
+	Od99UE67F8+vsgs27anJix93oASB79NCwRFmyUVxpiA2ltsY8Of6TeKECpTgGH2v
+	DY3hqpHwgiR0Ea8jmJR9kb6PiGMaGvJNwtGuzUl5LjKX4jywoQ+K4KD7u1liSQVo
+	PYCwDpBWituC8qt+AUwiKABucs2nPcIzVs6aPOEKwPFs3LK3xEUiNqhkKiMXLEK0
+	UpLodg==
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gvfjsghae-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 15:14:58 +0000 (GMT)
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-9806535f8ffso1924241241.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 08:14:58 -0700 (PDT)
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 15:15:01 +0000 (GMT)
+Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-97cb32961e3so754685241.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 08:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790176497; x=1790781297; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=yi7zkx2L2x0jJucRLt+eu9FDB7gUieAYrIxOpUP9teg=;
-        b=IHyF3hLTd2NrAncK5j/spxS/thwjWXR5eoovyIODN3sabZejS9G9TqzWQpaC8qyjRF
-         IKSUo7wezWHUS3wg5fp7FM4NuDm0Boj8/qyV1ytxxaBtGgiN49fv/nHM/WsrxprT9xdx
-         pfYJ0rLzVXgyLYxHa54U0+n6ic7wvjh3+SEw52rwtd/IvAXM22RDDNGuC9RbPUY0sdnS
-         r4ekrXa68+u69USHkJPAmflSFqp/RslqibFAKXAPrSduUBxrwcsRwZCze+jYjX375Akr
-         XHHfdmfS1Vbx5RPI478EwCgVb7vVcycYE537tAlmsdrs7rtt7N+cph4uQxcxun9ImV4z
-         bCIQ==
+        d=oss.qualcomm.com; s=google; t=1790176501; x=1790781301; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=L9UR2dTT1MgkrWsYz4e8MugIDq9vhO6USeCZW8zDLR4=;
+        b=BdITwPET0rBW81WWl/lh5M5p8vEwQldpgg7LKbw3AQzvNA2++uDMtR27uMYVUcl6ph
+         HAbjSsXm4aRLINTLsHR7FOxqExD1qdmr3vvLNasfqGNlib3rXoq83DuFVK3mR+sIVM/+
+         F/KpRQY16HnUQvaNCiGc7msK39nOM2KuCkNRQQ2VI8qfJdTrpZVdY7gNZHzwsuKlk5RZ
+         JuY1aKsTxyHNmTH8mQh4q/iCgKrgi/Gz40JBsmLInL+WiLPCOgiLagm5W1F82rWthd98
+         DK7xkeAmzZkPCzw0lPRQsp3CFiw+AVktQrUV04zCY8VBVkgCgSrktSt0/EAcGXBlqR1q
+         jZcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790176497; x=1790781297;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=yi7zkx2L2x0jJucRLt+eu9FDB7gUieAYrIxOpUP9teg=;
-        b=tkChWhYUct5qpUcNkqcZ5zLL9tQKDfhzk+ZKXJ0ZEycGBjtvwJjIQzLsI1ck/mZ6YQ
-         glssjbHq+9Hmv4/lXwxUwHMwQ5CEAHDUFjdtNnrGLWQaDThk7Q52Rq87oybL/37qpMl7
-         wSHoTItYr4QKS6pMtUKCmVA0LstMMat1sA0CwGIXcmX3lrJI7sBh0WncOljbce+W2RXz
-         ZANniS47dBPG6aP0x2NtLNHSANp7HIDLVy6WBA36Eey4R2wrjc++mQMDkx57lAyE1cim
-         iOyW9y6T8MaZUPF+fqU9btx+BefdwUNQv9R9VlTkr7ZPPckW7fQ/ww2Fc+4AioRO64hO
-         BY8w==
-X-Forwarded-Encrypted: i=1; AKwUvBx9olIHleRKVS6n0D5hdE0+qv9F/kevektyDta4/FioyuONuiuwSJTy1IjR4MbhA6blqMaH4vDFUP4sWurYgdlNaw==@vger.kernel.org
-X-Gm-Message-State: AFuF++leeSYpWpUWDDCsyg+6RGQtBpIaArgZc1i3kWDZ3a5u6ZTwshfH
-	+qWAJfkeotEA1bYAQhBMPCsL6SdUsHGXs8diBDUhFI2sTwJlKZAqjDi87kZkRbycwu9ce+NlitG
-	md5oXmwcWNuZqTDprV1BWA5TQh697evh1l0dvGex5FsIaW2Ulu+FxCyVKQppUTvf9FKkiSdKRew
+        d=1e100.net; s=20260707; t=1790176501; x=1790781301;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=L9UR2dTT1MgkrWsYz4e8MugIDq9vhO6USeCZW8zDLR4=;
+        b=nfNf4YLHbdm2EjPrZ/NWuPa/EKAYMendLlirQYXXJl6MEtjCSoD5lRB2PxbM7ts3A+
+         PRWWg8sE7zAL6tIATErhuhfZpggnMIQJpoT0XhJGGJ0eIf6kMiglArJdlmeTIeC28p/j
+         qZr+S/23aY2lFWB3nZJLyLEGOTQngbIld92spjkkg5D0Bu8WZIPMSgIj1g9xW3JJ0y3B
+         iNrPh+n9I/vCngX6NfdLswXNdP/xNsS4ia+EczwVaKONIBEfLmUaP0L5QsN6L4xehz2U
+         2f+y8naZ+BcbZ0YnVTHtSpTso/MY1CtapmaZ7rn0y9N7MRUKO4dgwHZRs1CMcF9z+7yY
+         fs3A==
+X-Forwarded-Encrypted: i=1; AKwUvBxObbgOmR1kouziSlkxc5hdcfhJ3ZOzLkxqmYp/BBKckoqVLP6lAqsuyefO1cBLqwYMZ9FJxkimhu48J3hIROArGQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++lHPR0ox8HYYGfln6TVpR8eg+jj67hkVrS2Ax44PoYmmmvnYNTD
+	9CxwcA/NZVADCt7dkJgjZ5kpN6wvB7nTzU3tn4V5riBpJBrklfaNzRn1ImxzuziP6XE4lm/i5JU
+	7HwfOU/T3J3bcptkci/mLj/whiZl70s/VQELY68aFs9UG7CywVOPZrE/jghqv4khtxRfH5dIk6g
 	==
-X-Gm-Gg: AYBFou1YtI9kZdq2bDdpl74GCstQCVLlAoiJnmYjfb+V+EI1vHVyeo07Ta5eOQAaxgz
-	KkqpmXPxiA+Gqw8mwsCx57419fdqtQGNrhRfRA4wy4hsrCiJuR7xaH2YyofnClzlqWSjsQhLVBs
-	xSiM/MDAifQmSq9rNci7T5TtLdQx+mDd8FpdbIRgmYz5bSSONC1Skn8HNnElhjPtVtZ7PqL5f3i
-	xiwsXhinQSWs5BRKAlk9C7j80VGoESyXtk+XbkX+WEIrhj3Z8sFr3GpMAhgj6dJcllZZp0TLqr6
-	5aglH3aIhntTY76atDks2gWwWzXCmaKA9sAsRW/+lvgseovYwxBGDHKPpdtlU96XHkOmuZxH2hc
-	rP2Gw2bH08AJQo+g1yRioRfy5lGpD
-X-Received: by 2002:a05:6102:5808:b0:7a3:b2c2:2e70 with SMTP id ada2fe7eead31-7ac0ca15c29mr2614095137.11.1790176497263;
-        Wed, 23 Sep 2026 08:14:57 -0700 (PDT)
-X-Received: by 2002:a05:6102:5808:b0:7a3:b2c2:2e70 with SMTP id ada2fe7eead31-7ac0ca15c29mr2614047137.11.1790176496602;
-        Wed, 23 Sep 2026 08:14:56 -0700 (PDT)
+X-Gm-Gg: AYBFou201Clyhwm9iuMc+QFwoycLJYvQgkqT2/Un7KwWI6lLU5/sn9okiCTAc5+dZQ+
+	SfWIt9vNIjUj3n/zidoaQLVxq79USGHRbK+lbB0Eto37cxeH5KmqQJeDS66qz5g0pngn/9V3pAa
+	zjpinwI220hP/TOk3hdYqBHQHUw4qI7YcAcpI8fITw9K/exFzX25y9uDQ8BczLC8K7EufjoTCyu
+	aQR1MXjaDdww8WGcV5UF3xUOc6Q2h11odiH1RgzG+uQp3AFd9stobnFOlDGvuQzzVZ96qzS1ZJg
+	yy+3wAIoQklV/3+/2vh9GeOW0X2nKqDCeIWv7aEVoIEYitfGnElfj0Mu4FNYx80TTZOXa4V42Hr
+	/ymyt7aUokcPzgbH6CA/+ups6NEx4
+X-Received: by 2002:a05:6102:4188:b0:7a7:198b:674b with SMTP id ada2fe7eead31-7ac1e24f078mr2861430137.32.1790176500553;
+        Wed, 23 Sep 2026 08:15:00 -0700 (PDT)
+X-Received: by 2002:a05:6102:4188:b0:7a7:198b:674b with SMTP id ada2fe7eead31-7ac1e24f078mr2861406137.32.1790176500070;
+        Wed, 23 Sep 2026 08:15:00 -0700 (PDT)
 Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:34c6:dbd6:5b58:a3fe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe0c4054fsm55126325e9.3.2026.09.23.08.14.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe0c4054fsm55126325e9.3.2026.09.23.08.14.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2026 08:14:54 -0700 (PDT)
+        Wed, 23 Sep 2026 08:14:58 -0700 (PDT)
 From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH net-next v15 0/9] net: stmmac: qcom-ethqos: add support for
- SCMI power domains
-Date: Wed, 23 Sep 2026 17:14:34 +0200
-Message-Id: <20260923-qcom-sa8255p-emac-v15-0-e82f33720737@oss.qualcomm.com>
+Date: Wed, 23 Sep 2026 17:14:35 +0200
+Subject: [PATCH net-next v15 1/9] net: phy: aquantia: fix system interface
+ type not updated in forced mode
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -90,15 +92,9 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANrss2oC/3XTwW7kIAwA0F+pcl5GtgEbeup/rPYACbSROkmbz
- EZdVfPvSyLtJtKQCxIQXmxsvps5TX2am+en72ZKSz/341AmaH88Ne1bGF6T6ruy0BCQBQGjPtv
- xqubgyNoPla6hVc4wkLahtUhNOfcxpdx/bejPZkg3NaSvW/Or7Lz1822c/mx/W3Db31yPUHEXV
- KA0BfFtxsTsXt77IUzjZZxeN27R/wkEkhqhCyFWWKInDSE+EGYnsJrdYgqRhZkBnLQpPBD2SFS
- jsIUA7HTSIWTtHhPhnSD0NYILYZxkBEeGMb2M83z5/B3ey6fXSxnWmy8AAyKdAY6D7kyk0Dn9C
- GyRyL9IGDRwDZICdQUC1OBNlBPIHSDEGuQKZB2RxFJfQHcC+SNUjcgXqLXOa5OEc6YTCOEgka5
- 2HKz94jVQJO0C8hmFO8VULRiu3YtRcvQ2Wsz+jKKdkvqNl4KCKr0TMbWZPOAZpQ8U1hNcHwSiz
- 469T9mlM8rslAdXpdaHkVpCimIkSFeh7vf7X8YAZytjBAAA
-X-Change-ID: 20250704-qcom-sa8255p-emac-8460235ac512
+Message-Id: <20260923-qcom-sa8255p-emac-v15-1-e82f33720737@oss.qualcomm.com>
+References: <20260923-qcom-sa8255p-emac-v15-0-e82f33720737@oss.qualcomm.com>
+In-Reply-To: <20260923-qcom-sa8255p-emac-v15-0-e82f33720737@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -136,221 +132,101 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-riscv@lists.infradead.org, brgl@kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        stable@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+        stable@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8129;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2050;
  i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=vnN+T2XbeWk5toset9VU4nTIVfbU8DZj0FMpypnlf4Y=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqs+zeOf2G7l8EXFcfVOAE+buElY5SFrPnn9wRC
- Evx9qRwltOJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCarPs3gAKCRAFnS7L/zaE
- w2TzD/9IIAk691KeBGEP5+gjr367MR9d6SS6IzzDpKNK8TFMzVaIsurZAnAS83j1rB17e7CiFcl
- OGz5i/BLZ9JcMNJRpHAJKKF23IdkFl1qxyzNgwXIAMAaXTcDvwTLUYgzzu2lGPbU1qUV3JmSLPu
- sTW5wvKTofo88VRNvuGegni7FRQnxAPhyj88ddvgs/veq3y5ldWsEK+ROUS3XQb9Cez8Joet9wo
- kVB0RtmP8l0+/fEF5XnM/iIWH07Cr2da2zwX/RUrUihkF26i3yUPrXRe20MGvetGg1vUVB/eT2p
- nnVM5xK3pQzVpTkPjVvfiSDNCAszd1ZU5q0eljGgVNUZ543eLw9WMtCAgAGFlvp6zk4SsZEJWiS
- LTA+UNgvxL1qDrBz0dLAiuZa0xP9TpTJCdey6ExoUEesZIIFHKr7L5ZKcusm5cNWJd1wsPe23d0
- M8128gvf/+PrbRQVafyn0jud+BgsQ0v0MPJT45bvf9m5Axej41IMwqj3pxlgrnn3hkFZ1npZlaN
- LzvmDPIvuOGArc453fn7+VDq6mEjGIZ91LXv/h5kf4LHcrOX0fItMbA8/HL0YXQIhIJ00iAQ2Rh
- zPYBLvlmFdbLA+razK5mu7GGFHMpDREhm7NxTTMUGv3dWBujH0/3ZIrkPAMEqD7LlxN8JiCRcpl
- 5dtzQeKEkgtW7PQ==
+ bh=48a0yspdUEk3xwkcjvTbhXXEU17F+t29neQdikkIdcE=;
+ b=kA0DAAoBBZ0uy/82hMMByyZiAGqz7OOgV0gtRJkZHGdKpH+X0k8DmAZYc5XdGUyaVggrvqRmy
+ IkCMwQAAQoAHRYhBJHlEy3ltUYde6Jl/AWdLsv/NoTDBQJqs+zjAAoJEAWdLsv/NoTDSakQAI45
+ 3c0nVh4x3AoEXSUEJkG/9yLxn5l3sftmcI8RwXGnLRW7g3FvPfHVO9kgDsV92QuJB8z+HB7Svuf
+ BufupGZa5X5CpNX48nD/7QUdcAxHO8pp/F9l7m+W24YDimBlfYxS7IUrHAn55TRybzGJwMaZvJS
+ kNOamqPyyzWoCKj0QQiV5TOeYkS1ydw4mUcyMsZY5tDnfUpwE/xFc3RB8ftI9QSKUMPx61J55qq
+ 2f1vmvyLtyvoVt6WImg9Ii7cBTL3SWVdKumUjIb19euVf3KEJDZOY0g9vSH+nYxpfFJ7jwkM7Bq
+ 7VequVxgJEIRnfSGF7VPVqefK0pHsTGZ+wms5ctzDQao6OVgGur58IYfJAcebTZnweW0IyIRnj7
+ W6vpWiDjXMrvSApv/PAGnGyY2j2Z4zXMYHLInNarwItTlDdAAKCDdI/EAnbNbGDkTja2obpkHru
+ XBK8uqCJwXJKsK9VIyy8GQlls0chF7VQmhzqo6T6pco5dR/9F6AqP4a2qOUi11LEgijlqi5OXkQ
+ noSRzO1UbVDQuLaUO4HFNbbALAnXh+ADClkQSikfRUvZLJvgAsNUDo4WvXBP0NvHljJHC35xgfI
+ wEf/Kh+whGvzFIwbrXorqRhgdglnrJ+Q4wTs3wmd5jXRaNVp22VJRxAbFtbwXebc/xKKUuuMQgR
+ SXihp
 X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIzMDA2MCBTYWx0ZWRfX+ow3Vl2vROvv
- PmHN1M0gM564I2h9BFtN7RVC8wiqLrdhw0Hge2TL6HBM352ScX2806avMnhwx4i6ti2jxvxBSbD
- o/l6/P2gSBOguYqwONmAr2cJu4Oar38=
-X-Authority-Analysis: v=2.4 cv=R/6WitRX c=1 sm=1 tr=0 ts=6ab3ecf2 cx=c_pps
- a=UbhLPJ621ZpgOD2l3yZY1w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIzMDA2MCBTYWx0ZWRfXxs+cGzxhOYmq
+ p0C50nf/V4CuLshG0xoweQCFJRupBxPxKYhkrWe6+lfYRbDXn7AlBVxLs73ZIYTpwutZ1fTeoyt
+ V0Aqz7c9HIKlb8c3b3GCb5jfhRnf22vhvJPJDmHjavLwbrp+cdmwrTRmccd6jtab39ep64ERuu4
+ 7mQqpXNzJhAqhmVwiAC1uAyG+DePUpf63RgwB4Ma1Pvr5TZ896lwUhTS0jL3QaowA6aLEtMnNvN
+ MRvPoq0teNXcINdlCMUYMiZpAbWoVu4NR/O/Az0X6Jw1Pt4MiJppxdSODRufeoWGGsaBXVdvTGu
+ UXO10jxEJU2/eRnwmU4aboshCU9vE905ZVIQ81P9yCWzkGbLsG2RGaTlP6Fmi5v539p99EiHz++
+ h6W9W9VJDHz0CEYnTPktTeJoB/tV7WHTt1ASuwvgld1uMSX3vWySPW1jExqh6pqg1O3GYd9s1Dz
+ 9HJ4K5OoXtGq/udK2ow==
+X-Proofpoint-GUID: BqG1f1rxuu6Ck-YaDIQTHI2QTu1pArOW
+X-Proofpoint-ORIG-GUID: BqG1f1rxuu6Ck-YaDIQTHI2QTu1pArOW
+X-Authority-Analysis: v=2.4 cv=K4+3jCWI c=1 sm=1 tr=0 ts=6ab3ecf5 cx=c_pps
+ a=ULNsgckmlI/WJG3HAyAuOQ==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=bC-a23v3AAAA:8
- a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=PHq6YzTAAAAA:8
- a=LD4EYYuP07UOpJRtIbAA:9 a=johg_cs5QguPD8jS:21 a=QEXdDO2ut3YA:10
- a=TOPH6uDL9cOC6tEoww4z:22 a=FO4_E8m0qiDe52t0p3_H:22 a=cvBusfyB2V15izCimMoJ:22
- a=ZKzU8r6zoKMcqsNulkmm:22
-X-Proofpoint-GUID: FFSt2Yoep5mIU9vZxMVwPDhUCyJztWgK
-X-Proofpoint-ORIG-GUID: FFSt2Yoep5mIU9vZxMVwPDhUCyJztWgK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIzMDA2MCBTYWx0ZWRfX9liy9EiSCqqk
- FuTUy3AzMPCw2JxBBPRIrjBvjSVlodvQTU/K1pcIBK1xkY+ZPwITvRKlmDhgIrJF5iLvy71yDNx
- DhXYMh9tUHPgw4Fx2Ksu5XjUPbZzOH+OwEmouivuosoJaPMPEST6GypseIkwXebhnbGJbuA00KJ
- ash95BTjea+CM+weSNlidtbdzASh2QpYUddd2h1P++NgmciwtvB8qEADK0CGnvfpsSrWdAL6Tli
- GyZ5QW9GEovIYTtFOVs8JETaRpLTamm0UXjrAiTckclBa3CVDWD7D7I29yCIX11nCdUlnF/3Ihy
- IaI2u4k0NYJ/wOsPEPMlYXi4duQ6w3d8tPYvdjaiAao4q/RDswDJb404HF/k/Yln3nClAipRVoq
- ynq2LnUlDrOEm7nfUMw+Cx+fYn+fwLeIxkQbhfh6n1gIH0LBgbG4ozUW32CMe3Jm+x1HEZs64KS
- 2nrabx+0zogAD6Dh10Q==
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=mooR1oPkU_hlknJbmfEA:9 a=QEXdDO2ut3YA:10
+ a=1WsBpfsz9X-RYQiigVTh:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIzMDA2MCBTYWx0ZWRfX6yi+ACXecORz
+ Ws8sVIIvrB9g0YzyHppdolnatwrKlCWPD34pVj/FJrht61bLqBVu/NrXnlQWRpvmZ0IZQm0Jzlx
+ EdD1bg3oXvlxKeRGyjuw2Xh3g3r2M1g=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-23_04,2026-09-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 adultscore=0
+ impostorscore=0 phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609230060
 
-This iteration addresses several issues raised by Sashiko. Some are not
-addressed as they were false positives (nothing in the PHY driver ever
-calls phy_runtime_get() on the parent device) or I decided they make no
-sense - like the suggestion to remove the power-domain-names property
-because there's only one power domain.
+aqr_gen1_read_status() decodes the MDIO_PHYXS_VEND_IF_STATUS register
+to determine which SerDes interface the PHY is currently using on its
+system side and stores the result in phydev->interface. phylink relies
+on this value to configure the MAC.
 
---
+The autoneg == AUTONEG_DISABLE check is not correct:
+MDIO_PHYXS_VEND_IF_STATUS is set by the PHY firmware based on the
+negotiated link speed, not based on whether autoneg was used to reach
+it. When the link comes up at 1G in forced mode, the register correctly
+reads SGMII, but the early return prevents phydev->interface from being
+updated. It stays at whatever value it held before (typically 2500BASE-X
+from the initial autoneg run), so phylink configures the MAC for the
+wrong interface and the link cannot come up.
 
-Add support for the firmware-managed variant of the DesignWare MAC on
-the sa8255p platform. This series contains new DT bindings and driver
-changes required to support the MAC in the STMMAC driver.
+Remove the autoneg guard so that the system interface type is always
+decoded when the link is up.
 
-It also reorganizes the ethqos code quite a bit to make the introduction
-of power domains into the driver a bit easier on the eye.
-
-The DTS changes will go in separately.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: stable@vger.kernel.org
+Fixes: 110a2432c520 ("net: phy: aquantia: add downshift support")
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 ---
-Changes in v15:
-- Squash patches 6 and 7 to avoid a potential hang-on-resume regression
-  (Sashiko)
-- Fix the AUTONEG_DISABLE early return path in forced mode (Sashiko)
-- Fix Kconfig dependencies on generic power domains (Sashiko)
-- Set the performance level back to 0 on unbind in the PHY driver
-  (Sashiko)
-- Use devm_pm_runtime_enable() where applicable
-- Link to v14: https://patch.msgid.link/20260908-qcom-sa8255p-emac-v14-0-ec212b747a7d@oss.qualcomm.com
+ drivers/net/phy/aquantia/aquantia_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Changes in v14:
-- let genpd's own runtime suspend/resume callbacks own the perf state entirely
-  by calling dev_pm_genpd_set_performance_state() in set_mode()
-  unconditionally in the sgmii PHY driver
-- drop usleep_range() from the PHY driver when setting the state as the level
-  setting is already synchronous
-- add missing power-domains limits for ma35d1/k3-dwmac
-- fix ordering of clearing the sgmii loopback
-- configure the wrapper clocks synchronously in scmi setup
-- Link to v13: https://patch.msgid.link/20260713-qcom-sa8255p-emac-v13-0-119f8699ef8e@oss.qualcomm.com
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index e95d391a6dc233879ae1fb2a97758b3df9600ce5..096407bebd52a8e644084c3e286fb5dbcfa3f598 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -544,7 +544,7 @@ static int aqr_gen1_read_status(struct phy_device *phydev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!phydev->link || phydev->autoneg == AUTONEG_DISABLE)
++	if (!phydev->link)
+ 		return 0;
+ 
+ 	/* The status register is not immediately correct on line side link up.
+@@ -594,6 +594,9 @@ static int aqr_gen1_read_status(struct phy_device *phydev)
+ 
+ 	phydev->interface = aqr_translate_interface(phydev, interface);
+ 
++	if (phydev->autoneg == AUTONEG_DISABLE)
++		return 0;
++
+ 	/* Read rate from vendor register */
+ 	return aqr_gen1_read_rate(phydev);
+ }
 
-Changes in v13:
-- Reapply OPP on speed change in the PHY driver
-- Use linux/device-id/of.h instead of mod_devicetable.h
-- Fix the "invalid PTP clock rate" warning on sa8255p
-- Add commits necessary to allow correct link speed change with SCMI
-- Link to v12: https://patch.msgid.link/20260706-qcom-sa8255p-emac-v12-0-e3ab1ecf2901@oss.qualcomm.com
-
-Changes in v12:
-- Drop the power-domain-names from the SGMII PHY DT bindings
-- Add missing Kconfig dependency on PM for the new SGMII PHY driver
-- Link to v11: https://patch.msgid.link/20260629-qcom-sa8255p-emac-v11-0-1b7fb95b51f9@oss.qualcomm.com
-
-Changes in v11:
-- Take a new approach: add a dedicated driver for the firmware-managed
-  SGMII PHY and simplify changes made to the MAC driver
-- Link to v10: https://patch.msgid.link/20260323-qcom-sa8255p-emac-v10-0-79302b238a16@oss.qualcomm.com
-
-Changes in v10:
-- Fix unit address in DT example
-- Link to v9: https://patch.msgid.link/20260316-qcom-sa8255p-emac-v9-0-c58934e76ff2@oss.qualcomm.com
-
-Changes in v9:
-- Rebase on top of current linux-next again
-- Link to v8: https://patch.msgid.link/20260311-qcom-sa8255p-emac-v8-0-58227bcf1018@oss.qualcomm.com
-
-Changes in v8:
-- Rebase on top of recent changes in linux-next which required an
-  extensive rework
-- Drop partial R-b tags
-- Link to v7: https://patch.msgid.link/20260306-qcom-sa8255p-emac-v7-0-d6a3013094b7@oss.qualcomm.com
-
-Changes in v7:
-- Restored the correct authorship after learning git uses .mailmap for
-  the --author switch
-- Rebased on top of changes from Russell
-- Fixed resource management issues in error paths
-- Link to v6: https://lore.kernel.org/r/20260112-qcom-sa8255p-emac-v6-0-86a3d4b2ad83@oss.qualcomm.com
-
-Changes in v6:
-- Fix $id value in the bindings
-- Drop patch 3/8 from the series
-- Update init/exit callback signatures
-- Link to v5: https://lore.kernel.org/r/20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org
-- Link to v6: https://lore.kernel.org/r/20251219-qcom-sa8255p-emac-v6-0-487f1082461e@oss.qualcomm.com
-
-Changes in v5:
-- Name the DT binding document after the new compatbile
-- Add missing space
-- Make the power-domains limits stricter
-- Link to v4: https://lore.kernel.org/r/20251104-qcom-sa8255p-emac-v4-0-f76660087cea@linaro.org
-
-Changes in v4:
-- Remove the phys property from the SCMI bindings
-- Mark the power-domain-names property as required
-- Set maxItems for power-domains to 1 for all existing bindings to
-  maintain the current requirements after modifying the value in the
-  top-level document
-- Link to v3: https://lore.kernel.org/r/20251027-qcom-sa8255p-emac-v3-0-75767b9230ab@linaro.org
-
-Changes in v3:
-- Drop 'power' and 'perf' prefixes from power domain names
-- Rebase on top of Russell's changes to dwmac
-- Rebase on top of even more changes from Russell that are not yet
-  in next (E1vB6ld-0000000BIPy-2Qi4@rmk-PC.armlinux.org.uk)
-- Link to v2: https://lore.kernel.org/all/20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org/
-
-Changes in v2:
-- Fix the power-domains property in DT bindings
-- Rework the DT bindings example
-- Drop the DTS patch, it will go upstream separately
-- Link to v1: https://lore.kernel.org/r/20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org
-
----
-Bartosz Golaszewski (9):
-      net: phy: aquantia: fix system interface type not updated in forced mode
-      dt-bindings: phy: document the serdes PHY on sa8255p
-      phy: qcom: add the SGMII SerDes PHY driver for SCMI systems
-      dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
-      net: stmmac: qcom-ethqos: set serdes mode before powerup
-      net: stmmac: qcom-ethqos: update phy_mode to the resolved interface in mac_finish()
-      net: stmmac: qcom-ethqos: reuse the address of ethqos_emac_driver_data
-      net: stmmac: qcom-ethqos: factor out linux-level setup into a separate function
-      net: stmmac: qcom-ethqos: add support for sa8255p
-
- .../bindings/net/allwinner,sun7i-a20-gmac.yaml     |   3 +
- .../bindings/net/altr,socfpga-stmmac.yaml          |   3 +
- .../bindings/net/amlogic,meson-dwmac.yaml          |   3 +
- .../devicetree/bindings/net/eswin,eic7700-eth.yaml |   3 +
- .../devicetree/bindings/net/intel,dwmac-plat.yaml  |   3 +
- .../bindings/net/loongson,ls1b-gmac.yaml           |   3 +
- .../bindings/net/loongson,ls1c-emac.yaml           |   3 +
- .../bindings/net/nuvoton,ma35d1-dwmac.yaml         |   3 +
- .../devicetree/bindings/net/nxp,dwmac-imx.yaml     |   3 +
- .../devicetree/bindings/net/nxp,lpc1850-dwmac.yaml |   3 +
- .../devicetree/bindings/net/nxp,s32-dwmac.yaml     |   3 +
- .../devicetree/bindings/net/qcom,ethqos.yaml       |   3 +
- .../bindings/net/qcom,sa8255p-ethqos.yaml          | 107 +++++++++
- .../devicetree/bindings/net/renesas,rzn1-gmac.yaml |   3 +
- .../bindings/net/renesas,rzv2h-gbeth.yaml          |   3 +
- .../devicetree/bindings/net/rockchip-dwmac.yaml    |   3 +
- .../devicetree/bindings/net/snps,dwmac.yaml        |   5 +-
- .../bindings/net/sophgo,cv1800b-dwmac.yaml         |   3 +
- .../bindings/net/sophgo,sg2044-dwmac.yaml          |   3 +
- .../devicetree/bindings/net/spacemit,k3-dwmac.yaml |   3 +
- .../bindings/net/starfive,jh7110-dwmac.yaml        |   3 +
- .../devicetree/bindings/net/stm32-dwmac.yaml       |   3 +
- .../devicetree/bindings/net/tesla,fsd-ethqos.yaml  |   3 +
- .../devicetree/bindings/net/thead,th1520-gmac.yaml |   3 +
- .../bindings/net/toshiba,visconti-dwmac.yaml       |   3 +
- .../bindings/phy/qcom,sa8255p-dwmac-sgmii-phy.yaml |  50 ++++
- MAINTAINERS                                        |   1 +
- .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 263 ++++++++++++++++-----
- drivers/net/phy/aquantia/aquantia_main.c           |   5 +-
- drivers/phy/qualcomm/Kconfig                       |  10 +
- drivers/phy/qualcomm/Makefile                      |   1 +
- drivers/phy/qualcomm/phy-qcom-sgmii-eth-scmi.c     | 117 +++++++++
- 32 files changed, 570 insertions(+), 58 deletions(-)
----
-base-commit: ab8dad6c8262729415164de729ba533466fc3649
-change-id: 20250704-qcom-sa8255p-emac-8460235ac512
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.47.3
 
