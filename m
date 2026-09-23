@@ -1,72 +1,72 @@
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
+Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com [74.125.227.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0EB53B346
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 14:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A011553ECF7
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 14:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790174814; cv=none; b=Wu4+lQcqPMUmFqrInmfYDvRxa14Af6KvWsBZHRUV3c9IiWGeqbz3Td+DDt//ht3sRHRvf6rIIFr50OG5lEp1eimZjfcC551cDJ+/lZq1Dvs6Phs3LZx9DgrT+y3GcNJc7YJf9STm72lETbflcFW3+KLeIe71TlZb+aPw14RqZmc=
+	t=1790175131; cv=none; b=gF+4+QS7YZM2lXuuAyHj0jIQ5K+abmLJdmRLiuMC+Ubf4Oq7XNtbEEG/UDIjKgsEhipxoOSdm03K9ssCDFCsvvCN7BvbcIqgM35vP86ateJKWTrk8wZabRLD4Z0hQoXjCJxdrLBwwSqEcbwYwYjhVrocjg+OnPAF/s4HR3SniB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790174814; c=relaxed/simple;
-	bh=FXzg6hBNBXZZsScdwtGeM5Pmqbhre7BC03zd4cLn0Yo=;
+	s=arc-20240116; t=1790175131; c=relaxed/simple;
+	bh=AfFgK5O94TRbSz0v+n2agZrfGhkoCKVuFplQhBhnZO0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YYBQdazDJrSSldo3BwYRiqOteHVLPGrusbJ3KgnXvgc2jpiJTddUEBLs5gbq0tV3je7pX94mE5YkaVJ43edXRY9JblxG7oxlu+nPOaS4f+p7/ql3gLhAfz9Sv4+BDB2d1xBIsAXoLeT/ib+EDDyuEqUi7IFFjNdlJIXnf5s5GUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.204
+	 To:Cc:Content-Type; b=ULlu7AgHkrVDVWJsDBFKbeEK6qrjtRCs8vi4yNgE4WzH/4EaHcq1jNZB07UpxrZrJsZKv+3hp4JVEiM3/kPEzyE3AGWkYdRdjzEs3fO6KIpvitgO/qM8axOrP216PsrOfq1qHHyKC2w+ynehHhuAuLyUWckTP09wa4BzzcRnsm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c7b4ed2so617922241.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 07:46:52 -0700 (PDT)
+Received: by mail-vs2-f41.google.com with SMTP id 71dfb90a1353d-5c67e512ee5so415233e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 07:52:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790174812; x=1790779612;
+        d=1e100.net; s=20260707; t=1790175127; x=1790779927;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ONYGJu27lrhOYpsTIFykGbM1Hkv2j9YTc036/0zk0Ug=;
-        b=psPuCoFtawDD1XHqFbmct+ul/E9srAhtf2sZ5qeeokkS4ufpFJ6IcHzE2EnrXJcWtC
-         8M3j4juz+Itt6Mxk9DrLN6g+2WhszGQOcu9JZWs8fm5VfbDJ5eyuXZGABBdeffT17UHv
-         LpxEu+UdDqFEEnyW0QID0B/P7xGd2YxzEF7+Gh3pVB9gbSoZhdUu6MHdJBWPFhxreiec
-         16phz+VlWNJFldrQ36fGubKU4um+6r/b3X7HmLbBTjkhItOG7PlNU6IuDH1MyVPg4nqR
-         nG8uUN69O5L66c8fr9DBVurUQUhQ/2ZvdcigCgH9yJx+Snc1Do/rKSRoTYTbNPTDR4+E
-         Uy8g==
-X-Forwarded-Encrypted: i=1; AKwUvBxrZTEBgT/ZzFbxsMGMEX9P7me61Aa49IfxlP5WVHpCwm3nhJ+y3qzyw9/YpCezfrLajTTkMAx8dd8kzM+mrsitnQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++k5WiN+PVWBAyR5gaEJvVNqE6b36Sgb/ovwvin4KszKBUOBovcF
-	fus17qZjs48K14kAJ4jlIAz6Ajz1DoHDUIGfLBif2yQmD8m8PqG3Jw+mU9gqsp3tYKo=
-X-Gm-Gg: AYBFou2dpqIErTaOMuT9PgRkcqxnVtS2fi/FpBMN3WXKtIe7hhjIAymjugjzKLkxRpk
-	6+fZbDSNRrqTKtA/koJ/u4yny40FQ4yntObXXO4Tuppbj8ITHqrMrDv6V2ALldm0ueUYPYdPPtL
-	gXG+3lc5TcK5yXAHcWMYGGSOiyntIfqEbER+D8H8Eb2T4NOortTeYHKaTSpBLJsE77L1NSzNl9F
-	HclZPnfRJob68/BE/arIP/6oLMoZT9+CDanMHIWdeEu+MszCzz/WI5hk6XuOzXNPv+yUpCaUyM7
-	0iucGT2kCtYoA3wRL8ESwy1M/nCHRChmz8Ra9NRvUWdRFqRl5Pxk+1zxphSvp91jSv99otP64/E
-	yF9u3GFe6rlllrIK+6TnuROLjFiZreDsHndTlrfX9DhfDCyxObJ9YGjHDRMb8dN4+f9F59CJ1J5
-	KNS5vxQ9FzExP5fTYZH7h7+c+ERRbb1tK+03clzTY4vSTZPFtGJiFNbUWVh9C36AyU0kTjZZuyN
-	4WdpSH48pqiJF0nC9sDKkxyZAbAuI04XhYP7HLssKJItWCm
-X-Received: by 2002:a05:6102:14a1:b0:7a7:7d3c:248c with SMTP id ada2fe7eead31-7ac1b9284c2mr2690510137.11.1790174811836;
-        Wed, 23 Sep 2026 07:46:51 -0700 (PDT)
-Received: from mail-ua2-f43.google.com (mail-ua2-f43.google.com. [74.125.226.235])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98517a8ecaesm3193575241.12.2026.09.23.07.46.51
+        bh=OTVINLgc5+4Z1oNwbQRG/rtTEB6pkVDW8ACRGjhrMlE=;
+        b=R8F2FJGzLZH15KB3iIjT4Lc+GNzNTTLIY+PyLTS+KLZ3hyyyhZH6u9EVbDMYlaHPBR
+         14HmgZQz6ny7laouCO0mlrG/3Id2ws1ZX2EffGECs15lqAPAi45SYGvYHMGpijEeqNJp
+         P63kmnIIEuWMI+eAR6MUhSar3L/w6nWz+GJyOF8PryTCrps+zqHzJKrjE313qfuCzEJ5
+         Y8bwctxe4WO7bGfSwh8eZ05ZUmPizJeyecgYuly7Pcf7bxZJtNyZMWORvPqY2Bgdezu4
+         mylX5tMC200eGE+3388TxS1+1Nijqp+/LnZmyjT0iMw/dgjWnsAxVCf+6FlyKUpOAHz2
+         9KdA==
+X-Forwarded-Encrypted: i=1; AKwUvBwTm+ES2HogJ7Ap8yBGsSDqOaQ/uR2hluQ7a2xTrIWS5ySeVBFphA5fVtRx4iLa66fLfc2CxU5HxcX6ovP3CquJbA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mi6+D5sj9rTvVW4haVVD2sqUT9gE5QVxYx8L7lijQ7kdwamuHU
+	MC/1o0sZxxzEHR6/9lq7iJCqdLfPQWVMJfNR6gH4P7Hqyoburp6u/aM6zTMFpOEed5U=
+X-Gm-Gg: AYBFou0n3Abl4CA4ka34yH1+EFJvLq0iWvJI7hGMbVI35/HKSTrN2xb94MJVdbaT1U/
+	gvh760Oop5vjE58JUUs7bZm43kt8qh6LVptZBuRTzU3soup2fNppWKe6BtrZpgaOB+JHTVerYLy
+	jkN/15RyexbB0pNeyM6H9WLXY2/3xFPSdfaPrv4lNVB0t3nxSKNkOiGdsnhLkalmfAZZpOIqIYo
+	20Orz91LRujKD8RCQypb+lACyQGioQhr5VNVtS1ec9NHU7jlQb1toRcXEoyEfmJUm/0BB8lXk4G
+	M6RhoZvJu6M+Y0Jp0g7a8ruRyakqIfX3CKX73NHukyrL6YHGS8iAxZ2AlUYIj06sjNsbv1R9kO/
+	r9ZV5ZbUBgVyt0ddhc4jtLqnfKDQdsRHaKycez94NcJiUX9sdAD7+1wj+6zsLl51yc0rhZ7/sRK
+	RFRduvtzhjoUGxJjtg0zzXhdsu66QfDHBcPR92nGm2ccyNW0GeU8LjmadtViAiGAQMadxdZT08+
+	u/CxNCh1TkDOwxyPpVFbWuLkxUd4KbIBVvS
+X-Received: by 2002:a05:6102:5696:b0:7a1:f951:f2fe with SMTP id ada2fe7eead31-7ac1db32676mr2251239137.17.1790175127170;
+        Wed, 23 Sep 2026 07:52:07 -0700 (PDT)
+Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com. [74.125.227.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7abf5a7fb17sm3743083137.7.2026.09.23.07.52.07
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 07:46:51 -0700 (PDT)
-Received: by mail-ua2-f43.google.com with SMTP id a1e0cc1a2514c-9851d513a70so406477241.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 07:46:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByXZRYP36zFagJthdR3YXUzI0ZpBB4kCEMxlKQEg3eTpb20iOcA+KALIceg3UiJNtHCSTwHcMQed0dE2ek1MC7HPw==@vger.kernel.org
-X-Received: by 2002:a05:6102:5709:b0:7a1:f7e2:aadf with SMTP id
- ada2fe7eead31-7ac1d0cb10emr2412732137.17.1790174811407; Wed, 23 Sep 2026
- 07:46:51 -0700 (PDT)
+        Wed, 23 Sep 2026 07:52:07 -0700 (PDT)
+Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-78ffc0e2f23so409256137.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 07:52:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBytc8z0uXAmichKojGa8KV4DF8Ugz2O8RX/pqCRTCZrFBW7nXwwsIzVhXQ2VyKBsS8eAjWxz0tjIJeRkaguTdMq6A==@vger.kernel.org
+X-Received: by 2002:a05:6102:370a:b0:7a7:3485:33ea with SMTP id
+ ada2fe7eead31-7ac1db33f0dmr2430482137.19.1790175126732; Wed, 23 Sep 2026
+ 07:52:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-5-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-5-94c4674927e8@solid-run.com>
+References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-6-94c4674927e8@solid-run.com>
+In-Reply-To: <20260904-rzg2-sr-boards-v8-6-94c4674927e8@solid-run.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 16:46:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWUt7w8Y=fmX2PtdJhZJ0k0YaKkoaC2ifx+LSYL5PijHg@mail.gmail.com>
-X-Gm-Features: AclHuK_0TFDwROATeFWc5QcEb9bj6YWPyy6x8RXwybT5t7YWLi1_s9QYUiwmNRs
-Message-ID: <CAMuHMdWUt7w8Y=fmX2PtdJhZJ0k0YaKkoaC2ifx+LSYL5PijHg@mail.gmail.com>
-Subject: Re: [PATCH v8 05/11] arm64: dts: renesas: add support for solidrun
- rzv2l som and hb-iiot evb
+Date: Wed, 23 Sep 2026 16:51:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV5HkURikoQjpm_tw7qnHfGbLFtug4nBMgO7vEtpyjA2g@mail.gmail.com>
+X-Gm-Features: AclHuK-gsUhfafKUl3WYFPzbbNPmdS5PRweR7PwdMXMcSw8FWUkpxbAv7z94Jqg
+Message-ID: <CAMuHMdV5HkURikoQjpm_tw7qnHfGbLFtug4nBMgO7vEtpyjA2g@mail.gmail.com>
+Subject: Re: [PATCH v8 06/11] arm64: dts: renesas: add support for solidrun
+ rzg2lc som and hb-iiot evb
 To: Josua Mayer <josua@solid-run.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -78,11 +78,13 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
+Hi Josua,
+
 On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for the SolidRun RZ/V2L [1] SoM on HummingBoard IIoT [2].
+> Add support for the SolidRun RZ/G2LC SoM [1] on HummingBoard IIoT [2].
 >
 > The SoM features:
-> - 2x 1Gbps Ethernet with PHY
+> - 100Mbps Ethernet with PHY
 > - eMMC
 > - 1/2GB DDR
 > - WiFi + Bluetooth
@@ -90,7 +92,7 @@ On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
 >
 > The HummingBoard IIoT features:
 > - 3x USB-2.0 Type A connector
-> - 2x 1Gbps RJ45 Ethernet
+> - 1x 100Mbps RJ45 Ethernet
 > - USB Type-C Console Port
 > - microSD connector
 > - RTC with backup battery
@@ -99,27 +101,52 @@ On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
 > - 1x DSI Display Connector
 > - GPIO header
 > - 2x RS232/RS485 ports (configurable)
-> - 2x CAN
 >
-> The RZ/V2L SoM shares PCB with RZ/G2L, differing only in the SoC itself.
-> RZ/V2L is adding a powerful DRP-AI NPU which G2L lacks.
+> The RZ/G2LC SoM was designed to be pin compatible to G2L SoM, with
+> slightly reduced feature set.
 >
-> Due to the similarities most code is shared, including DT overlays for
-> eMMC, microSD, and RS485.
+> Descriptions for eMMC, microSD, and RS485 are shared with G2L.
 >
-> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-v2l-som/
+> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2lc-som/
 > [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
 >
 > Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-LGTM, so
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-hummingboard-iiot.dts
+
+> +&eth0 {
+> +       phy-handle = <&phy0>;
+> +       pinctrl-0 = <&eth0_pins>;
+> +       pinctrl-names = "default";
+> +       /*
+> +        * ravb driver does not configure mac internal delays for RZ/G2L(C),
+> +        * instead delays are added by the ADIN1200 phy driver.
+> +        */
+> +       phy-mode = "rgmii-id";
+> +       status = "okay";
+> +
+> +       phy0: ethernet-phy@0 {
+> +               reg = <0>;
+> +               /* Level interrupts are typical for phy but not supported on rz/g2l gpios. */
+
+Nit: "RZ/G2L" (in all patches)
+
+> +               interrupts-extended = <&pinctrl RZG2L_GPIO(27, 0) IRQ_TYPE_EDGE_FALLING>;
+> +       };
+> +};
+
+I didn't compare with the board schematics, but the rest LGTM, so
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
