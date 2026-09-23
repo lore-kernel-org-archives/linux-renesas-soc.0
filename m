@@ -1,109 +1,80 @@
-Received: from mta0.migadu.com (out-28.mta0.migadu.com [91.218.175.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FB1427A10
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 18:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DB83AD513;
+	Wed, 23 Sep 2026 18:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790186875; cv=none; b=FGJmfCgn7FAxg2MRc7VGMdUVxWQCHSQ1/NKVbkEqXUsQx+te3HxHkTpZCwXo1Tc7qMF4DvSblTOnZef66PChL0QQpLBLOhWy299dzIjFZwyiWzE5e3pV69cWNzCJdajwlTgWgWtfY2lDDW4sEj+nqx7yMW2mCsrAz5ZtOfyJ0gY=
+	t=1790189182; cv=none; b=MDsuSQmzFl6PkbvjPJ1nlDIXTZwHjzRHEpaphtEMgEDRLE5dcAuGrWFwQaPP/4fu1HT83If/pDma6jSLN7NZLu3KW6iALIFsCKVoxj/k2VrlaXx/2f/k50fIgUh7aX3LcHFFwXlGPRuEEX1NHYQjI9MvBYlswi++shMGBgOVB34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790186875; c=relaxed/simple;
-	bh=bp0SnK46xnvz/q8fX5PdkYUTIaH6Zd0obLz2gE4r2gY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fkYSRvMaLQNBbfZfl6tIovQvL0XY1iG5+/p+7Wv5hbpAp8w3cFpggmliR8452mUBJLQmLF2rd7CA9vOmnlOFypOFuFLZ7W96gVm9a+hVb1j/3Da50+GwaNZ+crVD478WYXylOyIfr7YCqGHOp394XU3uKGxUickbzo2cCX3DnlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u/W4NWyF; arc=none smtp.client-ip=91.218.175.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1790189182; c=relaxed/simple;
+	bh=rH8yAyqi1c+oMnQBQmUIueQRmppbfeO7vw2UuyvMbLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ReXmNqtIzO2jz4sn+8ax+2nsEIbyOGjA43P6ZQQPf/0m1XU+7ER9OprHAfdlPt5YJMXRWZ4XKD3n6ruP0WO4sOCjQMm26SZUOXcX1/WxQARvCWuJ7KTAGMl6m3EGQU+gv9GjpPO7x5xjzZ0ij1IAevD1GJXxJ+AZ7ytvVT8AdtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=V62zPp6n; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u/W4NWyF"
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=bp0SnK46xnvz/q8fX5PdkYUTIaH6Zd0obLz2gE4r2gY=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1790186871; v=1; x=1790791671;
- b=u/W4NWyFrBL56Tt/9bzBEJDx/7TbwWqM+UwBDAZ9JblZPdkea7FnD+Bbbu9fzbsRzFJA0niu
- rjx3ZudkE+FksUD85x9WNW6/N8lYJZz5f8nTRM0jel9Y6s6tGPw7LWNE8W6GBn74GCYTKHmRacm
- /xGnNBQIVjW9fzFj9KlOyOkI=
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id a9800f2f57d37519;
-	Wed, 23 Sep 2026 18:07:51 +0000
-X-Mizu-Trace-ID: a9800f2f57d37519
-X-Migadu-Flow: FLOW_OUT
-From: Fuad Tabba <fuad.tabba@linux.dev>
-To: Manivannan Sadhasivam <mani@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Fuad Tabba <tabba@google.com>
-Subject: [PATCH v2] PCI: rcar-gen4: Fix device_node leak in rcar_gen4_pcie_host_msi_addr()
-Date: Wed, 23 Sep 2026 19:07:49 +0100
-Message-Id: <20260923180749.3906547-1-fuad.tabba@linux.dev>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="V62zPp6n"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hqmBj1G6VzKqJw;
+	Wed, 23 Sep 2026 20:46:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1790189165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V5knNz61kSkSju4U5VzB8QE+YbN5s70b+UWzok69nnE=;
+	b=V62zPp6nn+wtR6RFFFQqpGTFBA64Ie370TOl0quQ/rUGHFjrJwJpp+JVeOPaEGGpZfqNPr
+	WfBB9Q3vx6yEaMi8sVKAOj7kvFhE+rXahmvhByGhwImANRHnPPugHKQg+TWMKp/9tGF5Ld
+	EHEnM01VtoB5yTH1wb1W5iUEa7/e/BDajWAiWtlL6Gupz24kMxI9fKbXe/5jjC0uKeiFXp
+	NieNTYBIr7Hb80uFCl3mKZIT0seNptWqrl3spDc8BgHB/BMeB3b1AsTNJin+lmXMq2fem/
+	WpoD93Jpxpy74NADj2kOOrvhCp3eNYTPJwkYlgz7LWI6Spqg93l4ZoYkbq4qhg==
+Message-ID: <3a964a4c-56bd-4103-9de8-ca7da48c9b01@mailbox.org>
+Date: Wed, 23 Sep 2026 20:45:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] PCI: rcar-gen4: Fix device_node leak in
+ rcar_gen4_pcie_host_msi_addr()
+To: Fuad Tabba <fuad.tabba@linux.dev>, Manivannan Sadhasivam
+ <mani@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Fuad Tabba <tabba@google.com>
+References: <20260923180749.3906547-1-fuad.tabba@linux.dev>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20260923180749.3906547-1-fuad.tabba@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 9226aae27c1171cb7c0
+X-MBO-RS-META: ua3w8odx1exwhj18jy6qmfrxxs17ejgs
 
-rcar_gen4_pcie_host_msi_addr() calls of_msi_xlate() with *msi_np NULL,
-so it receives the MSI controller node with a reference held, and every
-return past the NULL check leaks that reference, the success path
-included. Declare msi_node with __free(device_node) so it's put on
-every return.
-
-Fixes: 8d6af27c0a73 ("PCI: rcar-gen4: Configure AXIINTC if iMSI-RX is not used")
-Reported-by: Sashiko <sashiko-bot@kernel.org>
-Closes: https://lore.kernel.org/linux-pci/20260905213855.8D6671F00A3D@smtp.kernel.org/
-Tested-by: Marek Vasut <marek.vasut+renesas@mailbox.org> # Retronix R-Car V4H Sparrow Hawk
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Signed-off-by: Fuad Tabba <fuad.tabba@linux.dev>
----
-
-Notes:
-    Changes since v1:
-    - Declare msi_node immediately before of_msi_xlate() rather than at the
-      top of the function, as Jonathan asked on the iproc conversion [1].
-    - Kept Marek's Tested-by and Reviewed-by, since the generated code
-      differs only in the stack offsets of msi_node and res.
-    
-    [1] https://lore.kernel.org/all/20260923093433.00006cab@oss.qualcomm.com/
-
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index fbe465a29068f..bb2fcfd6861ac 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -323,7 +323,6 @@ static struct rcar_gen4_pcie *rcar_gen4_pcie_alloc(struct platform_device *pdev)
- static int rcar_gen4_pcie_host_msi_addr(struct dw_pcie_rp *pp, u32 *msi_addr)
- {
- 	struct dw_pcie *dw = to_dw_pcie_from_pp(pp);
--	struct device_node *msi_node = NULL;
- 	struct device *dev = dw->dev;
- 	struct resource res;
- 	u64 addr;
-@@ -333,6 +332,7 @@ static int rcar_gen4_pcie_host_msi_addr(struct dw_pcie_rp *pp, u32 *msi_addr)
- 	 * Either the "msi-parent" or the "msi-map" phandle needs to exist
- 	 * to obtain the MSI node.
- 	 */
-+	struct device_node *msi_node __free(device_node) = NULL;
- 	of_msi_xlate(dev, &msi_node, 0);
- 	if (!msi_node)
- 		return -ENODEV;
-
-base-commit: fd73f4a6659897191fa0d40695fe370925dd3780
--- 
-2.39.5
-
+On 9/23/26 8:07 PM, Fuad Tabba wrote:
+> rcar_gen4_pcie_host_msi_addr() calls of_msi_xlate() with *msi_np NULL,
+> so it receives the MSI controller node with a reference held, and every
+> return past the NULL check leaks that reference, the success path
+> included. Declare msi_node with __free(device_node) so it's put on
+> every return.
+> 
+> Fixes: 8d6af27c0a73 ("PCI: rcar-gen4: Configure AXIINTC if iMSI-RX is not used")
+> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> Closes: https://lore.kernel.org/linux-pci/20260905213855.8D6671F00A3D@smtp.kernel.org/
+> Tested-by: Marek Vasut <marek.vasut+renesas@mailbox.org> # Retronix R-Car V4H Sparrow Hawk
+> Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> Signed-off-by: Fuad Tabba <fuad.tabba@linux.dev>
+I liked V1 a bit better, but either way works.
