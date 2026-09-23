@@ -1,107 +1,145 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
+Received: from mail-oi2-f12.google.com (mail-oi2-f12.google.com [74.125.231.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8FD51FCC2
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 12:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26303019BA
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 13:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790167259; cv=none; b=GkkTzT5YXBlUY/qXT8YqP3BEofyP9aCjC5IvGMJ8g46dtae3OZQ18tj/7qlU7Iqqn4c1bryJDd9Ju0aNSNI8EF8qsTpCz9Bo4I2xgq0Olt7+lUxyFpHGiYtQn0jplxY1ulpvCeHVYONsbjQv5jadxkFajVVbzrO2e1TJMulAcpc=
+	t=1790171321; cv=none; b=fp4qwjcixorAn73BGLYmYRlREvB5docU/Mgo7k+B+Z8CLCsjDpaQIq+Zg7FEUnsV3u9kso/4rzM2fd6WMk4OzpDnIxdUh1qjnSqDvO951JGt7O9rvLZrnh3by8ni16TAheicJ6jiVZmq/anNs4RfB3PjZf0979v0QBCnB2imOYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790167259; c=relaxed/simple;
-	bh=EfNXHDSpd8SaNyXGdUaOjzW2OpbKeUB9UNXfiskVQ6Y=;
+	s=arc-20240116; t=1790171321; c=relaxed/simple;
+	bh=zQLNcKwt8lnNKrUhZWYc0UbpzKFARTsV6kXIZiSRVZ0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gHRu43yBzU2ZrSbr8+xrryHLt3xyamyazAFuAP1V9xMr0cvsQP9dQwtjC4Uc2avp7zXiKAZOlwEMnhfk3x28/A1sRkpRZr3qiSdgkJyK26AaAMtysZBpYuPH0Agx/5hUfdx13usjOeOcn1WhDSS16iJ/g/NZnv0BKH7jiqSkJUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+	 To:Cc:Content-Type; b=JHfQ8H8S+yglRBTP1LeHfwgGVsZz8jQRqc44VSj2O4aAcVrhdi11GXo5xIE+vvAOqKwArk36HPOcX+Djb0dFbYXSm14riN92OaiJasgYd2Bki0j9YBP88JRXXrC3CNPVS5RuVGOM9ues+SKLwgyBA3yeWZF7KdN6nLvq3jJeK2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.231.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c7f7cc52efso377675e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 05:40:57 -0700 (PDT)
+Received: by mail-oi2-f12.google.com with SMTP id 46e09a7af769-7f4f0c89e33so619551a34.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 06:48:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790167256; x=1790772056;
+        d=1e100.net; s=20260707; t=1790171318; x=1790776118;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=5hc1TTWP/ig0ekllF54ZiQ7BuKR9C4G2lvuDy9dKjh8=;
-        b=g6t8pxkF+1APAa7iaTbcsdyD+mB3Myh2vxOCxm5R1y+Hocr4JbrtIenmA/bRNaZS3v
-         TjXkAeFHerNJ29pCzB0RfJrio2kpQo+V+cOjJpBpWXmZwyIFUgUJwMMPDd/QUTyZIpt2
-         GQPECFukY4Hv1PVjokpYHIAyyp7PRhP1kP3Dw3ojBvLKYhioOLEQTgkWO8k1zVMTlvyI
-         SJr79dj5sz+XdhnDpB5kIRHmDTDCjQpUxjhDxZULwZZfB0iaNMXtsYhZb8nde42o0rS7
-         fd+4MEMAQ6OQ+rShnSFfmAbOtEgu7sOMa4vIShL0yqn80mnWICl/7F7p2itrrt+vc+3F
-         DdWA==
-X-Forwarded-Encrypted: i=1; AKwUvBz+gARUahj+d7dqOfqqQyqUKZ5t1LNUUmhRw/I4c9rgTqq4XxYFoUBM+2C9xDSPWKbHlr15/F0tpe+PIeIjTbqAYg==@vger.kernel.org
-X-Gm-Message-State: AFuF++mw55YukifR05D9UimwdZcdLSEvl03IP4tMt493WNzkXKv5blJI
-	FUyX5JYppD1qLi34q7hcCeX0gcWnaJ/UsKe8qscexzeLnWWeSzV5Z93KgkIXnNIj908=
-X-Gm-Gg: AYBFou1zh+GhDWzr+gkFGaeMTZ7ovJKSuhDfdM7n3MtNNxzLrxIlgscECLO+byCUQDs
-	o9ZQIfgVoozSTNeENoCKicyRFucQmzv+mKNiCWj6qePsxkkdDr/ik9uhZfAGTOCeotaAhsaSewZ
-	6FIHzQwrFvkj2pmpD5J1ncPT/gUAceKvt5sMRmVNoOndStQf0iBWXZ8xakGgne7jpwllwMzD+jo
-	F2nhMUYmw2jELb1Brfv4N+DRKDTKrvZU4t3KfQBnQV1BLulWP6FtjxrQ83OKU1b7vJGzJUFsw03
-	Sy/L3UGiNtWXoTNcJ5686JYx3dSKzSf4P4f4J1df7fcldL0d5Q9LvAmcheNrlx/9CkdHEik6VwO
-	Fvh935Ls1ZibxIZ41K6cnyxL2b9jhNgioqrTOI2vmEMkIDCD72jr0J0NwDOWciOLH5QGPUcdJeG
-	2MctZfawBHiZVjpImWl6mHYSKwzlgxqHdv+Hke1xVGkln4CjEn3byYf+gvZzjq2fqedqWM/1YK2
-	HkqAKujOZ0mQNidmR0ZumbUcuTqwhKCqVnc
-X-Received: by 2002:a05:6102:f12:b0:79f:45dc:118e with SMTP id ada2fe7eead31-7ac1acd5debmr2142234137.5.1790167256376;
-        Wed, 23 Sep 2026 05:40:56 -0700 (PDT)
-Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com. [74.125.227.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9851a07144dsm2428806241.9.2026.09.23.05.40.55
+        bh=cZcaHlSLoWG/YlsEmorJF69zsl7G8OYYQpV3ToGZCjU=;
+        b=Swcl3TCSQKOEM6srCL9H2ipD0tPVVGKXKNoc68e6bDzMclUOXJiXecExeuRq/OXmkJ
+         cEzRfHf8eaIaE0i91bHai3nl1MNPVv9S7EUSNBh6A98L9u/7PtXzMcEjEaEMrZXSh4Uw
+         GFLNSmk9oSnHYvuTq5kurQdobc0RGiEUwkN5WO0VZTDawpOZT1blLDCuo8Ao7CrgwGGJ
+         eGO7Ozml2QLYb8K52ywrkAVIaLh8c5v76R8Rl9+trHC3LV2km471JLYkv6P7MeA+L6jM
+         BpPYNx3/ZHGsH3RGRh5xlS16ZTsivQPalFJppOsf5tapcIWsXo7cCvQ2X19KuwT8ccAC
+         xGIA==
+X-Forwarded-Encrypted: i=1; AKwUvBy1ryGLkSgw0zVFfF5Pk4rLB0zgVbUzV6W5/25gPxXWf/POZudG+4b/cspCr4Zv5ijrGrzjLgYKt+IwI9Ove8U0EQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nZoWXB0hJw33WK0KfGhJfSupLRohtoQXDKqcTY7KT10KNjZraC
+	uKiZCLT1QtPrpkV5cdftKJ25rcdy2SDm7SXe/VHZ+9yYM2HCfqNfCQcjZbjGzEAvvso=
+X-Gm-Gg: AYBFou1CibuRWari7nYuLUzif2yepHP14cDrvqKHotAXPKrXjs7L3exuUMwm760oUNC
+	l24C3WaQiT7m5QOgJErMlBQYFlkYy2HSkKJjlY4OCFlloQL+ALh9EeOnKpjJqGceOc53Ns5qJoU
+	eW/VZRxZolTPFf/nuBE2dkH0qq7J0iBiN7reLUxKvc6GEoDPo7RIAKqkYQI2z6nyFa/gxXyAk1L
+	6qhIHb/tSp9gxC6roH1l6ZOHIKiDitv2Nii4yI4/dCzNIzNSjeFtCo+cJE5xUh7Zc+pgBs9006Q
+	CSClRHLEkJg1G9m/v5HypZzZBIkrhsWQRfYgAmvT6jievO07MjkityqdBejDeOi+GSYbiIFzo4t
+	KjAYZ/Xjq+fASz/cI2qyaxXrocev2RbPHH6GooNg9BaUZT9bGInvXAIfDNhQTMVVQE9HSJy8+lb
+	Azm79cVOtMNFamN2BL01k56jiQgtJvw07N25AueIApIa0whNcqa1HtPZz9cIC5lNPtf3SrFdWtc
+	ZKc6TWlPL40b/JxxYukkOlZmw/AHCj75+KFfQ==
+X-Received: by 2002:a05:6830:4103:b0:7fa:5c49:523e with SMTP id 46e09a7af769-815f2141cbbmr2616552a34.23.1790171318399;
+        Wed, 23 Sep 2026 06:48:38 -0700 (PDT)
+Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com. [74.125.231.205])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81603fc87cdsm2957049a34.13.2026.09.23.06.48.37
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 05:40:55 -0700 (PDT)
-Received: by mail-vs2-f41.google.com with SMTP id ada2fe7eead31-785686d2764so199083137.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 05:40:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwrE13PTv07sKuuzYfXfcYaNHoRNsLtl4dynsurD/Iwm7xNYAyrUNV679BljQmhJ8jEV45xplLj6UO57i+Yj1BrMg==@vger.kernel.org
-X-Received: by 2002:a05:6102:4b0a:b0:7a5:e455:1823 with SMTP id
- ada2fe7eead31-7ac1d4f39fdmr2199964137.27.1790167254685; Wed, 23 Sep 2026
- 05:40:54 -0700 (PDT)
+        Wed, 23 Sep 2026 06:48:37 -0700 (PDT)
+Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4c13f2685f2so584074b6e.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Sep 2026 06:48:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwxfYrQuRgP/mgW5ifZygkrqIA8tyXOTXbYmOIthFZyh5NydcjldIlmFJE2PJEYzyHsKQJdVVPQJk/X2W3mBzE4bw==@vger.kernel.org
+X-Received: by 2002:a05:6102:390e:b0:7a7:195a:1b26 with SMTP id
+ ada2fe7eead31-7ac1de3a707mr2471914137.32.1790170950472; Wed, 23 Sep 2026
+ 06:42:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921134432.50338-1-ayman.chaudhry.kc@renesas.com> <20260921134432.50338-10-ayman.chaudhry.kc@renesas.com>
-In-Reply-To: <20260921134432.50338-10-ayman.chaudhry.kc@renesas.com>
+References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-1-94c4674927e8@solid-run.com>
+In-Reply-To: <20260904-rzg2-sr-boards-v8-1-94c4674927e8@solid-run.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 14:40:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUkhnGxssjiV5+v9VizEMK6BEyYm9Eor2_b=H9VpPKLrw@mail.gmail.com>
-X-Gm-Features: AclHuK85Jpqk5GFMNdOgnv-jyW7mXfscimJBoxQw6oeOM-P6bOVrQRWi9Fs-eqY
-Message-ID: <CAMuHMdUkhnGxssjiV5+v9VizEMK6BEyYm9Eor2_b=H9VpPKLrw@mail.gmail.com>
-Subject: Re: [PATCH v2 9/9] arm64: dts: renesas: Add HiHope RZ/G2M v3.0 SoC
- sub board support
-To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
+Date: Wed, 23 Sep 2026 15:42:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXtcxyD4Zh+HyM1D43zu8KND-18FiLhi9OXTHZPojRH=A@mail.gmail.com>
+X-Gm-Features: AclHuK-TckegHvHKUKBwHK2truVsVTBXY6gTl27m7I0mB2ihxriiWdVUDyPODHw
+Message-ID: <CAMuHMdXtcxyD4Zh+HyM1D43zu8KND-18FiLhi9OXTHZPojRH=A@mail.gmail.com>
+Subject: Re: [PATCH v8 01/11] dt-bindings: soc: renesas: Add various SolidRun
+ RZ/G2 based boards
+To: Josua Mayer <josua@solid-run.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 21 Sept 2026 at 15:45, Ayman Chaudhry
-<ayman.chaudhry.kc@renesas.com> wrote:
-> The HiHope RZ/G2M sub board sits below the HiHope RZ/G2M v3.0
-> (a.k.a. R8A774A3) SoC main board.
->
-> The RZ/G2M v3.0 SoC sub board is similar to the RZ/G2M v1.3 SoC sub
-> board, so there are already DTSI files available in the kernel. These
-> DTSI files will be included once additional support (e.g. CAN, PCIe
-> and ethernet) is added for the RZ/G2M v3.0 SoC.
->
-> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-> ---
-> v1->v2:
-> - Corrected indentation
-> - Updated licensing to "GPL-2.0-only OR BSD-2-Clause"
+Hi Joshua,
 
+On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
+> Add bindings for various SolidRun boards and System on Module built
+> around Renesas RZ/G2 family of SoCs:
+>
+> - RZ/G2L SoM [1]
+> - RZ/V2L SoM [2]
+>   (shares PCB with G2L and has very similar programming model)
+> - RZ/G2LC SoM [3]
+> - RZ/G2UL SoM [4]
+>   (shares PCB with G2LC but programming model differs largely)
+> - HummingBoard IIoT [5] (RZ/G2L, RZ/V2L, RZ/G2LC)
+> - HummingBoard Pro [6] (RZ/G2L, RZ/V2L)
+> - HummingBoard Base (Ripple) [7] (RZ/G2L, RZ/V2L, RZ/G2LC, RZ/G2UL)
+>
+> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
+> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-v2l-som/
+> [3] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2lc-som/
+> [4] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2ul-som/
+> [5] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
+> [6] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-sbc/
+> [7] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2lc-base/
+>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> @@ -508,6 +508,14 @@ properties:
+>                - renesas,r9a07g043u12 # RZ/G2UL Type-2
+>            - const: renesas,r9a07g043
+>
+> +      - description: SolidRun RZ/G2UL based boards
+> +        items:
+> +          - enum:
+> +              - solidrun,rzg2ul-hummingboard-ripple # SolidRun RZ/G2UL HummingBoard Ripple
+
+As RZ/G2UL is pin-compatible with RZ/G2LC, I guess you could have an
+RZ/G2UL-based HummingBoard IIoT, too?
+
+> +          - const: solidrun,rzg2ul-sr-som
+
+Is there any special meaning of the "sr" in the middle of this and all
+other SoM compatible values?
+If it just means "SolidRun", I think it can be dropped.  However,
+you already have that for various SoMs with non-Renesas SoCs.
+
+> +          - const: renesas,r9a07g043u12 # RZ/G2UL Type-2
+> +          - const: renesas,r9a07g043
+
+The rest LGTM, so
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
