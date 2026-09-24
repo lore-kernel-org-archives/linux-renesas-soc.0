@@ -1,102 +1,81 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587B381E8C;
-	Thu, 24 Sep 2026 14:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5B3CE495;
+	Thu, 24 Sep 2026 14:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790259200; cv=none; b=nfIIQXUOe2a+o8dBxTlzcBkWawPhomTIR7zaIcsrK92ekmv/+QmvtnAAYNG+bjjhr37B+G6ubeJ+QdHpmO1IhZieK44kdw25f5VzKiZswlzp37NhC72O6/ordYV/z1j8UDsxvekulVeYfY+fQjc2bjxaFRiTBux2rxQHK/Cz/ME=
+	t=1790260696; cv=none; b=dwJ2/+W7r+f5UoNfE1CVMLeS4wHf8H2P13OrAFrT4X+OrtoNQiF3ubbjQoFo+3KjjfmjXubkEdo2L0x0Kh03qcFwQxIR0iv6pVoiQUO4s2vIdPk6/wR+xjgzG0emzRFlUzetwSaFPJRbUuY8eLuTEFciiKXQh6mzdwo2KqxUE98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790259200; c=relaxed/simple;
-	bh=nA/rC2OvJeW0AaqvGfx1Brf8SxDvZIsuz7E/iVHMkZM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lGDBDqXBN8FeRF8sTinkQbaSZQu3iIGSUrrL6pnveI322E4RX3gMiDTHDNADsxaSH613yEuoDQklmp35Br+109LP3q/tHlcK3DXXdZgAf1N6q+qGJo9LEadWkqA3hnfAIMHX7joLA5tEyXj2eBCgsghozMGMFSmV4ZCR6IV3w5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V+8kD5Ju; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790260696; c=relaxed/simple;
+	bh=VQWnshW7x5JKhHt60SoiR0TLDTR0iIuIQR1epXJ8brQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HbDaBO8TQM70cEwx7+ShOZFB3h6jbmW3ZCk/hP+UIvthvhDmSgdVTAoOLAY8fTjE0QV56twl+z5069cLNNJ0R2yIB080W8ErF3ApIo5/g0RGzqZjdmh10byN69l7f2z0k4TDVU61Gvyj54/4BQqYnrxEbqYedt0QZzQqfs+TH98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJa0nT7M; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V+8kD5Ju"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id D41A54E4105D;
-	Thu, 24 Sep 2026 14:13:16 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A959460341;
-	Thu, 24 Sep 2026 14:13:16 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0ADD6103294B8;
-	Thu, 24 Sep 2026 16:13:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790259195; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=xLAWXoAqE+60g1cvgidm3NIwGVVBCvvmj/eG9JwqIno=;
-	b=V+8kD5JuxOudbRl/WH9LUeqXMUjJK41WUdnfUyFfTuL1Oemrl2ZLDZvqrgmXwZWgy2jvsk
-	a415S9KXKp+QNTiKZL8i+DyIzsnLy4UxnHCJD6Z6u3fk9jkXA1q6XINQmVv1yZieUJ7auD
-	jrXl9TzBonXA5MjRRXoZGa7hey4GCgLeo0m4pMUzcqPwQ8CxH4jSJdGq9ujxAI0GvOJ3Wv
-	x48xLUomc5xijlE95sOIqY7UfrOaMO8qEmlYTfWKtTMMAUhBmOcWR+r6SRSQoBkG0dm2od
-	8vv7mNXY9GZJDN/b6KMAie4sntpG7Lam8dhnvB+AvmwiIho2M2N0tL56puKwUA==
-From: Paul Louvel <paul.louvel@bootlin.com>
-Date: Thu, 24 Sep 2026 16:12:49 +0200
-Subject: [PATCH v3 3/3] ARM: dts: renesas: r9a06g032: add EDAC node
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJa0nT7M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CAF1F000FF;
+	Thu, 24 Sep 2026 14:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790260695;
+	bh=ldCUMl64vgCWY7zzR6Hp0M0K4EOVF52HaqQY1yiujP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=mJa0nT7My79F5EEMeFkscYdM7Nb/TJxUl1Y0nTE1c6aC+DUjpzQ+T0NJu7FHm/zPh
+	 l/uNdJX5Z+k1XJpexQBKxOQ/M+n4qNg4+ZS5DPocJhpZ2M7HR2k6Cw+3LsPKgHqsF5
+	 pRHHw79MaJUPiHCa8Jz2ycJXOmVA+umfs3NThyrDcz30ndKLsbeD64gaDDC78NMmJe
+	 kkKMXzGoUDP1zysTp9QbVL1bhsO+tVdsa5neQBhUvK/19zIjs0c3GdogKeFHyg1i0d
+	 M/RyEl29DqtdjrU1Uq8TyBYw3MmB2z1cgIBfKv0U9i8ueZfYUA5UCVcTwkY68wZWN+
+	 fUS8v3NLd/qPg==
+Date: Thu, 24 Sep 2026 09:38:13 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-iio@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: iio: adc: renesas,rzg2l-adc: Make
+ '#io-channel-cells' required for R9A08G045
+Message-ID: <179026069285.4124788.11493153710746349553.robh@kernel.org>
+References: <20260911133653.115553-1-biju.das.jz@bp.renesas.com>
+ <20260911133653.115553-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260924-paul-v7-3-rc1-edac-v3-3-bd8054a5b180@bootlin.com>
-References: <20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com>
-In-Reply-To: <20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com>
-To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Herve Codina <herve.codina@bootlin.com>, 
- "Paul Louvel (Schneider Electric)" <paul.louvel@bootlin.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790259185; l=1034;
- i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
- bh=nA/rC2OvJeW0AaqvGfx1Brf8SxDvZIsuz7E/iVHMkZM=;
- b=6ghn0a3/yX5el7Z0MU1g4HN4pSVvUMKi1fcuR26V612J6e7StQacy0pN2/qK1sWFCc9PkLOl4
- 920Iem3iPOxBtFI655i0rs9MN5dKOx4Drvk7+dlmbCzb1kKZ9OYN5u9
-X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
- pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260911133653.115553-2-biju.das.jz@bp.renesas.com>
 
-Add EDAC node to the SoC base device tree file.
 
-Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
----
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Fri, 11 Sep 2026 14:36:44 +0100, Biju Das wrote:
+> Add a conditional schema constraint so that '#io-channel-cells' is
+> required when the compatible string is "renesas,r9a08g045-adc".
+> 
+> This is required because the R9A08G045 ADC serves as an IIO provider,
+> allowing external hardware consumer nodes (such as the TSU) to reference
+> its individual channels. The '#io-channel-cells' property must be present
+> so consumers can correctly specify the channel index in their 'io-channels'
+> phandle property.
+> 
+> Fixes: a3152e5c742c ("dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml   | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index 19c9bce0a26d..779221931fb6 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -164,6 +164,16 @@ dmamux: dma-router@a0 {
- 			};
- 		};
- 
-+		edac: memory-controller@4000d000 {
-+			compatible = "renesas,r9a06g032-ddr-edac", "renesas,rzn1-ddr-edac",
-+				     "cdns,ddr-edac";
-+			reg = <0x4000d000 0x1000>;
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_DDRC>, <&sysctrl R9A06G032_HCLK_DDRC>;
-+			clock-names = "ddrc", "pclk";
-+			status = "disabled";
-+		};
-+
- 		udc: usb@4001e000 {
- 			compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
- 			reg = <0x4001e000 0x2000>;
-
--- 
-2.55.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
