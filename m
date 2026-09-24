@@ -1,83 +1,40 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C0131E840
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 13:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AE8345EA4;
+	Thu, 24 Sep 2026 14:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790258372; cv=none; b=QJ6y0DYPHjXKmK5+7EzSAkkY/AxNwsXznVv2TW9qPbj6T3xz57Y0rBlryVvyK+gaVpI3lwIBrx54nJKvHUW0s0h/kcRlI12dGJ5/wIi1w7jELuZFpc70DU8XB15VJvxxFOk0XrnT8BdI+DjfWXYlx4nu6zZpBqWvq33zBehZFv0=
+	t=1790259194; cv=none; b=lTdb+5Z4BLRB9XyweB5cNWNo8tzorPgujjkVl2MBbGrHsv82I5yqKUptjVnU2poNNe6eCIImWoq3AGAZd6fKrUIT+14HXRHSkPTUkq/jaYayACekGznI83XUWZoWK/jpHDAbk8B759rEkbjQJWSWUp8BApvVCbAvvdbDKmvM5o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790258372; c=relaxed/simple;
-	bh=2xDfb2Al+hXfazTjwcsYYYFYI7kZoADbOaOKtPhYA0M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kNgdIiYtI7ZP0ho5U+QcL1L9b1RLfcKyaW5jJat8DXkwC1sGZj1632gf19LkJlX+jLa4uLZz8hASiMMA91NW/7vWSNkCEYaH2CjmAoo5oSE9bjVtvVMBWpxYF0Jol//phvkhCOuTjrheii0G6lNCScQlWHWpmh02JKYvNwq+XIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O46g7lew; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1790259194; c=relaxed/simple;
+	bh=H7S9QBybBOV/orKznzXfZsxie+wZHaKwCvOd8EHwrR4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tIBD8eMSWVSvbw9RWOTusSUyaYKMWdMWXu3G2/AwGa3oBzYdw/Wqq6VsFKWS7vGNpSn+vjn375dy+HPVxyEDmk3x4nJwzAuT/vL76mMHQbMB04Evjh2okeEgwQKkzLCdsogOwTI7ulVbTykg/qDI32g+dl1cspgiaKq2us75U0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TpvRZZcA; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O46g7lew"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6350faaso1390171f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 06:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790258369; x=1790863169; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Bjiz5fcvqLF+AelQDc1eUMc5aT1mzQ/HKFsPWrKukUg=;
-        b=O46g7lew6DPUnKzEJXk7+IkCfHr9r5jCIiRs8g2qvDyJSKA/uO3JUgf1pXe6rpNZKf
-         +ABMhZgzFHC+mb3C2xZ9zzEwnzPU6hJQaKIz9m6swa0zLpskWUA/oDxsU/g5VkhPi70j
-         N5qrzuKecArBTIkACGwO6o071mBwYyKQXd7eTSnhglfPnfAbL1JAgVFeKXrRsEedffeo
-         y56QC5KAcMWDfquewtM2068wthiWvblgF+a8w2yIzWgi9l3rkiE6xPL0SRUFg+daQ9Pp
-         QDqqoUgzP3f7LYxS0dqnhl0iT1zI/PgLbaTZXkUoaute0ELBRbWGfZoC7OGEORdnDNDb
-         oggA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790258369; x=1790863169;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Bjiz5fcvqLF+AelQDc1eUMc5aT1mzQ/HKFsPWrKukUg=;
-        b=xDQeCEl9lBQpj/hWM1hgFZUjjgdVg3hCLIkajTtxfrI8i54Unt8Lf8qKrCt5Oxg41X
-         M46HUbTYeOadIJSNWDRfTSDCyCkboBdgpRN5ZDdBJeovpId5Hq6AKZCPGiYINArdnfiz
-         c1KI3ls3OfP33QKKMYxOsacLFMbyKQzHIvblV3C34Ue1A/Ta24zyyR6evnl+0mobXhmC
-         iAa9qiCVgDSWobzZaYMoikCfM1jvu+lbwAxmt0kqKEPzAJZlA3mBX0WfZsvc50+cj8ub
-         RrQrIzVSiPi1k9RAZep29X1f3RLLUhVg2LDXjN2q0SRym8LlG/96OrNtGVVHDyGBXiKG
-         ZzFg==
-X-Forwarded-Encrypted: i=1; AKwUvBxFl8aYRI+EK0Z98f++N1Kl34rjFP9AxTxcWy2cPjWtAafmCNs1427FTkhNL7DCeGPzCE79gVg0kwPxRX/VwfqIxg==@vger.kernel.org
-X-Gm-Message-State: AFuF++kp2Q5RnEGekgQToJYtFcA66ebmmAVR5C2E4mBHKy1/CZq0PRgh
-	IkuWSrwsX65WGDPTza8v6CPVpQYoEk3dV8z7GlyI8pp926CAo3qO401CtN8ioo/X/xk=
-X-Gm-Gg: AYBFou1E9cCT9zpmWe7FzHEuymwJ+ZeO+N1gcIVLKdLBqrgvrjGj3DybVSZkF7+Yc7Y
-	Ggv3MVl/hRdXtFb0ftDffJG3X5iY3TPTSlVy1rXqmawxYAx16A8PXGy4JofLnNNpYILVnj+S3Dr
-	RoNgCPQNMetobchVHyMePBqqoWgKloC4zmeiFLn95hgdn6Ec/TLgmqZ++oIIeEdcuxBeXTtWkNF
-	920mA8WXZ8FoH8UHVNXAAE6PUTh6pc/OtG+z58yIkIoWamw0o5qRuT/n6CsSbHEQGAHhwaBZCPl
-	iRM4fbLvJJAvkkg/ue5ONgD/jx324X4/1sRqBH3Xhbl0OnOOItfttvtkTFVPEDRJpqc7PEC/E/2
-	wSEqDy8ocJNXM/J1VCkJKrdXyK7Ii72gelKhJErwtUB6/jCQcUNQL34V94V0jdbXkea9juyWANN
-	lViY2O8pmudY2ZiXz+t15hLjRh8X3cMJHD174BhCeHkjklviogGuYGCOqavd85F0wZMqEd/Lmer
-	cFTUzGOOF+M3icc4dKO
-X-Received: by 2002:a05:6000:238a:b0:487:84:96d7 with SMTP id ffacd0b85a97d-48871974f03mr4191954f8f.53.1790258368630;
-        Thu, 24 Sep 2026 06:59:28 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886876c500sm15799213f8f.19.2026.09.24.06.59.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 06:59:28 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: dri-devel@lists.freedesktop.org, 
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- David Airlie <airlied@gmail.com>, Jessica Zhang <jesszhan0024@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>, 
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20260910181918.31551-1-marek.vasut+renesas@mailbox.org>
-References: <20260910181918.31551-1-marek.vasut+renesas@mailbox.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: Document 10"
- Raspberry Pi Touch Display 2
-Message-Id: <179025836777.3234093.12909071047594857987.b4-ty@b4>
-Date: Thu, 24 Sep 2026 15:59:27 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TpvRZZcA"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3D6CC4E4105D;
+	Thu, 24 Sep 2026 14:13:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F110460341;
+	Thu, 24 Sep 2026 14:13:09 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A9E99103294AA;
+	Thu, 24 Sep 2026 16:13:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790259188; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=cfSxVFfxQcjeZ+4V26PUzPWciO76dhK//kR7ut/JjGY=;
+	b=TpvRZZcAg0p8cCby9QOhCW7mZc9wUqYuovTju9j974G+Eck7NLcF90ObHDRai39w/sqwA/
+	bEVhG/KS+OA3CKIUM+Mq+pI0ZGAaFOU4x2vhF0ExhcmrjkidbTfwIgQeKt9pCNWDzsxCe5
+	ygr+gLy8ob7SkQMk6XyP7ESMVfhAtzYB8DIobB/Iy5Bqy0ML3uyevKL0MyVew0Jzdal1nw
+	Zduu7QYorvGV18UtPJj76YoK9FVKN7ckeQ3CAtm54YVCteI+8LBDOENwzT72bGEVQj05ru
+	eqvfxyLf5Q2uFBSSAkPXBQbc9ZmV7bMZPwbqXtlAOab+qTgXTRqv9Kq4CLslVg==
+From: Paul Louvel <paul.louvel@bootlin.com>
+Subject: [PATCH v3 0/3] Add Renesas RZ/N1x EDAC driver
+Date: Thu, 24 Sep 2026 16:12:46 +0200
+Message-Id: <20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -86,25 +43,96 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.1
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOQU7DMBBFr1J5jZHHk9gOK+6BWNiTMTUqceWkU
+ asqdyduN60oSCy/NO/NO4uRS+JRvGzOovCcxpSHdeDTRtDWDx8sU79uoZU2qgMj9/6wk7OVKAu
+ B5N6ThNjYLnYmUmvFCu4Lx3S8SN/er3s8hE+mqZrqxTaNUy6ny9cZ6t2fD2aQSvYKjXPaoQ7+N
+ eQ87dLwTPmr+q6wbn6FrQqMlhrw4O7g2jfr2wL7UKJXSWxbBwqhV5H/VVDhQNAoAwaY6GcB3hR
+ ofCjBVdI6BEcem+DxXrIsyzf5Zq2AzAEAAA==
+X-Change-ID: 20260916-paul-v7-3-rc1-edac-1f479f96fc57
+To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Herve Codina <herve.codina@bootlin.com>, 
+ "Paul Louvel (Schneider Electric)" <paul.louvel@bootlin.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790259185; l=2289;
+ i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
+ bh=H7S9QBybBOV/orKznzXfZsxie+wZHaKwCvOd8EHwrR4=;
+ b=elkDcHIFRYVjxXQLFBf26dM2znn+8XYvZZjNjaCQwijy2oTaB7F0A5TSBQcAZtFSOtKl8CoQq
+ GGrFpi0ois+DEPBZ/ppcmF2lvZmdIHW+EMqNf/hS0RFnqP3+afeIaOj
+X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
+ pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+The Cadence memory controller found on Renesas RZ/N1x SoCs supports ECC
+with SECDED.
 
-On Thu, 10 Sep 2026 20:18:42 +0200, Marek Vasut wrote:
-> Document the 10" Raspberry Pi Touch Display 2 MIPI-DSI TFT LCD panel.
-> The panel is based on the Ilitek IL79600A controller.
+The memory controller found on the r9a06g032 supports at most a single
+DIMM of DDR2/3, up to 2GB.
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+Add the EDAC driver for this memory controller, and the relevant
+device-tree binding. Also add the EDAC node to the existing r9a06g032
+SoC base device-tree.
 
-[1/4] dt-bindings: display: panel: Document 10" Raspberry Pi Touch Display 2
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e40d71fa231fc510c87c92cfe40f60f18eaafa61
-[2/4] drm/panel: ilitek-ili9882t: Make enable GPIO optional
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/803d7e465616d2822deb10ec3bf8952e49ffd6ba
-[3/4] drm/panel: ilitek-ili9882t: Set prepare_prev_first
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/20f01db1545252cf81a39202920d0b032fb4501a
-[4/4] drm/panel: ilitek-ili9882t: Add support for Ilitek IL79600A-based panels
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/481b38467000602761215ba4a196e89f58248055
+Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
+---
+Changes in v3:
+- Patch 2:
 
--- 
-Neil
+    - Added trailing newline to end message.
+
+    - Forgot mutex_init() in probe...
+
+    - Registering the MC at the end of the probe.
+
+- Link to v2: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v2-0-bc1406161ecc@bootlin.com
+
+Changes in v2:
+- Patch 2:
+
+    - FIELD_MODIFY() is always called with a compile-time constant mask
+      in this driver. I see no problem here.
+
+    - Use devm_clk_get_enabled() so the driver does not need to store
+      struct clk_bulk_data outside the stack space.
+      Clocks are not manipulated outside of probe.
+
+    - Introduced a mutex for rmw operations in inject_ctrl_store() sysfs
+      callback. Rename drv to priv in cdns_rmw().
+
+    - Return IRQ_NONE if the stat int register is empty.
+
+    - I see no reason to follow Sashiko last remark on this patch.
+      Is an unhandled interrupt a big deal in this case ?
+
+- Link to v1: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v1-0-70be37c41a18@bootlin.com
+
+---
+Paul Louvel (3):
+      dt-bindings: edac: cdns,ddr-edac: add Cadence DDR EDAC binding
+      EDAC/cadence: Add Cadence DDR EDAC driver
+      ARM: dts: renesas: r9a06g032: add EDAC node
+
+ .../devicetree/bindings/edac/cdns,ddr-edac.yaml    |  62 ++++
+ MAINTAINERS                                        |   7 +
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi           |  10 +
+ drivers/edac/Kconfig                               |  10 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/cadence_edac.c                        | 342 +++++++++++++++++++++
+ 6 files changed, 432 insertions(+)
+---
+base-commit: d9f39b2c0579f313d14954a9ec584511c543aab5
+change-id: 20260916-paul-v7-3-rc1-edac-1f479f96fc57
+
+Best regards,
+--  
+Paul Louvel, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
