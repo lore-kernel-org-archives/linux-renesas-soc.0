@@ -1,109 +1,76 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4703C9EF8;
-	Thu, 24 Sep 2026 14:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88D3B5F63;
+	Thu, 24 Sep 2026 14:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790260727; cv=none; b=WMCL5edMWT0th6AcJzzoBbBb7kpXzMbGPkmlFOa0swn1/M672Lr9axQLjm7NLjTG4S6QNRDyB3I1uwMEPThclz3dM7I4pOAp57MRshSmwoFsyuOz72nDJSWadjK55Mt/xrJTZaxo6yU4hq709LQ+/k5sxO9zHBQl45E1rHac81A=
+	t=1790260813; cv=none; b=UxgKM29lUXNCTGcpGE9+8nrMjr9CnUTvQeOq5zUTamoGAyp6RPe6R/Nl+mwen0ZWeJY97BH1o0NDOrlD6IZKAosyn+a/FcuXnV0HqqulQkZN+3VU8tsYeLL++YQnG8HV8q2OyyVkIgXqlftEhryGC/rgA+zk/3IUVzdVGMV09Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790260727; c=relaxed/simple;
-	bh=B7L+GN8EOMrfe62BtJNrbN4w2aX8t7lKA7UWYMth/QU=;
+	s=arc-20240116; t=1790260813; c=relaxed/simple;
+	bh=7FibWX/faPv45zX4OxvywYpnCNXLXQQk/dMKdoa/iD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IszkbdzTesjd2KEMstrBSbcxEhWnJwhCOLiP73uAAYjRR2qRhjTfWXfSmRflsdK8n29y19mUo+3onGM1CDan/zyEw55lsbu0M0aD4uMy6J4/m9EzaAN1ZiV78c0Af8/vDo2AGuYfpGpeSMdF55A7v8PKOvYfrxs8VQADh1/gXhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lKHwjV9m; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Njp9XUEJOC1PheUCsaeWiYHiv5Gn0Fj7fXBURqpopPl2KL73/YMK9PzHv+2imkQQuhrxkUcQqYJmLO2NI1cxDnmHqUuCcCjQvkMxqEhTNY0tN5iU4KlFeH/Sn5efekMDEZNGvAKfI3mO3oaaFdt6xKp/IE/nSyyr0sOIh2kJxHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZMU2c2R; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lKHwjV9m"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DAB7BD0;
-	Thu, 24 Sep 2026 16:36:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1790260615;
-	bh=B7L+GN8EOMrfe62BtJNrbN4w2aX8t7lKA7UWYMth/QU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lKHwjV9m5LTQ5EiY6WzBz9pgzaoNw7/t8Xf9M28MaUx21IG6tm32irCHIx7EPyMAQ
-	 7KcZGhKt/DjeAiOzwUkDXZkjgmgtFRu7OytINlmNQSpeLbWeqJvtXOTKTQqmFNK9vX
-	 QuPwtAHeu8EsoqTEQxXVmz8q9kAhA2ssnDnPiXbU=
-Date: Thu, 24 Sep 2026 17:38:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder@ideasonboard.com>
-Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZMU2c2R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A1C1F000FF;
+	Thu, 24 Sep 2026 14:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790260811;
+	bh=vb7dXJ12T11BKP48fJBn1yk3HKmhSHRr4ctLGx7xpD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BZMU2c2RocbLav0HDQGUZwvS/2wO08FZQD9JBGrUuO4ENM0MPqEesqmpye6Sf2QiQ
+	 LllIryGk7ED5JOq+joXC1FRyUj8+UhvC1Pxlsoj+7OfTCe8erW8oSu8b7m8fZNYsn+
+	 /VT4l8oGX0B1+aGKxzcsxMt9m/dyMO4Q1mJQpeUVQxBPAKMP4aO6Px4ULiAHyhkebS
+	 Sozes0OR72EyojpYJsIBMSc6FOS6m1zg6ic2b8ORxfKi9jUrF1QqLkEhCImll67NcW
+	 5e4rnHRL3ESLxsUfMPu4AL8DKfk4nO1NseQrH84c9uV6GTWFfvymHc2q0UCSA6fLRI
+	 yCSetLHpWsIsA==
+Date: Thu, 24 Sep 2026 09:40:09 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: David Lechner <dlechner@baylibre.com>,
+	linux-renesas-soc@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 08/11] media: vsp1: Document X5H SoC ID
-Message-ID: <20260924143841.GE135998@killaraus.ideasonboard.com>
-References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com>
- <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-8-dbe9236bfd22@ideasonboard.com>
- <20260919175851.GI1124359@killaraus.ideasonboard.com>
- <179024137074.2882041.17628313046085880585@neptunite.rasen.tech>
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Biju Das <biju.das@bp.renesas.com>, linux-iio@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 2/5] dt-bindings: iio: adc: renesas,rzg2l-adc: Document
+ RZ/G3L ADC for TSU
+Message-ID: <179026080913.4146821.390521831954658305.robh@kernel.org>
+References: <20260911133653.115553-1-biju.das.jz@bp.renesas.com>
+ <20260911133653.115553-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <179024137074.2882041.17628313046085880585@neptunite.rasen.tech>
+In-Reply-To: <20260911133653.115553-3-biju.das.jz@bp.renesas.com>
 
-On Thu, Sep 24, 2026 at 06:16:10PM +0900, Paul Elder wrote:
-> Quoting Laurent Pinchart (2026-09-20 02:58:51)
-> > On Sat, Sep 19, 2026 at 02:07:05AM +0900, Paul Elder wrote:
-> > > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > 
-> > > The R-Car X5H uses 0x09 as the SoC ID in the version register. Document
-> > > is with a macro, as done for other R-Car SoCs.
-> > > 
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> > > ---
-> > > Changes in v2:
-> > > - Fix the version register number: s/0x04/0x09/
-> > 
-> > Thanks for the fix.
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > 
-> > But I think we can squash this with patch 09/11.
-> > 
-> > > ---
-> > >  drivers/media/platform/renesas/vsp1/vsp1_regs.h | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > > index 4c0315656e9f81a9656b58fb6f0233f8a22ac0e1..8abf39bac6c2f333696ebf55de87586d2df3bed0 100644
-> > > --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > > +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > > @@ -816,6 +816,7 @@
-> > >  #define VI6_IP_VERSION_SOC_E3                (0x04 << 0)
-> > >  #define VI6_IP_VERSION_SOC_V3U               (0x05 << 0)
-> > >  #define VI6_IP_VERSION_SOC_V4H               (0x06 << 0)
-> > > +#define VI6_IP_VERSION_SOC_X5H               (0x09 << 0)
+
+On Fri, 11 Sep 2026 14:36:45 +0100, Biju Das wrote:
+> Add the renesas,r9a08g046-adc1 compatible string for the ADC1
+> instance on RZ/G3L, which is dedicated to the on-chip TSU (thermal
+> sensor unit). Unlike the other ADC instances, this one only exposes
+> a single channel (channel@8), so restrict the allowed channel nodes
+> accordingly.
 > 
-> Do we need to add an X5H1 (0x09) and X5H2 (0x07)? Or whatever 0x07 is because
-> that's what the bsp is referencing for X5H. I've personally observed 0x09 for X5H1.
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 21 +++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
 
-I'd add 0x09 for now, and 0x07 later when we'll be able to test X5H2.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> > >  /* RZ/G2L SoCs have no version register, So use 0x80 for SoC Identification */
-> > >  #define VI6_IP_VERSION_SOC_RZG2L     (0x80 << 0)
-> > >  
-
--- 
-Regards,
-
-Laurent Pinchart
