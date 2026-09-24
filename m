@@ -1,99 +1,133 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f40.google.com (mail-vs2-f40.google.com [74.125.227.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53B61FC0;
-	Thu, 24 Sep 2026 09:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2B83264D4
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 09:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790241381; cv=none; b=g5gL4SjwQ4MdaEzg4Gy7hphFSeYOiKURj58+myrZogTux/KbN/aUXa5i0vPRSZiZIjNsgqHJVOWfwDWPQU44UKUIYwDez6vVSKB4eQ/d/eq+rgtYZgY5Kz8psPlgk4pjjB0i3rzAbJ3p6TsFYJgVaJR8kTcw75b1p3jCLafR1yY=
+	t=1790242721; cv=none; b=rDZFjEFmKbtTycH1W0c8Prmk6iBvfhg6y6qFEtJ9foKF9eQVv97uIfMVZM0inqLP3tpuRyqoOKbPCgNDyT1VIb6Z14SNlt+v2g7A78TMEOH0B6GWWOYJybMngxwuK8Qz2AF+La7eh9TDqY8PSvVDT5EF0/MADYl0FNR1jkcRSoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790241381; c=relaxed/simple;
-	bh=mxDJacuipcRiB7b2yV1gYeeEIRh0C90gctrM/wdJWZ0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ukkLNL4Tv+cWOXGvAydH3r1nmD0ghz2/hvLq10z5ymJpqj+IwDbpokVyvtSnlXI29mf+kIel7ga5BJommnDw4qaBCxbHMptLq6MsP9a7TBBKEWOG8FWVkVpyb7zQgRw9gm6kA10QfNs9J+cY/88W9d11IlSVCnIpRBk3vqH4z30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JVNLgL24; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JVNLgL24"
-Received: from neptunite.rasen.tech (unknown [IPv6:2400:2411:160:2f00:b6d6:9a4a:6c9b:2322])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1976AC23;
-	Thu, 24 Sep 2026 11:14:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1790241269;
-	bh=mxDJacuipcRiB7b2yV1gYeeEIRh0C90gctrM/wdJWZ0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=JVNLgL24Phmm4TXO/Yx/6FgzOsmLX4iLoW5gt7CDyCPOceJEJjcwQG3wA/P13O6nJ
-	 B7e+GA0e0gnSOh0gigY97UqHkWaQv2WLO3s6bWfHUxT/3MdiWbIc2QL0/x7fNTxWoS
-	 YmgKiandddEjs4mD/BI47VsI/MEu7ivy4VSTATq4=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1790242721; c=relaxed/simple;
+	bh=gU+WI2i7LDEKT6RINnzIXgb5K5O4tS+U3cDvjUwa9t0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eFBBqeTyAQ2pA9Sn6jidZk7klsA9daHYS2PdWw3NlXL+goMEqPou49evP0Fhcupp2tmHk2FSEpcsnVWBb8zQFml9HnsOtDzb6OvepmKhYHNkr7UN/rKjF3I+ttQUfl7IdigmLPhg7HsCsV0wZW5C1SbaHrcY3JeSddkJSrTo6Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f40.google.com with SMTP id ada2fe7eead31-790ec94be85so746193137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 02:38:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790242718; x=1790847518;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=kpeffu0mh4OhtQGcEkTfxWhGK7BSRsx5zqS/No2TWCY=;
+        b=d3em6YkzS8WD1+mXZ9nySE6WEScNQFznNltnN+zD8f3X2e4cuflsdNKEIUUfJYTW7y
+         6azAa2thGGOPN7orN3zJ+8UXOqJKZwc2YSqZM5e1+l4FF8jMea48Wvg8OoUgIpAIGHh/
+         uqDAzheRPfpFcPkBVFHFchGDvLjtB0457WLLNZe0k4HtWmnFey42s8wyC+vTWXUFwrel
+         PioBbUS5oCHHveFw1nn12sLmdQu6X5tjIO/EUWTU4kk8tW8Y61ao3yIL8/vhlOoICOjE
+         ARbCF5RxkSWAkpJn2wO7IMg9dyrYhNqF9s8vgy7yY5DgZ04xl0b2ls2iFyrEU2f+Cttx
+         PJTw==
+X-Forwarded-Encrypted: i=1; AKwUvBycpcHQ7LRmXjeGDpC9qaiDCCsj5RS5MOkd5hHUsJQd5Z/U1hfTB8t2eEsN2VD8tWBTg+6PDecWomenMPuKQceLHw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nowwdn/kBXzMeji/NdKM40HVjEkxJEJtH02VsxVS6g+cOqew8O
+	1r0VdGNCY0iZxSyijgolV/62c87IM23y1iT4H5M954mIXxthacsc2qbGCWLRoxlwJik=
+X-Gm-Gg: AYBFou3fGEJP2cjkyn5p44UJ4CdEpl75Oncw6o+ZZYd0brNEAfhegeFLek+qePspXSk
+	mV0jGrZ3KfQt1EbeIsB0S6M9Ewpdteo0g2KF4chqqWjKsAy1GmDfjWx25yLgblkZnIZI1sgNde8
+	N3qyjU5rGu96vzZSwaAV6oWkBNM7MkylFWU+K6oX7E0VPzjnWnc/HvGc+8//xKRasHGGsLYNYuN
+	l6oOco7p+SZvgJqh16bprznc16CPu+GTtZzkmgVN640RrfPDQ450+JornE39r4lZl7vzEDyEiYu
+	2CXOssW/0LagA9+lWyuPJqAJUM30Vz66Z3PnWDWBVgR0NHX8+CDJ5MOVyxkT3dyilEHHqsEaCNl
+	pDbsRsrysQvvGQ4eBtINMHH32KWnpetorA4pcwNU9gPkOGWwbXN7FjPMi/x+LYxd1zc4KspsajU
+	apFr3d5KPpMEzu6m0Y0X8exNNe00ceuemlCbYDIxDYtqwBgpvTwU2kzq2lvjlr363UbNI9Ux6XN
+	6k3+F7enlF6dbBMSSyKI2UuOaOsh8OAUWUk3kU=
+X-Received: by 2002:a05:6102:41a2:b0:7a7:198a:c2bf with SMTP id ada2fe7eead31-7af1eaef58emr952031137.29.1790242718260;
+        Thu, 24 Sep 2026 02:38:38 -0700 (PDT)
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98517a8ecaesm5902586241.12.2026.09.24.02.38.37
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Sep 2026 02:38:38 -0700 (PDT)
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-982db8d3b1eso607862241.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 02:38:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz4/fdQ+1am++qXm3NfCM2Y2V4/aMQoxI5J/6MT5tanL2Vqk3cSaF4XSeReWTtW+/ePJNl8VGEsbj+TELzcXrHfzQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:524a:b0:7a7:12c0:f061 with SMTP id
+ ada2fe7eead31-7af1cb979b6mr924094137.12.1790242717699; Thu, 24 Sep 2026
+ 02:38:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260921232551.3129244-1-robh@kernel.org> <CAMuHMdV7D4RZ6zA_0jBqnCz8gee2=9bbNAXETbbNQxANhJ5pZg@mail.gmail.com>
+ <CAD++jLmvZAen+p_Z-aVSqUnXMChAa7qbNvgv=mEQr9tFMiJFwQ@mail.gmail.com>
+In-Reply-To: <CAD++jLmvZAen+p_Z-aVSqUnXMChAa7qbNvgv=mEQr9tFMiJFwQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Sep 2026 11:38:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWe0vGnyT9E1abK5cFTJgA8=U4mMsaMJAFJsXCAcJf9qw@mail.gmail.com>
+X-Gm-Features: AclHuK-4KFW8W7QHV9HlBHDtlVrNb0OLmBx3KedI1dCvkL0eI5l2kFSSP5LQI3w
+Message-ID: <CAMuHMdWe0vGnyT9E1abK5cFTJgA8=U4mMsaMJAFJsXCAcJf9qw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: renesas: Allow power-source
+To: Linus Walleij <linusw@kernel.org>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260919175851.GI1124359@killaraus.ideasonboard.com>
-References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com> <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-8-dbe9236bfd22@ideasonboard.com> <20260919175851.GI1124359@killaraus.ideasonboard.com>
-Subject: Re: [PATCH v2 08/11] media: vsp1: Document X5H SoC ID
-From: Paul Elder <paul.elder@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Paul Elder <paul.elder+renesas@ideasonboard.com>
-Date: Thu, 24 Sep 2026 18:16:10 +0900
-Message-ID: <179024137074.2882041.17628313046085880585@neptunite.rasen.tech>
-User-Agent: alot/0.0.0
 
-Quoting Laurent Pinchart (2026-09-20 02:58:51)
-> On Sat, Sep 19, 2026 at 02:07:05AM +0900, Paul Elder wrote:
-> > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >=20
-> > The R-Car X5H uses 0x09 as the SoC ID in the version register. Document
-> > is with a macro, as done for other R-Car SoCs.
-> >=20
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
-com>
-> > Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> > ---
-> > Changes in v2:
-> > - Fix the version register number: s/0x04/0x09/
->=20
-> Thanks for the fix.
->=20
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->=20
-> But I think we can squash this with patch 09/11.
->=20
-> > ---
-> >  drivers/media/platform/renesas/vsp1/vsp1_regs.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/=
-media/platform/renesas/vsp1/vsp1_regs.h
-> > index 4c0315656e9f81a9656b58fb6f0233f8a22ac0e1..8abf39bac6c2f333696ebf5=
-5de87586d2df3bed0 100644
-> > --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> > @@ -816,6 +816,7 @@
-> >  #define VI6_IP_VERSION_SOC_E3                (0x04 << 0)
-> >  #define VI6_IP_VERSION_SOC_V3U               (0x05 << 0)
-> >  #define VI6_IP_VERSION_SOC_V4H               (0x06 << 0)
-> > +#define VI6_IP_VERSION_SOC_X5H               (0x09 << 0)
+Hi Linus,
 
-Do we need to add an X5H1 (0x09) and X5H2 (0x07)? Or whatever 0x07 is becau=
-se
-that's what the bsp is referencing for X5H. I've personally observed 0x09 f=
-or X5H1.
+On Thu, 24 Sept 2026 at 09:25, Linus Walleij <linusw@kernel.org> wrote:
+> On Tue, Sep 22, 2026 at 3:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+>
+> > > +        power-source:
+> > > +          description: I/O voltage in millivolts.
+> > > +          enum: [ 1800, 3300 ]
+> (...)
+> > drivers/pinctrl/renesas/pinctrl-rzv2m.c does not implement support
+> > for PIN_CONFIG_POWER_SOURCE yet.  So I'd rather not advertise the
+> > power-source property in the DT bindings until the driver is fixed.
+>
+> The DT bindings are used by U-Boot and BSD too, what if
+> their drivers use it?
 
+As this property controls voltage, I am mostly worried that having
+a user without implementation may cause ill-effects (damage?) on the hardwa=
+re.
+With the property missing in the DT bindings, we at least get a
+warning with dtbs_check.
 
-Paul
+Fabrizio: do you have access to the hardware?
+Does it work? Perhaps the SDHI driver fails to probe due to the
+unhandled property?
 
-> >  /* RZ/G2L SoCs have no version register, So use 0x80 for SoC Identific=
-ation */
-> >  #define VI6_IP_VERSION_SOC_RZG2L     (0x80 << 0)
-> > =20
->=20
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
+> It's a bit confusing but we're essentially maintaining the bindings
+> for those other projects as well, and it's why, for a good reason,
+> DT maintainers originally wanted to split out the bindings to a
+> separate repo. (This didn't happen because nobody wants the
+> job of driving and maintaining that, binding maintainers have
+> enough trouble as it is.)
+
+Sure.
+
+> I'd say just apply the patch.
+
+I can't seem to find registers to implement the voltage switching,
+so perhaps it's purely controlled externally, and the property should
+not be described at all?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
