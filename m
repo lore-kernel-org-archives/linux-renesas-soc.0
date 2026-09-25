@@ -1,125 +1,113 @@
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA8C4A3847
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 13:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64344C7532;
+	Fri, 25 Sep 2026 15:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790344428; cv=none; b=nUmw6b6BllQaJPW64nAhPcuWsnVJxBSJU/0gxIRrxay0LDbp4Qvze7V3JgVniynV4n4XlCBRbWcrE6Hqh5Jt4wmUWhe63V2eWKeTZ+0CjNxDFUGTd1Be3zW18BueKV+lFhxuTRk4Mbss7mb9MzHXNd2S0+7lH0PQn2xNTj5pYYU=
+	t=1790349121; cv=none; b=DjdF9LBj6LYktbtUFTc/JfksvJdiZQB8uUVfTfJ9ikZ/FYliut1VKYipyEoyMWdspz2uCPSChwx7BxkFwG+r2Jg3dl2CVvHt65EP4vcAF0waWQgOVH7upkYk2SVH1nAGRgAmOF1nHPEbSEPNd6AAdJI2J5/HIUcarczFMCgXFEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790344428; c=relaxed/simple;
-	bh=hNw6vrHbhx2PblfWwARxPslf5MioPjYbwh4EEsJ1w7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJztXdoG3X2CaG1dzQaPRGxf+pmJ/iWu0ALS55YReD8E2SwACP+suq9Hw/9V19TILSr6yuWyVlW7Ubez3A8KWQ7Mk/zZd3V4m6luBFV7GZ11ymvWfXsTqzxYmFd78/XgMC7MQFu/YVS38j/beQLAQXGx0RRC3VH+9tB+5yIp/gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQ9muwFj; arc=none smtp.client-ip=74.125.228.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790349121; c=relaxed/simple;
+	bh=+0PSy4PHtUncQewfig+q5/PG8j/ig7upJPjO/VluALk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Px9h1KeFNOMwz2jnAlcrrqlQYJ7XL+B/5OPd9nPkj8XGCYaSy8w9NzUMQWnNmM6EEf3/YYjqaYE16Vi/vYutjzBTaW7bQc5+8rIc5dpQxmWBNj8CuyVViFSAiYt6uX1X4oR9L5d8/MPOS5Dcas4XTue+zTbLovUKyowhVwddvmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NX9ti3nJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQ9muwFj"
-Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-85469f20513so489084b3a.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 06:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790344427; x=1790949227; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=XdrXdgsFzarfUhjEFq1mXLUok84uZ5SW2Q9gL7YwPb4=;
-        b=nQ9muwFjCB8DFVOejEprVOhZXlOcf8jxTyJvfDaW0q/CWONpY0zSkeRLrXeqQu0zlH
-         thU5H7Ob1lVu0qByqV9kmsH+BoD4+tAVLDeD0QTzljgZkDCZZ7cMstjscaJiuFELrXgk
-         kV6dnDl+sdvY/VC0LBqKhjx7GyjFcjPpOE8/xADZfF+LXzVf2VyXX1mJMtBVQ0F36Jit
-         4bNhbxHWMJCexnpR3t0+hpXkPxv/mRs20Iq25AOU1OgNwNXps+ira3n7XftkJcexy401
-         jo+jhhS6rxNnctnMQRYsdkVSatzlVVkj1I9atvG28borFv9NXTbi/w20UTKLj1l5nK+O
-         UKzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790344427; x=1790949227;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XdrXdgsFzarfUhjEFq1mXLUok84uZ5SW2Q9gL7YwPb4=;
-        b=qwo+s919FhYm2BvdQIGaGBU9J8Z4R6YrOmNnijY+q84Nm9HiNc249Zv10aDmpyekap
-         QufvzfiaZmbiuOiNROb82CO7xQ2ntIetK8nZ7QOdErGS9tYEQv5GLUge6tr0+RX4nVk6
-         pIjrg+3WZAA9hGC5tctv6SyHHJr3kfc/H36ktnys1BrfzvFsVqMuNEJTyNF8NtU6d/dR
-         FaUVK1UH8h0JGe6ItxvlJgQEVyEX60He/o08KFiUn67FvbaUW07kQxf86uKXt+POG3/0
-         p8dONkrE0Yaqf7LvRQ/T+lNbFLWtGnyaDVwP+nGvZkvfyK8jcm428+qX82z5gpmmu/IK
-         r2Yw==
-X-Forwarded-Encrypted: i=1; AKwUvBywKvP02sWprvc3NzXYhTOjZR9LRP5c/0pRPYvWo2v9stXh/+9LHFSxlp/dyaz4SMhfq6hZhVSQflxuHjzNLIy5RA==@vger.kernel.org
-X-Gm-Message-State: AFuF++lsytJlXjXArQ24hKkWGS0KFZwSm0o8HUXNP3ONKz8vGxCEZqto
-	BtkrNGqFFDbi4djvccU21KDuzqkm2VIocipmLu4sTyGBTcH9SBQp968r
-X-Gm-Gg: AYBFou3kG3GN1VSeoA66m/TBgqjSwUh9oaXDs+e9EHS0Ci1mREBW+3NbZyX2B+8Fu2I
-	Vuqg7GjusrvC7pQ7OM1vUbtlrV0r6ZcP/JJIa2TOxYGrN2sW+/UUMcrUUSVzmNYOmjpeQn4n9ay
-	mEEU4CzSoeMK6GM4/1CJWtHP+wjy9l7W+fTnOpF0tE8kXu509v6rPSrT1udyHUY0sKSWX8uE/JS
-	MUVa0btrt+AT9iMNpx4doDZqGk+aE2c7CpgxWhIcUEI2lc1moi2lXilIW8WPSQdI5pMZMF0sFuE
-	5KMts1gwXFhqMdCoote0knwxd87iRi80kfza+o3GAClgpqiZlRWluUL3s9R2tUj7QRhoum6Oyrt
-	nb3nGUp39tgQIPf4YsJqj9NOJfDVmorubOmVKbwVlolXnj5AaJFHMTCQtFwXlSxT+6Vv+0apUHk
-	Fn2HBP6vpWrrq3uarofuaOTGdwvEMZ4iaUzCLhqBIS9M4zxUaCnyv3oGsCWziTqorWy8TtdFlju
-	qLAeDNmnIUS
-X-Received: by 2002:a05:6a00:6c88:b0:868:f29f:67c9 with SMTP id d2e1a72fcca58-87e9899515bmr4754627b3a.9.1790344426713;
-        Fri, 25 Sep 2026 06:53:46 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87fea888b10sm1160362b3a.29.2026.09.25.06.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 06:53:46 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 25 Sep 2026 06:53:45 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Colin Huang <u8813345@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Grant Peltier <grant.peltier.jg@renesas.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	colin.huang2@amd.com
-Subject: Re: [PATCH v3 2/2] hwmon: (pmbus/isl68137): Add Renesas RAA229639
- and RAA229640
-Message-ID: <6c0a8e93-9fe3-4389-8d59-08df49cc54e4@roeck-us.net>
-References: <20260921-add-raa229639-and-raa229640-v3-0-b104ee8a70b2@gmail.com>
- <20260921-add-raa229639-and-raa229640-v3-2-b104ee8a70b2@gmail.com>
- <20260925-hysterical-otter-of-courage-bc6ab0@quoll>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NX9ti3nJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984081F00893;
+	Fri, 25 Sep 2026 15:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790349113;
+	bh=9oyV3/opgKnk0vsSmQNyazfvKZeLqsNLIo/1NmZ4njw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=NX9ti3nJBsQtENiL9OeDqza0q/MOGqRZXNkF3sQQdbEGnukG2eUMEQxJAGRpc288N
+	 KhDFpkR+TiRlRWQAe0G498XS5e94K0kqPhn0oZynB//eACzQhj/7Cr2ot2uAeBMxBx
+	 fPKVUTvVbW+1R5q7LcqYf4QPpTzOjdCE2Tg46a+W034JCFyLCNYt5PU43oVsPyzSZZ
+	 NKBy94VwZdf5SPXSAEp71CKkuaWDvn6ViwXDWPiQTViUzd51OCN7YJJ+IZJzzxmau0
+	 QAfwTN1xoFvqH7xgHuObhCYtZEOhNL/FC8y/viKCQqhq49Kv1vZW8OFUgLlV5LUVBi
+	 D+/w8B/RszbMg==
+Message-ID: <b2b6810c-597b-47ac-b73a-73c120d2a4c3@kernel.org>
+Date: Fri, 25 Sep 2026 17:11:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260925-hysterical-otter-of-courage-bc6ab0@quoll>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: pmbus: isl68137: Add Renesas
+ RAA229639 and RAA229640
+To: Colin Huang <u8813345@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Grant Peltier <grant.peltier.jg@renesas.com>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ colin.huang2@amd.com
+References: <20260921-add-raa229639-and-raa229640-v3-0-b104ee8a70b2@gmail.com>
+ <20260921-add-raa229639-and-raa229640-v3-1-b104ee8a70b2@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <20260921-add-raa229639-and-raa229640-v3-1-b104ee8a70b2@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 25, 2026 at 03:06:51PM +0200, Krzysztof Kozlowski wrote:
-> On Mon, Sep 21, 2026 at 03:16:36PM +0800, Colin Huang wrote:
-> > Add support for the Renesas RAA229639 and RAA229640 PMBus
-> > voltage regulator devices.
-> > 
-> > Both devices are supported by the existing raa_dmpvr2_2rail_nontc
-> > driver variant, so no functional changes are required beyond
-> > adding the corresponding device IDs and OF match entries.
-> > 
-> > Signed-off-by: Colin Huang <u8813345@gmail.com>
-> > ---
-> >  drivers/hwmon/pmbus/isl68137.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
-> > index 2f7f825bfb69..15b4e3f15f11 100644
-> > --- a/drivers/hwmon/pmbus/isl68137.c
-> > +++ b/drivers/hwmon/pmbus/isl68137.c
-> > @@ -456,6 +456,8 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
-> >  	{ .name = "raa229004", .driver_data = raa_dmpvr2_2rail },
-> >  	{ .name = "raa229141", .driver_data = raa_dmpvr2_2rail_pmbus },
-> >  	{ .name = "raa229621", .driver_data = raa_dmpvr2_2rail },
-> > +	{ .name = "raa229639", .driver_data = raa_dmpvr2_2rail_nontc },
-> > +	{ .name = "raa229640", .driver_data = raa_dmpvr2_2rail_nontc },
+On 21/09/2026 09:16, Colin Huang wrote:
+> Add Device Tree compatible strings for Renesas RAA229639 and
+> RAA229640 PMBus devices.
 > 
-> The entire point of fallback is to avoid this change. Why do you need
-> this?
+> They are compatible with existing 2-rail non-TC controllers
+> and use renesas,raa228244 as fallback compatible
 > 
+> Signed-off-by: Colin Huang <u8813345@gmail.com>
 
-I personally like to have it for this driver because it makes it easy to
-track which device require which configuration without having to track down
-devicetree fallbacks.
 
-Guenter
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
+Best regards,
+Krzysztof
