@@ -1,575 +1,91 @@
-Received: from mail-ej2-f5.google.com (mail-ej2-f5.google.com [74.125.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA743CB551
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 04:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790311975; cv=pass; b=E0QzdT/kpSgPPaIf/fhEhbGukTgZpPV4QeSsKr9TDiCdV7GAtDozv5S1xpV6N9rSsVaQCjGW2xk31fFCKOJTzA3z/KXuMoyusHVy2NXEkJeW7ewedibVRlsfGjv4S96Th6hSjAhp6Et60wwEWzXY3Lg11YxtArB/zT+CFMvHueo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790311975; c=relaxed/simple;
-	bh=2RlNsuIIzo2boyH/LiGXPsxkr43jX708YTVIEODYsE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=baB+77G+6iCy/6gL5fO6xekNrZKIV2wj1BdI/G+rQUYwH1UMMEXNmnjMTkATAUiemmAxifyEtrBdF0riqX1JFRF/hamGmxXDjMH7NBLoq+3/O8YAZ/jtMo6DO7vGEYGGv26emRhZICMB8BCiELafYbS89gceJxFHx/pDT0hyPAA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+hFGbsr; arc=pass smtp.client-ip=74.125.228.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116E51DDA18;
+	Fri, 25 Sep 2026 05:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790312982; cv=none; b=agfaB/157351jZq5dSDiFR6Lraqup1d69hCaUR3nOm4IzadlTU1KjizyljCxoJOImQPjVdzM961La9/jSrRr1nQ65XGMB2PFCmsuqKVjUhbz1ouTbfcKHqyy7zY0gD3RGGt1fS2aiBEpAIh/nCW1WYoHbpOWpuhjVwsPTG9I93M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790312982; c=relaxed/simple;
+	bh=wEwPOc2WQyyy/2t/P4dqWVW+sEpoy7tMrAbctEy9e5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ndKD8Y2mf/QU3G70MX9eA4BgtO6a6HJFDqIv5VTLxQF/5p+tFXj3st37mWUZ/12if+0yIm6kDqvTe2GgXtqHmWL3PCQv7AUzjxvMb4o9SWW3SuoTmHvOga3oeA7nL4ewrDzLMrJ0TWQmLQJH77GdaOX+aMwGyABhDzkLqkbqzqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SjaCNnKr; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=m1o7XIhn; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+hFGbsr"
-Received: by mail-ej2-f5.google.com with SMTP id a640c23a62f3a-c2950c25486so27741866b.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 21:52:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790311971; cv=none;
-        d=google.com; s=arc-20260327;
-        b=fwi7q3Pv+OuK7Fwr82l0jSJA98Hs3KImr5oJceS/x2JjmADw9KVgjMrwCpq1e0fEe4
-         Vdp4V2rxNkqNHSbHcK/XQ4AnwaDBnaOXPOBofjjnSUE0QchITSFEtrasVrJhq2aoLKEK
-         yS5Ih6W4xLuPXpYyMjQjctln6G/SF5SEbuOxQoOO3Si4LDeKAZbvzM3XHHX9jHZwyydv
-         wbE57cMut3it7WtxGlfz2/Uo9jmkm4wkWcxHaqLeIPmjgbcpUyx/RJoSJiJ5wpwvscQk
-         8w3yVEwOQmrpkKz3ydv0buPGevNQabUCEWYByVVJz8NkgjLKmr9aaanh/uKIU6Dm0c6f
-         xo+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=YMLuV6/uZsUNZeXVfeQcmRIEgi8iWHmU4wnnVaPLUtw=;
-        fh=HqUNouVa8eKkbXZF5u6FlKmRFNB5jMZISL29fsooRGs=;
-        b=Eq3nw1+/yErkuNyNlwc8dySrmSCPpuqlRFRJ9iIvslM+YYpawg+bkBVQKGdHlspZNV
-         j3qKPsAdxhvzACYCWZQia8yYwQiF28K9pPHP2KTOfYI6sEJIfUbqhC8t0XAeEkSKmBt8
-         Np3NXDlTNHG8uwTYdlcZ0AnknstQzKPjBa83bRqLN4XciUYymyXvdIVcpPAN8QPRRngU
-         LELhxYlZUWJMuh+889bjMzuhQ0w+MHmkys9kMYV/5pkcoy0DKzMOw3QSwuDBqzTR64ce
-         kz2f99dR0L9ypacSPdY6mZ6p9xVCWqRfjEPIVlD5+f5zAAOwWleALFCMRuQgeUS3V7gr
-         pnSw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790311971; x=1790916771; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=YMLuV6/uZsUNZeXVfeQcmRIEgi8iWHmU4wnnVaPLUtw=;
-        b=C+hFGbsrBH7m8keH9lXPdZ5+FclcqQByatUP6YnMsCxmNmxpzHI7ZLKHc7B6+8YwJ1
-         idxgcvCkfhkzrLEDXd3X1WUz2CwqTMGZpQOeA4Sdlh/XAYfxmklBTHQt58SZVUpAZ4qd
-         AHmq29DeqvLGcV2WwTYu6WOg2od+rVGtZcTTeRne+EyVN3hMgi4NZHNQ2wT+WmbHJYQc
-         p3LQEYoys3gvEKHeDW9sr0zL7iugJrC+OKp7jYfF7vmS70exLznIHwEIXen8IrhOKNHB
-         UxOZphZaJnGN1Cq2+qIG+sImzXWs0WWkW3vE4BsgQcsL1X/7uuz1mNSivyGBXBv/KHfT
-         rAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790311971; x=1790916771;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=YMLuV6/uZsUNZeXVfeQcmRIEgi8iWHmU4wnnVaPLUtw=;
-        b=mddLnJazMUkAPfto+8ulqt60JBVZ8udEGLBCmmYZfiO4mYMO7jU/D/pJ2/5TYOWy2U
-         FHQeQRTvN6BHeev/p/VIpuNv+T3v7CB4ievqQSsYpb6iaosSoC7SKlQe4TF0cd7EiknI
-         4frDdw+3xhQ03tpr9TSc6R5+FBrwt98DDheRwSSRwy5Cm9GHiIgqTrojNRLM7sHtU8LZ
-         RGHQbZEguztZlGQA/xk1gZTNW2U/rWkw10silVUDg0pQpGLDzkLbVQ4xOcpLFg/0RSbv
-         34ivLfqLuczNj+cku9kLoSHY0Ozy3z4sHPXuG+qyGbJjBuI95CTJENFthFWNMVrx4NKz
-         Vslw==
-X-Forwarded-Encrypted: i=1; AKwUvBzjAq7ioAN1b0VcSrG7khvNjg3u85Lyh9EThicjoyQV4yz7QYIbgzDJavZezOqZRGA36EA3Efh7ipygokJBaXRwtg==@vger.kernel.org
-X-Gm-Message-State: AFuF++mIubU3+Vw71qoSrGXZap7riHn2yccJ0YyEKw/5Ldr04p99+PzD
-	AdXpsXZYsvaxGmbe2SpoDbmzgh6g5iYFnmZhEQ5yaD6pSWwibwGw8k4ycTs7SPnLHxIYPbhNv9/
-	YpcyyTgUtGTyZiNyv8xAEYxdpKPiMGrs=
-X-Gm-Gg: AYBFou1qC0Pl9qK7VK7oxJ1s6/3b2LA3kgbzElO1y7oGpAG34+wsgkTKEiAwUiSQBGf
-	gA7jqH1vbbkvnhe/WZUwbiySN6NEIBLqrBbrRVgWuRr98ekqs6mcz5rRPOLrKn26fKHn+vDoDvQ
-	zC30q22lf9Py02jeEUbbvpDeP2vwKS6NvDLL/M+Dw27C6Ufeldz2gGGiVFKH/YqAjEafeUhmDLa
-	wJhWf+OR6BQ7HmNKwcUNUkIpx5XhDyL4Tf33F0Y4HWQYu74dJZeMv2XldLZA4YsXQCMIkMpqzXf
-	twQVCUCziLMnyND4OpSFVCGb5Ox3gssFHFTq4iKoiwyr3hGCJg+0jLromEOyvFdnIab1mg==
-X-Received: by 2002:a17:907:e155:b0:c2a:c799:d068 with SMTP id
- a640c23a62f3a-c2ac799d409mr238869566b.28.1790311970470; Thu, 24 Sep 2026
- 21:52:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SjaCNnKr";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="m1o7XIhn"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hrdzc0wBVz8v2B;
+	Fri, 25 Sep 2026 07:09:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1790312972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oKsKlVZl8uuQQnOAtnTUFnRYg7AX745LF+QJJaTDUXo=;
+	b=SjaCNnKrXGGiqKcSR4se9BQjZG9Wt4pQZGUD7X3xeYPGwGaAxheKCJIynR7eAdzvCJ1FkR
+	DJuCDR5LKpCujIvwHeffkoPPkeTN2AQHYjTKp4TjsKgbGpmD/d27qc/xoBcY2rHur2+sCO
+	e3935Z1zMM31biNB7rZg9VQBzidOZs97gfYPaiE9CQ7NAVKmKkrN0OWqSLE3mqTkyPSsvf
+	ZmiKPvOLEZ7fQlcaSBBXPaKtNr0LyLYstM27kVHNjwsV28UewMAPQAcltWfaqRieDoGNca
+	QoG5FntjVON/OaHTJHstanz8oF10tEHGEl6Nl9MGW3g7fxlGVrJuvCuZIypLUg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=m1o7XIhn;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <ff358193-8c64-4200-aa9e-fe6619dc8948@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1790312970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oKsKlVZl8uuQQnOAtnTUFnRYg7AX745LF+QJJaTDUXo=;
+	b=m1o7XIhnZb+Vp/uiU6FDd52l3TU+9RaTmhY4ZvsQ4p36Bxb4xvkE02HjZtjcqn+Ru79gRc
+	pZZmiuWEbFoIXN3O9sAwqrf0zWN3j6jbjJlgWAlF5FF/oUQhT+UoOT3jG/ubHYyXFqiSNq
+	ZPGjREbZ/iBMnflTXKckl8anmD8ViKUUUVPcMwNp5aOpXZ1vu4sXVdYnODmRuSYZrMyyvS
+	ehdgeqiWFyIzgdbKSw10uCNsLTRM0Y9FKMcH5jUU7LZZdTeCVFnEoFjIhjgUzZcGe8f/oy
+	fb47M0brXDmZD3a4m3KxOG47rmEabuI1HtNNcr4156YM560LYNEbAAa/rKPcXQ==
+Date: Fri, 25 Sep 2026 06:31:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260922200336.2201212-8-coiaprant@gmail.com> <179030182389.2160803.3666914180615619528@kernel.org>
-In-Reply-To: <179030182389.2160803.3666914180615619528@kernel.org>
-From: Coia Prant <coiaprant@gmail.com>
-Date: Fri, 25 Sep 2026 12:52:38 +0800
-X-Gm-Features: AclHuK_QSlVOHZL4rfbkJK77lciB5Q35Ewt_icBWLaH_ziPpWM-jpQQyPZjBPUs
-Message-ID: <CALj3r0gFPLE3Prxvqd_2XzW8=j7tPZYioyfBXdXLTdLwYeGOyw@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 07/11] net: pcs: xpcs: add Rockchip RK3568
- platform glue driver
-To: netdev-bot+sashiko@kernel.org
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, heiko@sntech.de, vkoul@kernel.org, 
-	maxime.chevallier@bootlin.com, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	romain.gantois@bootlin.com, hkallweit1@gmail.com, neil.armstrong@linaro.org, 
-	linux@armlinux.org.uk, shawn.lin@rock-chips.com, david@ixit.cz, 
-	netdev@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] PCI: rcar: Release temporary device tree node
+ reference
+To: Yuho Choi <oss.patchbox@gmail.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260924010418.726980-1-oss.patchbox@gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20260924010418.726980-1-oss.patchbox@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: af84b3c26f185d3a6bb
+X-MBO-RS-META: xwooipfiedu7iqqtgymzp9ashnna8ept
+X-Rspamd-Queue-Id: 4hrdzc0wBVz8v2B
 
-<netdev-bot+sashiko@kernel.org> =E4=BA=8E2026=E5=B9=B49=E6=9C=8825=E6=97=A5=
-=E5=91=A8=E4=BA=94 10:03=E5=86=99=E9=81=93=EF=BC=9A
->
-> Thank you for your contribution! Sashiko AI review found 6 potential
-> issue(s) to consider.
->
-> Critical: 0 =C2=B7 High: 1 =C2=B7 Medium: 3 =C2=B7 Low: 2
->
-> If you believe none of the issues are legitimate, please reply to each
-> issue of Medium severity or higher and explain why the AI is wrong.
-> If any of them are legitimate and you plan to respin, please let patchwor=
-k
-> know by including "pw-bot: cr" as a separate line at the end of your repl=
-y
-> (one such reply per series is enough).
->
-> - [High] In drivers/net/pcs/pcs-xpcs-rk.c, xpcs_rk_system_suspend()
->   relies solely on device_set_wakeup_path() to keep the PD_PIPE power=E2=
-=80=A6
-> - [Medium] xpcs_rk_mdio_write_remapping() (drivers/net/pcs/pcs-xpcs-
->   rk.c:137-150) forces writes of DW_VR_MII_AN_CTRL,=E2=80=A6
-> - [Medium] xpcs_rk_create() (drivers/net/pcs/pcs-xpcs-rk.c:537-546)
->   dereferences the struct device_link * returned by device_link_add()=E2=
-=80=A6
-> - [Medium] Concern: xpcs_rk_create() validates the supplier with an
->   unlocked read of the driver-core-internal field=E2=80=A6
-> - [Low] Concern: xpcs_rk_create() is EXPORT_SYMBOL_GPL'ed and published
->   in a new header include/linux/pcs/pcs-xpcs-rk.h with no in-tree caller=
-=E2=80=A6
-> - [Low] In xpcs_rk_create() (drivers/net/pcs/pcs-xpcs-rk.c:518-558) the
->   comment justifying the device_link handling misstates the API=E2=80=A6
->
-> --
->
-> net: pcs: xpcs: add Rockchip RK3568 platform glue driver
->
-> This adds a Rockchip RK3568 glue driver for the DesignWare XPCS that
-> exposes the APB3-mapped CSRs through a virtual MDIO bus, splits the
-> generic platform glue into its own PCS_XPCS_PLATFORM module, and adds
-> power-management handling for the shared PD_PIPE power domain.
->
-> Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TR=
-M%20Part1%20V1.1-20210301.pdf (Page 59, CRU_CLKSEL_CON29)
-> Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TR=
-M%20Part2%20V1.1-20210301.pdf (Page 2078)
->
-> > diff --git a/drivers/net/pcs/pcs-xpcs-rk.c b/drivers/net/pcs/pcs-xpcs-r=
-k.c
-> > new file mode 100644
-> > index 0000000000000..35ee980a759e5
-> > --- /dev/null
-> > +++ b/drivers/net/pcs/pcs-xpcs-rk.c
-> > @@ -0,0 +1,619 @@
->
-> [ ... ]
->
-> > +static int xpcs_rk_mdio_read_remapping(int addr, int dev, int reg)
-> > +{
-> > +     switch (dev) {
-> > +     case MDIO_MMD_PMAPMD:
-> > +             return ROCKCHIP_MMD_PMAPMD;
-> > +     case MDIO_MMD_VEND2:
-> > +             break;
-> > +     default:
-> > +             return -ENXIO;
-> > +     }
-> > +
-> > +     /*
-> > +      * Reads are redirected by hardware to the port's read-only mirro=
-r;
-> > +      * only writes have to be targeted at MII (see the write path).
-> > +      */
-> > +     switch (addr) {
-> > +     case 0:
-> > +             return ROCKCHIP_MMD_MII;
-> > +     case 1:
-> > +             return ROCKCHIP_MMD_MII1;
-> > +     case 2:
-> > +             return ROCKCHIP_MMD_MII2;
-> > +     case 3:
-> > +             return ROCKCHIP_MMD_MII3;
-> > +     default:
-> > +             return -ENODEV;
-> > +     }
-> > +}
-> > +
-> > +static int xpcs_rk_mdio_write_remapping(int addr, int dev, int reg)
-> > +{
-> > +     switch (dev) {
-> > +     case MDIO_MMD_PMAPMD:
-> > +             return ROCKCHIP_MMD_PMAPMD;
-> > +     case MDIO_MMD_VEND2:
-> > +             break;
-> > +     default:
-> > +             return -ENXIO;
-> > +     }
-> > +
-> > +     /*
-> > +      * These registers physically live only in MII (the management po=
-rt).
-> > +      * Ports 1-3 expose read-only mirrors of these bits, so writes mu=
-st
-> > +      * always target MII; the read path remaps per address and the
-> > +      * hardware redirects to the port's mirror.
-> > +      */
-> > +     switch (reg) {
-> > +     case DW_VR_MII_AN_CTRL:
-> > +     case DW_VR_MII_AN_INTR_STS:
-> > +     case DW_VR_MII_EEE_MCTRL0:
-> > +     case DW_VR_MII_EEE_MCTRL1:
-> > +     case DW_VR_MII_DIG_CTRL2:
-> > +             return ROCKCHIP_MMD_MII;
-> > +     default:
-> > +             break;
-> > +     }
->
-> [Severity: Medium]
-> Reads and writes of the same (addr, reg) pair resolve to different MMDs f=
-or
-> addresses 1..3.  xpcs_rk_mdio_write_remapping() sends AN_CTRL, AN_INTR_ST=
-S,
-> EEE_MCTRL0/1 and DIG_CTRL2 to ROCKCHIP_MMD_MII before the per-address swi=
-tch
-> is reached, while xpcs_rk_mdio_read_remapping() returns ROCKCHIP_MMD_MII1=
-/2/3
-> for those same registers.  Since xpcs_rk_addr_format() folds the MMD into=
- the
-> APB CSR index, the two accesses land on different physical offsets.
->
-> The unmodified core does read-modify-write on exactly these registers, e.=
-g.
-> in xpcs_config_aneg_c37_sgmii():
->
->         ret =3D xpcs_modify(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_CTRL, mask=
-, val);
->         ...
->         ret =3D xpcs_write(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_INTR_STS, 0=
-);
->
-> and in xpcs_get_state_c37_sgmii():
->
->         an_intr =3D xpcs_read(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_INTR_STS=
-);
->         if (an_intr & DW_VR_MII_AN_STS_C37_ANCMPLT_INTR) {
->                 an_intr &=3D ~DW_VR_MII_AN_STS_C37_ANCMPLT_INTR;
->                 xpcs_write(xpcs, MDIO_MMD_VEND2, DW_VR_MII_AN_INTR_STS, a=
-n_intr);
->
-> For port 1..3, is the value read from the port mirror then written back i=
-nto
-> port 0's register, and is the autoneg-complete latch that was observed a
-> different one from the latch that gets acknowledged?
->
-> Two related questions on the same mapping:
->
-> AN_CTRL (PCS mode / TX_CONFIG) and the EEE registers become one shared
-> instance for all four ports with no serialization, yet the commit message
-> says ports 0..3 can be routed to GMAC0 or GMAC1 independently.  How is
-> cross-port clobbering avoided when two MACs configure their PCS?
->
-> DW_VR_MII_DIG_CTRL1, which holds VR_RST plus 2G5_EN/MAC_AUTO_SW and is
-> modified by the core in xpcs_config_aneg_c37_sgmii() and
-> xpcs_config_2500basex(), is not in the list and therefore goes to the
-> per-port MMD.  Does that contradict the comment's claim that such vendor
-> registers "physically live only in MII"?
+On 9/24/26 3:04 AM, Yuho Choi wrote:
+> of_find_matching_node() returns a referenced node even when it is used
+> only as a boolean test. Drop the reference right after the match check.
+> 
+> Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
+> Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-For ports 1..3 the vendor registers are read-only mirrors of MII. The
-hardware redirects reads to the port's mirror, so reading MII1's
-AN_INTR_STS returns the same value as reading MII's, and writing MII
-clears the shared instance. The read-modify-write sequence is
-therefore equivalent across ports.
-
-On the cross-port clobbering question: ports 0..3 can be routed to
-different GMACs, but the vendor registers live in a single shared MII
-instance by hardware design. The glue mirrors what the hardware does;
-it doesn't add serialization beyond what the core already provides.
-
-DW_VR_MII_DIG_CTRL1 goes to the per-port MMD because the Rockchip
-hardware has a per-port copy of that register, unlike the shared
-registers in the list. The comment in the write path is about the
-specific registers that only exist in MII.
-
-> > +     /*
-> > +      * Establish the device link before reading the supplier's drvdat=
-a.
-> > +      * device_link_add() does not fail on a supplier that is unbindin=
-g:
-> > +      * it creates the link in DL_STATE_SUPPLIER_UNBIND. Whether the l=
-ink
-> > +      * actually protects the drvdata depends on the supplier's state =
-at
-> > +      * creation time.
-> > +      *
-> > +      * Check link->supplier->links.status right after creation. If th=
-e
-> > +      * supplier was DL_DEV_DRIVER_BOUND, the link is in
-> > +      * DL_STATE_CONSUMER_PROBE and device_links_unbind_consumers() wi=
-ll
-> > +      * wait for this probe to finish before unbinding the supplier, s=
-o
-> > +      * the drvdata stays valid for the rest of the function. Any othe=
-r
-> > +      * state means the supplier is not usable yet; defer and retry.
-> > +      *
-> > +      * The link is released automatically when the consumer device is
-> > +      * destroyed (DL_FLAG_AUTOREMOVE_CONSUMER), so no explicit
-> > +      * device_link_remove() is needed on the failure paths.
-> > +      */
->
-> [Severity: Low]
-> Two details in this comment in xpcs_rk_create() look inaccurate.
->
-> include/linux/device.h describes the flag as:
->
->         /* Remove the link automatically on consumer driver unbind. */
->
-> so is "released automatically when the consumer device is destroyed" the
-> right wording?  The core drops such links from __device_links_no_driver()=
- on
-> consumer probe failure or driver unbind, not at device destruction.
-
-DL_FLAG_AUTOREMOVE_CONSUMER is dropped on consumer probe failure or
-driver unbind. device_del() also purges the link via
-device_links_purge(), so the comment isn't wrong, just incomplete.
-
-> The claim that a DL_DEV_DRIVER_BOUND supplier implies DL_STATE_CONSUMER_P=
-ROBE
-> only holds while the consumer is DL_DEV_PROBING:
->
-> drivers/base/core.c:device_link_init_status() {
->         case DL_DEV_DRIVER_BOUND:
->                 switch (consumer->links.status) {
->                 case DL_DEV_PROBING:
->                         link->status =3D DL_STATE_CONSUMER_PROBE;
->         ...
-> }
->
-> An already-bound consumer gets DL_STATE_ACTIVE and anything else gets
-> DL_STATE_AVAILABLE.  Could the comment (or the kernel-doc of the exported
-> helper) state that xpcs_rk_create() must be called from the consumer's pr=
-obe?
-
-This function is called only during the stmmac probe =E2=80=94 as indicated=
- by
-subsequent dwmac-rk patches =E2=80=94 and has no other users.
-
-> > +     link =3D device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_CONS=
-UMER);
-> > +     if (!link) {
-> > +             put_device(&pdev->dev);
-> > +             return ERR_PTR(-EPROBE_DEFER);
-> > +     }
-> > +
-> > +     if (READ_ONCE(link->supplier->links.status) !=3D DL_DEV_DRIVER_BO=
-UND) {
-> > +             put_device(&pdev->dev);
-> > +             return ERR_PTR(-EPROBE_DEFER);
-> > +     }
->
-> [Severity: Medium]
-> Is it valid to dereference the pointer returned by device_link_add() here=
-?
-> DL_FLAG_STATELESS is not passed, so this is a managed link, and the
-> kernel-doc above device_link_add() says:
->
->  * If that flag is not set, however, the caller of this function is handi=
-ng the
->  * management of the link over to the driver core entirely and its return=
- value
->  * can only be used to check whether or not the link is present.
->
-> No kref is taken for managed links (kref_get() only happens on the statel=
-ess
-> path), so the caller owns no reference on the link object, which the core=
- can
-> free from device_link_drop_managed() -> kref_put(&link->kref,
-> __device_link_del) or from device_del() -> device_links_purge().
->
-> Since link->supplier is just &pdev->dev, and this function already holds =
-a
-> reference on pdev from of_find_device_by_node(), would reading
-> pdev->dev.links.status instead give the same result without touching the
-> link object?
-
-Agreed in principle: for a managed link the return value is only good
-for checking presence, and I hold a reference on pdev from
-of_find_device_by_node(), so reading pdev->dev.links.status directly
-would give the same value without touching the link object.
-
-That said, this doesn't actually cause a problem today. The link is
-created in DL_STATE_CONSUMER_PROBE and the supplier waits for this
-probe to finish, so the link object cannot be freed while we're in
-xpcs_rk_create(). The dereference is safe under the current caller.
-
-I'll clean this up in a separate patch, together with the same pattern
-in mtk-svs, so it's one change rather than two.
-
-> > +     pxpcs =3D platform_get_drvdata(pdev);
-> > +     if (!pxpcs || !pxpcs->bus) {
-> > +             put_device(&pdev->dev);
-> > +             return ERR_PTR(-EPROBE_DEFER);
-> > +     }
-> > +
-> > +     xpcs =3D xpcs_create_mdiodev(pxpcs->bus, (int)port);
-> [Severity: Medium]
-> This is a check on a driver-core-internal field (links.status) followed b=
-y
-> use of the supplier's devm-owned data (pxpcs->bus, pxpcs->eee_mult_fact) =
-and
-> registration of an MDIO device on that bus.
->
-> For the in-tree caller the window does look closed: rk_pcs_init() runs fr=
-om
-> stmmac_pcs_setup() in __stmmac_dvr_probe(), so the consumer is DL_DEV_PRO=
-BING
-> and the new link is DL_STATE_CONSUMER_PROBE, which makes the supplier wai=
-t:
->
-> drivers/base/core.c:device_links_unbind_consumers() {
->         if (status =3D=3D DL_STATE_CONSUMER_PROBE) {
->                 device_links_write_unlock();
->
->                 wait_for_device_probe();
->                 goto start;
->         }
-> }
->
-> But xpcs_rk_create() is exported and does not document that precondition.
-> For a caller outside the consumer's probe the link would be
-> DL_STATE_AVAILABLE or DL_STATE_ACTIVE, nothing would wait for it, and the
-> supplier's devres could be released while pxpcs->bus is in use.  Also not=
-e
-> that xpcs_rk_create_data() publishes drvdata before bus and eee_mult_fact
-> exist:
->
->         pxpcs->pdev =3D pdev;
->
->         dev_set_drvdata(&pdev->dev, pxpcs);
->
-> so the read here relies entirely on the supplier being fully bound.  Woul=
-d
-> it be preferable to document the probe-context requirement, or to avoid
-> inspecting links.status from a driver altogether?
-
-Same reasoning. For the in-tree caller the window is closed:
-rk_pcs_init() runs from __stmmac_dvr_probe(), the consumer is
-DL_DEV_PROBING, and the link is DL_STATE_CONSUMER_PROBE, so the
-supplier waits.
-
-> [Severity: Low]
-> At this commit xpcs_rk_create() has no in-tree caller, and the new header
-> include/linux/pcs/pcs-xpcs-rk.h declares it without a
-> !CONFIG_PCS_XPCS_ROCKCHIP stub.  The caller does arrive later in the same
-> series (rk_pcs_init() in drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> calls it and is installed as plat_dat->pcs_init for
-> PHY_INTERFACE_MODE_SGMII), and DWMAC_ROCKCHIP does "select
-> PCS_XPCS_ROCKCHIP", which forces the tristate to at least the selector's
-> value, so there is no y/m link mismatch either.  Noting it only because t=
-he
-> symbol is unused at this point in the series.
-
-The caller arrives in patch 9 of the same series and DWMAC_ROCKCHIP
-selects PCS_XPCS_ROCKCHIP, so there's no y/m mismatch. Splitting the
-export and header out would just create a forward declaration for one
-patch.
-
-> > +static int xpcs_rk_system_suspend(struct device *dev)
-> > +{
-> > +     /*
-> > +      * Keep the PD_PIPE power domain on during system suspend.
-> > +      *
-> > +      * PD_PIPE is shared with SATA/PCIe and would be powered down by
-> > +      * genpd once all its consumers are suspended, killing the SerDes
-> > +      * and breaking MAC WoL.  Mark the XPCS as part of the wakeup pat=
-h
-> > +      * so genpd keeps the domain on.  Unconditional because the XPCS
-> > +      * core has no callback to convey the MAC WoL state.
-> > +      */
-> > +     device_set_wakeup_path(dev);
-> > +     return 0;
-> > +}
-> > +
-> > +static int xpcs_rk_system_resume(struct device *dev)
-> > +{
-> > +     return 0;
-> > +}
->
-> [Severity: High]
-> Does device_set_wakeup_path() actually keep PD_PIPE powered on RK3568?  T=
-he
-> commit message states:
->
->         genpd then leaves the domain powered, because the Rockchip power
->         domain driver sets GENPD_FLAG_ACTIVE_WAKEUP on PD_PIPE, which mak=
-es
->         genpd check the wakeup path of its consumers during system suspen=
-d.
->
-> PD_PIPE is registered without active wakeup in
-> drivers/pmdomain/rockchip/pm-domains.c:
->
->         [RK3568_PD_PIPE]        =3D DOMAIN_RK3568("pipe", BIT(8), BIT(11)=
-, false, false),
->
-> The last argument is the wakeup flag, so pd_info->active_wakeup stays fal=
-se
-> and GENPD_FLAG_ACTIVE_WAKEUP is never set for this domain.  genpd only
-> honours the consumer wakeup path when that flag is present:
->
-> drivers/pmdomain/core.c:genpd_finish_suspend() {
->         if (device_awake_path(dev) && genpd_is_active_wakeup(genpd) &&
->             !device_out_band_wakeup(dev))
->                 return 0;
-> }
->
-> Without the flag, does genpd fall through to genpd_sync_power_off() and p=
-ower
-> PD_PIPE down, which is exactly the situation the probe comment warns abou=
-t
-> ("The domain must be powered on before any register access, otherwise the=
- SoC
-> will trigger a synchronous external abort")?
->
-> dev_pm_genpd_rpm_always_on() does not appear to cover the system-suspend =
-path
-> either; genpd_sync_power_off() only consults GENPD_FLAG_ALWAYS_ON:
->
-> drivers/pmdomain/core.c:genpd_sync_power_off() {
->         if (!genpd_status_on(genpd) || genpd_is_always_on(genpd))
->                 return;
-> }
->
-> If the domain is power-cycled, what restores the hardware on the way back=
- up?
-> phy_init() and phy_power_on() are called once from xpcs_rk_probe() via
-> xpcs_rk_serdes_phy_poweron(), xpcs_rk_system_resume() returns 0 without
-> re-initialising the SerDes or the PCS, and
-> drivers/phy/rockchip/phy-rockchip-naneng-combphy.c has no dev_pm_ops at a=
-ll.
-> Does that leave the combphy and XPCS at power-on-reset defaults (no SerDe=
-s
-> configuration, no SerDes TX clock) after resume while the driver, the xpc=
-s
-> core and phylink still assume the programmed configuration is live, and M=
-AC
-> WoL, the stated reason for the mechanism, non-functional?
-
-You're right. RK3568_PD_PIPE is registered with active_wakeup =3D false,
-so GENPD_FLAG_ACTIVE_WAKEUP is not set and device_set_wakeup_path()
-alone does not keep the domain on during system suspend. The commit
-message and the comment in xpcs_rk_system_suspend() are wrong about
-this.
-
-The separate patch for the Rockchip PD driver to set active_wakeup on
-PD_PIPE is here:
-
-https://lore.kernel.org/all/20260925041751.495818-1-coiaprant@gmail.com/
-
-It affects SATA and PCIe as well, which is why it isn't folded into
-this PCS glue series. Once it lands, the device_set_wakeup_path() call
-here becomes effective.
-
-The runtime path is already covered by dev_pm_genpd_rpm_always_on();
-only the system-suspend path was missing.
-
-No respin planned for this series.
-
-Coia
+Thank you !
