@@ -1,226 +1,436 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011030.outbound.protection.outlook.com [40.107.74.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f2.google.com (mail-ej2-f2.google.com [74.125.228.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78E92D8385;
-	Fri, 25 Sep 2026 04:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3578038AC65
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 04:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.130
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790309610; cv=fail; b=JvkG/7QiVFBRKiKO52pHQFsg9VIK9amJJuqOkRLZmPGfc1Vmo2p4xKsMSNDlq1cG8QsNvPUDaDWyuFSrqrYKbnb37etHd2fNqvR9ilYLbElqIbPszOQgqaSy9ZcdryIPIuL1FsDLPhN3LNy46kSFW/RVcMGyALG0XUXQNCajX44=
+	t=1790310716; cv=pass; b=W1oUlsxWY0URviP+AM9gLE1TjfF7xjtwqmXFibv+zgzgWsxLuxPdzNgSin6HkUk4XlTcoO48zZDxgjw23qA1i7xIj05rL04qagNeFqqZhgv2Nnr8yQv+SbcvINUvVovdZdO7oaIe6D0zMcV6GHXvDQLz7zjprs+tkehL1xCo5yk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790309610; c=relaxed/simple;
-	bh=rTNzwIwbAb8omT01m0DWUcf6w4aD1DaWgBJsHeA+jlo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=J9wRkXGuXY7mM09Z8aFdSC9vqEbfsf1UkIv2Hb5B+cbHh1MxKpZZpP+dWTnToPeO5fHwIHpmBF5t7WCj6PCwUkSdv8GFb75PLjt54wSRPj/o3kQ4k/CuKZRVhTgedQ7AK0OJW/ynWfJiih4ESjfbvMLRDzp5PMx3hWOPbSZoqjg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ftu3Zx21; arc=fail smtp.client-ip=40.107.74.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1790310716; c=relaxed/simple;
+	bh=bKcBxxTsghoqMHyafZwepzf6RtFX/VymNrBL22MAUE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dAsWETDiUPVEDjY1QwALAH5B3mimKeXNDZpEZ/yMMbEOfe0vlf6EUqfJK+dECXHrfpIifNJH72Y7rRgkb0uvfc0xg/Wpcl57NdneO+40bL5D+NKFl+OoBAS/NCm/OLhVriVUmrDgxWRpLj5zIrsD/+7Orp99Pi7m/cEzQnaTeAU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biHxw4vz; arc=pass smtp.client-ip=74.125.228.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ftu3Zx21"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fmbM9WcrfoWx6vT1Uk7rsHzK2uaB2o6afCaNqAhEqkdc+oabsTHg7DF0BqxRkZ+OIBBDihpX1NocleH+aa5tRO7IPgAhSoDx4jlBa/mXx74L/mYckx9ezhJNsVWwaigj0SopjMT5ATPHITXvTkD4HVS7XGCQmrVZ1oNv7u1ApTF/aQ64TbVrH+82O99HCI3cjeSVfIeBDHQpSSh+Xxhdf4WVqRIOmmCx/qz368bLU4J2LItAb3MzCTmZrxTxWhjYsmJQiPHlOjKl2G89fTlbVkj21rTc6ZKdRTh1QL/ygRiyN8vQXOKRt7N6y6wBDbEpEpmxNo8GQTBx7hzuJN5Y/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rTNzwIwbAb8omT01m0DWUcf6w4aD1DaWgBJsHeA+jlo=;
- b=sVIXqBxRvZZI6yFdRuJUDaV8UdKVlaX9AIuNSwASL6sJkycXcD5rg3ghdrh0vp9UumtTm8wgTLALgVVbHR+LfzyrV2rABk3eatnk70NaOb9J3PcGPSoOHSDDX0agFcelbMiV2ewnxK6ewFyZTaGAPJ1dcfS/nL4pxYbo/ZDriTvBMrPIhIf1MGRiRfYiJZqdz5/s17z9eJv4M9GIUDTkxjYl7c7u5E+IubYuhVMVjXGqaD+j/mLab+N4BMn5miOtcRVihGS3QCX0chiqb5Qobdjuevv7Ke0Qw9shfcH2pRzH2k4HqgvLpHTmMKwgYFWtl7S76dYLaqCd2hBpzDGHKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rTNzwIwbAb8omT01m0DWUcf6w4aD1DaWgBJsHeA+jlo=;
- b=ftu3Zx21G65baNjuP6b13Vp1Wb6CKe9ZcwhnsiesUPqWDSOTxZAw6UOSKsW1eJA0s1+ZBuIziB7INQTboV/e5W2kCAmbI8qP0g2ZcN72MSdYRi+SyWMqPV+CFz3hT++suHQIScg8pp5uoKFKWJYOjw530jVFV0hx/npNCPgFW04=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSCPR01MB13427.jpnprd01.prod.outlook.com (2603:1096:604:32d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Fri, 25 Sep
- 2026 04:13:25 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0451.014; Fri, 25 Sep 2026
- 04:13:24 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Guenter Roeck <linux@roeck-us.net>, "Lad, Prabhakar"
-	<prabhakar.csengg@gmail.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"sashiko-reviews@lists.linux.dev" <sashiko-reviews@lists.linux.dev>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, wsa+renesas
-	<wsa+renesas@sang-engineering.com>, "robh@kernel.org" <robh@kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v6 6/8] watchdog: rzv2h: Add syscon support for WDTDCR
-Thread-Topic: [PATCH v6 6/8] watchdog: rzv2h: Add syscon support for WDTDCR
-Thread-Index: AQHdTCrXWsFavv0/7EqWKNI1uetVXbbeRKCAgABqooA=
-Date: Fri, 25 Sep 2026 04:13:24 +0000
-Message-ID:
- <TY3PR01MB11346CC8B3C7374C293E0F3EB86802@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260923104054.3324830-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260923104054.3324830-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260923105237.7B87D1F00893@smtp.kernel.org>
- <CA+V-a8uD16uG8cc9m7NHVZXT5bU64TYfu+_1POuXeioRAy6Z+A@mail.gmail.com>
- <4f5aadf0-8f23-4871-918f-430a0c99900d@roeck-us.net>
-In-Reply-To: <4f5aadf0-8f23-4871-918f-430a0c99900d@roeck-us.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB13427:EE_
-x-ms-office365-filtering-correlation-id: 2812d668-eaa9-41d6-7bb1-08df1abb580f
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|7416014|11063799006|56012099006|18002099003|4143699003|22082099003|10067099003|38070700021|6133799003;
-x-microsoft-antispam-message-info:
- 8lEYuNRu2hT8RJUWvxqCVurC1tIDGy/yD2IBqcUN35Wrp5bZS+FGyn5tear3xPS1a0veW+q7FDM/z+BO3sQIgkH30cuESozo5TBlfDBQPQNAbqU8bQ9hhXmgTge5q+yPUEYsQHiqpQsrb4WmUlXicFx4J+hCneKuROsC9s7kXpuqhJStrT6yRlsEDOE9fAOo5qOvFwdF6dI6NwO0d6KJMKMi2ChunThq6H8BFz9OxR5QulHz3H+TlJQ3gDM5rtALsILa71+e07XbiIZ1Ur3OLP9NvjmrM8P3Y6HKwWwpWHzFebtOhWP/6Y3zhn9C/pcxEakt6O52THAqu99OMJ9aJHbDv7zQxJ61Zj6iH9o5ybQFY/6AK/LZnG4rTrEC2eesieo1wz9gEP0IoKPkG1TupSoimzleOasmtQjDlD8Dbe86eAP/I7qVvRPJgKzEdOWdN3aRyTDnXCAzG+rG//olrXMuCFiGVyyW8xrA/W9mLnjQ9qkG+D9XFYomP4jAwnAy0R66aie24WbFUqe7dCpGlqdHe0RA8pWQ8iS15xxI161uEOpQ14dQryV8yto5XTBPd+K8NhEmauc9rc7Ocna+oLchy8dD9vzQ1F5nn4qZIdQaq8oupVrNLjl3Elzh7tXYE50B08FrQO1NGabi1lpvNxConiaqzwJKImxSOP4BllQiXz5ooHQWVHe3/6umIJVVPJCZtMWbZUApBY7itF+IpUaMoUfGhfkGqEYzbh5AoEw=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(7416014)(11063799006)(56012099006)(18002099003)(4143699003)(22082099003)(10067099003)(38070700021)(6133799003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NHdUQmJoS2pUSWNucHgwSjNCZThLUDBBRlB5RmZPUlFyRnRXWnJOUytaeW4z?=
- =?utf-8?B?eXZsRFNxcW0vZXBDWk96WGlOVTZCMG5ibGhnZGJXRTlEMUd3T3BYU3dUVGhq?=
- =?utf-8?B?V2YzcExQY0dqaUNOeFJQREJiUmtZdEQxUkptZDB0TW9UVmpnV3MvS2pQSUkv?=
- =?utf-8?B?VXBVeUNEWXc5RXM2dE1Hdzg1aGlYK1gvZEkzL2FKNTRKaTIzMFpsQ2syWTRP?=
- =?utf-8?B?YzZuUGlQNThsSUcrTjBHQVkrclV6SU1MK2FiWGJSajNBeGsySXdJS1pLU0Mx?=
- =?utf-8?B?dVVITjdqcTdoLzBmQkpTTmRHWkpmMGpCdnQxeHJKM1E1NWVsUzVmMjVpdC9n?=
- =?utf-8?B?OVMvUW9QNkJvU2p1S3RBT3VrWkRScGFOV0diSUpUa0QzN05CQU1YY1RqbHB2?=
- =?utf-8?B?WnRDV1ZDVlVnYTcyOWFXd0ZKaTlhdm5URThEbGlNV3Z3VkVwSGwwYkcyeC8w?=
- =?utf-8?B?SzlzeVRLaW9pVlFNVStqWCs5czRVNTJlUjcxYmcyZ0NSM0JONzZlMnBHQWFZ?=
- =?utf-8?B?Mnk2aVc5aEtZbytBMmE1MHFmNC9XdE5JZU5kaVlOL3V4elJaN3F5Y2FDTEFu?=
- =?utf-8?B?V1FWdzkzM0JVaDQ2YkRISnZzMHJaNU9rU1dkSE5Eck11dEZpOGN1ZnZLNWVa?=
- =?utf-8?B?b0ZhV0FqRWozRmN1WFNaa2RyZzhHazFlN1I1UXpuRi9aMStFOHVmdEQzOE96?=
- =?utf-8?B?eGhTODdKUnAxcHNjVmRaeHJsdlR5OHhqcS85Wm1jU1I3ZFQrUFI2QTRwQlJW?=
- =?utf-8?B?VlA1ZUdqZW1yTUI3MjU1ME1FRjB2T3I4N21seGptKzd1NDBkWWw0YSsvOTZH?=
- =?utf-8?B?T3JoN21yVzBCQVZzbng3SzZXaTZiNWozYUM4cVdwQlBBdjVLVmcxNkxrTE1I?=
- =?utf-8?B?KzhTcU5VNnNUSTBTck5GN0RHb2dwZDhidTFRaEFSNjVOUnJ5SC90RVhlTXNM?=
- =?utf-8?B?UkNFUnd4UWpESmJoN3p5bkJvdmdyYlJiaktDUWRGSHFlVUFlWGJaVkYyWFZS?=
- =?utf-8?B?d2JIS2tKdi9TL2F1dTE3bUp5akdEOUZiUVZVVllheUFmTlZSYVVLdzF0dGpF?=
- =?utf-8?B?VVRTWm1NakUwVEFSRDRhUE9WOHVjZ001MEhQb2U0Q2NldkVTVHZRL0kvZmht?=
- =?utf-8?B?MWhKTEkydFBYZFI0ckZnM0VRaXRFejVLTWhOT01DQ3pNTnlKUWpmUVJ5V0dl?=
- =?utf-8?B?STRISnplbzRzOEk5VDkrVTBkVXFhdWgyVk5wQWsrQWZsM1dxVFZvbEhIdVJl?=
- =?utf-8?B?MHM1Q3N3Nk9UcjYyQUw0UDQyN2FSN2wwd0k2Q0FPcytoaU5XMkk4VENBVTU5?=
- =?utf-8?B?dWZNNGdiOGZUSExHeWR3bE5LQzBUL1NzQ01xcWJ1bmNmV0VSMTlJNXJNaU1h?=
- =?utf-8?B?VitTQk1IOTNVTVVFVEpCTVJ0Ui9hYS9YN2o1eEkxczYxbkNqNFh2M3hQK2NO?=
- =?utf-8?B?U1QzNjYzdFZra2M4NlZwSGU5d3ZCeDZIMC9DTUhWdm1sS2lEaDh0aEt6dkU1?=
- =?utf-8?B?amF0MDRSaWcrVXI5dHBDcVNpMG1pYXcyNHhka1ZRS2k4VXptM2V2K3B2NTQy?=
- =?utf-8?B?b214T3BNNHlIOXRkZ3E5Uld1TmdienpNNXVEbjlOQ21rT3JDT0IrOHVSenZN?=
- =?utf-8?B?M1BZSDBvNzhWYnRvQWY4RHhGdnh0bmRBektkZURTVTdVbS9UTTlQcWo5T1U1?=
- =?utf-8?B?U0lLSGlMSE5nbHBlMWJSSlZ5SWMySzdZM215REFJbGVwVkhSVVdNQ1B6TjVt?=
- =?utf-8?B?dmpZdG41b0xSa2pIclhMemxnUEhpVDdKcDI5dm53OHYzVDhHb1haZkdVRnd4?=
- =?utf-8?B?V3hXVUZ1dTlWcURiUjRMNVVPNUtxL01vVTdrTThMd2x5citQVitoZmQ1Tytu?=
- =?utf-8?B?bFpOeEFKTFRlbUZBbWRGTFdLa2wxZ2x4c3gyNWhaM0VOOEQra05PL2o3ellq?=
- =?utf-8?B?Uy9mUlRwYU11ek1EZGkzYjVVNENDQ3NWVGVuUXZIQVRSdW0za291cjJlem9Q?=
- =?utf-8?B?NGFtMThlL0N4Q1JpZG5odUxWczFOMSs1aE0ydmJUZWxST3Y4dWpzWlp0bFV6?=
- =?utf-8?B?bW91ZU1ZeGFzd2c4WUJVbzZsM2hDSUR5MjdobXpNcko5czNZSGFDOGh4Z3d1?=
- =?utf-8?B?VFE5K2V6cUt4Y0dHZ2dBM0JhbWtvQzlTWEVsL2FYdE51Ri9ISzh5a0Vrd1Bp?=
- =?utf-8?B?UU1EeFhVeHpGYWQ4TDVNMnppalJhSXdySHdTMGdmMUJZZFozQWZIRVo4TEdp?=
- =?utf-8?B?VHJMaUY5WGtjdkk3dHB2U0w5UGtMc1p6OXNjOEl6VFN5MjZNQTY3VGpCeFFk?=
- =?utf-8?B?YWl1T0ZYK0dncWlJMUFaYzRDcHpVTmxYdzdsOENaWFVhMGp1QVY4Zz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biHxw4vz"
+Received: by mail-ej2-f2.google.com with SMTP id a640c23a62f3a-c294938a983so17205566b.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Sep 2026 21:31:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790310712; cv=none;
+        d=google.com; s=arc-20260327;
+        b=gWvwVTS70avTRhkMrh40VzA+TEpkn7KDTLC4Rsqz7RO69mojuEJcmuSkA1gUJTfV/e
+         /68mPj8smrbZlJTwU9RlP++tTlbFYQD+cJnxQh3LIpYdUFm/eGYsd4ZqX+J3enN3ElKi
+         WQlztR7+25q27r4wWqk56mv2kwjURl5l8OrOio1SagKbJXt7n8WbmjtuU5Tej6JyFirR
+         bBsmRve2etDB3rTE6zfBRsvc7YfdzcCQVrd3E+w0vHP9yORQ2jvP/YLpxQGs3F/6bisE
+         9+MD0NrkaTyUStZ2tDx1uEoTcIxEnV+bNw5bk+Kc6J4rTU6cKMXqTjVbXt0S/KlbXHbR
+         Z3dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=TNCXrCGsdTEIc304eZ6sG3kavghRL8koSeqoFiVhQaw=;
+        fh=U2u6t2AcK3BrkFLB142hOJuJcsy+uVfwRXYegdpyrOo=;
+        b=WQ72YbOBfuViDAn4WydgCzDOBIES25R+yQOl/OlSd8hoNhuV0LERoy9CRrBVQaLoth
+         /H5+jrfTwVc/cryGK9rtoYlZj0+dBcecm+OaLrZQDCPYN92k78FVbamLVSd1d+FuW+wQ
+         pjNbpc6VijO1czxaSFTM/5jzOfNgZS2mn8ewuvtVsqUkFTKHDEaaOdKb79PJTuoAEgfJ
+         nSA5+pnCuqaj2urj1Lhxvr7Tdkox6xVR4qwDUlItqgwD6+jp05etNUQkoTjwYtdNF+WT
+         4Ib3Ulz9IpszF8co71A2FiCRKyLyJbQbO/koG7jwgueDAY/2aRczpWO7LwTNPOB2dsl4
+         hCFA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790310712; x=1790915512; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=TNCXrCGsdTEIc304eZ6sG3kavghRL8koSeqoFiVhQaw=;
+        b=biHxw4vzKzUMDWrib41dTAVXYt7h5mMZCT/9+YZYvcXrfwD4ZoIvmuI9WRlkQWRN7N
+         slIdmCrKRdN1owq2laQLISNABFx6H3r/hxVtkzqp2iBdCFttbGE8XfRGdcj3OzuwVZuB
+         jNkqeonksW4iXbECQwarWZAUEnKopZy0VokA3zamCtiF3Ay3K1ATz6S+f9FzJim62urV
+         p1wcpcIY2EQI/3dDuqv1CGRKIMEKH7UwzRSGDrn6bXjbq45ESsYJlzUSDN/xUpVghDc6
+         rxpn+Gfxil1LYAcxh64+EYEt/tOIS9WImOWpAG9AunNnOqWxLh5Q6Jn2Tp/twGBYufPq
+         vVPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790310712; x=1790915512;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TNCXrCGsdTEIc304eZ6sG3kavghRL8koSeqoFiVhQaw=;
+        b=fFsgjxkKndUb5BgmsiqWQ6ZuuJ7AVIT+qZqkVmQa84TZTUA27KpnAomN5Gx3D0WDOu
+         ioSV+xO1GYIX6zkejJt5iSy22NXp7Be/myA6LOVDAZqDK8YAFAjmALuhP+M2mRqA5Kmn
+         l7O+vGUCX6CBT4F5T5vLfmHK3C3Z07iUXSyd2XsuKrgibLSOqFwRpYdKpmqzCqK9LDUK
+         +7FAl2/zpYY4PQ1VImk5hVjx2E/oYd9K1G86U4vOeGDqXBykLUwaMX55jONL/7WXxyhg
+         j0HlyaIFHQF0z//F1TGqznz8WX41/XB0Bp0YendzfPSIE5FRAyQxf/5WWr74puMtuH15
+         8flg==
+X-Forwarded-Encrypted: i=1; AKwUvBzPp2rVmTLFsuRbV08weKpYjEkJtLm7xdfp9umfWGI+sSsOGHwPgSDWmmRKf9+PlxefYEZPSpqVd1rhasWq8ShU/w==@vger.kernel.org
+X-Gm-Message-State: AFuF++lx5eESPyOcn0Srlwsa7UqbpMOj7xoZ3miO8hWlC4xskD66/Opt
+	DzQF1VJTUG5WDZZswj6gARgwJ/9/RHy77bdp8E/UX+NOeFN+O/h51+GYSnep258MYLj2pV3j8cd
+	/+3BdcrnJW1MicyVRmYvHwCpxY6nO0aM=
+X-Gm-Gg: AYBFou0B6owLWgckudPTT0n/3T08Y/S2d9DTJTni2/Y2qQNqGTBnkkTkvPCBLTfGFc1
+	yLgP7LCFrRGzlpNnf00BSca5OqEf0ZKtZ2QzbwGHWaC3hlIaXZ/+hyfcidm4qbtB8udIQZ9DB09
+	IuEBHxTMr5kIGxsSgANL4r4vnI80PFj0n/m17J5KX1Gk6bBfHtfum1n98B3u5gbtE4rSye1NLhs
+	R+LPWWbxMCXh65+3h1dr2QrlN02lstFtzjww+wDeTUhJshMjHUqaqnkLmMwqQOpdN8i/K3QZPOB
+	vryni0IHZBP02KQ4zWvFfbzK2wtpXZFYkgl/PprjxxNSd4qL3IImgrtagMq1FUqxPH6lzQ==
+X-Received: by 2002:a17:907:3f89:b0:c15:e8c8:340 with SMTP id
+ a640c23a62f3a-c2ac23eb793mr381414366b.23.1790310712139; Thu, 24 Sep 2026
+ 21:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2812d668-eaa9-41d6-7bb1-08df1abb580f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2026 04:13:24.8007
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Vw8oQYfmOq89EI3p9ouW2fXmypJjH9iFWffEwMMbPPi2cV44q35wFxQOzluKtW9oBKhwu6CHN8qzNqyjzGH9WrJP/2pAFiMDNbv62rKRGNI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13427
+References: <20260922200336.2201212-10-coiaprant@gmail.com> <179030182602.2160803.7636364487893366164@kernel.org>
+In-Reply-To: <179030182602.2160803.7636364487893366164@kernel.org>
+From: Coia Prant <coiaprant@gmail.com>
+Date: Fri, 25 Sep 2026 12:31:40 +0800
+X-Gm-Features: AclHuK-geYaCrQiIqbsqm9RqVt7-leTLevfj4XZTsxhgOEb2JIertLp2aoE5xzw
+Message-ID: <CALj3r0hF_fwnA7Psp8kc8EqthS9FZr4LUkqGXDLtVHesw7tUvQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 09/11] net: stmmac: dwmac-rk: add SGMII
+ support for RK3568
+To: netdev-bot+sashiko@kernel.org
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, heiko@sntech.de, vkoul@kernel.org, 
+	maxime.chevallier@bootlin.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	romain.gantois@bootlin.com, hkallweit1@gmail.com, neil.armstrong@linaro.org, 
+	linux@armlinux.org.uk, shawn.lin@rock-chips.com, david@ixit.cz, 
+	netdev@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgR2V1bnRlci9QcmFiaGFrYXIsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-RnJvbTogR3VlbnRlciBSb2VjayA8Z3JvZWNrN0BnbWFpbC5jb20+IE9uIEJlaGFsZiBPZiBHdWVu
-dGVyIFJvZWNrDQo+IFNlbnQ6IDI0IFNlcHRlbWJlciAyMDI2IDIyOjQ5DQo+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0ggdjYgNi84XSB3YXRjaGRvZzogcnp2Mmg6IEFkZCBzeXNjb24gc3VwcG9ydCBmb3Ig
-V0RURENSDQo+IA0KPiBPbiBUaHUsIFNlcCAyNCwgMjAyNiBhdCAwMjo0NDowN1BNICswMTAwLCBM
-YWQsIFByYWJoYWthciB3cm90ZToNCj4gPiBIaSBHdWVudGVyLA0KPiA+DQo+ID4gT24gV2VkLCBT
-ZXAgMjMsIDIwMjYgYXQgMTE6NTLigK9BTSA8c2FzaGlrby1ib3RAa2VybmVsLm9yZz4gd3JvdGU6
-DQo+ID4gPg0KPiA+ID4gVGhhbmsgeW91IGZvciB5b3VyIGNvbnRyaWJ1dGlvbiEgU2FzaGlrbyBB
-SSByZXZpZXcgZm91bmQgMSBwb3RlbnRpYWwgaXNzdWUocykgdG8gY29uc2lkZXI6DQo+ID4gPiAt
-IFtIaWdoXSB3YXRjaGRvZzogcnp2Mmg6IERlYWRsb2NrIGluIHJlc3RhcnQgaGFuZGxlciB2aWEg
-c3lzY29uDQo+ID4gPiByZWdtYXAgbG9ja2luZw0KPiA+ID4gLS0NCj4gPiA+DQo+ID4gPiBjb21t
-aXQgMWUxYjI2MDY5ZjcwNzM1YTUzNzc1MGIyMmE1MTI1N2JiNDIyYzJlNA0KPiA+ID4gQXV0aG9y
-OiBMYWQgUHJhYmhha2FyIDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5jb20+
-DQo+ID4gPg0KPiA+ID4gd2F0Y2hkb2c6IHJ6djJoOiBBZGQgc3lzY29uIHN1cHBvcnQgZm9yIFdE
-VERDUg0KPiA+ID4NCj4gPiA+IFRoZSBjb21taXQgYWRkcyBzdXBwb3J0IGZvciBhY2Nlc3Npbmcg
-dGhlIFdEVERDUiByZWdpc3RlciB2aWEgYQ0KPiA+ID4gc3lzY29uIHJlZ21hcCBpbnRlcmZhY2Ug
-Zm9yIFJaL1QySCBhbmQgUlovTjJIIFNvQ3MuIEl0IGxvb2tzIHVwIHRoZQ0KPiA+ID4gU1lTQyBy
-ZWdtYXAgdXNpbmcgdGhlICJyZW5lc2FzLHN5c2MiIHByb3BlcnR5IG9yIGZhbGxzIGJhY2sgdG8g
-TU1JTyBhY2Nlc3MgaWYgYWJzZW50Lg0KPiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvd2F0Y2hkb2cvcnp2Mmhfd2R0LmMNCj4gPiA+ID4gYi9kcml2ZXJzL3dhdGNoZG9nL3J6djJo
-X3dkdC5jIGluZGV4IDc2YzFkMzE1YjBlNzcuLjMwYjBiNzBmZWNhYTkNCj4gPiA+ID4gMTAwNjQ0
-DQo+ID4gPiA+IC0tLSBhL2RyaXZlcnMvd2F0Y2hkb2cvcnp2Mmhfd2R0LmMNCj4gPiA+ID4gKysr
-IGIvZHJpdmVycy93YXRjaGRvZy9yenYyaF93ZHQuYw0KPiA+ID4NCj4gPiA+IFsgLi4uIF0NCj4g
-PiA+DQo+ID4gPiA+IEBAIC05MywxOCArMTA0LDIyIEBAIHN0YXRpYyBpbnQgcnp2Mmhfd2R0X3Bp
-bmcoc3RydWN0DQo+ID4gPiA+IHdhdGNoZG9nX2RldmljZSAqd2RldikNCj4gPiA+ID4NCj4gPiA+
-ID4gIHN0YXRpYyBpbnQgcnp0Mmhfd2R0X3dkdGRjcl9jb3VudF9zdG9wKHN0cnVjdCByenYyaF93
-ZHRfcHJpdg0KPiA+ID4gPiAqcHJpdikgIHsNCj4gPiA+ID4gLSAgICAgZ3VhcmQoc3BpbmxvY2tf
-aXJxc2F2ZSkoJnByaXYtPnJlZ21hcF9sb2NrKTsNCj4gPiA+ID4gLSAgICAgcmV0dXJuIHJlZ21h
-cF9zZXRfYml0cyhwcml2LT53ZHRkY3JfcmVnbWFwLCBXRFREQ1IsIFdEVERDUl9XRFRTVE9QQ1RS
-TCk7DQo+ID4gPiA+ICsgICAgIHN0cnVjdCByenYyaF9zeXNjX3dkdGRjciAqc3lzYyA9ICZwcml2
-LT5zeXNjOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgIGd1YXJkKHNwaW5sb2NrX2lycXNhdmUp
-KCZzeXNjLT5yZWdtYXBfbG9jayk7DQo+ID4gPiA+ICsgICAgIHJldHVybiByZWdtYXBfc2V0X2Jp
-dHMoc3lzYy0+cmVnbWFwLCBzeXNjLT5vZmZzZXQsDQo+ID4gPiA+ICsgV0RURENSX1dEVFNUT1BD
-VFJMKTsNCj4gPiA+ID4gIH0NCj4gPiA+DQo+ID4gPiBbU2V2ZXJpdHk6IEhpZ2hdDQo+ID4gPiBJ
-cyB0aGUgZXh0ZXJuYWwgc3lzYy0+cmVnbWFwX2xvY2sgc3RpbGwgbmVjZXNzYXJ5IGhlcmU/DQo+
-ID4gPg0KPiA+ID4gV2hlbiB1c2luZyB0aGUgc3lzY29uIHJlZ21hcCByZXR1cm5lZCBieQ0KPiA+
-ID4gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGhhbmRsZV9hcmdzKCksDQo+ID4gPiB0aGUgcmVn
-bWFwIGhhcyBpbnRlcm5hbCBsb2NraW5nIGVuYWJsZWQgYnkgZGVmYXVsdC4gU2luY2UNCj4gPiA+
-IHJlZ21hcF9zZXRfYml0cygpIGFscmVhZHkgcGVyZm9ybXMgYW4gYXRvbWljIHJlYWQtbW9kaWZ5
-LXdyaXRlIHVzaW5nDQo+ID4gPiB0aGUgc3lzY29uJ3MgaW50ZXJuYWwgbG9jaywgdGhpcyBleHRl
-cm5hbCB3cmFwcGVyIGxvY2sgYXBwZWFycyByZWR1bmRhbnQgZm9yIHRoZSBzeXNjb24gcGF0aC4N
-Cj4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+ICBzdGF0aWMgaW5saW5lIGludCByenQyaF93ZHRfd2R0
-ZGNyX2NvdW50X3N0YXJ0X25vbG9jayhzdHJ1Y3QNCj4gPiA+ID4gcnp2Mmhfd2R0X3ByaXYgKnBy
-aXYpICB7DQo+ID4gPiA+IC0gICAgIHJldHVybiByZWdtYXBfY2xlYXJfYml0cyhwcml2LT53ZHRk
-Y3JfcmVnbWFwLCBXRFREQ1IsIFdEVERDUl9XRFRTVE9QQ1RSTCk7DQo+ID4gPiA+ICsgICAgIHN0
-cnVjdCByenYyaF9zeXNjX3dkdGRjciAqc3lzYyA9ICZwcml2LT5zeXNjOw0KPiA+ID4gPiArDQo+
-ID4gPiA+ICsgICAgIHJldHVybiByZWdtYXBfY2xlYXJfYml0cyhzeXNjLT5yZWdtYXAsIHN5c2Mt
-Pm9mZnNldCwNCj4gPiA+ID4gKyBXRFREQ1JfV0RUU1RPUENUUkwpOw0KPiA+ID4gPiAgfQ0KPiA+
-ID4NCj4gPiA+IFtTZXZlcml0eTogSGlnaF0NCj4gPiA+IENvdWxkIHRoaXMgbGVhZCB0byBhIGRl
-YWRsb2NrIGR1cmluZyBhIHN5c3RlbSBwYW5pYyBvciByZXN0YXJ0Pw0KPiA+ID4NCj4gPiA+IFRo
-aXMgZnVuY3Rpb24gaXMgY2FsbGVkIGJ5IHRoZSByenYyaF93ZHRfcmVzdGFydCgpIGhhbmRsZXIs
-IHdoaWNoDQo+ID4gPiBleGVjdXRlcyBpbiBhdG9taWMgb3IgcGFuaWMgY29udGV4dCBhbmQgbXVz
-dCByZW1haW4gc3RyaWN0bHkgbG9ja2xlc3MgdG8gcHJldmVudCBkZWFkbG9ja3MuDQo+ID4gPg0K
-PiA+ID4gV2hpbGUgYnlwYXNzaW5nIHRoZSBkcml2ZXIncyBsb2NhbCBzeXNjLT5yZWdtYXBfbG9j
-ayB3YXMgc2FmZSBpbiB0aGUNCj4gPiA+IGxlZ2FjeSBNTUlPIGZhbGxiYWNrIGNhc2UgKHdoZXJl
-IHJ6djJoX3dkdGRjcl9yZWdtYXBfY29uZmlnIGRpc2FibGVzDQo+ID4gPiBsb2NraW5nKSwgdGhl
-IHN5c2NvbiByZWdtYXAgaGFzIGludGVybmFsIGxvY2tpbmcgZW5hYmxlZC4NCj4gPiA+DQo+ID4g
-PiBDYWxsaW5nIHJlZ21hcF9jbGVhcl9iaXRzKCkgdW5jb25kaXRpb25hbGx5IGF0dGVtcHRzIHRv
-IGFjcXVpcmUgdGhlDQo+ID4gPiBzeXNjb24gcmVnbWFwJ3MgaW50ZXJuYWwgc3BpbmxvY2suIElm
-IHRoZSBzeXN0ZW0gcGFuaWNzIHdoaWxlDQo+ID4gPiBhbm90aGVyIENQVSBpcyBhY2Nlc3Npbmcg
-dGhlIHNoYXJlZCBzeXNjb24gYmxvY2ssIHRoZSByZXN0YXJ0DQo+ID4gPiBoYW5kbGVyIGNvdWxk
-IGhhbmcgdHJ5aW5nIHRvIGFjcXVpcmUgdGhpcyBsb2NrLCBkZWZlYXRpbmcgdGhlIHB1cnBvc2Ug
-b2YgdGhlIHdhdGNoZG9nIHJlc3RhcnQNCj4gcmVjb3ZlcnkuDQo+ID4gPg0KPiA+IEFncmVlZCwg
-dGhlIHN5c2NvbiByZWdtYXAgbG9jayBjYW5ub3QgYmUgYnlwYXNzZWQgZnJvbSB0aGUgd2F0Y2hk
-b2cNCj4gPiBkcml2ZXIsIHNvIHRoZSBfbm9sb2NrIHZhcmlhbnQgZG9lcyBub3QgYWNoaWV2ZSBh
-bnl0aGluZyBmb3IgdGhlDQo+ID4gc3lzY29uIGNhc2UuDQo+ID4NCj4gPiBSYXRoZXIgdGhhbiB3
-b3JraW5nIGFyb3VuZCB0aGlzLCBJIHRoaW5rIHRoZSByaWdodCBmaXggaXMgdG8gbm90DQo+ID4g
-cmVnaXN0ZXIgYSB3YXRjaGRvZyByZXN0YXJ0IGhhbmRsZXIgb24gUlovVDJIIGF0IGFsbC4gT24g
-UlovVDJILA0KPiA+IHN5c3RlbSByZXNldCBpcyBpbXBsZW1lbnRlZCBieSBURi1BIHRocm91Z2gg
-UFNDSSBTWVNURU1fUkVTRVQsIHdoaWNoDQo+ID4gdHJpZ2dlcnMgYSBzb2Z0d2FyZSBzeXN0ZW0g
-cmVzZXQgdmlhIHRoZSBTV1JTWVMgcmVnaXN0ZXIuIFRoZSBQU0NJDQo+ID4gZHJpdmVyIHJlZ2lz
-dGVycyBpdHMgcmVzdGFydCBoYW5kbGVyIGF0IHByaW9yaXR5IDEyOSwgd2hpbGUgdGhlDQo+ID4g
-d2F0Y2hkb2cgcmVzdGFydCBoYW5kbGVyIGlzIHJlZ2lzdGVyZWQgYXQgdGhlIGRlZmF1bHQgcHJp
-b3JpdHkgb2YgMCwNCj4gPiBzbyBQU0NJIGFscmVhZHkgcmVzZXRzIHRoZSBzeXN0ZW0gZmlyc3Qg
-YW5kIHRoZSB3YXRjaGRvZyByZXN0YXJ0DQo+ID4gaGFuZGxlciBpcyBuZXZlciByZWFjaGVkIG9u
-IHRoaXMgU29DLg0KPiA+DQo+ID4gV2l0aCB0aGUgcmVzdGFydCBoYW5kbGVyIGdvbmUgb24gUlov
-VDJILCBXRFREQ1IgaXMgb25seSBhY2Nlc3NlZA0KPiA+IGR1cmluZyBwcm9iZSBhbmQgZnJvbSB0
-aGUgc3RhcnQvc3RvcCBjYWxsYmFja3MuDQo+ID4NCj4gPiBJcyB0aGlzIGFwcHJvYWNoIE9LPw0K
-PiA+DQo+IE1ha2VzIHNlbnNlIHRvIG1lLg0KDQpKdXN0IGEgcXVlc3Rpb24sDQpGb3IgYXV0b21h
-dGljIHNvZnR3YXJlIHVwZ3JhZGUsIGlmIHRoZSByZWJvb3QgdXNpbmcgUFNDSSBmYWlscywgd2hh
-dCBpcyB0aGUgZmFsbGJhY2sNCmZvciByZWJvb3QsIHJlc2V0IHRoZSBib2FyZD8NCg0KQ2hlZXJz
-LA0KQmlqdQ0KDQo=
+<netdev-bot+sashiko@kernel.org> =E4=BA=8E2026=E5=B9=B49=E6=9C=8825=E6=97=A5=
+=E5=91=A8=E4=BA=94 10:03=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Thank you for your contribution! Sashiko AI review found 2 potential
+> issue(s) to consider.
+>
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 2 (3) =C2=B7 Low: 0
+>
+> If you believe none of the issues are legitimate, please reply to each
+> issue of Medium severity or higher and explain why the AI is wrong.
+> If any of them are legitimate and you plan to respin, please let patchwor=
+k
+> know by including "pw-bot: cr" as a separate line at the end of your repl=
+y
+> (one such reply per series is enough).
+>
+> - [Medium] In SGMII mode, the RK3568 glue tells phylink it supports
+>   interface modes that the hardware cannot run and that the glue never=E2=
+=80=A6
+> - [Medium] The commit's explanation of the SGMII in-band vs out-of-band
+>   problem does not match the code, and the driver does nothing to reject=
+=E2=80=A6
+>
+> Pre-existing issues:
+> - [Medium] rk_gmac_resume() (dwmac-rk.c:1618-1627) calls
+>   rk_gmac_powerup() and throws away its return value, then always=E2=80=
+=A6
+> - [Medium] gmac_clk_enable(bsp_priv, true) (dwmac-rk.c:1181-1200) first
+>   enables the bulk clocks with clk_bulk_prepare_enable() (line 1187).
+> - [Medium] __stmmac_dvr_probe() calls pm_runtime_get_noresume(device) and
+>   enables runtime PM (stmmac_main.c:8112-8115) before calling=E2=80=A6
+>
+> --
+>
+> net: stmmac: dwmac-rk: add SGMII support for RK3568
+>
+> This adds SGMII support for the RK3568 GMACs. It sets GRF bit 7 and
+> hooks up the Rockchip XPCS through the pcs_init, pcs_exit and select_pcs
+> callbacks. It also moves the clock enable in rk_gmac_powerup() earlier,
+> unifies its error unwinding, and for SGMII clears set_clk_tx_rate and
+> sets default_an_inband.
+>
+> Link: https://dl.radxa.com/rock3/docs/hw/datasheet/Rockchip%20RK3568%20TR=
+M%20Part1%20V1.1-20210301.pdf (Page 386)
+>
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/n=
+et/ethernet/stmicro/stmmac/dwmac-rk.c
+> > index 8d7042e689261..88f09014e3a69 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+>
+> [ ... ]
+>
+> > @@ -1208,6 +1236,43 @@ static void rk_phy_powerdown(struct rk_priv_data=
+ *bsp_priv)
+> >               dev_err(bsp_priv->dev, "fail to disable phy-supply\n");
+> >  }
+> >
+> > +static int rk_pcs_init(struct stmmac_priv *priv)
+> > +{
+> > +     struct device_node *np =3D priv->device->of_node;
+> > +     struct device_node *pcs_node;
+> > +     struct dw_xpcs *xpcs;
+> > +
+> > +     pcs_node =3D of_parse_phandle(np, "pcs-handle", 0);
+> > +     if (!pcs_node)
+> > +             return -ENODEV;
+> > +
+> > +     xpcs =3D xpcs_rk_create(priv->device, pcs_node);
+> > +     of_node_put(pcs_node);
+> > +     if (IS_ERR(xpcs))
+> > +             return PTR_ERR(xpcs);
+>
+> [Severity: Medium]
+> This is a pre-existing issue in the stmmac core, but this patch makes it
+> much easier to hit. rk_pcs_init() returns -EPROBE_DEFER from
+> xpcs_rk_create() whenever the XPCS device isn't bound yet. Does each of
+> those deferrals leak a runtime PM usage count?
+>
+> __stmmac_dvr_probe() takes the reference before PCS setup:
+>
+>     pm_runtime_get_noresume(device);
+>     pm_runtime_set_active(device);
+>     if (!pm_runtime_enabled(device))
+>         pm_runtime_enable(device);
+>     ...
+> error_pcs_setup:
+>     stmmac_mdio_unregister(ndev);
+> error_mdio_register:
+>     stmmac_napi_del(ndev);
+>
+> None of the error labels drop that count or disable runtime PM.
+> pm_runtime_reinit() returns early while runtime PM is enabled, so
+> usage_count is never reset.
+>
+> fw_devlink doesn't parse pcs-handle, so the GMAC can probe before the
+> XPCS. After the probe finally succeeds, the count can't reach zero, so
+> the MAC would never runtime suspend.
+>
+> Deferral from stmmac_mdio_register() already hit this path before the
+> patch, but deferral is now likely on RK3568 SGMII boards.
+
+Agreed that this is a real problem, but it's in __stmmac_dvr_probe(),
+not in dwmac-rk. The error labels in the core don't drop the count that
+pm_runtime_get_noresume() took, and pcs-handle is not a fw_devlink
+dependency so the deferral is now easier to hit. That should be fixed
+in the stmmac core in a separate series. I'm not going to restructure
+the core probe error paths as part of a platform glue patch.
+
+> > +
+> > +     priv->hw->xpcs =3D xpcs;
+> > +     return 0;
+> > +}
+> > +
+>
+> [ ... ]
+>
+> > +static struct phylink_pcs *rk_select_pcs(struct stmmac_priv *priv,
+> > +                                      phy_interface_t interface)
+> > +{
+> > +     if (!priv->hw->xpcs)
+> > +             return NULL;
+> > +
+> > +     return xpcs_to_phylink_pcs(priv->hw->xpcs);
+> > +}
+>
+> [Severity: Medium]
+> Does this give phylink interface modes that the RK3568 hardware can't
+> run?
+>
+> rk_get_interfaces() still sets RGMII and RMII, because rk3568_ops now
+> has both set_to_rgmii and set_to_rmii. SGMII comes from the XPCS through
+> stmmac_phylink_setup():
+>
+>     if (pcs)
+>         phy_interface_or(config->supported_interfaces,
+>                          config->supported_interfaces,
+>                          pcs->supported_interfaces);
+>
+> xpcs_rk_create() uses the plain xpcs_create_mdiodev() and never narrows
+> pcs.supported_interfaces. The set is therefore filled from the generic
+> synopsys_xpcs_compat[] table: USXGMII, 10GKR, 25GBASER, XLGMII,
+> 50GBASER, LAUI, 100GBASEP, 10GBASER, SGMII, 1000BASEX and 2500BASEX.
+>
+> The rockchip,rk3568-xpcs.yaml binding in this series says the hardware
+> supports only 1000BASE-X, SGMII and QSGMII. The dwmac4 MAC caps include
+> MAC_2500FD, so phylink keeps 2500BASE-X and USXGMII as valid choices.
+>
+> rk_select_pcs() also ignores its interface argument and returns the XPCS
+> for every mode. Neither the GRF nor the combphy is reprogrammed when the
+> interface changes: set_to_sgmii() runs once from the DT phy-mode, and
+> the combphy is fixed to PHY_TYPE_SGMII.
+>
+> Now take an SFP cage, or a PHY that switches host interface, such as a
+> 2.5G PHY moving between SGMII and 2500BASE-X. Could phylink pick
+> 2500BASE-X or USXGMII, and xpcs_config() then program a mode the SerDes
+> and MAC clocking can't carry?
+>
+> The same set is also copied into lpi_interfaces for EEE.
+>
+> The in-tree Photonicat board uses a 1G PHY with a fixed SGMII interface,
+> so it isn't affected.
+>
+> Could the RK3568 XPCS supported_interfaces be restricted, and
+> rk_select_pcs() return the PCS only for SGMII?
+
+The glue passes pcs-handle to xpcs_rk_create(), which uses the plain
+xpcs_create_mdiodev(). The XPCS core has no platform callback to narrow
+supported_interfaces, so the glue cannot filter the list cleanly.
+
+The only way I see to restrict it from the glue is to overwrite
+pcs->supported_interfaces (and possibly compat) after
+xpcs_create_mdiodev() returns. That reaches into the core's internal
+structure and I'm not sure maintainers would accept it, so I've left it
+out of this series for now. If there's a preferred way to express
+"this platform only supports SGMII" from a glue driver, I'm happy to
+use it.
+
+In practice the phy-mode is fixed in DT and the combphy is configured
+for PHY_TYPE_SGMII, so phylink will not negotiate into 2500BASE-X or
+USXGMII on this platform. The wide set is harmless here.
+
+> > @@ -1379,16 +1449,19 @@ static int rk_gmac_powerup(struct rk_priv_data =
+*bsp_priv)
+> >       if (ret)
+> >               return ret;
+> >
+> > +     ret =3D gmac_clk_enable(bsp_priv, true);
+> > +     if (ret)
+> > +             return ret;
+> > +
+>
+> [Severity: Medium]
+> This isn't a bug introduced by this patch, but the direct return here
+> only works if gmac_clk_enable() cleans up after itself. Does it?
+>
+> gmac_clk_enable() {
+>     ...
+>         ret =3D clk_bulk_prepare_enable(bsp_priv->num_clks,
+>                                       bsp_priv->clks);
+>         if (ret)
+>             return ret;
+>
+>         ret =3D clk_prepare_enable(bsp_priv->clk_phy);
+>         if (ret)
+>             return ret;
+>     ...
+> }
+>
+> If clk_prepare_enable(bsp_priv->clk_phy) fails, the bulk clocks stay
+> enabled and clk_enabled stays false.
+>
+> Every later gmac_clk_enable(bsp_priv, false) then returns early on the
+> clk_enabled check. That includes the new clk_disable label and
+> rk_gmac_powerdown(). Does this leak the enable counts of the bulk
+> clocks?
+>
+> This only applies with an integrated PHY, because clk_phy is NULL
+> otherwise.
+
+The clk_phy failure path was already fixed by a separate commit.
+
+> >       ret =3D rk_phy_powerup(bsp_priv);
+> > -     if (ret) {
+> > -             gmac_clk_enable(bsp_priv, false);
+> > -             return ret;
+> > -     }
+> > +     if (ret)
+> > +             goto clk_disable;
+> >
+> >       pm_runtime_get_sync(dev);
+> >
+> > @@ -1463,6 +1538,10 @@ static int rk_gmac_powerup(struct rk_priv_data *=
+bsp_priv)
+> >               bsp_priv->ops->integrated_phy_powerup(bsp_priv);
+> >
+> >       return 0;
+> > +
+> > +clk_disable:
+> > +     gmac_clk_enable(bsp_priv, false);
+> > +     return ret;
+> >  }
+>
+> [Severity: Medium]
+> This is a pre-existing issue, but rk_gmac_resume() throws away the error
+> that this path returns:
+>
+>     if (!device_may_wakeup(dev))
+>         rk_gmac_powerup(bsp_priv);
+>
+>     return 0;
+>
+> On the non-WoL resume path, a failure in rk_phy_powerup() takes the
+> clk_disable label, gates the GMAC clocks and returns an error. Nothing
+> sees that error.
+>
+> stmmac_resume() checks the plat->resume return value, but gets 0 here.
+> Can it then go on to MDIO and MAC/DMA setup with pclk_mac and aclk_mac
+> disabled?
+
+Pre-existing. The path that returns an error from rk_gmac_powerup() is
+the rk_phy_powerup() failure, which on RK3568 is the external PHY
+regulator. It's not related to SGMII or XPCS. I'll leave it for a
+separate fix.
+
+> > @@ -1602,6 +1681,17 @@ static int rk_gmac_probe(struct platform_device =
+*pdev)
+> >       plat_dat->suspend =3D rk_gmac_suspend;
+> >       plat_dat->resume =3D rk_gmac_resume;
+> >
+> > +     if (plat_dat->phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII) {
+> > +             /* SGMII clock always runs at 125 MHz */
+> > +             plat_dat->set_clk_tx_rate =3D NULL;
+> > +
+> > +             /* SGMII requires a PCS */
+> > +             plat_dat->default_an_inband =3D true;
+>
+> [Severity: Medium]
+> Does the commit message's explanation of the in-band vs out-of-band
+> problem match the code? It says:
+>
+>     Out-of-band mode does not work because the MAC would need to change
+>     the clock rate to 125/12.5/1.25 MHz for 1000/100/10 Mbps
+>     respectively, and the clock is fixed.
+>
+> The clk_tx_i comment in include/linux/stmmac.h and
+> stmmac_set_clk_tx_rate() both give 125/25/2.5 MHz for 1000/100/10.
+>
+> In stmmac_mac_link_up(), the negotiation mode is passed only to
+> plat->fix_mac_speed, which dwmac-rk doesn't set. The MAC speed
+> programming and the now-NULL set_clk_tx_rate call are the same in both
+> modes. The MAC therefore sees the same fixed 125 MHz clock whether
+> in-band or out-of-band is used.
+>
+> The difference between the modes seems to be on the XPCS side: AN in
+> xpcs_config_aneg_c37_sgmii(), versus the fixed BMCR write in
+> xpcs_link_up_sgmii_1000basex():
+>
+>     if (neg_mode =3D=3D PHYLINK_PCS_NEG_INBAND_ENABLED)
+>         return;
+>     ...
+>     ret =3D xpcs_write(xpcs, MDIO_MMD_VEND2, MII_BMCR,
+>                      mii_bmcr_encode_fixed(speed, duplex));
+>
+> The commit message also says that fixed-link nodes, and PHYs without
+> in-band support, can still end up in out-of-band SGMII. TX then works
+> but RX fails at 10/100.
+>
+> xpcs_inband_caps() returns this for SGMII:
+>
+>     case DW_AN_C37_SGMII:
+>     case DW_AN_C37_1000BASEX:
+>         return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
+>
+> So phylink will accept out-of-band mode, and the glue neither rejects
+> nor reports it. Should rk_gmac_probe() refuse, or at least warn about, a
+> fixed-link or out-of-band SGMII setup, rather than bring the link up
+> with RX not working?
+
+The out-of-band SGMII rejection cannot be implemented here: the XPCS
+core's xpcs_inband_caps() returns LINK_INBAND_DISABLE |
+LINK_INBAND_ENABLE for SGMII, and there is no platform callback for the
+glue to narrow that or to veto out-of-band mode. Phylink will therefore
+accept out-of-band SGMII and the link will come up with RX broken at
+10/100. That needs an XPCS core API, not a dwmac-rk change.
+
+No respin planned for this series.
+
+Coia
