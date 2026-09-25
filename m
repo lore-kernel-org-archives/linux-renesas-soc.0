@@ -1,92 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F774756CA;
-	Fri, 25 Sep 2026 12:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6146336495F
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 12:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790341012; cv=none; b=nSISq3vZVpYz1qKVR9Yfg2Z3+Iltj4/W9BZ6zZ4+g33bN5uUn/U6ZKZWchsZwlTDywIlbhPthcVXMyFlxtu3JNag/LJfxg2BhNZmYfNm3pEnMH7FCU95sAjltdKl/OS4m08X+0HhvG2894gXg7JWIoXPklyVPOIpczyugcFRMZc=
+	t=1790341091; cv=none; b=LVxD0Bmw4ZzxwAbg+1ePB6swYTdEzxxawkX0rjFcYKNPTtm2x6a3alk6/paYgWpiFRrl2ER4Vs7VTPvjFe/F+DQLfvJA1IJIHmJYdUqciNmaEtmNjpdziEblX9SkxpCslmaeuMWRWVbQmTqFPOCL21Q7TNme5r814eUc5+L0eQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790341012; c=relaxed/simple;
-	bh=AHSHaRam3VMD/yNqBolUcp4H09ueLegNu5acPLN9GTc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VUCgQu/C2AHH32dTtIibPLArX1SGIq7xHYkf2ow9q190UFZ64ot7ssqppW6NDoCDxp9EMiLClG92c93216lgedYJlaJj84sF9gstjeXTjxXqErvMqna8GnBlXY+HMR8oSGydOFoC2Vfo16z4rHVQ/oYzKkDIBxM5UUSO5L+eccE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ll1D5rD6; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ll1D5rD6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB721F000FF;
-	Fri, 25 Sep 2026 12:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790341011;
-	bh=+GdK6pvcgWilvifm77f5f7Er+eZFy0j70nbF6Poz82E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ll1D5rD6d6nXh+zcDHfaae/Nn9ZH6FS9TuD/WlOqmJRjzTXSjFnNq0Y7Nzl+uenV+
-	 VQvtFBChre6JQnUN8NBt7x2xJEN7Vamsam3rW/x78THHRKwtiGqR4BNqGK5bq6nIc3
-	 zkWVpJJdzy9Mt6cEbZQ47a/VRNd4samK+rxbf/46gPBKilHxQUSAC3Fe9blEbXG6Q5
-	 mxSenZp0xkNpM/T5HzTb0lbB5MVy9e+HXarGY7W2TfTxQoAjj1eZcf5ZQsarXee0Et
-	 0m6QSjA0Bz7W0o+QM4c666aoFMUZvj8YXGZIet2BSqKttiXo/v0chAD9WFezB7TzPW
-	 AS1DSqjQcpc3Q==
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 25 Sep 2026 14:56:35 +0200
-Subject: [PATCH v2 4/4] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
- ISP and IVC nodes
+	s=arc-20240116; t=1790341091; c=relaxed/simple;
+	bh=SNXrjUHLxaO4PIWLbvPnvyB48FFWSNE4zj+UVTQoMOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pz/6e38lDv8QQ6UE4uYvwpz4jv3XbCxXgVAWYI1SAnyR6vxY/Nk5e/YTPXv/z9zjWwGDjX62gpWXTylZG5rxkGy5MXpUjNH9q4pk6OVb9mARnQj86MWrJHzZlY42sRHj/VKme1WtoYHLmUwClGmhpqnsoEniEb1ZjJDpuGy0ANM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-78fb1fb9508so1622680137.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 05:58:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790341088; x=1790945888;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=iikrWSUlQodloxnitQUQlaOsbbx0iKNTngyqMd+wIHM=;
+        b=aqqxfMUfr0dwSD8GfllAZc/QA8CDpSzxbm+EZV8jgeim9Nj+Fy1WVv4bLjYS4gILrh
+         MoVKZLlXp+tSFxbZsGSfU3kPVqARrB8dPIQf0iyQ19nJWeGRGpViv1t1hmrkKpN1bhfo
+         oIuc7HVJHDdD+yg3A2hqK7xT/LKjtRSB9hSRzM1CAvDiJ0b/mIfI8aTRcgOfVolpC5Uh
+         83qqt8WZ8S7pjYstUrqW9VcSlvwVJAYaNbOLlfa7DoE+D+MbZazZ/gcSIL90eZAb9smM
+         Q/E/oSM/gB/gK15rtK0bn0r48VYSmX0SF3Cnzr0rSvhZVCY/QvP1Yp+3R7kavQUoXfnI
+         asRQ==
+X-Forwarded-Encrypted: i=1; AKwUvByPZELIRo1dkCggkPVKIhWoNQX9d5Zm/myqZ1NI80iZZNDPgTKw2wPAlsdOY4VKdo/i2YcSh/I+4mVMLorWNVnJsQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mCB2eOwHkSk+Ocsk8HcE83gYLOFLyWKJF0G3x+t/sRlX1CkU5p
+	tavHavX8oQlZSVEq1QyTkp8xg/K6oeKALSqStHLx8/QjSGiKBLLr6n2vUmaBTDoe
+X-Gm-Gg: AYBFou3cw/4sOT6EY+XVJEX/Xf+vSrpdMmjvT9S4cWU3+GySmFZ5TKGvOOQSODTA2Kv
+	55LfsOD2CYNavYoApY9HTfdgwOIYgDYoOInVN6bbV7TQI1RwmyWQS4JK/Uu5kaSVc3EUUORqtfD
+	o6AnbLZDWyfh7POI+A0nbi4vAr2uinep5geIWXjM9bAyDcDe0SSQwkhJdVwN4f/RSDiUwgbV9bY
+	GzkEgaXyVzMjVYB5S6cMQe+FT7cVNfIu4WQCPL/impVVMsqeIJvqn/JxxMBrWy95nYfSye8QFxM
+	+oiXR3fKYtgCgsP+1RviC8ncTosGTaqFYAvKKN/AUocUsI6wCUujDRxu+T9JCMFfwQt1Afe2URE
+	1ZnnsL6MNWzOFNCpwuanv/112Sq/wJzS/3W5oLOny0t8R+6/+XUroxGSBKrzE8ZRnLMQ9E+UBMD
+	B9mee4KO1vt7x6Bteslz5VAH0IlrpQFReDCWpwhi39nhSUrMiabFuv3k3cgSoc/2/xBQdXMf0/H
+	lK92/1Fdlox/Jq8a/mKv2T8Zop/bART7wfW
+X-Received: by 2002:a67:e001:0:20b0:7a4:3400:7e9b with SMTP id ada2fe7eead31-7af1d09eademr1776947137.13.1790341088234;
+        Fri, 25 Sep 2026 05:58:08 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9861afee2d2sm2465648241.6.2026.09.25.05.58.08
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Sep 2026 05:58:08 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-982838c4cccso586240241.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 05:58:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBza8zCUS6+rlyJ4EjED/0aZItfb0jyE7fh+7SMFOWXurvGbe+oX5XnmDS/Ztjl6Yk2+TODoJknqxqGfcuxgz2h3Dg==@vger.kernel.org
+X-Received: by 2002:a05:6102:a145:b0:78f:fee6:832 with SMTP id
+ ada2fe7eead31-7af1cea4a54mr1503499137.12.1790341087879; Fri, 25 Sep 2026
+ 05:58:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260925-mali-c55-renesas-dts-v2-4-69f728a474a2@kernel.org>
-References: <20260925-mali-c55-renesas-dts-v2-0-69f728a474a2@kernel.org>
-In-Reply-To: <20260925-mali-c55-renesas-dts-v2-0-69f728a474a2@kernel.org>
-To: Daniel Scally <dan.scally@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>
-X-Mailer: b4 0.16.0
+References: <20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com>
+ <20260924-paul-v7-3-rc1-edac-v3-1-bd8054a5b180@bootlin.com>
+ <arZpZolRwdU8zh6O@shikoro> <8733uxlcl1.fsf@bootlin.com>
+In-Reply-To: <8733uxlcl1.fsf@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 Sep 2026 14:57:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUeCH9SbCr70syV0hVSqD1ccjVptMHoY-6aaEhW_ine_Q@mail.gmail.com>
+X-Gm-Features: AclHuK-YV8P6qGPlYAimFvYOFx6QV9kkt9w-v-Qt2g3Qun14B0iXjB41Jl3A5uU
+Message-ID: <CAMuHMdUeCH9SbCr70syV0hVSqD1ccjVptMHoY-6aaEhW_ine_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: edac: cdns,ddr-edac: add Cadence DDR
+ EDAC binding
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Paul Louvel <paul.louvel@bootlin.com>, 
+	Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Herve Codina <herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Daniel Scally <dan.scally@ideasonboard.com>
+Hi Miqu=C3=A8l,
 
-Add nodes to devicetree enabling the ISP and IVC that are found on
-the RZ/V2H(P) SoC.
+On Fri, 25 Sept 2026 at 14:50, Miquel Raynal <miquel.raynal@bootlin.com> wr=
+ote:
+> > But one thing came to my attention just now which needs fixing:
+> >
+> >> +    items:
+> >> +      - const: renesas,r9a06g032-ddr-edac # RZ/N1D
+> >> +      - const: renesas,rzn1-ddr-edac      # RZ/N1
+> >
+> > We don't need a family compatible. Only N1D has a DDR controller.
+>
+> This is true, but from my experience with this platform, Geert used to
+> request both. I'm fine exposing only one of them, but I explicitly asked
+> Paul to put them both to mimic the existing bindings and keep some kind
+> of uniformity. I'm fine either ways, but before we go through that
+> iteration, Geert, would you mind confirming your preferences?
 
-[Rebase onto v7.3-rc1 and sort the board overrides by label.
- - Linus Walleij]
+Well, if only RZ/N1D has the DDR controller, there is not much point in
+adding a family-specific compatible value.  According to renesas.com,
+RZ/N1x is obsolete, so no new family members will arrive.
 
-Assisted-by: LLM
-Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-Signed-off-by: Linus Walleij <linusw@kernel.org>
----
- arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 637fc92dcc26..74b75be599ae 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -305,6 +305,14 @@ versa3: clock-generator@69 {
- 	};
- };
- 
-+&isp {
-+	status = "okay";
-+};
-+
-+&ivc {
-+	status = "okay";
-+};
-+
- &mdio0 {
- 	phy0: ethernet-phy@0 {
- 		compatible = "ethernet-phy-id0022.1640";
+                        Geert
 
--- 
-2.55.0
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
