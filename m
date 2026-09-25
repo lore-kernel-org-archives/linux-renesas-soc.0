@@ -1,101 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0075449B454
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 13:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC41149DB8D;
+	Fri, 25 Sep 2026 13:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790341610; cv=none; b=n8/Nxx+l6DLARBP7XFDY7+PLWJB0f7H4CdBJNV3rzvTQPQOkJbzd/dzBrv8s4dHuHDEbnv8nx2mN6UsXZoZHcvmRitbPARMvD17tHZxT82g6g+Bav0j46EoweShNmeXFxIO2j9LK/YT18PIm1RhO75Z7sdgp8TOY2bZxfIBsZ0E=
+	t=1790341616; cv=none; b=CDINq4hKg2JHh8fSs7D+Y2F/xLdN+EujqvEmv+SanxOruZHT9bTjVDdH5x/q96EPJJVgNDgTbVyYofyyxBsZz1+FzENcHZi+6cNiMDfAFAHrcclwXFOmGeCOIfIqo78xx+m3lAQQoNPpsfyPQtf6aj4o7nbKoZH4kfXDaDsXsQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790341610; c=relaxed/simple;
-	bh=p7SRRthxa+/+KaCVwpowLzFXgidOlmApik7lGDIYm3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KFnhsXLrQOFpuQRR+mFfSFUB6PS+9Qs0EbBSlUGCABZ7pWP7bsLDoM8RqTqGkhi8LDnHe6JKKQeEeMg+cV0HT7fVFGlPAH/HWQRz03CbPv1r0zwKYgK5ib4+A1bgtOjb6FuIXaWAJw5QYlzjQUmkxIMJzZPhXtmUOc1VouspK8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nxaf1gaD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790341616; c=relaxed/simple;
+	bh=oIr3KPdMNnlz8FeLHazRsNWMMFqBw0VgTMa0PhL8Cuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0AXBW4Q88rSsCcCPbEO6FW1tvcyJe5rZjESpRTeW0VsDnwBZ3ezqIKII4N+0jTHeN3TH+4TOujDVa4A/pjekp/xvizXi2Y6e0+mSlxkPbtEl10j4BHqNmmnD6Ph43FG2+EHKzwlRCbG/d+6uOR73px4EYit/pRka/SdStIlvF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPGETY43; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nxaf1gaD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4CEF1F0089E
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 13:06:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPGETY43"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEF21F000FF;
+	Fri, 25 Sep 2026 13:06:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790341608;
-	bh=mItZqQbaW3/QDrUT+nD5nQHdQY4GfBGSvPlx5RFgiFo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Nxaf1gaDTrGz+5/iPzBajcMeo0pv65XFtdZdr8i99ADdQE2153bwHURdn1/F2JBrr
-	 x11xLaxDvXBUx81HVliD3FXmVH3gJ42OAaYgI3leqUJeFnuLeIV/aMLIyFbSbUznnC
-	 YpLvZW3ANPWmD+RjYJzg+dFz3ebrSMyOmXWdR8GLIo3tLTNwm1mrfJqO6fnria+pYX
-	 eloRaWF9v0VYNJAiGGEY/8UCiIrsGqNxacQPew9vjXo4P75agW4PROAXpbQ36D+GEV
-	 ilJqf2J2ETSpbnS1rHeDo3g7LpeauOHF9PBcpvpqwy/JQov+mI9IjbWHqcY7Znz+MB
-	 zHI34S2jLFHhg==
-Received: by mail-oo2-f37.google.com with SMTP id 46e09a7af769-8137b129131so521011a34.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2026 06:06:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByPGrxk9mWe8mVQDTVYXMUCZU+EGzkKn1PtUDsXBq2BpWNgtBIi8WACDlVkB1CxhhBaFP+uJK0uZZEY8ElnsswJQA==@vger.kernel.org
-X-Gm-Message-State: AFuF++lmZT+i1t3Hw80M/kOT0BY3EW36B8fFbg8oJ9nQi+jYUTvnTyjx
-	CglPe5g70CUJ3KiCsRbnH/DvsgfFiRW+/a9RDERj8NkZch7cUDVzO+vzaW7Rx1j89Y01NryAd/e
-	5+/Y/Iz3Zd/5UmJFXegSLpPPA9cNL8yA=
-X-Received: by 2002:a05:6820:814:b0:6be:4117:ae1e with SMTP id
- 006d021491bc7-6d43f2c78e2mr5547333eaf.14.1790341608020; Fri, 25 Sep 2026
- 06:06:48 -0700 (PDT)
+	s=k20260515; t=1790341614;
+	bh=UuEiudtFZaUQYnaNOodb7Jda4VXpTSORWOacwuLmv9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RPGETY43Wv0o24mgk7BFYpS4/dkBeuuAOHUSOIZS8msT/25ShDQWTroQFvXSkJOqh
+	 X3wmrl8b6D5wFsl98tFQQdp34Bfjcr4cANlm9RTs/yPFs04Dzvx6XLm1kJ2sPP4hbj
+	 NuIRdj46A74AcKwu29EKpUaO+sNvKJAWfqhCTB7dqoOU7AlzcySD4VJw7GpZPDRzwK
+	 9q3gA3M9rKvMF0TwHtbOm8IFWJawtoMyPNPfM0qpJhdVj8u6SV8Lxmdm2ENOtaOiu1
+	 tt8+1VO2coXM2nDLAKJGqsC2Ntz4dYuR0Twza0pcgXk8tenhhB1qQ8ONYncW6YtxUq
+	 TtZ3RcmngvtJQ==
+Date: Fri, 25 Sep 2026 15:06:51 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Colin Huang <u8813345@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Grant Peltier <grant.peltier.jg@renesas.com>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, colin.huang2@amd.com
+Subject: Re: [PATCH v3 2/2] hwmon: (pmbus/isl68137): Add Renesas RAA229639
+ and RAA229640
+Message-ID: <20260925-hysterical-otter-of-courage-bc6ab0@quoll>
+References: <20260921-add-raa229639-and-raa229640-v3-0-b104ee8a70b2@gmail.com>
+ <20260921-add-raa229639-and-raa229640-v3-2-b104ee8a70b2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260925-mali-c55-renesas-dts-v2-0-69f728a474a2@kernel.org> <20260925-mali-c55-renesas-dts-v2-4-69f728a474a2@kernel.org>
-In-Reply-To: <20260925-mali-c55-renesas-dts-v2-4-69f728a474a2@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 25 Sep 2026 15:06:34 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnaOrdu4RPAG=swg21VU3OwqK3qLibNsccM8s4Rkcbo-w@mail.gmail.com>
-X-Gm-Features: AclHuK_l7bzXHW17FB1VP2a3I-hXrBCVNV6beJF5K2X0xy55AbAGagok_zP2UHw
-Message-ID: <CAD++jLnaOrdu4RPAG=swg21VU3OwqK3qLibNsccM8s4Rkcbo-w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
- ISP and IVC nodes
-To: Daniel Scally <dan.scally@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260921-add-raa229639-and-raa229640-v3-2-b104ee8a70b2@gmail.com>
 
-On Fri, Sep 25, 2026 at 2:56=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
-rote:
-On Fri, Sep 25, 2026 at 11:30=E2=80=AFAM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tue, Sep 22, 2026 at 03:34:01PM +0200, Linus Walleij wrote:
+On Mon, Sep 21, 2026 at 03:16:36PM +0800, Colin Huang wrote:
+> Add support for the Renesas RAA229639 and RAA229640 PMBus
+> voltage regulator devices.
+> 
+> Both devices are supported by the existing raa_dmpvr2_2rail_nontc
+> driver variant, so no functional changes are required beyond
+> adding the corresponding device IDs and OF match entries.
+> 
+> Signed-off-by: Colin Huang <u8813345@gmail.com>
+> ---
+>  drivers/hwmon/pmbus/isl68137.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
+> index 2f7f825bfb69..15b4e3f15f11 100644
+> --- a/drivers/hwmon/pmbus/isl68137.c
+> +++ b/drivers/hwmon/pmbus/isl68137.c
+> @@ -456,6 +456,8 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
+>  	{ .name = "raa229004", .driver_data = raa_dmpvr2_2rail },
+>  	{ .name = "raa229141", .driver_data = raa_dmpvr2_2rail_pmbus },
+>  	{ .name = "raa229621", .driver_data = raa_dmpvr2_2rail },
+> +	{ .name = "raa229639", .driver_data = raa_dmpvr2_2rail_nontc },
+> +	{ .name = "raa229640", .driver_data = raa_dmpvr2_2rail_nontc },
 
-> > From: Daniel Scally <dan.scally@ideasonboard.com>
-> >
-> > Add nodes to devicetree enabling the ISP and IVC that are found on
-> > the RZ/V2H(P) SoC.
-> >
-> > [Rebase onto v7.3-rc1 and sort the board overrides by label.
-> >  - Linus Walleij]
->
-> Geert commented on the commit message in the original series, that
-> comment seems to have been ignored.
+The entire point of fallback is to avoid this change. Why do you need
+this?
 
-Hm I managed to send out the v2 series before re-checking the mailing
-list for more comments, sorry :(
+Best regards,
+Krzysztof
 
-Maybe Geert can augment when applying, else I can send a v3.
-
-> > Assisted-by: LLM
->
-> This gives the impression that Dan's original patch was LLM-assisted,
-> which wasn't the case.
-
-This can also be dropped when applying.
-
-I am kind of over-reporting LLM use because I absolutely don't want
-people to get wrong information here, and the tag is a kind of
-all-encompassing.
-
-What I actually use it for is pretty silly: I use an LLM to query the
-datasheets for information, the rest is mostly done interactively,
-but well, it was used, like I use the evince PDF reader but that
-we don't have an Assisted-by tag for.
-
-Yours,
-Linus Walleij
