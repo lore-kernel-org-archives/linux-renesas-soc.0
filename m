@@ -1,41 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEF836B915;
-	Fri, 25 Sep 2026 08:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77643D9DDF;
+	Fri, 25 Sep 2026 08:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790326428; cv=none; b=LwX+MxaL5Ka3WT3Fj+ZxJjY8P6ijrpXVZ7Zgs7lmX5sY10DeulYZmrnpYh28P3UFo7rFQ7+HWJA/nEQY7VeuzWQD+II+Q3ZpvD+9dl8CiPRygZYRRz5ugnBh8F3l3+gDww1Kxlqt5d8P+SQUARoqAPHodQAf5FNKf4FE7++cBbA=
+	t=1790326586; cv=none; b=GSbqt7DTpCa+fOqnsX/RjSapPd+s2RHrhwj66Hmhhzr1Z0txct4c50vaV6/Trq8hYBlSqzy2LsArMIY6W0NEnran0dqAoe+dtSpOSK+dMC8iPt5AeYx3lLql5ZSPlq+qTMQMSDLvFrklH7dQ2MQTT9B9OrM3HAMrM31prnrs3aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790326428; c=relaxed/simple;
-	bh=3JA2AcXtvCo9mRvRvJ0uJv4Xssg70F4KtS0kS3YkXj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dHq3aKTc7CIIW5EXPrDvMpGcJ+/Xk7YCG2OaTuz1AJnGJ/VVOreNoZkrPPFz7IH4V8cDZJLJPoeL951cjZJq+F5rtf/OJHBefANJ6WfMNooqV7uRmzOCzZ7xEh5F+efVOcVwj3BZp4G9ZQ6kxjir09bO47h4Jf2y+Iszcr9Z8E4=
+	s=arc-20240116; t=1790326586; c=relaxed/simple;
+	bh=zlISlymVjfAiFGaKMJcWlDXI38cN69NpnzbCz/F4ytM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oiQDDHUkYZOODLxMhGsvtUSjzj4+O5fMoHnud2mIrxRCg8V0elESbhUNcNaCFjPFHA715R9g/8UB2U5JYhO9xGXS5nCjONlAs8kNKW8nzu+xbhuntlaO7wA886IAMGy7Ld5d4x6DzGz3z1rr5RJi7pPM1m9AO0d/D5blWq8xnjg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A6E61F00893;
-	Fri, 25 Sep 2026 08:53:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBED31F000FF;
+	Fri, 25 Sep 2026 08:56:22 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>
+	Jerome Brunet <jbrunet+clk@baylibre.com>
 Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a78000: Add MSIOF nodes
-Date: Fri, 25 Sep 2026 10:53:30 +0200
-Message-ID: <10e85f27b8ea4342f6f19a7c9e68fd641e58b54a.1790325809.git.geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a78000: Add SGASYNCD8_PERW_BUS
+Date: Fri, 25 Sep 2026 10:56:14 +0200
+Message-ID: <8c4912ada9c3d6776ae64d3896ffc1f45a98c51a.1790326477.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1790325809.git.geert+renesas@glider.be>
-References: <cover.1790325809.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -44,129 +33,46 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device nodes for the Clock-Synchronized Serial Interfaces with FIFO
-(MSIOF) on the Renesas R-Car X5H (R8A78000) SoC.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Add support for the SGASYNCD8_PERW_BUS clock, which is a fixed 133 MHz
+clock serving as the functional clock parent for I2C cores 1 to 8.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a78000.dtsi | 104 ++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
+To be queued in renesas-clk for v7.4.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a78000.dtsi b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-index 9a07753b221541ed..d75a9e43f772f871 100644
---- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-@@ -1000,6 +1000,110 @@ mdlc_aon: system-controller@c1338000 {
- 			bootph-all;
- 		};
+ drivers/clk/renesas/r8a78000-cpg.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a78000-cpg.c
+index 7946f9d0b423def1..b8024e76743ea53d 100644
+--- a/drivers/clk/renesas/r8a78000-cpg.c
++++ b/drivers/clk/renesas/r8a78000-cpg.c
+@@ -23,12 +23,14 @@ struct clk_map {
  
-+		msiof0: spi@c1700000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1700000 0 0x100>;
-+			interrupts = <GIC_ESPI 744 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x50>;
-+			resets = <&mdlc_scp 0x50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@c1710000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1710000 0 0x100>;
-+			interrupts = <GIC_ESPI 745 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x51>;
-+			resets = <&mdlc_scp 0x51>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@c1720000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1720000 0 0x100>;
-+			interrupts = <GIC_ESPI 746 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x52>;
-+			resets = <&mdlc_scp 0x52>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@c1730000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc1730000 0 0x100>;
-+			interrupts = <GIC_ESPI 747 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSO_SCP_MAIN>;
-+			power-domains = <&mdlc_scp R8A78000_MDLC_PD_SCP 0x53>;
-+			resets = <&mdlc_scp 0x53>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof4: spi@c0600000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0600000 0 0x100>;
-+			interrupts = <GIC_ESPI 18 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x4f>;
-+			resets = <&mdlc_perw 0x4f>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof5: spi@c0608000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0608000 0 0x100>;
-+			interrupts = <GIC_ESPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x50>;
-+			resets = <&mdlc_perw 0x50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof6: spi@c0610000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0610000 0 0x100>;
-+			interrupts = <GIC_ESPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x51>;
-+			resets = <&mdlc_perw 0x51>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof7: spi@c0618000 {
-+			compatible = "renesas,msiof-r8a78000",
-+				     "renesas,rcar-gen5-msiof";
-+			reg = <0 0xc0618000 0 0x100>;
-+			interrupts = <GIC_ESPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg R8A78000_CPG_MSOCK_PERW_BUS>;
-+			power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x52>;
-+			resets = <&mdlc_perw 0x52>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		mdlc_cmnn: system-controller@ca410000 {
- 			compatible = "renesas,r8a78000-mdlc";
- 			reg = <0 0xca410000 0 0x1000>;
+ enum fixed_clk {
+ 	FIXED_CLK_66M,
++	FIXED_CLK_133M,
+ 	FIXED_CLK_266M,
+ 	NUM_FIXED_CLKS
+ };
+ 
+ static const unsigned long fixed_clk_rates[NUM_FIXED_CLKS] = {
+ 	[FIXED_CLK_66M] = 66666000,
++	[FIXED_CLK_133M] = 133330000,
+ 	[FIXED_CLK_266M] = 266660000,
+ };
+ 
+@@ -140,6 +142,7 @@ static int r8a78000_cpg_probe(struct platform_device *pdev)
+ 
+ static const struct clk_map r8a78000_cpg_default[] = {
+ 	{ R8A78000_CPG_SGASYNCD4_PERW_BUS,	FIXED_CLK(266M) },
++	{ R8A78000_CPG_SGASYNCD8_PERW_BUS,	FIXED_CLK(133M) },
+ 	{ R8A78000_CPG_SGASYNCD16_PERW_BUS,	FIXED_CLK(66M) },
+ 	{ -1 }
+ };
 -- 
 2.43.0
 
