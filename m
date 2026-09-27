@@ -1,111 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108343B83F9;
-	Sun, 27 Sep 2026 19:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F9635A39D;
+	Sun, 27 Sep 2026 20:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790536819; cv=none; b=Rh2cq0FrMSVi6qbIECu+Qzd2IgzH3mLQ32p3ycHK45hS4sYe8GbScSCgjoJbmj2zQ45r8poxTHGXnmTGKb9La+s4d6Zt3qaD6/qq7VQQTPP7yy/d7DB5jXfXv6QQ1u/gA0i9QdcH8ZBKE5y1etSF4YZNAsKlPT7N3i1X+NJQF54=
+	t=1790539207; cv=none; b=iy26daYA2b70DDnXokLGqhxf8hVxHIUyyhzIU1KlBJmZFE6Zum3heF574OFaXw7/z9sjnvmGDuv66KAsd1Pah1zX/yb9H73zQbhYoyendTl6xfi17f9h3o+URUapu9wiqi+QLfCQUvDwSv8Iz5L6fCmff6VlWKw6xCqETgrHVcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790536819; c=relaxed/simple;
-	bh=Bi+G4xOm0CuAafK9NtXgYMH/kIkrDhJstHc8hRC/qdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qd5tzdl++5MHjE48OP4GI0aCiAZpEuNyJYwESn6WQtpfrtcqrxGUuIqKnZwQftC6mOgwwu5wQwHjkSwKt0Exgmeix6BZzmvf9JbvUd0bshmbJrp938RW3sDUhFson9boprxx3ugL6Y13IlkYrV8qNMIP2wQ4FhMrjPdK081MpNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNLFf+dg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790539207; c=relaxed/simple;
+	bh=I5GmwhcR9dEV4MtTDUzhSc57TT6erNzKqlpqSHAuWLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=POlZLTwHUHyDIevwa5nn4+Yk6C4Zsqhgzrmx1DCiFKYO9zqvvgN+BgnG4Cazr4XonKMgbgJWRJ6+r5Owfk1OS+aJbbgwArIGNwRmNcqsISuAHtVPxpN3HxKsmi3sTTbHw+eIul6TLpopSx3juj4LmwFwRS6BNvq0hgRYnQLg4GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OTBZXL7R; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNLFf+dg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1DC1F000FF;
-	Sun, 27 Sep 2026 19:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790536817;
-	bh=eqRtTpcMaqlYPCPA8/lOkTh+UCeNEAv+LhDVEoTL/UQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=KNLFf+dgiw/Xm0dZqQibNAiqjVZAcj7qBQBlt7IM1WbYs8NCHOXEw9KpeatVEdJUJ
-	 VT+nU4AD/QfuAoSPXATq0jAfUzknRze8oyKf7cmlZB/V9A62cHRWMfBHM/mnOE8X3S
-	 w98mhSnpu3mcxtaqwlo8A8LDdj2XZ1Z/wdpF+MyTs7wdAEvC0exvd0j7hM81ysY4vg
-	 PNXueinVc2cl03UhSA72Jg8jkb2Qdics3Crd3x3zuxu/FaYuhFhOlT31TeCyZ2m2QH
-	 Yrg58ABF1x+lwvbcjyYDEjXxyGMc03rtvO8rqEt43WCgIJblqcUzcT8M637pUE13Ge
-	 NRrnehj1QpwMw==
-Date: Sun, 27 Sep 2026 19:06:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel
- Lezcano <daniel.lezcano@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>,
- Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v3 6/8] iio: adc: rzg2l_adc: Rename num_channels to
- max_channels
-Message-ID: <20260927190615.30b3be49@jic23-hlaptop>
-In-Reply-To: <CAMuHMdVbyktVBAwBh=LoARWHHmb_FrF+omeDvNdR76uxus3mPA@mail.gmail.com>
-References: <20260922042707.116378-1-biju.das.jz@bp.renesas.com>
-	<20260922042707.116378-7-biju.das.jz@bp.renesas.com>
-	<CAMuHMdVbyktVBAwBh=LoARWHHmb_FrF+omeDvNdR76uxus3mPA@mail.gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OTBZXL7R"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4htFf44GRbzMlrg;
+	Sun, 27 Sep 2026 21:59:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1790539196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S3GpgvsWKyshpzVFnG9ZkXrNBlSawI5/txD9KcqJ8SE=;
+	b=OTBZXL7RH1YysOqlopuUr0xIA2u7qMmsR/0tKJ+kMyAcD0f6d7sr0fC1Z6QRG0MHp7rYZO
+	twUpIDxcEmHqFl0Q81wRXsgBKiJ0eFjBbHyekHA/ab86c1y+Hc8K70FI8NsUPDJR/CIdL1
+	GBuOB5s+hbzVOXVU+CFP8kiwP4rGa8vnRTmSgdNtrajCq0aJdYSjBEMLtufZkzLjGWqZFw
+	+Pud2xcM59cXqdshafivTLeKyC+3ZzFMNoblLeNJprKyv9PorbPGP2vo19cnk8LUHR6eHw
+	tIJYjH9sQJbpdVweCLmj1AxLNz7+UDtVj4OkFrhBMR7dopc0AdE5qYRJCiyb6w==
+Message-ID: <badcd2d5-7d61-426a-86d6-000043a6aa93@mailbox.org>
+Date: Sun, 27 Sep 2026 21:59:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH 02/11] PCI: rcar-gen4: Drop the APP-based link_up check
+To: Koichiro Den <den@valinux.co.jp>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+ Niklas Cassel <cassel@kernel.org>, Wilfred Mallawa
+ <wilfred.mallawa@wdc.com>, Serge Semin <fancer.lancer@gmail.com>,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260918032038.2216471-1-den@valinux.co.jp>
+ <20260918032038.2216471-3-den@valinux.co.jp>
+ <c2807afc-3e69-4744-8588-20f60839a603@mailbox.org>
+ <4peziifkgyfpglfl4jtyvcxqht2yo4r4bswmkweicpxdf45ejc@jxbqgurozlft>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <4peziifkgyfpglfl4jtyvcxqht2yo4r4bswmkweicpxdf45ejc@jxbqgurozlft>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: nypqomd6k5cuq5i8h1cykuee7hg4apcs
+X-MBO-RS-ID: 46d6c11dbd740c7fa7f
 
-On Tue, 22 Sep 2026 16:33:51 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On 9/23/26 4:56 PM, Koichiro Den wrote:
 
-> Hi Biju,
-> 
-> Thanks for your patch!
-> 
-> On Tue, 22 Sept 2026 at 06:28, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Rename the num_channels member of struct rzg2l_adc_hw_params to
-> > max_channels, as it represents the maximum channel supported by  
-> 
-> ... maximum number of channels...
-> 
-> "the maximum channel" (aka singular "max_channel") would be equal to
-> the maximum number of channels minus one.
+Hello Den-san,
 
-Ah. I just looked at v4 and realised I'd not been paying attention.
-The number isn't the maximum number of channels because it's a sparse
-set for the new part being added.  It is the oddity of maximum channel
-number and as such.  Ah well. I think at this stage this distinction
-doesn't really matter.
+>>> @@ -298,7 +285,6 @@ static int rcar_gen4_pcie_get_resources(struct rcar_gen4_pcie *rcar)
+>>>    static const struct dw_pcie_ops dw_pcie_ops = {
+>>>    	.start_link = rcar_gen4_pcie_start_link,
+>>>    	.stop_link = rcar_gen4_pcie_stop_link,
+>>> -	.link_up = rcar_gen4_pcie_link_up,
+>>>    };
+>>>    static struct rcar_gen4_pcie *rcar_gen4_pcie_alloc(struct platform_device *pdev)
+>>
+>> Can we include some form of the draft patch below, so the S4 Reference
+>> Manual rev.1.40 , page 1564 , Figure 104.5 Initial Setting of PCIEC ,
+>> bottommost diamond in the figure (smlh_link_up and rdlh_link_up = 1 test),
+>> would still be fulfilled, and the initialization code in the driver would
+>> not diverge from the initialization sequence listed in the reference manual
+>> ? What do you think ?
+> 
+> If always relying on the PORT_DEBUG1 check instead of the SMLH/RDLH check does
+> not introduce any regressions, I'd personally prefer to keep patch 2 as-is
+> because it keeps the code simpler. We could just add a comment noting that this
+> link-up check diverges from Figure 104.5.
 
-Jonathan
+I think the SMLH/RDLH does behave slightly differently, because those 
+SMLH/RDLH bits are set and latched in, and they have to be explicitly 
+cleared. The DEBUG1 bits report the current state of the link, which 
+might (?) be susceptible to bouncing (link going out and down in a short 
+window, but ultimately being up) ? I am not entirely sure whether that 
+might pose a problem or not.
 
-> 
-> > the ADC hardware rather than a count of channels currently in use.
-> >
-> > No functional change intended.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>  
-> 
-> > --- a/drivers/iio/adc/rzg2l_adc.c
-> > +++ b/drivers/iio/adc/rzg2l_adc.c
-> > @@ -62,7 +62,7 @@
-> >   * @adsmp_mask: ADC sampling period mask (see ADM3 register)
-> >   * @adint_inten_mask: conversion end interrupt mask (see ADINT register)
-> >   * @default_adcmp: default ADC cmp (see ADM3 register)
-> > - * @num_channels: number of supported channels
-> > + * @max_channels: the maximum channel for the ADC  
-> 
-> "maximum number of channels", to avoid confusion.
-> 
-> >   * @adivc: specifies if ADVIC register is available
-> >   */
-> >  struct rzg2l_adc_hw_params {  
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+> That said, I agree that in general we should follow the R-Car reference manual
+> where possible, and your draft makes sense for that purpose. If we go that way,
+> I have one question: would we need a polling loop with a timeout
+> (PCIE_LINK_WAIT_MAX_RETRIES * PCIE_LINK_WAIT_SLEEP_MS) in
+> rcar_gen4_pcie_start_link(), similar to dw_pcie_wait_for_link()?
 
+This is a good point, and I think we probably shouldn't do it this way, 
+because we can reuse the DWC core code for that purpose.
+
+How about extending the .link_up callback, and check both the SMLH/RDLH 
+bits there (to fulfill the datasheet compliance, dw_pcie_start_link() is 
+always followed by dw_pcie_wait_for_link() which calls the .link_up() 
+callback) and the DEBUG1 bits (to make sure we check the current state 
+of the link) ?
+
+That should cover all our concerns (datasheet compliance, DEBUG1 current 
+state of link check, polling), shouldn't it ?
+
+> P.S. I'll rebase v2 onto the latest pci/controller/dwc-rcar-gen4.
+
+Thank you, and I apologize for the inconvenience.
+
+-- 
+Best regards,
+Marek Vasut
