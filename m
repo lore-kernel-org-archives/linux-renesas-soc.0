@@ -1,146 +1,167 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05968EADC;
-	Sun, 27 Sep 2026 22:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790548673; cv=none; b=TbHyBaJGxVnGarDnnCzD3Lk1IHH7Z6WVS8aKrQu3KoSsX9sHBrdrdG8692ucGkDgeR+pcECaue5dKnHTKNW3SpNRpHAL0RoYAPXC615lQnW96GN7IpB1YDlCguolqVg9es8zLf0rSgXCODyMfxdnSKHSvSVlOV6iWimdP2kUwmE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790548673; c=relaxed/simple;
-	bh=N67NUZKb1HwXZygj5d6vUkNwwcymjhaIuEZz990ku2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U1feoYHLVdbW7ZA0MUvj5MI0uZuZkA3dj6elX8Kx2BVGBCulXj7Qn7sTJ91cWpoE2tYrah6bNfKJR8fzbYfdYwvmiXu0aMq8PQaNyctwXdmjTlC9YRUCAmlHeSJxUke64xIU80l7DaGI+jY5LfBENblMOlK+OkMmGY3tBo15oJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DplMAnkY; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA38B2EEE86
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 27 Sep 2026 23:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790550070; cv=pass; b=UBuKlw5wMisXJ6GSZKbWvPzlkNL4tNVrmdc6ArHg5ZUHQ95oOUYX29CDdJZ2hVBulJN6mbuIxbHUw27qlldzzUjL1ZJI/1zCQPdjeVzYU5WiYRKCFPCZT1IkZbCSfJMEX7d59yR3/mxn4NFkEtscZC71PJmogiiyLGCiU3LBOd4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790550070; c=relaxed/simple;
+	bh=JCpwn/WWICwDSoLBnOOTTp6gTS0SfU3IsgvUz7VJvnI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ayUZihYgfOz+PGWNPaFwN6EfGAfceu90kU50Kwsw4fN9IuyuxK8aQPVLTEEbwcFDJPiUOZ2pl2OX/G8/zD2zhn+jBsFuTePUlAru/WYuEBSoXgcsY4BnWVaY3LOdaVO3wSMDj2jFye9yJRUMq8f7HVDpdtssxW4SE/biIvIzs7U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InaRM3Pg; arc=pass smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DplMAnkY"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4htK8C6rvwzKp3c;
-	Mon, 28 Sep 2026 00:37:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1790548668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H6/mirp4Bz9bB7BY3nprZ6AZkmHJzy7o7ZyVgN0DDnk=;
-	b=DplMAnkYLUJkFWf2zKvWscayxHIfIB1ByGo1yiYRDfGdQFaYqmAf7JlyuHq+R6HJm03kry
-	rdRR7mIJsHQTrmXJPYjhQA1PuVUD0FmI+OCnRp6i+/5vcGDcas7RbRvKyRzJOJtgp6Rk9t
-	O/DBmOxaNZzabHt/CTZEdZcmU13DhV66SnSwXIfDKZN5gmEZPbocpzosuB7YmdA40Ijx/r
-	j5A8tBBV9Rg5+c0bzuXT7hc5Fp2Y81EWpO2sZIAuCKNMRAHwtWE0Yb4fmV9bYFOAMrvAxi
-	d5e5IHaDdTVRsTswcSwo5v3vrU4O3wQIH6vTodiItFERtTUvIketDn6WWN5TRg==
-Message-ID: <e70e5f17-35aa-429e-905f-a1990d549126@mailbox.org>
-Date: Mon, 28 Sep 2026 00:37:43 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InaRM3Pg"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-4a003bd18e5so1801545e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 27 Sep 2026 16:01:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790550067; cv=none;
+        d=google.com; s=arc-20260327;
+        b=E7gts2vov+8KtLPPGc3ExMmzFTbALRh3I72XlbrHi5lwcV2T8epFg95fy+E7i85m5q
+         WJPQ74tD0C66XNMy2CwmvPGju2aSYKua1lCr1WUoWflVDYmQV+Zhhi/PzVDT5gZmjZrI
+         V0bHzf4JGXn4bYQXd1KYox5P8auLbs/DEuwu5T0/3UEfLplQfWq8C954Vv/Axt/6xxT0
+         pdJfCvKFhnFWFjWd0prfqLwSnbg5Hwo+Qp51SGdo/ct4QrXl/DVOVebZqsJzdKS9n99J
+         02vMn/HgeGQFzEnZfChCBxovZvubUeDPoiRGpy8RyIHU+8yXSByvXZJUCvEVlCGvT2SR
+         sOmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pC1cDVE6Id7bEPJ+YQ1AhsXzN8ywZhzrUwp85FIkVFE=;
+        fh=33qRz6AETyE2rc8CNQSYDgBJPQ1QVKZBzetHl0OPlj4=;
+        b=RztmyzoB2kjwCMPsrIgJp1HII8ZiyOiMk3XdO4FTj6vuSRa6Fpveb1S3AnXyx86Koo
+         j10+DAZAh11dDh543UMyAq/5FuTTCdIVz7pXNtUQbth5UqoIvpvqT0cU1tvVSnWjUQ4A
+         PEg3V9WpZ2mqoODGHZldQIdZyPMGjvn14I+qAgnu93AELx1sysRnWOVGG+Q7noZ7T5My
+         kqaidlXNcOfsvnGWNW3Ji+zJ/i90A2GKE7HvmKiHqPOpsA8JaNgSbh2WmUmUS0Ir5+F6
+         lVV9hIXflR996+6WA1VGXF8toMVwTFYosLVm3PyEfL0JSqUXTRJwblIjEeA2/2CyOG6U
+         lZIw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790550067; x=1791154867; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pC1cDVE6Id7bEPJ+YQ1AhsXzN8ywZhzrUwp85FIkVFE=;
+        b=InaRM3PgpHKQsECCIra6A9YmBRSU1CMHlqJyRd8yeerQpCQvd3hxYGeJLq952g7t1l
+         FImRr7qA0/AGrx7QxUnbOU5d+BnBCmYSQDEWuFNqPIHk4mX5he6yGEJjtkkqlgcKoMQm
+         hm4goQmzW42wUPJqgLA9xR9+tJoKcep0QWKiBqTFJYVpgTDFyltqbipx21vYM8cTsDSr
+         xiYygf5JmKi3LurfHIfc7IdCgY1NFg+SvB09aBBFguhRYLgn5GNFCXRHNfmSiQmnsKXD
+         ReVm9SKwMqKcJWhtslwaJlV2MAj6XX8/EKaL7sU3COjGjb59ORyKDIdhKESRex9q91BC
+         HQkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790550067; x=1791154867;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pC1cDVE6Id7bEPJ+YQ1AhsXzN8ywZhzrUwp85FIkVFE=;
+        b=IDOpDddtrpodsPdB0FhHn6V/BFvv43RRcPNP2ZLjDo4evroPolgwAk6ULanFRaeCOo
+         RmddgDHgKShBeVDAQ0lDbCC9KT4mtzjeYRsKDFo9aotegoZ0IoSLF4kOlYRFHDDMeeFX
+         evQb2lTgPhz/eQ/iilUHkkNfLJZiTMJ1jGgME/HNoQi4nOj/QIhqrnN1GXjVoozaf8/D
+         U5J2DzjxcDBMZFdSqgan9QhY8qWlghj3x2evbVqT5CgF/kjDjjZnsX1AsEig7o+24Mmr
+         CfT4OX2gVYL9uPF4j+35jNNAqG627/siEbYpCATiwmJpw3sftWJDgM+KEmtLw5Th3Y61
+         M1xA==
+X-Forwarded-Encrypted: i=1; AKwUvBzrVTlW50Te4b+EVBFJN0rkjFx4pNs0iXYV1s9hLn9GR3prR+/RCC3OAy6VseE3h4J7SLsU/jxK5iFLKs099vmKtw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nN0OS6l/oRIxQx/trbHZGyM77bjrdC1P/l9n6VgOd9DXOx7b1N
+	WDn9HZsRpKlM+vdtXAKVZSdzkDgX06mlKRyWEU9BSwum/I4l4y58/2D457xmeScXjJO+ZIlXnXb
+	3HJ6VyVQOGU3FDZ7fKTxz0xnrGpus8EI=
+X-Gm-Gg: AYBFou0+Xgejq4y9JVileBKAMsaHy20QndoY8KraK0ul3ZTZ882aNtNa/HHowcTsHw6
+	Y/zG6XVJZeWVqGWqwVT0E2tL5VTXGbYccaJ0UyimdH7blCgrjjGNjo132S6G3Vl8do/gVNhPnFC
+	obDKM70w0wp31kGPTupwnvB+dbEn7hDuzrIUByOF3OGf4vka3Bb8/mbjClqzbOuDUQtsuvNB3pA
+	eBsbkA86xTiEyDSNERy2H1pNUd+26xkBu4VX5YEKViKJAEajuHYjoRMMLa9DdjN4ocQ2fI+6U7m
+	CT9ERWBHCsizlUkTXyjw6LS+qo4UpDxgELzrHrNqpJ/c8+39s1wZavujKC/OCBgkm3F5JgUYUg0
+	J/LM/JYg9GhNU7JXf8F3yubthkYLMcibVaMnfnFWdCPN5PIha0ueF0dvweJ/Zi9xNPCHyEOZIEg
+	==
+X-Received: by 2002:a05:600c:4f47:b0:49f:c199:e1e2 with SMTP id
+ 5b1f17b1804b1-49ff06ed9c1mr170160015e9.28.1790550066832; Sun, 27 Sep 2026
+ 16:01:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 07/11] PCI: rcar-gen4: Recover the Root Port on link down
-To: Koichiro Den <den@valinux.co.jp>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Jingoo Han <jingoohan1@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Niklas Cassel <cassel@kernel.org>, Wilfred Mallawa
- <wilfred.mallawa@wdc.com>, Serge Semin <fancer.lancer@gmail.com>,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260918032038.2216471-1-den@valinux.co.jp>
- <20260918032038.2216471-8-den@valinux.co.jp>
- <e9a60e4a-95ac-4e49-a16d-a8eca2196d4a@mailbox.org>
- <jbekhkl7ywblowemhmm4nhzzvg6bk6vpfciaebwvxe7nitfisc@3hbnpq6uz2rw>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <jbekhkl7ywblowemhmm4nhzzvg6bk6vpfciaebwvxe7nitfisc@3hbnpq6uz2rw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: or9mykabccwaz1959ynoid6wt8wg5tsd
-X-MBO-RS-ID: e086b13419eefc83387
+References: <TYCPR01MB74815955A10817B64BD6FB93A4812@TYCPR01MB7481.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB74815955A10817B64BD6FB93A4812@TYCPR01MB7481.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 28 Sep 2026 00:00:00 +0100
+X-Gm-Features: AclHuK9lqYCvHMC1AiAR3XuaDXFU85jazCSKt890eRq6J5XWeWZVuaVBpqASpBo
+Message-ID: <CA+V-a8vOrmXpr8Nx9aiE-D4axAQNf9oKhSgHaQXqdjE-bWeyNA@mail.gmail.com>
+Subject: Re: [PATCH net v4] net: pcs: rzn1-miic: Clear MIIC protection state
+ before unprotect sequence
+To: Yoshihisa Yamamoto <yoshihisa.yamamoto.xn@renesas.com>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/24/26 6:15 PM, Koichiro Den wrote:
-> On Tue, Sep 22, 2026 at 11:44:02PM +0200, Marek Vasut wrote:
->> On 9/18/26 5:20 AM, Koichiro Den wrote:
->>> On R-Car, intreq_pcim_sub carries both the integrated MSI receiver and
->>> the controller's reset requests (smlh_req_rst_not, link_req_rst_not), so
->>> the generic DesignWare chained handler reads the MSI status from DBI as
->>> soon as the link goes down. On R-Car S4 that is a hazard: DBI accesses
->>> issued within a few hundred microseconds of an unexpected link down do
->>> not complete and hang the host. In testing, the first Root Port config
->>> read after powering off the link partner hung unless delayed by ~300 us.
->>
->> Out of curiosity, do they trigger SError, and does the firmware (TFA)
->> trap/fix those up in EL3?
-> 
-> I haven't confirmed whether those DBI accesses trigger an SError.
-> The BL31 on the Spider I'm using should be based on rcar-s4_v2.5 [1] from the
-> Spider BSP (as I haven't updated it). I just checked that this version also sets
-> HANDLE_EA_EL3_FIRST=1, plus plat_ea_handler() is empty. So IIUC an SError would
-> be taken to EL3
+On Thu, Sep 24, 2026 at 11:45=E2=80=AFAM Yoshihisa Yamamoto
+<yoshihisa.yamamoto.xn@renesas.com> wrote:
+>
+> On RZ/T2H and RZ/N1D MIIC, writing 0x0000 to the MIIC protection
+> register clears the protection state machine.
+>
+> The initial protection state cannot be assumed to be constant,
+> as it may be influenced by previous activity before the driver
+> takes ownership of the hardware.
+>
+> Clear the protection state before issuing the unprotect sequence
+> so that register access always starts from a known state, regardless
+> of any previous activity.
+>
+> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+> Signed-off-by: Yoshihisa Yamamoto <yoshihisa.yamamoto.xn@renesas.com>
+> ---
+> V4:
+> - Clarify commit message
+> - Point Fixes tag to 7dc54d3b8d91, as the issue also affects RZ/N1D
+>
+> v3: https://lore.kernel.org/all/TYCPR01MB7481CE8351FDB2CDCA229955A4872@TY=
+CPR01MB7481.jpnprd01.prod.outlook.com
+> - Add Fixes tag
+>
+> v2: https://lore.kernel.org/all/TYCPR01MB748157ECB6B92D8E3FFD433BA4B82@TY=
+CPR01MB7481.jpnprd01.prod.outlook.com
+> - Fix indentation
+>
+> v1: https://lore.kernel.org/all/TYCPR01MB748139F059DF2459B9813416A4B92@TY=
+CPR01MB7481.jpnprd01.prod.outlook.com
+>
+>  drivers/net/pcs/pcs-rzn1-miic.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yes.
+Cheers,
+Prabhakar
 
-> , and the normal path would return to the kernel without fixing
-> the underlying error.
-
-That is correct.
-
-R-Car Gen3 does PCIe link error fixup in TFA, it looks this way:
-
-https://github.com/ARM-software/arm-trusted-firmware/commit/0969397f295621aa26b3d14b76dd397d22be58bf
-
-> And, regardless of whether it's a synchronous abort or an SError:
-> - There was no crash report (via report_unhandled_exception) on the console.
-> - Once that DBI access in the small window hangs, it never recovers,
->    whereas adding udelay(300) before the access avoids the hang. So I
->    doubt it's just retrying the same access after a transient synchronous
->    abort as well (though I can't rule it out).
-
-( It just crossed my mind, this sounds similar to 0056d29f8c1b ("PCI: 
-rcar-gen4: Assure reset occurs before DBI access") )
-
-> [1] https://github.com/renesas-rcar/arm-trusted-firmware/tree/rcar-s4_v2.5
-> 
->>
->>> Use the pre-MSI callback to check the APP reset status before DBI is
->>> touched. When a reset request is latched, mask the sources, ack the
->>> request and schedule recovery work. The work calls
->>> pci_host_handle_link_down(), which runs the AER-style recovery and
->>> resets the controller through reset_root_port(). If the reset fails, the
->>> sources stay masked so nothing touches the unrecovered controller.
->>>
->>> Only unmasked status bits are handled and pending latches are cleared
->>> when re-arming, so requests recorded during probe or the reset itself do
->>> not trigger another recovery. Teardown only disables link-down
->>> detection: MSI delivery has to keep working while devices are removed.
->>>
->>> When iMSI-RX is not used (external MSI controller or pci=nomsi), the
->>> DesignWare core does not request intreq_pcim_sub, so request it in the
->>> driver.
->>
->> Would it make sense to request the line unconditionally, to simplify the
->> driver(s) ?
-> 
-> Yes. The pcie-rcar-gen4 can set pp->msi_irq[0] = -ENODEV just like spear13xx,
-> dra7xx and keembay for the same reason. That also removes the need for adding
-> .pre_msi_irq addition in patch 4. Some other adjustments might be needed, but I
-> believe that is the right and clean direction. I will respin with that in mind.
-> 
-> Thanks for the review, that helps a lot!
-
-Likewise, thank you for your help !
-
--- 
-Best regards,
-Marek Vasut
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-m=
+iic.c
+> index 2b72fa98ddf1..279f709c889b 100644
+> --- a/drivers/net/pcs/pcs-rzn1-miic.c
+> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> @@ -270,6 +270,9 @@ static struct miic_port *phylink_pcs_to_miic_port(str=
+uct phylink_pcs *pcs)
+>
+>  static void miic_unlock_regs(struct miic *miic)
+>  {
+> +       /* Clear protection state */
+> +       writel(0x0000, miic->base + MIIC_PRCMD);
+> +
+>         /* Unprotect register writes */
+>         writel(0x00A5, miic->base + MIIC_PRCMD);
+>         writel(0x0001, miic->base + MIIC_PRCMD);
+> --
+> 2.34.1
+>
