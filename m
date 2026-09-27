@@ -1,103 +1,165 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50003EDE5F
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 27 Sep 2026 13:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A65339363;
+	Sun, 27 Sep 2026 14:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790514691; cv=none; b=s3LfaoGkD8nk8k4VJGNDVKQ7LqcZn8b8PBvTSGSgs3G9UyG5AXSNCjfNpXpQKVfUcdwZweTrUS6gDJ1F4P0yN4j68487QI0k58s104ZDOYf5EQj5gn6L6g256la2/l3WSy4MWrq4JkhuCosDpS6c5D9bTvJL0BzYdmfv4cBkeVA=
+	t=1790520554; cv=none; b=JQ1w5cn2CJ0rQhhIDy4VtVAa7Z2wi3Z+6QFKqVNEA17IF8M8MupuYdWKu8m1zOHTrWdytGC9hDXRN8fV5Ib3trrMIa0xkaQ1Nd6KzrN4XAeC4OE19xnECM+VtjctMMCrIG+4XrhqJsupdgkXhsB2bQblv5dh8+AnWLEIt708fQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790514691; c=relaxed/simple;
-	bh=HqmxqaFcjaW8dVsH6dq9iWXg4vsbd9ep12D9PWT+0gQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DsI6GkqKbTtoXvfeKmyihPyWqNnoq0wT/iVEI4gC9fSBRqghftMUKR1UWdmTgxWCVf6XvQuEu2mMXGYQhlBm1eo1/N8BCmTKIjdypxLhpJN0qyD9zwziooBw93zKXA61gusaZcC4xmYqQN7+eZfdSbS9ep2/XA9OYk/qaXKRbRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Y+OHHDMI; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1790520554; c=relaxed/simple;
+	bh=M/1wRLH6//vjXHn8+eNoN9tyf4dwMw8dzjbw6uTgBRs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=upkidwXsPngux0gyhV2emOTU8R1B4+Y0LLJbl3F5D4I+zSP7A7WjDntpxqnX+WMtqpnQPn//Km9gGJb0WEdZ6pY7qiiQL2vA95YVNFOn8jQbtWrWHSwKL6c79T8MzglBfLufxxB4AnrHz2lwk8CdkTqieln2vDImIEpsfqVkVT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dloG9usw; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Y+OHHDMI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Hqmx
-	qaFcjaW8dVsH6dq9iWXg4vsbd9ep12D9PWT+0gQ=; b=Y+OHHDMIaZr5KoFuA1Uz
-	slcQ+3RExcgEefqj6nmShUcI6fGVG7ARzMawJplccGuE1RmbXvu261CEvRZOJqGr
-	GyUYgd+CkQ7fVrIczCg9ixNirFvajnChYVNPEo079mKA8GwhJYYAjzfbBNnxEkwF
-	ZzYAxRkAZH/oUZgsyLa1IrMYZNHe7P4YTV59Kn8UmoG/de97FBNutzSt0FrIYJTr
-	zuBcWeHwGP5dCH8FABN3CCd9mewwvAOG/umh1R4N8Sdxhox16RbUr7JtF+PjzeTW
-	arxsU4jxE9LpzczNEwHd+C9Q914bdcl1O7G9xJqeJO6oaIfwAIJ0IRTdqDaUCtXr
-	gA==
-Received: (qmail 2618794 invoked from network); 27 Sep 2026 15:11:26 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Sep 2026 15:11:26 +0200
-X-UD-Smtp-Session: l3s3148p1@3unXr3Zc5OYujnuD
-Date: Sun, 27 Sep 2026 15:11:26 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: Frank Li <Frank.li@oss.nxp.com>, linux-renesas-soc@vger.kernel.org,
-	Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH 2/3] dmaengine: rcar-dmac: Add missing
- dma_descriptor_unmap()
-Message-ID: <arkV-ru3aNXDFawM@shikoro>
-References: <20260917071208.36888-1-wsa+renesas@sang-engineering.com>
- <20260917071208.36888-3-wsa+renesas@sang-engineering.com>
- <aqwXwOiPgRDUQfp_@SMW015318>
- <3odvtlxs62ulw4obrzfy3xlf74k4wltjkj6k4axsmdx3hnyo3a@rx2pm422eozp>
- <arkPcxePb1G1vyZt@shikoro>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dloG9usw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=iW
+	G5bcWR8Gy/SGkYDcpum8ojyQYtZQend0Il1O1hRvE=; b=dloG9usw7zj8EtvXg5
+	8g0jXhfqFaxVnph2cnIjQFOHXGTUdx3JskJvq9uUcQY6EWcS6UG9jYcGCI6zcwB4
+	5YVj3H/Kzg5dUkjg5QIWYv5uwCSTUULg6wX9y+nRhkcqoCoE2iNs/q22qZ51FdbH
+	3KaYvlFRErE/j15px59BzE6zE=
+Received: from pc.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD330OOLLlqjwJIBA--.47706S8;
+	Sun, 27 Sep 2026 22:47:52 +0800 (CST)
+From: Jiale Yao <yaojiale02@163.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Paul Barker <paul@pbarker.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jiale Yao <yaojiale02@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 6/7] net: ravb: fix resource teardown ordering
+Date: Sun, 27 Sep 2026 22:47:39 +0800
+Message-Id: <20260927144741.1320558-7-yaojiale02@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260927144741.1320558-1-yaojiale02@163.com>
+References: <20260927144741.1320558-1-yaojiale02@163.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kfKRMEYJsowOOtOu"
-Content-Disposition: inline
-In-Reply-To: <arkPcxePb1G1vyZt@shikoro>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD330OOLLlqjwJIBA--.47706S8
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAF15Cw43XFykCFy3GrWDtwb_yoW5KF1Dp3
+	95Ja98Kr1ktr1ktws7tw4kZa4ru3W8Ka4UGFy7Kan3Awnayryqqr1FqFyjqF48JFZ5A3yY
+	ga1jyw4xu3WDurJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pidOz-UUUUU=
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzhk6dGq5LJlNpAAA3W
 
---kfKRMEYJsowOOtOu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ravb_remove() frees the netdev before devres releases the managed IRQs.
+The handlers use the netdev as their data pointer, so an interrupt during
+that window can access freed memory. Probe error paths have the same
+ordering problem.
 
+The remove callback also returns when runtime resume fails. That leaves
+the netdev registered while the driver core still releases its managed
+resources. A running interface already holds a runtime PM reference, so
+the extra get cannot invoke a failing resume. A resume failure therefore
+occurs while the interface is down and ndo_stop() will not be called.
 
-> I share this thought, and I guess, Laurent expressed this, too. This is
-> a separate task to tackle, though. I still think your original patch
-> here makes the situation better by making sure the cache gets
-> invalidated and should be applied. Or am I missing something?
+Place the IRQ resources in a dedicated devres group and release it before
+freeing the netdev. Continue unregistering and freeing software resources
+when runtime resume fails, but skip the unmatched runtime PM put.
 
-Okay, I got now that Sashiko's comment was related to cookie-completion
-and not the callback. For me, its comment also makes sense because it is
-basically the same argument which the commits I quoted to Frank used:
-ensure cache completion. This is not only good before the callback but
-also before cookie completion. Or am I missing something?
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Fixes: 48f894ab07c4 ("net: ravb: Add runtime PM support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jiale Yao <yaojiale02@163.com>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-This is easy to fix. If we can agree on switching unmapping before
-cookie completion, I can update this patch and then send a series to fix
-other drivers, too.
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index ea1c7e536791..a25f5ac7062f 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2963,28 +2963,35 @@ static int ravb_probe(struct platform_device *pdev)
+ 		priv->num_rx_ring[RAVB_NC] = NC_RX_RING_SIZE;
+ 	}
+ 
++	if (!devres_open_group(&pdev->dev, priv, GFP_KERNEL)) {
++		error = -ENOMEM;
++		goto out_reset_assert;
++	}
++
+ 	error = ravb_setup_irqs(priv);
+ 	if (error)
+-		goto out_reset_assert;
++		goto out_release_irqs;
++
++	devres_close_group(&pdev->dev, priv);
+ 
+ 	priv->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(priv->clk)) {
+ 		error = PTR_ERR(priv->clk);
+-		goto out_reset_assert;
++		goto out_release_irqs;
+ 	}
+ 
+ 	if (info->gptp_ref_clk) {
+ 		priv->gptp_clk = devm_clk_get(&pdev->dev, "gptp");
+ 		if (IS_ERR(priv->gptp_clk)) {
+ 			error = PTR_ERR(priv->gptp_clk);
+-			goto out_reset_assert;
++			goto out_release_irqs;
+ 		}
+ 	}
+ 
+ 	priv->refclk = devm_clk_get_optional(&pdev->dev, "refclk");
+ 	if (IS_ERR(priv->refclk)) {
+ 		error = PTR_ERR(priv->refclk);
+-		goto out_reset_assert;
++		goto out_release_irqs;
+ 	}
+ 	clk_prepare(priv->refclk);
+ 
+@@ -3124,6 +3131,8 @@ static int ravb_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 	clk_unprepare(priv->refclk);
++out_release_irqs:
++	devres_release_group(&pdev->dev, priv);
+ out_reset_assert:
+ 	reset_control_assert(rstc);
+ out_free_netdev:
+@@ -3141,9 +3150,10 @@ static void ravb_remove(struct platform_device *pdev)
+ 
+ 	error = pm_runtime_resume_and_get(dev);
+ 	if (error < 0)
+-		return;
++		dev_warn(dev, "failed to resume device: %d\n", error);
+ 
+ 	unregister_netdev(ndev);
++	devres_release_group(dev, priv);
+ 	if (info->nc_queues)
+ 		netif_napi_del(&priv->napi[RAVB_NC]);
+ 	netif_napi_del(&priv->napi[RAVB_BE]);
+@@ -3153,7 +3163,8 @@ static void ravb_remove(struct platform_device *pdev)
+ 	dma_free_coherent(ndev->dev.parent, priv->desc_bat_size, priv->desc_bat,
+ 			  priv->desc_bat_dma);
+ 
+-	pm_runtime_put_sync_suspend(&pdev->dev);
++	if (error >= 0)
++		pm_runtime_put_sync_suspend(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(dev);
+ 	clk_unprepare(priv->refclk);
+-- 
+2.34.1
 
-Opinions?
-
-
---kfKRMEYJsowOOtOu
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmq5FfoACgkQFA3kzBSg
-KbboqBAArClYuEyLNkGWdRkosLHFmpCs3RRXNrgtUd70azKx/Wq6lEXKlj0RGiK2
-ARjl70KU2k7Gb1+M59VVsb6Tqq0WhR1NOgzSh3YYbmGQaLKM+DQlWJQkbOO5/fN1
-Nkym8HiT6rFaByAttJrSOc+6fA2xvxqYbYBTYRQmKIyrM7Yq/Zi7ZXWNZiI4pRVe
-QRT0gR71TiNv/kVS+q7ijzzlux73OtNGj1Ji10rne7ycZAnl1KrAQ1JRjO1BIDrl
-xsFLo3PWr8v3VX/qM2WfewJGJnjGscKALDMNl1K27iR6QjR2RGi2wJ4iLFDj+cmp
-8nNgdVhHAcwCfp0d4a2kXDkLHUWilrllPGmY9SlrPahJHzkuuExS9OOd+nLonfLX
-HniUnMFo9Gehe+JdufmQ5qNF5zBF7AUBOVHs2W6XUCUyHmQfZ1ukVwcoahU4vVIz
-Awm2BzARzEny+7bHwqW/EGdCCuViU7kj9mKVO+CS3TVNEDqVTXme6nLRz2K0OKvZ
-m2XOqVpJIMLGk+33qhgtxpcTctXiBnqYd4nXesaB9b64FKB2q0d/LJ1NfEkdxHAO
-mkHcffynXQL2uhMBlQHB5W+zdD/Ssj4OJzIqbcEMd8ZN8hp+998otXZpfcYYULoH
-BlThE3tLxwXL6U3YHqaNltTUj4h6RpfBy/frcHyT0+V9FDz7Wz8=
-=2C0U
------END PGP SIGNATURE-----
-
---kfKRMEYJsowOOtOu--
