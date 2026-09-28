@@ -1,92 +1,136 @@
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AC648FF82
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 09:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2A2471CE9;
+	Mon, 28 Sep 2026 09:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790586683; cv=none; b=WfXJJxfKVgHnoVnP/Sr6JSUFYY+EADpHaAfSnWJofnoXN6jl6nCAj/v9bJyphHxhvBYGScXkRjCBwAFSlRHYbFUL5fOKQ5SKD/ZJz0mdZOXCjbnJaZtDJidoU2JNDl7o134bLd7pY9SqNZGaEwOMw9Tqo5D3FpnwxWzFACzg87w=
+	t=1790588081; cv=none; b=p0X1gkjPFbiI/ejvkSfAjUTI8+pDdhWEGRYxYWl7S0ZDTOMR/a2S2uBBnAl7bJIloCEvekzZ7uNhdAheY4g5RpkvF9FK9yRX4B7DQb8MV9OAdfa7Ik20z61qFtc7paHHrR1O86v7oyitxNP1nVi0pFebSX4La+OX0ZrJWJd/Sp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790586683; c=relaxed/simple;
-	bh=3EkAw3KoUJ5vJqs5XLdwk3rugWwLtztqYVKLvXds3TE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=felLDuruHNeRw5O0dpmohT+rTb2GTyjCNyL+K1rraNzD68ahkW7x8kRka3D999iPbn4yYXgkcW+VeY/X0GV4MY2k5KD2hhYscxENs7ZWMdbL6UMklCXPfUCBVQNpb0deL3GLykE9ksheevT2q7FUbYlIyi6XfHbzSIk3ZtUyS8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c62dde3so685274241.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 02:11:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790586681; x=1791191481;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=YQdf/IVZCveOBsVWDfZ7xYtojPo7NY7S5FZDi+enVh4=;
-        b=qIEkJ1dzMFutWeFatQddWw2nFq15RTTg0VAEy+jbvZzu+TcaUCkxHrCJPS5+gG7yx2
-         LUXUSj4FhOzBH096HX3IwVMP6g6qzHEH/bJbOsbzxSPm0Zey/QSkNgL2BjLlCs+fPVCD
-         91yt5+5Fjg7zpgh4FwGuuHN3nvV3T2v/NlGDz2PYnV/5fZp3rJOTTg4GceLmmmy3dX6r
-         IHD9IXGx4zXX5jMeyg5F912Y/8dJd10OxG0QJS8jvqapi7Ofp+NK1VQxFmrV/nnBsWXc
-         KegtGHZrK/5ntxpRVszbnL5oJ9wsrEZxuoE9ahjEOwdSPWRyQa4iTRU9A1OEY81nNS/a
-         Kndg==
-X-Gm-Message-State: AFq9FYJk6K+ckG8e2506Jq9xuJPjqqXpd2A603GzIABedlTAX28P03rE
-	VUHQjNDIi6FQQZiOyd8nWgXC4DWh/xCybB0s9L87N+GlaIMbhjIAIze7wpW+enwJ
-X-Gm-Gg: AYBFou2anMc5AKYORsAQ+6ppFC8m7jFirpTgund4HSMslu7iVpvff09Ch5d6imnz0Vp
-	135QzQW+7hdkDP2YbvInoH19S6L1ESVbvD75wPzx89y7qW3AkFfOQfPpss0sZZnSZQhuANJLUEr
-	L0RtsVmYD5KFvELWPzt/clSm0AfEho2fsyulvyT5OpMZ0P1A1jpcNNPvgDylGUOe+lYABD48Td9
-	YA3xia6xTLHbKTzbsjsb+9rtWzo+Bi90BBtiNcfMfv10FyRduoisMk+NRsE60xH7u2YgT+adkse
-	0rzPd8nfxpJIpUFTyJ75m2jg7fKodyj3I29Jw9iSZMoAByuDhSrddZjN6yEL+QMfQiuBljUy00n
-	uEAu24eq3wAk1qHkcEADvN4OBaI2jaoOEfae55UnFWydRHRjOvY0Ajt/Gvb7HVCSrOv7dDaW32a
-	pcSrInh1/dpfunjc1pZ2ozr1R9d0ES/KH+AhVbLZAJ1CAe4GnfxZSwBjVUl18guKxHHgwR7PajQ
-	xLhf52yLujAaJsHe8Y0+ivMS0YUHvjIu+jAj7RysPxbZ3c=
-X-Received: by 2002:a05:6102:a1ce:20b0:7b5:1ca4:9df1 with SMTP id ada2fe7eead31-7b51ca4ab87mr411325137.5.1790586680623;
-        Mon, 28 Sep 2026 02:11:20 -0700 (PDT)
-Received: from mail-vs2-f40.google.com (mail-vs2-f40.google.com. [74.125.227.40])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-988a5453f79sm3401278241.12.2026.09.28.02.11.19
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Sep 2026 02:11:20 -0700 (PDT)
-Received: by mail-vs2-f40.google.com with SMTP id ada2fe7eead31-7a4fb331cc0so661599137.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 02:11:19 -0700 (PDT)
-X-Received: by 2002:a05:6102:a47:b0:7a5:4fe2:b380 with SMTP id
- ada2fe7eead31-7af1eff6903mr3975673137.26.1790586679062; Mon, 28 Sep 2026
- 02:11:19 -0700 (PDT)
+	s=arc-20240116; t=1790588081; c=relaxed/simple;
+	bh=cyu63G4M8s2947h0n3m0jDNJQ6XvOawDbj1EQ9J42sg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=dEYHYM8X9zlO+5YC/tcZ8icXyfjDerulqhgqnsog6Uf3fP6S97ijI676SFN/vMbKFxYIzqc/Yw94h9157NLSC5zeniUk19d0HE7tI2D7rFYmcFGdm3NC765A6JaKG1Tik7R97r//cZj50I/W9fKWk31mg/x9GJmJBCULKvDUcNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Yr2GzNgW; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Yr2GzNgW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=cyu63G4M8s2947h0n3m0jDNJQ6XvOawDbj1EQ9J42sg=; b=Y
+	r2GzNgW3iCQoDwUUNBDAK5uxoGu+bnYM8W/xWz/lqosDzYN3w80PBK7Crmeyq0TV
+	VpaxhjzB8W1RlBeR4WlMSbyhO7f0BoZJrBQD/WbLjAim0U06T0QAw+Qc1pob17A/
+	uybQOaV/MbnBop2p+bVx9rTkhBcSuZn7eVa6GfDbKE=
+Date: Mon, 28 Sep 2026 17:33:29 +0800 (CST)
+From: "jiale yao" <19888972804@163.com>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: "Paul Barker" <paul@pbarker.dev>, "Andrew Lunn" <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	"Eric Dumazet" <edumazet@google.com>,
+	"Jakub Kicinski" <kuba@kernel.org>,
+	"Paolo Abeni" <pabeni@redhat.com>,
+	"Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
+	"Mitsuhiro Kimura" <mitsuhiro.kimura.kc@renesas.com>,
+	"Claudiu Beznea" <claudiu.beznea.uj@bp.renesas.com>,
+	"Sergey Shtylyov" <s.shtylyov@omp.ru>, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re:Re: [PATCH v2 6/7] net: ravb: fix resource teardown ordering
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <20260927160134.GI1099675@ragnatech.se>
+References: <20260927144741.1320558-1-yaojiale02@163.com>
+ <20260927144741.1320558-7-yaojiale02@163.com>
+ <20260927160134.GI1099675@ragnatech.se>
+X-NTES-SC: AL_Qu2SAvmTt0gr7yeRZOkcn08ShO49XMOyvfoi2YFTc+gGmTzU3j0if1JyFELowOyzNySDujGrVSdF5ct2e7h6WLYFX5PXEaE9PvC0XY6E3Q==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260927151133.45845-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260927151133.45845-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 28 Sep 2026 11:11:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWJ6r4=hwm6KxayTsYTJ4c+O_Bf0mazi-RYN2P3AxWuLA@mail.gmail.com>
-X-Gm-Features: AclHuK9waXidYdoACalWAOWf4K7OhYl7ppYO1Lo215_OVK_ZMODfGAsk8xBNjaw
-Message-ID: <CAMuHMdWJ6r4=hwm6KxayTsYTJ4c+O_Bf0mazi-RYN2P3AxWuLA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a78000: Add I2C nodes
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <32efc762.8cd6.1a0e75cbd49.Coremail.19888972804@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:iCgvCgD3lzhpNLpqw6hPAA--.51201W
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzglwqmq6NGl5RAAA3t
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Sun, 27 Sept 2026 at 17:12, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Add device nodes for the I2C controllers of the Renesas R-Car X5H
-> (R8A78000) SoC.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGksCkF0IDIwMjYtMDktMjggMDA6MDE6MzQsICJOaWtsYXMgU8O2ZGVybHVuZCIgPG5pa2xhcy5z
+b2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPiB3cm90ZToKPkhpIEppYWxlLAo+Cj5PbiAyMDI2LTA5LTI3
+IDIyOjQ3OjM5ICswODAwLCBKaWFsZSBZYW8gd3JvdGU6Cj4+IHJhdmJfcmVtb3ZlKCkgZnJlZXMg
+dGhlIG5ldGRldiBiZWZvcmUgZGV2cmVzIHJlbGVhc2VzIHRoZSBtYW5hZ2VkIElSUXMuCj4+IFRo
+ZSBoYW5kbGVycyB1c2UgdGhlIG5ldGRldiBhcyB0aGVpciBkYXRhIHBvaW50ZXIsIHNvIGFuIGlu
+dGVycnVwdCBkdXJpbmcKPj4gdGhhdCB3aW5kb3cgY2FuIGFjY2VzcyBmcmVlZCBtZW1vcnkuIFBy
+b2JlIGVycm9yIHBhdGhzIGhhdmUgdGhlIHNhbWUKPj4gb3JkZXJpbmcgcHJvYmxlbS4KPj4gCj4+
+IFRoZSByZW1vdmUgY2FsbGJhY2sgYWxzbyByZXR1cm5zIHdoZW4gcnVudGltZSByZXN1bWUgZmFp
+bHMuIFRoYXQgbGVhdmVzCj4+IHRoZSBuZXRkZXYgcmVnaXN0ZXJlZCB3aGlsZSB0aGUgZHJpdmVy
+IGNvcmUgc3RpbGwgcmVsZWFzZXMgaXRzIG1hbmFnZWQKPj4gcmVzb3VyY2VzLiBBIHJ1bm5pbmcg
+aW50ZXJmYWNlIGFscmVhZHkgaG9sZHMgYSBydW50aW1lIFBNIHJlZmVyZW5jZSwgc28KPj4gdGhl
+IGV4dHJhIGdldCBjYW5ub3QgaW52b2tlIGEgZmFpbGluZyByZXN1bWUuIEEgcmVzdW1lIGZhaWx1
+cmUgdGhlcmVmb3JlCj4+IG9jY3VycyB3aGlsZSB0aGUgaW50ZXJmYWNlIGlzIGRvd24gYW5kIG5k
+b19zdG9wKCkgd2lsbCBub3QgYmUgY2FsbGVkLgo+PiAKPj4gUGxhY2UgdGhlIElSUSByZXNvdXJj
+ZXMgaW4gYSBkZWRpY2F0ZWQgZGV2cmVzIGdyb3VwIGFuZCByZWxlYXNlIGl0IGJlZm9yZQo+PiBm
+cmVlaW5nIHRoZSBuZXRkZXYuIENvbnRpbnVlIHVucmVnaXN0ZXJpbmcgYW5kIGZyZWVpbmcgc29m
+dHdhcmUgcmVzb3VyY2VzCj4+IHdoZW4gcnVudGltZSByZXN1bWUgZmFpbHMsIGJ1dCBza2lwIHRo
+ZSB1bm1hdGNoZWQgcnVudGltZSBQTSBwdXQuCj4KPldvdWxkIGl0IG5vdCBtYWtlIG1vcmUgc2Vu
+cyB0byByZXdvcmsgdGhlIGRyaXZlciB0byBhbGxvY2F0ZSB0aGUgbmRldiAKPnVzaW5nIGRldm0g
+dG9vIGluc3RlYWQgb2YgYWRkaW5nIGEgY29tcGxleCBkZXZyZXMgZ3JvdXA/IEFGSUsgCj5zL2Fs
+bG9jX2V0aGVyZGV2X21xcy9kZXZtX2FsbG9jX2V0aGVyZGV2X21xcy8gd291bGQgYWxsb2NhdGUg
+dGhlIG5kZXYgCj53aXRoIGRldm0gdG9vPwoKWW91IGFyZSByaWdodCwgSSBtYWRlIHRoaW5ncyBj
+b21wbGljYXRlZC4gSSB3aWxsIHJld29yayB0aGUgcmF2YiBwYXRjaCBhbmQKZHJvcCB0aGUgZGV2
+cmVzIGdyb3VwLgoKPgo+PiAKPj4gRml4ZXM6IGMxNTY2MzNmMTM1MyAoIlJlbmVzYXMgRXRoZXJu
+ZXQgQVZCIGRyaXZlciBwcm9wZXIiKQo+PiBGaXhlczogNDhmODk0YWIwN2M0ICgibmV0OiByYXZi
+OiBBZGQgcnVudGltZSBQTSBzdXBwb3J0IikKPj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcK
+Pj4gU2lnbmVkLW9mZi1ieTogSmlhbGUgWWFvIDx5YW9qaWFsZTAyQDE2My5jb20+Cj4+IC0tLQo+
+PiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4uYyB8IDIzICsrKysrKysr
+KysrKysrKysrLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgNiBk
+ZWxldGlvbnMoLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5l
+c2FzL3JhdmJfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4u
+Ywo+PiBpbmRleCBlYTFjN2U1MzY3OTEuLmEyNWY1YWM3MDYyZiAxMDA2NDQKPj4gLS0tIGEvZHJp
+dmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4uYwo+PiArKysgYi9kcml2ZXJzL25l
+dC9ldGhlcm5ldC9yZW5lc2FzL3JhdmJfbWFpbi5jCj4+IEBAIC0yOTYzLDI4ICsyOTYzLDM1IEBA
+IHN0YXRpYyBpbnQgcmF2Yl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAg
+CQlwcml2LT5udW1fcnhfcmluZ1tSQVZCX05DXSA9IE5DX1JYX1JJTkdfU0laRTsKPj4gIAl9Cj4+
+ICAKPj4gKwlpZiAoIWRldnJlc19vcGVuX2dyb3VwKCZwZGV2LT5kZXYsIHByaXYsIEdGUF9LRVJO
+RUwpKSB7Cj4+ICsJCWVycm9yID0gLUVOT01FTTsKPj4gKwkJZ290byBvdXRfcmVzZXRfYXNzZXJ0
+Owo+PiArCX0KPj4gKwo+PiAgCWVycm9yID0gcmF2Yl9zZXR1cF9pcnFzKHByaXYpOwo+PiAgCWlm
+IChlcnJvcikKPj4gLQkJZ290byBvdXRfcmVzZXRfYXNzZXJ0Owo+PiArCQlnb3RvIG91dF9yZWxl
+YXNlX2lycXM7Cj4+ICsKPj4gKwlkZXZyZXNfY2xvc2VfZ3JvdXAoJnBkZXYtPmRldiwgcHJpdik7
+Cj4+ICAKPj4gIAlwcml2LT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgTlVMTCk7Cj4+
+ICAJaWYgKElTX0VSUihwcml2LT5jbGspKSB7Cj4+ICAJCWVycm9yID0gUFRSX0VSUihwcml2LT5j
+bGspOwo+PiAtCQlnb3RvIG91dF9yZXNldF9hc3NlcnQ7Cj4+ICsJCWdvdG8gb3V0X3JlbGVhc2Vf
+aXJxczsKPj4gIAl9Cj4+ICAKPj4gIAlpZiAoaW5mby0+Z3B0cF9yZWZfY2xrKSB7Cj4+ICAJCXBy
+aXYtPmdwdHBfY2xrID0gZGV2bV9jbGtfZ2V0KCZwZGV2LT5kZXYsICJncHRwIik7Cj4+ICAJCWlm
+IChJU19FUlIocHJpdi0+Z3B0cF9jbGspKSB7Cj4+ICAJCQllcnJvciA9IFBUUl9FUlIocHJpdi0+
+Z3B0cF9jbGspOwo+PiAtCQkJZ290byBvdXRfcmVzZXRfYXNzZXJ0Owo+PiArCQkJZ290byBvdXRf
+cmVsZWFzZV9pcnFzOwo+PiAgCQl9Cj4+ICAJfQo+PiAgCj4+ICAJcHJpdi0+cmVmY2xrID0gZGV2
+bV9jbGtfZ2V0X29wdGlvbmFsKCZwZGV2LT5kZXYsICJyZWZjbGsiKTsKPj4gIAlpZiAoSVNfRVJS
+KHByaXYtPnJlZmNsaykpIHsKPj4gIAkJZXJyb3IgPSBQVFJfRVJSKHByaXYtPnJlZmNsayk7Cj4+
+IC0JCWdvdG8gb3V0X3Jlc2V0X2Fzc2VydDsKPj4gKwkJZ290byBvdXRfcmVsZWFzZV9pcnFzOwo+
+PiAgCX0KPj4gIAljbGtfcHJlcGFyZShwcml2LT5yZWZjbGspOwo+PiAgCj4+IEBAIC0zMTI0LDYg
+KzMxMzEsOCBAQCBzdGF0aWMgaW50IHJhdmJfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
+cGRldikKPj4gIAlwbV9ydW50aW1lX2Rpc2FibGUoJnBkZXYtPmRldik7Cj4+ICAJcG1fcnVudGlt
+ZV9kb250X3VzZV9hdXRvc3VzcGVuZCgmcGRldi0+ZGV2KTsKPj4gIAljbGtfdW5wcmVwYXJlKHBy
+aXYtPnJlZmNsayk7Cj4+ICtvdXRfcmVsZWFzZV9pcnFzOgo+PiArCWRldnJlc19yZWxlYXNlX2dy
+b3VwKCZwZGV2LT5kZXYsIHByaXYpOwo+PiAgb3V0X3Jlc2V0X2Fzc2VydDoKPj4gIAlyZXNldF9j
+b250cm9sX2Fzc2VydChyc3RjKTsKPj4gIG91dF9mcmVlX25ldGRldjoKPj4gQEAgLTMxNDEsOSAr
+MzE1MCwxMCBAQCBzdGF0aWMgdm9pZCByYXZiX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+ICpwZGV2KQo+PiAgCj4+ICAJZXJyb3IgPSBwbV9ydW50aW1lX3Jlc3VtZV9hbmRfZ2V0KGRldik7
+Cj4+ICAJaWYgKGVycm9yIDwgMCkKPj4gLQkJcmV0dXJuOwo+PiArCQlkZXZfd2FybihkZXYsICJm
+YWlsZWQgdG8gcmVzdW1lIGRldmljZTogJWRcbiIsIGVycm9yKTsKPj4gIAo+PiAgCXVucmVnaXN0
+ZXJfbmV0ZGV2KG5kZXYpOwo+PiArCWRldnJlc19yZWxlYXNlX2dyb3VwKGRldiwgcHJpdik7Cj4+
+ICAJaWYgKGluZm8tPm5jX3F1ZXVlcykKPj4gIAkJbmV0aWZfbmFwaV9kZWwoJnByaXYtPm5hcGlb
+UkFWQl9OQ10pOwo+PiAgCW5ldGlmX25hcGlfZGVsKCZwcml2LT5uYXBpW1JBVkJfQkVdKTsKPj4g
+QEAgLTMxNTMsNyArMzE2Myw4IEBAIHN0YXRpYyB2b2lkIHJhdmJfcmVtb3ZlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpY2UgKnBkZXYpCj4+ICAJZG1hX2ZyZWVfY29oZXJlbnQobmRldi0+ZGV2LnBhcmVu
+dCwgcHJpdi0+ZGVzY19iYXRfc2l6ZSwgcHJpdi0+ZGVzY19iYXQsCj4+ICAJCQkgIHByaXYtPmRl
+c2NfYmF0X2RtYSk7Cj4+ICAKPj4gLQlwbV9ydW50aW1lX3B1dF9zeW5jX3N1c3BlbmQoJnBkZXYt
+PmRldik7Cj4+ICsJaWYgKGVycm9yID49IDApCj4+ICsJCXBtX3J1bnRpbWVfcHV0X3N5bmNfc3Vz
+cGVuZCgmcGRldi0+ZGV2KTsKPj4gIAlwbV9ydW50aW1lX2Rpc2FibGUoJnBkZXYtPmRldik7Cj4+
+ICAJcG1fcnVudGltZV9kb250X3VzZV9hdXRvc3VzcGVuZChkZXYpOwo+PiAgCWNsa191bnByZXBh
+cmUocHJpdi0+cmVmY2xrKTsKPj4gLS0gCj4+IDIuMzQuMQo+PiAKPgo+LS0gCj5LaW5kIFJlZ2Fy
+ZHMsCj5OaWtsYXMgU8O2ZGVybHVuZAo=
