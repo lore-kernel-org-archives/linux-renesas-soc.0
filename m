@@ -1,92 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E583647C10D;
-	Mon, 28 Sep 2026 21:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A58A2DF137;
+	Mon, 28 Sep 2026 21:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790629319; cv=none; b=mViwVerot5ja0gWg2LFsXGl++NpNJqv9WMjJsqJR7e2op4DV1+xmx/Q//mnQZ4Ix4r628HgYcMFDgU2OdfWWPk6LyI2GrcMJ3nTL4nY/z/g+aHdv8/9FuJ9Q/jZEy1tsAXR4uhIAA55MtNM0LxiM7Xi15JXR2dLW3lgtsLjnxZ4=
+	t=1790630371; cv=none; b=WUR5ByMkhNg1dKrFVfWzyEqnwSqCV4NldrfJjWKECBBg52BrU5UY94Ev1SybE+AOaZZT9nYPng38fD+KyJsmXcorLYdG6hVgNOoVRztwMg44FNe3Y60leYK1FRbPvQOeyCSZFDsOjkxSIwueSsUbfnbQLI+uoGFaWlQFh9baymk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790629319; c=relaxed/simple;
-	bh=/npj3zdP2RbC2CIoCxwIFftfUISIBxvHaVXvjpZDXWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=efp82zGtxRBS2erz8XdbltdEFIbuHw78fgi5fZMLBekdi8LAvEsl66iPROswtbA7F1U6DNz2OEGnlehWB3e4L3UBZLoMNF7gNhXMEdgoklZt5TRTjAr3aM29u4B+H1qucSv7+OiVzVJQU8MHYU9A2ZpcfukSl/7DTp9Dyf5uQjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3lKCrs8; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790630371; c=relaxed/simple;
+	bh=kfmsQ9/d/zSC1kcaKVB7j/3bdEwiblUM+SnGKNFHH9k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UKAbtjHCA3iT/wu0sU0muHvlQ87JZntu6TSh5RLsdqHmWd9ibkE5OUFO3imWH8VIZJgET8UfaQY9/K8zYmzhZ4IUBYjT7bXOEXFh3AIN6TO/i0O4x5uXBPB8/udErOBgAl3qi8wLARkgZnbLRUCqkDgInCtUwkePFKRWKKU9cFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g26diT/P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3lKCrs8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A071F000FF;
-	Mon, 28 Sep 2026 21:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790629317;
-	bh=fR85tYcpWQ8ox9kILOPgK1wQGVXd4jwMDchSGmBsxeA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To;
-	b=H3lKCrs8OLzD6PYZhjlxHmjVpkC8QKLbXJfkZUgRYy29aPCBc/igzbj8NZcCt2jmK
-	 kqlRSLb98InAPQPm6wu3AEOiTnrAdpXtzlHKAoWbyk9v2sjTzs1vhTdERVys+A6iW8
-	 zJp2TcZLCgH9iedmz7gqueL1UleilN7KsQHv8gxS/rSuZbhThT8sI+OcGWlfmFekIr
-	 9vl7vs9jVO8vBqevuUlpc5igDrBXN5SuXaZE4TE9m6VKiJuKNPfKJzIfGZuAWfq4bu
-	 6qRJKmhAgYjhwAQNTWNMt3Ya/3QZLoXO9GSD4kqGGmq9vIGgbAjubwil079kfXHGlR
-	 EwF2+eS7ZEcRg==
-Date: Mon, 28 Sep 2026 16:01:55 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] PCI: dwc: rcar-gen4: Add support for R-Car X5H
- PCIe4
-Message-ID: <20260928210155.GA2260978@bhelgaas>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g26diT/P"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B4538C4AF0B;
+	Mon, 28 Sep 2026 21:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1790630370;
+	bh=kfmsQ9/d/zSC1kcaKVB7j/3bdEwiblUM+SnGKNFHH9k=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=g26diT/P6t76B5rrUQrKwIJCIXJMhezkkPTfgslb0W2RxTfbQsCKcrj38SQmhEabm
+	 zk3wS0S7TYwT/+kKuqicNid4n2dtGknjJ8/B1gq1sNq+nvAavEoLqde6eGR99ycVwR
+	 G4jB6RovSKpARWmXfNuUQBR93++t0i+taXhCAPohdRPjZxoEUjs7EFHMp7XvXpX7H7
+	 bT6/wI+0K3OydbkUPSy4RY2zwn6QhJd4U114yeeUSKauRsqdTXW16sX9Y4flJdtaKv
+	 UfspCFMI7/QWOfabQVjzGkeIkr0I/8r5JCm7Fp0C7O78AoQ+aDpILImvafHk1NcBj8
+	 xIKjwwT3QzVsg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C79CA5FA1;
+	Mon, 28 Sep 2026 21:19:30 +0000 (UTC)
+From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
+Date: Mon, 28 Sep 2026 14:19:03 -0700
+Subject: [PATCH net-next v2 1/3] net: pcs: rzn1-miic: Fix port numbering on
+ RZ/T2H
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260921202823.72620-7-marek.vasut+renesas@mailbox.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260928-miic-validate-dtb-v2-1-1ee3d33748e9@reliablecontrols.com>
+References: <20260928-miic-validate-dtb-v2-0-1ee3d33748e9@reliablecontrols.com>
+In-Reply-To: <20260928-miic-validate-dtb-v2-0-1ee3d33748e9@reliablecontrols.com>
+To: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790630370; l=911;
+ i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
+ bh=IeosEy2220CsO/HfUbuKH2ER3bJwKIrqImDfBfTHa5c=;
+ b=44tZkjaG38VvzANRTfwqSvQcjhG8i9NeLc5hJj4t67SbtutaOTMaTg3wGFqxpuXIsIN4rq+Ub
+ rxi7wE1m38uDsL/gIzqojAelmOlDbu2MjCzxB2PyUKD76PE157Ai0NA
+X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
+ pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
+X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
+ with auth_id=946
+X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
+Reply-To: khendry@reliablecontrols.com
 
-On Mon, Sep 21, 2026 at 10:27:48PM +0200, Marek Vasut wrote:
-> Add support for R8A78000 (R-Car X5H) PCIe4.
-> 
-> This driver previously supported R-Car Gen4 S4/V4H/V4M. PCIe features
-> of R-Car X5H PCIe4 are almost all the same.
-> 
-> The controller initialization sequence is slightly different and is
-> factored out into controller specific callbacks, in a manner similar
-> to previous R-Car Gen4 handling.
-> 
-> The controller does have a PHY attached to it, but the PHY is operated
-> by a separate PHY driver, the PHY driver instance binding is handled
-> in rcar_gen4_pcie_get_resources() and controlled in the aforementioned
-> controller specific callbacks.
-> 
-> The controller driver is deliberately using "renesas,rcar-gen5-pcie4"
-> DT compatible string to discern R-Car X5H PCIe4 controller supported
-> by this driver, from R-Car X5H PCIe6 controller which will most likely
-> use a separate driver.
+From: Kyle Hendry <khendry@reliablecontrols.com>
 
-The gen5/pcie4 usage is confusing.
+The port numbers on the RZ/T2H are documented as 0 to 3. Update the info
+structure to reflect this.
 
-I often push back on things like "PCIe Gen4" because it's ambiguous
-(does it mean "compliant with base spec r4.0" or "supports 16 GT/s" or
-something else), but it's so widely used to mean transfer rate that
-it's hard to resist, and the best I can hope for is clarification.
+Fixes: 08f89e42121d421b ("net: pcs: rzn1-miic: Add RZ/T2H MIIC support")
+Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+---
+ drivers/net/pcs/pcs-rzn1-miic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But in "renesas,rcar-gen5-pcie4", I don't know what the 5 and the 4
-mean.  Maybe "gen5" refers to some internal R-Car thing, and "pcie4"
-is something like "PCIe Gen4, i.e., 16 GT/s"?
+diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+index cb74861e823c..df70309c2d97 100644
+--- a/drivers/net/pcs/pcs-rzn1-miic.c
++++ b/drivers/net/pcs/pcs-rzn1-miic.c
+@@ -838,7 +838,7 @@ static struct miic_of_data rzt2h_miic_of_data = {
+ 	.index_to_string = rzt2h_index_to_string,
+ 	.index_to_string_count = ARRAY_SIZE(rzt2h_index_to_string),
+ 	.miic_port_start = 0,
+-	.miic_port_max = 4,
++	.miic_port_max = 3,
+ 	.sw_mode_mask = GENMASK(2, 0),
+ 	.reset_ids = rzt2h_reset_ids,
+ 	.reset_count = ARRAY_SIZE(rzt2h_reset_ids),
 
-> The R-Car X5H PCIe4 controller embeds HDMA instead of EDMA embedded
-> in the R-Car Gen4 PCIe controller, "dw-edma" driver supports both
-> DMA variants.
-> 
-> Endpoint mode is currently not implemented for R-Car Gen5 PCIe4.
+-- 
+2.43.0
+
+
