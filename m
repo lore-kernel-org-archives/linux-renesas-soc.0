@@ -1,163 +1,118 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B329B370AE7;
-	Mon, 28 Sep 2026 07:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC14611EE;
+	Mon, 28 Sep 2026 07:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790580748; cv=none; b=ripOK4NN2wg2TZezv81t8GpyGa/4CpQpmad45p2BUURcO8ue4/rO/UPUNCESF6oCVD00W4xl2KmlH4G0aNhoGlan0TMDJ7PVbFNdUIIj4t9e5oqS2w78nVr99fStW6k5G2fBJTimDZPkCwdHebgcNJ9fn3pyJJ8Ja29eo2Hri2E=
+	t=1790582011; cv=none; b=u9PKdh+DZJIuYBsXS9K67ybkpjxruKU7U7ER0Hkbc4e7Xk6nGdZD94FHToPZ/Po1UUnUjmxNFtnj9WI3OWkgd+vLQV0dxdBI/7SFbw0aYwEu6ojrTn/WLAnYrsrjGaTO/hLBFXyh+4rTbpQsKybyGxexgi4kGHq94rzSvLw2VJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790580748; c=relaxed/simple;
-	bh=dgepjDVWjlpjORY9mopx1lT//VGOTdCXOKLVTmgrXrU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=fCPMkNhVf2/UfHORqU7e3X3XJl6DMRULZ9fhpiGmqCoCguOquqJcMd171APCp7deMM4HuXGnZOv/cQ3doCK0brzG6sTqxKUru7TmUW8dbRZJk5iEHRwhMxVBuEMzpa998XelcJ/13g6DH8tm3cI0RTpeA0zTwc8Cg56ZKmpIj5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vkH/KMvR; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790582011; c=relaxed/simple;
+	bh=0mfzjK8mUAeG2Ip0jwsowlur0vip7mDGss8cqbe5xas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qyl2tVWSrPnRX8C+UfYgagismnUmo9zLKv5vedBZr+agb5HxxW6LFp/+HMIOR6Dc6lwY6JSGns4rTWMCmL9Ct1Wl2bKagB9xZGkXHMDYDBuk7Ab/mKMcZ4hXGNTqVq+ZceNXn7RPf/puPMZxqlkn+6fuX2RyvvycglZx3pJr7IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWqQE1Ee; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vkH/KMvR"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 40CE7C5CD4C;
-	Mon, 28 Sep 2026 07:33:09 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id F2D36601BD;
-	Mon, 28 Sep 2026 07:32:19 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B96CF102F1E42;
-	Mon, 28 Sep 2026 09:32:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790580738; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=1yVG7biGd8LMh933pwAmn0KONt09cooOBGmuGeDuRG4=;
-	b=vkH/KMvRVbAsfr989+yy6/jIOx0UvnkM3xmUrwI+hntjDoZhKSZlothGHJWV0SLXfmPioi
-	pBZUROwK79npc1KIJKFRseNPaZnVAO+E2Z88iFJjy6KC1Grzt3bjXI9IfaN+i4FOxs/gNQ
-	Nnd08n+01OQYRJf2xjlpAlFBIA18cnd8XINovHmM4HOYrI8avIZ6jZf54Dr3Aai2X//9S9
-	8VOJojwMsDZWENJ5jiYaQzZ5LFazff2+Cek28yw04jdKczOgYxKanRU6wBaXYQ3V8JhHzz
-	cNdID9Py9+StbQfzqUV4oln25LsWwpONTUdoIoh8yBrujC63mB2j91B03n0XGw==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWqQE1Ee"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC401F000FF;
+	Mon, 28 Sep 2026 07:53:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790582009;
+	bh=y3wv9BqAiTw2HCY3ulbCx5oK7QCkC1dJqen90pJn9Jo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=UWqQE1Eeh4cDpY4agdO4gNEiy+8Lw+xDHm9yvxnP6jzi+sSszLFTslJm2FpjSiuye
+	 N/RLk1IiTEU1OtA6wCn23XR6ue059PaIdW3D07YnGqVc+PdaIfgrj9Zq/f5KZLyDRx
+	 bkBZmrBdhrrj8hx5XRIxBGNyV90WR+1EpRwPem88r/5ycevVpsF3PQE3+ZrHKmkC26
+	 7WDQTkcO/P8CMT+9rN6yoOl2AY3VFC63feabB5MaeFXrSlHcp6OcHqYEzkOAj7A+i2
+	 tYR47lxdSMHa9knWelQSEOU3MpMylBHIpuZo45IoD+gyDW5ESGJd3/fbzU7e072Kmh
+	 GS91VYxTSNMkw==
+Message-ID: <0e0ad632-3dd9-4dbc-ae25-38fcfaab3508@kernel.org>
+Date: Mon, 28 Sep 2026 09:53:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] dt-bindings: iio: adc: renesas,rzg2l-adc: Document
+ RZ/G3L ADC for TSU
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, linux-pm@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>,
+ Biju Das <biju.das@bp.renesas.com>
+References: <20260922042707.116378-1-biju.das.jz@bp.renesas.com>
+ <20260922042707.116378-6-biju.das.jz@bp.renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260922042707.116378-6-biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 28 Sep 2026 09:32:14 +0200
-Message-Id: <DLQRW9F3KVF9.349XXY22RRFKH@bootlin.com>
-Cc: "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, "Magnus Damm"
- <magnus.damm@gmail.com>, <linux-kernel@vger.kernel.org>,
- <linux-renesas-soc@vger.kernel.org>, <linux-edac@vger.kernel.org>,
- <devicetree@vger.kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Miquel Raynal"
- <miquel.raynal@bootlin.com>, "Herve Codina" <herve.codina@bootlin.com>
-Subject: Re: [PATCH v3 2/3] EDAC/cadence: Add Cadence DDR EDAC driver
-From: "Paul Louvel" <paul.louvel@bootlin.com>
-To: "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Paul Louvel"
- <paul.louvel@bootlin.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com>
- <20260924-paul-v7-3-rc1-edac-v3-2-bd8054a5b180@bootlin.com>
- <arZiv20Z4P7DQaD6@shikoro>
-In-Reply-To: <arZiv20Z4P7DQaD6@shikoro>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On Fri Sep 25, 2026 at 2:02 PM CEST, Wolfram Sang wrote:
-> Hi Paul,
->
-> thanks for your patches!
->
-> On Thu, Sep 24, 2026 at 04:12:48PM +0200, Paul Louvel wrote:
->> Add the Cadence EDAC driver found on Renesas RZ/N1x SoC.
->> The memory controller supports ECC, software scrubbing, and SECDED.
->>=20
->> Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com=
->
->
-> Disclaimer: I don't know the technology nor the subsystem. So, only some
-> high level comments.
->
->> +
->> +static void cdns_rmw(struct cdns_mc_priv *priv, u32 reg, u32 mask, u32 =
-val)
->> +{
->> +	u32 regval;
->> +
->> +	mutex_lock(&priv->lock);
->> +	regval =3D readl(priv->io_base + reg);
->> +	FIELD_MODIFY(mask, &regval, val);
->> +	writel(regval, priv->io_base + reg);
->> +	mutex_unlock(&priv->lock);
->
-> Hmm, a spinlock is probably more suitable for such short operations? You
-> could even save a lock here and use a generic mutex in
-> inject_ctrl_store() for the whole operation. That would work for now. In
-> terms of defensive programming, a spinlock could be argued, too, to make
-> future additions more robust.
-
-Yes, I wanted to use the lock inside the function so that in the future, if=
- it
-is used, the caller won't have to bother locking anything.
-Noted for the spinlock, that seems more appropriate indeed.
-
->
->> +static void cdns_mc_err_inject(struct mem_ctl_info *mci, u16 synd)
->> +{
->> +	struct cdns_mc_priv *priv =3D mci->pvt_info;
->> +
->> +	cdns_rmw(priv, CDNS_DDR_ECC_XOR, CDNS_DDR_ECC_XOR_CHECK_BITS, synd);
->> +	cdns_rmw(priv, CDNS_DDR_ECC_STAT, CDNS_DDR_ECC_STAT_FWC, 1);
->> +}
->
-> Bike shedding: I think this is too short for a seperate function and it
-> should be folded into its caller.
-
-ACK.
-
->
->> +
->> +static ssize_t inject_ctrl_store(struct device *dev, struct device_attr=
-ibute *attr, const char *buf,
->> +				 size_t count)
->> +{
->> +	struct mem_ctl_info *mci =3D to_mci(dev);
->> +	u16 synd;
->> +
->> +	if (kstrtou16(buf, 16, &synd))
->> +		return -EINVAL;
->> +
->> +	cdns_mc_err_inject(mci, synd);
->> +
->> +	return count;
->> +}
->> +
->> +static DEVICE_ATTR_WO(inject_ctrl);
->> +
->> +static struct attribute *cdns_edac_attrs[] =3D { &dev_attr_inject_ctrl.=
-attr, NULL };
->> +
->> +ATTRIBUTE_GROUPS(cdns_edac);
->
-> What about using debugfs instead via edac_debugfs_create_*?
-
-Seems to be more appropriate since inducing a CE or UE would only be for
-debugging purposes.
-
->
-> Happy hacking,
->
->    Wolfram
+On 22/09/2026 06:26, Biju Das wrote:
+> Add the renesas,r9a08g046-adc1 compatible string for the ADC1
+> instance on RZ/G3L, which is dedicated to the on-chip TSU (thermal
+> sensor unit). Unlike the other ADC instances, this one only exposes
+> a single channel (channel@8), so restrict the allowed channel nodes
+> accordingly.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
 
-Thanks,
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-
-
---=20
-Paul Louvel, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Best regards,
+Krzysztof
