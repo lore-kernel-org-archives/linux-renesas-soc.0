@@ -1,136 +1,163 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2A2471CE9;
-	Mon, 28 Sep 2026 09:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57A53C872A;
+	Mon, 28 Sep 2026 10:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790588081; cv=none; b=p0X1gkjPFbiI/ejvkSfAjUTI8+pDdhWEGRYxYWl7S0ZDTOMR/a2S2uBBnAl7bJIloCEvekzZ7uNhdAheY4g5RpkvF9FK9yRX4B7DQb8MV9OAdfa7Ik20z61qFtc7paHHrR1O86v7oyitxNP1nVi0pFebSX4La+OX0ZrJWJd/Sp8=
+	t=1790592372; cv=none; b=rfl13j6w5oVuD9FJzGvi9y0jTkuXQeOQMvtg5yNBiV4F24bmbHiehSPun/dB5LtVdYXUCP87KO2u0q1fhxx7q9BP4XYfQv2yGUd7OrCeoXSJniHmRaszAIULrpTLP0HybyB/aFiNu+IsYmeAdxysEoZcJtQD8o7Mephmn7b5rp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790588081; c=relaxed/simple;
-	bh=cyu63G4M8s2947h0n3m0jDNJQ6XvOawDbj1EQ9J42sg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=dEYHYM8X9zlO+5YC/tcZ8icXyfjDerulqhgqnsog6Uf3fP6S97ijI676SFN/vMbKFxYIzqc/Yw94h9157NLSC5zeniUk19d0HE7tI2D7rFYmcFGdm3NC765A6JaKG1Tik7R97r//cZj50I/W9fKWk31mg/x9GJmJBCULKvDUcNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Yr2GzNgW; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1790592372; c=relaxed/simple;
+	bh=eQgQ7YQ7UmWVyd47COQWsNSE8eUIQeRl/q0KumbVqE4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X5IuRIGyx29du6XaZEKz6tm8ynMEuDX6B7sobFY0FDZSuVSAkLld9TRyfWMb2CBADUCnv0xqSgkkV+KnO3ecnbSbJsEwyX0OPVZ6VLDPZeKxWh0ydYvvOgqFCtyIrPaibcdSo0NRXPv84S7UaOHzaUxempCFeIjWz7S8zXSZqpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RdHA5sYS; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Yr2GzNgW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=cyu63G4M8s2947h0n3m0jDNJQ6XvOawDbj1EQ9J42sg=; b=Y
-	r2GzNgW3iCQoDwUUNBDAK5uxoGu+bnYM8W/xWz/lqosDzYN3w80PBK7Crmeyq0TV
-	VpaxhjzB8W1RlBeR4WlMSbyhO7f0BoZJrBQD/WbLjAim0U06T0QAw+Qc1pob17A/
-	uybQOaV/MbnBop2p+bVx9rTkhBcSuZn7eVa6GfDbKE=
-Date: Mon, 28 Sep 2026 17:33:29 +0800 (CST)
-From: "jiale yao" <19888972804@163.com>
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: "Paul Barker" <paul@pbarker.dev>, "Andrew Lunn" <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Jakub Kicinski" <kuba@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
-	"Mitsuhiro Kimura" <mitsuhiro.kimura.kc@renesas.com>,
-	"Claudiu Beznea" <claudiu.beznea.uj@bp.renesas.com>,
-	"Sergey Shtylyov" <s.shtylyov@omp.ru>, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re:Re: [PATCH v2 6/7] net: ravb: fix resource teardown ordering
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <20260927160134.GI1099675@ragnatech.se>
-References: <20260927144741.1320558-1-yaojiale02@163.com>
- <20260927144741.1320558-7-yaojiale02@163.com>
- <20260927160134.GI1099675@ragnatech.se>
-X-NTES-SC: AL_Qu2SAvmTt0gr7yeRZOkcn08ShO49XMOyvfoi2YFTc+gGmTzU3j0if1JyFELowOyzNySDujGrVSdF5ct2e7h6WLYFX5PXEaE9PvC0XY6E3Q==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RdHA5sYS"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 146FC1A0FDB;
+	Mon, 28 Sep 2026 10:46:07 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DA35A601BD;
+	Mon, 28 Sep 2026 10:46:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DE786102F1ECF;
+	Mon, 28 Sep 2026 12:46:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790592365; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=EezuqqWjWGyczBWMy/SW4LsHLd3FjeQixBx7OfSF15U=;
+	b=RdHA5sYS0X5L2eprQh6Xpry+OHRAvO3VTG+3jg14s0/WIwtIpXIYGSWg58XQedKAAOX49i
+	z9SyMK91jeMsmEY4CTrFDEAZ+Cii5FmR7TY7DEzZDhuWF6LJuVphWcnq8z9wFpqd/Ye5u7
+	zkV4R/4qZ+gsLXqqojB/tc/vDWqq2jVLV0FwMWaVku5LZaCsoKrPf9eRbfsc64x7WruKE8
+	bBEdLJV1+dWU48aIQCPp02SSHf8OpBlH2JE2eM4wDgDmP5jtEDLFf4pyBHriQIVcP+cXNQ
+	2jPqcpgqnHCY0kt3BfdJ8ewJdD3Nf8rei3DO0jBFokPde9VJMHHSE9IDzOXZuA==
+From: Paul Louvel <paul.louvel@bootlin.com>
+Subject: [PATCH v4 0/3] Add Renesas RZ/N1x EDAC driver
+Date: Mon, 28 Sep 2026 12:45:46 +0200
+Message-Id: <20260928-paul-v7-3-rc1-edac-v4-0-4646a5b7cac9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <32efc762.8cd6.1a0e75cbd49.Coremail.19888972804@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:iCgvCgD3lzhpNLpqw6hPAA--.51201W
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzglwqmq6NGl5RAAA3t
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOzU7DMBAGX6XyGSOv13/pifdAHOy1TY1KUiVpB
+ Kry7tjtpRUFqcdP2pmdE5vSWNLEtpsTG9NSpjL0dainDaOd798TL7FuJoU0ogPDD/6454vlyEc
+ CnqInDlnZLncmk7asgocx5fJ1lr6+XfZ0DB+J5mZqF7syzcP4ff66QLv798ECXPAo0DgnHcrgX
+ 8IwzPvSP9Pw2XwXWKo/YStCQksKPLgbuPUt8rrA3pXIKslaOxAIUeT0UEGDA4ESBgwkot8FeFU
+ g8a4Eq0Q7BEceVfD4UEGDQ3RCK68DOHFbsK7rDwGJeWQJAgAA
+X-Change-ID: 20260916-paul-v7-3-rc1-edac-1f479f96fc57
+To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Herve Codina <herve.codina@bootlin.com>, 
+ "Paul Louvel (Schneider Electric)" <paul.louvel@bootlin.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790592361; l=3351;
+ i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
+ bh=eQgQ7YQ7UmWVyd47COQWsNSE8eUIQeRl/q0KumbVqE4=;
+ b=se92g3Cavs/+obYgiz66ubB1UsPJttZRU5kMTaB/5ebxgsBuFcLZJJdEchlzEok+cJ495krpE
+ 0xjCRaL4BXmBxuGDnYUJ8ZnQwkJV4fHPXZtTpRX0EXh4n4JFAOhKaJF
+X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
+ pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
+X-Last-TLS-Session-Version: TLSv1.3
 
-SGksCkF0IDIwMjYtMDktMjggMDA6MDE6MzQsICJOaWtsYXMgU8O2ZGVybHVuZCIgPG5pa2xhcy5z
-b2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPiB3cm90ZToKPkhpIEppYWxlLAo+Cj5PbiAyMDI2LTA5LTI3
-IDIyOjQ3OjM5ICswODAwLCBKaWFsZSBZYW8gd3JvdGU6Cj4+IHJhdmJfcmVtb3ZlKCkgZnJlZXMg
-dGhlIG5ldGRldiBiZWZvcmUgZGV2cmVzIHJlbGVhc2VzIHRoZSBtYW5hZ2VkIElSUXMuCj4+IFRo
-ZSBoYW5kbGVycyB1c2UgdGhlIG5ldGRldiBhcyB0aGVpciBkYXRhIHBvaW50ZXIsIHNvIGFuIGlu
-dGVycnVwdCBkdXJpbmcKPj4gdGhhdCB3aW5kb3cgY2FuIGFjY2VzcyBmcmVlZCBtZW1vcnkuIFBy
-b2JlIGVycm9yIHBhdGhzIGhhdmUgdGhlIHNhbWUKPj4gb3JkZXJpbmcgcHJvYmxlbS4KPj4gCj4+
-IFRoZSByZW1vdmUgY2FsbGJhY2sgYWxzbyByZXR1cm5zIHdoZW4gcnVudGltZSByZXN1bWUgZmFp
-bHMuIFRoYXQgbGVhdmVzCj4+IHRoZSBuZXRkZXYgcmVnaXN0ZXJlZCB3aGlsZSB0aGUgZHJpdmVy
-IGNvcmUgc3RpbGwgcmVsZWFzZXMgaXRzIG1hbmFnZWQKPj4gcmVzb3VyY2VzLiBBIHJ1bm5pbmcg
-aW50ZXJmYWNlIGFscmVhZHkgaG9sZHMgYSBydW50aW1lIFBNIHJlZmVyZW5jZSwgc28KPj4gdGhl
-IGV4dHJhIGdldCBjYW5ub3QgaW52b2tlIGEgZmFpbGluZyByZXN1bWUuIEEgcmVzdW1lIGZhaWx1
-cmUgdGhlcmVmb3JlCj4+IG9jY3VycyB3aGlsZSB0aGUgaW50ZXJmYWNlIGlzIGRvd24gYW5kIG5k
-b19zdG9wKCkgd2lsbCBub3QgYmUgY2FsbGVkLgo+PiAKPj4gUGxhY2UgdGhlIElSUSByZXNvdXJj
-ZXMgaW4gYSBkZWRpY2F0ZWQgZGV2cmVzIGdyb3VwIGFuZCByZWxlYXNlIGl0IGJlZm9yZQo+PiBm
-cmVlaW5nIHRoZSBuZXRkZXYuIENvbnRpbnVlIHVucmVnaXN0ZXJpbmcgYW5kIGZyZWVpbmcgc29m
-dHdhcmUgcmVzb3VyY2VzCj4+IHdoZW4gcnVudGltZSByZXN1bWUgZmFpbHMsIGJ1dCBza2lwIHRo
-ZSB1bm1hdGNoZWQgcnVudGltZSBQTSBwdXQuCj4KPldvdWxkIGl0IG5vdCBtYWtlIG1vcmUgc2Vu
-cyB0byByZXdvcmsgdGhlIGRyaXZlciB0byBhbGxvY2F0ZSB0aGUgbmRldiAKPnVzaW5nIGRldm0g
-dG9vIGluc3RlYWQgb2YgYWRkaW5nIGEgY29tcGxleCBkZXZyZXMgZ3JvdXA/IEFGSUsgCj5zL2Fs
-bG9jX2V0aGVyZGV2X21xcy9kZXZtX2FsbG9jX2V0aGVyZGV2X21xcy8gd291bGQgYWxsb2NhdGUg
-dGhlIG5kZXYgCj53aXRoIGRldm0gdG9vPwoKWW91IGFyZSByaWdodCwgSSBtYWRlIHRoaW5ncyBj
-b21wbGljYXRlZC4gSSB3aWxsIHJld29yayB0aGUgcmF2YiBwYXRjaCBhbmQKZHJvcCB0aGUgZGV2
-cmVzIGdyb3VwLgoKPgo+PiAKPj4gRml4ZXM6IGMxNTY2MzNmMTM1MyAoIlJlbmVzYXMgRXRoZXJu
-ZXQgQVZCIGRyaXZlciBwcm9wZXIiKQo+PiBGaXhlczogNDhmODk0YWIwN2M0ICgibmV0OiByYXZi
-OiBBZGQgcnVudGltZSBQTSBzdXBwb3J0IikKPj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcK
-Pj4gU2lnbmVkLW9mZi1ieTogSmlhbGUgWWFvIDx5YW9qaWFsZTAyQDE2My5jb20+Cj4+IC0tLQo+
-PiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4uYyB8IDIzICsrKysrKysr
-KysrKysrKysrLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgNiBk
-ZWxldGlvbnMoLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5l
-c2FzL3JhdmJfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4u
-Ywo+PiBpbmRleCBlYTFjN2U1MzY3OTEuLmEyNWY1YWM3MDYyZiAxMDA2NDQKPj4gLS0tIGEvZHJp
-dmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4uYwo+PiArKysgYi9kcml2ZXJzL25l
-dC9ldGhlcm5ldC9yZW5lc2FzL3JhdmJfbWFpbi5jCj4+IEBAIC0yOTYzLDI4ICsyOTYzLDM1IEBA
-IHN0YXRpYyBpbnQgcmF2Yl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAg
-CQlwcml2LT5udW1fcnhfcmluZ1tSQVZCX05DXSA9IE5DX1JYX1JJTkdfU0laRTsKPj4gIAl9Cj4+
-ICAKPj4gKwlpZiAoIWRldnJlc19vcGVuX2dyb3VwKCZwZGV2LT5kZXYsIHByaXYsIEdGUF9LRVJO
-RUwpKSB7Cj4+ICsJCWVycm9yID0gLUVOT01FTTsKPj4gKwkJZ290byBvdXRfcmVzZXRfYXNzZXJ0
-Owo+PiArCX0KPj4gKwo+PiAgCWVycm9yID0gcmF2Yl9zZXR1cF9pcnFzKHByaXYpOwo+PiAgCWlm
-IChlcnJvcikKPj4gLQkJZ290byBvdXRfcmVzZXRfYXNzZXJ0Owo+PiArCQlnb3RvIG91dF9yZWxl
-YXNlX2lycXM7Cj4+ICsKPj4gKwlkZXZyZXNfY2xvc2VfZ3JvdXAoJnBkZXYtPmRldiwgcHJpdik7
-Cj4+ICAKPj4gIAlwcml2LT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgTlVMTCk7Cj4+
-ICAJaWYgKElTX0VSUihwcml2LT5jbGspKSB7Cj4+ICAJCWVycm9yID0gUFRSX0VSUihwcml2LT5j
-bGspOwo+PiAtCQlnb3RvIG91dF9yZXNldF9hc3NlcnQ7Cj4+ICsJCWdvdG8gb3V0X3JlbGVhc2Vf
-aXJxczsKPj4gIAl9Cj4+ICAKPj4gIAlpZiAoaW5mby0+Z3B0cF9yZWZfY2xrKSB7Cj4+ICAJCXBy
-aXYtPmdwdHBfY2xrID0gZGV2bV9jbGtfZ2V0KCZwZGV2LT5kZXYsICJncHRwIik7Cj4+ICAJCWlm
-IChJU19FUlIocHJpdi0+Z3B0cF9jbGspKSB7Cj4+ICAJCQllcnJvciA9IFBUUl9FUlIocHJpdi0+
-Z3B0cF9jbGspOwo+PiAtCQkJZ290byBvdXRfcmVzZXRfYXNzZXJ0Owo+PiArCQkJZ290byBvdXRf
-cmVsZWFzZV9pcnFzOwo+PiAgCQl9Cj4+ICAJfQo+PiAgCj4+ICAJcHJpdi0+cmVmY2xrID0gZGV2
-bV9jbGtfZ2V0X29wdGlvbmFsKCZwZGV2LT5kZXYsICJyZWZjbGsiKTsKPj4gIAlpZiAoSVNfRVJS
-KHByaXYtPnJlZmNsaykpIHsKPj4gIAkJZXJyb3IgPSBQVFJfRVJSKHByaXYtPnJlZmNsayk7Cj4+
-IC0JCWdvdG8gb3V0X3Jlc2V0X2Fzc2VydDsKPj4gKwkJZ290byBvdXRfcmVsZWFzZV9pcnFzOwo+
-PiAgCX0KPj4gIAljbGtfcHJlcGFyZShwcml2LT5yZWZjbGspOwo+PiAgCj4+IEBAIC0zMTI0LDYg
-KzMxMzEsOCBAQCBzdGF0aWMgaW50IHJhdmJfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKPj4gIAlwbV9ydW50aW1lX2Rpc2FibGUoJnBkZXYtPmRldik7Cj4+ICAJcG1fcnVudGlt
-ZV9kb250X3VzZV9hdXRvc3VzcGVuZCgmcGRldi0+ZGV2KTsKPj4gIAljbGtfdW5wcmVwYXJlKHBy
-aXYtPnJlZmNsayk7Cj4+ICtvdXRfcmVsZWFzZV9pcnFzOgo+PiArCWRldnJlc19yZWxlYXNlX2dy
-b3VwKCZwZGV2LT5kZXYsIHByaXYpOwo+PiAgb3V0X3Jlc2V0X2Fzc2VydDoKPj4gIAlyZXNldF9j
-b250cm9sX2Fzc2VydChyc3RjKTsKPj4gIG91dF9mcmVlX25ldGRldjoKPj4gQEAgLTMxNDEsOSAr
-MzE1MCwxMCBAQCBzdGF0aWMgdm9pZCByYXZiX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQo+PiAgCj4+ICAJZXJyb3IgPSBwbV9ydW50aW1lX3Jlc3VtZV9hbmRfZ2V0KGRldik7
-Cj4+ICAJaWYgKGVycm9yIDwgMCkKPj4gLQkJcmV0dXJuOwo+PiArCQlkZXZfd2FybihkZXYsICJm
-YWlsZWQgdG8gcmVzdW1lIGRldmljZTogJWRcbiIsIGVycm9yKTsKPj4gIAo+PiAgCXVucmVnaXN0
-ZXJfbmV0ZGV2KG5kZXYpOwo+PiArCWRldnJlc19yZWxlYXNlX2dyb3VwKGRldiwgcHJpdik7Cj4+
-ICAJaWYgKGluZm8tPm5jX3F1ZXVlcykKPj4gIAkJbmV0aWZfbmFwaV9kZWwoJnByaXYtPm5hcGlb
-UkFWQl9OQ10pOwo+PiAgCW5ldGlmX25hcGlfZGVsKCZwcml2LT5uYXBpW1JBVkJfQkVdKTsKPj4g
-QEAgLTMxNTMsNyArMzE2Myw4IEBAIHN0YXRpYyB2b2lkIHJhdmJfcmVtb3ZlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpCj4+ICAJZG1hX2ZyZWVfY29oZXJlbnQobmRldi0+ZGV2LnBhcmVu
-dCwgcHJpdi0+ZGVzY19iYXRfc2l6ZSwgcHJpdi0+ZGVzY19iYXQsCj4+ICAJCQkgIHByaXYtPmRl
-c2NfYmF0X2RtYSk7Cj4+ICAKPj4gLQlwbV9ydW50aW1lX3B1dF9zeW5jX3N1c3BlbmQoJnBkZXYt
-PmRldik7Cj4+ICsJaWYgKGVycm9yID49IDApCj4+ICsJCXBtX3J1bnRpbWVfcHV0X3N5bmNfc3Vz
-cGVuZCgmcGRldi0+ZGV2KTsKPj4gIAlwbV9ydW50aW1lX2Rpc2FibGUoJnBkZXYtPmRldik7Cj4+
-ICAJcG1fcnVudGltZV9kb250X3VzZV9hdXRvc3VzcGVuZChkZXYpOwo+PiAgCWNsa191bnByZXBh
-cmUocHJpdi0+cmVmY2xrKTsKPj4gLS0gCj4+IDIuMzQuMQo+PiAKPgo+LS0gCj5LaW5kIFJlZ2Fy
-ZHMsCj5OaWtsYXMgU8O2ZGVybHVuZAo=
+The Cadence memory controller found on Renesas RZ/N1x SoCs supports ECC
+with SECDED.
+
+The memory controller found on the r9a06g032 supports at most a single
+DIMM of DDR2/3, up to 2GB.
+
+Add the EDAC driver for this memory controller, and the relevant
+device-tree binding. Also add the EDAC node to the existing r9a06g032
+SoC base device-tree.
+
+Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
+---
+Changes in v4:
+- Patch 1 and 3: drop the RZN1 family compatible, as requested by Geert.
+- Patch 2:
+
+    - Instead of using FIELD_MODIFY macro that expect a compile-time
+      constant mask, use binary operators instead. Note that the new
+      code is doing exactly what FIELD_MODIFY do, minus the error if
+      cdns_rmw() is not inlined.
+
+    - Use a spinlock instead of mutex since the locked region will be
+      really fast to execute. Only lock it once for two register rmw.
+
+    - Use edac_debugfs_* facility instead of sysfs attributes. Use a
+      separate "bits" and "inject" file instead of just a single file.
+      This is better since clients can read the previously set syndrome.
+
+    - Cleaned up the probe function in separate functions. Use a remove
+      function instead of registering custom devm action. Use a goto for
+      resources cleaning.
+
+    - Mask all interrupts before un-registering the memory controller.
+
+- Link to v3: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com
+
+Changes in v3:
+- Patch 2:
+
+    - Added trailing newline to end message.
+
+    - Forgot mutex_init() in probe...
+
+    - Registering the MC at the end of the probe.
+
+- Link to v2: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v2-0-bc1406161ecc@bootlin.com
+
+Changes in v2:
+- Patch 2:
+
+    - FIELD_MODIFY() is always called with a compile-time constant mask
+      in this driver. I see no problem here.
+
+    - Use devm_clk_get_enabled() so the driver does not need to store
+      struct clk_bulk_data outside the stack space.
+      Clocks are not manipulated outside of probe.
+
+    - Introduced a mutex for rmw operations in inject_ctrl_store() sysfs
+      callback. Rename drv to priv in cdns_rmw().
+
+    - Return IRQ_NONE if the stat int register is empty.
+
+    - I see no reason to follow Sashiko last remark on this patch.
+      Is an unhandled interrupt a big deal in this case ?
+
+- Link to v1: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v1-0-70be37c41a18@bootlin.com
+
+---
+Paul Louvel (3):
+      dt-bindings: edac: cdns,ddr-edac: add Cadence DDR EDAC binding
+      EDAC/cadence: Add Cadence DDR EDAC driver
+      ARM: dts: renesas: r9a06g032: add EDAC node
+
+ .../devicetree/bindings/edac/cdns,ddr-edac.yaml    |  61 ++++
+ MAINTAINERS                                        |   7 +
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi           |   9 +
+ drivers/edac/Kconfig                               |  10 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/cadence_edac.c                        | 390 +++++++++++++++++++++
+ 6 files changed, 478 insertions(+)
+---
+base-commit: d9f39b2c0579f313d14954a9ec584511c543aab5
+change-id: 20260916-paul-v7-3-rc1-edac-1f479f96fc57
+
+Best regards,
+--  
+Paul Louvel, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
