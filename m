@@ -1,103 +1,117 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua2-f42.google.com (mail-ua2-f42.google.com [74.125.226.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF33349D5A0
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 10:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311EB4AB3AF
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 11:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790592377; cv=none; b=FZU3XOTh3yeLz3c+s0mU/JyJ1a8vuc6I5M6Jp4q1LTYFulUcTKhaMgkwXDAip9bHlmtDosm1DrtXq5W7g2mscq2I9FW0K8BPnv7lWyVppiER2YlBvo/Fyi1bLYiySyPMQq33Q+PyHJ1cocac8fbWsTJwn0k3i5Hjiugcr22EP/4=
+	t=1790595497; cv=none; b=ghYuZhns2H/V5yFj5kwXjoWIyoWYegaXQS75vuRKv1l9Mh9guHBEicatzCiRb0QsBTvr0ikpZXNqGV7aXZxBBhOJURdpefhrTGJkX61PPIvaNgBUXZYjKcaNiqJftH1w54gBKffFFvRHaqIFLPeoOrhWOdPWK83lIu1ZamTWPwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790592377; c=relaxed/simple;
-	bh=8DYNZFOHd5e4MsoRTx8ygmwQgvRgTdveiNKefgOMC4U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=puZag6guP1Vm4fFLfL+wh+TGYcsS6NUXNY2Bh6UX1gCBxmXHHB5Q9gXDrqMkdv2mXkOYfp+wVWouPoO0LH5poX5Sp7lUSZfxqMuFwyBTIKweYli6hnzdj+tbZVybpvlJcfiRkj3vy31RyWH/y942Svz3qcGep+Cy6liH+x1An+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S/bprw9U; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S/bprw9U"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E040A1A0FDB;
-	Mon, 28 Sep 2026 10:46:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B4029601BD;
-	Mon, 28 Sep 2026 10:46:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 01D31102F1ECF;
-	Mon, 28 Sep 2026 12:46:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790592371; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=atI7qXIzs6KQElAaHdZKdHw4dLA3gMuvDUusM2Vrg9U=;
-	b=S/bprw9UT+5Q/Y/cqgQEoC5V0eositOi2XgAaXvHaLAUNofBBr+5yFJb8XI+lJ9XBTiHVm
-	hWeCc1nlB3ezVPbTwktOo5h0SMc6WEzIavvHxcdVHBkyiFMLdKauHeslVY4B5CFLEpaOR9
-	755BIiWKSgsstVHNT9pOJKDkrZG6GNW2oZbLq5K4RWfT/iSNgg5EAaY2DfNY9NuCZwmTRw
-	oXO2dDz7bQtZiWa9TSUEi8P4febvvznNZKcyMBJ98W8lLpqQJa0JgtqdL/o3UD2sFRdILR
-	R1S6DyQvfCx7XxEYp2QqI07olFD35uU6bSn7W4D0NXvIHWVlKTKWy99xrgqNEQ==
-From: Paul Louvel <paul.louvel@bootlin.com>
-Date: Mon, 28 Sep 2026 12:45:49 +0200
-Subject: [PATCH v4 3/3] ARM: dts: renesas: r9a06g032: add EDAC node
+	s=arc-20240116; t=1790595497; c=relaxed/simple;
+	bh=tKvl59UVQolgo2gX344Tqkbysa6udLoFwYeW240vcog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RSnuxSNb6L9+RWrk64bnqLJOzQTwwLp/pHq/o4z55dcwFYVgNVW4sfIgchG6vTuKXmTdK6SvfJDhs41BLT4sczLbTPEAlY4q8DSE7V3qOu2y/B0lVCEJoesa11Efe4H+pGRlfT7igJO5y+QYpS0xG5d02dRcf6vd9XHQPHOIJws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua2-f42.google.com with SMTP id a1e0cc1a2514c-986dfb672d8so1289821241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 04:38:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790595495; x=1791200295;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=i6Axo3HGXtx4M0ZdgmZ+9VJvjH8NJrRWcx2B+NzBV5s=;
+        b=ROYZWqoyqPwJm8chNGFw4YW3F+nTZdL9VKyBEBrGr6jJN+lF6yuBaK1dHUhuGby7Za
+         WUvfg4hYR8VSZcatHx0LA9Y1/JRKcGyotmRQ4p/gb6vQoSRIMjo2Bj12Pr8XRgz4HRzV
+         nEd01fgquTCQZpimIy23ArTM1fvX3LQB5T6nia9vfAYiy3oFGsNq0uUUY2G4WLZ2VXYl
+         BLFfjG6DdJRhkjN+KO3MJTYeZ9qoFzyRVJCG0g5fqkkFOjFKbIPQa1Fyam9ZsO5eYGXy
+         Em8sldEN/iO9UMzlp2uAiwF3EKLlGBKKixcAq45MP/Un2XIQznFPWYVZJShcbKSSCPav
+         ENNg==
+X-Forwarded-Encrypted: i=1; AKwUvBzYMAxDQhyCRJeuP59Y9kF+VszOdtJIgdHEQTItwleSo1HFu0kqapNeOkvtUMygghaWprJbp8Ml73vhZROCxLPtwQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJicCHKzpxXWRQ9mIFNlFHOJGAAt4NYs1tWWBPGO0krL/z6DBkd
+	cQzewJxkBshuTPbNIbTIADMXqQwam/HxaFBiNgx3qYYTnDAMg1VI8APhs8BzpYAJ
+X-Gm-Gg: AYBFou1g/q11baNFSfxl1rItH0e/8Lev4m0z26KYb+TkXcKzy1Do95493KInOMPn9J+
+	LK4RDaqBOQTbYHw+ZP8tqB9Xzppxsbq6EsFxLbHKSi9qASVNCFETAzhs3TgjdByKazzMg9m5Yfv
+	ErGwop90dDRGaxxcjnPDiyXGGgY5P2huiWtkF51j09G8bupWi95ja8OSfblMU+YJuh65ORF75oF
+	p3d7jJVbBhwgtFvSg4sbsiZj4llqoA9gseLgvH92d9gvNVw1IrwvGLScw+o8XGOGO5/CEkxcoZQ
+	fZjPYpyR+m2jhYwnYo996UgC3cwRVY5VAUe6sBy4o861UasiRET9YNEI8KSWDLkJ+sKvWAiVxen
+	ZwaGtFFvh+I3+XKlqZyxTE0JbdzcvV7iYByOU2nafSGOhgU0xyBd21AFKn0C009v2ymtBy5MBc8
+	A17CPJdku7QUmzltVigRbSXza/whXPmnBOGa0DcAQ9CeKSG0ckXYCqJsNyCLQ7JBP2KGfvYSkB3
+	0av22eOJ4dOjRbmjHJ2YcpR1wAJdcq0y7kF21edp1jQocC8
+X-Received: by 2002:a05:6102:2928:b0:7b2:f832:49bf with SMTP id ada2fe7eead31-7b2f8324f4dmr2303074137.14.1790595495033;
+        Mon, 28 Sep 2026 04:38:15 -0700 (PDT)
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7b39c1a46a6sm8618153137.12.2026.09.28.04.38.11
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Sep 2026 04:38:11 -0700 (PDT)
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e97e2c7b3so1607113241.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Sep 2026 04:38:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz8PliHgcuiIkHqjfa/GOYTzGu8yW+DtKTd9N2GNWjccBThVGvaVOfww88222OnR9oOBcjB6Dhi6JmC9xlmeKrGEg==@vger.kernel.org
+X-Received: by 2002:a05:6102:4422:b0:79e:373e:8216 with SMTP id
+ ada2fe7eead31-7af1973fc40mr5035987137.0.1790595491034; Mon, 28 Sep 2026
+ 04:38:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260928-paul-v7-3-rc1-edac-v4-3-4646a5b7cac9@bootlin.com>
-References: <20260928-paul-v7-3-rc1-edac-v4-0-4646a5b7cac9@bootlin.com>
-In-Reply-To: <20260928-paul-v7-3-rc1-edac-v4-0-4646a5b7cac9@bootlin.com>
-To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Herve Codina <herve.codina@bootlin.com>, 
- "Paul Louvel (Schneider Electric)" <paul.louvel@bootlin.com>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790592361; l=1057;
- i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
- bh=8DYNZFOHd5e4MsoRTx8ygmwQgvRgTdveiNKefgOMC4U=;
- b=U8cazgFjhYJuyG9b1fMzAkuqK8ZRSYY67+eHDYe/HlnIs26EDT81hBi98tR506Wz0NIrl/TKa
- Mz6WvwKQKBhCoBjsICEjBYHpGw247l/1UY1//vq2L0lmyis+BQrEbmr
-X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
- pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
-X-Last-TLS-Session-Version: TLSv1.3
+References: <cover.1790325809.git.geert+renesas@glider.be> <10e85f27b8ea4342f6f19a7c9e68fd641e58b54a.1790325809.git.geert+renesas@glider.be>
+In-Reply-To: <10e85f27b8ea4342f6f19a7c9e68fd641e58b54a.1790325809.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 Sep 2026 13:38:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUJoy0pBHxfib-SmUf+2LCum3HAk1hftXyeV8CEwKWQ2A@mail.gmail.com>
+X-Gm-Features: AclHuK_Ipn8bslrHX7mMK7Zs6CdI4c2l8ME7s7cvf6MpMmTS5OEzqaHYWA0OcRE
+Message-ID: <CAMuHMdUJoy0pBHxfib-SmUf+2LCum3HAk1hftXyeV8CEwKWQ2A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a78000: Add MSIOF nodes
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add EDAC node to the SoC base device tree file.
+On Fri, 25 Sept 2026 at 10:53, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Add device nodes for the Clock-Synchronized Serial Interfaces with FIFO
+> (MSIOF) on the Renesas R-Car X5H (R8A78000) SoC.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a78000.dtsi | 104 ++++++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a78000.dtsi b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> index 9a07753b221541ed..d75a9e43f772f871 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
+> @@ -1000,6 +1000,110 @@ mdlc_aon: system-controller@c1338000 {
+>                         bootph-all;
+>                 };
+>
+> +               msiof0: spi@c1700000 {
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
----
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+[...[
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index 19c9bce0a26d..8152464d4e6b 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -164,6 +164,15 @@ dmamux: dma-router@a0 {
- 			};
- 		};
- 
-+		edac: memory-controller@4000d000 {
-+			compatible = "renesas,r9a06g032-ddr-edac", "cdns,ddr-edac";
-+			reg = <0x4000d000 0x1000>;
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&sysctrl R9A06G032_CLK_DDRC>, <&sysctrl R9A06G032_HCLK_DDRC>;
-+			clock-names = "ddrc", "pclk";
-+			status = "disabled";
-+		};
-+
- 		udc: usb@4001e000 {
- 			compatible = "renesas,r9a06g032-usbf", "renesas,rzn1-usbf";
- 			reg = <0x4001e000 0x2000>;
+>                 mdlc_cmnn: system-controller@ca410000 {
+
+Hmm, something went wrong while rebasing.
+Obviously I will fix the order while applying.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.55.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
