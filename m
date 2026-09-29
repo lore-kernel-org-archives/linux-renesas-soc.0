@@ -1,41 +1,41 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31D150E5B4;
-	Tue, 29 Sep 2026 10:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5142E50EC1C
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 10:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790678229; cv=none; b=trb8Qq54AzL1HYw9G4Rs045QGPfdORROK3HzKcFxHMCN+AE5hdk+zr7SHn958fKSybsCu/LUX4EQlCRdh+Ks1MeXB7uQ14wf+kS1V2udf+V/5tKCxS1PUay9JKirT3pnlsatrqMVdl4k0TNYbV+mVzc/2x0HnLkXPvaJIPEO8Jw=
+	t=1790678234; cv=none; b=V1YFg3s4OYJ54xMThDOsHWXdkKlylvYEQAXCdspYH2CajttG9vqTVBKz8almDyt2ZloEyI9WoJupHc4yOm2zv4an9aXajjY0inDVNq8L9XOBUaa67AfAPiGd0ablFC17ynKUGKuoEI85uexRVJnE4Qz0dunxuY3P47fN0ZVXlqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790678229; c=relaxed/simple;
-	bh=fAJCR/ZroPy+oJUNxMd85Nr72/31bKeldozY5NBeAX0=;
+	s=arc-20240116; t=1790678234; c=relaxed/simple;
+	bh=2mduncA6Id/g6Sh0/h8N1AnkuHZoc9jpW2YXz7Nkd50=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oUqHt+j2t9vl242aB/xp3khQy4aA49E7laqf29Fxvq/API4Kasbwl3s+vg6c2qFBaK07oe8+zW5skW6PhILjmZkjcfMjx5kgMDoQ894VSq+bxmpcnWtUVL+zPGG9m0IMG2XYyjvmesg4Vj2eZRyvrzoUCswjO4a6xvPIM6VXRg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MqTojPzP; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=PbSWaKiPfzMyAtgR3TgcujuAy4MPzsL4KwHwoqycNus/llQmHQM9SKIzpbUxcCEQ7wGyselkOw4uzdKYOzpLzeapdd1L9KGjguPWsrBGQZhSGGIe6SLQDzAvuS1LcXsGlCIuOUgJaKAua6acKWTJhBxTlO23WZBtt8rzOB5LsPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HcHZ/yEX; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MqTojPzP"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HcHZ/yEX"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7844A4E410B7;
-	Tue, 29 Sep 2026 10:36:53 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id AFDE04E410B8;
+	Tue, 29 Sep 2026 10:36:58 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4B7CF601BD;
-	Tue, 29 Sep 2026 10:36:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3BB42103297D9;
-	Tue, 29 Sep 2026 12:36:46 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8237A601BD;
+	Tue, 29 Sep 2026 10:36:58 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 24A22103295E3;
+	Tue, 29 Sep 2026 12:36:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790678211; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1790678216; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=032h6Th8l7IfQBTnPLHPYTAaN8pOyDuaC0Ayd1z2gxI=;
-	b=MqTojPzPfPXSqJtTFCsEBbmgmp2/5X3w9gioa23m3HV0/eMECBU2ebNCtd9XTNUzkQdqIs
-	VWYwkl/6StrQcAEB4FA1iXQVJu6wYSJgcPSH4mlngku+IWWWS7rSv2lRe7TOPW7GbXKZKx
-	Iyqaq0TsNIR/XQJrCLkf4ZgW9aW/UbXhgX4bsR0UnupObu7Tx3lyyNMXEj9pDzyq7EK7Hn
-	3jyGYyYML3DrDj6k3EdlDMBEzXKuyn5dTTHbE6wUI1Mn7272M3LnO4NLB5Dm/mURWCHjTN
-	07Y3JY2pIwLlRRCvaMaqfb08+MhUu98xTpXbKd8JmW1MHGLSkDQB+6Qamoeu4g==
+	bh=ZZa+gk1xSU87E90vuNj8MWoKLXAGcf4HT7mqh7DTZvU=;
+	b=HcHZ/yEX0y7E/R4eLYri/8Prr889zeEqUolkRUUmUn5kGhl39HdVqBLC8bSIi62bnjYqz5
+	cp4EEJl6hzscdE4OdsoTyh6Pa7r/W72cj45aI0cu52TeRj04MKLubTjd3wh5rRYafMCQzk
+	COGUqU/I2TLpcSwwxhJuQySNiiUrqNdPYJNhMeuHgz10ioaAVJ70GkCRVigr4dCZZLosl6
+	8hLdBTh2O3YyDKlRYKIz1Pxmz6537VudIAhCU7D3FoGRkwuQBB/iMsWJ7Aw/t4Wb0CPYPW
+	qpct/PZ1nkwMBvJQtgC9oydIKlSChSGvj9gcHvzL3GIMwkdBJD3bm1S82l32Xg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 29 Sep 2026 12:36:33 +0200
-Subject: [PATCH 1/7] drm/imx/lcdc: stop using deprecated
+Date: Tue, 29 Sep 2026 12:36:34 +0200
+Subject: [PATCH 2/7] drm: verisilicon: stop using deprecated
  devm_drm_of_get_bridge()
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v1-1-ccb7e602daad@bootlin.com>
+Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v1-2-ccb7e602daad@bootlin.com>
 References: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
 In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -74,7 +74,7 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 devm_drm_of_get_bridge() is deprecated, switch to
 of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() returns
-a refcounted bridge, ensure it is put.
+a refcounted bridge, ensure it is put by using bridge.next_bridge.
 
 Fixes build failure when CONFIG_OF is disabled.
 
@@ -83,30 +83,53 @@ Reported-by: Arnd Bergmann <arnd@kernel.org>
 Link: https://lore.kernel.org/r/20260928161605.2271412-1-arnd@kernel.org
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/imx/lcdc/imx-lcdc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/verisilicon/vs_bridge.c | 7 +++----
+ drivers/gpu/drm/verisilicon/vs_bridge.h | 1 -
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/imx/lcdc/imx-lcdc.c b/drivers/gpu/drm/imx/lcdc/imx-lcdc.c
-index c67fe80b8115..805a659e3f85 100644
---- a/drivers/gpu/drm/imx/lcdc/imx-lcdc.c
-+++ b/drivers/gpu/drm/imx/lcdc/imx-lcdc.c
-@@ -385,7 +385,6 @@ static int imx_lcdc_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.c b/drivers/gpu/drm/verisilicon/vs_bridge.c
+index dc7c85b07fe3..f1e8112f0ed2 100644
+--- a/drivers/gpu/drm/verisilicon/vs_bridge.c
++++ b/drivers/gpu/drm/verisilicon/vs_bridge.c
+@@ -29,7 +29,7 @@ static int vs_bridge_attach(struct drm_bridge *bridge,
  {
- 	struct imx_lcdc *lcdc;
- 	struct drm_device *drm;
--	struct drm_bridge *bridge;
- 	int irq;
- 	int ret;
- 	struct device *dev = &pdev->dev;
-@@ -401,7 +400,8 @@ static int imx_lcdc_probe(struct platform_device *pdev)
- 	if (IS_ERR(lcdc->base))
- 		return dev_err_probe(dev, PTR_ERR(lcdc->base), "Cannot get IO memory\n");
+ 	struct vs_bridge *vbridge = drm_bridge_to_vs_bridge(bridge);
  
--	bridge = devm_drm_of_get_bridge(dev, dev->of_node, 0, 0);
-+	struct drm_bridge *bridge __free(drm_bridge_put) =
-+		of_drm_get_bridge_by_endpoint(dev->of_node, 0, 0);
- 	if (IS_ERR(bridge))
- 		return dev_err_probe(dev, PTR_ERR(bridge), "Failed to find bridge\n");
+-	return drm_bridge_attach(encoder, vbridge->next_bridge,
++	return drm_bridge_attach(encoder, vbridge->base.next_bridge,
+ 				 bridge, flags);
+ }
+ 
+@@ -303,8 +303,7 @@ struct vs_bridge *vs_bridge_init(struct drm_device *drm_dev,
+ 		return NULL;
+ 	}
+ 
+-	next = devm_drm_of_get_bridge(drm_dev->dev, drm_dev->dev->of_node,
+-				      output, intf);
++	next = of_drm_get_bridge_by_endpoint(drm_dev->dev->of_node, output, intf);
+ 	if (IS_ERR(next)) {
+ 		ret = PTR_ERR(next);
+ 		if (ret != -EPROBE_DEFER)
+@@ -326,7 +325,7 @@ struct vs_bridge *vs_bridge_init(struct drm_device *drm_dev,
+ 
+ 	bridge->crtc = crtc;
+ 	bridge->intf = intf;
+-	bridge->next_bridge = next;
++	bridge->base.next_bridge = next;
+ 
+ 	if (intf == VSDC_OUTPUT_INTERFACE_DPI)
+ 		enctype = DRM_MODE_ENCODER_DPI;
+diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.h b/drivers/gpu/drm/verisilicon/vs_bridge.h
+index 70fee1749699..2b0ed94e4520 100644
+--- a/drivers/gpu/drm/verisilicon/vs_bridge.h
++++ b/drivers/gpu/drm/verisilicon/vs_bridge.h
+@@ -25,7 +25,6 @@ struct vs_bridge {
+ 	struct drm_connector *conn;
+ 
+ 	struct vs_crtc *crtc;
+-	struct drm_bridge *next_bridge;
+ 	enum vs_bridge_output_interface intf;
+ };
  
 
 -- 
