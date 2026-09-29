@@ -1,86 +1,83 @@
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DD04F4024;
-	Tue, 29 Sep 2026 14:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D933551EDFE;
+	Tue, 29 Sep 2026 14:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790692225; cv=none; b=OC+7ZHvk9IfcrJBvzeOJDjYw9IIJ7L0JRpcdFdhx/64/WvLXOGpqO/inyYNPiu4lMKHYk3x78EJ/A391crlgUBJcuVckzId99Ndu8iTD9ScNSK8TPsmT3/xu6dya6HrnLcl5bumfO6YK/awGoXWaYZR6Gap0JsS5l2dSeaOBoSY=
+	t=1790692342; cv=none; b=T6IdX8T0a7+gZg0PXNJQPSe4uCdCr3kBDJiTgi2NmPGyO23lR8UeyBMurpDyWRGcVCcYLkx2T17QuheKMbxF2U0WgNQNMGxaIYoOSxSZNTYQG8wo46/pcm68O9nw6BPxG34x0yFmUMsxeM58kfW1Z0aWIj8ms1SEhYiJce4S9A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790692225; c=relaxed/simple;
-	bh=7ZMoLlE5/mTVgfBTmCJqOWyEivNkU+AeJL3PzzVxxZo=;
+	s=arc-20240116; t=1790692342; c=relaxed/simple;
+	bh=EEkC1k5TlXqhlI1kvQuSXPB95c6jcTfMP0aFzVMO958=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqG27ZYAuOXaBePCi9TUORbK2G/3dBAalCiSqEhwMHhFMMM5ZhMXGB0OuQbxmdiuKDx8oQWk0i7UvpScMDv+EKwskCQRb2s+y4D1DPIfeo/ePvG+j1w+9M+3U9wSpMH8sH7+taIowFVKYZiu9cTlVSp9oyKo+1expwzoqUaed/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=lGdlGjez; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dm+XL5fC; arc=none smtp.client-ip=103.168.172.155
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yp2+9Ojqamg+Q0bYE+F4Hr9m0+/lk1Cj5hQZQYAArnB/1iEms9OG6dM+x9TE65pmezuVNcrq347O9YTxzz7dQk92MQxdINJwxK0QDJ9rDBoHlG4sVvXwj9O2aoDdmOMbxBspcn7BboxBvRKKGTWem0MJ8fz11veWPr8pW/9sFPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=XaGKsPSN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=v/No45hR; arc=none smtp.client-ip=103.168.172.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="lGdlGjez";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dm+XL5fC"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CE0E71400052;
-	Tue, 29 Sep 2026 10:30:18 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="XaGKsPSN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v/No45hR"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 37DEEEC0B6C;
+	Tue, 29 Sep 2026 10:32:12 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 29 Sep 2026 10:30:18 -0400
+  by phl-compute-05.internal (MEProxy); Tue, 29 Sep 2026 10:32:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1790692218;
-	 x=1790778618; bh=IvKd5F4ysyhmnPovYdkt0ImhsVRcG0GfXUCUA50JdJ4=; b=
-	lGdlGjezXHreh2zZB7Lk2xBC33E1ixJQMdTDLlOR5fmBevWY4CrWYH0dQuFxzjxr
-	w0INqrXpVB49kRihyRiilSRG3dUmNbC1+c3Hin96/H+Kh97Dd/fqwK8dc6ZKLWsq
-	qVix7iWBBJK4v63VnhnFMy4Xsm1+eUrN5kUMWee0JYt0noBdq7xazTKwIpEPfwx8
-	IixMCfLAW6vzQ+3MEsJXwQ4ocFilbUM0//mczQ8zGqUWddO4bjJ40QGqB5+AwkJP
-	mJYR5Q0uv8rk6hPzxFVzuKr7Q/ela46p6gLluIkxW/DqAf82ozynp7NJCEywLmEG
-	vGoo1R4hEl77GhEIsECuvw==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1790692332;
+	 x=1790778732; bh=DaNWAhJP0gQpiCQdc/OXCgSdstp19EO6gxhOwhRHnfE=; b=
+	XaGKsPSN67oBIpgRE+BUn5jYHrYfyVSq/btZpjLzuJURoe9z0Ffv1fDjlakfh4oU
+	mqLms6SIi1pBkE/uVR4EJlArQ4LW9Q4UInvIdLL++KqJWpCb2oCVTc0X21upMOfY
+	d/aUEDSmU7jFMS52r+pNfW6fkHk4Qm2uhnL1xxqCTTKO8AtccBTUu1cu3pNMZvco
+	awzg9rggdVxCiWfkbh2Y3vEYqH5mLkPXGMeF0KHhC1mu7f7zB0W0ebQRLZtioYd4
+	T3sOYXm/BJhFGNkZ6ffMezDL8SBgLAdHCJUNoOEk5tSknzkr6TbpQVCWVZscCl9L
+	q3SZbLykvm8HFketwzXy2A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790692218; x=
-	1790778618; bh=IvKd5F4ysyhmnPovYdkt0ImhsVRcG0GfXUCUA50JdJ4=; b=d
-	m+XL5fCSHZ30qaHl4u7S3FtqEl6oJ5Gem/v/I0XscirXMnjIO8UkeWKsQpgmkhvP
-	E4/C2IkGxjiL7QwtES30zyE/akJYyFUQpSdejt/o6AlbuuPLZaNNiGVBlqRrxgJp
-	JnKDGfOTF7jxqP+hY/u1yDPOb35R1cO1qIBNEUafuII6h5FxwA2gnl5OJjE6YDgl
-	JZaqxnV9GdM2ENbeJQivdfttfew0Shmic+512XzdDmc9kwZ5Dy3M2onXRJ8b/87H
-	aQ4DrKgcExUH5hx21+m0rsAPEldPQ0gT2oQtO5VCIQjlTdzLoLNJ6gVoOHkzt7VB
-	h2f0GTOv8GXIdIrKfxCPw==
-X-ME-Sender: <xms:esu7ank6YKCmk6upGufvbHdc7RcDdN_XkR9IwfOcccL_OhFTUo_lQQ>
-    <xme:esu7anaC2Qry5jE5m4JfvFu22CKspzQJ9bn0KR7TxD6PNUy8ptnmz0YnZL5fkcIWW
-    6X5gfsXzklg4sWQzFp0EPZ05Fm-4OP3dJ5aDvSc-nTEZK3gF_y4qc35nw>
-X-ME-Received: <xmr:esu7aiHJQBa28eqaBOaCuo5WZS6SQcgWXSLG9INa4S7Cct3WVVY3OcalB0mmINQ9nhgF3e7Lj62afSd_iLSmhBKBU1a4twU>
-X-ME-Proxy-Cause: dmFkZTEyWfgsudX6RHBNY3GF5pQCgYzAE/M8J+Q79q2i5teNIp70QUGwnC8FGzOsVnv7PH
-    Oauk00hqFW1CQZLOQyRkCYBzJNqjFDyye3CdCqcW2pTaNew2h1ya4Q53DsxGkxg1S5fA9L
-    Bk+4v4Jyf1OnyerDMQAPphlVFeNGvDdQqHQdLy6RqUrJFlNV2SNPNS0irkuuw+vI++2LsC
-    yQX3vBa+4scslmM2r8qXS153SzwoZGSy+b8NmCwxc+7scF+T4tLNa1HQ/QBQMgspF6/XOO
-    94/nmtmG8+Ei66lS9meTmpJaEvTT85MXdjZv+Nl5QwOgEml8P9OD/+soog4pi8907lToOY
-    eB7QdzwLaZRUQoIXmfojncegddWq2/MOSFsHFmEDgRamIKpUa2QKaNVXzuUDIla+qIdrk6
-    CBGOtLEW+zSfod0ZbGjhGl4g7m3bMEc2Nh1gN7Nf+/+K0ji/9UdoViPnwYF7FAluMQxtyZ
-    kjat/77oFrfdcnZn4vKncvB9cHeSipTT7g2f/zS8buZxNhKwKuYfaqub+aLszGxDjENAMR
-    8zwVafAY4YySCBjX2N5zMHdepnbiwRRRyIh6o5zX6e04W/sEDE7SqFk3NWMaMXwDW91UxG
-    IXnuPt8cOxyU3JFSTb+3gCvqumQ/2Y//4Vovl2j2jvy/5nGTL/YI8eZLpsuQ
-X-ME-Proxy: <xmx:esu7amZKKufKg_tiuKhOQH8rWIrTfNCErBRUTRTEku13CezcJJ4mOg>
-    <xmx:esu7amwp_9Fd5-u4cNdpJau8lxvrdJanWwsJNch21yE5er-pzi6sew>
-    <xmx:esu7aoQiblkj-cPTzXTUEq4DA4fj5y-PJ2cCGzx52yOXI3tf_YY5Tg>
-    <xmx:esu7ajKzV-Rc4yMHyzvglIPGLTLFx2SocykRgI_1ia0vBvaNJSSPDg>
-    <xmx:esu7arG7vGUhfFn73_gMWvHf32ps5gKvdzycQb7eMePiodvGqcZK4V__>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790692332; x=
+	1790778732; bh=DaNWAhJP0gQpiCQdc/OXCgSdstp19EO6gxhOwhRHnfE=; b=v
+	/No45hRJO2HHQbeLbtRs0wRFskqhvFXevopYBAxmJdXQjzrQlvDPtwOMi1OPNRGF
+	XcH7Gdijwf57foOqqdeLUJyUVQNxStPe/6vDYzzqbhCmzDIx4ZtAWgk2Dde29/kc
+	QB5DL0RifJBWRj6OcBHUtYn7+GpHtnF1pTiC+wLPg4bU937Fcp+zw0Hln3kjfHLY
+	+jI56IpduYapDLPIYkxik9gUrqPTVS6OPrmuEfDE7Cx6o1j2Hjxk4bfl0WUAb0M/
+	CJbP/Ksel/IogQ5oTzx0LjGi5kWL7o83nPoTq+BczvEB7HbSIglxNF2BdilcTkaf
+	AwAUZJ15an1G+h/G8IbUw==
+X-ME-Sender: <xms:68u7amiTG50oxv0Juv1OhZaUkNgSuCGICMwCoMhpHZjyY0ucb5E-7Q>
+    <xme:68u7ahGTWhGn9_RcCsInnmFXEIGO_4mIldDkLeKh1gU9qgTOiLWeiQMdZIlOpUdd1
+    BAkRNeJ1e5BzDXU0GYkQmv3Zg3ET7Zj7kvJ5IDvNPWK-J5NckUkHkI>
+X-ME-Received: <xmr:68u7at8_OImoJ7R9Xj7TFsiNuvjfeRPj6po_N96819qJNGQ_WCiwwj55S0w6pzoNpqQdpZ7RUnrBrohmBUMleuJ_t0HnXjo>
+X-ME-Proxy-Cause: dmFkZTFKpfdBnY2TZoh/ZAx2aNt9EPRpz20KcKtXzjCFAmyJsPZQs813kKOYPMn9fBHhMH
+    tzcrruEmr8LiQJujG2I9tkjWOlPCUhwW4mndVRV5hq4y58IrR8u3fJyFxE9ZWwYJ3aw2kY
+    zdc9Zm0R7ocQyq4EQgVl5qTRomUZ/wI/0olAKav0bY252ZwBfSkbhVbMjDPx2kHn8g8p/V
+    WeRqTLDm9Bly8+nirCwUwiK/qBr6rBUsae8DlriMj7WwnwhAL8leObQc10ieSpQrMCKehY
+    83KH5NxcE0S2iNl2D5vhMP0fNgXFiTotPXM6xXc1aKwS+0kamtfxfI8TaHFJhV7XpuwXg6
+    7EKStK+ZCGbUjKTgBiQZuYibsx2NWcTYTHH4URhzqbs1RTw4/ehGv0ROnSB7XV30wJ4v02
+    GeEY+HiXHMmHuBvnTAYZ/9Y4t90LX6Wq16we+/8VsYS6XWIBzmQbuYLlekB6rf1P/yI8Az
+    K05BwNY1X+SrddYuykh3yC/yGOQtV+27EBv5H6ALVSOiVJeu6t8iGeHbEy1KcaMJOhlfjJ
+    koIyaA2PNksz+/Wx5hYnVdWG7K1uWebFleP8dRrxsxzNbwnXHfFOAEEQ7krcyaBC4vEsvv
+    WuqIY142exsQyqLIfOgHwLlWeABE+ABKY+gHOiqeJ+qPt8qJbIgnYorBqoQw
+X-ME-Proxy: <xmx:68u7agyHUsiPCfT0F-9-M6kgvlGTu3m7xiegqBoX1X0EH2n7kcDHig>
+    <xmx:68u7ahMGFeuIrAw05tMuB8fpZpTIO6laFCqIvBbR79olAd7udSdM8g>
+    <xmx:68u7at_F1YPjlBHdJj3vkaUTfruYPwRt3pQgwUnMwe-YYBbpGg9lKg>
+    <xmx:68u7am4oniXNtd2wHeNTFnLTgZKAgfsrPMFiL1ra-YYg_syuWWBSbA>
+    <xmx:7Mu7anUzmF6J4_O8WO3gtqii1wb5ELpl5bt3vLrueZr5yHGI9R1NikNV>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Sep 2026 10:30:17 -0400 (EDT)
-Date: Tue, 29 Sep 2026 16:30:15 +0200
+ 29 Sep 2026 10:32:11 -0400 (EDT)
+Date: Tue, 29 Sep 2026 16:32:09 +0200
 From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 To: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] media: rcar-isp: ispcore: Fix inconsistent step sizes
-Message-ID: <20260929143015.GA1244576@ragnatech.se>
-References: <20260929133020.342677-2-barnabas.pocze+renesas@ideasonboard.com>
+	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] media: rcar-vin: Implement `VIDIOC_ENUM_FRMSIZES`
+Message-ID: <20260929143209.GB1244576@ragnatech.se>
+References: <20260929133720.344955-1-barnabas.pocze+renesas@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -90,113 +87,139 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260929133020.342677-2-barnabas.pocze+renesas@ideasonboard.com>
+In-Reply-To: <20260929133720.344955-1-barnabas.pocze+renesas@ideasonboard.com>
 
 Hi Barnabás,
 
-Thanks for your work.
+Thanks for your patch,
 
-On 2026-09-29 15:30:21 +0200, Barnabás Pőcze wrote:
-> `risp_io_{input,capture}_enum_framesizes()` sets the horizonal and vertical
-
-nit: horizontal
-
-> step size to 2. However, `risp_io_{input,capture}_try_format()` passes 2
-> to `v4l_bound_align_image()`, which corresponds to a step size of 2^2 = 4.
+On 2026-09-29 15:37:20 +0200, Barnabás Pőcze wrote:
+> Currently there is no way for applications to query the available frame
+> sizes, so implement `VIDIOC_ENUM_FRMSIZES` based on what is allowed in
+> `rvin_format_align()`.
 > 
-> So move these constants into macros to avoid the repetition, and with that,
-> use 4 as the step size everywhere.
-> 
-> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
 > Signed-off-by: Barnabás Pőcze <barnabas.pocze+renesas@ideasonboard.com>
+
+I'm not super exited about having ` in the patch title. With them 
+dropped,
 
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
->  .../media/platform/renesas/rcar-isp/core-io.c | 40 +++++++++++--------
->  1 file changed, 24 insertions(+), 16 deletions(-)
+>  .../platform/renesas/rcar-vin/rcar-v4l2.c     | 70 ++++++++++++++-----
+>  1 file changed, 51 insertions(+), 19 deletions(-)
 > 
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> index 820af506f896c..b60b91f43d42d 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> @@ -15,6 +15,12 @@
+> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> index 9d45e11898c13..4961d28f42c78 100644
+> --- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> @@ -19,6 +19,8 @@
+>  #include "rcar-vin.h"
 >  
->  #include "risp-core.h"
+>  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+> +#define RVIN_MIN_WIDTH		5
+> +#define RVIN_MIN_HEIGHT		2
+>  #define RVIN_DEFAULT_WIDTH	800
+>  #define RVIN_DEFAULT_HEIGHT	600
+>  #define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
+> @@ -187,6 +189,24 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+>  	}
+>  }
 >  
-> +#define RISP_MIN_WIDTH 128
-> +#define RISP_MAX_WIDTH 5120
-> +#define RISP_MIN_HEIGHT 128
-> +#define RISP_MAX_HEIGHT 4096
-> +#define RISP_SIZE_ALIGNMENT 2 /* 2^2 = 4 */
+> +static u32 rvin_format_width_alignment(u32 pixelformat)
+> +{
+> +	/* Hardware limits width alignment based on format. */
+> +	switch (pixelformat) {
+> +	/* Multiple of 32 (2^5) for NV12/16. */
+> +	case V4L2_PIX_FMT_NV12:
+> +	case V4L2_PIX_FMT_NV16:
+> +		return 5;
+> +	/* Multiple of 2 (2^1) for YUV. */
+> +	case V4L2_PIX_FMT_YUYV:
+> +	case V4L2_PIX_FMT_UYVY:
+> +		return 1;
+> +	/* No multiple for RGB. */
+> +	default:
+> +		return 0;
+> +	}
+> +}
 > +
->  #define risp_io_err(d, fmt, arg...)         dev_err((d)->core->dev, fmt, ##arg)
->  
->  static struct risp_buffer *risp_io_vb2buf(struct vb2_v4l2_buffer *vb)
-> @@ -330,8 +336,9 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
+>  static void rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
 >  {
->  	unsigned int bpp = 0;
+>  	u32 walign;
+> @@ -208,27 +228,12 @@ static void rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
+>  		break;
+>  	}
 >  
-> -	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-> -			      &pix->height, 128, 4096, 2, 0);
-> +	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> +			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
+> -	/* Hardware limits width alignment based on format. */
+> -	switch (pix->pixelformat) {
+> -	/* Multiple of 32 (2^5) for NV12/16. */
+> -	case V4L2_PIX_FMT_NV12:
+> -	case V4L2_PIX_FMT_NV16:
+> -		walign = 5;
+> -		break;
+> -	/* Multiple of 2 (2^1) for YUV. */
+> -	case V4L2_PIX_FMT_YUYV:
+> -	case V4L2_PIX_FMT_UYVY:
+> -		walign = 1;
+> -		break;
+> -	/* No multiple for RGB. */
+> -	default:
+> -		walign = 0;
+> -		break;
+> -	}
+> +	walign = rvin_format_width_alignment(pix->pixelformat);
+>  
+>  	/* Limit to VIN capabilities */
+> -	v4l_bound_align_image(&pix->width, 5, vin->info->max_width, walign,
+> -			      &pix->height, 2, vin->info->max_height, 0, 0);
+> +	v4l_bound_align_image(&pix->width, RVIN_MIN_WIDTH, vin->info->max_width, walign,
+> +			      &pix->height, RVIN_MIN_HEIGHT, vin->info->max_height, 0,
 > +			      0);
 >  
->  	for (unsigned int i = 0; i < ARRAY_SIZE(risp_io_input_formats); i++) {
->  		if (risp_io_input_formats[i].fourcc == pix->pixelformat) {
-> @@ -423,13 +430,13 @@ static int risp_io_input_enum_framesizes(struct file *file, void *fh,
->  
->  	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
->  
-> -	fsize->stepwise.min_width = 128;
-> -	fsize->stepwise.max_width = 5120;
-> -	fsize->stepwise.step_width = 2;
-> +	fsize->stepwise.min_width = RISP_MIN_WIDTH;
-> +	fsize->stepwise.max_width = RISP_MAX_WIDTH;
-> +	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
->  
-> -	fsize->stepwise.min_height = 128;
-> -	fsize->stepwise.max_height = 4096;
-> -	fsize->stepwise.step_height = 2;
-> +	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
-> +	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
-> +	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
->  
->  	return 0;
+>  	pix->bytesperline = rvin_format_bytesperline(vin, pix);
+>  	pix->sizeimage = rvin_format_sizeimage(pix);
+> @@ -343,6 +348,32 @@ static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
+>  	return -EINVAL;
 >  }
-> @@ -720,8 +727,9 @@ static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
->  static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
->  				       struct v4l2_pix_format_mplane *pix)
+>  
+> +static int rvin_enum_framesizes(struct file *file, void *priv,
+> +				struct v4l2_frmsizeenum *fsize)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	u32 wstep;
+> +
+> +	if (fsize->index != 0)
+> +		return -EINVAL;
+> +
+> +	if (!rvin_format_from_pixel(vin, fsize->pixel_format))
+> +		return -EINVAL;
+> +
+> +	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+> +
+> +	wstep = 1u << rvin_format_width_alignment(fsize->pixel_format);
+> +	fsize->stepwise.min_width = round_up(RVIN_MIN_WIDTH, wstep);
+> +	fsize->stepwise.max_width = vin->info->max_width;
+> +	fsize->stepwise.step_width = wstep;
+> +
+> +	fsize->stepwise.min_height = RVIN_MIN_HEIGHT;
+> +	fsize->stepwise.max_height = vin->info->max_height;
+> +	fsize->stepwise.step_height = 1;
+> +
+> +	return 0;
+> +}
+> +
+>  static int rvin_remote_rectangle(struct rvin_dev *vin, struct v4l2_rect *rect)
 >  {
-> -	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-> -			      &pix->height, 128, 4096, 2, 0);
-> +	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> +			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-> +			      0);
+>  	struct media_pad *pad = media_pad_remote_pad_first(&vin->pad);
+> @@ -564,6 +595,7 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+>  	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
+>  	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
+>  	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
+> +	.vidioc_enum_framesizes		= rvin_enum_framesizes,
 >  
->  	pix->field = V4L2_FIELD_NONE;
->  	pix->colorspace = V4L2_COLORSPACE_SRGB;
-> @@ -824,13 +832,13 @@ static int risp_io_capture_enum_framesizes(struct file *file, void *fh,
->  
->  	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
->  
-> -	fsize->stepwise.min_width = 128;
-> -	fsize->stepwise.max_width = 5120;
-> -	fsize->stepwise.step_width = 2;
-> +	fsize->stepwise.min_width = RISP_MIN_WIDTH;
-> +	fsize->stepwise.max_width = RISP_MAX_WIDTH;
-> +	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
->  
-> -	fsize->stepwise.min_height = 128;
-> -	fsize->stepwise.max_height = 4096;
-> -	fsize->stepwise.step_height = 2;
-> +	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
-> +	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
-> +	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
->  
->  	return 0;
->  }
+>  	.vidioc_g_selection		= rvin_g_selection,
+>  	.vidioc_s_selection		= rvin_s_selection,
 > -- 
 > 2.55.0
 > 
