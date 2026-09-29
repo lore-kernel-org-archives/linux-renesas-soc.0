@@ -1,120 +1,127 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEE752CCFE
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 13:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790689264; cv=none; b=pyN/OUXgCifDKIlNENpQg5EijwHBJ58ELNsu4wynurpKE1dApjcWUwoc1j3yGdehy6a5e5SkWkvWARDP7ykOYOY3CuSD+eBAd/drV4aEfKO/Lp5RfCZjdby9kpSa+WGiwuS8RNCc4VxrlgzTKGbQu3FqEp/LsbZM1yaTzYReCD0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790689264; c=relaxed/simple;
-	bh=lT5vgx/mFGA/dBeL0SbpODSx7eWVFp3Ausyg3+9cyBI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WtxiEyRNpldvBqAHjDs0zkk9mXRqPYPwYJdKMSeuJv8ONNh2gONt4kZz6jFSq07NPPDHb/riYILCgh0hnxElORZKVqzz4VAe1gNmIiVj015yb4OT/sTLaahbqUzCWQgmwCw9QCY8uOxDXk/ItyJvKBNjO2KT5/AYse7u7NaiiAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mw9KHbtz; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F38A2D73B6;
+	Tue, 29 Sep 2026 14:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790691558; cv=pass; b=V55WwpXfVcYyeMizo7euhs9El7m+xWdCcsWD+EeXxRJ9qp4K8ws2s8yM2GP/BZE24h3et1vBHx9lnp3uAA72DwjIEDQtz2hnMk2zMnaMdwmR3ETLRr+L6AFrXqnX8ckeGrPdlLeEYgH/cvrl3yiQ4jUCQow6Bo+2+rbzE1NNgPE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790691558; c=relaxed/simple;
+	bh=ni+BI1ouvlTGJ1KK/M2u5NHCbVyDz53Zm28rXNfRb44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkrxrf+FOXYfl8/IRpwW3e7KqJBq0++AOyfvcWmbLv8bEviAudoF4Sss253SMiyMgkMayh4bR39yvsoc3uznxnNapvakYNYYL4FUm+CHKXn9751hFTBRzJu+MEpmTqMDHxHwn0g/ioosAHLXyDUPKcTrgSPMb6/WPmJZZOgK02Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=bX6Pp+xv; arc=pass smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mw9KHbtz"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 4FF934E410B5;
-	Tue, 29 Sep 2026 13:41:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 21A0A601BD;
-	Tue, 29 Sep 2026 13:41:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6E735103297BA;
-	Tue, 29 Sep 2026 15:40:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790689258; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+Jbi3ZrbjMftX9+oR4Dt/bNs2t3qNv36/aL/DtZbOIA=;
-	b=mw9KHbtzMuNVa4Ij0ksdAIhkqT6DDh55fBMfnuOaMz1Dgrw7uTA5MLDYPmjcVHP8gBDsSc
-	fmMkHj6YzYsxESdZx0vOPYOFGR+Wnb+J9I8mOXDfVrYbGdQEnMUIBs++qI3goOFU0qLB45
-	h2w/bX1b9Kj+ldCkdHV6Vo2wqfVDhaeHhRO/MdvQYkAbKAiUltjvvZdyJGObNLQ2FQINN6
-	wX3OcTZeSbRjvV0zMN8JD1QeD0Ulo0Y9zqHRAyW26/wtlKM0hqYD+GGMBQgZZ7ogqir1CL
-	GHFzDlaEe5Wq4jwnoFYiaVSPWuaxF1Iny8s5bFCQdfeweuvHTYU6MblRpXTFlw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 29 Sep 2026 15:39:56 +0200
-Subject: [PATCH v2 7/7] drm: renesas: shmobile: stop using deprecated
- devm_drm_of_get_bridge()
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="bX6Pp+xv"
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id CB30520007B;
+	Tue, 29 Sep 2026 16:19:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1790691548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TmGTKRlxpynV8OYZ+hg9m7/obIfpUfUzF4Gu7phnyYI=;
+	b=bX6Pp+xvynpN45a3wG5oj5Ar2LB4JUJiEHWqLblUk4YqKIkauWxEoBiJPfRHcJNOgtbLhU
+	I+DfYYp8erV6CBRZoRvk9r73CENECc5yiRgNaGCXRA5DtN1u5r79qHwVbDvhbeiWdvzg2z
+	NnPx2Z7EK8tPObYppBhTiFVxIHQVeG5uv1X5u4JbfFwEV3kKIrHWAjg2bS5nRQm6bZBGO1
+	82NHdPi2IxONMNhcp/trm2AiQv2EddZjUB7s9jhNWzPJKKXy5raf64QlKhX4qUfQYVS+C6
+	lS9uN8HNo2puRYjbnnbx056VU+s6JDdMvffYXKtHHczxNXVo0nyLF1d/+C1qJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1790691548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TmGTKRlxpynV8OYZ+hg9m7/obIfpUfUzF4Gu7phnyYI=;
+	b=Mn2zpWzY9I/rUn5IPa+CD20TUUYWAoWnQSPlgM7Q9WsolT5t0xuAPKkkgTaTQpvXgTv/rq
+	+u/BQHYQpvHZhMDINQvLV7T79fcFG4jBrY0KBvc/1xU84cYXVHjy/xUGu849D3A8bTdKod
+	f8VYGk0a9uaguJiGj6alOastLiYehRSDtzBMxgEhGOANAlASU73SoLjLdHD6JtacTSzBbb
+	BAeTauTxNMOzlgwOWEGDH+mkalIxDc9LU0TEYmNES+K1Nd8b3mUoenKpK4oMnrtT/u67Kw
+	r9ZC22nVFN8+gTnH+ZiP0cGDGmouDd2PpnCIKoYbSQyqhPxpDqN6Tz13raXPOg==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1790691548; a=rsa-sha256;
+	cv=none;
+	b=RG5rUWGzGrSgxImEICeSheV+evT/VKr1Yj7RauU5H4ndTg9j6OTaY0nnoDFh/sD9YhjXjH
+	TKhhYOJSGTDLoGOhmNktjBg0LpMsx/j+31WjOGN4PXVY7E1Kh7GQBNVrBE9HnaBJ+V0OUe
+	HbtslK/jwSYIXzm/dYzW1Bm17R2hq4U+FVm1NDp5d/dq1MNUv/Jk7wPIip+Uywx2GKRP3P
+	6TQUGnZSIZ0QgTsZ+OWP3GCg7nrPgEAZXw75898H1uTAi+iV6J/qffAEicZ6zTMtJ9xt9L
+	M3USC+HBH6MfgTi0npBIK7wrmnjHZelpnLwiZU1LWChMSlHpkfvVauN3ibtueA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1xBYfk-003PGS-2N;
+	Tue, 29 Sep 2026 16:19:08 +0200
+Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5539F5B4937;
+	Tue, 29 Sep 2026 14:19:08 +0000 (UTC)
+Date: Tue, 29 Sep 2026 16:19:08 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: mailhol@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, claudiu.beznea@tuxon.dev, 
+	linux-can@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 0/7] can: rcar_canfd: Add support for Renesas RZ/G3S
+Message-ID: <20260929-loon-of-remarkable-romance-197df6-mkl@pengutronix.de>
+References: <20260902141544.565763-1-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v2-7-6da431d8f180@bootlin.com>
-References: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
-In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qmqwmpauwv5x7gzq"
+Content-Disposition: inline
+In-Reply-To: <20260902141544.565763-1-claudiu.beznea+renesas@tuxon.dev>
 
-devm_drm_of_get_bridge() is deprecated, switch to
-of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() returns
-a refcounted bridge, ensure it is put.
 
-drm_panel.h becomes unused, drop the include.
+--qmqwmpauwv5x7gzq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 0/7] can: rcar_canfd: Add support for Renesas RZ/G3S
+MIME-Version: 1.0
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+On 02.09.2026 17:15:37, Claudiu Beznea wrote:
+> Series adds CAN support for the Renesas RZ/G3S SoC. Along with it a typo
+> fix patch was added on the CAN driver.
+>
+> Merge strategy:
+> - patches 1-5/7 should go though the CAN tree
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 328a36215e39..51bae2008cc6 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -28,7 +28,6 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
--#include <drm/drm_panel.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
- 
-@@ -447,7 +446,6 @@ static const struct drm_encoder_funcs shmob_encoder_funcs = {
- int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
- {
- 	struct drm_encoder *encoder = &sdev->encoder;
--	struct drm_bridge *bridge;
- 	int ret;
- 
- 	encoder->possible_crtcs = 1;
-@@ -463,7 +461,8 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
- 	}
- 
- 	/* Create a panel bridge */
--	bridge = devm_drm_of_get_bridge(sdev->dev, sdev->dev->of_node, 0, 0);
-+	struct drm_bridge *bridge __free(drm_bridge_put) =
-+		of_drm_get_bridge_by_endpoint(sdev->dev->of_node, 0, 0);
- 	if (IS_ERR(bridge))
- 		return PTR_ERR(bridge);
- 
+Applied 1...5 to the linux-can-next tree.
 
--- 
-2.55.0
+regards,
+Marc
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--qmqwmpauwv5x7gzq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCarvI2QAKCRDMOmT6rpmt
+0nqJAPwMHqD/5/QETLswXeIkQskDnXi6oMwiwqJS8G5wpwU3NAEAtjREkc8RvgXN
+CnDa9kxJT5xkGu7cnX/oHJCG8mLUOAw=
+=or/f
+-----END PGP SIGNATURE-----
+
+--qmqwmpauwv5x7gzq--
