@@ -1,106 +1,145 @@
-Received: from mail-vs2-f37.google.com (mail-vs2-f37.google.com [74.125.227.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928694E4304
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 09:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E683AEF49;
+	Tue, 29 Sep 2026 09:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790672501; cv=none; b=KpaenwO5S7lmV9P7TtOr49bdmkaqbV8PMvX6G/4ISUvrgNeN5G/Yum4rFDqeJ52uINUMgyRy402IsIkmIiJLqhIzCnsowlawwVtmJq6svLD0VoEO5Oi+9Pr20OFEKO6mbGDJxXHVqDQ/nDRulb/wBvA3XO9Bi9lnYYqXHhf+gc0=
+	t=1790672766; cv=none; b=FLSBHEO9e7xsX0tUR7q79HM7A34V9bTuU7gwZ84NSdwK7KmlmKX90Oiqac8YBExaAQD5H/EzOM9hAEtzMrwNtNR05iPKdjnX27z7Ue6xB5fY+Yt9PrUIh0aOnSOM3SV8yfZD4Pg11oZVgBkQRDh6oYznnogtgN+tvWAfreFnUmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790672501; c=relaxed/simple;
-	bh=yGRUq+NkeA2wCzaT3ddrS1lhHL4f/8v2x/N+ptJUPEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jP6iU/Tk8UtLKP+33itbUoTkD9+x5BcdADhMmHQxX/NsGpRO/mLS1VwuvfiaRyJUvHWWYdp4aPwjaYGtfJzc/VWdnISQadVAtC81oLvX1R6d1sxeeVJnoyvvShgBX4QX6bAqcKZlPr/j38V8R5Wty4lw351FZHq8oUFpCxQBS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f37.google.com with SMTP id 71dfb90a1353d-5cfd29f1208so718890e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 02:01:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790672498; x=1791277298;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=M48abSoMOPLnpPLpLH2wH9c2xeQ/JgdDngp0dUmsb3o=;
-        b=poJ73MpEuMNIolzocKgQuGrifc5tHlXWILxP7b+gypUnvf3riutoLhw6t/HbExQ/M6
-         zdaUQJiZhKx8tKMbsEgtNyr1fLa5GP/Y5qfsiIVU+A53UwhRg4V4ZbYVwAm151gCYcl7
-         9wZaTuekCQh6ZR5iDU2nbwegIcUcQDLk9/+7k974ZrD0jEbCZcQQtbDb0P2flI/wAptU
-         PVrbZTSv5MXt6ev0h7J+DuqXzjeZXsrmi73CjT2wsltgp2qTO4B775IkblTKUJfDWzT/
-         EZTUeDYj5pNWWn6TLqXlQnPUcjZy2oktXT5X6PdFK4RsanSJ1XynKHk4ua1ua54+w8WR
-         d7SQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx4j1eHW59A8kuTV7tyUZ1Kd8n56O8nlXqWy7wjKt0/FH3YWHOACPhIgj+0SCQyUU1WqFxZrgJHxxPAAtRVSitu5Q==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLxYiYLVyh+CCD78q93zycGG0oVtQw6WubC6MWc1LdZRFI17HiP
-	5afq9U9JIiKcb9PhBvAcL4G2mb7VmC83k6M89Yn3wDSjLJ9V17ZFKrOcyXYuxleM2c4=
-X-Gm-Gg: AYBFou0u3V70yM4TOitAXyKqTxxzn/i8Ky9jOHBUzxsDCNgafEraz+2UNP1IIN0fAna
-	zm22iik5hcWMYv9C/WunZpfoTPn6xiP3pVy4QCQH78F/t49KQywqrZzt62MmxKxMqLu0AREYT93
-	sjwULm8g0xEptDOR/A44C2v+Jye/jRs8quymTESOE6HrpGLqIQ6Qjk0dnemDsrij6it9zjUIRn3
-	EmSj6cJdxayvd85m8S0d46Or5axewnLDB1po7KKYg5SKqS4LRjkFut7QqXY6jy1tS4xemGrrCTj
-	UWFREVidNucDKBpsQAUR9wFQ2lBmvK0A0ul6TAQVEcxEGVUcihv6FKT2+cam3apd02c3KTDgt/w
-	TJG1zRyMvLeR0TtnMmFmfRzebxtpOxgPpEZIPhQA9xywJZ8L7GeXGeZBMnek5+zINquZ4pAydy8
-	B2GXF/hl5uhMP9lxzAl6h7tsRN1fIIWZf3FAQOauttcjwohCSxf1p1+d6RY/8h+LGKY7Y3nZqZ5
-	UXDZYN1srUlChzohgvdleIc71kDBUUME3uv
-X-Received: by 2002:a05:6122:e22e:b0:5c9:c60e:f4b7 with SMTP id 71dfb90a1353d-5cb0bd5b4d9mr6341277e0c.21.1790672498123;
-        Tue, 29 Sep 2026 02:01:38 -0700 (PDT)
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5cfe5f4fa4fsm7837378e0c.1.2026.09.29.02.01.36
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2026 02:01:37 -0700 (PDT)
-Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-79028ca9371so1362522137.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 02:01:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByKls8iUi4q9UgJ0BJtdbcKmhUMM2xFDr3DSj3OVNjncBhnEh2Od7XSX+0L3G30jIA1HLWfyoANrWnvEJGE4qiLrQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:2d04:b0:7a6:accf:72c1 with SMTP id
- ada2fe7eead31-7af19740319mr5405907137.0.1790672496458; Tue, 29 Sep 2026
- 02:01:36 -0700 (PDT)
+	s=arc-20240116; t=1790672766; c=relaxed/simple;
+	bh=bbFcPc1IleVdvzLJ+qy5Z6oS0IHPGYiTbfbbbq/2INQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjEyWaMBQc4yb+nWgZ9iTPRMSBgoHvpXNRM11zh7IzQEUxSEs+tUuOclAwhlVrt9wQxu1brTgH6B/PUQKh6opU80QMTV30IQKamnE3saKcGYb3bueJN9X3q+h9bzXxAM8X/Fxq1gnkEA3epKkXRsMJTqG42lSikLSBJv53Flirg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eo64ku58; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eo64ku58"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE4C91F0089B;
+	Tue, 29 Sep 2026 09:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790672750;
+	bh=qAc4L7KUHHcY/yph5WN91+0w4y9rHjYBvQM3E9pKxuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eo64ku58MSp0JCLpwXnn+7itMA0bZmuXYS40dLtZSyDVfqrpYkE/x6e+uokBkjlF8
+	 ntER0n/to4t30A0gvVynkXqiTu03+WijvJebRYXDYUO1v9feUtNb4QnjnRU6Z9JH89
+	 4ZDsSrhkOpYBvv1d93YwuVMQigxBm8YGo6iIrZYK0Pm5RVrbgxhG2bqB3qGCtYOWcJ
+	 RjQFNzdN04G4DDFTJS0UNke1mtmwDm1Rmggv39mSCW7alr/7MJP3m/ryXh+d2sEDnx
+	 v983XPQGsn6JynEqxz9I1UlkPoUUm5bPMrqkZ2gJ7oTdqafOBxaYsyU0gEsTmwTwQu
+	 dBOdZz9bbyUiA==
+Date: Tue, 29 Sep 2026 11:05:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Paul Louvel <paul.louvel@bootlin.com>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Herve Codina <herve.codina@bootlin.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: edac: cdns,ddr-edac: add Cadence DDR
+ EDAC binding
+Message-ID: <20260929-brave-mouflon-of-enthusiasm-df7efe@quoll>
+References: <20260928-paul-v7-3-rc1-edac-v4-0-4646a5b7cac9@bootlin.com>
+ <20260928-paul-v7-3-rc1-edac-v4-1-4646a5b7cac9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com> <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Sep 2026 11:01:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUMURt52wR7kM3=7GKv7x-3O77MLwSuUDt7KJEf9e+hqg@mail.gmail.com>
-X-Gm-Features: AclHuK98mw98nJ3_l_Mt7cVTGbvizjI_Q30Ugi6pttPN_xWKMIDQnQGX1HfBaig
-Message-ID: <CAMuHMdUMURt52wR7kM3=7GKv7x-3O77MLwSuUDt7KJEf9e+hqg@mail.gmail.com>
-Subject: Re: [PATCH v10 00/11] arm64: dts: renesas: Add various SolidRun RZ/G2
- based boards
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260928-paul-v7-3-rc1-edac-v4-1-4646a5b7cac9@bootlin.com>
 
-On Tue, 29 Sept 2026 at 10:12, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, 28 Sept 2026 at 19:34, Josua Mayer <josua@solid-run.com> wrote:
-> > Add support for a variety of SolidRun RZ/G2 based SoMs and both
-> > HummingBoard IIoT and HummingBoard Ripple Evaluation boards.
->
-> Thanks, will queue in renesas-devel for v7.4.
+On Mon, Sep 28, 2026 at 12:45:47PM +0200, Paul Louvel wrote:
+> Add the Cadence EDAC DT binding.
 
-Except for:
+Which is?
 
-  - dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow input-/output-disable
-    Already queued in renesas-pinctrl for v7.4
+A nit, subject: drop second/last, redundant "binding". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree/bindings/submitting-patches.rst#L23
 
-  - dt-bindings: usb: cypress,hx3: make peer-hub property optional
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
+> ---
+>  .../devicetree/bindings/edac/cdns,ddr-edac.yaml    | 61 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  6 +++
+>  2 files changed, 67 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/edac/cdns,ddr-edac.yaml b/Documentation/devicetree/bindings/edac/cdns,ddr-edac.yaml
+> new file mode 100644
+> index 000000000000..098e69ff6297
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/cdns,ddr-edac.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/edac/cdns,ddr-edac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cadence DDR EDAC
+> +
+> +maintainers:
+> +  - Paul Louvel <paul.louvel@bootlin.com>
+> +
+> +description: >
 
-Gr{oetje,eeting}s,
+Drop >
 
-                        Geert
+> +  The Cadence DDR supports DDR2 and DDR3 memory with or without ECC.
+> +  The bootloader must configure ECC mode in the memory controller.
+> +
+> +  The memory controller supports SECDED (single bit error correction, double bit
+> +  error detection). ECC scrubbing has to be done via software.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: renesas,r9a06g032-ddr-edac # RZ/N1D
+> +      - const: cdns,ddr-edac
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I doubt this can be used standalone, so I am not sure what is the
+benefit of cnds compatible.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: DDR controller clock
+> +      - description: APB internal bus clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ddrc
+> +      - const: pclk
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
+> +
+> +    edac: memory-controller@4000d000 {
+
+Drop unused label
+
+Best regards,
+Krzysztof
+
