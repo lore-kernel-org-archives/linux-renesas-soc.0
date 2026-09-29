@@ -1,156 +1,137 @@
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8246E346ADB;
-	Tue, 29 Sep 2026 19:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCE04E13EF
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 21:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790709794; cv=none; b=f6OusgKsDkV4aJiuqhASQs7kN4cHJNo6oIXxMv+iHrN+qDYJMMj6SEZXjT7GyyyST6u4PkrB0Wmakzl30UKeUBhUOvNO9SOUHyc48dm+/qNonpuSD2i0va0iub9lOdb5KFHcTqCzdEkBXmn5KNzRroCEmWQ9WcvLO7zPKNRiIvw=
+	t=1790717229; cv=none; b=KyQMdWxQGz2WYrjv7tZx7mTOtfDNkO4GJCZtjsOLLay85l7hv3RSBRJ2g3s9iGV1aRMSbTXoe31FBGfuQ/kNtcS8FqYGJKu6DoEGWGAqe464Uxu2SfvKUDHVFn1A0ycTtPmgliovF+p7ZaSnGTB7xnca+V8hKxZSTYdwE7D+ij4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790709794; c=relaxed/simple;
-	bh=cSQ7YCu+UoGfjz8hkxjPBkniKzoBGa1mW6bgEpORYvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oCVM6r93zTICVjnuXIXYvDqxdYFwU2Peom6S+hqYcPdpfc7eJFU4I1sB4OI/mcP1MDh4JZPkWw+ZGWY0Tg6uySEeYR+G4wwfigLY4R9znJhhcZjyp+SROSTYhrL7HaWEtrK35wULzgDePLDjPQkAtvawtj56hPBrfmnhMxn5WNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.104] (91.78.6.248) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 29 Sep
- 2026 22:07:53 +0300
-Message-ID: <3b43b4fb-8479-4eb2-be58-1df6f0f747b9@omp.ru>
-Date: Tue, 29 Sep 2026 22:07:52 +0300
+	s=arc-20240116; t=1790717229; c=relaxed/simple;
+	bh=tyCWPKcs7/u/awFV7vdEON0Q6Y8m/fWoaG5L+nCraDc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=nwIO3Ws58b50nBdTp2s9L5bIB6CXWh5+hMG+r6xAvzkRwoZWijQadOyTpF5ea0qR4n5RZdy/LnrdL+MCyiv1FF6g5MTXIkBl9rQweB05wpjTUCy06t1nY2PHDlmx5c1XzCo+nZS5yS4vitM7w1rN+HKP14koFPkujKOIGCfGllU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hEDAHwYa; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hEDAHwYa"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 963A51A1050;
+	Tue, 29 Sep 2026 21:27:05 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 527F9601BD;
+	Tue, 29 Sep 2026 21:27:05 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 42A3E103295D5;
+	Tue, 29 Sep 2026 23:26:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790717218; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=tyCWPKcs7/u/awFV7vdEON0Q6Y8m/fWoaG5L+nCraDc=;
+	b=hEDAHwYakn5fRG4BUqIJO2Nc30p4PMlNz2fj/hv9u5oIYxFTNITCpy13PVRNtyY3TfIP4D
+	k7jJU1roWG08YKb+1I8DM4KpYXcjGdkvBVVnmNFMn5+EBn9jC6Uh0jXXV5PKV+GhHpJQsT
+	S9iWGlmrD0ZOKOKCkpyyRoR7Ao382WBj9MX7dbQoYWZHjooOEl+IQvBYTAOTixSWzsHJc9
+	e5d+9lXIl5FrPOnUx1GVztDB5fjD4JBjpieZrAZa/M4aJuOhVPcFY0tDHEAl5pfc5S6c9p
+	WxdZmPtYu1kfOZIBzqMvqblrCge95WF2E0SmMoPMsQqDkPM0SRajhSjVeMKaHg==
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] net: ravb: fix resource teardown ordering
-To: Jiale Yao <yaojiale02@163.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund@ragnatech.se>, Paul Barker <paul@pbarker.dev>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <stable@vger.kernel.org>
-References: <20260927144741.1320558-1-yaojiale02@163.com>
- <20260927144741.1320558-7-yaojiale02@163.com>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20260927144741.1320558-7-yaojiale02@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/29/2026 18:54:33
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 206322 [Sep 29 2026]
-X-KSE-AntiSpam-Info: Version: 6.1.1.27
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 125 0.3.125
- 408a76d0ab6a6a06c054d212c38932c1e9d7db86
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 91.78.6.248
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/29/2026 18:57:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/29/2026 5:22:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 29 Sep 2026 23:26:43 +0200
+Message-Id: <DLS49QCTEANL.D6E2UDEOG4O9@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v2 2/7] drm: verisilicon: stop using deprecated
+ devm_drm_of_get_bridge()
+Cc: "Arnd Bergmann" <arnd@kernel.org>, "Doug Anderson"
+ <dianders@chromium.org>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
+ <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+ "kernel test robot" <lkp@intel.com>
+To: "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Li"
+ <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>,
+ "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Dave
+ Stevenson" <dave.stevenson@raspberrypi.com>, =?utf-8?q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, "Raspberry Pi Kernel Maintenance"
+ <kernel-list@raspberrypi.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>
+X-Mailer: aerc 0.22.0
+References: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com> <20260929-drm-fix-of_get_bridge-build-regression-v2-2-6da431d8f180@bootlin.com> <e044caae8c2160d96a29073bb1e60efff5883513.camel@iscas.ac.cn>
+In-Reply-To: <e044caae8c2160d96a29073bb1e60efff5883513.camel@iscas.ac.cn>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello!
+Hello,
 
-   I guess you used scripts/get_maintainer.pl -- if so, I suggest that
-you add --no-git-fallback next time. Your current To: list is painfully
-long and contains some long defunct addresses (like mine)...
+On Tue Sep 29, 2026 at 4:42 PM CEST, Icenowy Zheng wrote:
+> =E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 15:39 +0200=EF=BC=8CLuca Ceresoli=
+=E5=86=99=E9=81=93=EF=BC=9A
+>> devm_drm_of_get_bridge() is deprecated, switch to
+>> of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint()
+>> returns
+>> a refcounted bridge, ensure it is put by using bridge.next_bridge.
+>>
+>> Fixes build failure when CONFIG_OF is disabled.
+>>
+>> Fixes: aa8a8c7e4641 ("drm/bridge: panel: move all code to
+>> drm_panel.c")
+>> Reported-by: Arnd Bergmann <arnd@kernel.org>
+>> Closes:
+>> https://lore.kernel.org/r/20260928161605.2271412-1-arnd@kernel.org
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes:
+>> https://lore.kernel.org/oe-kbuild-all/202609291109.OIsGTysr-lkp@intel.co=
+m/
+>> Closes:
+>> https://lore.kernel.org/oe-kbuild-all/202609290408.BOs7sk55-lkp@intel.co=
+m/
+>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>
+> Checked the code in drm_bridge.c, and it looks like the lifetime of
+> next_bridge should be indirectly managed by devm when
+> devm_drm_bridge_alloc() successes and the next_bridge field assigned,
+> so the only explicit put needed here should be in the alloc failure
+> path.
 
-On 9/27/26 5:47 PM, Jiale Yao wrote:
+Exactly.
 
-> ravb_remove() frees the netdev before devres releases the managed IRQs.
-> The handlers use the netdev as their data pointer, so an interrupt during
-> that window can access freed memory. Probe error paths have the same
-> ordering problem.
-> 
-> The remove callback also returns when runtime resume fails. That leaves
-> the netdev registered while the driver core still releases its managed
-> resources. A running interface already holds a runtime PM reference, so
-> the extra get cannot invoke a failing resume. A resume failure therefore
-> occurs while the interface is down and ndo_stop() will not be called.
+I think vs_bridge_init() could be simplified a bit by moving the 'next =3D
+...;' statement (with error management trailer) to after
+devm_drm_bridge_alloc. This would avoid the explicit drm_bridge_put() call
+added by this patch.
 
-   Seems like a separate problem?
+However for this regression fix I preferred to keep the diff minimal. The
+cleanup mentioned above can be done later.
 
-> Place the IRQ resources in a dedicated devres group and release it before
-> freeing the netdev. Continue unregistering and freeing software resources
-> when runtime resume fails, but skip the unmatched runtime PM put.
-> 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Fixes: 48f894ab07c4 ("net: ravb: Add runtime PM support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiale Yao <yaojiale02@163.com>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index ea1c7e536791..a25f5ac7062f 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-[...]> @@ -3124,6 +3131,8 @@ static int ravb_probe(struct platform_device *pdev)
->         pm_runtime_disable(&pdev->dev);
->         pm_runtime_dont_use_autosuspend(&pdev->dev);
->         clk_unprepare(priv->refclk);
-> +out_release_irqs:
+> Reviewed-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 
-   Somewhat unobvious label name, given the following call...
+Thanks for reviewing!
 
-> +       devres_release_group(&pdev->dev, priv);
->  out_reset_assert:
->         reset_control_assert(rstc);
->  out_free_netdev:
-> @@ -3141,9 +3150,10 @@ static void ravb_remove(struct platform_device *pdev)
-> 
->         error = pm_runtime_resume_and_get(dev);
->         if (error < 0)
-> -               return;
-> +               dev_warn(dev, "failed to resume device: %d\n", error);
-> 
->         unregister_netdev(ndev);
-> +       devres_release_group(dev, priv);
->         if (info->nc_queues)
->                 netif_napi_del(&priv->napi[RAVB_NC]);
->         netif_napi_del(&priv->napi[RAVB_BE]);
-> @@ -3153,7 +3163,8 @@ static void ravb_remove(struct platform_device *pdev)
->         dma_free_coherent(ndev->dev.parent, priv->desc_bat_size, priv->desc_bat,
->                           priv->desc_bat_dma);
-> 
-> -       pm_runtime_put_sync_suspend(&pdev->dev);
-> +       if (error >= 0)
-> +               pm_runtime_put_sync_suspend(&pdev->dev);
+>> Changes in v2:
+>> - fix bridge reference leak on attach error path
+>
+> It should be `bridge alloc error` instead of `attach error`, but I
+> don't know how to correct the error in the changelog, and anyway it
+> won't be part of the final commit.
 
-   Hm, definitely seems like a material for a separate patch...
+Ah, right, that's a copy-paste leftover. It's correct that it won't appear
+in the commit, so I won't sent a new iteration for this.
 
-[...]
+Luca
 
-MBR, Sergey
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
