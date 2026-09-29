@@ -1,119 +1,161 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3525352BE5F;
-	Tue, 29 Sep 2026 10:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6882651993C;
+	Tue, 29 Sep 2026 10:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790678270; cv=none; b=i3R2axpQ+Ej7WMTQLMNvCuYi7du8LqJn8W//iau3e4ktsnmVbo2Cc/LsLK/4Jaw7ipXlKwRvrkdzL8XeCYqWDQTrJRsXPRLZoH5BfObUFTyKLgwGTUxySgtLU2B8QpC1VL7b5yLJMaCUI7TbDFUmPZ1i5tFE1WqrYupgcUw/RU0=
+	t=1790678854; cv=none; b=IGjQBPs3VZazFeqfJmJqZAowR0HFILOKaLN9PIn6GAoKEX3oEncOo1cvDKA8niKfYGniVANhmUydRY3BwhGXD2MAw8vAfiCZfbBgi8cpH9HxjROZLa9Qvq2tgBif6vAIlDhf7YHKTGyb/+m1nSjxSOnKH9FirQTvVmtBbUnO5nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790678270; c=relaxed/simple;
-	bh=kMg9CyEpRG6j7s4GHZ0KuFt0d9OuafQqS3yLuECoiB0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LYw9E5KGnXG16eXoFQK5KSTxHCWSMJ0LT05j+p6p13bjyt+ly8KiebyCu1/8V42b6DhePGY778q8a83L3+pzi+t/EAcx5X7deHp4gqexFLJKYT/BYhppW9+l8Mh9OcW5f2nW9qgmMGZ25wOjreABooznrCwqmPzy4hMgA7aK7H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xFWWeVC+; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xFWWeVC+"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 115134E410BC;
-	Tue, 29 Sep 2026 10:37:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D24AB601BD;
-	Tue, 29 Sep 2026 10:37:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A6BBB103297AF;
-	Tue, 29 Sep 2026 12:37:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790678253; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Aq/miDDh+FHesOvczcSzM5kxiy3v5uRbviWlnSzPe50=;
-	b=xFWWeVC+oeNOjqXAdOi77g+AXgAib7PPbvOa6ZG181NE2dQGdrSTU4VLiyGxXRwcIlXA9a
-	IuntcrYc3PDfrZ7K8pWtNJvwhaW1jsaM0iyBAebn8La4S600cbQBhcpDfEAqvoH2kXrKct
-	/Om21RGpyULsuJKb0QZ5WVh/Phg6TO2TvMjdz5tmA7qfvwiWJ1tajgbpkHFPj/V4mmqYCo
-	d6hNljqygdk0a22n+iXBdh6I1abYB2aMR+1gQfGyVh3zP4BDdhhAuGLhMCkpkI7Il9+6KW
-	EfNXZ8ICN74ad3DTYMKCMbg2Qa7fyDRcKF1gxMxilTgUUEcnJk8YoGlO4mE+HQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 29 Sep 2026 12:36:39 +0200
-Subject: [PATCH 7/7] drm: renesas: shmobile: stop using deprecated
- devm_drm_of_get_bridge()
+	s=arc-20240116; t=1790678854; c=relaxed/simple;
+	bh=lWUhtc2EI4P8iKvvKNVdvZzhVvDwI9XwvEg+J4EFQOk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JIUcymMX51IFkcCP4Cc1ZDJImbNPZBVEQbSbwj265Xqpk3W1jL2x4ymRf+PJcoCMMBWp16oG1UWqPFdzCT92fesbn7SCBTaUAVeM/OkEY+Zt8YW6AynwwIRBnPE1Mba5x5GEn4VVZicy088TBvqHrbGYhbq00Ad7gwmdCoQrsqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [120.85.96.244])
+	by APP-05 (Coremail) with SMTP id zQCowAB34jwXl7tq7fmqCQ--.2307S2;
+	Tue, 29 Sep 2026 18:46:48 +0800 (CST)
+Message-ID: <c1b065c8bd926708500b7c42864279e055ed95d0.camel@iscas.ac.cn>
+Subject: Re: [PATCH 0/7] drm: remove deprecated *_of_get_bridge() from
+ non-OF drivers (fixes build regression)
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Frank Li	 <Frank.Li@nxp.com>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Andrzej Hajda	
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	 <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Dave Stevenson	
+ <dave.stevenson@raspberrypi.com>, =?ISO-8859-1?Q?Ma=EDra?= Canal	
+ <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance	
+ <kernel-list@raspberrypi.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
+ Thomas Petazzoni	 <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, 	imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Date: Tue, 29 Sep 2026 18:46:47 +0800
+In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
+References: 
+	<20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v1-7-ccb7e602daad@bootlin.com>
-References: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
-In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+X-CM-TRANSID:zQCowAB34jwXl7tq7fmqCQ--.2307S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFWxWFWxCw18Kw13Cry3urg_yoW5Xw1xpF
+	4xtryYyry8JrZaqwsrAF1kAry5A3WDJa4fJr1UtF1Fvr1rZF10qw4q9ryF9ryUAFW8ZFn8
+	tr1DXr1S9F17AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxU3byCDUUUU
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-devm_drm_of_get_bridge() is deprecated, switch to
-of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() returns
-a refcounted bridge, ensure it is put.
+=E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 12:36 +0200=EF=BC=8CLuca Ceresoli=E5=
+=86=99=E9=81=93=EF=BC=9A
+> After commit Fixes: aa8a8c7e4641 ("drm/bridge: panel: move all code
+> to
+> drm_panel.c") some drivers fail building:
+>=20
+> =C2=A0 error: implicit declaration of function 'devm_drm_of_get_bridge'
+>=20
+> This is because devm_drm_of_get_bridge() (and drmm_of_get_bridge())
+> have
+> been moved to drm-panel.h.
+>=20
+> The affected drivers are those which:
+>=20
+> =C2=A0* can be built without CONFIG_OF, and
+> =C2=A0* don't include drm_panel.h
+>=20
+> The affected drivers are 3, fix them (patches 1-3) by replacing the
+> deprecated *_of_get_bridge() calls with
+> of_drm_get_bridge_by_endpoint().
 
-drm_panel.h becomes unused, drop the include.
+The comment of drm_of_find_panel_or_bridge() still suggests
+devm_of_get_bridge(), and the documentation at the head of drm_bridge.c
+also mentions it.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Should this get fixed?
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 328a36215e39..51bae2008cc6 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -28,7 +28,6 @@
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_modeset_helper_vtables.h>
--#include <drm/drm_panel.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
- 
-@@ -447,7 +446,6 @@ static const struct drm_encoder_funcs shmob_encoder_funcs = {
- int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
- {
- 	struct drm_encoder *encoder = &sdev->encoder;
--	struct drm_bridge *bridge;
- 	int ret;
- 
- 	encoder->possible_crtcs = 1;
-@@ -463,7 +461,8 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
- 	}
- 
- 	/* Create a panel bridge */
--	bridge = devm_drm_of_get_bridge(sdev->dev, sdev->dev->of_node, 0, 0);
-+	struct drm_bridge *bridge __free(drm_bridge_put) =
-+		of_drm_get_bridge_by_endpoint(sdev->dev->of_node, 0, 0);
- 	if (IS_ERR(bridge))
- 		return PTR_ERR(bridge);
- 
+BTW should drm_of_get_bridge_by_endpoint() has some drmm/devm variant?
 
--- 
-2.55.0
+Thanks,
+Icenowy
+
+>=20
+> While there, do the same for all drivers which be built without
+> CONFIG_OF,
+> even if they don't fail (patches 4-7).
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+> Luca Ceresoli (7):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/imx/lcdc: stop using deprecated devm_d=
+rm_of_get_bridge()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm: verisilicon: stop using deprecated
+> devm_drm_of_get_bridge()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: dw-mipi-dsi: stop using deprec=
+ated
+> devm_drm_of_get_bridge()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/bridge: dw-mipi-dsi2: stop using depre=
+cated
+> devm_drm_of_get_bridge()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/vc4: dpi: stop using deprecated drmm_o=
+f_get_bridge()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/vc4: dsi: stop using deprecated drmm_o=
+f_get_bridge()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm: renesas: shmobile: stop using depreca=
+ted
+> devm_drm_of_get_bridge()
+>=20
+> =C2=A0drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 9 +++------
+> =C2=A0drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 9 +++------
+> =C2=A0drivers/gpu/drm/imx/lcdc/imx-lcdc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
+> =C2=A0drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c |=C2=A0 5 ++---
+> =C2=A0drivers/gpu/drm/vc4/vc4_dpi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 9 ++-------
+> =C2=A0drivers/gpu/drm/vc4/vc4_dsi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 10 ++++------
+> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 +++----
+> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+> =C2=A08 files changed, 19 insertions(+), 35 deletions(-)
+> ---
+> base-commit: 91ceac83e599c9d48da4c4d2d91410c588a215f7
+> change-id: 20260929-drm-fix-of_get_bridge-build-regression-
+> 98f22f8a1dcc
+>=20
+> Best regards,
+> --=C2=A0=20
+> Luca Ceresoli, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
