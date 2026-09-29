@@ -1,190 +1,188 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAEE3D45D5;
-	Tue, 29 Sep 2026 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C2C3DB64A;
+	Tue, 29 Sep 2026 15:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790692973; cv=none; b=rUrcxh0/z024pwevBazG3H+5w3317hEOD4z0XF/+53GEJDgA+kbLcljVzTvXH/ezWrU/y3qSXz5BwwOHGrg3kRYazw18XobaWEPfoGWjxGxPuy0qjsXMKGZy83MMCnao+eednSc6tAnKylRPZTBIWVRzU8SabsliMRa3Hec96V0=
+	t=1790695666; cv=none; b=I5tXYgFKsDIFXa84XyoD+5RBq8645N/VXIIfmUo9Lz5o2hRq9+HNq3u4E5i+WU75fLP59FNwuTmNUY774bRN4JIeS6358lhn/MwqW14qflrZAGjkqOLWCQdd3l3f2mw55QikXXScSHhl586Xf2DmEEf2ut3JGFK4I/TMYteP+U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790692973; c=relaxed/simple;
-	bh=BWNukz3gxR4ofTYhCcg6SCY61hjz0FbNIyj2Ss/lLgs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pIG15uUIUjeElW6t9CBGI8oCAcxVx9Er2m9JTfamGF9Y0ZcsxNqBTiNSPNtsKJ83HWdqUZoVv7VT5NYw4ojnhU189QFeliHraUpGkGg4UiAJaxSZNKx2HKIcdyKNj1Twvnd6XisLKVZ0rVSB+plMeJaoJAjTW1S9LvDM1qqiaHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from edelgard.fodlan.icenowy.me (unknown [112.94.101.54])
-	by APP-05 (Coremail) with SMTP id zQCowAC3IDtEzrtqWCqvCQ--.41306S2;
-	Tue, 29 Sep 2026 22:42:15 +0800 (CST)
-Message-ID: <e044caae8c2160d96a29073bb1e60efff5883513.camel@iscas.ac.cn>
-Subject: Re: [PATCH v2 2/7] drm: verisilicon: stop using deprecated
- devm_drm_of_get_bridge()
-From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Li	 <Frank.Li@nxp.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Andrzej Hajda	
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	 <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Dave Stevenson	
- <dave.stevenson@raspberrypi.com>, =?ISO-8859-1?Q?Ma=EDra?= Canal	
- <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance	
- <kernel-list@raspberrypi.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Thomas Petazzoni	 <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, 	imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, kernel test robot <lkp@intel.com>
-Date: Tue, 29 Sep 2026 22:42:12 +0800
-In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v2-2-6da431d8f180@bootlin.com>
-References: 
-	<20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
-	 <20260929-drm-fix-of_get_bridge-build-regression-v2-2-6da431d8f180@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	s=arc-20240116; t=1790695666; c=relaxed/simple;
+	bh=sAEpbqN+3poWHbya/BmEJrQtJipnQHhZl5UAqUKwn4I=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S8HZUa/6cJoEh86l6+Z/pvAXZpAGwmIVt2xkbR+dLwt3/DcjqNK+oDnvBSkDY4tn+yDPyUvsAIbmYBUYr6G47Hnu8MGWzKxXDR66YTtVWia+3E5VOoqlRKJgiH1kpnBVhglHLm8wz2YSGKbCvX6g1827It274hc1RaALanGKLaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAudfDhL; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAudfDhL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C48B81F000FF;
+	Tue, 29 Sep 2026 15:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790695660;
+	bh=QYOjcvwm8IvLdqo31Ia+V27XLsn8fLfzlUhQM59Ycfk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=EAudfDhL9HsiBNE5axjIHAY0jXYy6iS2xRl14nrrOp8V+gw4SXlD+6Blf9Yc4SK7D
+	 nxA1h6rtM6pZWG08X6OIh+0aKZM2sVdSgHY9v8eboUJfwn6/vBZvFzctQCT7Ti3r9Z
+	 xocq8+KUAWhmTHyRglxf7HZmzReJPBIwMw1aJypv12m1ns4UeQM0lC3UGnxovTOfw1
+	 MVF7BEJkz0WpcVoulLD3qy20gjg3oIfain3d4H9xuN4XUBJbUf16Snh1Lbx55vm7z9
+	 g+1y8CQTFpPizPeSu5g/mNVmv5e79OGotxwWXhIc6iAi7cvbT7ohdcqUWITHyRyNAc
+	 0y9d2HtGxpm7w==
+Subject: Re: [PATCH net-next 1/2] net: pcs: rzn1-miic: Make usage of
+ miic_port_max consistent
+From: netdev-bot+sashiko@kernel.org
+To: khendry@reliablecontrols.com
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 29 Sep 2026 15:27:39 +0000
+Message-ID: <179069565933.434549.5780027645108841461@kernel.org>
+In-Reply-To:
+ <20260925-miic-validate-dtb-v1-1-3a6db9bb75ec@reliablecontrols.com>
+References:
+ <20260925-miic-validate-dtb-v1-1-3a6db9bb75ec@reliablecontrols.com>
+X-sashiko-severity: Low
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:zQCowAC3IDtEzrtqWCqvCQ--.41306S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAry7Jr15Kw43Cw1DZFWkZwb_yoWrJF1rpF
-	40qa98try5XrWxXw42kr4j9FyYya4Dtw4rGFWUt34Fvr1FqF4DGF1kAry5Z3W5CF17GF1r
-	tr4DtFySv3W8Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
-	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUv4EEDUUUU
-X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-=E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 15:39 +0200=EF=BC=8CLuca Ceresoli=E5=
-=86=99=E9=81=93=EF=BC=9A
-> devm_drm_of_get_bridge() is deprecated, switch to
-> of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint()
-> returns
-> a refcounted bridge, ensure it is put by using bridge.next_bridge.
->=20
-> Fixes build failure when CONFIG_OF is disabled.
->=20
-> Fixes: aa8a8c7e4641 ("drm/bridge: panel: move all code to
-> drm_panel.c")
-> Reported-by: Arnd Bergmann <arnd@kernel.org>
-> Closes:
-> https://lore.kernel.org/r/20260928161605.2271412-1-arnd@kernel.org
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes:
-> https://lore.kernel.org/oe-kbuild-all/202609291109.OIsGTysr-lkp@intel.com=
-/
-> Closes:
-> https://lore.kernel.org/oe-kbuild-all/202609290408.BOs7sk55-lkp@intel.com=
-/
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Thank you for your contribution! Sashiko AI review found more severe
+issue(s) in other patches of this series. This mail is only an FYI, in case
+you want to address the nit picks below when you respin.
 
-Checked the code in drm_bridge.c, and it looks like the lifetime of
-next_bridge should be indirectly managed by devm when
-devm_drm_bridge_alloc() successes and the next_bridge field assigned,
-so the only explicit put needed here should be in the alloc failure
-path.
+Low priority / nit picks for your consideration:
 
-Patch is:
+- [Low] The commit message describes this patch as a consistency cleanup
+  ("Make usage of miic_port_max consistent").
 
-```
-Reviewed-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-```
+Pre-existing issues:
+- [Medium] In the reviewed commit, miic_parse_dt() reads the per-
+  converter DT "reg" into `int port` and never checks it against the…
 
->=20
-> ---
->=20
-> Changes in v2:
-> - fix bridge reference leak on attach error path
+--
 
-It should be `bridge alloc error` instead of `attach error`, but I
-don't know how to correct the error in the changelog, and anyway it
-won't be part of the final commit.
+net: pcs: rzn1-miic: Make usage of miic_port_max consistent
 
-Thanks,
-Icenowy
+This patch makes miic_port_max always mean a port count rather than the
+last port number. It adds a MIIC_PORT_END() helper for the last valid port
+and uses it for the range check in miic_create(). The per-SoC values now
+come from the index_to_string tables.
 
-> - mention lkp report
-> ---
-> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.c | 11 ++++++-----
-> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.h |=C2=A0 1 -
-> =C2=A02 files changed, 6 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.c
-> b/drivers/gpu/drm/verisilicon/vs_bridge.c
-> index dc7c85b07fe3..3a5091c0ac2c 100644
-> --- a/drivers/gpu/drm/verisilicon/vs_bridge.c
-> +++ b/drivers/gpu/drm/verisilicon/vs_bridge.c
-> @@ -29,7 +29,7 @@ static int vs_bridge_attach(struct drm_bridge
-> *bridge,
-> =C2=A0{
-> =C2=A0	struct vs_bridge *vbridge =3D drm_bridge_to_vs_bridge(bridge);
-> =C2=A0
-> -	return drm_bridge_attach(encoder, vbridge->next_bridge,
-> +	return drm_bridge_attach(encoder, vbridge->base.next_bridge,
-> =C2=A0				 bridge, flags);
-> =C2=A0}
-> =C2=A0
-> @@ -303,8 +303,7 @@ struct vs_bridge *vs_bridge_init(struct
-> drm_device *drm_dev,
-> =C2=A0		return NULL;
-> =C2=A0	}
-> =C2=A0
-> -	next =3D devm_drm_of_get_bridge(drm_dev->dev, drm_dev->dev-
-> >of_node,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 output, intf);
-> +	next =3D of_drm_get_bridge_by_endpoint(drm_dev->dev->of_node,
-> output, intf);
-> =C2=A0	if (IS_ERR(next)) {
-> =C2=A0		ret =3D PTR_ERR(next);
-> =C2=A0		if (ret !=3D -EPROBE_DEFER)
-> @@ -321,12 +320,14 @@ struct vs_bridge *vs_bridge_init(struct
-> drm_device *drm_dev,
-> =C2=A0
-> =C2=A0	bridge =3D devm_drm_bridge_alloc(drm_dev->dev, struct
-> vs_bridge, base,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bridge_funcs);
-> -	if (IS_ERR(bridge))
-> +	if (IS_ERR(bridge)) {
-> +		drm_bridge_put(next);
-> =C2=A0		return ERR_PTR(PTR_ERR(bridge));
-> +	}
-> =C2=A0
-> =C2=A0	bridge->crtc =3D crtc;
-> =C2=A0	bridge->intf =3D intf;
-> -	bridge->next_bridge =3D next;
-> +	bridge->base.next_bridge =3D next;
-> =C2=A0
-> =C2=A0	if (intf =3D=3D VSDC_OUTPUT_INTERFACE_DPI)
-> =C2=A0		enctype =3D DRM_MODE_ENCODER_DPI;
-> diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.h
-> b/drivers/gpu/drm/verisilicon/vs_bridge.h
-> index 70fee1749699..2b0ed94e4520 100644
-> --- a/drivers/gpu/drm/verisilicon/vs_bridge.h
-> +++ b/drivers/gpu/drm/verisilicon/vs_bridge.h
-> @@ -25,7 +25,6 @@ struct vs_bridge {
-> =C2=A0	struct drm_connector *conn;
-> =C2=A0
-> =C2=A0	struct vs_crtc *crtc;
-> -	struct drm_bridge *next_bridge;
-> =C2=A0	enum vs_bridge_output_interface intf;
-> =C2=A0};
-> =C2=A0
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+> index cb74861e823c8..62daaf76e0525 100644
+> --- a/drivers/net/pcs/pcs-rzn1-miic.c
+> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> @@ -59,6 +59,8 @@
+>  
+>  #define MIIC_MAX_NUM_RSTS		2
+>  
+> +#define MIIC_PORT_END(x) ((x)->miic_port_start + (x)->miic_port_max - 1)
+> +
+>  /**
+>   * struct modctrl_match - Matching table entry for  convctrl configuration
+>   *			  See section 8.2.1 of manual.
 
+[ ... ]
+
+> @@ -482,7 +484,7 @@ struct phylink_pcs *miic_create(struct device *dev, struct device_node *np)
+>  
+>  	miic = platform_get_drvdata(pdev);
+>  	of_data = miic->of_data;
+> -	if (port > of_data->miic_port_max || port < of_data->miic_port_start) {
+> +	if (port > MIIC_PORT_END(of_data) || port < of_data->miic_port_start) {
+>  		put_device(&pdev->dev);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+
+[Severity: Medium]
+This is a pre-existing issue, not one introduced by this patch. Now that
+MIIC_PORT_END() exists, should miic_parse_dt() use it as well?
+
+miic_parse_dt() reads each converter's reg into int port and uses it with
+no range check:
+
+drivers/net/pcs/pcs-rzn1-miic.c:miic_parse_dt() {
+    ...
+	for_each_available_child_of_node(np, conv) {
+		if (of_property_read_u32(conv, "reg", &port))
+			continue;
+		...
+		/* Adjust for 0 based index */
+		dt_val[port + !miic->of_data->miic_port_start] = conf;
+		...
+		miic_configure_phy_link(miic, conf, port, active_low);
+	}
+    ...
+}
+
+dt_val is allocated with conf_conv_count entries (6 on RZ/N1, 5 on
+RZ/T2H). On RZ/T2H, reg = 4 writes dt_val[5], one byte past the end of the
+allocation. Larger or negative reg values write further out of bounds.
+
+miic_configure_phy_link() also builds BIT(port + shift) from the same
+unchecked value, and the result is written to MIIC_PHY_LINK.
+
+The miic_probe()->miic_parse_dt() path runs before miic_create() sees the
+port, so the new check here does not cover it. Only a malformed DT can
+reach this, since the binding restricts reg per SoC.
+
+A later patch in this series, "net: pcs: rzn1-miic: Validate dtb
+configuration values", appears to add a port < miic_port_start ||
+port > MIIC_PORT_END() check to miic_parse_dt() and fail probe with
+-EINVAL. That would resolve this.
+
+[ ... ]
+
+> @@ -838,7 +840,7 @@ static struct miic_of_data rzt2h_miic_of_data = {
+>  	.index_to_string = rzt2h_index_to_string,
+>  	.index_to_string_count = ARRAY_SIZE(rzt2h_index_to_string),
+>  	.miic_port_start = 0,
+> -	.miic_port_max = 4,
+> +	.miic_port_max = ARRAY_SIZE(rzt2h_index_to_string) - 1,
+>  	.sw_mode_mask = GENMASK(2, 0),
+>  	.reset_ids = rzt2h_reset_ids,
+>  	.reset_count = ARRAY_SIZE(rzt2h_reset_ids),
+
+[Severity: Low]
+The subject describes this as a consistency cleanup:
+
+  net: pcs: rzn1-miic: Make usage of miic_port_max consistent
+
+Isn't this really a functional fix that only affects RZ/T2H and RZ/N2H?
+
+The value here is still 4, but its meaning has changed. Before this patch,
+miic_init_hw() already used it as a count:
+
+	for (port = 0; port < miic->of_data->miic_port_max; port++) {
+
+miic_create(), on the other hand, used it as the last valid port:
+
+	if (port > of_data->miic_port_max || port < of_data->miic_port_start) {
+
+So on RZ/T2H, a PCS node with reg = 4 was accepted, even though
+rzt2h_index_to_string only lists CONV0..CONV3. That produced
+miic_port->port = 4. The phylink ops then wrote MIIC_CONVCTRL(4) and
+toggled bit 4 of CONVRST for a converter that does not exist.
+
+After this patch, MIIC_PORT_END() is 0 + 4 - 1 = 3 on RZ/T2H, so
+miic_create() now rejects reg = 4 with -EINVAL.
+
+Nothing changes on RZ/N1. ARRAY_SIZE(index_to_string) - 1 is still 5, and
+MIIC_PORT_END() is 1 + 5 - 1 = 5.
+
+Could the commit message name the affected SoC, describe this change in
+behaviour, and note that RZ/N1 is unaffected?
+
+Should it also carry a Fixes: tag? The mismatch appears to come from
+08f89e42121d ("net: pcs: rzn1-miic: Add RZ/T2H MIIC support"). That commit
+added .miic_port_max = 4, while the check from c112520de041 ("net: pcs:
+rzn1-miic: move port range handling into SoC data") treated the value as
+the last port.
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260925-miic-validate-dtb-v1-0-3a6db9bb75ec%40reliablecontrols.com
