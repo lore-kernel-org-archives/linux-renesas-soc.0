@@ -1,42 +1,42 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCECF511E69;
-	Tue, 29 Sep 2026 10:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0108351122E;
+	Tue, 29 Sep 2026 10:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790678241; cv=none; b=YbX+YFO84PNSK2Sh2Er75skJ5QJKBZZTb2wrX3vcR2LL1qOOMXnVjQTlktpPZTNMMolUHjoEu5ib6WSyaF2fLbMUTANACTjpCX401kRaqGtbLNLUxefuT9IklI1Dd0UlD6XpFDMxob6J1OSmEufNl+njA/U0gshaCBiAVu+COFk=
+	t=1790678255; cv=none; b=FSkVJyIQTnfqwJJkgbOmvz24COUSWM3wB7UaE23kCfHAWLhRS5q7e0DOOpIqOCLcNgbUtZdNom4JuTaH2I+MN7b+Nk9BQII/5OiHC90x0s8/fcvFtLBdbfDKRHuiCXaxiKA7ZGpDakRrO+HFT5RPzJGxFabfIxCsZpjTz+ppO4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790678241; c=relaxed/simple;
-	bh=Jx2My6QgxWrCNaGVNxRidyoZVc2RbLQWB3KollVEGXU=;
+	s=arc-20240116; t=1790678255; c=relaxed/simple;
+	bh=zk/sW/7dKyqBBddE4Q1iLVHl5U2i7wrfyuso679Wkys=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r8HfwNoiM1UVrqBsF3wvbhMY2NkQjvTqMIVskfrwiJIVQDXTfD1kEI6LaBVXhIDQK3zlbvhy0kgAKOPS5FQviJZcxSTQlsr/Ycu6oh+EYpvXaw3j6fgCICT1yeznbINWR/p5++5sKpIQBr/gCJxYPfZpky5JLrxKxGBvlTOOavM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HkhamXZz; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=oYzOZ1cwoBL8vqdFf1i/359LyKXC75zeihddeFo7vvBbJv4JPOKDR4sbCY1sRbkVkIkzicZAx9mqzxSHWy172dse0RwpGRE+pbaKQegP2LGPSdMbGszrw1CWKI15M1XVU+HvpN1phMe/2PHN9AS4e4M6JApDpxkvcNvHyBBxmKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=awY69VGz; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HkhamXZz"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="awY69VGz"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 0E4004E410B7;
-	Tue, 29 Sep 2026 10:37:12 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id E38334E410B8;
+	Tue, 29 Sep 2026 10:37:20 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D5209601BD;
-	Tue, 29 Sep 2026 10:37:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A5A2E103297BD;
-	Tue, 29 Sep 2026 12:37:01 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AD3D7601BD;
+	Tue, 29 Sep 2026 10:37:20 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 57982103297DC;
+	Tue, 29 Sep 2026 12:37:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790678226; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1790678235; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=MclBdn8qJNnkVxx6agDK+453pDYr2WeUrlYel3GftU0=;
-	b=HkhamXZzgsVwqQsF7Kmnz7704aC5HD1bfqTX3uzG6BqJoUGvqaSUI9zNcnKgIBSEbn+JpB
-	9DJ8JEXRm/gt1JAQxriQDyv0LM4Xuf49tr3Bt1+BPC6M2+g0vYsjlXDFXSMh42vFmyjiK7
-	HGFOKUFbsIZqM431WrmtlAdsht6DuqfcsU+ZQ/gqIBOc5QlE7V3MQ3S5BCCfQWzZPFPkf9
-	cfNpZ5qWD3YhOpqCLCDiDxGz/YLurO+vR6RNkc/gGZNR63uPUSHA3jE9WJxUUPh8Ysq5JF
-	KHQDoOo40uMZz+P+VkI1Db8JucLABcWmeR6xbP3G/wV+dYvheg21Dn4R0DYlsQ==
+	bh=iOxyCS599oVo+AZS8JSoUu6X3bzbx9qa/yjHz16Q5+8=;
+	b=awY69VGzxHFCSZVboz5MVQUhK4Yr4tWBaJBBGV2WWHGpRF2fiN9X93UAm6z/xxKWWR703v
+	PTnDrGxLz/JSdWFilMw0GAFq/bsoXyeLMIy8r1Qi18WJnmEn/NYsN7z8a0gnzCofpOxoYJ
+	mej1BnLsULUJBvjTbXYPgNQwhf7aG+0kxntKvibiHYprvaL1AwH5UhwWobx3b7Zq5kqDgX
+	Wg6hJskBRWE8K/y/ap3/HaFIuGdHBdJ1CJPHredDsXnkX2kperR4I1w1g4gNUv5C8UmvKp
+	L0z2Sb24I7wSb9Lh9HFrM/Q5AkXxf2+T+40sTf50p3knnZqXg11V7qcoYsupMg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 29 Sep 2026 12:36:36 +0200
-Subject: [PATCH 4/7] drm/bridge: dw-mipi-dsi2: stop using deprecated
- devm_drm_of_get_bridge()
+Date: Tue, 29 Sep 2026 12:36:37 +0200
+Subject: [PATCH 5/7] drm/vc4: dpi: stop using deprecated
+ drmm_of_get_bridge()
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v1-4-ccb7e602daad@bootlin.com>
+Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v1-5-ccb7e602daad@bootlin.com>
 References: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
 In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -74,64 +74,48 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 devm_drm_of_get_bridge() is deprecated, switch to
 of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() returns
-a refcounted bridge, ensure it is put by using bridge.next_bridge.
+a refcounted bridge, ensure it is put.
+
+drm_panel.h becomes unused, drop the include.
+
+Also remove a comment that is now obvious: now panels are just bridges.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
 ---
+ drivers/gpu/drm/vc4/vc4_dpi.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Unlike other commits in this series, this is not a fix: this code can be
-built only when CONFIG_OF=y. Do this change to keep dw-mipi-dsi
-dw-mipi-dsi2 as similar as they are already.
----
- drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
-index 7fd2f1e60654..a008450d83aa 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
-@@ -192,7 +192,6 @@ struct cmd_header {
- struct dw_mipi_dsi2 {
- 	struct drm_bridge bridge;
- 	struct mipi_dsi_host dsi_host;
--	struct drm_bridge *panel_bridge;
- 	struct device *dev;
- 	struct regmap *regmap;
- 	struct clk *pclk;
-@@ -528,12 +527,12 @@ static int dw_mipi_dsi2_host_attach(struct mipi_dsi_host *host,
- 	dsi2->format = device->format;
- 	dsi2->mode_flags = device->mode_flags;
+diff --git a/drivers/gpu/drm/vc4/vc4_dpi.c b/drivers/gpu/drm/vc4/vc4_dpi.c
+index 53f36626a50d..5060eb463704 100644
+--- a/drivers/gpu/drm/vc4/vc4_dpi.c
++++ b/drivers/gpu/drm/vc4/vc4_dpi.c
+@@ -16,7 +16,6 @@
+ #include <drm/drm_drv.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_of.h>
+-#include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+@@ -279,16 +278,12 @@ static const struct of_device_id vc4_dpi_dt_match[] = {
+ 	{}
+ };
  
--	bridge = devm_drm_of_get_bridge(dsi2->dev, dsi2->dev->of_node, 1, 0);
-+	bridge = of_drm_get_bridge_by_endpoint(dsi2->dev->of_node, 1, 0);
- 	if (IS_ERR(bridge))
- 		return PTR_ERR(bridge);
+-/* Sets up the next link in the display chain, whether it's a panel or
+- * a bridge.
+- */
+ static int vc4_dpi_init_bridge(struct vc4_dpi *dpi)
+ {
+-	struct drm_device *drm = dpi->encoder.base.dev;
+ 	struct device *dev = &dpi->pdev->dev;
+-	struct drm_bridge *bridge;
  
- 	bridge->pre_enable_prev_first = true;
--	dsi2->panel_bridge = bridge;
-+	dsi2->bridge.next_bridge = bridge;
- 
- 	drm_bridge_add(&dsi2->bridge);
- 
-@@ -565,8 +564,6 @@ static int dw_mipi_dsi2_host_detach(struct mipi_dsi_host *host,
- 
- 	drm_bridge_remove(&dsi2->bridge);
- 
--	drm_of_panel_bridge_remove(host->dev->of_node, 1, 0);
--
- 	return 0;
- }
- 
-@@ -884,7 +881,7 @@ static int dw_mipi_dsi2_bridge_attach(struct drm_bridge *bridge,
- 	encoder->encoder_type = DRM_MODE_ENCODER_DSI;
- 
- 	/* Attach the panel-bridge to the dsi bridge */
--	return drm_bridge_attach(encoder, dsi2->panel_bridge, bridge,
-+	return drm_bridge_attach(encoder, dsi2->bridge.next_bridge, bridge,
- 				 flags);
- }
- 
+-	bridge = drmm_of_get_bridge(drm, dev->of_node, 0, 0);
++	struct drm_bridge *bridge __free(drm_bridge_put) =
++		of_drm_get_bridge_by_endpoint(dev->of_node, 0, 0);
+ 	if (IS_ERR(bridge)) {
+ 		/* If nothing was connected in the DT, that's not an
+ 		 * error.
 
 -- 
 2.55.0
