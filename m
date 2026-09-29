@@ -1,153 +1,219 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEF351DB0B;
-	Tue, 29 Sep 2026 10:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400A851598D
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 10:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790678881; cv=none; b=gXxW7utP1jV/XiHOSZUzjzdaCRPbb1jr5AClGoCBGvMTOCp5w+JaiS+s7Y/4VX1rSxT24gNlmctich4twnHRO1TxkI3OudBCVut6P1azVL+RI1HNCTkB2DDtYLRWiPaNs/iKntOgjwIVIpHnEQIFs43ahlX7BZuqogrKNgI6rBU=
+	t=1790679044; cv=none; b=tDeFNPuonYvceadgHU4xcpH2ExFrJFrq5kiNvrqmiqg2GhfErcflKtIfdzafG50BH4crDXlxpC8k7aPao543tDasnQrWaOo/FFFAOyiqyH7JvSuris7SUjanJSofj7+xopaNDsvCTgtp4celUThbhZIEt+5UMJT55ywbbtF7uv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790678881; c=relaxed/simple;
-	bh=/9ec7V2K6sM0GPhU8tib+Kjkd3p+z19v0EHjq13NeMg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=i6jLUvTLjvvNPjV5tXz2mQqLq3FW8vmQt7drtzYvZ5nBdQcWtoc37lPEGthhkkRSXoBNvkcsF7zdj0YPbWVANtYIre3MMP23q00TPudvgB8kFn08WNHDv9Jr+gKTilxFBB6MCpitt5hjXCfLdCKpOHZE684fE+gnUWibM4s1h0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from edelgard.fodlan.icenowy.me (unknown [120.85.96.244])
-	by APP-05 (Coremail) with SMTP id zQCowADnUDs4l7tqMf2qCQ--.2178S2;
-	Tue, 29 Sep 2026 18:47:21 +0800 (CST)
-Message-ID: <e11d8db56fc0633598d191c49b96d286046c506f.camel@iscas.ac.cn>
-Subject: Re: [PATCH 2/7] drm: verisilicon: stop using deprecated
- devm_drm_of_get_bridge()
-From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Li	 <Frank.Li@nxp.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Andrzej Hajda	
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	 <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Dave Stevenson	
- <dave.stevenson@raspberrypi.com>, =?ISO-8859-1?Q?Ma=EDra?= Canal	
- <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance	
- <kernel-list@raspberrypi.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Thomas Petazzoni	 <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, 	imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-Date: Tue, 29 Sep 2026 18:47:20 +0800
-In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v1-2-ccb7e602daad@bootlin.com>
-References: 
-	<20260929-drm-fix-of_get_bridge-build-regression-v1-0-ccb7e602daad@bootlin.com>
-	 <20260929-drm-fix-of_get_bridge-build-regression-v1-2-ccb7e602daad@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	s=arc-20240116; t=1790679044; c=relaxed/simple;
+	bh=WFXtyizqLGIjeqJuBx4E9hrha6JrwqGU/OoHpHVWIBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ehTth7Wqx2qpePqktqdmKOJiwT3LpuFFl6IGoa67t+iD9MHNMA21bY7PcWbG2KwNISP/VITQxRIuVYqN5/PSZiJo0r2SHbA2oQRjQLIyD8PmoWfHTD7h1S95opRpu6clG/Ms6TuOqwKNr13TYUJtKcdIYlTx2odSYKQKsfAaLFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnIcDz2M; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnIcDz2M"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4834977ae75so2387067f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 03:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790679037; x=1791283837; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=x7SolB0St7GVMEYCNplMh8ZGWzJ6l4dcWp+uIpkdJQ8=;
+        b=LnIcDz2MsNcTIn+E8xQAwO1P83V5JZMWjgK18sD8u8xS1kRHJWH19ucPOvisPSkTHd
+         AZhOjaAZkBHqc4QME1yalwTEr925K09ITTWxIbZRzaVqFXZYwLH6sDeQixL0+L0PV3oI
+         tvUcm98Ri4mLh6rZ8fErBUmURBNN9JkI+IFvas4Gco8KY8kynjdO/O7NHo1WeiOV55gT
+         MgcbEgMb+aeJGnVTrkOko1zuhz6Ghbxg7nluuJhDAaITWcsNvMEOs2Tj59FgMvPgmmZO
+         akdRqUdZESeybha8re8qhuWGNC2YvC7TjDII8Ls5uMTEe6bLe9qpm+Tct5kKY1fhdsGT
+         /D2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790679037; x=1791283837;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=x7SolB0St7GVMEYCNplMh8ZGWzJ6l4dcWp+uIpkdJQ8=;
+        b=bFfEU3Y0vlhNKHtslKdGAisN8n3oHZRFmIkYmpzllOAUdE5SUzUi+m0Pr+1sIPL93N
+         +BcQDqSJozI8VN+qoJOtVCNu2QZi9XNLnNBK7EyeAtsJhF/r6BkVdXxL3QJl+uqh2ORv
+         0tlVnrTg4U6PsMxKXgJTFpIzg3JqsxWyxmnUtsTa30jkrnysa/4oAROBRQPvAVCeAmn1
+         9nv2yDBcWFLPlUeI2LAHbGsDq5ONLfSFYMUB9fs2u+zAALMALl2VfS4HlSxAnVyTkRGV
+         U8tt7kDbXcu3bDih8dd2BTLZONoxzq9Y6Cy5zziKFeobjJ1YuyheywcnkEa4bJXD5eIf
+         szMA==
+X-Gm-Message-State: AFq9FYJZSc1ub6Cu+BteAl6Fdvp69AWOoxHe3pooV/E9G9ZxrpzezYNj
+	BmQiKMo9xxdjzk/bMkIcIwxrIvsoAvBk476ml42F3uF8B4DSleLQze2e
+X-Gm-Gg: AYBFou08CB0+xutCdrKyq5rD3tUjDVK7Fe1Vale/4aw1m09G0q7c9ydEviEGl3mM80X
+	UCfRQ92MADuDj+kEyfGfkxq4ztq7ISzOg0WUGa4PqXSjtfBF+9C7yDL5Ukln4urqE8Sv8QkrX74
+	lGNq8Ob+4AbpePa7wWN+mathLz33vLk880m+5VQtcz/09HK27eF0jZYX1ZMMHB4Q43GO4MpVIN0
+	EGms5uoUbe2f2/3SYKZW9cOS9czs70w+1+V5/1WCgJxFdft+I1IhXtFiYLoJDHUPKjXGLabFPFr
+	dNXl5LbQmOQ9hs/x3x0E4yTsAayOP6Pslwe1mxVbmUR7oe9XaABsRIV5IxpfYevzuPQvXOTvHf4
+	eTWbN4oB/GAUTNORkztWNTCiQ1zvRgEpa8ShuJ+aBkWVRfkLh/WJyKy9T0tbw3n5WPY3dfiJxcL
+	XMbDbrTDS5CNsvvGkbLchiZRcOiyhXTG5/WdB3/JkiDYUmaDu/gQU6KUPInic6i0YsmaiuXnHyF
+	T/Ib83LMRO4lJ4GdsvUtMpwVbI/JSXrYKKOx2LD+MWAnUu5Feex7WpUdRfCI7/PAyRcL29Ljdf6
+	4X1Zybimy/F7VYCVsA==
+X-Received: by 2002:a5d:64c7:0:b0:487:27f6:a4df with SMTP id ffacd0b85a97d-488716b8a05mr30515262f8f.47.1790679036596;
+        Tue, 29 Sep 2026 03:50:36 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:10d5:21e1:1aae:c9d8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48af5058c52sm3516303f8f.19.2026.09.29.03.50.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2026 03:50:36 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v7 1/8] clk: renesas: r9a09g077: Add helper to start WDTDCR counter
+Date: Tue, 29 Sep 2026 11:50:14 +0100
+Message-ID: <20260929105021.542730-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260929105021.542730-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260929105021.542730-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:zQCowADnUDs4l7tqMf2qCQ--.2178S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFy8CFyfWw1xWr47Xw13Jwb_yoW5GFyxpF
-	4jqa98trWUXrWxXa1jkF4jkFy5AasrK3yrGFWUtw1FvF1FqF1DGF1kAry5AFW5CF17GF1r
-	tr4DArWS9F18AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvlb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x07jTc_-UUUUU=
-X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-=E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 12:36 +0200=EF=BC=8CLuca Ceresoli=E5=
-=86=99=E9=81=93=EF=BC=9A
-> devm_drm_of_get_bridge() is deprecated, switch to
-> of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint()
-> returns
-> a refcounted bridge, ensure it is put by using bridge.next_bridge.
->=20
-> Fixes build failure when CONFIG_OF is disabled.
->=20
-> Fixes: aa8a8c7e4641 ("drm/bridge: panel: move all code to
-> drm_panel.c")
-> Reported-by: Arnd Bergmann <arnd@kernel.org>
-> Link:
-> https://lore.kernel.org/r/20260928161605.2271412-1-arnd@kernel.org
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Acked-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+The WDTDCRm registers are not suitable for access through the SYSC regmap
+from atomic or panic context, as regmap locking can deadlock when another
+CPU holding the lock has already stopped.
 
-Thanks,
-Icenowy
+Add a lockless helper to clear WDTDCRm.WDTSTOPCTRL and start the watchdog
+counter using the existing SYSC register accessors.
 
-> ---
-> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.c | 7 +++----
-> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.h | 1 -
-> =C2=A02 files changed, 3 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.c
-> b/drivers/gpu/drm/verisilicon/vs_bridge.c
-> index dc7c85b07fe3..f1e8112f0ed2 100644
-> --- a/drivers/gpu/drm/verisilicon/vs_bridge.c
-> +++ b/drivers/gpu/drm/verisilicon/vs_bridge.c
-> @@ -29,7 +29,7 @@ static int vs_bridge_attach(struct drm_bridge
-> *bridge,
-> =C2=A0{
-> =C2=A0	struct vs_bridge *vbridge =3D drm_bridge_to_vs_bridge(bridge);
-> =C2=A0
-> -	return drm_bridge_attach(encoder, vbridge->next_bridge,
-> +	return drm_bridge_attach(encoder, vbridge->base.next_bridge,
-> =C2=A0				 bridge, flags);
-> =C2=A0}
-> =C2=A0
-> @@ -303,8 +303,7 @@ struct vs_bridge *vs_bridge_init(struct
-> drm_device *drm_dev,
-> =C2=A0		return NULL;
-> =C2=A0	}
-> =C2=A0
-> -	next =3D devm_drm_of_get_bridge(drm_dev->dev, drm_dev->dev-
-> >of_node,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 output, intf);
-> +	next =3D of_drm_get_bridge_by_endpoint(drm_dev->dev->of_node,
-> output, intf);
-> =C2=A0	if (IS_ERR(next)) {
-> =C2=A0		ret =3D PTR_ERR(next);
-> =C2=A0		if (ret !=3D -EPROBE_DEFER)
-> @@ -326,7 +325,7 @@ struct vs_bridge *vs_bridge_init(struct
-> drm_device *drm_dev,
-> =C2=A0
-> =C2=A0	bridge->crtc =3D crtc;
-> =C2=A0	bridge->intf =3D intf;
-> -	bridge->next_bridge =3D next;
-> +	bridge->base.next_bridge =3D next;
-> =C2=A0
-> =C2=A0	if (intf =3D=3D VSDC_OUTPUT_INTERFACE_DPI)
-> =C2=A0		enctype =3D DRM_MODE_ENCODER_DPI;
-> diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.h
-> b/drivers/gpu/drm/verisilicon/vs_bridge.h
-> index 70fee1749699..2b0ed94e4520 100644
-> --- a/drivers/gpu/drm/verisilicon/vs_bridge.h
-> +++ b/drivers/gpu/drm/verisilicon/vs_bridge.h
-> @@ -25,7 +25,6 @@ struct vs_bridge {
-> =C2=A0	struct drm_connector *conn;
-> =C2=A0
-> =C2=A0	struct vs_crtc *crtc;
-> -	struct drm_bridge *next_bridge;
-> =C2=A0	enum vs_bridge_output_interface intf;
-> =C2=A0};
-> =C2=A0
+Export the helper in the RZT2H_CPG namespace for use by the watchdog
+driver.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v6->v7:
+- New patch
+---
+ drivers/clk/renesas/r9a09g077-cpg.c | 35 ++++++++++++++++++++++++-----
+ include/linux/clk/renesas.h         |  6 +++++
+ 2 files changed, 35 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
+index 5a0e7df1eb06..90f0c373976f 100644
+--- a/drivers/clk/renesas/r9a09g077-cpg.c
++++ b/drivers/clk/renesas/r9a09g077-cpg.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/renesas.h>
+ #include <linux/device.h>
++#include <linux/export.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+@@ -103,10 +104,17 @@ MODULE_IMPORT_NS("RZV2H_CPG");
+ #define RZT2H_SYSC_BLOCK(x)		FIELD_GET(RZT2H_SYSC_BLOCK_MASK, x)
+ #define RZT2H_SYSC_REG_OFFSET(x)	FIELD_GET(RZT2H_SYSC_OFFSET_MASK, x)
+ 
++/* WDT Debug Control Registers (WDTDCRm), in the block 1 SYSC region */
++#define RZT2H_WDTDCR(n)			(RZT2H_SYSC_BLOCK_MASK | (0x5100 + (n) * 4))
++#define RZT2H_WDTDCR_WDTSTOPCTRL	BIT(0)
++#define RZT2H_WDT_MAX_INSTANCES		6
++
+ struct r9a09g077_sysc_reg {
+ 	void __iomem *base[2];
+ };
+ 
++static struct r9a09g077_sysc_reg *r9a09g077_sysc_regs;
++
+ enum rzt2h_clk_types {
+ 	CLK_TYPE_RZT2H_DIV = CLK_TYPE_CUSTOM,	/* Clock with divider */
+ 	CLK_TYPE_RZT2H_MUX,			/* Clock with clock source selector */
+@@ -963,10 +971,25 @@ static bool r9a09g077_writeable_readable_sysc(struct device *dev, unsigned int r
+ 	}
+ }
+ 
++void rzt2h_cpg_wdtdcr_count_start(unsigned int wdt_index)
++{
++	struct r9a09g077_sysc_reg *sysc = r9a09g077_sysc_regs;
++	unsigned int reg, val;
++
++	/* Sanity check: ensure sysc is initialized and wdt_index is valid */
++	if (!sysc || wdt_index >= RZT2H_WDT_MAX_INSTANCES)
++		return;
++
++	reg = RZT2H_WDTDCR(wdt_index);
++	r9a09g077_regmap_read(sysc, reg, &val);
++	val &= ~RZT2H_WDTDCR_WDTSTOPCTRL;
++	r9a09g077_regmap_write(sysc, reg, val);
++}
++EXPORT_SYMBOL_NS_GPL(rzt2h_cpg_wdtdcr_count_start, "RZT2H_CPG");
++
+ static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub *pub)
+ {
+ 	struct regmap_config *regmap_cfg __free(kfree) = kzalloc_obj(*regmap_cfg);
+-	struct r9a09g077_sysc_reg *sysc_reg;
+ 	struct regmap *regmap;
+ 	struct resource res;
+ 	int ret;
+@@ -991,13 +1014,13 @@ static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub *pub)
+ 	if (!regmap_cfg)
+ 		return -ENOMEM;
+ 
+-	sysc_reg = devm_kzalloc(dev, sizeof(*sysc_reg), GFP_KERNEL);
+-	if (!sysc_reg)
++	r9a09g077_sysc_regs = devm_kzalloc(dev, sizeof(*r9a09g077_sysc_regs), GFP_KERNEL);
++	if (!r9a09g077_sysc_regs)
+ 		return -ENOMEM;
+ 
+ 	/* Only allow access in the SYSC regions */
+-	sysc_reg->base[0] = pub->base0 + RZT2H_SYSC_OFFSET;
+-	sysc_reg->base[1] = pub->base1 + RZT2H_SYSC_OFFSET;
++	r9a09g077_sysc_regs->base[0] = pub->base0 + RZT2H_SYSC_OFFSET;
++	r9a09g077_sysc_regs->base[1] = pub->base1 + RZT2H_SYSC_OFFSET;
+ 
+ 	regmap_cfg->name = "rzt2h_sysc";
+ 	regmap_cfg->reg_bits = 32;
+@@ -1008,7 +1031,7 @@ static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub *pub)
+ 	regmap_cfg->readable_reg = r9a09g077_writeable_readable_sysc;
+ 	regmap_cfg->writeable_reg = r9a09g077_writeable_readable_sysc;
+ 
+-	regmap = devm_regmap_init(dev, &r9a09g077_sys_regmap_bus, sysc_reg, regmap_cfg);
++	regmap = devm_regmap_init(dev, &r9a09g077_sys_regmap_bus, r9a09g077_sysc_regs, regmap_cfg);
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
+index c9495558cd5c..1e171db25eb7 100644
+--- a/include/linux/clk/renesas.h
++++ b/include/linux/clk/renesas.h
+@@ -216,4 +216,10 @@ static inline bool rzv2h_cpg_get_pll_divs_pars(const struct rzv2h_pll_limits *li
+ #define rzv2h_get_pll_pars	rzv2h_cpg_get_pll_pars
+ #define rzv2h_get_pll_divs_pars	rzv2h_cpg_get_pll_divs_pars
+ 
++#if defined(CONFIG_CLK_R9A09G077) || defined(CONFIG_CLK_R9A09G087)
++void rzt2h_cpg_wdtdcr_count_start(unsigned int wdt_index);
++#else
++static inline void rzt2h_cpg_wdtdcr_count_start(unsigned int wdt_index) { }
++#endif
++
+ #endif
+-- 
+2.55.0
 
