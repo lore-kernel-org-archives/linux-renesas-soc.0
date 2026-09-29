@@ -1,100 +1,88 @@
-Received: from mail-ua2-f34.google.com (mail-ua2-f34.google.com [74.125.226.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F373ACA42
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 08:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5C9384CE5
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 08:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790669554; cv=none; b=HdL54xOEMqYsWA7mv+UjGIhEex4rfFqptS4ctP9HCgKzCDRO87EiZZC2fo/4i3CWjzXCIa11Y5sq/NCgc1R0O7lZUNsCSk0bsh8ff8Wpdx3Kl6hytWUJz6XNXjm/ngkhT2+Hafji20LbuXMCOp9Wkz7PTeHxZJ3TPMiD3gQTcfo=
+	t=1790670610; cv=none; b=SJMT9WO3RoCTux/q4r0tRtA0aflna7MLOeoU0SDqX2UZOovf3Z79Bo7KpVJgsnzEruiOrRwCvK+Y/Bop0SGzOxCxCsQT3N26GveO3yuHjR45nBoMON06yMY0RBovNlK6Yaz2rnjhCCVjUxxfC+pZ+pQIWGPQAx4ukOVALiZ0WSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790669554; c=relaxed/simple;
-	bh=e8jTQ59tb4Ke+Zmo+wcDDbIer2Daet/lCXTrHvU+JBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NjiKXlxL2wvpq0LSI5ut/RsM2a6y9pbsG+tG78DiZcuvBIPAZWFuoyycisUpiiVWEbQ6mE8TC0+1muj4CqvFx8wGNBpKwCwusea1uLHYDjiHiCyMWSxT4kCwyLL1hJu8apPsSH/P7kVu5SUmL9IOIiDL3r9bZf1uIPf9x4PFNiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua2-f34.google.com with SMTP id a1e0cc1a2514c-982db8d3ab8so1955294241.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 01:12:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790669551; x=1791274351;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=wKTPnbd7pHw8WKn97YDxHbj3C025J4UMPNethHoNt9I=;
-        b=oW7hLBwy/DvoFIkbgxnN7zqUEY2K6pYCGkeOx0xUNPSkQOqhPHwvvtZmvCOv1qOrPp
-         3bzZnU+ZMRzaOdjrvmPjC3z605/aCIcn08iNd589SqZjtvM1ATGeFyLsd1IBTPZCi0QC
-         QndEvzUX+wAuQxvtPke4XTwclHK+gRaydzwzlSCSOixatNNNyPybmev3scEkywVCTjPn
-         gVwV4OmXl9NzeX/qcwpA7p/r662oQjnx185aCBCndE/69bqs2yBi59PMD+/rdEdOfaT0
-         hcNYy00IQxRxPEhXdlipBc2jMO39d06LTN9XySYq84pJp/uurRlh34weuD3wu9zI7H6I
-         +uXw==
-X-Forwarded-Encrypted: i=1; AKwUvBzkDiGmEBshJAk/iwGRZ93vVjxwH7bwCS9Wn/rtyyvAzkInftWRP89KaPUnbugHWRPgZOEmFeb08gWWWsO5z4xGUQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKkGzDyPiQ83icVTOdKRaxtlD5SpZz1vo3I85nho+kR2MR88J9r
-	Djs+FBsO079EFrfn0tCwHtXkTVhHq6rOyQP3StPi1BjLPua5RVUG7xmaUvX08lxdIzI=
-X-Gm-Gg: AYBFou1nYMkp2A2WQCQaUTUPkwESKGUlpfVpHHct3U2dso96IhM3Olvb3u/YF78sXJu
-	7BtUkRQ1cO6k2/ejgSqe0tJr4ouZcdnnpCw6TDb7YptwVxtsOa0Kz+kLROCqmME0CBB0HUW0owZ
-	VvHs9SrfzM/5+N6mCnI1rTKYOKIjT+frndSXobmltH4/Em4SuiBqfqz7wwBL6vcBFt0IJ0BmmW2
-	tHl8/Vdkm0pJ5OP+7ZNy+qNYB6YX2g864/s5hInzagm7kcuvmVEJlfljKGp+n8geCUYZc5zrz6b
-	5pdWo1peIxL2n4nhGRMkp8QWZs+i7FG717+ID6hbO4TGtDuWk3jjgevVR+XgHBUOovJka4k23Zd
-	QteS1fF5Jen0wg46QSO/n7m/4cO7rzbRjAFgJY7/MEKRWAzqrtRMqnRuqVf8R9ZgkCGa8Hae0gp
-	DXq84S7NZYJcDIwX6nGOCNnHx+f4BESc5Xs9Oxks5qHa0sr/eOA2qqYl5Qg/36RXXQEPaT5xBa3
-	naqlDlwFc8+0LHZK0RuFqshd4201pNjFtEQGv4=
-X-Received: by 2002:a05:6102:5346:b0:7a8:15b9:dd34 with SMTP id ada2fe7eead31-7af1c58fb71mr6318348137.2.1790669550710;
-        Tue, 29 Sep 2026 01:12:30 -0700 (PDT)
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7b39b9ae253sm12470353137.8.2026.09.29.01.12.29
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2026 01:12:29 -0700 (PDT)
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-982db8d3ab8so1955278241.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 01:12:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByAsy40NCcW2mShXunA8bIujN2v03GiPXazzQJhlLV2VcF64V3ddkQdwjLAE9hKvXRYd6sOnmFvwb3zIl2+B4OaPQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:5346:b0:7a8:15b9:dd34 with SMTP id
- ada2fe7eead31-7af1c58fb71mr6318332137.2.1790669548884; Tue, 29 Sep 2026
- 01:12:28 -0700 (PDT)
+	s=arc-20240116; t=1790670610; c=relaxed/simple;
+	bh=Efgunz+ZsZe7XFx0szrFsfwhNXT5TKInPi6Uh1PxAoA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:To; b=f74Lrimf8KY55nr/i9+MJZAxrjtrR1VHQ2GaLWxn5Tes/73OYufrU27IlyENF+kPjlyf/0UoRa/Lma1xuZ2HIVWRqI3mOab+K8j/0UP0kAVqyyP840dw4T+pDpQu8k5Z4grb2OmB1kTuh4IGo2wwsPLvJlrkqTlcAs5C+w3Oszw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZimpBURA; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZimpBURA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CEC1F000FF
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 08:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790670609;
+	bh=2UYj57gOKLmxKTFYJ3auPnbOsMjA/yTSah3M+FxFwnQ=;
+	h=Subject:From:Date:To;
+	b=ZimpBURA80zhfrnqiiH7x5QhgKA/HuRH5YhgEQ4xP2jx1gHd5Sst72bRlwTQ9hXo8
+	 9iuyTsUO8ZJ3czSYWhnNsJ5ZfD+hgjnwtoJDw/QAQBO8oCH0gwE3CDfd1Mqu47Cc13
+	 txm29ox0mGXHG1UudK3WiOLp1fOzw0EQ2dx54NgzaGV+Z9S+FJuOb6h3aX6BC0Hscz
+	 KO6L+vUeFvQXyrpUgfAkE4Bdo9aJL585HKeeOXdZJNqpeLio8TbwwMGFpeFd9XvZ2G
+	 OfqmonJFRhfggjPZHsljm93WdFOPvMM6/UA9o4UkViZfcZ0I6HrJOFggjPX5bruPcS
+	 AoKSUlNRDT9Qg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3CA0D392625A
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 08:30:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com>
-In-Reply-To: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Sep 2026 10:12:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
-X-Gm-Features: AclHuK9FhwKj6JL-kiqTsnzPxsKOECrpai_keY8LaopHP5dfC3Vjj3Wu8JulErc
-Message-ID: <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
-Subject: Re: [PATCH v10 00/11] arm64: dts: renesas: Add various SolidRun RZ/G2
- based boards
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From: patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: 
+ <179067060791.352944.4641597026945726126.git-patchwork-summary@kernel.org>
+Date: Tue, 29 Sep 2026 08:30:07 +0000
+To: linux-renesas-soc@vger.kernel.org
 
-Hi Josua,
+Hello:
 
-On Mon, 28 Sept 2026 at 19:34, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for a variety of SolidRun RZ/G2 based SoMs and both
-> HummingBoard IIoT and HummingBoard Ripple Evaluation boards.
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-Thanks, will queue in renesas-devel for v7.4.
+Series: arm64: dts: renesas: Add various SolidRun RZ/G2 based boards
+  Submitter: Josua Mayer <josua@solid-run.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/series/1175460/
+  Lore link: https://lore.kernel.org/r/20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com
+    Patches: [v10,01/11] dt-bindings: soc: renesas: Add various SolidRun RZ/G2 based boards
+             [v10,04/11] arm64: dts: renesas: add support for solidrun rzg2l som and hb-iiot evb
+             [v10,05/11] arm64: dts: renesas: add support for solidrun rzv2l som and hb-iiot evb
+             [v10,06/11] arm64: dts: renesas: add support for solidrun rzg2lc som and hb-iiot evb
+             [v10,07/11] arm64: dts: renesas: rzg2l(c)/rzv2l hb-iiot: add dsi panel dt overlay
+             [v10,08/11] arm64: dts: renesas: add support for solidrun hb-ripple with rzg2l som
+             [v10,09/11] arm64: dts: renesas: add support for solidrun hb-ripple with rzv2l som
+             [v10,10/11] arm64: dts: renesas: add support for solidrun hb-ripple with rzg2lc som
+             [v10,11/11] arm64: dts: renesas: add support for solidrun rzg2ul som on hb-ripple
 
-Gr{oetje,eeting}s,
+Series: [1/6] dt-bindings: PCI: rcar-gen4-pci-host: Document Application/Local register reset
+  Submitter: Marek Vasut <marek.vasut+renesas@mailbox.org>
+  Patchwork: https://patchwork.kernel.org/series/1157397/
+  Lore link: https://lore.kernel.org/r/20260903205153.283553-1-marek.vasut+renesas@mailbox.org
+    Patches: [1/6] dt-bindings: PCI: rcar-gen4-pci-host: Document Application/Local register reset
+             [4/6] arm64: dts: renesas: r8a779f0: Add PCIe Application/Local register reset
+             [5/6] arm64: dts: renesas: r8a779g0: Add PCIe Application/Local register reset
+             [6/6] arm64: dts: renesas: r8a779h0: Add PCIe Application/Local register reset
 
-                        Geert
+Patch: soc: renesas: Kconfig: Enable ICU support for RZ/G3E and RZ/V2N
+  Submitter: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/series/1174130/
+  Lore link: https://lore.kernel.org/r/20260925224927.14951-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+
+
+Total patches: 14
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
