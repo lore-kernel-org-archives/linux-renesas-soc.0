@@ -1,42 +1,42 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1D652B1EF
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 13:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEE752CCFE
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 13:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790689259; cv=none; b=Y2NsuUAT5MJ0GJ4ZTG/j2bqQmVhTWnZDx0so38TZhIhiVS77Foj7ZGaShLBZHnONVDNthLgtd7FjgsoYdC8sHQ251t3AA9EHM1fnaJXata4ECJWaIYNEGV9tKzWJ+07Fw6oZgjAxv2fIoI1hSwm1uQG8Et9bId8LYOvA3d80PY0=
+	t=1790689264; cv=none; b=pyN/OUXgCifDKIlNENpQg5EijwHBJ58ELNsu4wynurpKE1dApjcWUwoc1j3yGdehy6a5e5SkWkvWARDP7ykOYOY3CuSD+eBAd/drV4aEfKO/Lp5RfCZjdby9kpSa+WGiwuS8RNCc4VxrlgzTKGbQu3FqEp/LsbZM1yaTzYReCD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790689259; c=relaxed/simple;
-	bh=0scs8d2LKkIpYUOJZuRUpcxLT6493VRjc1UArMTBYoo=;
+	s=arc-20240116; t=1790689264; c=relaxed/simple;
+	bh=lT5vgx/mFGA/dBeL0SbpODSx7eWVFp3Ausyg3+9cyBI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pPs6Y9dCOMyl21m8tpPDkphwEjMcf0OD6KhetpoCSjDo6h80w//7Nwxe6yjFVS+xqVPTf4g17UEyAn7WOfzDJnCg+1xdSizNX/lM7SEt0gZ6o8AUBmA/mdiCnnX2pOzSEPX7FCGVwPh33Y/2IdO03GyXSFAUzMOdr3fSh645Dd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TvEnfhr4; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=WtxiEyRNpldvBqAHjDs0zkk9mXRqPYPwYJdKMSeuJv8ONNh2gONt4kZz6jFSq07NPPDHb/riYILCgh0hnxElORZKVqzz4VAe1gNmIiVj015yb4OT/sTLaahbqUzCWQgmwCw9QCY8uOxDXk/ItyJvKBNjO2KT5/AYse7u7NaiiAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mw9KHbtz; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TvEnfhr4"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mw9KHbtz"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 22BE34E410B8;
-	Tue, 29 Sep 2026 13:40:56 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 4FF934E410B5;
+	Tue, 29 Sep 2026 13:41:01 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E8C1D601BD;
-	Tue, 29 Sep 2026 13:40:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 01C0B10328354;
-	Tue, 29 Sep 2026 15:40:45 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 21A0A601BD;
+	Tue, 29 Sep 2026 13:41:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6E735103297BA;
+	Tue, 29 Sep 2026 15:40:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790689250; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1790689258; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=53MH9p9KsQnEH2oRW0dLdKIc6Yu/y/Sp7Zguh36Zgnk=;
-	b=TvEnfhr4t6igcjamNAkj6qhRUV7KKh2aTtg3RdnMQuoOQA2iV1XqcsoIdnJJ/QxvGhMkuW
-	9Ft3Vk2pduigyuKDvRzg7aFFqVkLH+MWX/Vnj4TlJWFska8w9diRihWDu//lbZPoN65DQP
-	UZb8BQJRoWs0qwPLTBMAfmJAHx7eo8NqE+lxqpIl9shYn2YVTX12cKOQWHnYgL9h9yqCoP
-	6p3vn4CdSH2rY5QwNqvrdUqXkft/Ahs9GTzwSt4KAShfQVXJJEDCLtJuqQNKsSofrrm6SE
-	mwR1tzZRa/8qMgUM9DC2Wz0/eR4DmUghVEYRFAQ/M0gYyf4SvLsYzZzpuJz+xg==
+	bh=+Jbi3ZrbjMftX9+oR4Dt/bNs2t3qNv36/aL/DtZbOIA=;
+	b=mw9KHbtzMuNVa4Ij0ksdAIhkqT6DDh55fBMfnuOaMz1Dgrw7uTA5MLDYPmjcVHP8gBDsSc
+	fmMkHj6YzYsxESdZx0vOPYOFGR+Wnb+J9I8mOXDfVrYbGdQEnMUIBs++qI3goOFU0qLB45
+	h2w/bX1b9Kj+ldCkdHV6Vo2wqfVDhaeHhRO/MdvQYkAbKAiUltjvvZdyJGObNLQ2FQINN6
+	wX3OcTZeSbRjvV0zMN8JD1QeD0Ulo0Y9zqHRAyW26/wtlKM0hqYD+GGMBQgZZ7ogqir1CL
+	GHFzDlaEe5Wq4jwnoFYiaVSPWuaxF1Iny8s5bFCQdfeweuvHTYU6MblRpXTFlw==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 29 Sep 2026 15:39:55 +0200
-Subject: [PATCH v2 6/7] drm/vc4: dsi: stop using deprecated
- drmm_of_get_bridge()
+Date: Tue, 29 Sep 2026 15:39:56 +0200
+Subject: [PATCH v2 7/7] drm: renesas: shmobile: stop using deprecated
+ devm_drm_of_get_bridge()
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v2-6-6da431d8f180@bootlin.com>
+Message-Id: <20260929-drm-fix-of_get_bridge-build-regression-v2-7-6da431d8f180@bootlin.com>
 References: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
 In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -72,59 +72,48 @@ Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>,
 X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-drmm_of_get_bridge() is deprecated, switch to
+devm_drm_of_get_bridge() is deprecated, switch to
 of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() returns
-a refcounted bridge, ensure it is put by using bridge.next_bridge.
+a refcounted bridge, ensure it is put.
 
 drm_panel.h becomes unused, drop the include.
 
+Acked-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/vc4/vc4_dsi.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_dsi.c b/drivers/gpu/drm/vc4/vc4_dsi.c
-index 0148f2befed1..30598738cfcf 100644
---- a/drivers/gpu/drm/vc4/vc4_dsi.c
-+++ b/drivers/gpu/drm/vc4/vc4_dsi.c
-@@ -35,7 +35,6 @@
- #include <drm/drm_edid.h>
- #include <drm/drm_mipi_dsi.h>
- #include <drm/drm_of.h>
+diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+index 328a36215e39..51bae2008cc6 100644
+--- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
++++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
+@@ -28,7 +28,6 @@
+ #include <drm/drm_gem_dma_helper.h>
+ #include <drm/drm_modeset_helper.h>
+ #include <drm/drm_modeset_helper_vtables.h>
 -#include <drm/drm_panel.h>
- #include <drm/drm_print.h>
  #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
-@@ -555,7 +554,6 @@ struct vc4_dsi {
+ #include <drm/drm_vblank.h>
  
- 	struct platform_device *pdev;
+@@ -447,7 +446,6 @@ static const struct drm_encoder_funcs shmob_encoder_funcs = {
+ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+ {
+ 	struct drm_encoder *encoder = &sdev->encoder;
+-	struct drm_bridge *bridge;
+ 	int ret;
  
--	struct drm_bridge *out_bridge;
- 	struct drm_bridge bridge;
- 
- 	void __iomem *regs;
-@@ -1165,7 +1163,7 @@ static int vc4_dsi_bridge_attach(struct drm_bridge *bridge,
- 	struct vc4_dsi *dsi = bridge_to_vc4_dsi(bridge);
- 
- 	/* Attach the panel or bridge to the dsi bridge */
--	return drm_bridge_attach(encoder, dsi->out_bridge,
-+	return drm_bridge_attach(encoder, dsi->bridge.next_bridge,
- 				 &dsi->bridge, flags);
- }
- 
-@@ -1749,9 +1747,9 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
- 		return ret;
+ 	encoder->possible_crtcs = 1;
+@@ -463,7 +461,8 @@ int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
  	}
  
--	dsi->out_bridge = drmm_of_get_bridge(drm, dev->of_node, 0, 0);
--	if (IS_ERR(dsi->out_bridge))
--		return PTR_ERR(dsi->out_bridge);
-+	dsi->bridge.next_bridge = of_drm_get_bridge_by_endpoint(dev->of_node, 0, 0);
-+	if (IS_ERR(dsi->bridge.next_bridge))
-+		return PTR_ERR(dsi->bridge.next_bridge);
+ 	/* Create a panel bridge */
+-	bridge = devm_drm_of_get_bridge(sdev->dev, sdev->dev->of_node, 0, 0);
++	struct drm_bridge *bridge __free(drm_bridge_put) =
++		of_drm_get_bridge_by_endpoint(sdev->dev->of_node, 0, 0);
+ 	if (IS_ERR(bridge))
+ 		return PTR_ERR(bridge);
  
- 	/* The esc clock rate is supposed to always be 100Mhz. */
- 	ret = clk_set_rate(dsi->escape_clock, 100 * 1000000);
 
 -- 
 2.55.0
