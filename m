@@ -1,137 +1,81 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCE04E13EF
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2026 21:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393B9282F20;
+	Wed, 30 Sep 2026 00:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790717229; cv=none; b=KyQMdWxQGz2WYrjv7tZx7mTOtfDNkO4GJCZtjsOLLay85l7hv3RSBRJ2g3s9iGV1aRMSbTXoe31FBGfuQ/kNtcS8FqYGJKu6DoEGWGAqe464Uxu2SfvKUDHVFn1A0ycTtPmgliovF+p7ZaSnGTB7xnca+V8hKxZSTYdwE7D+ij4=
+	t=1790728208; cv=none; b=sIeFZTQMFYtQZgRVW74UtKRsv1rLU/GAtuNaqtvRBOxJ63/au5O7/PBqMVBsIVsu21nq2/hallEjWJSHKrVyCQXbkb78t2RbUgOzghEEI/GvkZT4CrbrHrpcKOG1HBlsxSRtz+gDbK2q+dK7pvRHE2DVd32QZeOvoLbHdEsF408=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790717229; c=relaxed/simple;
-	bh=tyCWPKcs7/u/awFV7vdEON0Q6Y8m/fWoaG5L+nCraDc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=nwIO3Ws58b50nBdTp2s9L5bIB6CXWh5+hMG+r6xAvzkRwoZWijQadOyTpF5ea0qR4n5RZdy/LnrdL+MCyiv1FF6g5MTXIkBl9rQweB05wpjTUCy06t1nY2PHDlmx5c1XzCo+nZS5yS4vitM7w1rN+HKP14koFPkujKOIGCfGllU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hEDAHwYa; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790728208; c=relaxed/simple;
+	bh=vNW8LuCKhtSIPOsqEAKz0G1ppn4MvMsYJk6CVvdhQtU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=AryubeAE+BOpJ+wjZfNT0F+nvY8m9amkwhPug264tDoDl/P15He+68RCNyXyR4OAc5zuH/2RycOgBqpjwqVegGJcde+7Nqm1ZnTPcisgDc7yh6IgF+cYjXUiO0PC9DwornhNshzUfkRFU3Uc89WZjhMyWmh9OjE2eIO//FazDVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLX9YqJ2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hEDAHwYa"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 963A51A1050;
-	Tue, 29 Sep 2026 21:27:05 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 527F9601BD;
-	Tue, 29 Sep 2026 21:27:05 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 42A3E103295D5;
-	Tue, 29 Sep 2026 23:26:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790717218; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=tyCWPKcs7/u/awFV7vdEON0Q6Y8m/fWoaG5L+nCraDc=;
-	b=hEDAHwYakn5fRG4BUqIJO2Nc30p4PMlNz2fj/hv9u5oIYxFTNITCpy13PVRNtyY3TfIP4D
-	k7jJU1roWG08YKb+1I8DM4KpYXcjGdkvBVVnmNFMn5+EBn9jC6Uh0jXXV5PKV+GhHpJQsT
-	S9iWGlmrD0ZOKOKCkpyyRoR7Ao382WBj9MX7dbQoYWZHjooOEl+IQvBYTAOTixSWzsHJc9
-	e5d+9lXIl5FrPOnUx1GVztDB5fjD4JBjpieZrAZa/M4aJuOhVPcFY0tDHEAl5pfc5S6c9p
-	WxdZmPtYu1kfOZIBzqMvqblrCge95WF2E0SmMoPMsQqDkPM0SRajhSjVeMKaHg==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLX9YqJ2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3931F000FF;
+	Wed, 30 Sep 2026 00:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790728206;
+	bh=nzrw1DJAxJrrbMgCNrigmRVtMubjrWWM9LSdykWzn54=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=SLX9YqJ20OOE1gTlypIfyEyf/i5KOEzOgbLR6kk9PWApnvxrpZ+1U9Qcoch9idgs8
+	 BTqQckV9aQwbZK/SpCRiZXp8mXNTan3vdIWo/I0NP17vMSlbZyxJd97Tc/0rNiVbA8
+	 QKrT4v7SpEkNvlgADMO3yC0XGATWglQqUywaF2XvqClcKs+qD9jmor8Ynaof6t5E1J
+	 jTd8iKjsx4sS+inLvBgMyUDX+7rn9hs9SnLHVsJKjWQ3q4JPH/MIxDn2RfisVPTjAK
+	 qV/b8bCDnZffce0l3HitpoZkyuiJQzfLDtxOPtBm6TOLMQPmvz/WyLiuosUktdSpaN
+	 mqTqi0gAm0mKg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B43C93924FEA;
+	Wed, 30 Sep 2026 00:30:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Sep 2026 23:26:43 +0200
-Message-Id: <DLS49QCTEANL.D6E2UDEOG4O9@bootlin.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v2 2/7] drm: verisilicon: stop using deprecated
- devm_drm_of_get_bridge()
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Doug Anderson"
- <dianders@chromium.org>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
- <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
- "kernel test robot" <lkp@intel.com>
-To: "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Li"
- <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>,
- "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, =?utf-8?q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, "Raspberry Pi Kernel Maintenance"
- <kernel-list@raspberrypi.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>
-X-Mailer: aerc 0.22.0
-References: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com> <20260929-drm-fix-of_get_bridge-build-regression-v2-2-6da431d8f180@bootlin.com> <e044caae8c2160d96a29073bb1e60efff5883513.camel@iscas.ac.cn>
-In-Reply-To: <e044caae8c2160d96a29073bb1e60efff5883513.camel@iscas.ac.cn>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v4] net: pcs: rzn1-miic: Clear MIIC protection state
+ before unprotect sequence
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <179072820554.1181068.4496571892719089196.git-patchwork-notify@kernel.org>
+Date: Wed, 30 Sep 2026 00:30:05 +0000
+References: 
+ <TYCPR01MB74815955A10817B64BD6FB93A4812@TYCPR01MB7481.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TYCPR01MB74815955A10817B64BD6FB93A4812@TYCPR01MB7481.jpnprd01.prod.outlook.com>
+To: Yoshihisa Yamamoto <yoshihisa.yamamoto.xn@renesas.com>
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+Hello:
 
-On Tue Sep 29, 2026 at 4:42 PM CEST, Icenowy Zheng wrote:
-> =E5=9C=A8 2026-09-29=E4=BA=8C=E7=9A=84 15:39 +0200=EF=BC=8CLuca Ceresoli=
-=E5=86=99=E9=81=93=EF=BC=9A
->> devm_drm_of_get_bridge() is deprecated, switch to
->> of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint()
->> returns
->> a refcounted bridge, ensure it is put by using bridge.next_bridge.
->>
->> Fixes build failure when CONFIG_OF is disabled.
->>
->> Fixes: aa8a8c7e4641 ("drm/bridge: panel: move all code to
->> drm_panel.c")
->> Reported-by: Arnd Bergmann <arnd@kernel.org>
->> Closes:
->> https://lore.kernel.org/r/20260928161605.2271412-1-arnd@kernel.org
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes:
->> https://lore.kernel.org/oe-kbuild-all/202609291109.OIsGTysr-lkp@intel.co=
-m/
->> Closes:
->> https://lore.kernel.org/oe-kbuild-all/202609290408.BOs7sk55-lkp@intel.co=
-m/
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->
-> Checked the code in drm_bridge.c, and it looks like the lifetime of
-> next_bridge should be indirectly managed by devm when
-> devm_drm_bridge_alloc() successes and the next_bridge field assigned,
-> so the only explicit put needed here should be in the alloc failure
-> path.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Exactly.
+On Thu, 24 Sep 2026 10:36:57 +0000 you wrote:
+> On RZ/T2H and RZ/N1D MIIC, writing 0x0000 to the MIIC protection
+> register clears the protection state machine.
+> 
+> The initial protection state cannot be assumed to be constant,
+> as it may be influenced by previous activity before the driver
+> takes ownership of the hardware.
+> 
+> [...]
 
-I think vs_bridge_init() could be simplified a bit by moving the 'next =3D
-...;' statement (with error management trailer) to after
-devm_drm_bridge_alloc. This would avoid the explicit drm_bridge_put() call
-added by this patch.
+Here is the summary with links:
+  - [net,v4] net: pcs: rzn1-miic: Clear MIIC protection state before unprotect sequence
+    https://git.kernel.org/netdev/net/c/8b9993437429
 
-However for this regression fix I preferred to keep the diff minimal. The
-cleanup mentioned above can be done later.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> Reviewed-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 
-Thanks for reviewing!
-
->> Changes in v2:
->> - fix bridge reference leak on attach error path
->
-> It should be `bridge alloc error` instead of `attach error`, but I
-> don't know how to correct the error in the changelog, and anyway it
-> won't be part of the final commit.
-
-Ah, right, that's a copy-paste leftover. It's correct that it won't appear
-in the commit, so I won't sent a new iteration for this.
-
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
