@@ -1,82 +1,83 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+Received: from mail-wr2-f35.google.com (mail-wr2-f35.google.com [74.125.225.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA3A5172C1
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Sep 2026 17:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A4A4F3EAA
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Sep 2026 17:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.99
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790787613; cv=pass; b=Oz09iJBfOAvIjY1b3ZbYxTjAJDQuBtXARNR4PmBiy4l4he2ad+VsrpAsdE27ymrySehB+YSFgBdpD7xCyqwU7HSwj6gQ6+cv8a8Wb4Q9yBIVvWVA0FBCh76/vldtjCxfCQAeC4bTcjaQsLP/avmx7BOEnzJR3uWn3C4ucceEK+M=
+	t=1790787865; cv=pass; b=Wy0GvrpYM0S+oKomszTpFaFiorcueZEyQJzdXc8F0ZqsqIpGTiPE0960LvW0XKrHkBDSMxInongB2RsMTukh4xrItIOmiVCJexsd0u9SONeGacxhvxqA+GNhSMVBOR3+EgISQMHoCThFk6kWQgfvd6OzmlxpVcD3fPCcBEag1rQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790787613; c=relaxed/simple;
-	bh=YwFLKTRtD485E9tMKuK2u3mAFkxgr0aAxTDkVA98D4M=;
+	s=arc-20240116; t=1790787865; c=relaxed/simple;
+	bh=YPB0OuzgSu6bYeqdbKJsDvFZ0QIOxvCezfQ72jpnedE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1dIRjj6i06tT8qbaP2xq2NSdu5GJ46IzSDDKhqnXi/8mO/7AVxplUw3V9RlotPui3YyNS0m/SDnT5IjsiRerGRcW2VImsA9Km3K4yYZsOPP6QXubny14C962Xz7LpVHmVIoxsD1O++K7dIM/hVJBfexALKkU2RiO+Cfp4B1mIk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=spahUrRI; arc=pass smtp.client-ip=74.125.225.140
+	 To:Cc:Content-Type; b=K3B+OBGP7vUx8bzZ8ZCBApX30cr4QMB7XxofbVb+VS5u30nwZSjAc5ewZhp6QWvJiAzr5BQkR++kUjQEqpUSkkm0mnpNPBBSLr/6ClWwMKI+mkUg3lqIvJOFF+mSWO59VyarQiEUbxk2xfc3IZ71DZRuWvX20wvNWpYleiK81Ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivTyT5JU; arc=pass smtp.client-ip=74.125.225.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="spahUrRI"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912d391aso42909385e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Sep 2026 10:00:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790787609; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivTyT5JU"
+Received: by mail-wr2-f35.google.com with SMTP id ffacd0b85a97d-4887f6cf16bso3549032f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Sep 2026 10:04:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790787863; cv=none;
         d=google.com; s=arc-20260327;
-        b=r83ZwZg6IpIbQfDmGWQn/rVz1v6kOZSNdMub/sZVo+y3XvNVvAn2DIYrGuzRQpoB9i
-         8J6w8RdK05ECfKCQOSKpCyy2IWpiuCFXdbKZ+kHVlYRoJISNWJ2Sw5Pc5KPJx1ec2Y4C
-         tGKNl3nCIOck9uyMdfc2EumkQ5Nwnmp2ZTUJnt5ux5z0wxcvYxK84Dn2mBMHpESP5CuD
-         09fEH/CrraIizB1U7UpQfKhs9FCWIOcusiekIMAd9LDbuvZsfv+F1vldAcCIN+CTaBVx
-         6s2j0rdiJa3WdCb7HrlK0ypLJV7mccM0qn+oWgyg6ebWl7M3COjkfnQjmx86kHLcdkNV
-         2e5Q==
+        b=SkBGkahTmU7zUWOoksDBa2mC257l7U5OxctSRXq0jrEm2kAjtG6PlbyfqQcTqXv0/8
+         uHxP3Y5UqzPblNzmZ/9fqSNJhsOZg2ZkWV4DhOsR18QSVPXt6DyBPEbSSwcmTIrKR2w0
+         tTAt3japHdvaKOcLT/nS2hNx/drJAE3VkwzO8MjdDkN8ubAv0dRyE1fCmrW/qEWlUbge
+         7PH9fClkX8/sbEGfq6b1MPb3hR9PSP+XvN8aqv5erNAl8pcZyYTL0rew35GndM2B+Clc
+         /4nADAN74Idak3iYQaOwQV0EYyHpEk9xbG5v0R/eq/Ozp6l7ZKIWxFKo1J0BuE5Q9DBY
+         +bmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=d/J1exTPTWXkJiVUl9p6jDIEpb+9AWn6n19nTgbowZw=;
-        fh=T698eUmyERcLWVLpgfP4yl8DE3rnNI2AjUtASujBhNE=;
-        b=JNyA/daV4ZWixNLLehXi/GpVi+6n6wKztJI2hsJI/ZUAiBbLSpsDCPLDltVrA7Bmz4
-         wx+VbSNa7yknn5jY6RMkXf0Bga89ylDjdobvl8MOBL3/c1u6MHTXEzUNKy6D8nb8Q+l7
-         lUwnZa298vzgE06l9EJWaiOJPqNsyZLaLA8pWcTlGZ8IC90lYDe3B0VXyAylQigdHOft
-         02Li+75kcb+RH/wH5F3ChLJBbOGkXb3Wa4201w8J8w2ZBNt8Al2KGWEIZtuBurHl0NMZ
-         hQLDqin47WfgwhBEROcl8W/QrZnlQBdDzerCzuiCT0RpKlHdMYLbVzqsdzqR8WlzxmPF
-         2siQ==;
+        bh=zbCTMDLKH8sxYxpZqqOg0zEN33xQKgj6205FhZee8H4=;
+        fh=3w7triAWfJk4ogC06n4yRwNtHD1c8BpB8QkKsP4Xr4c=;
+        b=jH/XGqcMNEXM/hYieLH1puBXd7C0l99+HlImzPD1tS3zZwlMFeMHjbVGNXTv8UK5EI
+         tCQJ4q95mGbe2DBznEGpdfkaK6insMaaOo9rJLRyL+i7kwIW3nDL7+drc/5RkF2ajbEA
+         cb0vzT7Tg4xp5CvQN93wCg61n154knWXQW3RVp7v9NSoHLx5cRxdI/NDHcogXq+RKEzl
+         9nU6kNuiK2Uu/LVUYe1BynjodHggpwaOJiLaXwAYx8hCeBk5sRbuw28FhByfzYSdnpfT
+         mAUDhiEbVUzllfNqEjDlqjmg7SBhKyDUnz/Klb+sV6YMPyxMyUDcDbhhGNH00LbMZ+zj
+         MLaw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790787609; x=1791392409; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790787863; x=1791392663; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=d/J1exTPTWXkJiVUl9p6jDIEpb+9AWn6n19nTgbowZw=;
-        b=spahUrRInjqDGGCVC2I/U7dc0ub9D2jo+Upg83f6FC+CFeNA2/k5Bk1+fJJD7FvFZx
-         5ixDoCfl2yl8TVeXtKqWzfBhBkBNQNAuXT/ufFwt2Wd5jGOLOg22SWt/zgTycF1U3Mh4
-         LysofWYUqZtBvTcvuzJdRdkPBj9JL/3xDEyH25hdZAG3XIope6rM/HDiqer5rXTjZVtn
-         k4ZLvaF1jho5NXPSP9sKahqsdqS4eASzW3wgTvENPQHXfs+urwFvWycIPM3WLru1vUcZ
-         eqjoVMg8TkAwaaHYxyepEK7itbKkk52yZjBOlJiLRiDJk/a4tWnXm6vZTialQtegKAUN
-         6xxQ==
+        bh=zbCTMDLKH8sxYxpZqqOg0zEN33xQKgj6205FhZee8H4=;
+        b=ivTyT5JUHKeGqQuEuNbfdAGYblvHXNS4/cO+fgAoTGcyxuty/wgF03oAUMwj1lM80i
+         lp0f/IBpZKvT2slcDmaOsfl6LAoSc19DgvJlOJRXn+OQukYfFWu1BlJ5BVCNd3ImmpPc
+         eBKqB95iAqIn7eWFOAoQxmZG7v4Y3fvy7vllRxa7mfnOORdW6rbHcVmuI0qVx96C5efk
+         HvrKNEKcYn9yTYyFKSgMWj/sf0T2+Cf8L0WFXC7pYWmf85Hu3ttNEybGwuxhu1q4nDFm
+         Z4JJskBc9pGj38DTriJuzMWfv1K2RkxK8kfCthViHRDvkGP3q8iODb4iJ0Y5XAco1fcX
+         QfZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790787609; x=1791392409;
+        d=1e100.net; s=20260707; t=1790787863; x=1791392663;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=d/J1exTPTWXkJiVUl9p6jDIEpb+9AWn6n19nTgbowZw=;
-        b=NtWFl3XQUz/qG53zB4r/RHH7+dj4y47CeqDDHldoIB0jPnE+pwgbJKrlgaqaiQxi/b
-         sLvHBj6Gg0Xsq1+AtlZaKEpc4LYUEZyUMrV4czvroMREvCyJr0GhyOUdGgk20WZZVyPW
-         wcvDADZ+EsVSAd7FZSc0UK+Wuenq5Th+Aq60z4tAlYCxJzOrArKltNjSEOgLyqRml2Z8
-         ys4wrf1sodtDuSMsQhjQh4SM/468bgPhwK2/SPYu+QjWpE6am9BwUAPE6l78Wy8PEFX8
-         ZOVJsWWNdiX+jWvXo9+wuuHw2Sr03QZbAGpI9Wq1xf0XayvB5RrnITD9VL+1Re1wJsa/
-         g09Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzZJbZu6dtjlM6yFtqyGjYZSzoQG+5US+mPv0E17yQbe2HbTCzwcH4ZaC4UIoMHphFc7U30tgxTU/NrgTs3D9F+NQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mcI2Z1OIQmKw8PVTnMcoYQUB/QY5i1cjmS5pDbdByevWpzHWS1
-	WcuEhg01qJUUYO8Mc2vJJ68L92UTGT+eTHyjiVqv+KwvCr6pa/at0RAw+DMIwxgUeEuf92Yi26u
-	5brfwftFkkNHnUIGKTw6aDMZIWj69ark=
-X-Gm-Gg: AYBFou1MVl0IqZIVIUxQEr3mHYUnXbwmJUh1ha7+Wlffa0oSsnYZZrllksrdo+29izj
-	QiGWFfFYXIa/VEPOJDshFc/jBTHU4yAL92u++8Zkq9yZdLXZ1AKJ6opECm3uJU1RBMc9QR5lRv5
-	RL0CeAk/HeS2+hizDFWslNnbZHcsVUms3m2vNUF762T+aZwbJnBjOvcf7bwZqp9U/SXcIH32LxE
-	qPkKuLknCndS1Eh95UtkgFZMBZ9vnIXOdeevAxNSChC8sVxdzvsEUQPMDAH5hLshI9iNPTh4djj
-	CwPv4ZInkJE0R5iZNHKCGeUqTE7kFQmqIEyboZwHPpiYISOBi2J5qIYROpcx+KziaYJzrfX/HDu
-	JyjaiLFaudXdO6y84iIsro7v+BbxFGdfJDpP2lKIIyyPEhoMmKR3i3iX3zir3qJkEhzUWPw==
-X-Received: by 2002:a05:600c:3152:b0:49c:fc6c:be19 with SMTP id
- 5b1f17b1804b1-4a01b12603amr36070955e9.31.1790787609394; Wed, 30 Sep 2026
- 10:00:09 -0700 (PDT)
+        bh=zbCTMDLKH8sxYxpZqqOg0zEN33xQKgj6205FhZee8H4=;
+        b=IazfLQk4GePoB4JbltjO8100QgWOzyOFJlJIXdIlrm1BOKrx+s+FDtZ3Rf+Abac3RP
+         Cyz1EBnSDcTdRc5T20u40CxGzCXztJAQ3mqJE9Kkpe1xMzCEmTz8xcerT8MRnds39yoI
+         TIGZLe/YCdegVK/SZRcmqukZWByoz1AURhbEoYefw0tzbmSwQAyZVeLQy/VFwmn1jnXx
+         48Olyz74B3tqGOmZnVlvsnJH0KaWcsPQDFpuNscVNaSl2SL6F4DjevJ0l8iuonRh4mRz
+         9SDMWdiWX6mCwKCnyzJGCU2kVa39Gf5alMB8nP9f7C7FoOYRLYH5WfLcnqu2Rf3eC2+u
+         MKYw==
+X-Forwarded-Encrypted: i=1; AKwUvBzAtYGwW5Ka4u0wroJ4uxwepG5Og8zgfaCZz8gqZhNrP4IJbTK+Ie53yBbXzz8bCITAsXtLHSlFg321I+6IVJ1q9A==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIgP1P9UGSqhrW3UItKrwUgWQGtFu6ngNhnL6p/FeG3HCGUMhul
+	D3R6WNN5Vx9S0KWb2JMcDiMWwY53mbe8bOmDW1Nv6Y5nUTPJ7O8+updJNTZhAmrBirURIqpXgYU
+	sTZpIV9/cVRnA1NoQZwA5Gi5ScSBSKAU=
+X-Gm-Gg: AYBFou36gMmmu0AdqqT05RBo9ATjPdeqUhskmFD6/+ynfHjndCKNWkN2NiQi5gGiiDd
+	O+9AGP+RjEce67J73Ben9C4OINu60T/4W9uezjdRTyyoPWwVkEANg+iLhBzLWR//GBelvtMe3XL
+	rNctFuSilpb1TLQOk1jdzUqQQP3G+0a1abJg5pvNco0/JFhaviDXVkjNJ9o1Vg79olUuN1KT/av
+	Z9a+TjU+F8Td3lcpG2nSUqzgyUH2UJmXLRJYUTQyauqd/MVO5k/xHnfRI0ic6Jw3I+5Atvn8S0O
+	Nw0neLhjz0m/bDKuAZXL6pkoQNUYk2E+4PvbQA+Fow56RC4J7tDkTu6ti43aJoGffIC86KxZqwq
+	M/SCh7g9IcknQzfSUz7H+PS6suWscQ4OzDonYFBGtztckx48WXc08vEAXtPFT5SDpxUPeoAZ+E4
+	4=
+X-Received: by 2002:a05:6000:4283:b0:487:106f:ee31 with SMTP id
+ ffacd0b85a97d-48b02524089mr4421323f8f.27.1790787862365; Wed, 30 Sep 2026
+ 10:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -84,13 +85,13 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260929124248.237032-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260929124248.237032-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <arzVw02dIqn4M-VK@ashevche-desk.local>
-In-Reply-To: <arzVw02dIqn4M-VK@ashevche-desk.local>
+ <20260929124248.237032-8-prabhakar.mahadev-lad.rj@bp.renesas.com> <arzWMViKacekCSdS@ashevche-desk.local>
+In-Reply-To: <arzWMViKacekCSdS@ashevche-desk.local>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 30 Sep 2026 17:59:43 +0100
-X-Gm-Features: AclHuK8eJrFqm5LeaZJBMYeX86u8m2nZ2ZLVvt1JxRR4ALOvCiQsOu3O-zn_iL8
-Message-ID: <CA+V-a8uUtqBCDJC=Gy60Jx=a3au+9ZN1Dbbi6uGbzvHA3GJsXg@mail.gmail.com>
-Subject: Re: [PATCH 3/8] iio: adc: rzt2h: Add chip-specific configuration
+Date: Wed, 30 Sep 2026 18:03:56 +0100
+X-Gm-Features: AclHuK9LOI7GwX6WVy-CRezdreahkEzOs_5YWlyyazInLnkw8984BuD6XWEzDWY
+Message-ID: <CA+V-a8swr65n3hnGA_a2L-uGfLbzAKeQ3TqddjcyC+iWF52Vgg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] iio: adc: rzt2h: Use scan type for ADC scale
 To: Andy Shevchenko <andriy.shevchenko@intel.com>
 Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
 	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
@@ -111,44 +112,24 @@ Hi Andy,
 
 Thank you for the review.
 
-On Wed, Sep 30, 2026 at 10:26=E2=80=AFAM Andy Shevchenko
+On Wed, Sep 30, 2026 at 10:28=E2=80=AFAM Andy Shevchenko
 <andriy.shevchenko@intel.com> wrote:
 >
-> On Tue, Sep 29, 2026 at 01:42:43PM +0100, Prabhakar wrote:
+> On Tue, Sep 29, 2026 at 01:42:47PM +0100, Prabhakar wrote:
 >
-> > Prepare the driver for supporting SoCs with ADC IP that is similar to t=
-he
-> > RZ/T2H ADC but may have different channel configurations.
+> > Prepare the driver for RZ/V2H(P) support, where the ADC supports both
+> > 12-bit and 8-bit conversion resolutions.
 > >
-> > Introduce chip-specific configuration for the channel template and numb=
-er
-> > of channels, and use it when setting up the IIO channels and DMA layout=
-.
+> > Use the current IIO scan type to determine the ADC resolution when
+> > reporting the scale instead of assuming a fixed 12-bit resolution.
 >
 > ...
 >
-> > +struct rzt2h_adc_chip_info {
-> > +     const struct iio_chan_spec *chan_template;
+> > +#define RZT2H_ADC_VREF_MV            1800
 >
-> __counted_by_ptr() ?
+> _mV (yes, as it's called officially for millivolts).
 >
-I don't think __counted_by_ptr() applies here. chan_template points to
-a single struct iio_chan_spec, not to an array of num_channels
-entries.
-
-> > +     unsigned int num_channels;
-> > +     u8 features;
-> > +};
->
-> ...
->
-> > +     chip_info =3D device_get_match_data(dev);
-> > +     if (!chip_info)
-> > +             return -ENODEV;
->
-> -ENODATA
->
-Ok.
+Ok, I will rename the macro.
 
 Cheers,
 Prabhakar
