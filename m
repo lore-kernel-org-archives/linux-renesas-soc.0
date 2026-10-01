@@ -1,65 +1,41 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8596C4E01E8;
-	Thu,  1 Oct 2026 10:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875713E9C05;
+	Thu,  1 Oct 2026 10:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790850860; cv=none; b=be783qNRQ7s3VpZiyzp4ox5tdxkcUY3sgDHx/V9EBwVjvK4e+1yvT5B95ITGc4hgrjF6JDARQ55vp+u04ZgpLE5YOSpBMhZPbsY5lRJvXrOq9dGTxJAj25+H5OvyZMzte8VKyi9M+rfwKS0TcYhLwkclePMIcOReN2bZ0ClxwaE=
+	t=1790851227; cv=none; b=jn9la0ZY+OXzke6c+7DE2+h0XM1I7M3gDni6XG+7JHkBJqr82Joeban1NunpTAODhzrhat+MMPiaBd94MIpJ9jBzGAEt6AvsSQpZKr5GTH1vOhxbOBdCqZJBRe79SN3XREzZVH+TtAmib0rZi4TOdoA3TvzHM5K7vXLN4uDl9xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790850860; c=relaxed/simple;
-	bh=xjVMW3aXX1KCF37mr2VmMH/GPb4/XV4kex/2mMgZ8vg=;
+	s=arc-20240116; t=1790851227; c=relaxed/simple;
+	bh=L4646pQ+4q/5njjsjHYYgregcsQKAS9YGlFAr+w+rJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t3vG5NMFu2CMpX3RVXHDE3GBzOF39ci8E/OpA2en7pyfKjj3jF/SolCIawl4B2OCQ8o6npgcnN2LSyzwj7FIId4qw0QgcnRADqPO8nywLDy8kVkvWiaY8TiwxpUm+ZYbQOtppgQF41hA8PfcaIYU9frNz3RBfF0Oya9rVVdEl8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mRIe2UAT; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvbe8V99uiNjwaBJE2Vpa+gizetihaJFMCe/AML/zLaxigUb1+9BgrrEMsYKEN+5Us9h5ofQLExGoTvb8HcwwyY6YVEm31HTEyTCpThyKKeJ3vSGsbtOrz4TgE/4Ds18s3sfr3Sd/m0kptEvPaZU8hWTx91bX2ThBsFduHYLhVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otNyyg1v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mRIe2UAT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790850856; x=1822386856;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=xjVMW3aXX1KCF37mr2VmMH/GPb4/XV4kex/2mMgZ8vg=;
-  b=mRIe2UATDSdZaLmFvFN6OGLwz+5EIW0R/B+IYI79mYBa+/QlPOJNyjIQ
-   sTUCVRidPTXscavljCMnHbchDOfmdTrYuujAWVHxV/ixh2R1ExCC4DsEQ
-   EykxqelgOhSXggU+HSaIfd97ee0Eki/vupzllvVgSwWZ7LqfRVb15ZzFk
-   eJ0wjlvE3TCDIuBhpOIjanrXxyB46fRrGWOPEtMWKBkn3pSjrGHfRUTxh
-   FT89Pbs+UdOn/yXhvyyc5DGzpzFbUSEfriQLVz6OlEGp/hWsMjRDXCp/Q
-   Wm3hY4nxS+mD2Mc0FpQlR1dGFVH4FT9nMuJAQwWO5TwAKKSmvLdWBymxk
-   A==;
-X-CSE-ConnectionGUID: H11a5I/DQie8aIBLQSsMSA==
-X-CSE-MsgGUID: Yy8gKO7+QnG9F8Jgk+eJKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11921"; a="113390217"
-X-IronPort-AV: E=Sophos;i="6.27,134,1787036400"; 
-   d="scan'208";a="113390217"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2026 03:34:10 -0700
-X-CSE-ConnectionGUID: 7S1VmvmGRveXsMyrE3BPbA==
-X-CSE-MsgGUID: Guu9ITM9RUmISY1TW2anfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,134,1787036400"; 
-   d="scan'208";a="274044840"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.7])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2026 03:34:07 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id B52BD121BA0;
-	Thu, 01 Oct 2026 13:34:03 +0300 (EEST)
-Date: Thu, 1 Oct 2026 13:34:03 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
-Cc: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: rcar-isp: ispcore: Fix inconsistent step sizes
-Message-ID: <ar43Gx4cm_bKLC0b@kekkonen.localdomain>
-References: <20261001085130.84565-1-barnabas.pocze+renesas@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otNyyg1v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63C81F00898;
+	Thu,  1 Oct 2026 10:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790851203;
+	bh=bQJeP082wYG6p7Gsy0czusgedL1PZIxQOaV5p7SEutQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=otNyyg1vD1bAXKm6gl11ZqG6KTat58jFzWfwU3F9MT95Xqs/5pPmE+LL+iLNe5IF3
+	 ERRBXTrpj9+c2f94JwOkWPe7L5dQA4MsKzPEeQbdPPezQd5eNtPybshzsdufszyEJW
+	 nS2E/y/CVgKLXbU++TXWXpm6a6lQxsZTefm0IiA04myEubsU0LtVpiBiGzJ3GKRMDP
+	 0dTxHjxlQkUveZyXVVGg3eMMzaJPSbZqno1iIZHLjIfGYQSE0xOCTj3HkHjei/X1mH
+	 J0Q5ckG50hMAXnta07I26ajptBLMlV22UX1iC7p/AbXch8gxtOThJme12nNd8Yqkpn
+	 CcFwOiRPncwUQ==
+Date: Thu, 1 Oct 2026 12:39:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: soc@lists.linux.dev, soc <soc@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [GIT PULL 1/3] Renesas ARM defconfig updates for v7.4
+Message-ID: <20261001-wondrous-vehement-coot-a8cbe3@quoll>
+References: <cover.1789722868.git.geert+renesas@glider.be>
+ <cover.1789722870.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -68,27 +44,18 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261001085130.84565-1-barnabas.pocze+renesas@ideasonboard.com>
+In-Reply-To: <cover.1789722870.git.geert+renesas@glider.be>
 
-Hi Barnabás,
-
-On Thu, Oct 01, 2026 at 10:51:30AM +0200, Barnabás Pőcze wrote:
-> `risp_io_{input,capture}_enum_framesizes()` sets the horizontal and vertical
-> step size to 2. However, `risp_io_{input,capture}_try_format()` passes 2
-> to `v4l_bound_align_image()`, which corresponds to a step size of 2^2 = 4.
+On Fri, Sep 18, 2026 at 11:37:03AM +0200, Geert Uytterhoeven wrote:
+> The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 > 
-> So move these constants into macros to avoid the repetition, and with that,
-> use 4 as the step size everywhere.
+>   Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 > 
-> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
-> Signed-off-by: Barnabás Pőcze <barnabas.pocze+renesas@ideasonboard.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> are available in the Git repository at:
+> 
 
-I already have v1 in my tree and I don't think there's a need to fix that
-tiny typo just for the typo itself.
+Thanks, applied
 
--- 
-Regards,
+Best regards,
+Krzysztof
 
-Sakari Ailus
