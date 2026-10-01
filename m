@@ -1,161 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC31F41837D;
-	Thu,  1 Oct 2026 12:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C847F3BE;
+	Thu,  1 Oct 2026 12:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790857265; cv=none; b=E+CziRL6IFOC5Pv3L+Dgkio5cS9wzmwV0pUhFv26JX/n/PC+N1ExURsKtw8CYnE7my1u3VU6OyxMe9q9E3Ft/LMjKD1GZ+txSyf/TobdQpibD84dOp42No3l/1ADuRbtNDulzCaX2TGJqeJ1YFazw6GLP738OxcuUrkYwSBE5Lk=
+	t=1790858543; cv=none; b=fFccB9Zkvy0aYhPgDGwLj0RC7UNrQRhq9Tz32hM9mwGhecjMGisGMU2q4q50TgtUtoYY61hDt4JQ/J/o0Xt175iMf0XJnYh1XsdyrAjuYsOW9H4hhk0T6zNh1ibqkB1DqkIk50eRX4GZqar6C0whGpBBGjBciXHhjl0b5Xo7RTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790857265; c=relaxed/simple;
-	bh=yj9saCJhtK1e2Ovkw/v1tf4+M2E/RC4gER6+0Fxhkqw=;
-	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LZNLKMLlfi0USc+kQE+0z7HCPZzlD8l4CKu/3M4zYyqVxwgwA0kCB0jK3QOJAql4WVSgOxBDjZrB8SXkk2IYbc7pfzZ8knsjKUkgj21comNGIUh6RZZUHMzXNcCSMOe2J8M3NdvqzuMob7rDcTsb08ILwbE33lKPj+oNlfHZ5is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKPq+FeL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790858543; c=relaxed/simple;
+	bh=+iDR3sgRYXVOjsAHsVSOjsKrGbB2T6BK4qFl7aMdN4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDKavlzCr8zec8sJPew2BGDl6vgcHKjJ4hqFUrAbeVp6WoAW78zgyZVVl2MdZOm22KXpLvivlOO33P0zvIVU9Fww7jZ7Aw/zyfQ3eD6LIgnFU/NeNbAmGpyoICQDaHST2DFBs+3Ls/TYXlP8mpsnbtiJQ9DBuohLyb+Be4lcDD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjGKDheP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKPq+FeL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E33831F000FF;
-	Thu,  1 Oct 2026 12:21:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjGKDheP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4811F000FF;
+	Thu,  1 Oct 2026 12:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790857263;
-	bh=oAW9yhIqz+GzzqxSQL3/AimWVIPwnoUGBGX02Gy9QqE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=hKPq+FeLVRe6l+vSuRSS/QKJUins4smgtnS0QGrZdpTS/EJNtI8grIX7SGF6fOSps
-	 dXRAOe0CLV5L2pB5/uQbX8MgAPUnSWzkBoDFBzA2Qp7TEd+QbVJIZz6c4kFIhj4s5o
-	 ri/AYoV/iIoSsIvmTbRak3b1GRZ2cFr/YaBt78HRQfzzoKKlaCVUnGRQveRFbVXbB6
-	 ZMkFfrZ/yDFadVoLLeH7SBMSse7VPNQ4MR/xauJh/quQrltHigYMBqMfAgrzEp+iRs
-	 aKMvYW7uw1I3Yyt5jyRCgLxwLZ+0oqX578PQnYiKnQYnfU9n5WGT0CuEGEaLMJyL5Y
-	 4eZATeKYT71uA==
-Subject: Re: [PATCH net-next v2 3/3] net: pcs: rzn1-miic: Validate dtb
- configuration values
-From: netdev-bot+sashiko@kernel.org
-To: khendry@reliablecontrols.com
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 01 Oct 2026 12:21:02 +0000
-Message-ID: <179085726249.434549.2964258291206401936@kernel.org>
-In-Reply-To:
- <20260928-miic-validate-dtb-v2-3-1ee3d33748e9@reliablecontrols.com>
-References:
- <20260928-miic-validate-dtb-v2-3-1ee3d33748e9@reliablecontrols.com>
-X-sashiko-severity: High
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20260515; t=1790858542;
+	bh=5d/lfo+j/m96Rp7cQ0pebNNQO5aBypVc1xArkCmf11Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RjGKDhePdQwqte/D3He2EVGkPVAx09SlNHiZsb5txAm5O3hHkEPTIDquET5QZXNEd
+	 FXRQzUbJekgtVG6hvCOqIs0ZUdIWbj3M4DrqrpdCHj+6Wc8iG85wDeMLkQ/P6o6DlH
+	 O0KOJ3ssW19btQbLFb488hHZl2tRb3CQdJqcvbBslGOPRS6R97MkKdhGeHNyslOp5x
+	 49YpHdH+U//QrjwN5aOPFVBJHaikO9zgrQB4rRSGWSU45s8Sg4Se8OHCVM5Nit5Z4O
+	 hfSMaLwfC7hdjWrf5p+/sRbtzQZoVBHTxBKzWT3WoEeWgpZned2flfCXZKTTmOWLO3
+	 nK/iR2iQrUN7w==
+Date: Thu, 1 Oct 2026 14:42:19 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Jiale Yao <yaojiale02@163.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 0/4] pinctrl: free maps on DT mapping failures
+Message-ID: <ar5U-FseGCtU3mp2@orome>
+References: <20260924111856.622898-1-yaojiale02@163.com>
+ <CAD++jLkTzLm00UKdUZuxWidNUppQM=Fge-dUgDJGB-NdRVEn9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f32m3uco7dl7mmpf"
+Content-Disposition: inline
+In-Reply-To: <CAD++jLkTzLm00UKdUZuxWidNUppQM=Fge-dUgDJGB-NdRVEn9w@mail.gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issue(s) to consider.
 
-Critical: 0 · High: 1 · Medium: 0 · Low: 2
+--f32m3uco7dl7mmpf
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/4] pinctrl: free maps on DT mapping failures
+MIME-Version: 1.0
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
+On Thu, Oct 01, 2026 at 09:49:09AM +0200, Linus Walleij wrote:
+> On Thu, Sep 24, 2026 at 1:19=E2=80=AFPM Jiale Yao <yaojiale02@163.com> wr=
+ote:
+>=20
+> > Several pinctrl drivers reserve map storage before appending mux and
+> > configuration entries while translating device tree nodes.  If a later
+> > operation fails, their error paths free only temporary configuration da=
+ta
+> > and leave the partially built map allocated.
+> >
+> > Commit 17007cd700601777d9ee203a13d97e64ece3a10f fixed the same cleanup
+> > problem in the generic mapping helper.  These drivers use their own map=
+ping
+> > callbacks and need equivalent error handling.
+> >
+> > Free the accumulated map and clear the output parameters on every failu=
+re
+> > path in the Spreadtrum, Renesas RZ/N1, Tegra XUSB, and Samsung drivers.
+> > Each patch changes one driver and remains independently buildable.
+>=20
+> Patches applied as nonurgent fixes.
 
-- [High] The fix is incomplete.
-- [Low] The commit fixes a memory-safety bug but has no Fixes: tag.
-- [Low] The new error message in miic_parse_dt() prints `conf`, declared
-  `u32 conf;`, with `%d`: `dev_err(miic->dev, "Port %d configuration out…
+Jiale said they were going to update this to drop the useless reset of
+the output parameters. Those changes should probably be integrated into
+the patches you apply. Could of course be a follow-up, too.
 
---
+Thierry
 
-net: pcs: rzn1-miic: Validate dtb configuration values
+--f32m3uco7dl7mmpf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This commit adds range checks in miic_parse_dt() for the per-port "reg"
-and "renesas,miic-input" device tree values. If either value is out of
-range for the SoC, the probe fails with -EINVAL.
+-----BEGIN PGP SIGNATURE-----
 
-> Bad configuration values from the dtb could result in out of bounds array
-> access. Verify parsed values are within range for the SoC and fail the
-> probe if invalid.
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq+VSkACgkQ3SOs138+
+s6HNHQ//UNL8kQCrEzTu9uTC/OiH7O9obk5jWD8Nh/LlerlKRTS6I1fCi2DYc9id
+TJqRVIH2lGnbcQIVFawD1O621eAHcyFIg2oMGj9UCOeCNVS6L+7XiBvwl/cvRLBJ
+1kFB11kEQy70S31trT5+hlmGhCRlLYdpiU0ZnrHHtH4ysppPmK1ZwCZEmycMsu2C
+iKmaEjl5iET99dShGYb8rmR48oYnLPNRoKne7xhGL/alZ4c8Oyrs3Ms9/3gr/tkw
+OXRzqB9kkHiLr0oe4hhQ1HC5OmE1WrAfosE+DxLvcBtzMJVbP4i/ybQP9EIgszWD
+Hvc0s+8GJx6toMp9nt/aqE1u81LWIIDC9qSilBOlK1EmlufDwauxHcaMHi5zT/bf
+ExYOMvK1z5+mYtFLCmm2tC73YVLwijsS0inoQvX3M1Ug+xGAdYBKPLf6nxB92jpy
+Njxvt9O4F17kdS3gHYkr13k6qeL5I1Wv6QJOXnOGcEnjpzkwj8Nedr2LGuPtSVhC
+bf6Q0FGAObGOYJIEgJJ2Dfq3HTfmyWDDKqP4ykr8qwMslrVeJ4Kh8Fzfet1jTnX9
+d4AdeIZGLzqNPuSCjcaCb43isl4xGJp+OHchBJtF7o6us0XADMP8IZRcL7hVK5fB
+Yp+3CZ9dugrQ0W7mMSPKnjN7oE9ubzpLtcLwkvgzZRAc87EUid8=
+=ILq1
+-----END PGP SIGNATURE-----
 
-[Severity: Low]
-Should this have a Fixes: tag?
-
-Before this patch, an unchecked "reg" value in miic_parse_dt() could
-write past the end of the kmalloc'ed dt_val[] buffer. That buffer is only
-conf_conv_count bytes:
-
-	dt_val[port + !miic->of_data->miic_port_start] = conf;
-
-The unchecked index seems to date back to the original driver. There,
-dt_val[] was a stack array indexed directly by the DT "reg" value.
-Would this trailer be appropriate?
-
-Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
-
-Two earlier patches in this series already carry Fixes: tags: "net: pcs:
-rzn1-miic: Fix port numbering on RZ/T2H" and "net: pcs: rzn1-miic: Fix
-miic register initialization loop".
-
-> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-> index 9e830932ce49c..9a4c6d3b7d424 100644
-> --- a/drivers/net/pcs/pcs-rzn1-miic.c
-> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> @@ -697,9 +697,25 @@ static int miic_parse_dt(struct miic *miic, u32 *mode_cfg)
->  		if (of_property_read_u32(conv, "reg", &port))
->  			continue;
->  
-
-[ ... ]
-
->  		if (of_property_read_u32(conv, "renesas,miic-input", &conf))
->  			continue;
->  
-> +		if (conf >= miic->of_data->conf_to_string_count) {
-
-[Severity: High]
-This checks "renesas,miic-input", but what about the parent node's
-"renesas,miic-switch-portin" value earlier in miic_parse_dt()? It is
-still stored with no range check:
-
-	if (of_property_read_u32(np, "renesas,miic-switch-portin", &conf) == 0)
-		dt_val[0] = conf;
-
-The u32 is truncated into an s8. An out-of-range value will not match
-any entry in the match table. miic_match_dt_conf() then falls through to
-miic_dump_conf(), which does:
-
-	conf_name = of_data->conf_to_string[conf[i]];
-
-Can this read a pointer from past the end of conf_to_string[] and then
-pass it to dev_err() as a %s argument? Values from 128 to 254 become
-negative s8 values, so for those the read would land before the start
-of the array.
-
-The binding allows only 1 or 2 on RZ/N1 and only 0 on RZ/T2H/N2H. A
-value of 255 truncates to -1 (MIIC_MODCTRL_CONF_NONE) and is silently
-treated as absent.
-
-Could the same conf_to_string_count check, or the stricter per-SoC
-binding values, be applied to switch-portin before it is stored in
-dt_val[0]?
-
-> +			dev_err(miic->dev, "Port %d configuration out of range: %d\n",
-> +				port, conf);
-
-[Severity: Low]
-This isn't a bug, but conf is declared u32, so should this be %u? Any DT
-value of 0x80000000 or above prints as negative. 0xffffffff prints as -1,
-which looks like the MIIC_MODCTRL_CONF_NONE sentinel.
-
-> +			of_node_put(conv);
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-
-[ ... ]
-
--- 
-Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260928-miic-validate-dtb-v2-0-1ee3d33748e9%40reliablecontrols.com
+--f32m3uco7dl7mmpf--
