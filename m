@@ -1,117 +1,154 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591A3BED32;
-	Thu,  1 Oct 2026 08:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914384A688D;
+	Thu,  1 Oct 2026 08:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790843512; cv=none; b=g3l2HqeJLJh+OE/xm71iYXmV8NymAJQKtIrjA9vnPO4MB7OHjsZW6ASVsi0fTRj+Ocr1XyUoKjJb84wCBwTH5W+ujfuX/dcflxgyBSAB9m+7gCy0bZ3fgbc6OlM33XsNak2oMbLGMSmniv/DJ9WWNDduiz7wTtyQOdfo0sgtQp4=
+	t=1790844698; cv=none; b=or4I1q110NZFngBJMjIMulGoSiImCEd4nzggPMS2OVu6fPbfoNxu9t8l5hS4a4X4STp2P1YZnKzzPo41mgeb8DqNTqc33xxhKIcS33hl4Gvj4WZBwHqMXB4PyAjVbY+AvzsX1Gzo9WQ2ThVlG6FvclxAu1BdN85JGQg071hCIBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790843512; c=relaxed/simple;
-	bh=jpbVVx9QoqKKtBn74779r5rJeMJp9L3EDVWrB/wBfF8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=IyLPEymcsZa5PLJwp/LOUIb75pPQaskEM54iPF4+Jf39540keg+P8BJ7m010+G4UwKDNyxnezyFPC/D7a58fKLhjkoNiridWZAhMiNoIyZYcMWl9u3CUVMUrcIsEyvzM9NdSFshp5FUdSxbNT0B7SwF+xIWAdDYbG54ifpoTTEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sagW3Htt; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790844698; c=relaxed/simple;
+	bh=Gf/erM2X4bMMBKjxD99nHhhCql2UqvHfnorRhXFDxRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hH/iD488fkG1ZbV1wu6DGAbu7Nu/3QbLKBtWEYtiwRt7qDZvoAe/2yytrerL1z9F+uiARN07QelS0fpwY1FYqeYOqcmwBSySOObz2nokcc09Lnz8BD6l/jo4mQXPzv0dcJqiF5beWSq/O8fLRla5oCq9wuKA4mf5tn865sRq/6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QkAvxNnS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sagW3Htt"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B50A01A109B;
-	Thu,  1 Oct 2026 08:31:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 81B8260341;
-	Thu,  1 Oct 2026 08:31:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5F0F4103290C1;
-	Thu,  1 Oct 2026 10:31:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790843506; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=RiIDTpci/0UJ3NCrt48cxrs7UcRvkm9TcGYKchYj198=;
-	b=sagW3Htt5YQwsJod0ppAZZLVo/HIbh2Wh1p3vMtfEqB4XzuMaoD5AyK9Xuqhjsglex+M6K
-	d6GboCZyFgqJlMZx/6YAQ/YGbVbRnzF/QRgBYMIxDkxucLFdgQTFK7kiSTyH2OcmiZydOt
-	cccMEa+DX6efu2rnGF1NSYK75PUxwZe91djO9sMyVvwWqi1k3ZSaKvhvSSfS4AyzCGrV8Z
-	lzPuYHAJ/x6OL2dxv2lcoAoKWQvoySk7ekWG2AyInjDdfcaHesnl6/y18kaAcliFte1w5R
-	U/SEZR0ZuELcN7FNSCQ3LXdMRk/6JwXjyWiJuEMWoEEcGGJtD4zg1voBIxS/MA==
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QkAvxNnS"
+Received: from pb-laptop.local (185.182.214.55.nat.pool.zt.hu [185.182.214.55])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5EDE0593;
+	Thu,  1 Oct 2026 10:49:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1790844581;
+	bh=Gf/erM2X4bMMBKjxD99nHhhCql2UqvHfnorRhXFDxRA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QkAvxNnSGg+8btw1IXCMEClUjdOCGdoeqGW+MhpDZXUfFl9gR8TJea23BI3D3rmBx
+	 j4czvOO5AFhK2vAyMXKrFX0k5jyyGM+EIoW83wBzimpE4Xmx0JQ80c3RClYTJgTUzx
+	 GO159Rpo5chsPYUDFDlbUf4bfX9/5GiG6lDQHcc0=
+From: =?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
+Subject: [PATCH v2] media: rcar-isp: ispcore: Fix inconsistent step sizes
+Date: Thu,  1 Oct 2026 10:51:30 +0200
+Message-ID: <20261001085130.84565-1-barnabas.pocze+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 01 Oct 2026 10:31:37 +0200
-Message-Id: <DLTD1D4TV8ZX.2PNM1B670T8UK@bootlin.com>
-Subject: Re: [PATCH v2 5/7] drm/vc4: dpi: stop using deprecated
- drmm_of_get_bridge()
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Doug Anderson"
- <dianders@chromium.org>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
- <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-To: "Paul Cercueil" <paul.cercueil@bootlin.com>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Li"
- <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>,
- "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Dave Stevenson"
- <dave.stevenson@raspberrypi.com>, =?utf-8?q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, "Raspberry Pi Kernel Maintenance"
- <kernel-list@raspberrypi.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.22.0
-References: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com> <20260929-drm-fix-of_get_bridge-build-regression-v2-5-6da431d8f180@bootlin.com> <accaa9f4ad05ef73071e5cfb5368fcbdd394d3ab.camel@bootlin.com>
-In-Reply-To: <accaa9f4ad05ef73071e5cfb5368fcbdd394d3ab.camel@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi Paul,
+`risp_io_{input,capture}_enum_framesizes()` sets the horizontal and vertical
+step size to 2. However, `risp_io_{input,capture}_try_format()` passes 2
+to `v4l_bound_align_image()`, which corresponds to a step size of 2^2 = 4.
 
-On Thu Oct 1, 2026 at 10:22 AM CEST, Paul Cercueil wrote:
+So move these constants into macros to avoid the repetition, and with that,
+use 4 as the step size everywhere.
 
->> -/* Sets up the next link in the display chain, whether it's a panel or
->> - * a bridge.
->> - */
->
-> The first part of the comment is not wrong, I would keep "Sets up the nex=
-t link
-> in the display chain".
+Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
+Signed-off-by: Barnabás Pőcze <barnabas.pocze+renesas@ideasonboard.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+changes in v2:
+  * fix typo
 
-OK, I will do it in v3. This patch is not a fix, so not urgent.
+v1: https://lore.kernel.org/linux-media/20260929133020.342677-2-barnabas.pocze+renesas@ideasonboard.com
+---
+ .../media/platform/renesas/rcar-isp/core-io.c | 40 +++++++++++--------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
->> =C2=A0static int vc4_dpi_init_bridge(struct vc4_dpi *dpi)
->> =C2=A0{
->> -	struct drm_device *drm =3D dpi->encoder.base.dev;
->> =C2=A0	struct device *dev =3D &dpi->pdev->dev;
->> -	struct drm_bridge *bridge;
->>
->> -	bridge =3D drmm_of_get_bridge(drm, dev->of_node, 0, 0);
->> +	struct drm_bridge *bridge __free(drm_bridge_put) =3D
->> +		of_drm_get_bridge_by_endpoint(dev->of_node, 0, 0);
->> =C2=A0	if (IS_ERR(bridge)) {
->> =C2=A0		/* If nothing was connected in the DT, that's not an
->> =C2=A0		 * error.
->
-> It could make sense to go the extra mile and just move that code back int=
-o the
-> caller function, I don't see much benefit in having it in a static functi=
-on
-> here.
+diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
+index 820af506f896c..b60b91f43d42d 100644
+--- a/drivers/media/platform/renesas/rcar-isp/core-io.c
++++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
+@@ -15,6 +15,12 @@
+ 
+ #include "risp-core.h"
+ 
++#define RISP_MIN_WIDTH 128
++#define RISP_MAX_WIDTH 5120
++#define RISP_MIN_HEIGHT 128
++#define RISP_MAX_HEIGHT 4096
++#define RISP_SIZE_ALIGNMENT 2 /* 2^2 = 4 */
++
+ #define risp_io_err(d, fmt, arg...)         dev_err((d)->core->dev, fmt, ##arg)
+ 
+ static struct risp_buffer *risp_io_vb2buf(struct vb2_v4l2_buffer *vb)
+@@ -330,8 +336,9 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
+ {
+ 	unsigned int bpp = 0;
+ 
+-	v4l_bound_align_image(&pix->width, 128, 5120, 2,
+-			      &pix->height, 128, 4096, 2, 0);
++	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
++			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
++			      0);
+ 
+ 	for (unsigned int i = 0; i < ARRAY_SIZE(risp_io_input_formats); i++) {
+ 		if (risp_io_input_formats[i].fourcc == pix->pixelformat) {
+@@ -423,13 +430,13 @@ static int risp_io_input_enum_framesizes(struct file *file, void *fh,
+ 
+ 	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+ 
+-	fsize->stepwise.min_width = 128;
+-	fsize->stepwise.max_width = 5120;
+-	fsize->stepwise.step_width = 2;
++	fsize->stepwise.min_width = RISP_MIN_WIDTH;
++	fsize->stepwise.max_width = RISP_MAX_WIDTH;
++	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
+ 
+-	fsize->stepwise.min_height = 128;
+-	fsize->stepwise.max_height = 4096;
+-	fsize->stepwise.step_height = 2;
++	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
++	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
++	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
+ 
+ 	return 0;
+ }
+@@ -720,8 +727,9 @@ static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
+ static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
+ 				       struct v4l2_pix_format_mplane *pix)
+ {
+-	v4l_bound_align_image(&pix->width, 128, 5120, 2,
+-			      &pix->height, 128, 4096, 2, 0);
++	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
++			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
++			      0);
+ 
+ 	pix->field = V4L2_FIELD_NONE;
+ 	pix->colorspace = V4L2_COLORSPACE_SRGB;
+@@ -824,13 +832,13 @@ static int risp_io_capture_enum_framesizes(struct file *file, void *fh,
+ 
+ 	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+ 
+-	fsize->stepwise.min_width = 128;
+-	fsize->stepwise.max_width = 5120;
+-	fsize->stepwise.step_width = 2;
++	fsize->stepwise.min_width = RISP_MIN_WIDTH;
++	fsize->stepwise.max_width = RISP_MAX_WIDTH;
++	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
+ 
+-	fsize->stepwise.min_height = 128;
+-	fsize->stepwise.max_height = 4096;
+-	fsize->stepwise.step_height = 2;
++	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
++	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
++	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
+ 
+ 	return 0;
+ }
+-- 
+2.55.0
 
-Why not. If no one objects I'll do it as an additional patch in v3.
-
-Cheers,
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
