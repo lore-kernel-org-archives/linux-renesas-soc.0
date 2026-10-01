@@ -1,113 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08273FE359;
-	Thu,  1 Oct 2026 08:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591A3BED32;
+	Thu,  1 Oct 2026 08:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790843417; cv=none; b=kz7vqumEAmlMlrpyUmO25WtPhBBlqg4/rucfDN0MajMRpBOIxpbmfQBLvmGZISqIwi83+386hwi7PbgkpuHHb/YQRqe5hKB4KkQ9/KbLG4JVGL0eW6gLESBthNDqbq/vqcLUMZcC4vLeGGz/Pa6CsjbDXJ3knEp7t6uIhVdr+80=
+	t=1790843512; cv=none; b=g3l2HqeJLJh+OE/xm71iYXmV8NymAJQKtIrjA9vnPO4MB7OHjsZW6ASVsi0fTRj+Ocr1XyUoKjJb84wCBwTH5W+ujfuX/dcflxgyBSAB9m+7gCy0bZ3fgbc6OlM33XsNak2oMbLGMSmniv/DJ9WWNDduiz7wTtyQOdfo0sgtQp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790843417; c=relaxed/simple;
-	bh=w0QSNKMPvMNwWEzZGS6hCPEc+nmrywKd7ktFYHv8O2w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ww3ubnZtuQfflmbul103H0qZbiUX/y+YuT/gF4aGNDJYEBg949Uhb8C4EaOUoqWmR49fvA+atRwv+PB87OPxlhd4eFu2VLVPuqmq+q+96qDdqaEjGkJH6XwydeLsYR/GyxbHN/31dpQmaniDPxclClaqIJgk7WkC5we18wh04l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byDw1osX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790843512; c=relaxed/simple;
+	bh=jpbVVx9QoqKKtBn74779r5rJeMJp9L3EDVWrB/wBfF8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=IyLPEymcsZa5PLJwp/LOUIb75pPQaskEM54iPF4+Jf39540keg+P8BJ7m010+G4UwKDNyxnezyFPC/D7a58fKLhjkoNiridWZAhMiNoIyZYcMWl9u3CUVMUrcIsEyvzM9NdSFshp5FUdSxbNT0B7SwF+xIWAdDYbG54ifpoTTEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sagW3Htt; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byDw1osX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4638B1F000FF;
-	Thu,  1 Oct 2026 08:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790843408;
-	bh=dymhJU7LE7PbeKqUDP3nU7/VgxqoggQ+VbnMCZhERnY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=byDw1osXZ+/H1VZ2eU89EzCA9n5Hf21vLbCdMw7CZvXGXGBLjvzkFMk31w/CVrmKP
-	 pP0P9AcKc+sxvoGGgRosCzgCLIWoir5W6JhKjRvliE7rWmtjUCYSFOLdw4Ju7iUPD2
-	 pTZsBUcDcYj1lpkmAquO7bbdDopMnb6Lg4eISZOSQLc2oRdGmrfgDbMDxZIvGvuCTh
-	 Q610AWOmTgW0kLNXD9jD8/moHLWfYiBA9Mc1NtMfTamVIKbLgVGNM7BvDzaTkH7kAA
-	 8sRMZUUr5Ih+ZNUkGEwM4Z28ugjoESwcNdrJL9Zmc3ncndZc25merovSeQGIhPURM1
-	 LI0+eJwQ8YlTg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3A457380CFF9;
-	Thu,  1 Oct 2026 08:30:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sagW3Htt"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B50A01A109B;
+	Thu,  1 Oct 2026 08:31:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 81B8260341;
+	Thu,  1 Oct 2026 08:31:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5F0F4103290C1;
+	Thu,  1 Oct 2026 10:31:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790843506; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=RiIDTpci/0UJ3NCrt48cxrs7UcRvkm9TcGYKchYj198=;
+	b=sagW3Htt5YQwsJod0ppAZZLVo/HIbh2Wh1p3vMtfEqB4XzuMaoD5AyK9Xuqhjsglex+M6K
+	d6GboCZyFgqJlMZx/6YAQ/YGbVbRnzF/QRgBYMIxDkxucLFdgQTFK7kiSTyH2OcmiZydOt
+	cccMEa+DX6efu2rnGF1NSYK75PUxwZe91djO9sMyVvwWqi1k3ZSaKvhvSSfS4AyzCGrV8Z
+	lzPuYHAJ/x6OL2dxv2lcoAoKWQvoySk7ekWG2AyInjDdfcaHesnl6/y18kaAcliFte1w5R
+	U/SEZR0ZuELcN7FNSCQ3LXdMRk/6JwXjyWiJuEMWoEEcGGJtD4zg1voBIxS/MA==
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v15 0/9] net: stmmac: qcom-ethqos: add support
- for
- SCMI power domains
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <179084340677.2325520.95323259899491825.git-patchwork-notify@kernel.org>
-Date: Thu, 01 Oct 2026 08:30:06 +0000
-References: <20260923-qcom-sa8255p-emac-v15-0-e82f33720737@oss.qualcomm.com>
-In-Reply-To: <20260923-qcom-sa8255p-emac-v15-0-e82f33720737@oss.qualcomm.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, vkoul@kernel.org,
- peppe.cavallaro@st.com, wens@kernel.org, jernej.skrabec@gmail.com,
- neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com,
- shawnguo@kernel.org, festevam@gmail.com, jan.petrous@oss.nxp.com,
- s32@nxp.com, mohd.anwar@oss.qualcomm.com, romain.gantois@bootlin.com,
- geert+renesas@glider.be, magnus.damm@gmail.com, mripard@kernel.org,
- christophe.roullier@foss.st.com, brgl@kernel.org, radu@rendec.net,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, dfustini@tenstorrent.com,
- linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-mips@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- sophgo@lists.linux.dev, linux-riscv@lists.infradead.org,
- bartosz.golaszewski@linaro.org, stable@vger.kernel.org,
- krzysztof.kozlowski@oss.qualcomm.com, martin.blumenstingl@googlemail.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 01 Oct 2026 10:31:37 +0200
+Message-Id: <DLTD1D4TV8ZX.2PNM1B670T8UK@bootlin.com>
+Subject: Re: [PATCH v2 5/7] drm/vc4: dpi: stop using deprecated
+ drmm_of_get_bridge()
+Cc: "Arnd Bergmann" <arnd@kernel.org>, "Doug Anderson"
+ <dianders@chromium.org>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
+ <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+To: "Paul Cercueil" <paul.cercueil@bootlin.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Li"
+ <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>,
+ "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Dave Stevenson"
+ <dave.stevenson@raspberrypi.com>, =?utf-8?q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, "Raspberry Pi Kernel Maintenance"
+ <kernel-list@raspberrypi.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.22.0
+References: <20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com> <20260929-drm-fix-of_get_bridge-build-regression-v2-5-6da431d8f180@bootlin.com> <accaa9f4ad05ef73071e5cfb5368fcbdd394d3ab.camel@bootlin.com>
+In-Reply-To: <accaa9f4ad05ef73071e5cfb5368fcbdd394d3ab.camel@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello:
+Hi Paul,
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+On Thu Oct 1, 2026 at 10:22 AM CEST, Paul Cercueil wrote:
 
-On Wed, 23 Sep 2026 17:14:34 +0200 you wrote:
-> This iteration addresses several issues raised by Sashiko. Some are not
-> addressed as they were false positives (nothing in the PHY driver ever
-> calls phy_runtime_get() on the parent device) or I decided they make no
-> sense - like the suggestion to remove the power-domain-names property
-> because there's only one power domain.
-> 
-> --
-> 
-> [...]
+>> -/* Sets up the next link in the display chain, whether it's a panel or
+>> - * a bridge.
+>> - */
+>
+> The first part of the comment is not wrong, I would keep "Sets up the nex=
+t link
+> in the display chain".
 
-Here is the summary with links:
-  - [net-next,v15,1/9] net: phy: aquantia: fix system interface type not updated in forced mode
-    https://git.kernel.org/netdev/net/c/6e0022b5ae3d
-  - [net-next,v15,2/9] dt-bindings: phy: document the serdes PHY on sa8255p
-    (no matching commit)
-  - [net-next,v15,3/9] phy: qcom: add the SGMII SerDes PHY driver for SCMI systems
-    (no matching commit)
-  - [net-next,v15,4/9] dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
-    (no matching commit)
-  - [net-next,v15,5/9] net: stmmac: qcom-ethqos: set serdes mode before powerup
-    (no matching commit)
-  - [net-next,v15,6/9] net: stmmac: qcom-ethqos: update phy_mode to the resolved interface in mac_finish()
-    (no matching commit)
-  - [net-next,v15,7/9] net: stmmac: qcom-ethqos: reuse the address of ethqos_emac_driver_data
-    (no matching commit)
-  - [net-next,v15,8/9] net: stmmac: qcom-ethqos: factor out linux-level setup into a separate function
-    (no matching commit)
-  - [net-next,v15,9/9] net: stmmac: qcom-ethqos: add support for sa8255p
-    (no matching commit)
+OK, I will do it in v3. This patch is not a fix, so not urgent.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>> =C2=A0static int vc4_dpi_init_bridge(struct vc4_dpi *dpi)
+>> =C2=A0{
+>> -	struct drm_device *drm =3D dpi->encoder.base.dev;
+>> =C2=A0	struct device *dev =3D &dpi->pdev->dev;
+>> -	struct drm_bridge *bridge;
+>>
+>> -	bridge =3D drmm_of_get_bridge(drm, dev->of_node, 0, 0);
+>> +	struct drm_bridge *bridge __free(drm_bridge_put) =3D
+>> +		of_drm_get_bridge_by_endpoint(dev->of_node, 0, 0);
+>> =C2=A0	if (IS_ERR(bridge)) {
+>> =C2=A0		/* If nothing was connected in the DT, that's not an
+>> =C2=A0		 * error.
+>
+> It could make sense to go the extra mile and just move that code back int=
+o the
+> caller function, I don't see much benefit in having it in a static functi=
+on
+> here.
 
+Why not. If no one objects I'll do it as an additional patch in v3.
 
+Cheers,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
