@@ -1,138 +1,166 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E054AB1D6;
-	Thu,  1 Oct 2026 08:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057314B8262;
+	Thu,  1 Oct 2026 08:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790842960; cv=none; b=V5tg/wZgG0mLR/lvKyxMD/KoWxSfuNtAarej7KOs5z8oRHZ8iXz9uLP0i3u9teSCN/dtMv+c3cQRNYLm4kTSy10eoL54vhBFzkI1TT8ryMB11cm9Pw9sFhDpLBwCpUIBOhjozvifFdN28evJYNqlyNydUCNOtfx3117Di0ieHK8=
+	t=1790842972; cv=none; b=nm176AR0ZQEBx0DnsCj9OHuQq07UcA13aNW5rHGpE+dSybqzvQrONWiE3UsW/hiGCeZZo20J8LcsNAjsdSX/YfQtFqPhrLbNzHoPkI5rpEhlcI+k/prSD+prSg98geFViSBpFNqUgPPfWjNbp442HlYPFTvCQ3IS+eLpu5Z+b1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790842960; c=relaxed/simple;
-	bh=l3pNl8eVfMIFbhX2KJ2917zrtECrHhyEBC2FW99QDHM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F61NDjDTQf6jt/0JTn56dFUav9CC80HXa8YjrsuS60b2YLzVBl8R9QFWHvpSdFihQA2T+1u4vSnkv6hQIrYGhj7vJGpnhV8aY5JXkyBONhpwtlqtueMHtuW8JesEvvD8DEcSfozw/fKsS/nn+18Fl5W1sC6XHdvYHQGLfL80wQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nJMALIU1; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1790842972; c=relaxed/simple;
+	bh=+BGYJv/Ec5lmfa8H8S/IhXnRpw8XMU+otzHcScLyKyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JRgDU7dhlJmAOWkCFIpDPwkwjkJdHhlCx6ItQcpzypBmlrTx1J8qnd4b5Jf1tk5uhj8c5J6gGNNeTVCqdYXbXo01tlqcshDIgEWvmzObdSuMQQ7UvTkWbNlXbAUoWASPlikFodHiBMHHb6dw3XkRqZTNOTAsQBbc7qTvKwbrpmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YDZNOU0M; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nJMALIU1"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YDZNOU0M"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 0DB2E4E410ED;
-	Thu,  1 Oct 2026 08:22:25 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 13F124E410EF;
+	Thu,  1 Oct 2026 08:22:37 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C2B5460341;
-	Thu,  1 Oct 2026 08:22:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1420E103290C1;
-	Thu,  1 Oct 2026 10:22:15 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D34D160341;
+	Thu,  1 Oct 2026 08:22:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 10F8F103290C1;
+	Thu,  1 Oct 2026 10:22:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790842943; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1790842955; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=SU7IEV8K31VentfUkgezeCnenvWoxswvOfrHYxEVQl0=;
-	b=nJMALIU1tbooMgeAGLRs2BwuEqkgLDYowj4ggQkgLnldsk/8YLuEjRzAHIXmOof/jZcEaQ
-	T7J6diupyFGSakm03gCM8vIRmqJQE8EVFg3fJBWL+rKwWX4HV/Q5SXidLYHAMRuaFAvFsF
-	vS8jLNOfhY8W4QTzpqQ97fB7F7Cg7WrqQdnU/b9MOqOClfczP4vyB1uSF/jDaJ7uCjeZhv
-	xkGeQ0iOxAgcwpeg3re+PQLytVEtBpn5A+9lcpzMC/eu6xx8gDPokAPeFAAPeuEfSkI0La
-	P/8dzBerMm0+UT9db8wgBWRxKLUmw1fphI9jrFFXbTzH3slUjdTvLfHAX5XHmw==
-Message-ID: <accaa9f4ad05ef73071e5cfb5368fcbdd394d3ab.camel@bootlin.com>
-Subject: Re: [PATCH v2 5/7] drm/vc4: dpi: stop using deprecated
- drmm_of_get_bridge()
-From: Paul Cercueil <paul.cercueil@bootlin.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Li	 <Frank.Li@nxp.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Icenowy Zheng	
- <zhengxingda@iscas.ac.cn>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart	 <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Dave
- Stevenson <dave.stevenson@raspberrypi.com>,  =?ISO-8859-1?Q?Ma=EDra?= Canal
-	 <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance	
- <kernel-list@raspberrypi.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Thomas Petazzoni	 <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, 	imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-Date: Thu, 01 Oct 2026 10:22:13 +0200
-In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v2-5-6da431d8f180@bootlin.com>
-References: 
-	<20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
-	 <20260929-drm-fix-of_get_bridge-build-regression-v2-5-6da431d8f180@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	bh=fO65BpNoMjprHokkh6R5n/KLjYhKRahGsAa+s7tmcCM=;
+	b=YDZNOU0MpWP7RdrvqFtn8DJTciuoeUSUxV9yE+WRKXFYZiDlxqbNNjFL5NIfczESYjhJ2p
+	Nx8upCxwqqIgYGk/2vMXtEN6tC1gbaRHhGcUQfcNSnkD5T5Ss5o6vhGfucLJb8yrCuewkT
+	645RutDNUKPop4oDkiMJSQigWIkE3plSQbl3+RMkMP0pn5VliHGkm4Q78syjCZfx4f2yyP
+	f7+Uaa5pDU8TQovdbcPCuHFKlPszDzzl1frzuBPPCC6CfjCbUYRt5qwVhbb9qZLZqGPCK5
+	IIr8UCo65tKENlQ13m96GTk2Cl45Y0re4yE6zMhA9g/Z4dDAPtjIpmxx3/u3zA==
+From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v7 1/4] dt-bindings: timer: Add the Renesas RZ/N1 timer
+Date: Thu,  1 Oct 2026 10:22:21 +0200
+Message-ID: <20261001082225.125956-2-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261001082225.125956-1-herve.codina@bootlin.com>
+References: <20261001082225.125956-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Luca,
+The Renesas RZ/N1 timer block controller is the controller in charge of
+timers available in the Renesas RZ/N1 SoCs family.
 
-Le mardi 29 septembre 2026 =C3=A0 15:39 +0200, Luca Ceresoli a =C3=A9crit=
-=C2=A0:
-> drmm_of_get_bridge() is deprecated, switch to
-> of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() retur=
-ns
-> a refcounted bridge, ensure it is put.
->=20
-> drm_panel.h becomes unused, drop the include.
->=20
-> Also remove a comment that is now obvious: now panels are just bridges.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
-> =C2=A0drivers/gpu/drm/vc4/vc4_dpi.c | 9 ++-------
-> =C2=A01 file changed, 2 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vc4/vc4_dpi.c b/drivers/gpu/drm/vc4/vc4_dpi.=
-c
-> index 53f36626a50d..5060eb463704 100644
-> --- a/drivers/gpu/drm/vc4/vc4_dpi.c
-> +++ b/drivers/gpu/drm/vc4/vc4_dpi.c
-> @@ -16,7 +16,6 @@
-> =C2=A0#include <drm/drm_drv.h>
-> =C2=A0#include <drm/drm_edid.h>
-> =C2=A0#include <drm/drm_of.h>
-> -#include <drm/drm_panel.h>
-> =C2=A0#include <drm/drm_print.h>
-> =C2=A0#include <drm/drm_probe_helper.h>
-> =C2=A0#include <drm/drm_simple_kms_helper.h>
-> @@ -279,16 +278,12 @@ static const struct of_device_id vc4_dpi_dt_match[]=
- =3D {
-> =C2=A0	{}
-> =C2=A0};
-> =C2=A0
-> -/* Sets up the next link in the display chain, whether it's a panel or
-> - * a bridge.
-> - */
+This controller handles 8 timers:
+ - 6 16-bit timers
+ - 2 32-bit timers
 
-The first part of the comment is not wrong, I would keep "Sets up the next =
-link
-in the display chain".
+Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ .../bindings/timer/renesas,rzn1-timer.yaml    | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
 
-> =C2=A0static int vc4_dpi_init_bridge(struct vc4_dpi *dpi)
-> =C2=A0{
-> -	struct drm_device *drm =3D dpi->encoder.base.dev;
-> =C2=A0	struct device *dev =3D &dpi->pdev->dev;
-> -	struct drm_bridge *bridge;
-> =C2=A0
-> -	bridge =3D drmm_of_get_bridge(drm, dev->of_node, 0, 0);
-> +	struct drm_bridge *bridge __free(drm_bridge_put) =3D
-> +		of_drm_get_bridge_by_endpoint(dev->of_node, 0, 0);
-> =C2=A0	if (IS_ERR(bridge)) {
-> =C2=A0		/* If nothing was connected in the DT, that's not an
-> =C2=A0		 * error.
+diff --git a/Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml b/Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
+new file mode 100644
+index 000000000000..7218c0c2671d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,rzn1-timer.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/renesas,rzn1-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 timers
++
++maintainers:
++  - Herve Codina <herve.codina@bootlin.com>
++
++description: |
++  The Renesas RZ/N1 SoCs timers block controller is composed of 8 independent
++  timers.
++    - 6 are 16-bit timers
++    - 2 are 32-bit timers
++
++  Each timer has its own interrupt line and can work in either one-shot or
++  periodic mode.
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r9a06g032-timer   # RZ/N1D
++      - const: renesas,rzn1-timer
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: APB internal bus clock
++
++  clock-names:
++    items:
++      - const: pclk
++
++  power-domains:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 8
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++    timer@51001000 {
++        compatible = "renesas,r9a06g032-timer", "renesas,rzn1-timer";
++        reg = <0x51001000 0x200>;
++        clocks = <&sysctrl R9A06G032_HCLK_TIMER0>;
++        clock-names = "pclk";
++        power-domains = <&sysctrl>;
++        interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
++    };
++...
+-- 
+2.55.0
 
-It could make sense to go the extra mile and just move that code back into =
-the
-caller function, I don't see much benefit in having it in a static function
-here.
-
-Cheers,
--Paul
