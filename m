@@ -1,149 +1,174 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAD84F93B5
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 11:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790854114; cv=pass; b=Va0vy9++TF67bvMLCQFpsjD3inAINJhcN3CA555sqWZZ/edkeLD9mZuosmosZrSHesieDc78/HENROJxyBsEU/K/G6g1Moi98yeQKb5H8PwnzUm3LxIUTInIi6iUNlsOmuSxZxC8eTyCAYAFH6IJZtlKasz0oiwoPnrnvibVuCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790854114; c=relaxed/simple;
-	bh=AwszME0PVQXG1C2Shl+TVih5js5vNu61zvf1dP2CyC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MOzP2+QCfbsCfDgmMt8yLjUH4cA2VA/TnzIvlcjHzUEitsjasKeUUbhaK40LTzoZ0OswVMamKBjHCXByiPWnqeHNiFVX9nkUlSqHRAO2GtuuFNXyy3Rdv+q1Q+Aos3GR9gbslYBj+jO3MTY0IAwrFvmjJP0K20NUa7En5RPFj+U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmRgA7XM; arc=pass smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF6835F60A;
+	Thu,  1 Oct 2026 12:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790857262; cv=none; b=dZppWiftBd2jsEmQghwr/e79sv1NK17aaJ57UCWeDLhEAI0+AThKEzwhqBnFY/0oSOQdmQCXH+GRf9PhDn3trNijkz8Jkt8XoU4c89MjoRE70a/RtTMTdjSjPCgjrewBP4qJEZzILiwH0UU6jq1iXmAGj3dEiBt6V6HhMP9WynM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790857262; c=relaxed/simple;
+	bh=Q7jzvmO3u3jfv/qIC2dCDpMmEzLO/rCpNK6IdLXWJkM=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uqDqiJ0uwJhJ0CXfRe9RPITQpYZP15EqkCOjIboRZcQtga4aeUpuHwuKHsBJI3hZbR3aLYvMx9+YfvnO93a8ksMLYTZZjSZRMBgOxp1GsCaMK6cDrvlcCw9r7HAWtSAgnl8pNnTjr+Fl5vrYp+CI96zFzaYNJqx7PVrgUj40SSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeJjcL0E; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmRgA7XM"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6350f89so3900260f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Oct 2026 04:28:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790854104; cv=none;
-        d=google.com; s=arc-20260327;
-        b=RpqltTP6NufuV0WKS420nW7xlslWZMSOjzi2Bf13UgPkgc+ufd/TJMUk14iun3q9yO
-         DC9lyrBA2uuZwnhDOVgJ5mme+ZPixCkVFs7BMr/gwKP5sUQ/U1vh+SyrguBtO5ctmoVb
-         Fxp6rb370CD2al2+uXhaSQTU/LI/UTK8hZ7pDSUa0kB9vd2H7rYFEMcNklXv+5I/jQcr
-         6EzJu7uFkUFJYv5LaJBQwRmkNb9CPU3ZWd7BXMYZLERUnLTK7S2VLEfJEjzivT7VnBdV
-         H+eWkAvMY06wtPRFMeyVMMHdbdgcmNG26ibTjCv+cqh5/Pp5s74TLHqbvMh2RXUWz4aU
-         /wWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=wlTXVZFyOCFbc+V/2yF4m7zDYgmRZl4N5AzvlwIj8Is=;
-        fh=jL7H6CkFStWrqAsDuLDARpfvK1O7I+SEf9pB3hYqSYA=;
-        b=OwrLPreQ5GgSG4+3u1XUWglrYZAavOvDj6hrWthXRdCYMaJzYiTEPR26DGuBgx7lpj
-         HfXmNqOHDGBh9daz5D4EXXAxXY65y98rYEceGV4RI097fnBkx/lldcUtNN31Fpyw07fY
-         RuCJUFcdeUBU+i7JSMg9OKkRFXmFBH4POTmMyYtozg56gqSMEMZfjmGZ6Klu95/0ZfiT
-         PSIUcGLEVhTs2YmYT7wAbKQb9KSkKJqr9eb9NCN+9+y+XFDgyfwu8OoK9ojpK7m2GWUj
-         W1vXAON4J+Y5FLmuqeVfEyxQAJ4GbRJGcZQ3OEFDWhVkTLB5I5O0bco3mRz9DI65tIty
-         OzkA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790854104; x=1791458904; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=wlTXVZFyOCFbc+V/2yF4m7zDYgmRZl4N5AzvlwIj8Is=;
-        b=hmRgA7XMkdEUl5NDDcgnxH6nPHV45XbFOLCGcbW6yI+zubzTerjygoc2LBiwsmEZMY
-         Z5sVoZc72Xc22ckzOZ2IJVDFOpxSGVn8Uw3mPLFJKbE6IX5hsi6ocKjWNa3VpPTIGEIw
-         vEz4TFynFiB+apqfoP18RiyMc/TgfInaxGvebKBiwx/xzcccAcMXPsAKMX1/UChjKbVw
-         jr47EM+HKDM9cvF29ONKb1phPGWuoZ2rawclhn93dovhH4dlbnsxXm/USeHV8OZpVdB5
-         1bwQkcTF7V8nOyXeX1NfHfGV+hJj3iYn74DPrTPbdZVYztIEKyDhoADHfLlDaIm2iS8Z
-         lE+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790854104; x=1791458904;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wlTXVZFyOCFbc+V/2yF4m7zDYgmRZl4N5AzvlwIj8Is=;
-        b=uzjQDoVbYm9w2rQyyMpHom1eAyj8eYg2fdbLp09iUHAAPO0OOOrFbWZGzAnoZI0pHK
-         fB0x0XFutYiZtsjtrls1FO6tbQ1nG4y+/MpZKXMtA0KxKJ+VLdSuKs923qfw4jTD9ozY
-         7+UW5uEUB0RpqW/5l7V+7svFu8x0oCUBAYQppskobSJesaEedtNrVuHb7tAwg/Xym+gn
-         fT7MUoPkUFjEZmYDGSv9Xo5Ft//xL8wn6h3q5i9E303s3BtE/NL6l9rzcqoCMs3NsNHY
-         OxJGYYcCCxeq3u4/u8+PlkZiqoOm1iYdnZdX1Te6nFKqlaPT+kykzFZoxC1Ns8L54cwM
-         CVww==
-X-Forwarded-Encrypted: i=1; AKwUvByc6lpRYIVr10SDflzp0tVWXVW5qeqfi0B4onWL4O6V81UnUyRyexPGJex4RaZbms6FCwtCO5os+UURnJOLGmBYHg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIZvkoax4LdPU3lU6iLjZi0XJ0G6gajLF51C92FcYyStUjWQNYJ
-	6aglTOHuUgNRHISwb4bvlzVyMN3dQhB12h8NM6l19OLzpPsfs0lSJnptau4tmWMdD1+nV0LvUOQ
-	RrwC69LSHTAryaf+9hhlYoYtP+HyQWSH5hBNHvL4=
-X-Gm-Gg: AYBFou2N+UnFSjUafeHvzPI+2O+4UHzpqoPIG/DYZbfhevh1Z34Jjs25SnqcWkWynsb
-	6hap1/QFeS5XLLcxvtnIH16Zs9k+ooWgtpfUEPQEc24sAINgxXQx4z3nNAB+HkNRhNm7FdOvXGN
-	ybFN8rQl+FbfW68ch9RHbPsN5Z15pCBt0aafKe+2QZqmK1o3k5fcE1LPCQn74Bdrw+96T481fXc
-	8ndhvqgX8fZ9jbq+7jQO73bZP/B0yaa119QruDyRI9ci2e4WQUnMvtsb7+qRLbKsNjEcFF+4pJZ
-	2qZEd/XrCkoJ9R+s/1RVC/YlU98vllLanA0seNXicQNI6YT6obHTYyKCLJZx1qUpH7Rtk/F4Y4j
-	6m7jxaBrtx0kKd6BYFiqXUcqMqwWCw0crQrASxG1d8kAEF+wwMFlOk6MwrYtnJAKd/StWXWHfAg
-	==
-X-Received: by 2002:a05:6000:290c:b0:48a:fcf8:20d1 with SMTP id
- ffacd0b85a97d-48b02550600mr8872303f8f.48.1790854103827; Thu, 01 Oct 2026
- 04:28:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeJjcL0E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57A5E1F000FF;
+	Thu,  1 Oct 2026 12:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790857261;
+	bh=MVTra0NODk2ukfHSv4EropBInomf+hUpsPIFCCjdQNY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=eeJjcL0Eh3wbg0QsYh8LPr+52zDsk8iXP0lCLkCvWFynD4wJ06ep3YWFIJkjBeQL8
+	 Wa1qXCX2emzQZu8t+PmG7txasXUi+DbMlgLoF/vDod8SAs2ePR4GReIp4trYAr/vtt
+	 XiN1yyQRyJ4pazZ8zA/ZyFq6kiNdeGB/0KAgY7fyQB8K4WRMMYrYt6XSa78GCfYQUk
+	 s5/kwbbaJfLmLdQcqgFMWRe9BeF0+nZRVWhRz60wcmkxv87p1qnYZBwes/EdQOdO1j
+	 i/jvuQ8b0oCbWQh7EEKD2zxSEoBZMk7i9ri1lEbwmqdBpg1HkEHykkoKmD9ONYSC3E
+	 kRFRtqYudl06w==
+Subject:
+ Re: [PATCH net-next v2 1/3] net: pcs: rzn1-miic: Fix port numbering on RZ/T2H
+From: netdev-bot+sashiko@kernel.org
+To: khendry@reliablecontrols.com
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 01 Oct 2026 12:20:59 +0000
+Message-ID: <179085725981.434549.8679017357220612418@kernel.org>
+In-Reply-To:
+ <20260928-miic-validate-dtb-v2-1-1ee3d33748e9@reliablecontrols.com>
+References:
+ <20260928-miic-validate-dtb-v2-1-1ee3d33748e9@reliablecontrols.com>
+X-sashiko-severity: Medium
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-miic-validate-dtb-v2-0-1ee3d33748e9@reliablecontrols.com>
- <20260928-miic-validate-dtb-v2-1-1ee3d33748e9@reliablecontrols.com>
-In-Reply-To: <20260928-miic-validate-dtb-v2-1-1ee3d33748e9@reliablecontrols.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 1 Oct 2026 12:27:56 +0100
-X-Gm-Features: AclHuK8F6U7l3QWG93hRCdan52bWlrmjNJx7o9EjG92O3k2nxmSLT0XW8-w3RDA
-Message-ID: <CA+V-a8uGauEQZD4dT7woBmg4b0dqgvWNQ7JCdCgpf4U=aZ0X-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 1/3] net: pcs: rzn1-miic: Fix port numbering
- on RZ/T2H
-To: khendry@reliablecontrols.com
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Kyle,
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue(s) to consider.
 
-Thank you for the patch.
+Critical: 0 · High: 0 · Medium: 1 (1) · Low: 0
 
-On Mon, Sep 28, 2026 at 10:19=E2=80=AFPM Kyle Hendry via B4 Relay
-<devnull+khendry.reliablecontrols.com@kernel.org> wrote:
->
-> From: Kyle Hendry <khendry@reliablecontrols.com>
->
-> The port numbers on the RZ/T2H are documented as 0 to 3. Update the info
-> structure to reflect this.
->
-> Fixes: 08f89e42121d421b ("net: pcs: rzn1-miic: Add RZ/T2H MIIC support")
-> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
-> ---
->  drivers/net/pcs/pcs-rzn1-miic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-m=
-iic.c
-> index cb74861e823c..df70309c2d97 100644
+If you believe none of the issues are legitimate, please reply to each
+issue of Medium severity or higher and explain why the AI is wrong.
+If any of them are legitimate and you plan to respin, please let patchwork
+know by including "pw-bot: cr" as a separate line at the end of your reply
+(one such reply per series is enough).
+
+- [Medium] `miic_port_max` means two different things in
+  drivers/net/pcs/pcs-rzn1-miic.c: - `miic_create()` (line 485) treats…
+
+Pre-existing issues:
+- [Medium] In `miic_parse_dt()` (drivers/net/pcs/pcs-rzn1-miic.c), the
+  child node's DT "reg" value is used unchecked in two places: - It…
+
+--
+
+net: pcs: rzn1-miic: Fix port numbering on RZ/T2H
+
+This commit changes miic_port_max in rzt2h_miic_of_data from 4 to 3. The
+RZ/T2H ports are documented as 0 to 3.
+
+> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+> index cb74861e823c8..df70309c2d970 100644
 > --- a/drivers/net/pcs/pcs-rzn1-miic.c
 > +++ b/drivers/net/pcs/pcs-rzn1-miic.c
-> @@ -838,7 +838,7 @@ static struct miic_of_data rzt2h_miic_of_data =3D {
->         .index_to_string =3D rzt2h_index_to_string,
->         .index_to_string_count =3D ARRAY_SIZE(rzt2h_index_to_string),
->         .miic_port_start =3D 0,
-> -       .miic_port_max =3D 4,
-> +       .miic_port_max =3D 3,
-The description for miic_port_max in struct miic_of_data needs
-updating. I would suggest renaming this variable to miic_port_last.
+> @@ -838,7 +838,7 @@ static struct miic_of_data rzt2h_miic_of_data = {
+>  	.index_to_string = rzt2h_index_to_string,
+>  	.index_to_string_count = ARRAY_SIZE(rzt2h_index_to_string),
+>  	.miic_port_start = 0,
+> -	.miic_port_max = 4,
+> +	.miic_port_max = 3,
 
-Cheers,
-Prabhakar
+[Severity: Medium]
+Does this leave converter 3 out of miic_init_hw() on RZ/T2H?
 
->         .sw_mode_mask =3D GENMASK(2, 0),
->         .reset_ids =3D rzt2h_reset_ids,
->         .reset_count =3D ARRAY_SIZE(rzt2h_reset_ids),
->
-> --
-> 2.43.0
->
->
->
+This file uses miic_port_max in two ways. miic_create() treats it as the
+highest valid port, inclusive:
+
+drivers/net/pcs/pcs-rzn1-miic.c:miic_create() {
+    ...
+	if (port > of_data->miic_port_max || port < of_data->miic_port_start) {
+    ...
+}
+
+miic_init_hw() treats it as a converter count, exclusive:
+
+drivers/net/pcs/pcs-rzn1-miic.c:miic_init_hw() {
+    ...
+	for (port = 0; port < miic->of_data->miic_port_max; port++) {
+		miic_converter_enable(miic, port, 0);
+    ...
+}
+
+With miic_port_max = 3 and miic_port_start = 0, the loop now covers only
+ports 0 to 2. miic_converter_enable() changes only the CONVRST bit for the
+port it is given. So CONVRST bit 3 (MIIC_CONVRST_PHYIF_RST(3)) is no longer
+cleared at probe.
+
+CONV3 then stays in whatever reset state the bootloader left it in while
+MODCTRL is reprogrammed.
+
+A later patch in this series, "net: pcs: rzn1-miic: Fix miic register
+initialization loop", changes the loop bound to
+miic_port_max - miic_port_start + 1. After that change both uses agree
+again.
+
+This patch has a Fixes: tag, so it could be backported on its own. Could
+the two patches be squashed or reordered, so that neither bisect nor stable
+ever sees this in-between state?
+
+>  	.sw_mode_mask = GENMASK(2, 0),
+>  	.reset_ids = rzt2h_reset_ids,
+>  	.reset_count = ARRAY_SIZE(rzt2h_reset_ids),
+
+[Severity: Medium]
+This isn't a bug introduced by this patch, but can miic_parse_dt() write
+past the end of dt_val[]?
+
+The DT "reg" value of each converter child is used as an index with no
+bounds check:
+
+drivers/net/pcs/pcs-rzn1-miic.c:miic_parse_dt() {
+    ...
+	dt_val = kmalloc_objs(*dt_val, miic->of_data->conf_conv_count);
+    ...
+		/* Adjust for 0 based index */
+		dt_val[port + !miic->of_data->miic_port_start] = conf;
+    ...
+		miic_configure_phy_link(miic, conf, port, active_low);
+    ...
+}
+
+On RZ/T2H conf_conv_count is 5. A child with reg >= 4 therefore writes at
+index 5 or higher.
+
+The same port value also reaches BIT(port + shift) in
+miic_configure_phy_link(). A large value there would be an undefined shift.
+
+The "renesas,miic-input" value is not range checked either. When no match
+table entry matches, miic_dump_conf() uses it as
+of_data->conf_to_string[conf[i]].
+
+A later patch in this series, "net: pcs: rzn1-miic: Validate dtb
+configuration values", adds port and conf range checks before the dt_val[]
+write. That covers the converter child path.
+
+The top-level "renesas,miic-switch-portin" value still looks unchecked
+after that patch:
+
+	if (of_property_read_u32(np, "renesas,miic-switch-portin", &conf) == 0)
+		dt_val[0] = conf;
+
+Could an out-of-range value there still reach conf_to_string[conf[0]] in
+miic_dump_conf()?
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260928-miic-validate-dtb-v2-0-1ee3d33748e9%40reliablecontrols.com
