@@ -1,64 +1,64 @@
 Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58C44A0901
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 09:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F07D4BE43D
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 09:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790847650; cv=none; b=HB4/Brp6Rfal3krLFCThSUwBwaiLMiWGcrpWER01/4M9ivxp5mJeZka6prhDZElpgBq0BNcvajjceAKp68l6iBsQ4cxjVOcWYrWDUkDTLP8ms7hCYoZ7Ivs/h68wlz4AX2Xkrn5ZRRwyJSTi8bFZLuY0iFS36gChz/EitdEg3CM=
+	t=1790847652; cv=none; b=VcfgVDnfGs23YWByRh13T5oPSADTHmsF1ZI5pSce6WHe4VbRQi0xYNmw3Z7kslpFxjfdpTloT6BD+vGil1xMYQnf9rOwieig3hpfOhNLXGY00Jd+lZS2rLmLmR8Y8vnXQiRNbxpMPILp7mxv9jfvAGp/S7H/8sGwzL9RVi+eTy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790847650; c=relaxed/simple;
-	bh=HzJ0XdBe4e+3eV5s/AAOK7HQGzgLyDAyz0pIZk2tifU=;
+	s=arc-20240116; t=1790847652; c=relaxed/simple;
+	bh=xrtZNTI442sn4UYlmsAhqNFzv3+O/q3n5I8T+Nlb/QU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=to+58B62jPVRycP7R7xFLGFSnyc5EHphJhCqMBy909DRWoiD1Ivh5XmP0gY0p4wRcBKKX9b24ORP/pLVZwPkjDCr2w+NHhg4lYvSzerzzNAcgYOMgzLeFHvoEdYtOcZ+y1Wkw+iVfy6nEwfdtzOcy3xmRNYgbTwFE7fg+Yt+Xgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKbFLiyR; arc=none smtp.client-ip=74.125.225.141
+	 MIME-Version; b=CZHEM/NYdKJOwxxVyYe8AgbGHSrewiDwlaigD0XoilOLxg7ME52c9HZI4GDShtg6vE2WAJ1KjXM2sGmKw8aKlUZ525PNwFZtTwveQ0ek8BCnwotY9bF+mk5xL4quhqa7wO5SOiX+PrtsRMALWeO9vIqK7N6+/EM4WRsbSrYPXBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gd0uH3W9; arc=none smtp.client-ip=74.125.225.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKbFLiyR"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-4a022e9cbebso2617175e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Oct 2026 02:40:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gd0uH3W9"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e6c0fce17so34429665e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Oct 2026 02:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1790847647; x=1791452447; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=h2InO87pmSFWFpzCtL0kBSIEBqZO5yulpRnkLLV7Amw=;
-        b=mKbFLiyRsUTzjq098xriHo/xYaEhGbLO+4sxsc6e1cYkD56sUzw4Q8g5uRJD6aVywf
-         PjUtVIzWxLoYKpv8i3yr43qr4yItE26JJlfTM5qgy5SF4/Ij3T3y0dAYd8twgRUrRXwa
-         xKHwYjyEWESp6sWa8EKP5wlJ8N4WmdSCsMkoaLxR+6dmInGZ3MJ+O8ksKiHEtIlrfYo1
-         MVVvAKLhF3RTkUSedk/QlTer4ZNqG9HuesChUzcK/XPBS+Z3PinkH8/hM/Zc8By0msx5
-         8+gYS8wekUh1B6KDYTrxPVGVsQUXtlY9/JOQbdOsp8Xz0DXu53oDppZK1SI2atTv5enM
-         Qm5w==
+        bh=I4W5NZM4ccedNa6iDSrM95gMMfTflIrpPojWIgsdmsU=;
+        b=Gd0uH3W9frtpGg17B1lMCp21aBT9B/P+j4jPx7ha4UKG7MwNWuzMgEP8jx7MSmjunL
+         YjUrCLVdJXLwKVUXBfmfI2fo6RWPb6BxzSJcAPHcobhZhCuu0Drhg7BjG43NE3AAU/2V
+         UylHpSWttl2nL6+ifIkimjeiDLAPGoMUNd7QHFZA6Vykwto9DGK4TWSC9nVg6aap6NSF
+         rVIjHJ67UUWSzYaJ7HvUFi1oIDrt+3wuwubNO77l3W8IQudZaOsVaJnhErOFrZ21G/hM
+         3RESt/b9yH6W9K85a1GvXnHqpaZadnZ381os+kq7DfliTk1XVfGvPcVt81ekI9OvNPyj
+         8x5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20260707; t=1790847647; x=1791452447;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=h2InO87pmSFWFpzCtL0kBSIEBqZO5yulpRnkLLV7Amw=;
-        b=SQ/0dk2K57rkqn3Xv+QbCfcDRRgraK+bH5ZTruSb4HCfLCT4vAMKfMGmyC1cFDLD4Q
-         NMPgA+guakg4AdMkxK6Id4DazlxGhyLCnVNWeLkUtOcwhV1AUvCGJvNDSpBUE4IdKCHM
-         uZz+3AdPtNnBLgnVoXO1ZdAxelAJ3PUhCeIl5KAiGaYktN+zqn3yVlpt2HGY7xahEkKx
-         NF5M1Rw+B6tLBwMcS5BkjjyDWBgdxWNSawYWSzLcayEf/mavGFxtKxKigzXYoYIPER3G
-         xQsbswqxsjrVPNXBL5+ghQ77zJooy8rBAkFl8GKYNgI2IPIkV4QwdL5Jy610WfHan3Ll
-         Naqw==
-X-Forwarded-Encrypted: i=1; AKwUvBxdGd1hB/0j87q+EaCK+/IbdS2Wqf3aWVljZPesfYRwGcUqR1tvNqIAEOYSkBe7toJb2rgYdyqEpKa+/qX9HYXezA==@vger.kernel.org
-X-Gm-Message-State: AFuF++m+xYAFadkmGCAHbuIGRMvWwNmtqzz9DZp+A5P4wc4sFO5zE/zO
-	NBguBjopLJO/P9ujkVHSeMK7mz2/dYHQHBoS4VIC1pwg3reZmDvOI1GX
-X-Gm-Gg: AYBFou0fXVONdmhdg/NA1OssOoAUpmLebLLPKLkYvL5eckKFVJXqXv77Ask+fPluhDG
-	DrgZc4E6jyQWL1JmI4yyDD9Mtte++PTEiBlmTmrRkTY4fdwpvzH+4y2qiaFoefoq/RNSmBRhGQu
-	5fkJ5/ruCvOtkhn9wfrk5hCHqhz9jc5cZRBa0MZZcel0cUkrvMr/szS3QL3Q0X3IUJhkF8BnD3e
-	Ky33wnI5jdL+v0yPBbhNTjBnO8g884ZyWXqbH3UsDcvbrtuk7YHQVjhiBmeBwGzFkzhjI7wBKlh
-	hIJBAHpBp/lk2LcoN/eAQOZbYjDnESF+8yJfZt0lvfGPhX1teAsCKuMiABixhXqq8qejz+9VLF/
-	9HhXGnDi86Y+9ruCMJI+KkWY1gTR+QhRTYNdTbd0K/bcSmX0Pq66Ji1Jo0AhKKtypOUzQk/G2JZ
-	G49a3U1qyVesS/dxAe9DpOgj2y0PiGw7orMcmTy5Roq4sDvoNExfnqCeIcOkLVdsv6PdleCR1nE
-	Lia
-X-Received: by 2002:a05:600c:c490:b0:49f:ce73:5e96 with SMTP id 5b1f17b1804b1-4a01b12d914mr68051805e9.34.1790847646421;
-        Thu, 01 Oct 2026 02:40:46 -0700 (PDT)
+        bh=I4W5NZM4ccedNa6iDSrM95gMMfTflIrpPojWIgsdmsU=;
+        b=l1tHShpOcwQ6ZCVoJmIpSoInz++wJ81SzOFSXyfJhck4WfYJCwR2aT4dFm7XW++lBX
+         AmXOtttUnSO4n5vC3JV4X54KQ9GZCLucsxSqSNsJAPhKwB4AL6cXgprQvVOWm4M/CbYA
+         3XFaZ5KacANWUNe0xFAbznvD4UFKEsO0jin41XbuZFnYCPKM6ba+b5kMlGUSUs9fgnEm
+         ToGwPcB9ZV6nqA0eBEM7iAYYKG/mEPIKxhcFMrcQRrLThz9NY0G46ldD2D3FSg8Oar30
+         4cqIjDOGfilkXDm3WlVGEo/PshcQ08WaNWLa5sOLL6tystV+g4ouD9weTmuyBGU/6IOU
+         dtGw==
+X-Forwarded-Encrypted: i=1; AKwUvByFYpgWwSDTQQNklvTBuxqTFP7X5acR/7yaX3zK17ahqLY/QBUtjpyAG3ytmwucXOiJMJc9avNrw2a1QE5JnvGm8w==@vger.kernel.org
+X-Gm-Message-State: AFuF++lhlQhsJRtAw72vQbJUyDaxj8Icxi95tFyuyYXs5j4KO8pXZyAb
+	cYMrkdHWV6QqDqCltuevgyyo6fPABB5RxXGQwQTiz5zB6+k0OKECRNMd
+X-Gm-Gg: AYBFou1U9S/cHvunoevjQvMF9JRmML1vmIlojuxLzs1cK/XcR7TzfVnL0zoeGqpAeyO
+	2BlXDlIuelim/VaFd8FQqkf4/QPWITi7llWzeuvJZxiRdiBKkGkFl0B+FioiF1Dg/nVWcey6lrB
+	AFqiO3Nfjtjb9a5rcP+UTKlsfOwHvu2r1k8ln0Q/9qi5Aq5QKTy0aSBn/SJSzWDjuIAuhjahaFO
+	zjhVFfxoUBpCrYv65s8/rXXTH3gYsqWLSNsmdDJuhokXCVsWIcFu6in1Y8mNVOmB7Uzf7OkMvWm
+	4zP7OEr5cpaZg+8x64obBRgczJPBk0dTAmYioVqGS+SAsmiX8njveqtGZ27wHhiHLwnQPqv58J+
+	4ixcapexZHUyuVCbiMYQJd9hDag32lVP5H/CW68KdQUuAa6Milsvl8iRb2nhTcR9knby0PFrH1o
+	dudTMnWCDjhU3+o2xMhIFaV4mgL9mFJUR/W3XazD6JTl1Tfn/IErSyDLBJTXRMVOkUv/dCD2FKH
+	R7r2qsJt5Rz/RI=
+X-Received: by 2002:a05:600c:c490:b0:49c:fc6e:a3d7 with SMTP id 5b1f17b1804b1-4a01afeab70mr67040295e9.22.1790847647365;
+        Thu, 01 Oct 2026 02:40:47 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a702:d301:5563:a938:8fc:9dc5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0226201aasm38937725e9.6.2026.10.01.02.40.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0226201aasm38937725e9.6.2026.10.01.02.40.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2026 02:40:46 -0700 (PDT)
+        Thu, 01 Oct 2026 02:40:47 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -74,9 +74,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
 	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH v5 2/9] drm: renesas: rzg2l_mipi_dsi: Add activation_dly to hw_info
-Date: Thu,  1 Oct 2026 10:40:17 +0100
-Message-ID: <20261001094041.135697-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v5 3/9] drm: renesas: rzg2l_mipi_dsi: Move global timings into hardware info struct
+Date: Thu,  1 Oct 2026 10:40:18 +0100
+Message-ID: <20261001094041.135697-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261001094041.135697-1-biju.das.jz@bp.renesas.com>
 References: <20261001094041.135697-1-biju.das.jz@bp.renesas.com>
@@ -90,10 +90,11 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Move the post-reset activation delay into the hw_info structure as
-activation_dly, allowing SoC-specific values to be defined per
-compatible. This prepares the driver for supporting SoCs that require a
-different delay after reset deassertion.
+Move rzg2l_mipi_dsi_global_timings and its array size out of the hardcoded
+ARRAY_SIZE reference in rzg2l_mipi_dsi_dphy_init() and into the struct
+rzg2l_mipi_dsi_hw_info. This allows future hardware variants to supply
+their own timing tables rather than sharing a single global array, making
+the driver more extensible without code duplication.
 
 Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
@@ -101,44 +102,49 @@ Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 v4->v5:
  * No change.
 v3->v4:
- * No change.
-v2->v3:
  * Collected tag.
+v2->v3:
+ * Dropped .dsi_global_timings from rzv2h_mipi_dsi_info as it uses
+   different path.
 v1->v2:
  * No change.
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 2128fd16ebc9..1538eeece2b5 100644
+index 1538eeece2b5..d67e1230b70c 100644
 --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -59,6 +59,7 @@ struct rzg2l_mipi_dsi_hw_info {
+@@ -54,6 +54,8 @@ struct rzg2l_mipi_dsi_hw_info {
+ 		const u8 *table;
+ 		const u8 table_size;
+ 	} cpg_plldsi;
++	const struct rzg2l_mipi_dsi_timings *dsi_global_timings;
++	unsigned int num_dsi_global_timings;
+ 	u32 phy_reg_offset;
+ 	u32 link_reg_offset;
  	u32 dphyctrl0_init_val;
- 	unsigned long min_dclk;
- 	unsigned long max_dclk;
-+	u16 activation_dly;
- 	u8 features;
- };
+@@ -488,8 +490,8 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
+ 	u32 dphytim3;
  
-@@ -806,7 +807,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
- 		if (ret < 0)
- 			goto err_phy;
- 
--		fsleep(1000);
-+		fsleep(dsi->info->activation_dly);
+ 	/* All DSI global operation timings are set with recommended setting */
+-	for (i = 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i) {
+-		dphy_timings = &rzg2l_mipi_dsi_global_timings[i];
++	for (i = 0; i < dsi->info->num_dsi_global_timings; ++i) {
++		dphy_timings = &dsi->info->dsi_global_timings[i];
+ 		if (hsfreq <= dphy_timings->hsfreq_max)
+ 			break;
  	}
- 
- 	return 0;
-@@ -1534,6 +1535,7 @@ static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
+@@ -1530,6 +1532,8 @@ static const struct rzg2l_mipi_dsi_hw_info rzg2l_mipi_dsi_info = {
+ 	.dphy_init = rzg2l_mipi_dsi_dphy_init,
+ 	.dphy_exit = rzg2l_mipi_dsi_dphy_exit,
+ 	.dphy_conf_clks = rzg2l_dphy_conf_clks,
++	.dsi_global_timings = rzg2l_mipi_dsi_global_timings,
++	.num_dsi_global_timings = ARRAY_SIZE(rzg2l_mipi_dsi_global_timings),
+ 	.link_reg_offset = 0x10000,
+ 	.dphyctrl0_init_val = DSIDPHYCTRL0_CAL_EN_HSRX_OFS | DSIDPHYCTRL0_CMN_MASTER_EN |
  			      DSIDPHYCTRL0_RE_VDD_DETVCCQLV18 | DSIDPHYCTRL0_EN_BGR,
- 	.min_dclk = 5803,
- 	.max_dclk = 148500,
-+	.activation_dly = 1000,
- };
- 
- static const struct of_device_id rzg2l_mipi_dsi_of_table[] = {
 -- 
 2.43.0
 
