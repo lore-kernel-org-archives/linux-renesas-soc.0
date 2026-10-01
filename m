@@ -1,46 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20943D9DBF
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 07:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B632455615
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 07:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790839932; cv=none; b=AzBax2WnKjmoBub+nyvH+VIU5mbY/CuZOXxKIRknSjRoyt1uKISkaa7ADJzOMY2RttGzcYYsgcObglFa2oghZGpouWLKGlvr5VZcTodqDQWRv6wi3U5znNFZGLPuXJGSP2/hJ/K1YA2j+DXdw/zVATlYMBGa/zj4kG+S4M1JGBE=
+	t=1790840372; cv=none; b=ihJIdkPa2HQnTFajbHROPFRFJOpGRa9BjooM45TuNORf8g+EVA2XtQvjqb9Y9lUS4niRQ1/QaRbGqFn42GR7Mr6FL49UOR5y+NQ4uF4axk4d4kVqep5eEG+JRIYKCNA9VrBQkyp8xr/hPPwaPz5sYknQQ4Hub23eibm2JufBTf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790839932; c=relaxed/simple;
-	bh=ELdBCMU5f7/O4ZMIta9o4UVKjIIZnw/X5SSJeT3GM90=;
+	s=arc-20240116; t=1790840372; c=relaxed/simple;
+	bh=prgThMa3RDaqzpouVznTJCw2SnOG3567R/8UJXmM108=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8E6jaCdXJFLgCso5Pq37yLe7Noi/eKdnWBx8HenuRnjp/f9w7GUX1mD+iMkr9wAp4j6UZofUD9gw+2s4Kwwr1HCbzuJStecFG0i/EzzG5+AcV7cyd57/GbVX796+0GTteelV+dpXzssZ6cTElEb1wghAOpXtsfRwH6/Tr8/uvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9ED6Xoy; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=hrhr8hH/ksrn0N1q0TE7MLhfNnq7gSqUL6z601JM1yr2tQvrLHnL/5fHBhKhAnfNAa6P/8GA+dQl9N13yiwXcS3g5352CPjsNCupvhGfuFsn384fXYjRaWTtu01mifbABPAVT9tJp8mPpJz1qRjMeE/aK+UeUagcGVfyIhjOqA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUL5M1RL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9ED6Xoy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A8EB1F008A6
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 07:32:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUL5M1RL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B07B1F00898
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 07:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790839930;
-	bh=ELdBCMU5f7/O4ZMIta9o4UVKjIIZnw/X5SSJeT3GM90=;
+	s=k20260515; t=1790840371;
+	bh=6/ClGyojAdsXGc/BQReGBNWEln4ElamcBkeTBZDQp5g=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=m9ED6XoyFU6f6NSxPdVX7ZgGtbARjsD/CvfZD8tuhOkiZ6dKnPRKSRSktb3gLidmc
-	 VPbCeYi2IKHwWOv9a94mqT6hb1QyGGIuQBER4nXjiOTZRozsX037c2spwbLmYAMdft
-	 hSocy81uy0QFI/ZtDOvX28+07QuujnXHssLX3bpIUqE7ULrFoS3pV03E333y7RCNzK
-	 HsH5YwqLVDE8Ag8eULAvrQkln7YBVbnRdOZn5XnVa80W1ViRxENJZnXfTYVrjFagcy
-	 G3vUUO2AFJbwfAf2/N1XRAUG8lpRgJF09f4ryfCh5u+wg5DjSHuu95Tq7PJHOpKRZi
-	 qrKAsvE+hguKQ==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5ba3d90ac37so1785355e87.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Oct 2026 00:32:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx4vBuwFtDCZ3EoF7BKBJ2Lwq7qx4Kbw3xqk1/41Hkdb0UmzsPCmjOa7ODx1EcNCIzPHVyZNOnH58OnXcBJcS7JmQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYISc2UzGhb5PxUMYKwzw5VFT2CCJFvDcYsbtqSzPy5D/I9i5hfy
-	/7R/riyGQgE5lhgnh3lY+SHfXiCnNnCIEQhHJWxFf66ZdaydA292dlU5T47emEdwd7Rl9G3HB9x
-	NxFnSCZjrweL0ya4e21vdleiMpKnhECbiVlGavRTk8w==
-X-Received: by 2002:ac2:42d0:0:b0:5b8:f97f:7a22 with SMTP id
- 2adb3069b0e04-5ba405ec7a1mr1161789e87.54.1790839929167; Thu, 01 Oct 2026
- 00:32:09 -0700 (PDT)
+	b=VUL5M1RLHivOqD3deTq3IHx+IU/NZDzjlfDtnpYRvqmCvxPDLdvQa31bYsRdkSA55
+	 Asq2nCy9aApaw2mE8wXMVqvBa1NBfz7vVZSOmy2RMc0SMw+CYtBHnNL4rDDHFJCXpa
+	 Az/Cw/B2D0r6WGKCZUeU8wZSkBqsJEIeDlKOD0cRVsN4V+gx53O078XnYEDvtL2mCc
+	 NjBHvLAQbj3IQ7aeHD5VIvoq8vPfmmqC38lwdkgcUcdSk3RK0W5EG3Rv6WltGhYbEs
+	 S3f+O9X7Imo9yNyxUqF+Gc+N8779hq5ZHFRCdX8Qs/EJqdXpU3xvYzwLJXZCOeZS81
+	 2VP919IFoifDw==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5bb54bd50c2so117219e87.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Oct 2026 00:39:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBytYX3VtgXZRP/m/6GS5rHUCpw+UE8aXQKyqI5effPYylur/Na1U6H0RCtp3rA9bzQXOpJTpFoyQbdK+fjNZJjPPQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKTeBXFcJJ6qMR0lWU04TQvDc5NRmDkezLhys2PqwU4Gq879xE4
+	tNwl1+ncOADhdHTsxBlOPZAM/V7yU9f4RZfk953udRCA9xFVw/M/sxpndmmghZx8gcizopLQzl4
+	3gA2heBP/+RGzjAcWge9M02qtM2TvRDZi2Mbmit6BUA==
+X-Received: by 2002:a05:6512:2115:b0:5b8:f4ad:6e49 with SMTP id
+ 2adb3069b0e04-5ba402b86b1mr998420e87.8.1790840013059; Thu, 01 Oct 2026
+ 00:33:33 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 1 Oct 2026 10:32:07 +0300
+ HTTPREST; Thu, 1 Oct 2026 10:33:32 +0300
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 1 Oct 2026 10:32:07 +0300
+ HTTPREST; Thu, 1 Oct 2026 10:33:32 +0300
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260930163334.60b4a88c@kernel.org>
+In-Reply-To: <20260930163217.4003d232@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -48,13 +48,13 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260923-qcom-sa8255p-emac-v15-0-e82f33720737@oss.qualcomm.com>
- <20260923-qcom-sa8255p-emac-v15-1-e82f33720737@oss.qualcomm.com> <20260930163334.60b4a88c@kernel.org>
-Date: Thu, 1 Oct 2026 10:32:07 +0300
-X-Gmail-Original-Message-ID: <CAMRc=MeUx2iHf8-d9yjZZ=n7VaG_GROvO2dW-bxavAS+XbGMFg@mail.gmail.com>
-X-Gm-Features: AclHuK8P_ZwjJ__3SNp9LNTCdpGSDaQAP4RQWoM4JsBj1lq1vbQDeX8sSTrNEMU
-Message-ID: <CAMRc=MeUx2iHf8-d9yjZZ=n7VaG_GROvO2dW-bxavAS+XbGMFg@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 1/9] net: phy: aquantia: fix system interface
- type not updated in forced mode
+ <20260923-qcom-sa8255p-emac-v15-3-e82f33720737@oss.qualcomm.com> <20260930163217.4003d232@kernel.org>
+Date: Thu, 1 Oct 2026 10:33:32 +0300
+X-Gmail-Original-Message-ID: <CAMRc=MfEHHny4x8pi-M-WqvcTxFY+98TvRa1jFTKQBjYCzy8FQ@mail.gmail.com>
+X-Gm-Features: AclHuK_lOavdmNlSvx0sNUPmny1qPtgCYs4QE7hryCERWbwB8_l7zIoUuzlYZiM
+Message-ID: <CAMRc=MfEHHny4x8pi-M-WqvcTxFY+98TvRa1jFTKQBjYCzy8FQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v15 3/9] phy: qcom: add the SGMII SerDes PHY
+ driver for SCMI systems
 To: Jakub Kicinski <kuba@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -77,38 +77,33 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.or
 	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
 	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
 	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 1 Oct 2026 01:33:34 +0200, Jakub Kicinski <kuba@kernel.org> said:
-> On Wed, 23 Sep 2026 17:14:35 +0200 Bartosz Golaszewski wrote:
->> aqr_gen1_read_status() decodes the MDIO_PHYXS_VEND_IF_STATUS register
->> to determine which SerDes interface the PHY is currently using on its
->> system side and stores the result in phydev->interface. phylink relies
->> on this value to configure the MAC.
+On Thu, 1 Oct 2026 01:32:17 +0200, Jakub Kicinski <kuba@kernel.org> said:
+> On Wed, 23 Sep 2026 17:14:37 +0200 Bartosz Golaszewski wrote:
+>> Implement support for the firmware-managed SGMII/SerDes PHY present on
+>> Qualcomm platforms. Do this as a separate driver from the HLOS-managed
+>> variant as they don't share almost any code.
 >>
->> The autoneg == AUTONEG_DISABLE check is not correct:
->> MDIO_PHYXS_VEND_IF_STATUS is set by the PHY firmware based on the
->> negotiated link speed, not based on whether autoneg was used to reach
->> it. When the link comes up at 1G in forced mode, the register correctly
->> reads SGMII, but the early return prevents phydev->interface from being
->> updated. It stays at whatever value it held before (typically 2500BASE-X
->> from the initial autoneg run), so phylink configures the MAC for the
->> wrong interface and the link cannot come up.
->>
->> Remove the autoneg guard so that the system interface type is always
->> decoded when the link is up.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 110a2432c520 ("net: phy: aquantia: add downshift support")
 >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+>> ---
+>>  drivers/phy/qualcomm/Kconfig                   |  10 +++
+>>  drivers/phy/qualcomm/Makefile                  |   1 +
+>>  drivers/phy/qualcomm/phy-qcom-sgmii-eth-scmi.c | 117 +++++++++++++++++++++++++
+>>  3 files changed, 128 insertions(+)
 >
-> Sounds like a real regression, is it? Should we ship it to Linus
-> tomorrow so that it makes 7.3? stable + next does not compute for me
+> Hmm, why is this here? is there a hard dependency?
+> Otherwise it'd be better to send it separately out to Vinod,
+> this is drivers/phy after all.
 >
 
-Yes, this is independent from the rest of the series and a small fix. It sounds
-good to send it upstream ASAP.
+Heh, it's always the same question of whether to split larger series into
+per-subsystem threads or keep them together in order to provide the full
+picture and let maintainers pick up subsets of patches. I've been yelled at
+for doing both in the past. :)
+
+Ok, I'll split the next iteration into smaller chunks.
 
 Bart
