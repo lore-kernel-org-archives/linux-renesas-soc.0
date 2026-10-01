@@ -1,178 +1,141 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1B33EBF1A;
-	Thu,  1 Oct 2026 08:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09264B7A24
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2026 08:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790844792; cv=none; b=RQtTSryjE0iRvkWFbrVX2aqCgVQoyrdCerKTjmlUkII1GQnd6frAurKDOii1BTteDfvoSXLJ746rWy25HJCu26YPQcTV0ujGMJMezkbBXXYeRrr6g69rUnLUbNELkdGIVMsXx0sQ2bLlMNQ1a61G7sD9COfTbrUnAUyebQVi8Lg=
+	t=1790845029; cv=none; b=Or7WoXE1Jkwz0CzsmmVvZ6N2tdmwvbeWfK1RAJ9oha/MjycagYtF2+PqV3BZs817wpLYDku2a2o/FzACbxUi+pbV13GKJiLK51Q5scle3SyNSiSIbBXuMY2OaZxTG0l/7t9mQCYKbBnom6POpOgWnL+NafBuIdw1w0Mf+lTWN3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790844792; c=relaxed/simple;
-	bh=AdLZNKnIsHkb/105aNVcukDgsZ7MAIvTyFATmH8uFlY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h8jQ6JvEht0Ott5/Gpy6UGrVbTgy+KIuwoYV156GVSvlszR5ghbtZaEeO2jawdZdZruJm1ZGDZgRTmat8GiP9BVtkQP50DZJlgYXdRE9vxEvXUEP0TGMOBYggE2wKM3U8uX9h2j5JgKEcJK/ZhFx14JCWB/XtLQU/LNAmr0drho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wWrOwVj7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1790845029; c=relaxed/simple;
+	bh=su0DVhDRbgCW6ivk6VcekvGuPKLwR9SF8luDE9CtZfs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FuF4puJgXgWoZSBmXCr0jZFGW+FFJuB21QrzkIYP0WDci4Elq4UMIhEEqnPQ7H5RVhfz40XtvZ+v7GNFuAiy9nA27nz3j+a1McEC3Ty7xKnLXkVLr9RWRuj2KJFFvQfflgwVpC1TmQmcbJVWcp+MKkapVvrOoNK48xyX5Ag+zM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QsojwJno; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wWrOwVj7"
-Received: from pb-laptop.local (185.182.214.55.nat.pool.zt.hu [185.182.214.55])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65A28593;
-	Thu,  1 Oct 2026 10:51:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1790844675;
-	bh=AdLZNKnIsHkb/105aNVcukDgsZ7MAIvTyFATmH8uFlY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=wWrOwVj7gSwt6LolnDNVSbziRkOv1w4rF+4CeJXCiF7UzneIlIBXUeACtfJUILy0k
-	 iB4I0TLRRhkA3lGyJNOVc9DG3zMRHLMYCJK82SxOgkOMS3qnVMAN2Y4jcyrB10WzlX
-	 LBPVE+XDQsrBanXz0oUQwsUoUrJm+n3Q7oXf+hVk=
-From: =?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
-Subject: [PATCH v2] media: rcar-vin: Implement VIDIOC_ENUM_FRMSIZES
-Date: Thu,  1 Oct 2026 10:53:04 +0200
-Message-ID: <20261001085304.85930-1-barnabas.pocze+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QsojwJno"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 2BDF84E410ED;
+	Thu,  1 Oct 2026 08:57:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DCAED60346;
+	Thu,  1 Oct 2026 08:57:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4008F103290C1;
+	Thu,  1 Oct 2026 10:56:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790845021; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=LlgutliI/KyIKbAEWb5yL2RePu83dUVtZxE0EVUCt+U=;
+	b=QsojwJnojSOEfMmX4qR135/VbWIIEhOft0th6YS8tec7yWEwdHIqr6rzBQWQE0U6FC1Yyh
+	5KMBHklyBG56gY4HnOPODLfeiYlCWBvp7c8cTKzNipyJMCCF6+h7BX/hxGO25SQCuhiWMy
+	4sSnWyqBUQHtpBzVA0KdWeDQKI73GWuSyXi8ex5eig+7M1u3LaUscxBDiAINCOcZ7caphY
+	jOdrr3KEprZfswqFDJOmFfUy6bAy3KiYKpcqXRBX3o/bkReMImkoUe4xAFVRts/m3xV0PK
+	JzoCCkOOl9ED0iwh8LOoTeF56AZSFCSjfCE/x5wWYuuXs7qwnRQ8bvvuC8NErA==
+Message-ID: <d247a15360eb3254ed1ae1f9bad859c3bb0b5c77.camel@bootlin.com>
+Subject: Re: [PATCH v2 6/7] drm/vc4: dsi: stop using deprecated
+ drmm_of_get_bridge()
+From: Paul Cercueil <paul.cercueil@bootlin.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Frank Li	 <Frank.Li@nxp.com>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Icenowy Zheng	
+ <zhengxingda@iscas.ac.cn>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart	 <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Dave
+ Stevenson <dave.stevenson@raspberrypi.com>,  =?ISO-8859-1?Q?Ma=EDra?= Canal
+	 <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance	
+ <kernel-list@raspberrypi.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Arnd Bergmann <arnd@kernel.org>, Doug Anderson <dianders@chromium.org>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
+ Thomas Petazzoni	 <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, 	imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Date: Thu, 01 Oct 2026 10:56:44 +0200
+In-Reply-To: <20260929-drm-fix-of_get_bridge-build-regression-v2-6-6da431d8f180@bootlin.com>
+References: 
+	<20260929-drm-fix-of_get_bridge-build-regression-v2-0-6da431d8f180@bootlin.com>
+	 <20260929-drm-fix-of_get_bridge-build-regression-v2-6-6da431d8f180@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Currently there is no way for applications to query the available frame
-sizes, so implement `VIDIOC_ENUM_FRMSIZES` based on what is allowed in
-`rvin_format_align()`.
+Hi Luca,
 
-Signed-off-by: Barnabás Pőcze <barnabas.pocze+renesas@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-changes in v2:
-  * drop ` from title
+Le mardi 29 septembre 2026 =C3=A0 15:39 +0200, Luca Ceresoli a =C3=A9crit=
+=C2=A0:
+> drmm_of_get_bridge() is deprecated, switch to
+> of_drm_get_bridge_by_endpoint(). As of_drm_get_bridge_by_endpoint() retur=
+ns
+> a refcounted bridge, ensure it is put by using bridge.next_bridge.
+>=20
+> drm_panel.h becomes unused, drop the include.
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+> =C2=A0drivers/gpu/drm/vc4/vc4_dsi.c | 10 ++++------
+> =C2=A01 file changed, 4 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/vc4/vc4_dsi.c b/drivers/gpu/drm/vc4/vc4_dsi.=
+c
+> index 0148f2befed1..30598738cfcf 100644
+> --- a/drivers/gpu/drm/vc4/vc4_dsi.c
+> +++ b/drivers/gpu/drm/vc4/vc4_dsi.c
+> @@ -35,7 +35,6 @@
+> =C2=A0#include <drm/drm_edid.h>
+> =C2=A0#include <drm/drm_mipi_dsi.h>
+> =C2=A0#include <drm/drm_of.h>
+> -#include <drm/drm_panel.h>
+> =C2=A0#include <drm/drm_print.h>
+> =C2=A0#include <drm/drm_probe_helper.h>
+> =C2=A0#include <drm/drm_simple_kms_helper.h>
+> @@ -555,7 +554,6 @@ struct vc4_dsi {
+> =C2=A0
+> =C2=A0	struct platform_device *pdev;
+> =C2=A0
+> -	struct drm_bridge *out_bridge;
+> =C2=A0	struct drm_bridge bridge;
+> =C2=A0
+> =C2=A0	void __iomem *regs;
+> @@ -1165,7 +1163,7 @@ static int vc4_dsi_bridge_attach(struct drm_bridge
+> *bridge,
+> =C2=A0	struct vc4_dsi *dsi =3D bridge_to_vc4_dsi(bridge);
+> =C2=A0
+> =C2=A0	/* Attach the panel or bridge to the dsi bridge */
+> -	return drm_bridge_attach(encoder, dsi->out_bridge,
+> +	return drm_bridge_attach(encoder, dsi->bridge.next_bridge,
+> =C2=A0				 &dsi->bridge, flags);
+> =C2=A0}
+> =C2=A0
+> @@ -1749,9 +1747,9 @@ static int vc4_dsi_bind(struct device *dev, struct
+> device *master, void *data)
+> =C2=A0		return ret;
+> =C2=A0	}
+> =C2=A0
+> -	dsi->out_bridge =3D drmm_of_get_bridge(drm, dev->of_node, 0, 0);
+> -	if (IS_ERR(dsi->out_bridge))
+> -		return PTR_ERR(dsi->out_bridge);
+> +	dsi->bridge.next_bridge =3D of_drm_get_bridge_by_endpoint(dev->of_node,
+> 0, 0);
+> +	if (IS_ERR(dsi->bridge.next_bridge))
+> +		return PTR_ERR(dsi->bridge.next_bridge);
 
-v1: https://lore.kernel.org/linux-media/20260929133720.344955-1-barnabas.pocze+renesas@ideasonboard.com/
----
- .../platform/renesas/rcar-vin/rcar-v4l2.c     | 70 ++++++++++++++-----
- 1 file changed, 51 insertions(+), 19 deletions(-)
+I had to double-check that it is fine to leave the .next_bridge field as a
+pointer-encoded error. It works because drm_bridge_put() handles this case.
 
-diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-index 9d45e11898c13..4961d28f42c78 100644
---- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-@@ -19,6 +19,8 @@
- #include "rcar-vin.h"
- 
- #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
-+#define RVIN_MIN_WIDTH		5
-+#define RVIN_MIN_HEIGHT		2
- #define RVIN_DEFAULT_WIDTH	800
- #define RVIN_DEFAULT_HEIGHT	600
- #define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
-@@ -187,6 +189,24 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
- 	}
- }
- 
-+static u32 rvin_format_width_alignment(u32 pixelformat)
-+{
-+	/* Hardware limits width alignment based on format. */
-+	switch (pixelformat) {
-+	/* Multiple of 32 (2^5) for NV12/16. */
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV16:
-+		return 5;
-+	/* Multiple of 2 (2^1) for YUV. */
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_UYVY:
-+		return 1;
-+	/* No multiple for RGB. */
-+	default:
-+		return 0;
-+	}
-+}
-+
- static void rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
- {
- 	u32 walign;
-@@ -208,27 +228,12 @@ static void rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
- 		break;
- 	}
- 
--	/* Hardware limits width alignment based on format. */
--	switch (pix->pixelformat) {
--	/* Multiple of 32 (2^5) for NV12/16. */
--	case V4L2_PIX_FMT_NV12:
--	case V4L2_PIX_FMT_NV16:
--		walign = 5;
--		break;
--	/* Multiple of 2 (2^1) for YUV. */
--	case V4L2_PIX_FMT_YUYV:
--	case V4L2_PIX_FMT_UYVY:
--		walign = 1;
--		break;
--	/* No multiple for RGB. */
--	default:
--		walign = 0;
--		break;
--	}
-+	walign = rvin_format_width_alignment(pix->pixelformat);
- 
- 	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 5, vin->info->max_width, walign,
--			      &pix->height, 2, vin->info->max_height, 0, 0);
-+	v4l_bound_align_image(&pix->width, RVIN_MIN_WIDTH, vin->info->max_width, walign,
-+			      &pix->height, RVIN_MIN_HEIGHT, vin->info->max_height, 0,
-+			      0);
- 
- 	pix->bytesperline = rvin_format_bytesperline(vin, pix);
- 	pix->sizeimage = rvin_format_sizeimage(pix);
-@@ -343,6 +348,32 @@ static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
- 	return -EINVAL;
- }
- 
-+static int rvin_enum_framesizes(struct file *file, void *priv,
-+				struct v4l2_frmsizeenum *fsize)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+	u32 wstep;
-+
-+	if (fsize->index != 0)
-+		return -EINVAL;
-+
-+	if (!rvin_format_from_pixel(vin, fsize->pixel_format))
-+		return -EINVAL;
-+
-+	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
-+
-+	wstep = 1u << rvin_format_width_alignment(fsize->pixel_format);
-+	fsize->stepwise.min_width = round_up(RVIN_MIN_WIDTH, wstep);
-+	fsize->stepwise.max_width = vin->info->max_width;
-+	fsize->stepwise.step_width = wstep;
-+
-+	fsize->stepwise.min_height = RVIN_MIN_HEIGHT;
-+	fsize->stepwise.max_height = vin->info->max_height;
-+	fsize->stepwise.step_height = 1;
-+
-+	return 0;
-+}
-+
- static int rvin_remote_rectangle(struct rvin_dev *vin, struct v4l2_rect *rect)
- {
- 	struct media_pad *pad = media_pad_remote_pad_first(&vin->pad);
-@@ -564,6 +595,7 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
- 	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
- 	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
- 	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
-+	.vidioc_enum_framesizes		= rvin_enum_framesizes,
- 
- 	.vidioc_g_selection		= rvin_g_selection,
- 	.vidioc_s_selection		= rvin_s_selection,
--- 
-2.55.0
+Reviewed-by: Paul Cercueil <paul.cercueil@bootlin.com>
 
+Cheers,
+-Paul
