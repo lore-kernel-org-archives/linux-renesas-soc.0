@@ -1,156 +1,137 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f42.google.com (mail-vs2-f42.google.com [74.125.227.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40FC47DD78
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Oct 2026 09:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC58457E64
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Oct 2026 09:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790934601; cv=none; b=THX+nC0B2lP5N4Ip1kl0UIpTMFUDtgkREBJG7wJnQNRmd71MP+nRzxF35ZiF+0j69+cq0fKY8J2gOuMGmfxeu4rBCZcD/QRZ9dNs8BSrfS8Sn1eh5+sM/rhW06OIC3oYqkcIuLsOzWuMRZNSB/APWoy32GwweMsBXB8ZybL+JzI=
+	t=1790934894; cv=none; b=DNKA4gCoHR4+WKjufpk0xdsI8g6Gdv28MuVB1LuZF5BuyeLr875/HlvLBsRl019B9tD9ZUxPeyU4zrEqOZnUJFpGsbNJTXLcukl425mXsRZ0z0SoWTfQo2HNWC6nwCyi+kHef5ipyx9Pe7m14uCpgzySGjUwZ9sFujuu+0mzQkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790934601; c=relaxed/simple;
-	bh=F0sLIblX1LwJTORAx8BzwbeGJ13SNRyBB9uu3B0ACqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qk7Ol4NrItq26Tgz5u9gTShEmt6C/EneGr/L6kPjNKHpCV+Kie0eKVlPFdk740mMu4HDZAFes1l1G3BjHD5Y66gfNU+zZGnhhbxrBiYnEooPbLNIvwHo9+v/Fe0AcnLjTbzCt6rSCwXfvfdlYpi4WzwdXHZinXU6dHvJplPZAx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KoiWOYmn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HAJ3qVNg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KoiWOYmn";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HAJ3qVNg"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6929nsqi1591157
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 2 Oct 2026 09:49:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mR1Q5bi6LOaKz+4z5fzw6s7JS2c3RQ3jTLLJoeWChao=; b=KoiWOYmnTOOnyP8z
-	RrhIaArb0jrf6yayEb1n4SR8GBKjw6fraJDTuhHYU3+jg8dnvpV/eDinoeLlHg/j
-	TjLrhNdubY67/GIagsabNcnVmSeg0L4nM8ibHwqj85rYiAj/tWrq9/QzpAQ9FczD
-	6pa4Ql3ODOhSIgYhbgbdA8b/zXiFYNJtDJbUbIeWlW5HWhgpUUr3u6PngQF77HJR
-	ULilbTQo+SGSTovr3IumjAYe5c5O/cdUL0zrVYxqGeQWurUKBHAjB++P6IxSplWR
-	cnP2OD1UAqh/SeVAUXYPr2LTH4J6tFWWQ3puRMRW0mP2A8JaKUGA5Lyky/tF7Lta
-	8ETD2Q==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h1qukc8yq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Oct 2026 09:49:54 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-53397b6e05aso17575491cf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Oct 2026 02:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790934594; x=1791539394; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mR1Q5bi6LOaKz+4z5fzw6s7JS2c3RQ3jTLLJoeWChao=;
-        b=HAJ3qVNgQAqAlM2g4GRhMbPRzgO37Fdw6QoFfyrJ9snDUdDlgrKA4ceLYv/3BpCaL0
-         +mQsXqFH+zsm4UbqdKaP3Za7QNCqbmay815SmMXHJbPKZOiJDSpLuN8+fOqaXcjvjezt
-         AE3OkgNOAzz7Kl3zsA1D9a4kULmI73WZpztbsjl1KWNvxSrd5y5dOe7dnC2v0sziLeTZ
-         ng/QcZk+kSsJNqGKWKNEjiKQci0WzkC9QTo/Qgj0RWabSVeYXbqn8FEVkNvjle4egWXN
-         SjYovd4XklGYB1iNsf/SwY3XT/SdmFuMrKe88JzIgOR6p8JYSb4cM++uLrHdZc3/uHIu
-         ellg==
+	s=arc-20240116; t=1790934894; c=relaxed/simple;
+	bh=GzAnx2xBXfEPO5tzd00AnUoKCvkCiQ5XrGLMnwGIK18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q8xDSvnqMFybDFUq6oL0u4+8FunrePboGvXWNPRZGua1LTDbdbqzoBTYBXxxHqZSWKb6ygmCdc6kNSQrsUQ7lfxz5vDQrXqva8ntDKGW1t1ZKg5nJni5y6PSQz0HLGyw9fyoVwKnUd39bDjqzmbDPCpg84ZZv8IMLv/bdE59tUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f42.google.com with SMTP id 71dfb90a1353d-5c979c5eca8so5633552e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Oct 2026 02:54:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790934594; x=1791539394;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=mR1Q5bi6LOaKz+4z5fzw6s7JS2c3RQ3jTLLJoeWChao=;
-        b=wrsII61DqJsfd145+kLyXkmnnxlRz8RTZJHclVgtZ2iwNyTkY+ZeY/rIzv0b2nakxG
-         HlG42vKTw3nlyGDVEDJA7o76lFpA2TGaPUuGmQMlRYYhSBx+nlbh10Nd1/Qi6ZHl3ml+
-         dmhZdIi1jXfmbi+C85C6cfaueOslEnj2HKMegF4/URi87Fp118qpYaEjFuaQaW8r7djB
-         qVVBayRsMRYQcrDv0wnLzTjr6DnDbDOvWK384inMGFTdAoXVKuo1WmZjLNsgnHmnPX5o
-         xNf8/WTZLU7A3OfDAOM0gl9t5kWKoTPzuw/Z93O8GpU+pLguhQaeJNNZUVVjgGH90ORt
-         TY5A==
-X-Gm-Message-State: AFuF++lsL9GCujKvOyLdvzyusg7tkP7s5ygIhFfS48pG2fZVUhScD3a4
-	qWG1aej4BVqHZ7DK3V6p+Svf53Cu2Fw8ljmBDBhwDIgJdG2DCNlWEzWUsjIb2lkvwwhCpPbxIOH
-	VmqV4fdWeGZIB5WVkB9LgcDib7vlQjv8J42+l42IoNbI8gvRSLsHdT7IspxdMeRvcNy3DQScJDw
-	==
-X-Gm-Gg: AYBFou1YsmF3/eXv/4zbe46H5X5TyqQEUqaWTB49tXkhhDf5HAQ6Y0OfIIr2Y+DiDgx
-	uGD4d+sk8k98cLkblzCcuOVf6xLxXSbJ9llpM68xcE2A1dw2qOieqyooDsI3xU+Z+L+eswaKx+F
-	JjQ3uJhPT8agoWo0E/HU0I7pWbixzbZpU4PcbfyWv/RoplgEOaLlmniswGYGeX2eCowMqU3Ox0W
-	s4MFEJDwf7ALsPgC6E8YEv6L+FnaWjZ/sBe3jHBzO8kzdYV2RgFgqRYf9/nucq/X77vY/2L+cZ9
-	6M1NrKMcbNy5vaqoL8BqyVToJFeksAurllA1kf3Cc9/nQMfgV0yk3r3L23Om919latfENwgHU0n
-	6NgI4lWKFVQlPxOdBI9+mjxASFbzIwYYzc/iydmiDY9q1VcqdIFUNE55Gg7mWrw==
-X-Received: by 2002:a05:620a:454c:b0:93c:6abf:c8ae with SMTP id af79cd13be357-93cf1791c20mr326873285a.50.1790934593188;
-        Fri, 02 Oct 2026 02:49:53 -0700 (PDT)
-X-Received: by 2002:a05:620a:454c:b0:93c:6abf:c8ae with SMTP id af79cd13be357-93cf1791c20mr326868685a.50.1790934592654;
-        Fri, 02 Oct 2026 02:49:52 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:f14c:b716:c104:4712? ([2a05:6e02:1041:c10:f14c:b716:c104:4712])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b82253e5bsm3914595f8f.1.2026.10.02.02.49.50
+        d=1e100.net; s=20260707; t=1790934892; x=1791539692;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Z0fxwGjBjqcCfabEbDLAIlWYoRpsrY3klbqZYJ/Lvy0=;
+        b=mGETvbhFwWN4BpY2axVXOrf/AwoPTKsSrX31gbIJEjTX1csxj/itaKavnUTeEG6+2s
+         S8XHVH43QGxxTpdx4+c+k6IqSWUn+gVCoufaqh0kHSoYeg4BcC24UJ3Mi/OOAM5djQpp
+         hPTZHpAsyrNvYIBikoCeo9mtYfbkuKxhKu9hTFBLvbqw043PJZ4I6KHFV1p9NbwGqIxl
+         Xkotop1aqtjQp/hog26xdznxXUauSczJ1z9BQdYhaywV4gKHJvtlHzQijEuWGPBg0uyJ
+         D11hK1iRJdtX+o/3YVLi24nptpS3nQCPyHsrl+I220XO6RixM7+NEg+4l0n5a+dgm6Ao
+         zCMA==
+X-Forwarded-Encrypted: i=1; AKwUvBx1zxpQIojtad2O2t158WpEVO5VWsc/Z7obbeoSDC83FGB2A0rql1m6gqPy7bo1kx3fZHd31hV9Qu1xJjnYdN1I6Q==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKRkXdaM/gTbegnv6lC7SP9Q4wP+f5Un9o+z0S/9DrRtZLDKmwc
+	ncnkyk54OSLGlYG1Be3BojDTDaanJyxeEK9E7iQUrrzdNqRwlPq6JFUM8wQKsHSX
+X-Gm-Gg: AYBFou0CZNQb5PpLbAu02z4uuGbJQaK9NYzgts/LuW7uSqgGMz/ABoUUwyBuJj99v8G
+	J/Xue5aWIaOsbK6QTovN+Pv0uKGa90bquKYQ7yh71QDsVabWK+RhF0jrdS+/G5vtKX1hzcz3ukt
+	9MQhjIGyjoBbqF0ctQt3IbdxLxy2VS+ahQldxPqReoFv7aSrp4jm5tz+aBaWP75ZkdCUaVcLUWQ
+	zByN91SF3wPH15aT7StdjQJpapwrjDTYEbEpnY1Jock0bv6yfwACmLB5EeiahLHn4b0YaBX7+hy
+	NSnvcv1tmwUhnCM0SWqeKWMLR9lq3T8EpOmP+5rZ+WW+xN+Er9EujAkBPFOCeNzfzMRhmWOyfXe
+	5XaXdZWbr2wxRJxzeY+QdPY/MG8ACMbvsLg6cfKg/mdzmp5TtJkTwmkruZIV2v1Hk06RaIvinH8
+	/RbhvWXnS/k+bRVEofhpLkGY9LMe77M5EsgnIwoGI+/wpdOYAziYtjxXPuvpdkFF6KGkEk2fChS
+	7wEKXWeTxUqPQnY3pNr1C7aEPwnju9gA90eHw==
+X-Received: by 2002:a05:6122:d0b:b0:5cd:575f:9396 with SMTP id 71dfb90a1353d-5dab0eb6dbfmr672280e0c.12.1790934891910;
+        Fri, 02 Oct 2026 02:54:51 -0700 (PDT)
+Received: from mail-vs2-f37.google.com (mail-vs2-f37.google.com. [74.125.227.37])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5da62d10534sm2936124e0c.13.2026.10.02.02.54.50
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Oct 2026 02:49:51 -0700 (PDT)
-Message-ID: <8eb0b435-e5d4-4429-a807-24e15b0659fa@oss.qualcomm.com>
-Date: Fri, 2 Oct 2026 11:49:49 +0200
+        Fri, 02 Oct 2026 02:54:50 -0700 (PDT)
+Received: by mail-vs2-f37.google.com with SMTP id ada2fe7eead31-7b42f1cbcf3so4021240137.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Oct 2026 02:54:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw+mmzwRDOMdSDdDZclXS5T8wIeMFYJEyVs7mymDc1gTqILf+6VaNRt8IuS/lT6bEpO9uHzNWGNRhI/jlVV1RvAew==@vger.kernel.org
+X-Received: by 2002:a05:6102:162c:b0:7b5:6bb2:53a3 with SMTP id
+ ada2fe7eead31-7c0f498afacmr661636137.10.1790934890369; Fri, 02 Oct 2026
+ 02:54:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/4] timers: Add support for RZ/N1 SoCs timers
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Daniel Lezcano <daniel.lezcano@kernel.org>,
-        Thomas Gleixner
- <tglx@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20261001082225.125956-1-herve.codina@bootlin.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-In-Reply-To: <20261001082225.125956-1-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDAyMDAzOSBTYWx0ZWRfXwME3zvKMWJpk
- PbBalhY4LzZUKaBmPA0q8Xpgy5YeVvtCVBIX/Nwb9Qlh+4/L8KpE0+9DvcfFfhgIham5JcK6cTE
- yC6JJjwEbjx7DFzaTot6rDXobgq6SQU=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDAyMDAzOSBTYWx0ZWRfX8M9rznIsdkM+
- uUOPwoEabLibM4waR0kuXR4ragKGtasicq1MQ2223a/GR0OFX912MC2w/Be5Wn4zn6wtM9AMDlq
- w8rxpbt5MGaJGUtE4K3Y8iUuOgMc97VoOAhfTh+5xzfOt9No7TQDvjgDcLRquuxLO7y6phISlw3
- j8/h/hJ4BIG3dRJ3MUS0vLJDKGA/ldmBjtNAKv7oHpmvH82U6MNtWPD0peAwbRrNyh19ExZvd62
- UHZdy1hTdsadvbLDxMdFRLSgzU03Iwj2TbPiSuMTktv65TQfC++KmHzJasbzO/c9xri9sHGOBuc
- WFUMq91PhqcvJGaUDXv8LIxq96aGWwu18tTgUfjMd7+KcPDUR7eYZbYRDco2o0m2VDWMrl70QSF
- 8mTvziJG8rVp+GxkHBz/izfuPLFACrCHws2PLwlB69i/yyBy8Q7JI3kr3RYKU3k3HjqX+xecvLj
- rZ0irkPNPx/LdY1uraQ==
-X-Proofpoint-GUID: ZtnPDjvxsaL3cS_NIKZWLmNbxiGrEeP_
-X-Authority-Analysis: v=2.4 cv=TdADJhQh c=1 sm=1 tr=0 ts=6abf7e42 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=v9AyLkvIsLCxcgOLbSsA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: ZtnPDjvxsaL3cS_NIKZWLmNbxiGrEeP_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-02_03,2026-10-01_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 suspectscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2610020039
+References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com> <20260928-rzg2-sr-boards-v10-4-91752ea39cbc@solid-run.com>
+In-Reply-To: <20260928-rzg2-sr-boards-v10-4-91752ea39cbc@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Oct 2026 11:54:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXZMcdpgmZ8r3khF2er_ZNLsHJOXULbPmWj8ikCyeigew@mail.gmail.com>
+X-Gm-Features: AclHuK95-pOI_InJ83kxtHngxLL78Cpy4C0cuDPVuyEs-ntx9z4X1Kg0cbn21cw
+Message-ID: <CAMuHMdXZMcdpgmZ8r3khF2er_ZNLsHJOXULbPmWj8ikCyeigew@mail.gmail.com>
+Subject: Re: [PATCH v10 04/11] arm64: dts: renesas: add support for solidrun
+ rzg2l som and hb-iiot evb
+To: Josua Mayer <josua@solid-run.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/1/26 10:22, Herve Codina (Schneider Electric) wrote:
-> The Renesas RZ/N1 SoCs family has two timers block controller
-> available.
-> 
-> Each controller is charge of 8 timers (six 16-bit timers + two 32-bit
-> timers).
-> 
-> Each timer has its own interrupt, its own prescaler that can be used to
-> divide the clock by 25 (timers block are fed with a 25 MHz clock) and
-> all timers can work in either one-shot or periodic mode.
-> 
-> This series adds support for those timers blocks.
-> 
-> Best regards,
+Hi Josua,
 
-Applied, patch 1,2 and 4
+On Mon, 28 Sept 2026 at 19:34, Josua Mayer <josua@solid-run.com> wrote:
+> Add support for the SolidRun RZ/G2L SoM [1] on HummingBoard IIoT [2].
+>
+> The SoM features:
+> - 2x 1Gbps Ethernet with PHY
+> - eMMC
+> - 1/2GB DDR
+> - WiFi + Bluetooth
+> - SDHI Mux switching between eMMC and Carrier Board
+>
+> The HummingBoard IIoT features:
+> - 3x USB-2.0 Type A connector
+> - 2x 1Gbps RJ45 Ethernet
+> - USB Type-C Console Port
+> - microSD connector
+> - RTC with backup battery
+> - RGB Status LED
+> - 1x M.2 B-Key connector with USB-2.0 + SIM card holder
+> - 1x DSI Display Connector
+> - GPIO header
+> - 2x RS232/RS485 ports (configurable)
+> - 2x CAN
+>
+> Descriptions for eMMC, microSD and RS485 are provided as overlays due to
+> their dependency on configurable mux states.
+>
+> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
+> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi
+
+> +       sdhi0_4bit_pins: sdhi0-4bit {
+> +               sd0_ctrl_dat03 {
+
+> +               sd0_dat47 {
+
+Node names should not use underscores.  I  will replace them by
+dashes.
+
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
