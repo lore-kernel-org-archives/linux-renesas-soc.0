@@ -1,186 +1,115 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ED727442;
-	Sun,  4 Oct 2026 01:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6741633E37A;
+	Sun,  4 Oct 2026 04:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791076742; cv=none; b=W1vyyf4Rit13zWVPt3S7xabqSMixWF4thsLeIMn7opFpLCdJPXiU0kuqpeXzikSAax/pbs5OPGkL/mCch6dehAhoQvTBnVPxL3BL4xVeWSkH+8ze8oWmEpPnP6PZ4GMBharQrzuy80b5fUUFuvW0uY/5ktzSCWZMB6CX1n+FiWE=
+	t=1791088913; cv=none; b=Su4bXOID/O0FBGFk5KIdDCImjCouVGzsS5KRKYATE4cVP0CRuZECqjJMDmSPmqc6oODMlS+FU4qauuZ+riUIq7s1En7ge5PpHm/weztGH+89s1up4X2reJWETJxi3GX8pDTxgxd9bdEadcB+L4bUzIuZNfhAern+p7gUfrLqx94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791076742; c=relaxed/simple;
-	bh=1h/gWQQiJHoKYSKzX/YmfMFxjxyr1KmmDEENQ283Fe0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a+yuVQo9BKG5NdZUYrGxv4ib/LVp8fOSE35dCaO65+nxI3LUoV1YTY4Jz/gOO7EO+DJKKJsDj8h5FVz9IbE6hWdgrIZXLp3jjck3kK/3d4mo82ykuX6QCvB9KvMMP5hIF9112n/jKCQEBAcltHDtJ7P/brkeNWCQF0hNyRtxPv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TSV/DXMD; arc=none smtp.client-ip=80.241.56.171
+	s=arc-20240116; t=1791088913; c=relaxed/simple;
+	bh=L+jANw5Z589wY+Mc8+/1MyXCzG7hSTFqtOcs1xwyXLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lAiY6cZ7O12ooBLwGei2fZpG1yGpdzJ2j6c/XpoLHEVcnt/hcqzTaJSiRadrcj8rskMZyaJvkuuX8GiY9mQJ2J5Q+smkMJpVGsWQetz96ZvvNX5ka8bz3HQe0X9r0VmtMRrROnfQDKG/XcNjvBuvHe/PllV5PT7OyDAWvloxjl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=lUOvVe/a; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=B/I64Mfv; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TSV/DXMD"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="lUOvVe/a";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="B/I64Mfv"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hy4RN2n8lzMlSH;
-	Sun, 04 Oct 2026 03:18:56 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4hy8xS4JsjzKnRy;
+	Sun, 04 Oct 2026 06:41:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1791076736;
+	t=1791088908;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6K74zQYOJYJRfcBo9UYqdfObKDdq20Wwv5QO1BflE2k=;
-	b=TSV/DXMDv106tQWNK2BtS+6YDbbRj8nn5gD1Vxw6A6LgOMYcNBZ7agDCQOr2sm70L2nIzl
-	Yqw5rdiGgtAZ+NLhQg/OPmubHSAlfMIxyDPTaotajXnfyLuG7u11F66LddGTbqpWaL18ox
-	Lk+938V5RLOcVO5gl36UYr0xBNT4rAAH83cKAucuQKR30/zZ49/FVMiG4hdnfy48KLww14
-	gGi+hUCWc2ntyPwu811gbXJ8g6Sp+cc089prqhhdzGRZhWJdkj/uUbpFUlhibx3j91k5Wd
-	ycHA+lsnkITHi0HtuesT0MCRoeal9d745rIAbznBwWQnrwSVEsW0gDsEoH/gKA==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <den@valinux.co.jp>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5] PCI: rcar-gen4: Add missing PM ops
-Date: Sun,  4 Oct 2026 03:18:13 +0200
-Message-ID: <20261004011851.866833-1-marek.vasut+renesas@mailbox.org>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G19ibnZTze7Y60hikbKT8jD4/+e1+MSfLkPWZX7oams=;
+	b=lUOvVe/aRBIG8hooB6nWMv10t8xE23pRl8amwVH1F+Xzod/oYqPyjiWOwzVCnLdolUYdgl
+	oCHF56FArg8Oe3CFo3ACbnifDBGr5v1tfWrOesLHvshyC0OQC+nIHB2vqls1a1/4Q63l3D
+	iB5ChxcGvGf9W++WsjyxO2EHv2R/+gKnGbefQpwRuR3gI2IDUuRcjR18FRlo72ttfjVyoF
+	ZnPvDU6G7ZjYFtrKeSpVGr1Rfr0Gb6arbNth7+HPoUu2jZinj30uARsUR9edRBCgxbNkbQ
+	DacLsBhkhqUImRiuxgGdvUGRkidGQXjpl9C8iMA3xC0ipoF1acoiLGZTbX9o7g==
+Message-ID: <6937b9a8-697b-4b87-b31b-74d6eab8bfbe@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1791088907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G19ibnZTze7Y60hikbKT8jD4/+e1+MSfLkPWZX7oams=;
+	b=B/I64Mfv9TNrwVwGwwXZnU4o3dE4vntvmFDSzugNnT/UGA1C/MEdT4tb1ULAjn08w5pktA
+	IaukEgFeIyhc9fvXwQvnhIXsYHlD7Giu5BnPzZcg7i0culBjfXmwDWPUSRPYwYwD4SZbxo
+	Xc3g921UhQOj8BB9CuZ3inZQEVHKdFSLKqPxzQafRV7UOhuxxryD3OjSG41gsqbwO0texR
+	nyee8zaToaP/TnLlJHObCZNBGKLS0N1VHLPiaOI6mYwAjdpmEEkqEY3IkX8+nOhquX3WOF
+	EGpvnWGflRBpC+4Pe+aih7rbxkujmVZ9JCIGwlyKejBYs8ZJsowKOXm+fZtw8w==
+Date: Sun, 4 Oct 2026 03:38:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: zg3sma315nhdrqi1ieqacsgbsgn4a7yc
-X-MBO-RS-ID: 576233e560cbda28b14
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/15] PCI: rcar-gen4: Recover the Root Port on link
+ down
+To: Koichiro Den <den@valinux.co.jp>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Jingoo Han <jingoohan1@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+ Niklas Cassel <cassel@kernel.org>, Wilfred Mallawa
+ <wilfred.mallawa@wdc.com>, Serge Semin <fancer.lancer@gmail.com>,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260928165230.3397664-1-den@valinux.co.jp>
+ <20260928165230.3397664-12-den@valinux.co.jp>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20260928165230.3397664-12-den@valinux.co.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 640fda1b65dcf665f0e
+X-MBO-RS-META: 3abhhi88rjuaaeawu4z6tafjidpjutw1
 
-The R-Car Gen4 PCIe controller is part of a power domain. On R-Car S4
-and V4H, this is an always-on power domain which is not shut down in
-suspend. On R-Car V4M, this is a dedicated A2PCIPHY power domain,
-which is shut down during suspend, and the controller loses state,
-which prevents the PCIe from working after resume.
+On 9/28/26 6:52 PM, Koichiro Den wrote:
+> On R-Car, the controller's reset requests (smlh_req_rst_not,
+> link_req_rst_not) arrive on intreq_pcim_sub, the interrupt the MSIs are
+> demultiplexed from, so DBI is read as soon as the link goes down. On
+> R-Car S4 that is a hazard: DBI accesses issued within a few hundred
+> microseconds of an unexpected link down do not complete and hang the
+> host. In testing, the first Root Port config read after powering off
+> the link partner hung unless delayed by ~300 us.
+> 
+> Check the APP reset status in the interrupt handler before DBI is
+> touched. When a reset request is latched, flag the controller as
+> needing reinitialization, which masks the sources, ack the request and
+> schedule recovery work. The work calls pci_host_handle_link_down() on
+> the Root Port, which runs the AER-style recovery and resets the
+> controller through reset_root_port(); it holds a reference on the port,
+> which can be removed through sysfs meanwhile. The check also reports a
+> recovery already pending, whether started by another interrupt or left
+> over from a failed reset, so the handler issues no further DBI accesses
+> until a reset succeeds.
+> 
+> Arm the detection once enumeration is done, as the recovery needs the
+> Root Port to exist. Only unmasked status bits are handled and pending
+> latches are cleared when the sources are re-enabled, so requests
+> recorded during probe or the reset itself do not trigger another
+> recovery. Teardown only disarms the detection: MSI delivery has to keep
+> working while devices are removed.
+> 
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
 
-Fix this by adding generic suspend/resume noirq ops for the controller,
-which tear the link down on suspend, and restart it on resume. Use the
-same PM ops on all of R-Car Gen4 to gracefully suspend and resume the
-PCIe link on V4H and S4 too.
-
-Test case which demonstrates the problem on R-Car V4M:
-"
-$ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/pre
-$ echo s2idle > /sys/power/mem_sleep
-$ echo platform > /sys/power/pm_test
-$ echo mem > /sys/power/state
-$ hexdump -vC /sys/bus/pci/devices/0000:00:00.0/config > /tmp/post
-$ diff -Naru /tmp/pre /tmp/post
-...
--00000000  12 19 32 00 07 05 10 00  00 00 04 06 00 00 01 00
-+00000000  12 19 32 00 07 05 10 00  00 00 00 ff 00 00 80 00
-                                          ^^^^^
-                                    Class 0604->00ff
-"
-
-Fixes: 0d0c551011df ("PCI: rcar-gen4: Add R-Car Gen4 PCIe controller support for host mode")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Koichiro Den <den@valinux.co.jp>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Koichiro Den <den@valinux.co.jp>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Add TB from Geert for RC mode
-    - Use pm_sleep_ptr()
-    - Call HOST suspend/resume ops only in case the controller is in RC mode
-V3: - Add RB from Geert
-    - Make rcar_gen4_pcie_pm_ops() static
-    - Pull the mode from driver data
-V4: - Add TB from Den-san
-V5: - Set pp->use_atu_msg = true to use generic MSG TLP for sending PME_Turn_Off
-      (as suggested by Den-san)
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 27 +++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 2e7a8d85c0060..fceecbd16355c 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -671,6 +671,8 @@ static int rcar_gen4_add_dw_pcie_rp(struct rcar_gen4_pcie *rcar)
- 		return -ENODEV;
- 
- 	pp->num_vectors = MAX_MSI_IRQS;
-+	/* Reserve an iATU window for the generic PME_Turn_Off implementation. */
-+	pp->use_atu_msg = true;
- 	pp->ops = &rcar_gen4_pcie_host_ops;
- 
- 	return dw_pcie_host_init(pp);
-@@ -1062,6 +1064,26 @@ static int rcar_gen4_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable
- 	return 0;
- }
- 
-+static int rcar_gen4_pcie_suspend_noirq(struct device *dev)
-+{
-+	struct rcar_gen4_pcie *rcar = dev_get_drvdata(dev);
-+
-+	if (rcar->drvdata->mode != DW_PCIE_RC_TYPE)
-+		return 0;
-+
-+	return dw_pcie_suspend_noirq(&rcar->dw);
-+}
-+
-+static int rcar_gen4_pcie_resume_noirq(struct device *dev)
-+{
-+	struct rcar_gen4_pcie *rcar = dev_get_drvdata(dev);
-+
-+	if (rcar->drvdata->mode != DW_PCIE_RC_TYPE)
-+		return 0;
-+
-+	return dw_pcie_resume_noirq(&rcar->dw);
-+}
-+
- static struct rcar_gen4_pcie_drvdata drvdata_r8a779f0_pcie = {
- 	.init = rcar_gen4_pcie_common_init,
- 	.deinit = rcar_gen4_pcie_common_deinit,
-@@ -1127,10 +1149,15 @@ static const struct of_device_id rcar_gen4_pcie_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rcar_gen4_pcie_of_match);
- 
-+static DEFINE_NOIRQ_DEV_PM_OPS(rcar_gen4_pcie_pm_ops,
-+			       rcar_gen4_pcie_suspend_noirq,
-+			       rcar_gen4_pcie_resume_noirq);
-+
- static struct platform_driver rcar_gen4_pcie_driver = {
- 	.driver = {
- 		.name = "pcie-rcar-gen4",
- 		.of_match_table = rcar_gen4_pcie_of_match,
-+		.pm = pm_sleep_ptr(&rcar_gen4_pcie_pm_ops),
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.probe = rcar_gen4_pcie_probe,
--- 
-2.53.0
-
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
