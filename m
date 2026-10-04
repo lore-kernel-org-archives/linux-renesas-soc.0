@@ -1,42 +1,41 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB8823E325;
-	Sun,  4 Oct 2026 09:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF11EEC0;
+	Sun,  4 Oct 2026 09:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791105293; cv=none; b=lTet5rOwPG812CpA57qU9M4qaE1sjg0v+ol7e9sS4Mg0pDmqhMNVShmMtB45FSvx1RWg6l3JT4gz6pDM9xguvEnLb1UssOUTO5FZUPja8h0g89+Ci+Du2N8C6DKbzsBfx4VFXopxdyUaOr0yrS33eeYdrIDs9zEW5LrGFaA5Pyk=
+	t=1791105416; cv=none; b=HNXE/Xk3ldozcCOnPrb1HWJ8IDfYz7iF6tK8BHm+uHo7xK6b4QJUIsdZMzQU6beQ9k2V0aitNVBFAoAESpB17SLAlFQNn61lbsZEqM5DNF+qQCbTZMRFWnuzWydf2LTVEhwf3ZJ3FFZslw865HmATThS5/Xxkwz/LrAP2ClqwkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791105293; c=relaxed/simple;
-	bh=m24J8QWxE2ewvQOWjbW2sUjPKip/IP43KF+FDYqbYOE=;
+	s=arc-20240116; t=1791105416; c=relaxed/simple;
+	bh=s0J8jpGcFGHV4AOczf24YcjhD3jDp8gujvZpm6R3mgE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOa8i+k5sKMckWG+vGGpJ0MAJcmb0rH+FnIqGHq045uqX/XvAy2UIdbf5BZqh+/PPE+1veiZoitV+Rt1vmbBpgGL1uU9Pd4Bt/FQqPX8z9duN7sHG57FPZkfvY/ESPwmnEvZvgspU7opUaVTXFREt0qSTNAj8euS7VitCSfQcM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GC32X11Y; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=s0xbp33mJOdHcuip7fMm9KYAxGXNPj6s6CI2kqyWP56pxrDmAOInz8+HnSXjJehd9es6ecS+P6c8vDdUpFnxsiBFHJZuclpfUK14mbKHEk0RfvPkJQqJ72+Ov+xG1arH5C3DVKs3yuX7x86wKWw549Xfu/LUvuSrS29qwpqSsdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UbUqdXNq; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GC32X11Y"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UbUqdXNq"
 Received: from ideasonboard.com (unknown [93.65.100.155])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DA76982A;
-	Sun,  4 Oct 2026 11:12:45 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8154B82A;
+	Sun,  4 Oct 2026 11:14:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1791105165;
-	bh=m24J8QWxE2ewvQOWjbW2sUjPKip/IP43KF+FDYqbYOE=;
+	s=mail; t=1791105297;
+	bh=s0J8jpGcFGHV4AOczf24YcjhD3jDp8gujvZpm6R3mgE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GC32X11Y3zkuHP+4VTu6H6pDo+i8FMJDZ1/EtWuxOcdeouV31n7m2LrbrWouAZaMA
-	 ya9EyotvdThODQGOoXvlDjlruAc6MHVmI9guAFz/xp4sKfRRi8RftIyft3y8liKbSq
-	 aS0N/4SnMmnlotoza9QbFEl38r7o1HnH5s0Epjqw=
-Date: Sun, 4 Oct 2026 11:14:37 +0200
+	b=UbUqdXNq22Bd3vdEalzZri/OmoFahQqtvjYNmc75GldXAd2+55yPXYfcpnA/uDUk+
+	 ld7MIwi8PgXRri8+xuj5BIBKudAXT8kct5/2u2EM89FrGJPq1shbzUMDPeb4ibmbOd
+	 Y2UXwUitL9YnQzvwJYH+ZxtCGoEsNpP/z31psVSY=
+Date: Sun, 4 Oct 2026 11:16:48 +0200
 From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 To: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>
 Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
 	Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: rcar-isp: ispcore: Fix inconsistent step sizes
-Message-ID: <asIXMIVjbusYLbaR@zed>
-References: <20261001085130.84565-1-barnabas.pocze+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2] media: rcar-vin: Implement VIDIOC_ENUM_FRMSIZES
+Message-ID: <asIZcew-rinp5W4z@zed>
+References: <20261001085304.85930-1-barnabas.pocze+renesas@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -46,139 +45,140 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261001085130.84565-1-barnabas.pocze+renesas@ideasonboard.com>
+In-Reply-To: <20261001085304.85930-1-barnabas.pocze+renesas@ideasonboard.com>
 
 Hi Barnabás
 
-On Thu, Oct 01, 2026 at 10:51:30AM +0200, Barnabás Pőcze wrote:
-> `risp_io_{input,capture}_enum_framesizes()` sets the horizontal and vertical
-> step size to 2. However, `risp_io_{input,capture}_try_format()` passes 2
-> to `v4l_bound_align_image()`, which corresponds to a step size of 2^2 = 4.
+On Thu, Oct 01, 2026 at 10:53:04AM +0200, Barnabás Pőcze wrote:
+> Currently there is no way for applications to query the available frame
+> sizes, so implement `VIDIOC_ENUM_FRMSIZES` based on what is allowed in
+> `rvin_format_align()`.
 >
-> So move these constants into macros to avoid the repetition, and with that,
-> use 4 as the step size everywhere.
-
-Why 4 ?
-
-I can't find any such limit in documentation.
-
-For input I don't find alignment constraints nor in CS or VSPX
-documentation.
-
-For output I only see a requirement that the stride is 256 bits
-aligned, something that is enforced by risp_io_capture_try_format()
-already.
-
-I see Niklas has reviewed the patch, so he might have found somewhere
-in the long documentation where the alignment for both input and
-capture nodes is described.
-
->
-> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
 > Signed-off-by: Barnabás Pőcze <barnabas.pocze+renesas@ideasonboard.com>
 > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
 > ---
 > changes in v2:
->   * fix typo
+>   * drop ` from title
 >
-> v1: https://lore.kernel.org/linux-media/20260929133020.342677-2-barnabas.pocze+renesas@ideasonboard.com
+> v1: https://lore.kernel.org/linux-media/20260929133720.344955-1-barnabas.pocze+renesas@ideasonboard.com/
 > ---
->  .../media/platform/renesas/rcar-isp/core-io.c | 40 +++++++++++--------
->  1 file changed, 24 insertions(+), 16 deletions(-)
+>  .../platform/renesas/rcar-vin/rcar-v4l2.c     | 70 ++++++++++++++-----
+>  1 file changed, 51 insertions(+), 19 deletions(-)
 >
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> index 820af506f896c..b60b91f43d42d 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> @@ -15,6 +15,12 @@
+> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> index 9d45e11898c13..4961d28f42c78 100644
+> --- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> @@ -19,6 +19,8 @@
+>  #include "rcar-vin.h"
 >
->  #include "risp-core.h"
+>  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+> +#define RVIN_MIN_WIDTH		5
+> +#define RVIN_MIN_HEIGHT		2
+>  #define RVIN_DEFAULT_WIDTH	800
+>  #define RVIN_DEFAULT_HEIGHT	600
+>  #define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
+> @@ -187,6 +189,24 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+>  	}
+>  }
 >
-> +#define RISP_MIN_WIDTH 128
-> +#define RISP_MAX_WIDTH 5120
-> +#define RISP_MIN_HEIGHT 128
-> +#define RISP_MAX_HEIGHT 4096
-> +#define RISP_SIZE_ALIGNMENT 2 /* 2^2 = 4 */
-
-The fact that 2 means 2^2 is only because of how
-v4l_bound_align_image() is implemented
-
+> +static u32 rvin_format_width_alignment(u32 pixelformat)
+> +{
+> +	/* Hardware limits width alignment based on format. */
+> +	switch (pixelformat) {
+> +	/* Multiple of 32 (2^5) for NV12/16. */
+> +	case V4L2_PIX_FMT_NV12:
+> +	case V4L2_PIX_FMT_NV16:
+> +		return 5;
+> +	/* Multiple of 2 (2^1) for YUV. */
+> +	case V4L2_PIX_FMT_YUYV:
+> +	case V4L2_PIX_FMT_UYVY:
+> +		return 1;
+> +	/* No multiple for RGB. */
+> +	default:
+> +		return 0;
+> +	}
+> +}
 > +
->  #define risp_io_err(d, fmt, arg...)         dev_err((d)->core->dev, fmt, ##arg)
->
->  static struct risp_buffer *risp_io_vb2buf(struct vb2_v4l2_buffer *vb)
-> @@ -330,8 +336,9 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
+>  static void rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
 >  {
->  	unsigned int bpp = 0;
+>  	u32 walign;
+> @@ -208,27 +228,12 @@ static void rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
+>  		break;
+>  	}
 >
-> -	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-> -			      &pix->height, 128, 4096, 2, 0);
-> +	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> +			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-
-Should we maybe use 1 here, unless it is documented that 4 is a
-requirement ?
-
-My suspicion is that we originally meant '2' everywhere, but
-v4l_bound_align_image() is weird and if you pass '2' in it means
-'2^2' and this went unnoticed.
-
+> -	/* Hardware limits width alignment based on format. */
+> -	switch (pix->pixelformat) {
+> -	/* Multiple of 32 (2^5) for NV12/16. */
+> -	case V4L2_PIX_FMT_NV12:
+> -	case V4L2_PIX_FMT_NV16:
+> -		walign = 5;
+> -		break;
+> -	/* Multiple of 2 (2^1) for YUV. */
+> -	case V4L2_PIX_FMT_YUYV:
+> -	case V4L2_PIX_FMT_UYVY:
+> -		walign = 1;
+> -		break;
+> -	/* No multiple for RGB. */
+> -	default:
+> -		walign = 0;
+> -		break;
+> -	}
+> +	walign = rvin_format_width_alignment(pix->pixelformat);
+>
+>  	/* Limit to VIN capabilities */
+> -	v4l_bound_align_image(&pix->width, 5, vin->info->max_width, walign,
+> -			      &pix->height, 2, vin->info->max_height, 0, 0);
+> +	v4l_bound_align_image(&pix->width, RVIN_MIN_WIDTH, vin->info->max_width, walign,
+> +			      &pix->height, RVIN_MIN_HEIGHT, vin->info->max_height, 0,
 > +			      0);
 >
->  	for (unsigned int i = 0; i < ARRAY_SIZE(risp_io_input_formats); i++) {
->  		if (risp_io_input_formats[i].fourcc == pix->pixelformat) {
-> @@ -423,13 +430,13 @@ static int risp_io_input_enum_framesizes(struct file *file, void *fh,
->
->  	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
->
-> -	fsize->stepwise.min_width = 128;
-> -	fsize->stepwise.max_width = 5120;
-> -	fsize->stepwise.step_width = 2;
-> +	fsize->stepwise.min_width = RISP_MIN_WIDTH;
-> +	fsize->stepwise.max_width = RISP_MAX_WIDTH;
-> +	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
->
-> -	fsize->stepwise.min_height = 128;
-> -	fsize->stepwise.max_height = 4096;
-> -	fsize->stepwise.step_height = 2;
-> +	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
-> +	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
-> +	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
->
->  	return 0;
+>  	pix->bytesperline = rvin_format_bytesperline(vin, pix);
+>  	pix->sizeimage = rvin_format_sizeimage(pix);
+> @@ -343,6 +348,32 @@ static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
+>  	return -EINVAL;
 >  }
-> @@ -720,8 +727,9 @@ static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
->  static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
->  				       struct v4l2_pix_format_mplane *pix)
+>
+> +static int rvin_enum_framesizes(struct file *file, void *priv,
+> +				struct v4l2_frmsizeenum *fsize)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	u32 wstep;
+> +
+> +	if (fsize->index != 0)
+> +		return -EINVAL;
+> +
+> +	if (!rvin_format_from_pixel(vin, fsize->pixel_format))
+> +		return -EINVAL;
+> +
+> +	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+> +
+> +	wstep = 1u << rvin_format_width_alignment(fsize->pixel_format);
+> +	fsize->stepwise.min_width = round_up(RVIN_MIN_WIDTH, wstep);
+> +	fsize->stepwise.max_width = vin->info->max_width;
+> +	fsize->stepwise.step_width = wstep;
+> +
+> +	fsize->stepwise.min_height = RVIN_MIN_HEIGHT;
+> +	fsize->stepwise.max_height = vin->info->max_height;
+> +	fsize->stepwise.step_height = 1;
+> +
+> +	return 0;
+> +}
+> +
+>  static int rvin_remote_rectangle(struct rvin_dev *vin, struct v4l2_rect *rect)
 >  {
-> -	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-> -			      &pix->height, 128, 4096, 2, 0);
-> +	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> +			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-> +			      0);
+>  	struct media_pad *pad = media_pad_remote_pad_first(&vin->pad);
+> @@ -564,6 +595,7 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+>  	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
+>  	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
+>  	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
+> +	.vidioc_enum_framesizes		= rvin_enum_framesizes,
 >
->  	pix->field = V4L2_FIELD_NONE;
->  	pix->colorspace = V4L2_COLORSPACE_SRGB;
-> @@ -824,13 +832,13 @@ static int risp_io_capture_enum_framesizes(struct file *file, void *fh,
->
->  	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
->
-> -	fsize->stepwise.min_width = 128;
-> -	fsize->stepwise.max_width = 5120;
-> -	fsize->stepwise.step_width = 2;
-> +	fsize->stepwise.min_width = RISP_MIN_WIDTH;
-> +	fsize->stepwise.max_width = RISP_MAX_WIDTH;
-> +	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
->
-> -	fsize->stepwise.min_height = 128;
-> -	fsize->stepwise.max_height = 4096;
-> -	fsize->stepwise.step_height = 2;
-> +	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
-> +	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
-> +	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
->
->  	return 0;
->  }
+>  	.vidioc_g_selection		= rvin_g_selection,
+>  	.vidioc_s_selection		= rvin_s_selection,
 > --
 > 2.55.0
 >
