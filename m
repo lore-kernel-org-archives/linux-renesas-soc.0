@@ -1,69 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB11F303C97;
-	Mon,  5 Oct 2026 17:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C813F363C5A;
+	Mon,  5 Oct 2026 18:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791221990; cv=none; b=GJ09AbOgSD8Zj2hqMiCXN0jiUjkc0AanZbRWJIWMhOT3mc3ud2ndHDjBS2G8jYy65rA4vNE29pH2XV6SnvxITJAL/IXJtpsiLq0ritc6pZHKTbFx2oeF8h4SNAm/QidwSIuE6jdafuQY89d0/uyULBAtvKRjynnodQML4DhjJHg=
+	t=1791226016; cv=none; b=Qxy6JGbufe5/HmPDGimzPPxl6w7JDHWFqi9gJVHo85MVZMAkdFNq+RUH2USd+y8huywBKK1kV4zUEW6/bORsPkPAD5S3MsutASGexGXXQ4x1eMeCN4LxKt58HIlCdl4IoBCRg6EWrpsDBhGbkLK+mk5/t3tDcw49FPR/rQEtulI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791221990; c=relaxed/simple;
-	bh=tVogYNVk/7RXiDaB46futlBqlXvruV/vsJHK5dC0+p4=;
+	s=arc-20240116; t=1791226016; c=relaxed/simple;
+	bh=zJy94wq+pxsvLL8zQ2fDXpGOCF5NanZqgXUp1EvccIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q7tPOe1RHgv86j3+748GTBlH79c1sV5VRWLfOl7XQOVGFHexnC3jZ/gnN8IdTcxGyf9Payog2axFRzQ9CAZbw9VOBY1c3YO+wFKkg7qTdbQxC0PJwzdnqp4veTnHQUWI12Wh/k5XoXO6GoW6b2LEmd4vCzXmDm8M/RLIzfZDTqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvTQ046L; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=GApkF7HAvQK1jhT68RyTTTF79Kxg8L07MWdNNVY3QKuYh89NTCrUvL/pmgfX5Gr0hd2uhfkp6XPPooZ4rB4r5cgmf+0L/an51gwaTNWPzxAOQpmy2rHJw597SkAl/4qXTB3A713+gO0ejMTJYINiOftzyBlqVNZVdVhl/Qr/TaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MABR9Alz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvTQ046L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6B71F000FF;
-	Mon,  5 Oct 2026 17:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791221989;
-	bh=Ctg/3slngj6Ax0VMHPrJemELmc/4CrkDcseM1aL//0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bvTQ046LixC0uLGHadKW38Yl1kgSpEg4V9I858WYwuiNdFpOo1jUXFeWeIJTRdAr5
-	 QN1rKQuVcBJ7ldJogcwyQWEo8ceBnFBfA8WmMpcTYjCDC+Jv6QzcoPTIkU5bcoIKkr
-	 P7EYGkEpVA9rVUnFr/RvGrqlDk/zeQWqJTEtsezdkT1Lm5ztw+yWMV1tlrrNfCTEeT
-	 BQrZ+JgDsYHSwB6WLrPJWUiCGulMQdC98P8razyZSME08znIeUh/aRlaQVoyHoOCu+
-	 RnsTLbcuQyXfPXyA5aoZvv7jRqo3aeele4NBloc0hNt1n2kbq82O8aWziPtZlsEfE+
-	 b5thB5K70nALA==
-Date: Mon, 5 Oct 2026 12:39:48 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Vincent Mailhol <mailhol@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MABR9Alz"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8863040E02A8;
+	Mon,  5 Oct 2026 18:46:51 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id WqRemdZ8-rBP; Mon,  5 Oct 2026 18:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1791226000; bh=JkX2GDHCaUk/bsmTXqai5KaSceDht0IEE6x+doMIyr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MABR9AlzoRB85EV/neOIxFXDjqhHkp0L0wp90cXC6dd3DOnHWA3dNmY5pNasCZiSb
+	 EIPqNQqPosZmIszXkCYnPItHiiOWVIW8Mr8ISjpjmVsQA9Qct0zYuTiNM+SyB9/kHF
+	 WhkPM2Y3V3xwq4A4iXZioYoAVHi5eDT3v9dwTBDv/HVojfnSjFPejJrSELSTNt1gtS
+	 tjRJlNKdgCCqd8QHJJgTxmi1A10KkJssn87bnWLfNYAgX3SxQrVT3NpeTeRATvzPc9
+	 fqqvZGy3FQvPTYh2l6izrCSD8Y3vrF/QqogSUvyT3p/x4iehzwqBkTd6h+XaRYY/j7
+	 KsakRUPELSVqdi84fMiDFGMdmTTuZk2Cdk2Hc6pj3LX0pCAW/gQErUw25P4t5TwYlw
+	 DwebbyJFBMSL2WKUcymrvLwLwPVLf6vhRtaB6tyy5Za1ePysipRLcIzKS1/V5oqizw
+	 sinyfw9/lmUFzU0s5/0nvKBsPz3IAY10vcRw+f7OKR73bP0EOhytit/jXaWZCSJbNj
+	 EGGZN8rWxyaExoH+5854LfTQZyGNiljANILgNMy2sPWT91hseJhT5Tdo1vKSGANtS6
+	 RThngi+aXsm9ue9+xNhY+/tjFmQM3OsFPLhwmE5NlHBSYZIb7KNz2t48HJoRJkfxN6
+	 gi+doYG5AJJwwsPg6qMXg2a8=
+Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::3a])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A50BC40E01B4;
+	Mon,  5 Oct 2026 18:46:24 +0000 (UTC)
+Date: Mon, 5 Oct 2026 11:46:21 -0700
+From: Borislav Petkov <bp@alien8.de>
+To: Paul Louvel <paul.louvel@bootlin.com>
+Cc: Tony Luck <tony.luck@intel.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Restrict resets in
- top-level
-Message-ID: <179122198795.1261273.168277489725207765.robh@kernel.org>
-References: <20261001060825.53335-2-krzysztof.kozlowski@oss.qualcomm.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v5 1/3] dt-bindings: edac: cdns,ddr-edac: add Cadence DDR
+ EDAC
+Message-ID: <20261005184621.GCasPwfaQNE0q6zykP@fat_crate.local>
+References: <20261005-paul-v7-3-rc1-edac-v5-0-140a0f124bc0@bootlin.com>
+ <20261005-paul-v7-3-rc1-edac-v5-1-140a0f124bc0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261001060825.53335-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20261005-paul-v7-3-rc1-edac-v5-1-140a0f124bc0@bootlin.com>
 
-
-On Thu, 01 Oct 2026 08:08:26 +0200, Krzysztof Kozlowski wrote:
-> Properties varying per variant of the device should still have the
-> broadest constraints set in the top level, so add such for the "resets".
-> Since top-level part says "reset-names" cannot accept one item, disallow
-> it for the two variants which do not use it in practice.
+On Mon, Oct 05, 2026 at 02:49:22PM +0200, Paul Louvel wrote:
+> Add the Cadence EDAC dt binding.
+> The memory controller optionally supports ECC SECDED with DDR2/DDR3
+> memory.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
 > ---
->  .../devicetree/bindings/net/can/renesas,rcar-canfd.yaml   | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
+>  .../devicetree/bindings/edac/cdns,ddr-edac.yaml    | 61 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  6 +++
+>  2 files changed, 67 insertions(+)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Needs review by DT maintainers if it is going to go through the EDAC tree, see
+output of:
 
+./scripts/get_maintainer.pl -f Documentation/devicetree/bindings/edac/
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
