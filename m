@@ -1,74 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f33.google.com (mail-wr2-f33.google.com [74.125.225.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216494D796C;
-	Mon,  5 Oct 2026 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0026D4CB8A6
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Oct 2026 15:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791215013; cv=none; b=M8sf8glynagrimT6pY77bJhE50+k7wJM7b/LPyfbPwH3ie0LUdd/pM8dHKbltGNfZnhsMgWDOnDXgDL+NdYk8LQGb8ae4RD3ZlTaLJg3F/uYhm57pYsgK3urvA89ULIOTARgMMLnTKuc650O77z+a5+4VdFxLzDPozH2i6WX10s=
+	t=1791215352; cv=none; b=hgzIGAgI6bwMyIiJPWWiz981vV3wo1+MGiZwHCBkiqvo3pJ9uHI7Wf38jooJLT4ppsC981isV4+8gqWcvCxLgrjHGyPV+O/i9TKvJFsF+yW/RSk6Li1DZpTMT4aXqO06MGOyMuliSF4Syek4EAxpkIkPij5ShSA5CUaaYN77FBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791215013; c=relaxed/simple;
-	bh=MGtCI72p328j03OTkEC7xfAJkAt4172XIwEPAbwPTRg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IvawWL4KI50oxHYq/yBkFyIWkgouW/qKHty+3x8DjFN5hR7aGdOkIG8x/9CyzdyLyWcdNU2Tr12qdXYA4+SGt/0ElNDvnsy9yEX5Oxab6FE+7R0MWwCXpBk7v0q8n7f0CbfmGBfp0RUOsqhkNbEhrmK1Ap9X9Z6KiT9A4pi8dUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUaACKvr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791215352; c=relaxed/simple;
+	bh=86vd1ZJmIRtc6IXUtGVaQflwbbFOYMvM7RqGwkiQTyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMp3y+8+lmA4/ERn3OSxOHE+GAUr3TUkVCkD9GeDrdH6kaPiHfpgMZ8cPayjH7xgjojaC/pBo9Mv4xNVa5ZaNURPmHzUt4GEtTAHO5sdQPfonWSx/wKHYLCuwcFaoSqdPciNnY1WDCor9HWqvTINHB+xQyh0hOQXZn83DRsdXIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGIhMdOO; arc=none smtp.client-ip=74.125.225.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUaACKvr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 364C91F000FF;
-	Mon,  5 Oct 2026 15:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791215011;
-	bh=2mhnBnDa3icGYBlrsRq1w0WPoVIqoiIvOyy81bKb3so=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=XUaACKvrL85sLcsCKGppctEwswqkz0y46759GPzWH6IWfvv15rfvUqguVEdufq0L8
-	 wG9NUWLDmTDqtUE//pKuwtEdNRxBevJVNvQ4KUXfLG+uaGeN9sPcYqSukrNokLbo2y
-	 y8jd0F7MvAXHcKYDfHRF/d9rtZG75SStAqJS3rm3Jq9Coz3MQCBZCKvg/SObgNa5r2
-	 Q6QHUPPsjh/Gig15vUCQVaNI2N0NVFonMGjru5LL/eplXE/6GfCVxET067IEBDExNN
-	 OVk3Ve43ThwdlEPqT73A4oY7TVGCaACaAmiyBIuiJ5+A4l75DgiLCdYnZ4pZC4UFuG
-	 eT00+8fBj2Nqg==
-From: Vinod Koul <vkoul@kernel.org>
-To: Frank.Li@kernel.org, biju.das.jz@bp.renesas.com, 
- geert+renesas@glider.be, Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: claudiu.beznea@tuxon.dev, dmaengine@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, stable@vger.kernel.org, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20260922092037.224884-1-claudiu.beznea@kernel.org>
-References: <20260922092037.224884-1-claudiu.beznea@kernel.org>
-Subject: Re: [PATCH] dmaengine: sh: rz-dmac: Fix off-by-one in residue
- lmdesc lookup
-Message-Id: <179121500885.358863.14766200941521520131.b4-ty@kernel.org>
-Date: Mon, 05 Oct 2026 17:43:28 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGIhMdOO"
+Received: by mail-wr2-f33.google.com with SMTP id ffacd0b85a97d-48c54d65743so1195942f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Oct 2026 08:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791215349; x=1791820149; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xDA7SE8Bs6IcBW2j1ppM+dM+f01g1/9YMIx6NP+5lIU=;
+        b=kGIhMdOODplxYSfKL1lo23U1KWeyPNRYHtFK7Fsl8PtSzaVOgXJ+DUn2Ju7wcPx+gH
+         FQ/0ER2YHiAHGW6i320V9MIdpqST5ZJZDfmIg6wbWQLB1HCyDPHk+5Yq3PL8KdQWWNx0
+         ipythfc3VEv4zIhFeI24BsR2P+H156RZM6td8ISyMx5BfbEqq58vxWG+GfLYVynUwDsi
+         sErL0z4mdj2ukZQb7YFG8ixxx1RasBi/whWEubuxs5D7BUSeJWvFKHnI39UXZa6r839o
+         SLZZ+n8uXZv3ygNlCLMDMDMFttAqPHTy9pnaeOo/ro6pbZqjMuCcbYntw9unpvGh343S
+         Jc8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791215349; x=1791820149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=xDA7SE8Bs6IcBW2j1ppM+dM+f01g1/9YMIx6NP+5lIU=;
+        b=c/gYVz2W4d0OqtqtqYc0vheshruoWE9VQKQAUhZOrSBYnXl+fEg4cqpAdT1VCw8nH0
+         XM8tmemBrfZOlBxega4P6tRFd8bAOddxsOfOdkrCIGeITCvJR00hyH98v4P2lh7TddUP
+         2uvKbrhFzAV2OQrgaIcrkDzo8TvsXc2vbgVSD+QrmHPN6SzZhA0molTYNgue7Mf1DbRi
+         RrJ++lH1JEkznFUBwIp5NRJInC566DNn6YtzyvudG1QRUp461A/kZDzgXYsFHHytyaCo
+         Z7jA1zv8sr3CypY0HnuRo4RnAAJh0AG3l6epyYC9NLJYd8jk3nbWMSQzhzOhZEo1IP7H
+         e2OQ==
+X-Gm-Message-State: AFq9FYKiK0Mkl0LSkxrAf9KZ9MgkSmLiXYMhQESoT4zgEFkuGG/dIg8X
+	MmSQMxbPVEWa5g9aEZLrH1LeY07PwIMCw7UeLLnljrdGCrSS8wu4cFls
+X-Gm-Gg: AYBFou1wju9/oKZfXpR/xFRqdMUiCL5wsELEA5Dx5N6aRhwGlH74i6SbFLlhf9aKf/s
+	+yzYAu8OvNEoAWVhV+Q78lp87fd+bexDdEvz3bnKNuC+/xAzQwUbaGltwJ1uWp9kwASFhPNHk80
+	lwP+LQbnHcTyfpA3WRZaAG2WEB8nAt2343RWiPNYuMwZQfdcU4jnBXVxJDbGLOwtJvJQM/3WdjE
+	zXAhwq8WLmk0OJZuLJ4uqPeEvybGE4hAbI7esNhI1tnfZc8H7qMHtuhlcySDoiH99RKHEiV38oB
+	v/Iu781LwdmDoM/ylvJtjBPPyqgN8zrpL26YFV2eNdz8kLPacOqaPmh+rtnsrXWYooFtxiyv5yC
+	2HLrH2pp2kW3q3zr+RP3gjSwTU0QfJtY1hwAxr7l+bcxq4X0EelAbkVPtrtxYF/mOuMDF+qL6nH
+	mqBgkjnYBcCR04ixm7Lw7VQW5Fha48VJ9AC+lZRuDM21RVnIkSnOuv1/eygbCZ4CeRAmCslZt3D
+	4HhCNhsKZMsgY5dmChHNJcVToGFt9b6AKcwwRABS+yBG0kugcr/75oZQhGSjbeC+2Pk23RJ9JUH
+	ZuwPwTbd
+X-Received: by 2002:a5d:5f42:0:b0:487:27f9:82f with SMTP id ffacd0b85a97d-48b1271aaa4mr19605297f8f.36.1791215348860;
+        Mon, 05 Oct 2026 08:49:08 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:19ee:7722:1d2a:b728])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c622704c1sm3714976f8f.10.2026.10.05.08.49.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Oct 2026 08:49:08 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Keep OTG VBUS disabled until role is known
+Date: Mon,  5 Oct 2026 16:48:41 +0100
+Message-ID: <20261005154841.168047-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, 22 Sep 2026 12:20:37 +0300, Claudiu Beznea wrote:
-> lmdesc->nxla is the address of the next descriptor, so comparing it
-> against CRLA, which is the address of the current descriptor,
-> finds the descriptor before the active one, not the active one.
-> The residue loops below then summed one lmdesc too many on top of
-> that.
-> 
-> Compare each descriptor's own address to CRLA instead, and add tb
-> after advancing to the next lmdesc.
-> 
-> [...]
+Prevent the OTG PHY from driving VBUS during probe, as the port role has
+not yet been determined and doing so can back-power an external host.
 
-Applied, thanks!
+Keep the regulator enabled while disabling its physical VBUS output until
+the port role is established. If disabling the hardware output fails,
+release the regulator reference to avoid leaving the regulator enabled
+after probe fails.
 
-[1/1] dmaengine: sh: rz-dmac: Fix off-by-one in residue lmdesc lookup
-      commit: 9db8e502b34bc1df8078abd0169a4fa0624de3bb
+Rename the regulator helper to reflect that it acquires the regulator
+without enabling its physical VBUS output.
 
-Best regards,
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 26 +++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index b5ba751805aa..08db619a43a0 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -1114,8 +1114,8 @@ static void rcar_gen3_phy_usb2_vbus_disable_action(void *data)
+ 	regulator_disable(vbus);
+ }
+ 
+-static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(struct rcar_gen3_chan *channel,
+-								  bool enable)
++static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive(struct rcar_gen3_chan *channel,
++							   bool acquire)
+ {
+ 	struct device *dev = channel->dev;
+ 	int ret;
+@@ -1133,15 +1133,27 @@ static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(struct rcar_ge
+ 		return 0;
+ 	}
+ 
+-	if (enable) {
++	if (acquire) {
+ 		ret = regulator_enable(channel->vbus);
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+-	if (regulator_is_enabled(channel->vbus))
++	if (regulator_is_enabled(channel->vbus)) {
++		/*
++		 * The internal regulator is enabled above only so that the regulator
++		 * core holds a reference to it. Do not drive VBUS until the port's
++		 * role is known; rcar_gen3_enable_vbus_ctrl() switches it from then on.
++		 */
++		ret = regulator_hardware_enable(channel->vbus, false);
++		if (ret) {
++			regulator_disable(channel->vbus);
++			return ret;
++		}
++
+ 		return devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_vbus_disable_action,
+ 						channel->vbus);
++	}
+ 
+ 	return 0;
+ }
+@@ -1151,7 +1163,7 @@ static int rcar_gen3_phy_usb2_vbus_regulator_register(struct rcar_gen3_chan *cha
+ 	struct device *dev = channel->dev;
+ 	struct regulator_config rcfg = { .dev = dev, };
+ 	struct regulator_dev *rdev;
+-	bool enable = false;
++	bool acquire = false;
+ 
+ 	rcfg.of_node = of_get_available_child_by_name(dev->of_node,
+ 						      "vbus-regulator");
+@@ -1165,10 +1177,10 @@ static int rcar_gen3_phy_usb2_vbus_regulator_register(struct rcar_gen3_chan *cha
+ 					     "Failed to create vbus-regulator\n");
+ 
+ 		channel->otg_internal_reg = true;
+-		enable = true;
++		acquire = true;
+ 	}
+ 
+-	return rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(channel, enable);
++	return rcar_gen3_phy_usb2_vbus_regulator_get_exclusive(channel, acquire);
+ }
+ 
+ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
 -- 
-~Vinod
-
+2.55.0
 
