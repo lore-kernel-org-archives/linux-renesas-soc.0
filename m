@@ -1,208 +1,157 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011055.outbound.protection.outlook.com [52.101.125.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3E643BDA7;
-	Mon,  5 Oct 2026 09:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791192268; cv=none; b=PL557lSa0Sg8vISRQS3feXcvnjLmQrL/FC6u5WHnFXCTn98stJ/6i1xFqXmYXpfbAcAl0Io4NGVY0JZ+4jtXPMeOsiaTamq6vGgXTOac/P2L0/wBHrS1dtCmPG03HKtqcoXmWfIUhzkCC0dDTrq/13f98cP/C7GnTnXTLHZ6mg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791192268; c=relaxed/simple;
-	bh=U4N7Uoho8EEs57T1hMidYG126Frn7XTAr/XTRAMt98c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLjYUDfczlvNhkqygMKrMIJvdwkqDHLEisYZO2Si1HRgnJ1wxkgEqIruduLZmElTRMFpCVAiFsH7ChurH7UTntV9OSD0meJQO3zK/ADp8uqO851zHpfQCExtEYL2X+qex8Oz1EbS0pKuAJhNM13m6KjjLe5BVJT4b1U8zQvs+xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ens7dtQc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D73C25B08E
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Oct 2026 10:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791195663; cv=fail; b=i9TKubJ7n+Rje9C2QczVk5+6fIia4VDDa4bp5stgg6KH8hD7AJBdbg8wXFctQYnc9M/3uyT1w3Tb7aZVl2wHSBX9Gi4/g0/Lc9QB049xlQqu/miGdGZhPuBquKKz37r/91wyFQHcB6rSk/roDtihJZKa0Jfwe4LJFZ7yynAg7f4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791195663; c=relaxed/simple;
+	bh=5+YZ7KPV7y//MGFh62pzuczay2IbNaPWlAcUWgzPrnY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VwAufKtBXXU9ODuQP+EbG4lCwC7wejdZo5lF+OMYdQGl3Jk2e7G81/6u1ryncGPp5WJgsfSEIBdlgGE0Ouq7kfO8E8vedlU9WikwT8CKv/ozWTgh2XX+SQWUK5K6/IqTu9jP94z7JsexZ1qwUALr9joLRDwAi8h5/mYHmSW5Vew=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=B0lxxHZg; arc=fail smtp.client-ip=52.101.125.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ens7dtQc"
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A9AFD63C;
-	Mon,  5 Oct 2026 11:22:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1791192141;
-	bh=U4N7Uoho8EEs57T1hMidYG126Frn7XTAr/XTRAMt98c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ens7dtQcXi0L1aeo/Al+rAk4+2MOzXQzG+TGoolT2kBmY4Q4mzYOg0B1vDEXelenl
-	 xBeE59C0zT7mk1dFFy4cuMPKhLWxqhgsUBK+CNY9FrFmnU0bK9ZfXzaSbqqtNPpxns
-	 vAz9GiAkYbZfpd1FB2eBRwfKHtwCN8ypsp5J7G50=
-Date: Mon, 5 Oct 2026 11:24:14 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: rcar-isp: ispcore: Fix inconsistent step sizes
-Message-ID: <asNsjkhHv9OoMjqm@zed>
-References: <20261001085130.84565-1-barnabas.pocze+renesas@ideasonboard.com>
- <asIXMIVjbusYLbaR@zed>
- <58f364aa-0960-4ae1-95e6-1313b9d08bdd@ideasonboard.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="B0lxxHZg"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OQlFV2WFRSl+AtCQVnwWwWTYKfD3Ra9VVXb/NmVm5sdWCk1Rvs+7d4PdKzUDEOR8JKLPd6507Sf1hCG6nsswd56aM1mJUDWZr1GBDBAC0xtBsrcDOPIhzUyH7iLdp4+dLCUTgHzb8iU9sjuymC6NMdMJj2l0ejiygh+8bfjTXU3KlFz8Jc+dlTZxuuJaxTByA+J8u1NVY/GfTdlNlauOuwJ1/VZHm7tI6j6cWP1KVirF7jWfMbg7i0MG3hroLjt9U8+UarnVSox+vXVZgQUvKiSRv0YvKqJ4m69dQAV8quyqJiPP3jxgx4AgPfr62XjeF7GzRXGXEYDKZM4W1D8SZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=570+fFPmlVpvDwXvMdeP0VkvM+9ZpKLzswlp2RzGYTM=;
+ b=oZjDysATwVsvtBGCL/Mdz6T3ofsDzB1o114m+RlCb9DhIVtO2fY6Hp1qDo3rtJpSlZm0SVleYs0VULA1fZHmTl6CAqmdRMr4/3oa9GBZxO08Z5qw+uZa54gPK5jC/hI/HdA28GWvD4GKbzYUeAawYd8i1G9Iu3tDD+M3uZQFuK+MJSxt9VTC9S8DBG7VLDP+sYJlmfxiFGqpCxPG4cwM+fxM/fw5piQ2RLTV/NT5E2DyE+0BpqAOnjBVCi5zM++WaTZhznIlqoY6BEwKkwwqThOFCE/3y5mU66vbvcTtqWv4/ZU2tPKCJppMG0mHwK0Rt4ZjTEX4bl2Sqix42bSGFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=570+fFPmlVpvDwXvMdeP0VkvM+9ZpKLzswlp2RzGYTM=;
+ b=B0lxxHZgcd69EE6mz1m7sq/oa1t/0xqAQWIXuMeH4e/8mC9xO3HGkwQ/2ofnpvD+HA5zkrct2TbX5NiN5gxajQUXZPjrtHQ3YMqL4M3Ov9H4ayCLRSKcWEksQJ1qSbpkNTlgDfGOrfDfFOx7tanPylYPSHwy6I9gFjqKG/ilfPo=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS9PR01MB14079.jpnprd01.prod.outlook.com (2603:1096:604:365::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 5 Oct
+ 2026 10:20:56 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0451.026; Mon, 5 Oct 2026
+ 10:20:55 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: kernel test robot <lkp@intel.com>
+CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, Philipp
+ Zabel <p.zabel@pengutronix.de>, "open list:PIN CONTROLLER - RENESAS"
+	<linux-renesas-soc@vger.kernel.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Mark Brown <broonie@kernel.org>
+Subject: RE: reset-rzg2l-usbphy-ctrl.c:undefined reference to `pwrseq_enable'
+Thread-Topic: reset-rzg2l-usbphy-ctrl.c:undefined reference to `pwrseq_enable'
+Thread-Index: AQHdVG/tLl7s2RO/T0GROpI2z0UrnLbuvI9Q
+Date: Mon, 5 Oct 2026 10:20:55 +0000
+Message-ID:
+ <TY3PR01MB11346125B244C4B1DC27BFA8F86962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <202610050445.WP4OvIgZ-lkp@intel.com>
+In-Reply-To: <202610050445.WP4OvIgZ-lkp@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB14079:EE_
+x-ms-office365-filtering-correlation-id: 61135267-4012-4f84-7e52-08df22ca5795
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|23010399003|1800799024|22082099003|18002099003|38070700021|11063799006|10067099003|56012099006;
+x-microsoft-antispam-message-info:
+ vrB0dtJPzl++epPVyE7OGz985LHO3/mf+9r72DM5Xaf94Hko7smIiMWSyNOkMR1SxJ1JL/i9ekrId4DZGUKxgUouI7zrcLu7yKjMaAYQQCGdYJG9dd4S5TY0GsYCtKy+cuR2gzwh8jio5HC6WM4UdJCHGEMjV37ZD/EiNXzKN/JinoImaH5aVLI80w9kOoaycDw64tZI2BtCr/nW2IPAuf9KaPOWpNj/gUZHHS0BsubONDdMXRkoaghzFaz1gPbvdgz8J4CsiHxMz3L5KmG6FGhUieOK3QRoDWNCgVYgcbnZwJFCRp6/4JpwueccjGX9bJC5MDauZ9aK13clz+Lut0pYwX3IG3zDuVhdUgcaCdV+rnhd+CJZeXtzntoOUNBpEl20UkbSqIwimNlityDgGT+iVOxRwofIE8TD8Dl6QYJ+uX7SPvySQSeLj62ci9PbFqjTpSfIeT7vY13Q8ZuI3z8EndiKN/IDA5B5OQMFGt4DoJlLPznSVa0OZixLMiYN8mas9nnkNptXwbIadlp75v3wni6q8N0cZuefN26EOiVmavZr29gsS4oAZykSii08dZwgx1RuXJIwsgPEb5cHhOGQfQK/MRwetnQCQ6SOrTyyw4MmQcDOwaTj+nbGTNOOtrxp29WrRP6f5PMNlk41Q8r6Ijs+Z2tZeGVTGPN+uPCdZemKUWu/Lck9z2AujXH79OZAn4kDVDA0254YvxshoSuFcykLteJFnBGsBU6gmWc=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(22082099003)(18002099003)(38070700021)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?HbCTwJCNKF3Ozbf5PfzDxGBqT2DEy/x0irZZ8vfu1IOvzoA5R26zGbIn2Toe?=
+ =?us-ascii?Q?wNS2SFDYVkCRozTL+hozgzvcE4+pXug14FVwKbTlWP0qsPJs4Ot2nNV+ESZu?=
+ =?us-ascii?Q?veezQRZ2GodMGGCZhdxK0pOb6YYZAZHdIf4Vkwq3fQ26+upy0yIMh0O7c9RS?=
+ =?us-ascii?Q?35ea/xX2mgbtK7iFgycUymE6L1cCVN0DK+ruyukDgrE5WpDkCrOJYKZ+sn09?=
+ =?us-ascii?Q?aaqGIMUzMUXBCFqKS1iQ6pxizKcgAcSSo6mtijricTlcwfa5xkWK8+MdsVIP?=
+ =?us-ascii?Q?vuBNg4PVJ2VQWc0xRTN2Q6MOLwAF1teupl+np0vVhgz0ee9BIQ7lAQ6zupLt?=
+ =?us-ascii?Q?YiOD7+QFMvFup90YOH5HABByptufZTuyDmZ82vh6QM2R9fslzGgYg3rx1b92?=
+ =?us-ascii?Q?/i5TjuiWA5sc6En+lKXuXilhwWGy1GRi7CTDLcAd0DKYR5VVqLv9CyrgFVnk?=
+ =?us-ascii?Q?wPX0OoONj+b/JgcfVDYvCQ2q//5g0Oqoaztn5sRdEYhYnYXRefVO+aCdJViM?=
+ =?us-ascii?Q?CKCpvszk3e31iWGMTPHkkuDOGLzL9sNV41t8o1B3LM8F6ZH9qYu2PeQzeWzq?=
+ =?us-ascii?Q?U+xhjrk3DDlnEzm1F0b8UGANdZa5b2r28AEsZcKIfR6BJa7u6wQQX2Bq6dzg?=
+ =?us-ascii?Q?LYNj7ShlCJtCTotHqT3enUjhWc8OotsVsShHjHNH/JacxPULnzi/o132vdVG?=
+ =?us-ascii?Q?UnFHsYazzlMW/+ITZf1MxxPnCa0sZsSvMYiG2Ktu/O0nrM2+fbbvgZNVdCNK?=
+ =?us-ascii?Q?C/P20HFiTdRRs3f+FAMzf1tDMx+xsKmXIiFiqcP+ZHk74jFdymEo0rzv0xEZ?=
+ =?us-ascii?Q?g5ALowlB8i2aItCjkdYwLMfZyHYHd34wu7qO6EN4vOICEyBXDK1Gr7jmo57O?=
+ =?us-ascii?Q?ozXql1VJtkukxA2ET/duRJEOCV9pWWJSv4xU3eTFd1jg2DN4aw7yi+ALXZRz?=
+ =?us-ascii?Q?WSoqgEKPXp4psdad4526bI6Kc/rQtXgNttxOt7idvn06QJlb1GMODsQw7Im4?=
+ =?us-ascii?Q?IV5o0UIt3kj0EJ4Z+l4BekWO8BI2BZZEgh64Z+IjSYiJhCt7Cr/J5AJ36nBF?=
+ =?us-ascii?Q?MuBADlGsPtHnhSDut2QRMG6T5kJv2vfrnNy6J/jA01nyuH0gTuhT20L4gzxk?=
+ =?us-ascii?Q?WzcyrHr87NYu+/z2sIpVbIBdT8KUqvjD7mMIwV3sKRyAqglBQ6ZTLFquD4BH?=
+ =?us-ascii?Q?e6Jik2oHBp98+DnAYhbFlOaYx+b8TAanEd63JRBpY5A5tzR1GIy+2FVHmXNt?=
+ =?us-ascii?Q?OAWjfmZ9PmPPVHjdqWQyFeRXtAj6Zj1EqIE11HcA2XFNGPS2Kc1HFj4lXlwb?=
+ =?us-ascii?Q?Wml78ibpoYfrmWcLkkLS40AGrHvQqXmzKpNq60qX0/XXFUz5du1GC68E40zn?=
+ =?us-ascii?Q?jrjZExyxxjARRDGfYK4whWUjG/uRbWFQnEnLAj6WjyAxRs8nRfIhk2VAmll8?=
+ =?us-ascii?Q?7eOVKaWMbnSrmfU7/GJEjzI2MNQhV5lFUFZJgPtq0IJePlW6LmtFzPVqP5ez?=
+ =?us-ascii?Q?9Lm4KuDZbvSTfXTNhp5fljGgIYkef4pnN+PtwJmdeUl0BpJ8bIplrg9UMspY?=
+ =?us-ascii?Q?UOVeu+v2UhJgMVtNo4bIROEzaa5ARQZ4zEBKwNYllBLonuRX7iEyfEEjYQYQ?=
+ =?us-ascii?Q?7Kr5H7gGTKQuKxUpZSmVfmYqDx2W/15MmldhoQC6dWJxaSs+mJZaPAt8mi9e?=
+ =?us-ascii?Q?+9ej0mFoeTB7fNeSXrOOflPHnS3iB4VuiYGKq5REa9G3NohoB+xWdZhHI5Lg?=
+ =?us-ascii?Q?YqRyayDkiQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <58f364aa-0960-4ae1-95e6-1313b9d08bdd@ideasonboard.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61135267-4012-4f84-7e52-08df22ca5795
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2026 10:20:55.7590
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m2AEKMi+5teKGiScKQosS17ecGuxUIEowN0nXgWAyx0DjViG8/8DCrU5dB7cEVEk7u/GanO9AcOtylrSoedKhemBo4hqTchzbfd1WlTLnwc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14079
 
-Hi Barnabás
+Hi All,
 
-On Mon, Oct 05, 2026 at 10:55:00AM +0200, Barnabás Pőcze wrote:
-> 2026. 10. 04. 11:14 keltezéssel, Jacopo Mondi írta:
-> > Hi Barnabás
-> >
-> > On Thu, Oct 01, 2026 at 10:51:30AM +0200, Barnabás Pőcze wrote:
-> > > `risp_io_{input,capture}_enum_framesizes()` sets the horizontal and vertical
-> > > step size to 2. However, `risp_io_{input,capture}_try_format()` passes 2
-> > > to `v4l_bound_align_image()`, which corresponds to a step size of 2^2 = 4.
-> > >
-> > > So move these constants into macros to avoid the repetition, and with that,
-> > > use 4 as the step size everywhere.
-> >
-> > Why 4 ?
-> >
-> > I can't find any such limit in documentation.
-> >
-> > For input I don't find alignment constraints nor in CS or VSPX
-> > documentation.
-> >
-> > For output I only see a requirement that the stride is 256 bits
-> > aligned, something that is enforced by risp_io_capture_try_format()
-> > already.
-> >
-> > I see Niklas has reviewed the patch, so he might have found somewhere
-> > in the long documentation where the alignment for both input and
-> > capture nodes is described.
->
-> My primary goal was to remove the inconsistency between the reported and applied
-> step sizes. So I went with 4 because that was the applied step size, so with that,
+> -----Original Message-----
+> From: kernel test robot <lkp@intel.com>
+> Sent: 05 October 2026 03:19
+> To: Biju Das <biju.das.jz@bp.renesas.com>
+> Cc: oe-kbuild-all@lists.linux.dev; 0day robot <lkp@intel.com>
+> Subject: reset-rzg2l-usbphy-ctrl.c:undefined reference to `pwrseq_enable'
 
-Let's first clarify if the 4 was intentional or is the API of
-v4l_bound_align_image() that confused us.
+I can reproduce this issue on loongarch build and the issue is fixed
+by below changes
 
-Niklas: any recollection here ?
+biju@biju:~/share/linux-work/linux$ git diff
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index eda9c698a95f..d1067f2188e9 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -269,7 +269,7 @@ config RESET_RASPBERRYPI
+=20
+ config RESET_RZG2L_USBPHY_CTRL
+        tristate "Renesas RZ/G2L USBPHY control driver"
+-       depends on ARCH_RZG2L || COMPILE_TEST
++       depends on ARCH_RZG2L || (COMPILE_TEST && POWER_SEQUENCING)
+        select MFD_SYSCON
+        help
+          Support for USBPHY Control found on RZ/G2L family. It mainly
 
-> it's quite certain that nothing that has worked will break.
->
-> Admittedly I do not know if that is the correct number, but I think that can
-> be considered a separate issue.
->
->
->
-> >
-> > >
-> > > Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
-> > > Signed-off-by: Barnabás Pőcze <barnabas.pocze+renesas@ideasonboard.com>
-> > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > > ---
-> > > changes in v2:
-> > >    * fix typo
-> > >
-> > > v1: https://lore.kernel.org/linux-media/20260929133020.342677-2-barnabas.pocze+renesas@ideasonboard.com
-> > > ---
-> > >   .../media/platform/renesas/rcar-isp/core-io.c | 40 +++++++++++--------
-> > >   1 file changed, 24 insertions(+), 16 deletions(-)
-> > >
-> > > diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> > > index 820af506f896c..b60b91f43d42d 100644
-> > > --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> > > +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> > > @@ -15,6 +15,12 @@
-> > >
-> > >   #include "risp-core.h"
-> > >
-> > > +#define RISP_MIN_WIDTH 128
-> > > +#define RISP_MAX_WIDTH 5120
-> > > +#define RISP_MIN_HEIGHT 128
-> > > +#define RISP_MAX_HEIGHT 4096
-> > > +#define RISP_SIZE_ALIGNMENT 2 /* 2^2 = 4 */
-> >
-> > The fact that 2 means 2^2 is only because of how
-> > v4l_bound_align_image() is implemented
-> >
-> > > +
-> > >   #define risp_io_err(d, fmt, arg...)         dev_err((d)->core->dev, fmt, ##arg)
-> > >
-> > >   static struct risp_buffer *risp_io_vb2buf(struct vb2_v4l2_buffer *vb)
-> > > @@ -330,8 +336,9 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
-> > >   {
-> > >   	unsigned int bpp = 0;
-> > >
-> > > -	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-> > > -			      &pix->height, 128, 4096, 2, 0);
-> > > +	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> > > +			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-> >
-> > Should we maybe use 1 here, unless it is documented that 4 is a
-> > requirement ?
-> >
-> > My suspicion is that we originally meant '2' everywhere, but
-> > v4l_bound_align_image() is weird and if you pass '2' in it means
-> > '2^2' and this went unnoticed.
-> >
-> > > +			      0);
-> > >
-> > >   	for (unsigned int i = 0; i < ARRAY_SIZE(risp_io_input_formats); i++) {
-> > >   		if (risp_io_input_formats[i].fourcc == pix->pixelformat) {
-> > > @@ -423,13 +430,13 @@ static int risp_io_input_enum_framesizes(struct file *file, void *fh,
-> > >
-> > >   	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
-> > >
-> > > -	fsize->stepwise.min_width = 128;
-> > > -	fsize->stepwise.max_width = 5120;
-> > > -	fsize->stepwise.step_width = 2;
-> > > +	fsize->stepwise.min_width = RISP_MIN_WIDTH;
-> > > +	fsize->stepwise.max_width = RISP_MAX_WIDTH;
-> > > +	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
-> > >
-> > > -	fsize->stepwise.min_height = 128;
-> > > -	fsize->stepwise.max_height = 4096;
-> > > -	fsize->stepwise.step_height = 2;
-> > > +	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
-> > > +	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
-> > > +	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
-> > >
-> > >   	return 0;
-> > >   }
-> > > @@ -720,8 +727,9 @@ static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
-> > >   static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
-> > >   				       struct v4l2_pix_format_mplane *pix)
-> > >   {
-> > > -	v4l_bound_align_image(&pix->width, 128, 5120, 2,
-> > > -			      &pix->height, 128, 4096, 2, 0);
-> > > +	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> > > +			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-> > > +			      0);
-> > >
-> > >   	pix->field = V4L2_FIELD_NONE;
-> > >   	pix->colorspace = V4L2_COLORSPACE_SRGB;
-> > > @@ -824,13 +832,13 @@ static int risp_io_capture_enum_framesizes(struct file *file, void *fh,
-> > >
-> > >   	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
-> > >
-> > > -	fsize->stepwise.min_width = 128;
-> > > -	fsize->stepwise.max_width = 5120;
-> > > -	fsize->stepwise.step_width = 2;
-> > > +	fsize->stepwise.min_width = RISP_MIN_WIDTH;
-> > > +	fsize->stepwise.max_width = RISP_MAX_WIDTH;
-> > > +	fsize->stepwise.step_width = 1u << RISP_SIZE_ALIGNMENT;
-> > >
-> > > -	fsize->stepwise.min_height = 128;
-> > > -	fsize->stepwise.max_height = 4096;
-> > > -	fsize->stepwise.step_height = 2;
-> > > +	fsize->stepwise.min_height = RISP_MIN_HEIGHT;
-> > > +	fsize->stepwise.max_height = RISP_MAX_HEIGHT;
-> > > +	fsize->stepwise.step_height = 1u << RISP_SIZE_ALIGNMENT;
-> > >
-> > >   	return 0;
-> > >   }
-> > > --
-> > > 2.55.0
-> > >
-> > >
->
+Cheers,
+Biju
+
+=20
+
