@@ -1,157 +1,159 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011055.outbound.protection.outlook.com [52.101.125.55])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010069.outbound.protection.outlook.com [52.101.229.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D73C25B08E
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Oct 2026 10:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0347CA81;
+	Mon,  5 Oct 2026 11:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791195663; cv=fail; b=i9TKubJ7n+Rje9C2QczVk5+6fIia4VDDa4bp5stgg6KH8hD7AJBdbg8wXFctQYnc9M/3uyT1w3Tb7aZVl2wHSBX9Gi4/g0/Lc9QB049xlQqu/miGdGZhPuBquKKz37r/91wyFQHcB6rSk/roDtihJZKa0Jfwe4LJFZ7yynAg7f4=
+	t=1791198163; cv=fail; b=ZyE1SImCKZGeuMJPis+74/UiaQLj7OrfbhnjMwcrwIsIUAzXDcliYiGh6lVbft+TQaifc/KM9FkDNEr9ww2xUIiRz+9WnDhxPHiwk8KzA5dP4QDiEueWHvH+gSQwlSeOO5xbIdtBRXuJ35BJvgDpAiXK+TniWPmqO6mzHY8kFQQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791195663; c=relaxed/simple;
-	bh=5+YZ7KPV7y//MGFh62pzuczay2IbNaPWlAcUWgzPrnY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VwAufKtBXXU9ODuQP+EbG4lCwC7wejdZo5lF+OMYdQGl3Jk2e7G81/6u1ryncGPp5WJgsfSEIBdlgGE0Ouq7kfO8E8vedlU9WikwT8CKv/ozWTgh2XX+SQWUK5K6/IqTu9jP94z7JsexZ1qwUALr9joLRDwAi8h5/mYHmSW5Vew=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=B0lxxHZg; arc=fail smtp.client-ip=52.101.125.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1791198163; c=relaxed/simple;
+	bh=1Atrb+0V3MLH0RZxRF9qgYpTdygfJr9MXSyVR8C7dps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WNtLTNFAao4Ori3Ylos74ZvpvrbA+l954lPDf6jvUkUMDpqK/Nx51FyE5C9qH7GuBxMP2o6Ueur+qdWjIfiFdyOmY+4AHQdQduyKLD3pSsZ+4AqqOe6yVf7wP5yrvo/DCundogu7L8Q7oUbIsgtfCU+dtC3gXrfUWKdswaEtatA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=ValvWFw3; arc=fail smtp.client-ip=52.101.229.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="B0lxxHZg"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="ValvWFw3"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OQlFV2WFRSl+AtCQVnwWwWTYKfD3Ra9VVXb/NmVm5sdWCk1Rvs+7d4PdKzUDEOR8JKLPd6507Sf1hCG6nsswd56aM1mJUDWZr1GBDBAC0xtBsrcDOPIhzUyH7iLdp4+dLCUTgHzb8iU9sjuymC6NMdMJj2l0ejiygh+8bfjTXU3KlFz8Jc+dlTZxuuJaxTByA+J8u1NVY/GfTdlNlauOuwJ1/VZHm7tI6j6cWP1KVirF7jWfMbg7i0MG3hroLjt9U8+UarnVSox+vXVZgQUvKiSRv0YvKqJ4m69dQAV8quyqJiPP3jxgx4AgPfr62XjeF7GzRXGXEYDKZM4W1D8SZQ==
+ b=Bg3orlaZAGOYff2tsnqdTvQvurqb5sPhFPWpbeGolFM2yeIIVkd2Js2uf6m4Qw7afszqAem43VoHn0r4v5XJDwN4g1yHu+orrUvmead6e3wrceroNwj6QPNTxHUiyRLoCHABHHgRcOFKPz5F7MO4kfSskCdCP8HJEpse7XP0MQ86jmwzi695PCt/w0IAbpl35xzhvDiM67CWystcXRBFb0j2KTuKUEpUOUsAL0LuFFYM1p5Bw+FTfa7Xp/RhUUpxA0Vm2hNs8l/mOpraqykgLMkthIyC/eVZv0ANW64/3Fhs/xnstYm9j4VPbnmC23mrvlg70RUwSLD8NG78N6GZWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=570+fFPmlVpvDwXvMdeP0VkvM+9ZpKLzswlp2RzGYTM=;
- b=oZjDysATwVsvtBGCL/Mdz6T3ofsDzB1o114m+RlCb9DhIVtO2fY6Hp1qDo3rtJpSlZm0SVleYs0VULA1fZHmTl6CAqmdRMr4/3oa9GBZxO08Z5qw+uZa54gPK5jC/hI/HdA28GWvD4GKbzYUeAawYd8i1G9Iu3tDD+M3uZQFuK+MJSxt9VTC9S8DBG7VLDP+sYJlmfxiFGqpCxPG4cwM+fxM/fw5piQ2RLTV/NT5E2DyE+0BpqAOnjBVCi5zM++WaTZhznIlqoY6BEwKkwwqThOFCE/3y5mU66vbvcTtqWv4/ZU2tPKCJppMG0mHwK0Rt4ZjTEX4bl2Sqix42bSGFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ bh=Y/fcYpNLjBEpECwB+4aEqXY8kUy21PFM0EvC6Hu4l3E=;
+ b=uQRn8cIrAVJu7yaFYTZiCcNjL7Kc+tTIg9gMHwHMx79bfCEe5lZv9vD6yXtEocsI9UmKY9d6icaVtTd6zC/WOTMUENWHJEJbqJG2FUQF9EVkCmyZX05cZaprlWfTXXq0PnZGqUvh/bd6BgJZrw5sbS1/xksDdcQebSlXN0WcVdUuksoKnhmsXJ9hdT7rpO+yWqi6woKDBXIkZ6sasMPPmn8MVtopHKOulIFYBuz1KLdn6spqw1u3uanlaJRb/GuYz+O4jDYR+FLrGGvgFDAbG4bLbUUScWkjwrVakGK5ftWuhv5H4p0yr19PtsF8hgG1113/cGd9q6GY5CqkyzftEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=renesas.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=570+fFPmlVpvDwXvMdeP0VkvM+9ZpKLzswlp2RzGYTM=;
- b=B0lxxHZgcd69EE6mz1m7sq/oa1t/0xqAQWIXuMeH4e/8mC9xO3HGkwQ/2ofnpvD+HA5zkrct2TbX5NiN5gxajQUXZPjrtHQ3YMqL4M3Ov9H4ayCLRSKcWEksQJ1qSbpkNTlgDfGOrfDfFOx7tanPylYPSHwy6I9gFjqKG/ilfPo=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS9PR01MB14079.jpnprd01.prod.outlook.com (2603:1096:604:365::6) with
+ bh=Y/fcYpNLjBEpECwB+4aEqXY8kUy21PFM0EvC6Hu4l3E=;
+ b=ValvWFw3E/tE8bCNkB49FxBVzw+cixHnAiDcMC1LTRFsg9w7bUPJZxJR1rv60SkRmhl4irbhjcrA1k71KXEWEP3WCJFAf/96pbbFDTZhbYYfk002FA+aEweEmaE3kWUam/GyiyhfpdOc1hX55jXGdvtg6rWqndyloJYOqAlruXU=
+Received: from OS7P301CA0026.JPNP301.PROD.OUTLOOK.COM (2603:1096:604:26b::8)
+ by TYWPR01MB9939.jpnprd01.prod.outlook.com (2603:1096:400:237::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 5 Oct
- 2026 10:20:56 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0451.026; Mon, 5 Oct 2026
- 10:20:55 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: kernel test robot <lkp@intel.com>
-CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, Philipp
- Zabel <p.zabel@pengutronix.de>, "open list:PIN CONTROLLER - RENESAS"
-	<linux-renesas-soc@vger.kernel.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Mark Brown <broonie@kernel.org>
-Subject: RE: reset-rzg2l-usbphy-ctrl.c:undefined reference to `pwrseq_enable'
-Thread-Topic: reset-rzg2l-usbphy-ctrl.c:undefined reference to `pwrseq_enable'
-Thread-Index: AQHdVG/tLl7s2RO/T0GROpI2z0UrnLbuvI9Q
-Date: Mon, 5 Oct 2026 10:20:55 +0000
-Message-ID:
- <TY3PR01MB11346125B244C4B1DC27BFA8F86962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <202610050445.WP4OvIgZ-lkp@intel.com>
-In-Reply-To: <202610050445.WP4OvIgZ-lkp@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB14079:EE_
-x-ms-office365-filtering-correlation-id: 61135267-4012-4f84-7e52-08df22ca5795
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|23010399003|1800799024|22082099003|18002099003|38070700021|11063799006|10067099003|56012099006;
-x-microsoft-antispam-message-info:
- vrB0dtJPzl++epPVyE7OGz985LHO3/mf+9r72DM5Xaf94Hko7smIiMWSyNOkMR1SxJ1JL/i9ekrId4DZGUKxgUouI7zrcLu7yKjMaAYQQCGdYJG9dd4S5TY0GsYCtKy+cuR2gzwh8jio5HC6WM4UdJCHGEMjV37ZD/EiNXzKN/JinoImaH5aVLI80w9kOoaycDw64tZI2BtCr/nW2IPAuf9KaPOWpNj/gUZHHS0BsubONDdMXRkoaghzFaz1gPbvdgz8J4CsiHxMz3L5KmG6FGhUieOK3QRoDWNCgVYgcbnZwJFCRp6/4JpwueccjGX9bJC5MDauZ9aK13clz+Lut0pYwX3IG3zDuVhdUgcaCdV+rnhd+CJZeXtzntoOUNBpEl20UkbSqIwimNlityDgGT+iVOxRwofIE8TD8Dl6QYJ+uX7SPvySQSeLj62ci9PbFqjTpSfIeT7vY13Q8ZuI3z8EndiKN/IDA5B5OQMFGt4DoJlLPznSVa0OZixLMiYN8mas9nnkNptXwbIadlp75v3wni6q8N0cZuefN26EOiVmavZr29gsS4oAZykSii08dZwgx1RuXJIwsgPEb5cHhOGQfQK/MRwetnQCQ6SOrTyyw4MmQcDOwaTj+nbGTNOOtrxp29WrRP6f5PMNlk41Q8r6Ijs+Z2tZeGVTGPN+uPCdZemKUWu/Lck9z2AujXH79OZAn4kDVDA0254YvxshoSuFcykLteJFnBGsBU6gmWc=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(22082099003)(18002099003)(38070700021)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?HbCTwJCNKF3Ozbf5PfzDxGBqT2DEy/x0irZZ8vfu1IOvzoA5R26zGbIn2Toe?=
- =?us-ascii?Q?wNS2SFDYVkCRozTL+hozgzvcE4+pXug14FVwKbTlWP0qsPJs4Ot2nNV+ESZu?=
- =?us-ascii?Q?veezQRZ2GodMGGCZhdxK0pOb6YYZAZHdIf4Vkwq3fQ26+upy0yIMh0O7c9RS?=
- =?us-ascii?Q?35ea/xX2mgbtK7iFgycUymE6L1cCVN0DK+ruyukDgrE5WpDkCrOJYKZ+sn09?=
- =?us-ascii?Q?aaqGIMUzMUXBCFqKS1iQ6pxizKcgAcSSo6mtijricTlcwfa5xkWK8+MdsVIP?=
- =?us-ascii?Q?vuBNg4PVJ2VQWc0xRTN2Q6MOLwAF1teupl+np0vVhgz0ee9BIQ7lAQ6zupLt?=
- =?us-ascii?Q?YiOD7+QFMvFup90YOH5HABByptufZTuyDmZ82vh6QM2R9fslzGgYg3rx1b92?=
- =?us-ascii?Q?/i5TjuiWA5sc6En+lKXuXilhwWGy1GRi7CTDLcAd0DKYR5VVqLv9CyrgFVnk?=
- =?us-ascii?Q?wPX0OoONj+b/JgcfVDYvCQ2q//5g0Oqoaztn5sRdEYhYnYXRefVO+aCdJViM?=
- =?us-ascii?Q?CKCpvszk3e31iWGMTPHkkuDOGLzL9sNV41t8o1B3LM8F6ZH9qYu2PeQzeWzq?=
- =?us-ascii?Q?U+xhjrk3DDlnEzm1F0b8UGANdZa5b2r28AEsZcKIfR6BJa7u6wQQX2Bq6dzg?=
- =?us-ascii?Q?LYNj7ShlCJtCTotHqT3enUjhWc8OotsVsShHjHNH/JacxPULnzi/o132vdVG?=
- =?us-ascii?Q?UnFHsYazzlMW/+ITZf1MxxPnCa0sZsSvMYiG2Ktu/O0nrM2+fbbvgZNVdCNK?=
- =?us-ascii?Q?C/P20HFiTdRRs3f+FAMzf1tDMx+xsKmXIiFiqcP+ZHk74jFdymEo0rzv0xEZ?=
- =?us-ascii?Q?g5ALowlB8i2aItCjkdYwLMfZyHYHd34wu7qO6EN4vOICEyBXDK1Gr7jmo57O?=
- =?us-ascii?Q?ozXql1VJtkukxA2ET/duRJEOCV9pWWJSv4xU3eTFd1jg2DN4aw7yi+ALXZRz?=
- =?us-ascii?Q?WSoqgEKPXp4psdad4526bI6Kc/rQtXgNttxOt7idvn06QJlb1GMODsQw7Im4?=
- =?us-ascii?Q?IV5o0UIt3kj0EJ4Z+l4BekWO8BI2BZZEgh64Z+IjSYiJhCt7Cr/J5AJ36nBF?=
- =?us-ascii?Q?MuBADlGsPtHnhSDut2QRMG6T5kJv2vfrnNy6J/jA01nyuH0gTuhT20L4gzxk?=
- =?us-ascii?Q?WzcyrHr87NYu+/z2sIpVbIBdT8KUqvjD7mMIwV3sKRyAqglBQ6ZTLFquD4BH?=
- =?us-ascii?Q?e6Jik2oHBp98+DnAYhbFlOaYx+b8TAanEd63JRBpY5A5tzR1GIy+2FVHmXNt?=
- =?us-ascii?Q?OAWjfmZ9PmPPVHjdqWQyFeRXtAj6Zj1EqIE11HcA2XFNGPS2Kc1HFj4lXlwb?=
- =?us-ascii?Q?Wml78ibpoYfrmWcLkkLS40AGrHvQqXmzKpNq60qX0/XXFUz5du1GC68E40zn?=
- =?us-ascii?Q?jrjZExyxxjARRDGfYK4whWUjG/uRbWFQnEnLAj6WjyAxRs8nRfIhk2VAmll8?=
- =?us-ascii?Q?7eOVKaWMbnSrmfU7/GJEjzI2MNQhV5lFUFZJgPtq0IJePlW6LmtFzPVqP5ez?=
- =?us-ascii?Q?9Lm4KuDZbvSTfXTNhp5fljGgIYkef4pnN+PtwJmdeUl0BpJ8bIplrg9UMspY?=
- =?us-ascii?Q?UOVeu+v2UhJgMVtNo4bIROEzaa5ARQZ4zEBKwNYllBLonuRX7iEyfEEjYQYQ?=
- =?us-ascii?Q?7Kr5H7gGTKQuKxUpZSmVfmYqDx2W/15MmldhoQC6dWJxaSs+mJZaPAt8mi9e?=
- =?us-ascii?Q?+9ej0mFoeTB7fNeSXrOOflPHnS3iB4VuiYGKq5REa9G3NohoB+xWdZhHI5Lg?=
- =?us-ascii?Q?YqRyayDkiQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 2026 11:02:36 +0000
+Received: from OS1PEPF0000D214.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:26b:cafe::41) by OS7P301CA0026.outlook.office365.com
+ (2603:1096:604:26b::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.20 via Frontend Transport; Mon, 5
+ Oct 2026 11:02:36 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 8.62.32.50) smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
+ 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
+Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
+ OS1PEPF0000D214.mail.protection.outlook.com (10.167.240.21) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.14
+ via Frontend Transport; Mon, 5 Oct 2026 11:02:36 +0000
+Received: from vm01.adwin.renesas.com (unknown [10.226.93.89])
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 88F263000204;
+	Mon,  5 Oct 2026 20:02:33 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Subject: [PATCH] PCI: rzg3s-host: Fix NVMe resume errors after s2idle
+Date: Mon,  5 Oct 2026 11:02:24 +0000
+Message-ID: <20261005110224.17160-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61135267-4012-4f84-7e52-08df22ca5795
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2026 10:20:55.7590
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS1PEPF0000D214:EE_|TYWPR01MB9939:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: d5d85191-c9cd-485c-f5ed-08df22d02a56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|23010399003|36860700016|1800799024|10067099003|56012099006|6133799003|11063799006|5023799004|13003099007|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	41EUybhImkW8ApQ/J2Fm1gKOoe8ocu0xyBcd0z/qRRDH4fST4yViUzWGnBGW3DAv7GypYCTzRHMur7J1LfIyKV+/H++/+fCuyHqNtptgljX9znYqzc7nt8hPhSNU4NhG//lz/+4wC9SBwKC2Nlk39avblTc/657I06ctAPO0CRN0FkAZcQihAncY01KdXP2ATDSwQuFFH+qbfZTbS3juoJFgm8sYxcyOwlTXO3WG6OfnSCgIeth3rL/JkPdvX+/jGA6cnZydt9XguVqSc7DcZl7cAiQje2ETSV6/gpjUurrPaslG9mfLoaWviB2whGZOQg3GTvRTmU7VsqFU8DXN9a18sKy2csQLmmvBq4CiaIJ76NHHBri0PTiOs7QmJp3FBPNTc2644w+moxMBtY9A+SjiUlSDbryfGFqgE2CN7gBdmbuRpXAFMP6apahMgeNBU1LJtuq4xb7IqFZGLD6goQA5E0ib570Mr8PjqZCN33pk6Hwv4nMzINgHw9qGyfA9QZ9EjhjiO2z/uISI68cCBub55a7sMtjifkvfFx4HKkMSVBo+Gm+3zyv9FV2LZ19Ls/l81GvfFVn3fPhY5pTaC35Mwb7Vz1BZkGEn0V2jPGkvlh1l0p03DmOjee41HdNQYKa369TLzMEk8YEKHuXkYhh3iUnkHm9ueXA5yKAqic/NnAuNvGcnyVbC6WhHZL+pubyXjt8g8XLo0nwmAaoBLQ==
+X-Forefront-Antispam-Report:
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(23010399003)(36860700016)(1800799024)(10067099003)(56012099006)(6133799003)(11063799006)(5023799004)(13003099007)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	nsWMpbCTpZCrS6tZ4WIix6IuFCoQsoQttBhtUI9S8al0NsoASFnl8IdpyXlbVYGwrCcyGYLyczbdegF7C4r7uy5e0OCVOU1jmwdl17fJcU5xh9KBydyhS79UY0zbxDsmMk8BGR2uqMsumaIOKfdwj0bxvNup6QeENCypnZ0MjMkSdImKptlqWR6qwRlwKyx1iAOv681KPL/2funvcCDT5IGCEOT4HtYxKJWrRXy+UUQHi+jPgFMc6+TNIpYejLcHSwRLHMif6UeHi7kITVb32c/FUHlkHHGeLPVLqnWeMMPT9+LRw85pQRj5tTxFSReKZl7SnJyyzhagPmlek40KDOmoQgeQ4jPp9/1ylzn9TiTojoliEoPZ8Py/T3jxUdUuXON52OYzaPzFx3XiSSvDmr5cAFbQenKye8duzR/Gdyvl9ylLezk6IHFQASukFXH8
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2026 11:02:36.8167
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: m2AEKMi+5teKGiScKQosS17ecGuxUIEowN0nXgWAyx0DjViG8/8DCrU5dB7cEVEk7u/GanO9AcOtylrSoedKhemBo4hqTchzbfd1WlTLnwc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14079
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5d85191-c9cd-485c-f5ed-08df22d02a56
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D214.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9939
 
-Hi All,
+On the Renesas RZ/V2H platform, when ASPM is enabled, resuming from s2idle
+with an NVMe SSD connected fails with:
 
-> -----Original Message-----
-> From: kernel test robot <lkp@intel.com>
-> Sent: 05 October 2026 03:19
-> To: Biju Das <biju.das.jz@bp.renesas.com>
-> Cc: oe-kbuild-all@lists.linux.dev; 0day robot <lkp@intel.com>
-> Subject: reset-rzg2l-usbphy-ctrl.c:undefined reference to `pwrseq_enable'
+  nvme nvme0: I/O tag 27 (001b) opcode 0x9 (Admin Cmd) QID 0 timeout, reset controller
+  nvme nvme0: Disabling device after reset failure: -19
 
-I can reproduce this issue on loongarch build and the issue is fixed
-by below changes
+This happens because during s2idle, when ASPM is enabled, nvme_suspend()
+does not shut the drive down. It leaves it in D0, puts it in its lowest
+NVMe power state, so that resume only has to restore the previous power
+state instead of a full reinitialization. This assumes the drive keeps
+its context over the suspend.
 
-biju@biju:~/share/linux-work/linux$ git diff
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index eda9c698a95f..d1067f2188e9 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -269,7 +269,7 @@ config RESET_RASPBERRYPI
-=20
- config RESET_RZG2L_USBPHY_CTRL
-        tristate "Renesas RZ/G2L USBPHY control driver"
--       depends on ARCH_RZG2L || COMPILE_TEST
-+       depends on ARCH_RZG2L || (COMPILE_TEST && POWER_SEQUENCING)
-        select MFD_SYSCON
-        help
-          Support for USBPHY Control found on RZ/G2L family. It mainly
+However, rzg3s_pcie_suspend_noirq() doesn't take this into account and
+it always powers down the controller and asserts the controller resets,
+including PERST#. That resets the drive, and the command the NVMe driver
+sends on resume never completes.
 
-Cheers,
-Biju
+To fix this, similar to the dwc driver, use
+pci_host_common_d3cold_possible() to check if the controller should be
+powered down and keep the controller running otherwise. Do this only for
+s2idle, as deep sleep could power off the SoC and neither the power domain
+nor the driver will restore the controller clocks and resets on resume.
 
-=20
+Fixes: 7ef502fb35b2 ("PCI: Add Renesas RZ/G3S host controller driver")
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+Note: this fix depends on the following series:
+https://lore.kernel.org/all/20261002110935.2004349-1-claudiu.beznea@kernel.org/
+
+ drivers/pci/controller/pcie-rzg3s-host.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+index eea215818633..9fc1a5a4bed8 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -2272,6 +2272,14 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+ {
+ 	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
++	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
++	bool pme_capable;
++
++	if (!pm_suspend_via_firmware() &&
++	    !pci_host_common_d3cold_possible(bridge, &pme_capable)) {
++		device_set_awake_path(dev);
++		return 0;
++	}
+ 
+ 	return rzg3s_pcie_host_stop(host);
+ }
+-- 
+2.34.1
 
