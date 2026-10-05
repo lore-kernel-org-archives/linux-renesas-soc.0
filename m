@@ -1,77 +1,77 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB924EA90
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Oct 2026 11:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC713A9639
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Oct 2026 11:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791199145; cv=none; b=BJBAD0AbHU59BPI97xbYbQ1/pu2rzR8IjGf2WoZYswEuZk+YOgw7PZ5/jb6m6pBQ4rzDpVKnVmTFgb93BYrj5QTWQ6gwo4mln7hVXcNjgY7mwCktxOivIh+YzILFgs6qW7SN4neFg4+VRkRB7i1slsfv+1BkQvz1o+T0uwKVfTo=
+	t=1791199146; cv=none; b=TMOIKfDvnMmVAKt2ZluqlqcqYXDx6wWGQMAvMNPrCOTYo6qhPAG5WZOsx+zz2wPwOnOvF6CG2/OUoITcSizueNGLMk2rjNn6ju1nrcdmKpIveF96BYpVLUwhuvav3XB+MR8NV8T6PY+LT/lJomzza6cviI5yy9L+PSOz0pvohHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791199145; c=relaxed/simple;
-	bh=Xodd013biq2MKbL6kUChNNvwqCu5kE+metrYThk3sQs=;
+	s=arc-20240116; t=1791199146; c=relaxed/simple;
+	bh=/ZbSUdwpV48ZNs7jgbwX0X/UopChOClfTe/duGKze2E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cjgMePyyUiAQRf9b4LDPXQOtoRt9cQOcISLcIL3x2c5v7Ni1blGcrmd0F3UbsqEALDg2nc2fsgLH2zmhPMABl1wBtybu4FMwJATMwRFirvihTsfFh0gFB3BjAUNDxPOmRfjp+nR1U7zxMB0sGAUiZcZxm75B9RU/Q64q+LmJofg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3he1moz; arc=none smtp.client-ip=74.125.225.141
+	 MIME-Version; b=gY3xiAOsbdxjWaiduxSvGY6UIqxDrVqZ72DACyO8HtAXa35xRejW3Tpec+jSRIkobfZpcK5aIWpSeoTQfw/71x4gVnFLTyzFSAj8C4VNQUxfwM78GZAk8FwerfAk7XmFA9aB1M876TlpqKEVxqLtmQUnoGMnnnI/yoTduSeScF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAnT3vhW; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3he1moz"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49b912d822dso14021585e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Oct 2026 04:19:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAnT3vhW"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912d8239so14011325e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Oct 2026 04:19:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791199142; x=1791803942; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791199143; x=1791803943; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=EuELcdmeZ/Z2vaO4xtsB/FWfua8jRooRYaHxH5d0F4s=;
-        b=M3he1mozgitISdLXJUB5LK2jcedIKYYgJBhZ57PmcLn7EAsBEt860hR6BFuupGFf9H
-         nPwEHywiNX2CJ+KrFuKPqvbaR2oj82n+mC9tPdJNkjO+1cvr4dbBDk3uGS4BrJwqZfmY
-         ToMz9QF0We8iAoOHtFFtuWaKpeVDQCtuEr7JwkVUOiVip9OoubYm0bSjXm4HvpJBwbTo
-         G06Bp7R1vHxCCkZjKM5n3yo7VVvw9hl0a6LCagDeJRpS22dv93Q+HG6XvZp9PVT0Kmyn
-         nz7UApBGLcgkCX6q5uRfbyBZQwFHEA0ChiEvqgx9lhy+00+MRf6hDW0+l1m6z1tSzMLV
-         pMSg==
+        bh=OIeG7oYgHrMUat50/G4UEBP0LTimpfjYyHpWae96MHA=;
+        b=QAnT3vhWGygngo1S4svB+CzHP5S7W8FndTXH9ytw9WTn5EVFAKAARsOqEqQH7ncycF
+         JIhkt0KevTmt3J9s9KuCtHEpslKgBdBemN3RDpR52qqqY3zNpHAGn6iNvQECKhRDNhd5
+         TVWhyNiEH2u+G2QqPJwmFzJoEJeAwFrgOksg6Su7rGAmDkcJdG8YhaMFcFrqqnmrs7U6
+         f4tU/2E0cc8N55NrCmx0UGagkEsTY0aWiDBuSMR3jwi0vFDq4MSLPEVVThtqb8x6lQlk
+         ojPuHS0OaigaJ+ZdeWaMTQLqwo0cFG7wxY5rW8oniMJ3Z8zHDxEJDBPnXFgaaVzve7Hh
+         MK0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791199142; x=1791803942;
+        d=1e100.net; s=20260707; t=1791199143; x=1791803943;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EuELcdmeZ/Z2vaO4xtsB/FWfua8jRooRYaHxH5d0F4s=;
-        b=b2ckCLTl1zHPTYP4hisAKNc4DOUrYA16s4smKz7Skt2tbGTO4lwLrSnnZFeBDTJHtA
-         m4z+/7csHXN9cy1FHMCRTBQItxh/9fl6gd8UjCvhdncL8TKETLuAGZvNBMtlEI4gwjrA
-         4p/HEX42fiTrKcKtmOmVkYx2BcSR2P0ZutlCh1OPVjLnaOYehVmz6bohkemb8xuvJMHj
-         ykeRlV86qHT7uP5UFtfdEGdAojk5f8G2DbMaE18mfqNPf0qz3mHvMldJ6uZNgAX2hSpv
-         hQRQpq1ePz+ef8jiGe70BXBV9DtFofynuAvOFRFc816NHnADd+u+TGee0iInbmcQzXgD
-         fExw==
-X-Forwarded-Encrypted: i=1; AKwUvBwpmrNTr6RjLv6/T6c8n1BeihwwD77oZSSOAtsryQWgcYC6iFv7h+frHirixRfzVBoiRuaFJcGBpWGzI9bF1vGPxA==@vger.kernel.org
-X-Gm-Message-State: AFuF++mUzmgdDTQ+Axy8PYYr65u7mdxNHb/WYbgp97zKsnuHRM26o+6U
-	v2pF72mO1KY2/HmUuVuxhm/4yYfyBDjqIMsY/mzfDlztNtK80/NQmgHzFdjPEw==
-X-Gm-Gg: AYBFou1VFa5VLWTcOScJTdC8+FdVxQsN0U8KLG9+zT+8WF5iCS3ZMsLmaq0IaPypWTI
-	NAXJsNi0qM/xqZ66DO+qYafrVflAZAn2jp9XhndmAVv9xjyuN7yvSlLhSw+R78FpMrb+QJwM6BF
-	93r9eeA3jBVnX1xqTPAZOFT5bQxivKiaNGQWM8z9dIoD1ZxUnZb3kfH+qHi1A7gWUH7+V22hct9
-	2I10b0+ILk2Ug45L6ZCFj0ObfVDDSKMyrm7Bd242NUmlLtvnHk9UYIg695rOGa06ChyWRM0DcPT
-	j/JTipfl9woVg7YfQw9Iv5QO/+oXVj1euc09MTMY1B5ysTZCRbeE2IRsmxr0dkDUsmKmPpLYsvL
-	UK+zaMYGhsFqn3IAp4LTkdS0KUb7UDrAu8NzmdvAr2avkabq8EkdAizv0V4DzmC0OSLJ98vVaoL
-	+2EvqzQYeNtx7xGC+UBsFSMb4B/t2/6dmre85reJPlyTMPdZbU/Dwz2SKMcjvs/RA5zPi2w+4TU
-	7ueVsqQgRDEdA9bFWFO/JT4
-X-Received: by 2002:a05:600c:4592:b0:4a0:bc9:28c6 with SMTP id 5b1f17b1804b1-4a0276b6860mr160308985e9.34.1791199141934;
-        Mon, 05 Oct 2026 04:19:01 -0700 (PDT)
+        bh=OIeG7oYgHrMUat50/G4UEBP0LTimpfjYyHpWae96MHA=;
+        b=ymc1+7a9lIp3olUAVHmHQc+T+LLJSGIhqqbXu8r9rnZ/AkYXatJtyWMgfxpTFahOPN
+         xQylcetkZ9mGmG9pIkmoqJfDTF6TsPhNaE31KuGE1fjFOps5HmjGM3Jf1B1jIg98lRKK
+         85jWIWSgKCa0ZCJTBhJoU3sggJAih6k9Zxbsf3g7kUyFAioiif+PabP64JkBQ4IewNf8
+         EDhBGzs45qhxHc8AGUgHwnYdCXKeLA4PTUBy3XBqeoFpJyAYKUH6oqgyLfW64CbL9nf/
+         rREilCj8PPTAI6l4tRjcuADRvX4cmNPOutzKgT1WlAh4t+wIjDpCHaN/Zy6mf3JFMfMq
+         GSBg==
+X-Forwarded-Encrypted: i=1; AKwUvBxZlGxdc4/0pFzM8cztEVwoQw58NxPOT1w6BCgUQBiauFlMJxvpBU8Bsj0IrmrdgFcvmifWyG0dBrgJOD6dfE7QnA==@vger.kernel.org
+X-Gm-Message-State: AFuF++kKEAsmivzbFA5ar80nqFa7r4RCvSeLQ/el6uo5IPb1RHMA9bsl
+	sVIilEOSEERNdf6rj3MeXp0xPxBO5oxR4uegJaXg3/xKC+pmYHmghp+A
+X-Gm-Gg: AYBFou0YIMTRYoPUvuR3Ryai1zbDEz+6gh1msWehK7LwLSuNrZP5q2RMLCevV9qaUef
+	sn1p4xbtdn8XtUe3kSD9mQGJV4noUcQrfg75D5WLHK483lxqbOwHpazzRjhHv/LgN4ANAO49JcG
+	5+53psha2QU6y9pcRgBLmqMHuu8ROiSv6iOfqvEmCQ26taVj5G6m3M/6kX4/0iCiWv215e43xxs
+	buQQAQns+W0Urmj1K5iMvSAXMKlLtkWOIvQsIz2arKKpt8eC9uY0vsoQB5Ncy/fDp5mW5UDuPod
+	2JzwWLVhLsyHRRcALOoNNGbQWha/S8vb6Vtac0/oCsAbyVzLraqXpGhvWPiofkYKZ7m5O4O3uTk
+	yzFA4NgC2PSvVHB3k2bIUOfaAmH7wLBkzIFWpDvnxNgYb4phb2kvd8kFO0vdiFSOKflZQpFsXG6
+	GrjOGYvWhhUpYIR5Rg/bThY5FK7Tb9Xf/i9/8R9k+ui00GGJ7nVzw3U6VdkXUHiNVmnU022FbVu
+	ldp/KuD/9PXXi3xoMBOTQemBhQkM7BcTQ==
+X-Received: by 2002:a05:600c:4e13:b0:49c:d019:70c5 with SMTP id 5b1f17b1804b1-4a0274565e1mr196326195e9.0.1791199142635;
+        Mon, 05 Oct 2026 04:19:02 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:ddf5:4eec:313c:43f0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0280bfafasm355884865e9.8.2026.10.05.04.19.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0280bfafasm355884865e9.8.2026.10.05.04.19.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 04:19:01 -0700 (PDT)
+        Mon, 05 Oct 2026 04:19:02 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
 	Biju Das <biju.das@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v11 4/5] reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
-Date: Mon,  5 Oct 2026 12:18:30 +0100
-Message-ID: <20261005111854.275120-5-biju.das.jz@bp.renesas.com>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v11 5/5] regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator support
+Date: Mon,  5 Oct 2026 12:18:31 +0100
+Message-ID: <20261005111854.275120-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261005111854.275120-1-biju.das.jz@bp.renesas.com>
 References: <20261005111854.275120-1-biju.das.jz@bp.renesas.com>
@@ -85,206 +85,136 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The RZ/G3L SoC has two OTG controllers, compared to one on RZ/G3S, so
-it needs a separate rzg3l-vbus-regulator driver to handle the
-additional VBUSEN control for port 2. It also differs in how USB
-PWRRDY is controlled: instead of the "renesas,sysc-pwrrdy" syscon
-register, PWRRDY is handled by a power sequencer provider.
+Add dual USB VBUS regulator support for the RZ/G3L (r9a08g046) SoC, which
+has two OTG controllers (one per port), unlike RZ/G3S which has only one.
 
-Add a regulator_name field to struct rzg2l_usbphy_ctrl_info and pass
-it to platform_device_alloc(), so each SoC can select its VBUS
-regulator driver. The name must exactly match the one registered in
-the regulator driver's id_table for platform bus matching to succeed.
-RZ/G2L and RZ/G3S keep "rzg2l-vbus-regulator", and RZ/G3L uses
-"rzg3l-vbus-regulator".
+Introduce a RZG3L_USB_VBUS_REG macro and a rzg3l_usb_vbus_regulators
+array with two descriptors: vbus0 (BIT(0)) and vbus1 (BIT(1)), both
+sourced from a regulators sub-node as defined in the binding. Add a
+dedicated rzg3l_usb_vbus_regulator_probe() that iterates over the array
+and registers both regulators using devm_regulator_register().
 
+Convert the existing platform driver to use an id_table, allowing it to
+dispatch to either the RZ/G2L or RZ/G3L probe function based on the
+matched platform device name.
+
+Acked-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v10->v11:
- * Fixed a build issue on loongarch by adding a dependency on the
-   POWER_SEQUENCING config.
+ * No change.
 v9->v10:
- * Updated commit description.
- * Simplified rzg2l_usbphy_ctrl_pwrrdy_init().
+ * No change.
 v8->v9:
- * Buid dependency on patch[1] for API changes
- * Replaced pwrseq_power_on() with pwrseq_enable()
- * Replaced pwrseq_power_off() with pwrseq_disable()
- * Dropped redundant devm_add_action_or_reset() for pwrseq.
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?id=d51fc9d4cd6eb18ac82913d83ecf7bd8c85f71ee
+ * No change.
 v7->v8:
- * Avoided code duplication by moving devm_add_action_or_reset() to
-   rzg2l_usbphy_ctrl_pwrrdy_init().
+ * No change.
 v6->v7:
  * No change.
 v5->v6:
- * No change.
+ * Replaced dev_err->dev_err_probe() in error path of
+   rzg3l_usb_vbus_regulator_probe().
+ * Retained the tag as the change is trivial.
 v4->v5:
- * Replaced the variable regulator_driver_name->regulator_name in struct
-   rzg2l_usbphy_ctrl_info
- * Switched to power sequence consumer for controlling pwrrdy signal.
- * Updated commit description.
+ * Collected the tag.
 v3->v4:
- * Updated the commit description.
- * Migrated to id_table match using driver_name and reduced the length
-   < 24.
+ * Dropped rzg3l specific platform driver.
+ * Dropped the tag as there are new changes.
+ * Added id_table handling by introducing a common probe().
 v2->v3:
  * No change.
 v1->v2:
- * No change.
+ * Passing pointer to an array of regulators to make it scalable.
+ * Updated commit description.
 ---
- drivers/reset/Kconfig                   |  2 +-
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 62 +++++++++++++++++++++++--
- 2 files changed, 59 insertions(+), 5 deletions(-)
+ .../regulator/renesas-usb-vbus-regulator.c    | 73 ++++++++++++++++++-
+ 1 file changed, 72 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index eda9c698a95f..d1067f2188e9 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -269,7 +269,7 @@ config RESET_RASPBERRYPI
- 
- config RESET_RZG2L_USBPHY_CTRL
- 	tristate "Renesas RZ/G2L USBPHY control driver"
--	depends on ARCH_RZG2L || COMPILE_TEST
-+	depends on ARCH_RZG2L || (COMPILE_TEST && POWER_SEQUENCING)
- 	select MFD_SYSCON
- 	help
- 	  Support for USBPHY Control found on RZ/G2L family. It mainly
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-index 79503f6f4b23..c5bc7c0b756d 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -10,6 +10,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/pwrseq/consumer.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
- #include <linux/reset-controller.h>
-@@ -37,11 +38,13 @@ struct rzg2l_usbphy_ctrl_priv {
- 	void __iomem *base;
- 	struct platform_device *vdev;
- 	struct regmap_field *pwrrdy;
-+	struct pwrseq_desc *pwrseq;
- 
- 	spinlock_t lock;
- };
- 
- struct rzg2l_usbphy_ctrl_info {
-+	const char *regulator_name;
- 	bool pwrrdy;
- };
- 
-@@ -110,15 +113,24 @@ static void rzg2l_usbphy_ctrl_init(struct rzg2l_usbphy_ctrl_priv *priv)
- 	spin_unlock_irqrestore(&priv->lock, flags);
- }
- 
--static const struct rzg2l_usbphy_ctrl_info rzg2l_info = {};
-+static const struct rzg2l_usbphy_ctrl_info rzg2l_info = {
-+	.regulator_name = "rzg2l-vbus-regulator",
-+};
- 
- static const struct rzg2l_usbphy_ctrl_info rzg3s_info = {
-+	.regulator_name = "rzg2l-vbus-regulator",
-+	.pwrrdy = true,
-+};
-+
-+static const struct rzg2l_usbphy_ctrl_info rzg3l_info = {
-+	.regulator_name = "rzg3l-vbus-regulator",
- 	.pwrrdy = true,
- };
- 
- static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
- 	{ .compatible = "renesas,rzg2l-usbphy-ctrl", .data = &rzg2l_info },
- 	{ .compatible = "renesas,r9a08g045-usbphy-ctrl", .data = &rzg3s_info },
-+	{ .compatible = "renesas,r9a08g046-usbphy-ctrl", .data = &rzg3l_info },
- 	{ /* Sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rzg2l_usbphy_ctrl_match_table);
-@@ -153,8 +165,8 @@ static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
- 	rzg2l_usbphy_ctrl_set_pwrrdy(data, false);
- }
- 
--static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
--					 struct rzg2l_usbphy_ctrl_priv *priv)
-+static int rzg2l_usbphy_ctrl_pwrrdy_syscon_init(struct device *dev,
-+						struct rzg2l_usbphy_ctrl_priv *priv)
- {
- 	struct reg_field field;
- 	struct regmap *regmap;
-@@ -186,6 +198,36 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
- 	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, priv->pwrrdy);
- }
- 
-+static int rzg2l_usbphy_ctrl_pwrrdy_powerseq_init(struct device *dev,
-+						  struct rzg2l_usbphy_ctrl_priv *priv)
-+{
-+	priv->pwrseq = devm_pwrseq_get(dev, "usb-pwrrdy");
-+	if (IS_ERR(priv->pwrseq)) {
-+		/*
-+		 * This platform requires a sequencer. If we can't get it, we
-+		 * must return the error (including -EPROBE_DEFER to wait for
-+		 * the provider to appear)
-+		 */
-+		return dev_err_probe(dev, PTR_ERR(priv->pwrseq),
-+				     "Failed to get required power sequencer\n");
-+	}
-+
-+	return pwrseq_enable(priv->pwrseq);
-+}
-+
-+static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
-+					 struct rzg2l_usbphy_ctrl_priv *priv)
-+{
-+	int ret;
-+
-+	if (of_property_present(dev->of_node, "renesas,sysc-pwrrdy"))
-+		ret = rzg2l_usbphy_ctrl_pwrrdy_syscon_init(dev, priv);
-+	else
-+		ret = rzg2l_usbphy_ctrl_pwrrdy_powerseq_init(dev, priv);
-+
-+	return ret;
-+}
-+
- static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- {
- 	const struct rzg2l_usbphy_ctrl_info *info;
-@@ -245,7 +287,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- 	if (error)
- 		goto err_pm_runtime_put;
- 
--	vdev = platform_device_alloc("rzg2l-vbus-regulator", pdev->id);
-+	vdev = platform_device_alloc(info->regulator_name, pdev->id);
- 	if (!vdev) {
- 		error = -ENOMEM;
- 		goto err_pm_runtime_put;
-@@ -300,6 +342,12 @@ static int rzg2l_usbphy_ctrl_suspend(struct device *dev)
- 	if (ret)
- 		goto reset_deassert;
- 
-+	if (priv->pwrseq) {
-+		ret = pwrseq_disable(priv->pwrseq);
-+		if (ret)
-+			goto reset_deassert;
-+	}
-+
+diff --git a/drivers/regulator/renesas-usb-vbus-regulator.c b/drivers/regulator/renesas-usb-vbus-regulator.c
+index 22fcf0d10c85..050820a30efb 100644
+--- a/drivers/regulator/renesas-usb-vbus-regulator.c
++++ b/drivers/regulator/renesas-usb-vbus-regulator.c
+@@ -55,8 +55,79 @@ static int rzg2l_usb_vbus_regulator_probe(struct platform_device *pdev)
  	return 0;
+ }
  
- reset_deassert:
-@@ -314,6 +362,12 @@ static int rzg2l_usbphy_ctrl_resume(struct device *dev)
- 	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(dev);
- 	int ret;
- 
-+	if (priv->pwrseq) {
-+		ret = pwrseq_enable(priv->pwrseq);
-+		if (ret)
-+			return ret;
++#define RZG3L_USB_VBUS_REG(rname, en_mask)				\
++	{								\
++		.name			= #rname,			\
++		.of_match		= of_match_ptr(#rname),		\
++		.regulators_node	= of_match_ptr("regulators"),	\
++		.type			= REGULATOR_VOLTAGE,		\
++		.owner			= THIS_MODULE,			\
++		.ops			= &rzg2l_usb_vbus_reg_ops,	\
++		.enable_reg		= 0,				\
++		.enable_mask		= (en_mask),			\
++		.enable_is_inverted	= true,				\
++		.fixed_uV		= 5000000,			\
++		.n_voltages		= 1,				\
 +	}
 +
- 	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
- 	if (ret)
- 		return ret;
++static const struct regulator_desc rzg3l_usb_vbus_regulators[] = {
++	RZG3L_USB_VBUS_REG(vbus0, BIT(0)),
++	RZG3L_USB_VBUS_REG(vbus1, BIT(1)),
++};
++
++static int rzg3l_usb_vbus_regulator_probe(struct platform_device *pdev)
++{
++	struct regulator_config config = { };
++	struct device *dev = &pdev->dev;
++	struct regulator_dev *rdev;
++
++	config.dev = pdev->dev.parent;
++	config.regmap = dev_get_regmap(dev->parent, NULL);
++	if (!config.regmap)
++		return dev_err_probe(dev, -ENOENT, "Failed to get regmap\n");
++
++	for (unsigned int i = 0; i < ARRAY_SIZE(rzg3l_usb_vbus_regulators); i++) {
++		rdev = devm_regulator_register(dev, &rzg3l_usb_vbus_regulators[i],
++					       &config);
++		if (IS_ERR(rdev))
++			return dev_err_probe(dev, PTR_ERR(rdev),
++					     "failed to register %s regulator\n",
++					     rzg3l_usb_vbus_regulators[i].name);
++	}
++
++	return 0;
++}
++
++static int rzg2l_usb_vbus_regulator_common_probe(struct platform_device *pdev)
++{
++	int (*probe_func)(struct platform_device *pdev);
++	const struct platform_device_id *id;
++
++	id = platform_get_device_id(pdev);
++	if (!id)
++		return dev_err_probe(&pdev->dev, -ENODEV, "No ID match found\n");
++
++	probe_func = (int (*)(struct platform_device *))id->driver_data;
++
++	return probe_func(pdev);
++}
++
++static const struct platform_device_id rzg2l_usb_vbus_regulator_ids[] = {
++	{
++		.name = "rzg2l-vbus-regulator",
++		.driver_data = (kernel_ulong_t)rzg2l_usb_vbus_regulator_probe
++	},
++	{
++		.name = "rzg3l-vbus-regulator",
++		.driver_data = (kernel_ulong_t)rzg3l_usb_vbus_regulator_probe
++	},
++	{ /* Sentinel */ }
++};
++MODULE_DEVICE_TABLE(platform, rzg2l_usb_vbus_regulator_ids);
++
+ static struct platform_driver rzg2l_usb_vbus_regulator_driver = {
+-	.probe = rzg2l_usb_vbus_regulator_probe,
++	.probe = rzg2l_usb_vbus_regulator_common_probe,
++	.id_table = rzg2l_usb_vbus_regulator_ids,
+ 	.driver	= {
+ 		.name = "rzg2l-vbus-regulator",
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 -- 
 2.43.0
 
