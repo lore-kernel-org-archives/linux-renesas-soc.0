@@ -1,128 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F362AE76;
-	Tue,  6 Oct 2026 03:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6376E30ACF0;
+	Tue,  6 Oct 2026 05:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791256782; cv=none; b=DmEvwHJmRHIItJaro97utApYcdkalupDyg2KvsddgPk0q/z3PBNv22Q45SF0NlwOYEkf49pI/n4cv2rf/JE6Hmm3BIfDppFXQBdB3uW0opaYD0aifNKRdwx6x7rjKuix/aovm52gEeGeCFhVODobBablg91ekAG/fhLXauZ8vtc=
+	t=1791265715; cv=none; b=hrgIfWth0eSyWsEnTXAslPSqOllxSghj4zEfdI53WaOmutXezuI8GnMo13YPWiolvW9xnFz4MCM7JiHw9gx0W0GZP8+oV4HP/bePzNxOZxRIBAX3FsC2Km5IB0Pt1rR69hUXyp76NB1BVFE6P7EUfaioLDVs1HQUxC7bZzeDG3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791256782; c=relaxed/simple;
-	bh=Agw2RhQklfgIBib4EAvdg2pid0xbqBA/hVsPpmqP5vc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFOMoGV7pFOj/kkVQf6+KO9vXXb4MqJr4f9MXFQ9eoUWs/SewCSs6b3orjNIPhYk8hhwanz85pdvcTtEehqzTi2Do9r5ys3i727llqSRd1HMXG5mjjo/c2u/+u4urBTSIO5N1dtO5/icLkGI5nLwemOP7pTxFR6zxYEJmZyg3LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJs22g9v; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791265715; c=relaxed/simple;
+	bh=bWFHcT3cQnXUfVn+E4GPd6ugdQHGNoy+3sAGbounbAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVuzFFGBOzSYM+h5K6saAT46LvWORakGsAp9GCQOvI42ZMfACT7yYjwDTunwNcyeHDBk3HPAm9q8+7hwDfUovcsCfvG9Esw7j1MkkIwqAWK1vbkPvo0N2dFlgWlfA+Eq5xz5cUp/KEFjBsF6uYi1RjvuqPOGBqoHXtqe4mNOvr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tzbPh0+T; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJs22g9v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE79A1F000FF;
-	Tue,  6 Oct 2026 03:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791256781;
-	bh=frSziYbGcXy/fyBE3c+wNGZd5VBCdtrpJH2rxB4+k2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jJs22g9v2cljL64y+pJ8FRGQdw5+fK9+dEOdCAnISbmdhFfrnu8Ey1rDQQRq01NlI
-	 E0q2OtOMaCs0AELJtjNsHPLMdyvv9JO/xG7dKjMAsh1jdPTl2x65STq/dwLmhyXw4A
-	 aeuWPrUpiMcEchKMtm1y2Aqgrooeb3KIU0HkxfuCcBiCp0iAIHXzI422kdlAD3sIp+
-	 JQAyv2Ks6jvQO7LmLdAncPviRTkdqWYVTf6o0UoRmclz/SM7UdW4YAHAtZR5e3sTq4
-	 /bnQKkEegQIA7QOoBbUhfwK967UcV1MvRWXq6JQDcGIhYkXBFEx01Qf7m5tboP1/Lv
-	 jhxfEISu6+2cw==
-Date: Mon, 5 Oct 2026 22:19:40 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jens Emil Schulz =?iso-8859-1?Q?=D8stergaard?= <jensemil.schulzostergaard@microchip.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	Vladimir Oltean <olteanv@gmail.com>, devicetree@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v13 2/9] dt-bindings: net: lan9645x: add
- LAN9645X switch bindings
-Message-ID: <179125677205.3531384.13185008704922350230.robh@kernel.org>
-References: <20260929-dsa_lan9645x_switch_driver_base-v13-0-827c2d3617f2@microchip.com>
- <20260929-dsa_lan9645x_switch_driver_base-v13-2-827c2d3617f2@microchip.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tzbPh0+T"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4hzQKM56kzz8twZ;
+	Tue, 06 Oct 2026 07:48:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1791265703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K/f9oCJzacuOtCMgIQ2RlyGSpR3oGeLxyRwyU9u3vJo=;
+	b=tzbPh0+TlNHJvmbQrUpGcz8Skkdq2EJqWqcDif/G3wj3HvVi5QLw6BNFgM+cfj1OCbZXfO
+	4v3U6JUw+86VZ7E7t2w2ErJVNrVnWvEGlwvEbH1wIU94vhQwKxi3wrV6F6dD/kx6qm6Wr5
+	sTbWz2W1mfprRrlf8A8IQ5uhuM+ll4ZPqT5Eu8Wzru2ckQA96Wnm2ayiOxbaQmuw+Cq8xK
+	nl/c8fDozTdRQjFNyAmBNCBdKizc8PwI2IK2AKnfX9cE7a75DNQ/0InH3JyAniZNkoO2VH
+	itbWCNXfibhPE2e8xwKPrbM4JS7vLofePYnAPL2h8WmIikMFo9maiqIjhjZlkw==
+Message-ID: <f4ca9c43-aaf8-4c15-9b29-363414779e41@mailbox.org>
+Date: Tue, 6 Oct 2026 07:20:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260929-dsa_lan9645x_switch_driver_base-v13-2-827c2d3617f2@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/15] arm64: dts: renesas: r8a779f0: Describe the PCIe
+ AER interrupts
+To: Koichiro Den <den@valinux.co.jp>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+ Niklas Cassel <cassel@kernel.org>, Wilfred Mallawa
+ <wilfred.mallawa@wdc.com>, Serge Semin <fancer.lancer@gmail.com>,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260928165230.3397664-1-den@valinux.co.jp>
+ <20260928165230.3397664-16-den@valinux.co.jp>
+ <d9ffb9f3-ad89-4912-b863-637c838196cb@mailbox.org>
+ <mtczl7e3tlwt26gj56wmvfeotuvd63dfpsmazo3yg4sqstyuhn@omeidmdgauzz>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <mtczl7e3tlwt26gj56wmvfeotuvd63dfpsmazo3yg4sqstyuhn@omeidmdgauzz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: f7xtbstsca31pjg4c6b7uatdib6i1qhp
+X-MBO-RS-ID: da55d30359b515db82d
 
-
-On Tue, 29 Sep 2026 09:48:23 +0200, Jens Emil Schulz Østergaard wrote:
-> Add bindings for LAN9645X switch. We use a fallback compatible for the
-> smallest SKU microchip,lan96455s-switch. The last digit of the part number
-> is the number of usable front ports and the letter is the feature set.
+On 10/5/26 7:11 PM, Koichiro Den wrote:
+> On Sat, Oct 03, 2026 at 10:00:13PM +0200, Marek Vasut wrote:
+>> On 9/28/26 6:52 PM, Koichiro Den wrote:
+>>> The PCIe controllers report Root Port AER notifications through
+>>> intreq_pci0_lperr (SPI 421) and intreq_pci1_lperr (SPI 428),
+>>> respectively, separately from the integrated MSI receiver interrupts.
+>>> Describe these interrupts with the "aer" name so the controller driver
+>>> can use them for Root Port error reporting.
+>>>
+>>> Append the new interrupts to preserve the existing interrupt indices.
+>>>
+>>> Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>>> Signed-off-by: Koichiro Den <den@valinux.co.jp>
 > 
-> The switch is a child of an externally controlled parent that hands out
-> one regmap per register target, so reg and reg-names describe the target
-> layout the way mscc,vsc7514-switch.yaml does for the equivalent
-> mscc,vsc7512-switch node. That binding, and the mfd parent it hangs off
-> in mscc,ocelot.yaml, is the model this driver and its parent follow.
+> Hi Marek,
 > 
-> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-> Signed-off-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
-> ---
-> Changes in v13:
-> - Remove section quoting Documentation/networking/phy.rst from commit
->   message.
-> - Remove rx/tx-internal-delay-ps from example.
+>> Please also feel free to add this patch for R-Car V4H (performed cover
+>> letter tests 2 and 3 on Retronix Sparrow Hawk)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+>> index 5284923b6cef7..8342d3c6f9881 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+>> @@ -801,8 +801,9 @@ pciec0: pcie@e65d0000 {
+>>                          interrupts = <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
+>>                                       <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
+>>                                       <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
+>> -                                    <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>;
+>> -                       interrupt-names = "msi", "dma", "sft_ce", "app";
+>> +                                    <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+>> +                                    <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>;
+>> +                       interrupt-names = "msi", "dma", "sft_ce", "app",
+>> "aer";
+>>                          clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
+>>                          clock-names = "core", "ref";
+>>                          power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
+>> @@ -850,8 +851,9 @@ pciec1: pcie@e65d8000 {
+>>                          interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
+>>                                       <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
+>>                                       <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
+>> -                                    <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>;
+>> -                       interrupt-names = "msi", "dma", "sft_ce", "app";
+>> +                                    <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
+>> +                                    <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>;
+>> +                       interrupt-names = "msi", "dma", "sft_ce", "app",
+>> "aer";
+>>                          clocks = <&cpg CPG_MOD 625>, <&pcie1_clkref>;
+>>                          clock-names = "core", "ref";
+>>                          power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
+>>
+>> And a matching patch for R-Car V4M (boot tested, but the board has no PCIe
+>> device plugged into the slot)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+>> index 5f9223a0f4468..a377aab3c8be0 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+>> @@ -683,8 +683,9 @@ pciec0: pcie@e65d0000 {
+>>                          interrupts = <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
+>>                                       <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
+>>                                       <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
+>> -                                    <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>;
+>> -                       interrupt-names = "msi", "dma", "sft_ce", "app";
+>> +                                    <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+>> +                                    <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>;
+>> +                       interrupt-names = "msi", "dma", "sft_ce", "app",
+>> "aer";
+>>                          clocks = <&cpg CPG_MOD 624>, <&pcie0_clkref>;
+>>                          clock-names = "core", "ref";
+>>                          power-domains = <&sysc R8A779H0_PD_A2PCIPHY>;
 > 
-> Changes in v12:
-> - Remove Rob's Reviewed-by
-> - Match both the port@ and ethernet-port@ spellings, so the per port
->   constraints apply. dsa.yaml accepts either, and the local pattern only
->   matched the long form.
-> - Allow 0 as well as 2000 for rx/tx-internal-delay-ps, matching what the
->   driver accepts, and restrict them to those two values on RGMII ports.
-> - Constrain the ethernet-ports node the way renesas,rzn1-a5psw.yaml does,
->   with additionalProperties instead of a local dsa-port.yaml $ref.
-> - Put the example properties in canonical order, so dt-check-style
->   --mode=strict is clean.
-> - Describe the switch register targets in reg, with a matching reg-names,
->   following mscc,vsc7514-switch.yaml.
-> - Document the default of rx/tx-internal-delay-ps, as
->   microchip,lan937x.yaml does.
-> - Describe the SKU naming in the binding description.
-> 
-> Changes in v5:
-> - No changes.
-> 
-> Changes in v4:
-> - No changes.
-> 
-> Changes in v3:
-> - remove additionalProperties: true
-> - remove unnecessary | from description
-> - change top level $ref to dsa.yaml#/$defs/ethernet-ports
-> - use ethernet-ports and ethernet-port
-> - move ethernet-ports under properties instead of patternProperties
-> - move unevaluatedProperties: false after $ref
-> - update example to use ethernet-ports and ethernet-port
-> 
-> Changes in v2:
-> - rename file to microchip,lan96455s-switch.yaml
-> - remove led vendor property
-> - add {rx,tx}-internal-delay-ps for rgmii delay
-> - remove labels from example
-> - remove container node from example
-> ---
->  .../net/dsa/microchip,lan96455s-switch.yaml        | 177 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 178 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+> Thanks! I'll add them as two separate patches in v3, with your Suggested-by.
+Thank you !
