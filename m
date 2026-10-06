@@ -1,104 +1,190 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59823563F6;
-	Tue,  6 Oct 2026 16:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791305292; cv=none; b=d9asgd6o7wM19komLjIdQbkg5Vx1AETqqMIo1cFC+Z3nxOXaXl66AvgUSoJ60SPgfsjKExcoxjcLiBctivpxSmO01KJwifGpCd3fER7gQNaI3uPzOHE4nQm+lki4ALPfGldqvyhlovh1a+NqTA2Mbxfm82/cqZD0oZDR3TOGo24=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791305292; c=relaxed/simple;
-	bh=zXSXQbCwcrgf1rnHXh1JMPBFTzcV1b9TDrQgc1cAtkQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HsnnKbFToUshke+Xjk+ZoMvIk5y2OwoOWW6PVwFqlUj953V8c50aQGkR78AWJFqLO981h4amlvkIausVuqhiiCL/n5QyiBESBKO0lrxIbANiHhDHULR3JjPJ7ICT9e2oUIdIDyghH7VH7dit/Npl55N0fh0Y3qLQJgi/We6I6rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqCAdBaQ; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F534A2071
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2026 18:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791311620; cv=pass; b=DNdgfOqEx5iKqlHtEOmeDvF+Qx5mynW6+gdV3Fv+6ESqoaOWr9ASZ7dwYKZhpEVpBsT3iAwvKMVbQAt/QYb886+cBrVYPs6GH9OeqyJHYQdNRMyopwjWwGMW3nRdoMKpjVFsovdHezQTEPFvLJRVezK7WY7dFQ47YE9s5omsljk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791311620; c=relaxed/simple;
+	bh=97oUKsO0e5chpZ77/TXNGzc+ViH4yet7xP4s2/riIOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iniWez4Ay9r2yCtnx9t97g+FhmYFE0nNmeVo4gUlCJB/2Yz4R+945Lzlun9Y+WBm9V0QYtKSWZtL5nH9dzIC3YQ1+A+kXSIrt6LKkNCZmYNPBE7J+4zPZXAkHGvOI4LE2FwPEVAMlJ4gZx5fr8wdYIX1zx6ECzE7lwFK5Izjaj8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYNyzuGb; arc=pass smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqCAdBaQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5BEC3C2BCF4;
-	Tue,  6 Oct 2026 16:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1791305292;
-	bh=zXSXQbCwcrgf1rnHXh1JMPBFTzcV1b9TDrQgc1cAtkQ=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=mqCAdBaQpTJwOVxopFX1srU1QDie+7KetQYBjpIpzE2A+yQA0S3zCN2/9uMtRLBlp
-	 lkqy580VPKJvgR77khlJgzScbBRZ1w4AMdKs4EmBZXdG5Iox8XUHDBsXFHdlDprVAp
-	 Js5KZ6ZzDTzn+q08DIgFGZ2cMylYVS8l3tseQRMs0hSMXQ/VZdJ54WXWx/UiH6yluW
-	 FHcP/E1olL08al5laiMzXe1z5qvcKhEPftR8lcVWEeM3RIMJBWPHGl4IM9g4Fsps1Q
-	 ZNbmB1ONqWUpebI9hRCi+tC72PqEQSrb44dM72iemLavIXfgfPYHpBxv4C1JLOj28Y
-	 0k87OzayhsJVQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 329F5CA5FFC;
-	Tue,  6 Oct 2026 16:48:12 +0000 (UTC)
-From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Subject: [PATCH net-next v3 0/2] net: pcs: rzn1-miic: Validate dtb
- configuration values
-Date: Tue, 06 Oct 2026 09:48:10 -0700
-Message-Id: <20261006-miic-validate-dtb-v3-v3-0-68617b3dca5c@reliablecontrols.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYNyzuGb"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48afe75f055so2847489f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 11:33:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791311617; cv=none;
+        d=google.com; s=arc-20260327;
+        b=InVc9M2qa9vjYhRqorlXWa7JiN4JqvD+talHSoEvMiPXDdmpYG/kGpDPDy6BsSxFsI
+         TiKt43V9VOqFXQFOrHr5M6ovTYQgrrD+PW77n8rrVw9PY5Z5zMwlY7+2WANJJHDqijKs
+         tF7iFaRIeHpUwxF2bEqkMIOiUC+DpoXwBSSnvZlVlN+iUGwkffT2YbuafAuk6CJF9Szg
+         nM9PcPLg5atKN9+yb6ay0JpBHucz8bhqrLwgQ+PEP0xDPMMQPN/9ivKHFTCE7QPXMFZs
+         8qGUoCRPZF5cAW+i1LHrgbpLL6XfnkUDRfG2TB4Kvy6wV580X4nddkiX6TkWOz607il9
+         T10w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=1I/Bjkthev9xcVUp93lwFAJuDTou6l7HQTsHKxmqsYg=;
+        fh=4bUPKfPDSX+e9i1MdLt5ciEMlEHQ+JXjfPFpI5a/OLo=;
+        b=cljtUW+wEXV/1Ogftl5p5F6v4maffWbfLOa7hZ/btYwp66Kyj674MrzIbChSLIDiF6
+         bHQKPgkscCgfA3lewFPJSSCK6B/cy8MBDgELTaZpZXJ07hpbTlr5gUG3wPa0RLis6Crb
+         fNz519tcDc0eb+JjKAXBsCF9CpoElcBSYI6mE5lys94cQUS3amshpluoSLFh+NsXTUay
+         +EAKTLVNP5G3p+o+bg/LY3F3n10yOkXCYHVcWZzi2rf5pAKZ290icFlEs3EW4FE78UYN
+         5Y7V/tStVDH9GkV6ZU077UELTq+Grdxd79diN8Dhwk5s1SQUS6Efdy3GtqjUhqj/JArU
+         okkQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791311617; x=1791916417; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=1I/Bjkthev9xcVUp93lwFAJuDTou6l7HQTsHKxmqsYg=;
+        b=gYNyzuGbEw8W4W3thlPUfhzcRnGusY6lf3EsyUAc/nJ8UnMCTdXApXgRl1ks+flh/R
+         3nuifYo9GCF1zUtCvxZZbn/ndZY3BmFFEmzp5x/9O8pnunYO/T/DkyC4GO/qbjrUMm6u
+         c1eZRWsydrqSm70+EmlkERII7S02TvFh5QEX7fuNcvIGNeFtjruIG7pr9d4WWeP2NVTM
+         iyZp5F/3YskowHayAhhd0xicqdv6zQxv6HMYk4qVL0bi6lPgR31v8xShbf0XMpTkdH6y
+         BC/4NEb76i122EwS/3DyjXwI3ghwDzL27WXpirH3bOjllOCnjF5lNPqAI0qhKmyxJj8W
+         M3Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791311617; x=1791916417;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=1I/Bjkthev9xcVUp93lwFAJuDTou6l7HQTsHKxmqsYg=;
+        b=1C4vVdLr2BuPpbTY5ihgXCOcKZqs7zUzAeX+3UvotmX8u4i2KUflsXHFyE/QJY5JpI
+         /oCQy9eJTsS8z+N3A5/4gNTNt4amrvLC+JozKlTKHHdd3/5jxJdPsnTS/tJbh/MeL7u5
+         cZtz+4pVsnp9xsOiy+M5lfOrVAHsQaih2guQzhPELbxpTdeI8bS0X7aDTC4QO4zHewD3
+         C2ZEqqEdiqrO0L2IuVN8VifIXrU1iJd86hOB8v0C33z6zHh0WTpPPhOFgqrjb5EQdzpD
+         FvgoRg9nEUtYBLtNajexNh5zJxMY8VhbcDuyFXvGfLtLpLfeM8DwYG0SQ4HMBFZObCzr
+         QGWw==
+X-Forwarded-Encrypted: i=1; AKwUvBziHDhbg3IS2JvOvejiU+bqk4XAtcc1bkIaGdHLjJmcyblUEyPLOAvId/2DlSZh7fDVZwlg50YmkPb0YEMeM3MlZg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKCfi/KzDXVL99jvAqozRNJH3iEXaHMq6+HPMI3F/sWV4ddorDr
+	rxSOrBy4UEf7MTUkzTryEkLjQ4J3VtLmBFvOP8eMYnyt29E6gvg4qH+L1h3J78pQ0dsNWk7LHC5
+	wemRFv7R7LoujcGuZTNmrVLdIlnx88dQ=
+X-Gm-Gg: AYBFou1D+y2eclBaNGOgcjnqDwDQ6bCIJ5zk/eV2pWPsKfILJbICG05Yvm16i4HmKbl
+	EzI5Ng1To3W2P4bf63u3kHdJCYO4zxDRf2HlPo6aBf8S8Itwtj2/TOU9MfMjr/QV5/V18VFZuVQ
+	zzAhBRuYp9QosGDacnePPtmTuGn9NAtrBv+6VO1SH3YapKCj5NwCvmFYjKyff5HBGy7MUVxeY0T
+	NPQAqnWV6U6ejNEaN2xgHTTmaLYIj+eiyaHPbmCAM4xOVmxWgN34yIH+0l6jff4OheJbWc59xY+
+	Gi3KjA/IS4ggMYwSTdU0hBipbm0ZzUtX8aUKdaX6/igdWlXWZhGwK8zEJi2m82hQy3AhdwwCgj8
+	yaplNMFoHDvxky3/MKt55vc3HGZz3UfFBaD46LBmXLNk=
+X-Received: by 2002:a05:6000:208a:b0:487:1ac0:32af with SMTP id
+ ffacd0b85a97d-48c728a7f51mr452023f8f.51.1791311616531; Tue, 06 Oct 2026
+ 11:33:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEomxWoC/x3MSwqDMBRG4a3IHfdCHihttyIdxORXL7SpJCEI4
- t4NDr/BOQdlJEGmd3dQQpUs/9hgHx351cUFLKGZjDKDVqrnn4jn6r4SXAGHMnG17Gern0b5SeN
- FLd0SZtnv7UgRhSP2Qp/zvACslybCcAAAAA==
-To: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791305291; l=1340;
- i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=zXSXQbCwcrgf1rnHXh1JMPBFTzcV1b9TDrQgc1cAtkQ=;
- b=+gvUdgGmUhXtWwCRIbXud22BVaXjP4blOyp0hcOw5wX7yqK/y3BIbqys32ea3CA7CiOWi9Q9j
- gOySn5oEgfSCeKdjy/BBUM1hP5HrgABZ9r7kzPLgTGaY6a0VhAy/Xmv
-X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
- pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
-X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
- with auth_id=946
-X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
-Reply-To: khendry@reliablecontrols.com
+References: <20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org> <20260928-mali-c55-renesas-dts-v3-5-2cf7eb746ebb@kernel.org>
+In-Reply-To: <20260928-mali-c55-renesas-dts-v3-5-2cf7eb746ebb@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 6 Oct 2026 19:33:09 +0100
+X-Gm-Features: AclHuK-lHOnsjkuXOpvnCyKRYV7OYbDYDNgNdkGPQxNTBgQh6bjjlMS_ndycwy4
+Message-ID: <CA+V-a8uam6zpuFoJURO+YuiYLeckAYvEAOpF5cZsH2buBsfLBg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
+ ISP and IVC nodes
+To: Linus Walleij <linusw@kernel.org>
+Cc: Daniel Scally <dan.scally@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This series addresses issues found when reviewing another fix:
-https://lore.kernel.org/netdev/20260915-rzn1-miic-fix-array-v5-1-b7173fd5b97d@reliablecontrols.com/
+Hi Linus,
 
-Invalid values from the dtb could cause out of bounds array access. Checking
-the values as they're parsed should prevent this.
+On Mon, Sep 28, 2026 at 1:33=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
+rote:
+>
+> From: Daniel Scally <dan.scally@ideasonboard.com>
+>
+> Add nodes to devicetree enabling the ISP and IVC that are found on
+> the RZ/V2H(P) SoC.
+>
+> [Rebase onto v7.3-rc1 and sort the board overrides by label.
+>  - Linus Walleij]
+>
+> Assisted-by: LLM
+> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Linus Walleij <linusw@kernel.org>
+> ---
+>  arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arc=
+h/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> index 637fc92dcc26..74b75be599ae 100644
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> @@ -305,6 +305,14 @@ versa3: clock-generator@69 {
+>         };
+>  };
+>
+> +&isp {
+> +       status =3D "okay";
+> +};
+> +
+> +&ivc {
+> +       status =3D "okay";
+> +};
+> +
+I was trying this on 20261006 as soon as I start camshark I get the
+output below. Im using IMX708 sensor on the RZ/V2H EVK. Are there any
+additional patches required for this to work (any sepcific version of
+v4l-utils/libcamera) ?
 
-Changes in v3:
-- Squash patches changing miic_port_max
-- Change name of miic_port_max to miic_port_last
-- Remove fixes tags
-- Add another check for configuration value of miic-switch-portin
-- Link to v2: https://lore.kernel.org/r/20260928-miic-validate-dtb-v2-0-1ee3d33748e9@reliablecontrols.com/
+192 login: [  196.846011] rcu: INFO: rcu_preempt detected stalls on CPUs/ta=
+sks:
+[  196.852193] rcu:     3-...0: (8 ticks this GP)
+idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D1048
+[  196.861489] rcu:     (detected by 2, t=3D5253 jiffies, g=3D5753, q=3D6 n=
+cpus=3D4)
+[  206.875392] rcu: rcu_preempt kthread timer wakeup didn't happen for
+1254 jiffies! g5753 f0x0 RCU_GP_WAIT_FQS(5) ->state=3DI
+[  206.886411] rcu:     Possible timer handling issue on cpu=3D2
+timer-softirq=3D2740
+[  206.893406] rcu: rcu_preempt kthread starved for 1255 jiffies!
+g5753 f0x0 RCU_GP_WAIT_FQS(5) ->state=3DI ->cpu=3D2
+[  206.903455] rcu:     Unless rcu_preempt kthread gets sufficient CPU
+time, OOM is now expected behavior.
+[  206.912616] rcu: RCU grace-period kthread stack dump:
+[  206.918235] rcu: Stack dump where RCU GP kthread last ran:
+[  178.982667] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  178.988821] rcu:     3-...0: (8 ticks this GP)
+idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D3946
+[  178.998117] rcu:     (detected by 2, t=3D22262 jiffies, g=3D5753, q=3D6 =
+ncpus=3D4)
+[  199.056986] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  199.063092] rcu:     3-...0: (8 ticks this GP)
+idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D6596
+[  199.072322] rcu:     (detected by 2, t=3D38018 jiffies, g=3D5753, q=3D69=
+ ncpus=3D4)
+[  176.177639] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  176.183749] rcu:     3-...0: (8 ticks this GP)
+idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D9246
+[  176.192984] rcu:     (detected by 2, t=3D53773 jiffies, g=3D5753, q=3D70=
+ ncpus=3D4)
 
-Changes in v2:
-- Simplify fixes by making miic_port_max the last documented port number
-- Add fixes tags
-- Link to v1: https://lore.kernel.org/r/20260925-miic-validate-dtb-v1-0-3a6db9bb75ec@reliablecontrols.com
 
-Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
----
-Kyle Hendry (2):
-      net: pcs: rzn1-miic: Update port numbering for RZ/T2H
-      net: pcs: rzn1-miic: Validate dtb configuration values
+Cheers,
+Prabhakar
 
- drivers/net/pcs/pcs-rzn1-miic.c | 45 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 8 deletions(-)
----
-base-commit: a5e7d8e446af9803e37a3b6a4d416fb41178348f
-change-id: 20261005-miic-validate-dtb-v3-cf31820cb1e9
-
-Best regards,
--- 
-Kyle Hendry <khendry@reliablecontrols.com>
-
-
+>  &mdio0 {
+>         phy0: ethernet-phy@0 {
+>                 compatible =3D "ethernet-phy-id0022.1640";
+>
+> --
+> 2.55.0
+>
+>
