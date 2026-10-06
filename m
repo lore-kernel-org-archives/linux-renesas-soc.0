@@ -1,103 +1,104 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7753DB658
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2026 11:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48783E5EDB
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2026 11:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791284904; cv=pass; b=PvtsQH9e6+CGt7KZH6H9W1b4nDEOPrKk+G76N1xoD4AITUpJEA/CBoVL2zowk9aR/bP9K7ZVbpdNQMFUaxCWIImUD56/Vgv6gOWwO2zoIFAKYLtGXyaioqGpRg9DVeE+0e+g6qou77FnsySjEk/8Cg1oIpB3jUpMVbHSwB5Q/yg=
+	t=1791285112; cv=pass; b=R5joQYmK8PLkxER1c+Xx2pkRwL8W0X1aD6pifXuowPtS6mR+W8nMXhUC92FVzyIYgFMayrtjltcBVMJ/C89IIw/0CMY7AO27C6rcvs50gkO8+K3fY8X3e6t5CkM2V6QctGor2QbHWcoBJFt2NVWNh2SyEzC/pwDWM8uDULnbyIg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791284904; c=relaxed/simple;
-	bh=mu/t0nX9SJf6wo8N8jq58J5MNpmsuozgdWxvH8xSVO8=;
+	s=arc-20240116; t=1791285112; c=relaxed/simple;
+	bh=mUNeY0u+Irh6yo+HzKbKNtxDudPGVOMhORN9dinV7FA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IPFB9vRlEOUkVPSdXtuSEE+jcOvMxd+0u4rIN57z8X6J+BWfUEG8YH1SfneRPcw6pjEVKQDYdnZ94M3DribyY9HU1nd5G7Kx+NWx6IRI1c9Vhmlib0LpNioCsFdXEiIxHCYT6xdLYKeSLJjrPFpRcSxR/GXJ+fnyBWZsnYXo/Bc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KT1hCJ8A; arc=pass smtp.client-ip=209.85.128.51
+	 To:Cc:Content-Type; b=C17euEaGQyHv2L4Nn9WOcNdDVwx5X3OdcqoP9Q/amzyD+gjcoLwoOvXc1zwRCYVbP0GrC5I4hrs+t+Qvo+AoaZMK/N3ahGVKZFgTJgWoo65uuoTpMTaG872ThDJ3yPU0KsfOZ8OtvSYafe3ML/eX9o8q9XLzID3oYHQZM6YFHRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zc82NDTs; arc=pass smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KT1hCJ8A"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a018dc1f98so5699395e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 04:08:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791284901; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zc82NDTs"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48b001cd92bso1418278f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 04:11:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791285109; cv=none;
         d=google.com; s=arc-20260327;
-        b=QGFCgCfmoaOraUSrkzl0y1LB2PIXL7d1TVU4UN60bgf7GQixsGDUS5ZWuPtphLklar
-         ja7zfZLu+u2+SGsfgQJDhBvEijxiScUJzX5F8jtShEmz17Rp6xBY100RxqKo4mVZW7gB
-         RbRrlQB8z1hoSI8fdat3Hd/5oKNoGMYc+jUgHNfGRceCQOr5cVv5ONS7LWaQ+83L43Dz
-         EpJLMFvZUTO4aA6AuGum9hC8H4M4y3x74VOl5P06mbgRwsthwzzsT3G6zN3Nb3FKGcEd
-         n/YeNA4bsfvp0EHlte2XExjEtw0sH+xIPaHxRnfZPKoDmfoGa+34vqn6/ratLOjrO6KH
-         13ZQ==
+        b=F6HNDN5JDKBQO3uLdVmQSV/XboykRpSw2cHDTB3cwCRDjthhRo4iAUXc1r3Dswujul
+         hWSs638jErqCFArtXnemyRmzZ+lRBuXloQw4vjP6vyb5+4p2AA3oDQCsHvpB4YlwwdbH
+         n9oi8IBYZDq3ZuNjxt3un7jW3oTTCgmvFSTLvMpw0XJi7m1pjMYphEfsneRZGuXm8Kke
+         TfhwJJ6rS5hz1y3ua7OW9KPHuEFAndMZa8U3MwACIMnlEuhGSzS5uwUPv20DaZ5gjCST
+         dXM96LctdSJRa+fScWbgoZx6Z541K2jlroMK0Z6dRuYzLhJliyyuhbnm1q9tXuQAw21+
+         jJ/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=yJ8PE6Uy4bwH6wDfLl1X3RI3sdy7oVAtm672ES1XxF4=;
-        fh=Unikq8tTjhRyV+YHkBiq7v9Ezxk54i1H2FxgUJiur+A=;
-        b=fqEd8T/5U5p584WCXMh3nLFNNVAgcKJrSYn2SpvYw6Oy8+OinC6R51pzfWwWfCJZ0z
-         eFjFDDqQVyDA1RCFFFNeAvWFyzLdKxA+gU9n0/x8ge4gi3fg8e7V86BenTWHQGZRz+jq
-         jcSf35o+FDou8K0aCOq5MobqhyrhL4q5hwb4esaHvcMdG0fdNlESMy++S50W2OeQgnTI
-         QBIt/Nyl39qyW9l7niEzu+fNzCPm9Ph3rHsc+Q1PSPPEYAj3Iznz0ZQG6THBk/eXq3IT
-         peZ+Grr13Jqe0Gy3X+yq9Hdf9epLN3fQ0f9xVCA/gs8rL2NWLBhxXKGlGkppziB0WFs3
-         GLag==;
+        bh=hGa1JZEofQkImbdUcr0R+0KXG2WfE9qw2GmFzyG0ca0=;
+        fh=/KVVQ/Eo27EdXLVB18ctmVJaSn1H9ZqF1Hd8vRivbFM=;
+        b=QBRugGggeBJzKN7MrQ/NtFI6bRV7ghhEx2JjLKtDfsYopMq5+0P8BHUz5aSojbbJ+C
+         aEpglrSq3E4MkoP+5AJxu4JNAXnHEwz6S6QWTXIq8EZ6d1SmpMCvCLTV40k3rw866VK5
+         cYknBjCKPYPrJ7hlFEOFhG2RTujxnaTAZtMidsu9j3AQKCvWRcwsOioJf31jM606y0W4
+         ZGtzam7P80LRbxIs/9uZTD/AmI72LXu5h2GyVlZ4D+OMP8nltzA8dxfIJ3kf3v2cqBBo
+         U2rbhVHkvT4YTwZDMOGnf/oIUXpF4FQgXRv0gfRkdVWnQe0RIwva7crFz4HpzTj9DB7l
+         rPKw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791284901; x=1791889701; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791285109; x=1791889909; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=yJ8PE6Uy4bwH6wDfLl1X3RI3sdy7oVAtm672ES1XxF4=;
-        b=KT1hCJ8A7oqKyx/HwsCOpG/k8CUyOUxNqnqhANXA3v/D501wdyMQD/7fxto87CZA23
-         b3H+9lTW9z58X+AKuT14XbGFYQSc1xd1lqqLdXpVWoFNwSUYUxqZQ0hqqzLjjMSk5GtP
-         apdhWwTQ25paigoxcYFhy9CfgjlHYl1WPntyi0sQEXRbnMTOb70P0a3JPwAXpuqw1ABG
-         oprA+Ble1uL+FudlWSAqhEngp0vooE9sZMMOS44hSUzextuaQPfpjx20CHbxdBGCyJps
-         EWUTG/dqKLOhd/vvkRkl5FdwdCEklePWrRzo2hlVlzEBzwEUv8OxLdv3+ycau8Xwhmjc
-         KJ/w==
+        bh=hGa1JZEofQkImbdUcr0R+0KXG2WfE9qw2GmFzyG0ca0=;
+        b=Zc82NDTsUNurJDINr8R7WoGBO1Kglvdz4OFjt+dUjGIdn813cYGuiuG00CFAGsjqoh
+         wSwv3mSWym9yl24y6vzSfdyHXzr1NKe7CIqqY5FADf2b1v6rYmSdZ7tyd2k5vFTdncKA
+         +eWTJAkb8wZyBBrExkd5ITvtFfr4MyuFhQNNqaMUABl/ab+TfU/AbWmu3MCMXYVSuz/2
+         fGDbH5FGMDXARijapoefRsbIb7XRQeA/sZ2Mvbme7MVpc/E59tSlsyl76gFdYP0bmpaa
+         pYTKTkKhAOY22HC4Ps/fDPLer7YfP2NeNKUaKpiSSGvjHRUqJAkIDvNn4Kav7aPOsTDH
+         xcjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791284901; x=1791889701;
+        d=1e100.net; s=20260707; t=1791285109; x=1791889909;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=yJ8PE6Uy4bwH6wDfLl1X3RI3sdy7oVAtm672ES1XxF4=;
-        b=FNjN9bj4ij4CvzDXfC1NH3kOR73ipBf5z0woshMVYvpAjaGSb4lLDqylGR8F33JyEp
-         Dzyuhvufbj7sb8/4PYU9GvuGnimu9PXETjBFZnAvodD6VbFcfbNeDb+4Hi5oqA+KCplg
-         eQt0IEIMObxyJtqGlk6E1Sk7RTBc229rhVZYDC372PEoqNgaJDtluXLSAVkp9G8xgZqk
-         Nyfo7iV8fr6Aqw6PBgWH+awtL+6twa45VTqxZfm0ZeP+JrrRuvuO1kKZm72WlaH290VT
-         RCOSqpDxZjl/ZRA4MKMTj/Aycp9PaJEd7YSXisZSLY/6bcXDzx725yaBSDhOHp8V3gHN
-         BgQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx5C3NlDuJ+jXzzO/ItYDQc3wiZSqq2vhY4hItsrWvOAZGGzPXcD+R9mSJx10OQ0/DQBr9Aqkb/oFE9EFNLwTgpGw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lBeG2serFu0negXrtUnA4kNXAUFWjhFVLE8eMWjHHaBrf0vUwG
-	XQXLLHARWQorvTt3bDAYgIqnidvn3pPdTNc+EVKf8IMWhf1BszjsdZGGCyFZ7fzM46VPJiryO0m
-	5IafEYqXdlL/IJQkN/m4QLlgvl+3K77k=
-X-Gm-Gg: AYBFou1wW+KElvic+MXaEYR7cG7fAogR8DtYQMXsJ5h0t8TS/uAmQHVrS6EpUnCUEhE
-	Y7BH1urHle8P7S4ey8Q+BsT0+rr36u5cE2lAhYRdDparT8y2s0G/6jWrHkEW4F4yfBLdr0yDUyL
-	Jwllz1HzlSO6ORwmfctXM0CnnDeeYNV8SIX3qan5j5R+cEcgPFPU0yGU8wqbmwIqlgyaLLIz/l+
-	OkELJenIfzQxdZOYlBc5aBn6Wx6ho+mdozgUGc4TtRsrQhons51whVeTVyOE4EptjJr4PMlWrxy
-	eZxmbJTQHXRU5e05E5Q9egNNC7OJmwd/n2Ip6EBTtwNNLVHytB0UPF5U93Hxu6E71Cjd1wAxWfZ
-	g6KswbsA2u2jbV7hvusVzN4MXXkIrc/DTQC5qfpw2tcBlYx7KFvDqxintDUBwdBF3s0eqezPQ
-X-Received: by 2002:a05:600c:8b55:b0:4a0:13ea:2ec3 with SMTP id
- 5b1f17b1804b1-4a17b55f8d4mr16436125e9.35.1791284900622; Tue, 06 Oct 2026
- 04:08:20 -0700 (PDT)
+        bh=hGa1JZEofQkImbdUcr0R+0KXG2WfE9qw2GmFzyG0ca0=;
+        b=iolttAB76368oG/3GiKhQs+4uznHfsAcqpmSPdE9QFAqUNnDZNi/06uAlNDepfqWKi
+         44MeClMxYPUkKJZpJGoQ0oB4o+/tLom5Nok5yyqZj7YaJXRmyaeSf1WOCETfCKq4JYrM
+         aumNRc85gIuRoIFvpISB9woJd5SnR8oqIMmG8Nlq6kQgZeCwPudln6sCJnzM0WKAW4hG
+         H69XsjXV7tagRuIMYwTFjgC/fs4SipOpZq/V4RB1pArgPL9VlwJ2JNBX/gtRhKTpcxVc
+         QaW0nFjYNozLh903L03MH4F9us5PBOwleQ2J+7ZPH4FIHw9qzl/D7juP5NJyyYQfi0bW
+         SNIA==
+X-Forwarded-Encrypted: i=1; AKwUvBwMdVCOrCj5WuU4Mf5Z66Eh9O2KYzIunai+oZvkV5GLKpuF5n3HEQBI+FrD1gz0c/FDdp8Ifaf9umSPWL1nHNn2Gg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJJy6gDmRhL20hO0ro7h4rZjWnctM0ncd905SiRFplC5/PHKs4n
+	JzmPGMNqDFDPen8cfrZjfhSN+wyfQJiXmWCPgqPsIisZ+CLFxvPJuWA6+WMZ8RlbjL2L+0HEy1u
+	NKSHthGfmsx8ElBCBbFp9xGBzJ7NsCGA=
+X-Gm-Gg: AYBFou3S8ajqdNa7v9cD7XvyZHYPk5aHmkllZpZ8wP0zyJqkIigkRc6En5Z7wCigOJj
+	VHbQQK2QgJbfBSaGo8J2I53woInxzpfLCvAHYpq0AYn9LI9jZMG4WmWHd9VQDFGVIW0v71A+Oo1
+	8LhNBYLsQcahy82++Mv+C5dIoA/fLwBeChx6exbvbBmHssU3Blh5S5JOUJsk+3sd2lRdQJwsqJQ
+	l/m9LCRz+B24WZRObC17CXROM0wnpg0+QnySb7Ml9sLPsHdUA+nITEr1IQyCyWpo+Qb+LV/TCZY
+	hhFobkG+JnAu+1fVg4gWa6fMLndzat0fA4RtoJzsBoYgGZL3fAzfBToMrdS3XCCEY/h/0sWNbgo
+	1QNK7JEMZqnKV/PzwGePkRC2jTx02RlSAEsFCbhhbFzDBds2SUT5HnW1W4DHneFB2vYEWIdyYKp
+	/OyCUjMFM=
+X-Received: by 2002:a05:6000:4a04:b0:48c:4707:1b6f with SMTP id
+ ffacd0b85a97d-48c480272dcmr16516413f8f.53.1791285108694; Tue, 06 Oct 2026
+ 04:11:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org> <20260928-mali-c55-renesas-dts-v3-1-2cf7eb746ebb@kernel.org>
-In-Reply-To: <20260928-mali-c55-renesas-dts-v3-1-2cf7eb746ebb@kernel.org>
+References: <20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org> <20260928-mali-c55-renesas-dts-v3-2-2cf7eb746ebb@kernel.org>
+In-Reply-To: <20260928-mali-c55-renesas-dts-v3-2-2cf7eb746ebb@kernel.org>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 6 Oct 2026 12:07:53 +0100
-X-Gm-Features: AclHuK93-zqsTFDUIXHtLL21RUOx75gjaGfM2OXZX3yb6vwYcEZ12igB1pL2UyA
-Message-ID: <CA+V-a8t_WZpq+n_z8zk7M+OpWExRZydZaS3W1uxi6dH7SukXtg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: media: renesas,r9a09g057-ivc:
- Describe additional interrupts
+Date: Tue, 6 Oct 2026 12:11:21 +0100
+X-Gm-Features: AclHuK8IOd_scDCDMasik1_SzcAsKOlMt2yLWcF2qQVhREPX9v8HScGEMDKtzlU
+Message-ID: <CA+V-a8t5NaVRnh60eTD50rbnHGmYpZ_O-bQJtwF9=yU2jo_5jA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] dt-bindings: media: arm,mali-c55: Describe DMA
+ line-tick interrupts
 To: Linus Walleij <linusw@kernel.org>
 Cc: Daniel Scally <dan.scally@ideasonboard.com>, 
 	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
 	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -105,55 +106,53 @@ Hi Linus,
 
 Thank you for the patch.
 
-On Mon, Sep 28, 2026 at 1:32=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
+On Mon, Sep 28, 2026 at 1:42=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
 rote:
 >
-> The RZ/V2H IVC provides input frame-start and frame-stop completion
-> interrupts alongside its input frame-end interrupt.
+> Mali-C55 exposes separate full-resolution and UV DMA writer line-tick
+> interrupts in addition to its combined core interrupt.
 >
-> Describe these optional interrupts, keeping frame end first and requiring
-> only that entry to preserve support for existing device trees. Extend the
-> example to show all three interrupts using mock interrupt numbers.
+> Describe these optional interrupts, keeping the core interrupt first and
+> requiring only that entry to preserve support for existing device trees.
+> Extend the example to show all three interrupts using mock interrupt
+> numbers.
 >
 > Assisted-by: LLM
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > Signed-off-by: Linus Walleij <linusw@kernel.org>
 > ---
->  .../devicetree/bindings/media/renesas,r9a09g057-ivc.yaml      | 11 +++++=
-++++--
+>  Documentation/devicetree/bindings/media/arm,mali-c55.yaml | 11 +++++++++=
+--
 >  1 file changed, 9 insertions(+), 2 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/media/renesas,r9a09g057-iv=
-c.yaml b/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
-> index c09cbd8c9e35..3eeb1a92c9cf 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
-> @@ -21,7 +21,11 @@ properties:
+> diff --git a/Documentation/devicetree/bindings/media/arm,mali-c55.yaml b/=
+Documentation/devicetree/bindings/media/arm,mali-c55.yaml
+> index fc4fcd19922a..8fcc46660b75 100644
+> --- a/Documentation/devicetree/bindings/media/arm,mali-c55.yaml
+> +++ b/Documentation/devicetree/bindings/media/arm,mali-c55.yaml
+> @@ -18,7 +18,11 @@ properties:
 >      maxItems: 1
 >
 >    interrupts:
 > -    maxItems: 1
 > +    minItems: 1
 > +    items:
-> +      - description: Image input frame-end interrupt
-> +      - description: Image input frame-start interrupt
-> +      - description: Frame-stop processing completion interrupt
+> +      - description: Combined ISP core interrupt
+> +      - description: Full-resolution DMA writer line-tick interrupt
+> +      - description: Full-resolution UV DMA writer line-tick interrupt
 >
 >    clocks:
 >      items:
-> @@ -92,7 +96,10 @@ examples:
->                 <&cpg 0xd3>;
->        reset-names =3D "reg", "axi", "isp";
->
+> @@ -75,7 +79,10 @@ examples:
+>        clock-names =3D "vclk", "aclk", "hclk";
+>        resets =3D <&resets 0>, <&resets 1>, <&resets 2>;
+>        reset-names =3D "vresetn", "aresetn", "hresetn";
 > -      interrupts =3D <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>;
 > +      /* Example interrupt numbers. */
-> +      interrupts =3D <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 104 IRQ_TYPE_EDGE_RISING>,
-> +                   <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+> +      interrupts =3D <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
+> +                   <GIC_SPI 101 IRQ_TYPE_EDGE_RISING>,
+> +                   <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
 >
-I think it would be better to use the actual interrupt numbers used on
-the RZ/V2H(P) SoC. Most of the Renesas bindings use the actual
-interrupt numbers.
+Same comment as patch 1/4.
 
 Rest LGTM,
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -162,7 +161,7 @@ Cheers,
 Prabhakar
 
 >        port {
->          ivc_out: endpoint {
+>          isp_in: endpoint {
 >
 > --
 > 2.55.0
