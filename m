@@ -1,190 +1,234 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F534A2071
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2026 18:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791311620; cv=pass; b=DNdgfOqEx5iKqlHtEOmeDvF+Qx5mynW6+gdV3Fv+6ESqoaOWr9ASZ7dwYKZhpEVpBsT3iAwvKMVbQAt/QYb886+cBrVYPs6GH9OeqyJHYQdNRMyopwjWwGMW3nRdoMKpjVFsovdHezQTEPFvLJRVezK7WY7dFQ47YE9s5omsljk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791311620; c=relaxed/simple;
-	bh=97oUKsO0e5chpZ77/TXNGzc+ViH4yet7xP4s2/riIOU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iniWez4Ay9r2yCtnx9t97g+FhmYFE0nNmeVo4gUlCJB/2Yz4R+945Lzlun9Y+WBm9V0QYtKSWZtL5nH9dzIC3YQ1+A+kXSIrt6LKkNCZmYNPBE7J+4zPZXAkHGvOI4LE2FwPEVAMlJ4gZx5fr8wdYIX1zx6ECzE7lwFK5Izjaj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYNyzuGb; arc=pass smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89734FC8D6
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2026 23:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791328799; cv=none; b=JBbidZkCTo7wKNX5GRb/vZw9h0gtEQUagU/GIjIu2e+kRN4c6fwOBxFQbmuYqrpReRnaInYDnU6Axb/KGQ+VnfQa+34SL5aZZZo/pffR8pd5Ut3hZak5W3TW9zrpbPegPLquZUdsVNC/VQHZm20AGgVa/pF03CQgy8nye+nw3kA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791328799; c=relaxed/simple;
+	bh=P7oecALR/wCKBNyKL3ajEPimn0nV+l81GMYEnAFRGkM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HpPm40esrZbEpwvPHqIY6Xe0SewyRWlzRPw9oesGMljIWgvXTJMYqV9Z7I/TjudlkeDdbkhzLIYvRmjduT1C9EX096zKrt84+2ETmndHvhhiawwu/SJWOqGa84hfaprnXg2kn/dQiiHSLfAT/85tSEMDRewHWtomS3f4E6GJ5wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Qu9oONBi; arc=none smtp.client-ip=74.125.82.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYNyzuGb"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48afe75f055so2847489f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 11:33:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791311617; cv=none;
-        d=google.com; s=arc-20260327;
-        b=InVc9M2qa9vjYhRqorlXWa7JiN4JqvD+talHSoEvMiPXDdmpYG/kGpDPDy6BsSxFsI
-         TiKt43V9VOqFXQFOrHr5M6ovTYQgrrD+PW77n8rrVw9PY5Z5zMwlY7+2WANJJHDqijKs
-         tF7iFaRIeHpUwxF2bEqkMIOiUC+DpoXwBSSnvZlVlN+iUGwkffT2YbuafAuk6CJF9Szg
-         nM9PcPLg5atKN9+yb6ay0JpBHucz8bhqrLwgQ+PEP0xDPMMQPN/9ivKHFTCE7QPXMFZs
-         8qGUoCRPZF5cAW+i1LHrgbpLL6XfnkUDRfG2TB4Kvy6wV580X4nddkiX6TkWOz607il9
-         T10w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=1I/Bjkthev9xcVUp93lwFAJuDTou6l7HQTsHKxmqsYg=;
-        fh=4bUPKfPDSX+e9i1MdLt5ciEMlEHQ+JXjfPFpI5a/OLo=;
-        b=cljtUW+wEXV/1Ogftl5p5F6v4maffWbfLOa7hZ/btYwp66Kyj674MrzIbChSLIDiF6
-         bHQKPgkscCgfA3lewFPJSSCK6B/cy8MBDgELTaZpZXJ07hpbTlr5gUG3wPa0RLis6Crb
-         fNz519tcDc0eb+JjKAXBsCF9CpoElcBSYI6mE5lys94cQUS3amshpluoSLFh+NsXTUay
-         +EAKTLVNP5G3p+o+bg/LY3F3n10yOkXCYHVcWZzi2rf5pAKZ290icFlEs3EW4FE78UYN
-         5Y7V/tStVDH9GkV6ZU077UELTq+Grdxd79diN8Dhwk5s1SQUS6Efdy3GtqjUhqj/JArU
-         okkQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qu9oONBi"
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-150f88d22aeso2234745c88.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 16:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791311617; x=1791916417; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1I/Bjkthev9xcVUp93lwFAJuDTou6l7HQTsHKxmqsYg=;
-        b=gYNyzuGbEw8W4W3thlPUfhzcRnGusY6lf3EsyUAc/nJ8UnMCTdXApXgRl1ks+flh/R
-         3nuifYo9GCF1zUtCvxZZbn/ndZY3BmFFEmzp5x/9O8pnunYO/T/DkyC4GO/qbjrUMm6u
-         c1eZRWsydrqSm70+EmlkERII7S02TvFh5QEX7fuNcvIGNeFtjruIG7pr9d4WWeP2NVTM
-         iyZp5F/3YskowHayAhhd0xicqdv6zQxv6HMYk4qVL0bi6lPgR31v8xShbf0XMpTkdH6y
-         BC/4NEb76i122EwS/3DyjXwI3ghwDzL27WXpirH3bOjllOCnjF5lNPqAI0qhKmyxJj8W
-         M3Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791311617; x=1791916417;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=chromium.org; s=google; t=1791328786; x=1791933586; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=1I/Bjkthev9xcVUp93lwFAJuDTou6l7HQTsHKxmqsYg=;
-        b=1C4vVdLr2BuPpbTY5ihgXCOcKZqs7zUzAeX+3UvotmX8u4i2KUflsXHFyE/QJY5JpI
-         /oCQy9eJTsS8z+N3A5/4gNTNt4amrvLC+JozKlTKHHdd3/5jxJdPsnTS/tJbh/MeL7u5
-         cZtz+4pVsnp9xsOiy+M5lfOrVAHsQaih2guQzhPELbxpTdeI8bS0X7aDTC4QO4zHewD3
-         C2ZEqqEdiqrO0L2IuVN8VifIXrU1iJd86hOB8v0C33z6zHh0WTpPPhOFgqrjb5EQdzpD
-         FvgoRg9nEUtYBLtNajexNh5zJxMY8VhbcDuyFXvGfLtLpLfeM8DwYG0SQ4HMBFZObCzr
-         QGWw==
-X-Forwarded-Encrypted: i=1; AKwUvBziHDhbg3IS2JvOvejiU+bqk4XAtcc1bkIaGdHLjJmcyblUEyPLOAvId/2DlSZh7fDVZwlg50YmkPb0YEMeM3MlZg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKCfi/KzDXVL99jvAqozRNJH3iEXaHMq6+HPMI3F/sWV4ddorDr
-	rxSOrBy4UEf7MTUkzTryEkLjQ4J3VtLmBFvOP8eMYnyt29E6gvg4qH+L1h3J78pQ0dsNWk7LHC5
-	wemRFv7R7LoujcGuZTNmrVLdIlnx88dQ=
-X-Gm-Gg: AYBFou1D+y2eclBaNGOgcjnqDwDQ6bCIJ5zk/eV2pWPsKfILJbICG05Yvm16i4HmKbl
-	EzI5Ng1To3W2P4bf63u3kHdJCYO4zxDRf2HlPo6aBf8S8Itwtj2/TOU9MfMjr/QV5/V18VFZuVQ
-	zzAhBRuYp9QosGDacnePPtmTuGn9NAtrBv+6VO1SH3YapKCj5NwCvmFYjKyff5HBGy7MUVxeY0T
-	NPQAqnWV6U6ejNEaN2xgHTTmaLYIj+eiyaHPbmCAM4xOVmxWgN34yIH+0l6jff4OheJbWc59xY+
-	Gi3KjA/IS4ggMYwSTdU0hBipbm0ZzUtX8aUKdaX6/igdWlXWZhGwK8zEJi2m82hQy3AhdwwCgj8
-	yaplNMFoHDvxky3/MKt55vc3HGZz3UfFBaD46LBmXLNk=
-X-Received: by 2002:a05:6000:208a:b0:487:1ac0:32af with SMTP id
- ffacd0b85a97d-48c728a7f51mr452023f8f.51.1791311616531; Tue, 06 Oct 2026
- 11:33:36 -0700 (PDT)
+        bh=L71GPMsk4GSIdxEygBnLFVf0LVf2CMTomc/BzDysxCo=;
+        b=Qu9oONBiAHrYHtYN59RK9IbVZz92On8/5XjZdNEzonq5e1IqjPuwZEdtTmph05NdrQ
+         5g94TMWmD8iMlaMNgcRDdfgiVz+Y17r6mMsFj5fydMDQjuaUQcDIPEiv7EWrgOUVrtRZ
+         WzAFxBPuNT41Z9M7b4SaudPb3WlMfkyeQadlg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791328786; x=1791933586;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=L71GPMsk4GSIdxEygBnLFVf0LVf2CMTomc/BzDysxCo=;
+        b=jP3gH9BdBfoFqp+9Sc243dje035m47W6/yp9mFL+9b7+tTrW1pFrfliDuTl0Zez+iy
+         icJOJiUwa6ae0gP+JzrdC/85QE5XyH/uoPgUe+WX1wbgssV962EAB4lWjxi0lp3/CbGs
+         GzAf8jUfx970oslULnEQmKS6Pl2PzxKisexL7FJDbs9w6No71n9ouZ5yLrUYPfbXPCar
+         Ao+8r/Do4Md8vB3EUHE17PGHpFoRLMmMy3LYUXmpqfrFVzV05Dw99PuJH0YbAo+BTi/5
+         SfaWvrjGWqsq5Gl1FlthD+QI2fvOIWIWAnQd6sjmYKsLgFf0OZfHfBduXkOISAGxbWSv
+         1A+g==
+X-Forwarded-Encrypted: i=1; AKwUvBwn69zIO+hkodmlr/ymfrPnIhlqTcbj+jBKakipvIRRBuwm1gRVs9qtHyTxFDlqfANoBhFAq4j+5vhaRoggLV0WLg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kAnKdnF3OOt7Hi/rLrOIKitXm/L91AOso1K+69Apgvtfvwtxoj
+	ePMWMAJL9ZDf4kTJotd+VxISsfKe4JpeHFuLdUzn0EL68pTiHzdWluCipZSUIh6WvQ==
+X-Gm-Gg: AYBFou0en6IpeXLnQTd/cesibPp0j1OV3VQI8FiqSrEnN1XgOadhff3gjbd4T4r6O3/
+	7QwBX8zT+m4oT/fQMtzKRTX7yVAKoFvULl7ebciTjsysLcS4Jid8WBBBm8Y0G3lOblOFVJT1LmM
+	vofhQKlY8YYnNTbAaK3nKDek4Q0x1AERh4pJpTKaaAwQhJDNJ6zG/TctkvpG2cGpIdTLm+cjHLB
+	7VKzDRQ+5EnK6t82iepMPIM+Mxitik/5Fx/qAI2WtQF3JHfgVOuUPHXLCvpObxi5lJHaI+4tOm1
+	DII82a44BWSB+3mRUet+YNmYaq6f7laZaSUfw56gW/UwQ0tnLCB/Nz1mpMMoRp2riaDYYxYgu7S
+	hKqxtmyngkssMUrC+IRxFpjGe1zrQ/xFSFi1z6joveLJxhtTNMrU2xKQOLtvGTFgFlnoXATemmY
+	WYSMXMut6Mh1mrBSUJECNI/VpHMvgopUrjl0gO/54RiV2TYDowXOJZuymVlsgOJxdXWVmoDq03G
+	ekbWsxmtkKkCvWz8f47mZLFXygVku9naMkoWw==
+X-Received: by 2002:a05:701b:4553:10b0:151:7831:e401 with SMTP id a92af1059eb24-162045b8dcfmr323314c88.15.1791328785498;
+        Tue, 06 Oct 2026 16:19:45 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:63eb:e7f9:1d47:7d47])
+        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-161680e191esm1583634c88.11.2026.10.06.16.19.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Oct 2026 16:19:44 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	Ulf Hansson <ulfh@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>,
+	"Bryan O'Donoghue" <bod@kernel.org>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Alex Elder <elder@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hadar Gat <hadar.gat@arm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Johan Hovold <johan@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Mark Brown <broonie@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Melissa Wen <mwen@igalia.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Olivia Mackall <olivia@selenic.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org,
+	greybus-dev@lists.linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	sound-open-firmware@alsa-project.org
+Subject: [PATCH 00/13] PM: runtime: Convert pm_runtime_put_autosuspend() and friends to a void function
+Date: Tue,  6 Oct 2026 16:13:28 -0700
+Message-ID: <20261006231900.3230373-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.56.0.360.g66cac248cb-goog
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org> <20260928-mali-c55-renesas-dts-v3-5-2cf7eb746ebb@kernel.org>
-In-Reply-To: <20260928-mali-c55-renesas-dts-v3-5-2cf7eb746ebb@kernel.org>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 6 Oct 2026 19:33:09 +0100
-X-Gm-Features: AclHuK-lHOnsjkuXOpvnCyKRYV7OYbDYDNgNdkGPQxNTBgQh6bjjlMS_ndycwy4
-Message-ID: <CA+V-a8uam6zpuFoJURO+YuiYLeckAYvEAOpF5cZsH2buBsfLBg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
- ISP and IVC nodes
-To: Linus Walleij <linusw@kernel.org>
-Cc: Daniel Scally <dan.scally@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Similar to this effort:
 
-On Mon, Sep 28, 2026 at 1:33=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
-rote:
->
-> From: Daniel Scally <dan.scally@ideasonboard.com>
->
-> Add nodes to devicetree enabling the ISP and IVC that are found on
-> the RZ/V2H(P) SoC.
->
-> [Rebase onto v7.3-rc1 and sort the board overrides by label.
->  - Linus Walleij]
->
-> Assisted-by: LLM
-> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
-> ---
->  arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arc=
-h/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> index 637fc92dcc26..74b75be599ae 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> @@ -305,6 +305,14 @@ versa3: clock-generator@69 {
->         };
->  };
->
-> +&isp {
-> +       status =3D "okay";
-> +};
-> +
-> +&ivc {
-> +       status =3D "okay";
-> +};
-> +
-I was trying this on 20261006 as soon as I start camshark I get the
-output below. Im using IMX708 sensor on the RZ/V2H EVK. Are there any
-additional patches required for this to work (any sepcific version of
-v4l-utils/libcamera) ?
+  Subject: [PATCH v1 00/23] PM: runtime: Convert pm_runtime_put() to a void function
+  https://lore.kernel.org/all/6245770.lOV4Wx5bFT@rafael.j.wysocki/
 
-192 login: [  196.846011] rcu: INFO: rcu_preempt detected stalls on CPUs/ta=
-sks:
-[  196.852193] rcu:     3-...0: (8 ticks this GP)
-idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D1048
-[  196.861489] rcu:     (detected by 2, t=3D5253 jiffies, g=3D5753, q=3D6 n=
-cpus=3D4)
-[  206.875392] rcu: rcu_preempt kthread timer wakeup didn't happen for
-1254 jiffies! g5753 f0x0 RCU_GP_WAIT_FQS(5) ->state=3DI
-[  206.886411] rcu:     Possible timer handling issue on cpu=3D2
-timer-softirq=3D2740
-[  206.893406] rcu: rcu_preempt kthread starved for 1255 jiffies!
-g5753 f0x0 RCU_GP_WAIT_FQS(5) ->state=3DI ->cpu=3D2
-[  206.903455] rcu:     Unless rcu_preempt kthread gets sufficient CPU
-time, OOM is now expected behavior.
-[  206.912616] rcu: RCU grace-period kthread stack dump:
-[  206.918235] rcu: Stack dump where RCU GP kthread last ran:
-[  178.982667] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  178.988821] rcu:     3-...0: (8 ticks this GP)
-idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D3946
-[  178.998117] rcu:     (detected by 2, t=3D22262 jiffies, g=3D5753, q=3D6 =
-ncpus=3D4)
-[  199.056986] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  199.063092] rcu:     3-...0: (8 ticks this GP)
-idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D6596
-[  199.072322] rcu:     (detected by 2, t=3D38018 jiffies, g=3D5753, q=3D69=
- ncpus=3D4)
-[  176.177639] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  176.183749] rcu:     3-...0: (8 ticks this GP)
-idle=3D2de4/1/0x4000000000000000 softirq=3D3984/3985 fqs=3D9246
-[  176.192984] rcu:     (detected by 2, t=3D53773 jiffies, g=3D5753, q=3D70=
- ncpus=3D4)
+i.e., commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
+type to void") and friends.
+
+As with pm_runtime_put(), there is very little value in return-code
+checking for any of the other async __pm_runtime_suspend() and
+__pm_runtime_idle() APIs:
+
+  pm_runtime_put_autosuspend()
+  pm_request_idle()
+  pm_request_autosuspend()
+
+Checking the return code is more likely to
+produce a race condition (fighting with user space writing "on" to the
+"control" attribute) than to tell a consumer useful info.
+
+Nobody outside KUnit tests checks pm_request_idle() or
+pm_request_autosuspend() return codes, but there are a number of
+pm_runtime_put_autosuspend() callers that check its return code. Thus,
+this series largely deals with pm_runtime_put_autosuspend().
+
+Patches 1-11 are independent of each other, and similarly to the last
+series, I expect the respective maintainers can pick them up. We can
+apply patch 12 later. Patch 13 is also independent, but included in this
+topic for completeness. It can be applied any time.
+
+This touches a lot of trees/maintainers, so I tried to keep CC's only
+for the relevant patch(es), plus the cover letter. I hope that's not too
+noisy.
+
+- Brian
 
 
-Cheers,
-Prabhakar
+Brian Norris (13):
+  hwrng: cctrng: Discard pm_runtime_put_autosuspend() return value
+  drm: Discard pm_runtime_put_autosuspend() return values
+  iio: Discard pm_runtime_put_autosuspend() return values
+  media: venus: Discard pm_runtime_put_autosuspend() return values
+  pinctrl: qcom: lpass-lpi: Discard pm_runtime_put_autosuspend() return
+    values
+  spi: ti-qspi: Discard pm_runtime_put_autosuspend() return value
+  greybus: Discard pm_runtime_put_autosuspend() return value
+  ALSA: hda: Discard pm_runtime_put_autosuspend() return value
+  ASoC: codecs: lpass: Discard pm_runtime_put_autosuspend() return
+    values
+  ASoC: intel: atom: Discard pm_runtime_put_autosuspend() return value
+  ASoC: SOF: Discard pm_runtime_put_autosuspend() return values
+  PM: runtime: Drop pm_runtime_put_autosuspend() return code
+  PM: runtime: Drop pm_request_{idle,autosuspend}() return codes
 
->  &mdio0 {
->         phy0: ethernet-phy@0 {
->                 compatible =3D "ethernet-phy-id0022.1640";
->
-> --
-> 2.55.0
->
->
+ drivers/base/power/runtime-test.c             |  8 ---
+ drivers/char/hw_random/cctrng.c               |  6 +-
+ drivers/gpu/drm/panel/panel-simple.c          |  8 +--
+ drivers/gpu/drm/tidss/tidss_drv.c             |  7 +--
+ drivers/gpu/drm/v3d/v3d_drv.h                 |  4 +-
+ drivers/iio/accel/bmc150-accel-core.c         | 14 ++---
+ drivers/iio/accel/fxls8962af-core.c           | 11 +---
+ drivers/iio/accel/kxcjk-1013.c                | 15 ++---
+ drivers/iio/accel/mma8452.c                   | 15 +++--
+ drivers/iio/accel/mma9551_core.c              | 15 +++--
+ drivers/iio/adc/rcar-gyroadc.c                |  4 +-
+ drivers/iio/adc/ti-ads1015.c                  |  8 +--
+ drivers/iio/chemical/atlas-sensor.c           |  4 +-
+ .../common/hid-sensors/hid-sensor-trigger.c   | 14 ++---
+ drivers/iio/gyro/bmg160_core.c                | 17 +++--
+ drivers/iio/gyro/fxas21002c_core.c            | 12 ++--
+ drivers/iio/imu/kmx61.c                       | 17 +++--
+ drivers/iio/light/apds9960.c                  |  2 +-
+ drivers/iio/light/isl29028.c                  | 15 +----
+ drivers/iio/light/pa12203001.c                |  3 +-
+ drivers/iio/light/rpr0521.c                   | 15 +++--
+ drivers/iio/light/tsl2583.c                   | 27 ++------
+ drivers/iio/light/us5182d.c                   |  3 +-
+ drivers/media/platform/qcom/venus/vdec.c      | 10 ++-
+ drivers/media/platform/qcom/venus/venc.c      | 10 ++-
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c      | 16 +++--
+ drivers/spi/spi-ti-qspi.c                     |  6 +-
+ drivers/staging/greybus/power_supply.c        |  8 +--
+ include/linux/greybus/bundle.h                | 12 +---
+ include/linux/pm_runtime.h                    | 63 +++----------------
+ include/sound/hdaudio.h                       |  8 +--
+ sound/hda/core/device.c                       | 13 ++--
+ sound/soc/codecs/lpass-rx-macro.c             |  4 +-
+ sound/soc/codecs/lpass-tx-macro.c             |  4 +-
+ sound/soc/codecs/lpass-va-macro.c             | 17 ++---
+ sound/soc/codecs/lpass-wsa-macro.c            |  8 +--
+ sound/soc/intel/atom/sst/sst.h                |  2 +-
+ sound/soc/intel/atom/sst/sst_drv_interface.c  |  4 +-
+ sound/soc/intel/atom/sst/sst_pvt.c            |  9 +--
+ sound/soc/sof/control.c                       |  6 +-
+ sound/soc/sof/sof-client-ipc-flood-test.c     |  5 +-
+ .../soc/sof/sof-client-ipc-kernel-injector.c  |  4 +-
+ sound/soc/sof/sof-client-ipc-msg-injector.c   |  6 +-
+ sound/soc/sof/sof-client-probes.c             | 18 ++----
+ 44 files changed, 152 insertions(+), 325 deletions(-)
+
+-- 
+2.56.0.360.g66cac248cb-goog
+
