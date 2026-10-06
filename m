@@ -1,127 +1,156 @@
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D21D3E40EF;
-	Tue,  6 Oct 2026 16:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58F73368A2;
+	Tue,  6 Oct 2026 16:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791302940; cv=none; b=na9kzQio63jF8HJ5kt0XDllfYm17BcKcWZQZVCbt8shceUVRGuPdVlUXE8TToJrF19T4Ez9aujJbAWjlFhRbbCZRJc+bGvAZcUrou9PbFfDC48mzD8bCsP5+xipCE9UFt7uhik+BwNYmKRiVLKVe3nU4n6nWNH1+LLa+yPXv8ZM=
+	t=1791305292; cv=none; b=HQUyDl8TIGK03zzsk2laVmbQQiWy6I/YjcM+b8XUrMoXLyzyydtZ0f7S7IlUcLcKTc5WEFiQJJ4QvW7pHRxoywkmYknZrFEVu11cqjAR5e2yT/ketFQRNc/ldMBpsLtL/ijF4PV8mdaI9+2yxWYK5vhRVXca1XvnYHZtkUwXWSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791302940; c=relaxed/simple;
-	bh=a+jfnn4EpxUTdTpHVi2Jp0n2tIf21E2mpQIDZSU7dVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lFgSNy3ZcIydZb4UHuCKLdB4jPYyiderNvlB2Q9Funfm5G6g42oI0q2WehQzUFkdt4Dsq/dm/HpCh0heZqvHLE65lnV/qBzj0CsF0juZhWP2VEpbwCIIBhai6G7iKIlwnBM1iMGBqnESympWMrlZWAAqiM35vIwGZR76hJAO55g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.104] (91.79.33.31) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 6 Oct
- 2026 19:08:34 +0300
-Message-ID: <01c2f59d-8e22-434a-9f5b-b69608c3eae2@omp.ru>
-Date: Tue, 6 Oct 2026 19:08:33 +0300
+	s=arc-20240116; t=1791305292; c=relaxed/simple;
+	bh=iNxUTUX7UN203sLEmQVGGlet3XolpEaKqh1jbgSx3hM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=THlCohYqq/a9GCfC2UtSGa1uUYrtsaIAQDEuWyjT85NUTcByhtpiRkgsI0Qf4Ys5n7Si86gar7cvfHBxm/7GVkAQwikXOGUgqrqg1o5uzywberSaJyk6AMwjA3GwiFgSH6NjwGUnoDX6EgMTjZBkicbAINChX+f+eIySPgmleNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmky91BS; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmky91BS"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 63562C4AF60;
+	Tue,  6 Oct 2026 16:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1791305292;
+	bh=iNxUTUX7UN203sLEmQVGGlet3XolpEaKqh1jbgSx3hM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=mmky91BSo/tCzQQyIl+MUhlBA2UlbBol6IYrii2f3ljljyXL7b9Mvd700gtzhFMOY
+	 J66Qu6JignrWQVNgnLCpdAn4IFXgyjhEy4ZxUuFeFRlMzjLTtNUZp3po3zk1US50Pk
+	 Qi6PAN/1W25ausMb+u9GEKqLOqAN2QQ7Hmg7/9TBFcpC75wFHPUd5YMEkBunY5C6CL
+	 TxURMleIFhyhTb25AQSpgU2/yOziV1tGSgiaq91utqTBYjXaUmkJrrEq9nMEMTkigE
+	 gzGiD0Xp7M1KM3U0vVhFUKHXyLPdGYLo2vIVHHa/ib3JqA57viUuBvUc4+eiPCEwyY
+	 uYzFca0/+5C2A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B7FCA5FFE;
+	Tue,  6 Oct 2026 16:48:12 +0000 (UTC)
+From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
+Date: Tue, 06 Oct 2026 09:48:11 -0700
+Subject: [PATCH net-next v3 1/2] net: pcs: rzn1-miic: Update port numbering
+ for RZ/T2H
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] net: ravb: fix resource teardown ordering
-To: jiale yao <19888972804@163.com>
-CC: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Paul
- Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Mitsuhiro Kimura
-	<mitsuhiro.kimura.kc@renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-References: <20260927144741.1320558-1-yaojiale02@163.com>
- <20260927144741.1320558-7-yaojiale02@163.com>
- <3b43b4fb-8479-4eb2-be58-1df6f0f747b9@omp.ru>
- <12190bf2.18c1.1a0f004c539.Coremail.19888972804@163.com>
- <b85d8dc9-b787-40e0-bbaf-027df2c3bf49@omp.ru>
- <222db01f.1264.1a101087434.Coremail.19888972804@163.com>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <222db01f.1264.1a101087434.Coremail.19888972804@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/06/2026 15:56:59
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 206480 [Oct 06 2026]
-X-KSE-AntiSpam-Info: Version: 6.1.1.27
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 127 0.3.127
- 0884f7b061fa529b810563f359267cd65d2ec05c
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {diag_burst_silent}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 91.79.33.31 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 91.79.33.31
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 10/06/2026 15:58:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 10/6/2026 3:38:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261006-miic-validate-dtb-v3-v3-1-68617b3dca5c@reliablecontrols.com>
+References: <20261006-miic-validate-dtb-v3-v3-0-68617b3dca5c@reliablecontrols.com>
+In-Reply-To: <20261006-miic-validate-dtb-v3-v3-0-68617b3dca5c@reliablecontrols.com>
+To: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791305291; l=3304;
+ i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
+ bh=s6/3RKxk6IiiYAhYfZef0zPZJb+mPc2/vcFTV9MLxXQ=;
+ b=wq5r3+EzGS8MksyQQvg+AARMJS0wr4tSQhISxB17uBqM/hkhjTWx3Zl3229cRPHAKr6ki3/pr
+ 4Psmtqv+ysAAVRkUt5HuJ35uFdiRvAj1GHs9Uu2v0VDn4nl8/jiwjSg
+X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
+ pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
+X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
+ with auth_id=946
+X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
+Reply-To: khendry@reliablecontrols.com
 
-On 10/3/26 12:11 PM, jiale yao wrote:
+From: Kyle Hendry <khendry@reliablecontrols.com>
 
-[...]
+The port numbers on the RZ/T2H are documented as 0 to 3. Update the info
+structure and change the member name to miic_port_last to be more accurate.
 
->> On 9/30/26 4:53 AM, jiale yao wrote:
->>
->> [...]
->>
->>> Thanks for your review.
->>
->>   Top-posting on the kernel MLs is a bad idea... :-)
->>
->>> You're right — I'll split this into two patches:
->>> One patch for the IRQ/netdev ordering issue.
->>> One patch for the runtime PM resume failure handling.
->>> I'll use --no-git-fallback next time, sorry for this.
-> 
-> v3 in https://lore.kernel.org/all/20261003085940.493951-7-yaojiale02@163.com/
-> It only addresses the IRQ/netdev teardown ordering issue. The runtime
-> PM resume failure handling has been left unchanged.
+This value was being used as the number of miic registers when setting
+default values. Add logic to get the total port count and loop over that.
 
-   Too bad you forgot to address Niklas' comment this time... :-)
+Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+---
+ drivers/net/pcs/pcs-rzn1-miic.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-> I plan to submit the runtime PM fix separately after the patch above
-> has been applied, to avoid conflicts between the two changes, or any
-> other suggestion?
+diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+index 3aa513467060..31716241b58f 100644
+--- a/drivers/net/pcs/pcs-rzn1-miic.c
++++ b/drivers/net/pcs/pcs-rzn1-miic.c
+@@ -222,7 +222,7 @@ enum miic_type {
+  * @index_to_string: String representations of the index values
+  * @index_to_string_count: Number of entries in the index_to_string array
+  * @miic_port_start: MIIC port start number
+- * @miic_port_max: Maximum MIIC supported
++ * @miic_port_last: MIIC port last number
+  * @sw_mode_mask: Switch mode mask
+  * @reset_ids: Reset names array
+  * @reset_count: Number of entries in the reset_ids array
+@@ -240,7 +240,7 @@ struct miic_of_data {
+ 	const char * const *index_to_string;
+ 	u8 index_to_string_count;
+ 	u8 miic_port_start;
+-	u8 miic_port_max;
++	u8 miic_port_last;
+ 	u8 sw_mode_mask;
+ 	const char * const *reset_ids;
+ 	u8 reset_count;
+@@ -485,7 +485,7 @@ struct phylink_pcs *miic_create(struct device *dev, struct device_node *np)
+ 
+ 	miic = platform_get_drvdata(pdev);
+ 	of_data = miic->of_data;
+-	if (port > of_data->miic_port_max || port < of_data->miic_port_start) {
++	if (port > of_data->miic_port_last || port < of_data->miic_port_start) {
+ 		put_device(&pdev->dev);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -523,6 +523,7 @@ EXPORT_SYMBOL(miic_destroy);
+ static int miic_init_hw(struct miic *miic, u32 cfg_mode)
+ {
+ 	u8 sw_mode_mask = miic->of_data->sw_mode_mask;
++	int num_ports;
+ 	int port;
+ 
+ 	/* Unlock write access to accessory registers (cf datasheet). If this
+@@ -538,7 +539,10 @@ static int miic_init_hw(struct miic *miic, u32 cfg_mode)
+ 	miic_reg_writel(miic, MIIC_MODCTRL,
+ 			((cfg_mode << __ffs(sw_mode_mask)) & sw_mode_mask));
+ 
+-	for (port = 0; port < miic->of_data->miic_port_max; port++) {
++	num_ports = miic->of_data->miic_port_last -
++		miic->of_data->miic_port_start + 1;
++
++	for (port = 0; port < num_ports; port++) {
+ 		miic_converter_enable(miic, port, 0);
+ 		/* Disable speed/duplex control from these registers, datasheet
+ 		 * says switch registers should be used to setup switch port
+@@ -825,7 +829,7 @@ static struct miic_of_data rzn1_miic_of_data = {
+ 	.index_to_string = index_to_string,
+ 	.index_to_string_count = ARRAY_SIZE(index_to_string),
+ 	.miic_port_start = 1,
+-	.miic_port_max = 5,
++	.miic_port_last = 5,
+ 	.sw_mode_mask = GENMASK(4, 0),
+ 	.init_unlock_lock_regs = true,
+ 	.miic_write = miic_reg_writel_unlocked,
+@@ -841,7 +845,7 @@ static struct miic_of_data rzt2h_miic_of_data = {
+ 	.index_to_string = rzt2h_index_to_string,
+ 	.index_to_string_count = ARRAY_SIZE(rzt2h_index_to_string),
+ 	.miic_port_start = 0,
+-	.miic_port_max = 4,
++	.miic_port_last = 3,
+ 	.sw_mode_mask = GENMASK(2, 0),
+ 	.reset_ids = rzt2h_reset_ids,
+ 	.reset_count = ARRAY_SIZE(rzt2h_reset_ids),
 
-   Yeah, it seems a good idea to address the broken commits in the
-chronological order... However, the fixes seem pretty much orthogonal
-to each other?
+-- 
+2.43.0
 
-[...]
-
-MBR, Sergey
 
