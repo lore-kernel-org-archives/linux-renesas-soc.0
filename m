@@ -1,51 +1,50 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4717B4119E3;
-	Tue,  6 Oct 2026 12:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7FC43F4A7;
+	Tue,  6 Oct 2026 12:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791290109; cv=none; b=bpRFU5ZSdFn40Q/O66Anobi3nJsyPDDq23TJ0I0egZvASdF8Vn1Dpj4XSjX7NeedYixf2kvm3xzxprsqGScqIeNODvKevJWD6zTTc+H6eWElotrpvlL2+ObNQB06uuHAFkWvX51M77lAQbVzvl4RCqu5mQ+pOebfrDfZX14v2b4=
+	t=1791291139; cv=none; b=Sk7goo8ltcTlvSUbQXmE7rN0MC7kAbHgf33VvTIOjxFcuWkCaJWlSs9guqd77Oq0kEW9ZxemRJ5uPIHkGjZIzEEBMUl/drGAwq4ll4bJ5OAVnnmCgQOV1AevFc/sU0DRvB8wPS37+UcO6EMOwOzSUxVcBwDNyxU/iItgvhwW0BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791290109; c=relaxed/simple;
-	bh=okO//1OC5q5RSrh6WMC9iDoGxpZ9FQDabGRMzI/Nm70=;
+	s=arc-20240116; t=1791291139; c=relaxed/simple;
+	bh=FL6XHPuPMvhVSQHv15tPkB5Abk6onukAB9fohPnclnU=;
 	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G+pLtPDllaI3qjZeRACWvZeJZPgCDwTOsCDDY+bGDTDR4IeD8bAXemddQuU9tqQQD850G5xl2K+En3tu5Vs6/Xig0lrUZBylqdU/ohw9WiQFjeXslkdy+zLOGCXZ5Q3Q8BFCu0bVSOh8hUZCFD6mhk+9Mzzq+1hFGoMg3cVr2Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YNfR4PgH; arc=none smtp.client-ip=68.232.153.233
+	 Content-Type:MIME-Version; b=OaDTY2vMOcaTTietjti2xbVmVke+vO0LYfuFu+ZrwPKflTUwecGFISZ+JqmY8EQiwmvRKH4x2aRT9AYG42tCt+iEjqIYDKvh7xIxgxsnJYM0kLG+CPPABb/9TnJLAZp/k0FlDKI60eDcQR/GA6Jw3kWEj/dzYUjKFN39BZzBtLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kIlnQNIR; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YNfR4PgH"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kIlnQNIR"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1791290104; x=1822826104;
+  t=1791291135; x=1822827135;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=okO//1OC5q5RSrh6WMC9iDoGxpZ9FQDabGRMzI/Nm70=;
-  b=YNfR4PgHbJno5vJ6T7Hwe1BAD3UfyeQ8v2EfTJf6+fOR4VkexCoKGzAB
-   ybEYsdcXcQJydQqscLJTIndQwu82kaJ8EJcqAwMNexgvVpWlvYh5qmYzE
-   /8zmRfD5QHo5ffw08zJ9NAXharPq5Y4QuC20qF5F4D5qrNTSTou8ZZxIB
-   gNwJQPXG5xgkB2nV5Qy8i1xEb8uvX0nW+4JZTC4PlS+t39t6lzs4/+7/O
-   G7CTsKjFrSNN5gtfzqPCMpvp2fUTn+K+oe3+Bw+IHB618uMOz8KsAA+hn
-   XqbxY4WCUXJu7C5HuVLv94pkJk1jFVPWhYSZDASAHB6O6/vDBdKxb/3As
-   Q==;
-X-CSE-ConnectionGUID: hmQu6HW7T3SnUf2azV1Z+Q==
-X-CSE-MsgGUID: WlD+0t1IQeSx8p7I1VKAew==
+  bh=FL6XHPuPMvhVSQHv15tPkB5Abk6onukAB9fohPnclnU=;
+  b=kIlnQNIRYBDQCJ2Tb2cJrPWKqVsxM2ma/auV4bdik51mF9f7VI9i07ZV
+   MAECeB0kXGSuZDRkFrXaM87gR/7Ut+IwIOwoAlZ4m0x6/uAxxMtiZAmo4
+   /S/fHrcgcrqEpausw7aPDet1Rs/g0zVlFOKkbiMTHM/RZLeBDVj+cgHjt
+   90vnGpHRDASVepG/kbaLVii+/qH8l+P/zr6FLkzfNn42Kz0veiAdof0aA
+   orNWvJkrJe+9sK7pRU2CuOUucU/xw8d/KnMwm6X3okBGcFn9zqL7AWvZD
+   v8faVXbMw1c1PL4smxhloS96X9CbpuqhS56MSKFtDCEg4Hnw+u3SyU/ux
+   A==;
+X-CSE-ConnectionGUID: qmz+3RNeT6C/7C918+zNuw==
+X-CSE-MsgGUID: EArNHnYcSsCzufowadr4Eg==
 X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; 
-   d="scan'208";a="64640319"
+   d="scan'208";a="231739168"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Oct 2026 05:35:00 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Oct 2026 05:51:59 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 6 Oct 2026 05:34:58 -0700
+ 15.1.2507.58; Tue, 6 Oct 2026 05:51:58 -0700
 Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Tue, 6 Oct 2026 05:34:55 -0700
-Message-ID: <b882df169d0b56a5d16f97ed44fcdb9baa2f7ed6.camel@microchip.com>
-Subject: Re: [PATCH net-next v13 6/9] net: dsa: lan9645x: add mac table
- integration
+ 15.1.2507.58 via Frontend Transport; Tue, 6 Oct 2026 05:51:54 -0700
+Message-ID: <4a1fe0e98d7d593900d8d4b68afaf569fa8160fd.camel@microchip.com>
+Subject: Re: [PATCH net-next v13 7/9] net: dsa: lan9645x: add mdb management
 From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
 To: <netdev-bot+sashiko@kernel.org>
 CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
@@ -57,10 +56,10 @@ CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
 	<magnus.damm@gmail.com>, <linux-kernel@vger.kernel.org>,
 	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-renesas-soc@vger.kernel.org>
-Date: Tue, 6 Oct 2026 14:34:54 +0200
-In-Reply-To: <179097566160.434549.9925459819174275044@kernel.org>
-References: <20260929-dsa_lan9645x_switch_driver_base-v13-6-827c2d3617f2@microchip.com>
-	 <179097566160.434549.9925459819174275044@kernel.org>
+Date: Tue, 6 Oct 2026 14:51:54 +0200
+In-Reply-To: <179097566330.434549.248865005553005719@kernel.org>
+References: <20260929-dsa_lan9645x_switch_driver_base-v13-7-827c2d3617f2@microchip.com>
+	 <179097566330.434549.248865005553005719@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2.1 
@@ -75,10 +74,10 @@ On Fri, 2026-10-02 at 21:14 +0000, netdev-bot+sashiko@kernel.org wrote:
 > EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
 e content is safe
 >=20
-> Thank you for your contribution! Sashiko AI review found 2 potential
+> Thank you for your contribution! Sashiko AI review found 3 potential
 > issue(s) to consider.
 >=20
-> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 1
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 2
 >=20
 > If you believe none of the issues are legitimate, please reply to each
 > issue of Medium severity or higher and explain why the AI is wrong.
@@ -88,227 +87,200 @@ k
 y
 > (one such reply per series is enough).
 >=20
-> - [Medium] For a non-zero VID, lan9645x_fdb_add() and lan9645x_fdb_del()
->   map DSA_DB_PORT and DSA_DB_BRIDGE host entries to the same hardware=E2=
-=80=A6
-> - [Low] Each new MAC table sequence writes the key, the filter and the
->   command through lan_wr().
+> - [Medium] On a failed MAC table write, lan9645x_mdb_widen_dest() drops
+>   the reference on new_pgid right away=E2=80=A6
+> - [Low] lan9645x_mdb_narrow_dest() commits mdb_entry->pgid =3D new_pgid a=
+nd
+>   mdb_entry->ports =3D new_ports before calling lan9645x_mdb_write_dest()=
+.
+> - [Low] A failed CPU-only membership delete leaks a PGID reference
+>   because old_pgid and new_pgid are the same object.
 >=20
 > --
 >=20
-> net: dsa: lan9645x: add mac table integration
+> net: dsa: lan9645x: add mdb management
 >=20
-> This commit adds MAC table support to the lan9645x DSA driver. It adds
-> learn, forget, flush and GET_NEXT based dump helpers keyed on (vid, mac).
-> These are wired into the port_fast_age, port_fdb_dump, port_fdb_add and
-> port_fdb_del DSA callbacks.
+> This adds the DSA mdb callbacks to the lan9645x driver. IP multicast
+> stores the port group mask inline in the mac table entry. L2 multicast
+> points at a refcounted PGID whose destination mask is the port group.
+> CPU membership is carried by the MAC_CPU_COPY bit, and when the PGIDs
+> run out, add and delete handle it differently.
 >=20
-> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_mac.c b/driver=
-s/net/dsa/microchip/lan9645x/lan9645x_mac.c
+> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_mdb.c b/driver=
+s/net/dsa/microchip/lan9645x/lan9645x_mdb.c
 > > new file mode 100644
-> > index 0000000000000..50ce1378b9dae
+> > index 0000000000000..92ab5f55f7913
 > > --- /dev/null
-> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_mac.c
-> > @@ -0,0 +1,268 @@
+> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_mdb.c
+> > @@ -0,0 +1,569 @@
 >=20
 > [ ... ]
 >=20
-> > +static void lan9645x_mac_select(struct lan9645x *lan9645x,
-> > +                             const unsigned char mac[ETH_ALEN],
-> > +                             unsigned int vid)
+> > +static int lan9645x_mdb_widen_dest(struct lan9645x *lan9645x,
+> > +                                struct lan9645x_mdb_entry *mdb_entry,
+> > +                                enum macaccess_entry_type type,
+> > +                                struct lan9645x_pgid_entry *new_pgid,
+> > +                                int pgid_index, u16 new_ports)
 > > +{
-> > +     u64 maddr =3D ether_addr_to_u64(mac);
+> > +     struct lan9645x_pgid_entry *old_pgid =3D mdb_entry->pgid;
+> > +     int err;
 > > +
-> > +     lockdep_assert_held(&lan9645x->mact_lock);
+> > +     lockdep_assert_held(&lan9645x->mdb_lock);
 > > +
-> > +     lan_wr(ANA_MACHDATA_VID_SET(vid) |
-> > +            ANA_MACHDATA_MACHDATA_SET(upper_32_bits(maddr)),
-> > +            lan9645x,
-> > +            ANA_MACHDATA);
-> > +
-> > +     lan_wr(lower_32_bits(maddr),
-> > +            lan9645x,
-> > +            ANA_MACLDATA);
-> > +}
->=20
-> [ ... ]
->=20
-> > +static int __lan9645x_mact_learn(struct lan9645x *lan9645x, int port,
-> > +                              const unsigned char mac[ETH_ALEN],
-> > +                              unsigned int vid,
-> > +                              enum macaccess_entry_type type,
-> > +                              bool cpu_copy)
-> > +{
-> > +     lockdep_assert_held(&lan9645x->mact_lock);
-> > +
-> > +     lan9645x_mac_select(lan9645x, mac, vid);
-> > +
-> > +     lan_wr(ANA_MACACCESS_VALID_SET(1) |
-> > +            ANA_MACACCESS_DEST_IDX_SET(port) |
-> > +            ANA_MACACCESS_MAC_CPU_COPY_SET(cpu_copy) |
-> > +            ANA_MACACCESS_ENTRYTYPE_SET(type) |
-> > +            ANA_MACACCESS_MAC_TABLE_CMD_SET(CMD_LEARN),
-> > +            lan9645x, ANA_MACACCESS);
-> > +
-> > +     return lan9645x_mac_wait_for_completion(lan9645x, NULL);
-> > +}
->=20
-> [Severity: Low]
-> Can a failed register write here be reported to DSA as a successful learn=
-?
->=20
-> lan_wr() returns void and only calls WARN_ON_ONCE() when regmap_write()
-> fails. Suppose the ANA_MACACCESS command write is lost but the reads that
-> follow still work. Then lan9645x_mac_wait_for_completion() sees CMD_IDLE
-> immediately and returns 0:
->=20
->         err =3D lan9645x_rd_poll_timeout(lan9645x, ANA_MACACCESS, val,
->                                        ANA_MACACCESS_MAC_TABLE_CMD_GET(va=
-l) =3D=3D
->                                        CMD_IDLE);
->=20
-> In that case lan9645x_fdb_add() returns success and the bridge marks the
-> entry as offloaded, but the table was never changed. The same applies to
-> CMD_FORGET in __lan9645x_mact_forget().
->=20
-> What happens if only the ANA_MACHDATA or ANA_MACLDATA write in
-> lan9645x_mac_select() fails? Would CMD_LEARN or CMD_FORGET then act on a
-> stale key? That could be the previous operation's key, or whatever the
-> last GET_NEXT walk in lan9645x_mact_dsa_dump() left in the registers.
->=20
-> lan9645x_mact_flush() has the same problem with its ANA_ANAGEFIL write:
->=20
->         lan_wr(ANA_ANAGEFIL_PID_EN_SET(1) |
->                ANA_ANAGEFIL_PID_VAL_SET(port),
->                lan9645x, ANA_ANAGEFIL);
->=20
-> If that write fails, both CMD_AGE scans would run without the port
-> filter. Would that flush dynamic entries from every port instead of only
-> the requested one?
->=20
-> This only happens if the parent MFD bus can fail a write while later
-> reads succeed. The parent driver is not in the tree, so that could not be
-> confirmed. The ocelot-family drivers follow the same lan_wr() convention.
->=20
-> [ ... ]
->=20
-> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c b/drive=
-rs/net/dsa/microchip/lan9645x/lan9645x_main.c
-> > index 6818b91f4bed2..5cb4f5fe13740 100644
-> > --- a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c
-> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c
->=20
-> [ ... ]
->=20
-> > @@ -360,6 +364,81 @@ static int lan9645x_port_vlan_del(struct dsa_switc=
-h *ds, int port,
->=20
-> [ ... ]
->=20
-> > +static int lan9645x_fdb_add(struct dsa_switch *ds, int port,
-> > +                         const unsigned char *addr, u16 vid,
-> > +                         struct dsa_db db)
-> > +{
->=20
-> [ ... ]
->=20
-> > +     if (dsa_port_is_cpu(dp) && !br &&
-> > +         dsa_fdb_present_in_other_db(ds, port, addr, vid, db))
-> > +             return 0;
-> > +
-> > +     if (!vid)
-> > +             vid =3D lan9645x_vlan_unaware_pvid(!!br);
-> > +
-> > +     dest =3D dsa_port_is_cpu(dp) ? PGID_CPU : port;
-> > +
-> > +     return lan9645x_mact_learn(lan9645x, dest, addr, vid, ENTRYTYPE_L=
-OCKED,
-> > +                                false);
-> > +}
-> > +
-> > +static int lan9645x_fdb_del(struct dsa_switch *ds, int port,
-> > +                         const unsigned char *addr, u16 vid,
-> > +                         struct dsa_db db)
-> > +{
-> > +     struct net_device *br =3D lan9645x_db2bridge(db);
-> > +     struct dsa_port *dp =3D dsa_to_port(ds, port);
-> > +     struct lan9645x *lan9645x =3D ds->priv;
-> > +
-> > +     if (IS_ERR(br))
-> > +             return PTR_ERR(br);
-> > +
-> > +     if (dsa_port_is_cpu(dp) && !br &&
-> > +         dsa_fdb_present_in_other_db(ds, port, addr, vid, db))
-> > +             return 0;
-> > +
-> > +     if (!vid)
-> > +             vid =3D lan9645x_vlan_unaware_pvid(!!br);
-> > +
-> > +     return lan9645x_mact_forget(lan9645x, addr, vid, ENTRYTYPE_LOCKED=
-);
-> > +}
+> > +     err =3D lan9645x_mdb_write_dest(lan9645x, mdb_entry, type, pgid_i=
+ndex,
+> > +                                   new_ports);
+> > +     if (err) {
+> > +             lan9645x_pgid_entry_put(lan9645x, new_pgid);
+> > +             return err;
+> > +     }
 >=20
 > [Severity: Medium]
-> Could this forget a CPU port entry that another database still needs?
+> Can this hand a PGID index to an unrelated group while hardware still
+> points at it?
 >=20
-> For a non-zero vid, lan9645x_fdb_add() and lan9645x_fdb_del() map two
-> host entries with the same (vid, mac) to one hardware key pointing at
-> PGID_CPU: the DSA_DB_PORT one and the DSA_DB_BRIDGE one. Only vid 0 is
-> split, into HOST_PVID and UNAWARE_PVID by lan9645x_vlan_unaware_pvid().
+> __lan9645x_mact_learn() issues the command before it polls for
+> completion:
 >=20
-> DSA refcounts the two entries separately on the CPU port, because
-> dsa_mac_addr_find() includes the db in its key. The shared-key guard only
-> matches entries of the same db type:
+>     lan_wr(ANA_MACACCESS_VALID_SET(1) |
+>            ANA_MACACCESS_DEST_IDX_SET(port) |
+>            ...
+>            ANA_MACACCESS_MAC_TABLE_CMD_SET(CMD_LEARN),
+>            lan9645x, ANA_MACACCESS);
 >=20
-> net/dsa/dsa.c:dsa_fdb_present_in_other_db() {
->     ...
->         if (a->db.type =3D=3D db.type && !dsa_db_equal(&a->db, &db))
->                 return true;
->     ...
-> }
+>     return lan9645x_mac_wait_for_completion(lan9645x, NULL);
 >=20
-> So when a DSA_DB_PORT entry is deleted, the guard never sees a
-> DSA_DB_BRIDGE entry with the same key. For DSA_DB_BRIDGE deletions, the
-> !br check skips the guard entirely.
+> That means an error from lan9645x_mdb_write_dest() only tells us the
+> outcome is unknown, for example after a failed poll read or a timeout.
+> The entry may already point at pgid_index.
 >=20
-> One way to hit this:
+> If new_pgid was just created, this put frees its index. A later add
+> with a different port mask can get the same index back from
+> lan9645x_mdb_pgid_entry_create(). lan9645x_pgid_entry_alloc() then
+> rewrites ANA_PGID for that group, so an entry that may have been
+> written would forward this group to the other group's ports.
 >=20
-> - swp1 is in a VLAN-aware bridge.
-> - swp1.100 is a VLAN upper whose MAC M differs from swp1's.
-> - dsa_user_vlan_rx_add_vid()->dsa_user_schedule_standalone_work(DSA_UC_AD=
-D)
->   installs a DSA_DB_PORT host entry (M, 100).
-> - M is also a bridge host address in VID 100, which adds a DSA_DB_BRIDGE
->   host entry (M, 100). This happens, for example, with br0 using vid 100
->   self and the same MAC, or with a local entry of another port in VID 100=
-.
+> When the entry already existed (ports !=3D 0), __lan9645x_mdb_add() does
+> no further cleanup. For a fresh entry it issues the forget only after
+> the PGID has been released, and it ignores the result:
 >=20
-> Removing either entry, for example by taking swp1.100 down or deleting
-> the bridge VLAN, goes through:
+>     lan9645x_mact_forget(lan9645x, mdb_entry->mac,
+>                          mdb_entry->vid, type);
+>     lan9645x_mdb_entry_dealloc(lan9645x, mdb_entry);
 >=20
-> dsa_switch_host_fdb_del()
->   dsa_port_do_fdb_del()
->     lan9645x_fdb_del()
->       dsa_fdb_present_in_other_db()   /* false, db types differ */
->       lan9645x_mact_forget()          /* CMD_FORGET on (M, 100) */
+> The comment there says the forget "fails harmlessly if the bus is still
+> down". Isn't that the case where an entry pointing at a freed PGID is
+> left in hardware?
 >=20
-> Wouldn't the hardware then lose the entry for the host address that is
-> still wanted?
+> The delete side handles the same uncertainty by keeping the reference.
+> lan9645x_mdb_narrow_dest() keeps old_pgid on failure, and
+> __lan9645x_mdb_del() sets mdb_entry->pgid =3D NULL when CMD_FORGET fails.
+> The v12 changelog gives the reason: "so the index cannot be handed to an
+> unrelated group while hardware may still point at it".
 >=20
-> __lan9645x_port_set_host_flood() leaves the CPU out of PGID_UC when only
-> bridged ports request host flooding. Unicast to M in VID 100 could then
-> be dropped instead of reaching the host. The felix driver uses the same
-> pattern.
+> Should the add path also keep the new_pgid reference when the write
+> fails?
 >=20
 
-Correct, a DSA_DB_PORT and a DSA_DB_BRIDGE host entry with the same
-address and a non-zero VID map to one MAC table entry, and
-dsa_fdb_present_in_other_db() only considers databases of the same type.
-v14 replaces the check with one that walks the CPU port address list and
-compares the MAC table key each entry maps to, so the entry is only
-learned or forgotten when no other database uses that key.
+Correct, an error from the learn command leaves the hardware state
+unknown, and the add path dropped the PGID reference anyway. v14 keeps
+the reference on a failed write, as the delete path does, so the index
+cannot be reused while hardware may point at it.
 
 
+> > +     mdb_entry->pgid =3D new_pgid;
+> > +     mdb_entry->ports =3D new_ports;
+> > +     lan9645x_pgid_entry_put(lan9645x, old_pgid);
+> > +     return 0;
+> > +}
+>=20
+> [ ... ]
+>=20
+> > +static void lan9645x_mdb_narrow_dest(struct lan9645x *lan9645x,
+> > +                                  struct lan9645x_mdb_entry *mdb_entry=
+,
+> > +                                  enum macaccess_entry_type type,
+> > +                                  struct lan9645x_pgid_entry *new_pgid=
+,
+> > +                                  int pgid_index, u16 new_ports)
+> > +{
+> > +     struct lan9645x_pgid_entry *old_pgid =3D mdb_entry->pgid;
+> > +     int err;
+> > +
+> > +     lockdep_assert_held(&lan9645x->mdb_lock);
+> > +
+> > +     mdb_entry->pgid =3D new_pgid;
+> > +     mdb_entry->ports =3D new_ports;
+>=20
+> [Severity: Low]
+> mdb_entry->pgid is switched to new_pgid before the hardware write. If
+> that write fails, which PGID does the entry use afterwards? Hardware
+> would still use old_pgid, while software records new_pgid.
+>=20
+> The in-place branch in __lan9645x_mdb_del() assumes hardware points at
+> mdb_entry->pgid, so it only rewrites ANA_PGID:
+>=20
+>     if (mdb_entry->pgid && refcount_read(&mdb_entry->pgid->refcount) =3D=
+=3D 1) {
+>         mdb_entry->pgid->ports =3D new_ports &
+>                                  ~BIT(lan9645x->num_phys_ports);
+>         ...
+>         lan_rmw(ANA_PGID_PGID_SET(mdb_entry->pgid->ports), ...);
+>         return 0;
+>     }
+>=20
+> For example, take a group {A,B,C} on PGID P:
+>=20
+> 1. Deleting C creates Q=3D{A,B} with the last free index, and the MAC
+>    write fails.
+>=20
+> 2. Deleting B finds no PGID for {A}, so creation returns -ENOSPC.
+>=20
+> 3. Q has refcount 1, so it is narrowed in place.
+>=20
+> Hardware still forwards through P, so B and C keep receiving the group,
+> and nothing further is logged.
+>=20
+> Should the in-place branch, or a later narrowing, rewrite the MAC entry
+> after an earlier failed write?
+>=20
+> > +
+> > +     err =3D lan9645x_mdb_write_dest(lan9645x, mdb_entry, type, pgid_i=
+ndex,
+> > +                                   new_ports);
+> > +     if (err) {
+> > +             dev_err(lan9645x->dev,
+> > +                     "Narrowing %pM vid %u to mask 0x%x returned %pe\n=
+",
+> > +                     mdb_entry->mac, mdb_entry->vid, new_ports,
+> > +                     ERR_PTR(err));
+> > +             return;
+> > +     }
+>=20
+> [Severity: Low]
+> Does this early return leak a PGID reference when old_pgid and new_pgid
+> are the same object?
+>=20
+> Take a group {A, CPU} on PGID P, whose ports are {A}. When only the CPU
+> port module leaves, lan9645x_mdb_pgid_entry_get() strips the CPU bit.
+> lan9645x_mdb_pgid_entry_lookup() then returns P after refcount_inc().
+> Now new_pgid =3D=3D old_pgid =3D=3D P, and P holds two references for a s=
+ingle
+> mdb entry.
+>=20
+> If lan9645x_mdb_write_dest() fails here, the put below is skipped. When
+> the group is removed later, lan9645x_mdb_entry_dealloc() drops only one
+> reference. P and its index then stay reserved until
+> lan9645x_mdb_deinit().
+>=20
+> Keeping old_pgid makes sense when it differs from new_pgid. Here,
+> though, mdb_entry->pgid already holds P. Should the put still run when
+> old_pgid =3D=3D new_pgid?
+>=20
+> > +
+> > +     lan9645x_pgid_entry_put(lan9645x, old_pgid);
+> > +}
+>=20
 > [ ... ]
 >=20
 > --
