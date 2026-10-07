@@ -1,70 +1,78 @@
-Received: from mta1.migadu.com (out-141.mta1.migadu.com [95.215.58.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2493F38236E
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Oct 2026 06:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC86047F77F;
+	Wed,  7 Oct 2026 10:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791355579; cv=none; b=Br+QWYFsRC8weNLhDI4gpaAFFJTVmncubenu8Ipo/Pwa3T8i12OonJEWbhZSjl3/E+LSNvGdc/hV+JUZBXTTMGJvTj5NzCzSo5xTcqlZi5hMehhMUEWZcRPzwtlUNnije8zUsOAFgZkJTrsy/NSKDJG00aIMRTBvullMdqWPCaY=
+	t=1791368940; cv=none; b=fpSUIs6vixw8NIaE1Ax+7U2JY7Z/u0csmPLC3dcQk+vOdxlhLXmy2kpOtNt//5Km1eiKKTY71iMV1pTepo+9jB8NWbPrnltRDuS6WML84c77oDh8T+LMJSrSWW+5G13A3+GFcJlVeHNie2gUuFiY4vfLNGeAQMNXF33nKCBJsIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791355579; c=relaxed/simple;
-	bh=kEx5juAaGMpPT9V4dZHafbCN0tHJgI/vgPamOMCAtmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U9iKMXVJJWJO+lhgmCDRwsQHClGqO04qDXTySz9eS8Yhqq3mDbl4yR8frbBB7m8bvqVo3AyNl6jh/+SMkLK5KwSqa7cTPQZFV8x2XQ3JFWk/hpiVZz55hFnI9LtLdbcxPLrnmUFciZPNhVxaZ7gZwtgWVkdE83FcbF0MB4GGKuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l1jIPsQs; arc=none smtp.client-ip=95.215.58.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1791368940; c=relaxed/simple;
+	bh=weuBvweQFZVt/7mS7Fc95N/a2AlwcIYomOHyPpIYkUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OkBFYwRS86nP3Awwxu2V/Md+iaoWlzK1/FVzXbARkoAf8eYtnL8r9ficSyAC4JwIr4/3NYIMLPF98piJus5A3JEzRW0AolTLXBd4u16eosgpjkcDjfqIZXMS1bYwqvHPUcnBbAkGH1Ab8AiYitdJhL2pymwMc0DB6wGr+1tVZek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sAxtiXM+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l1jIPsQs"
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=kEx5juAaGMpPT9V4dZHafbCN0tHJgI/vgPamOMCAtmE=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1791355575; v=1; x=1791960375;
- b=l1jIPsQsHyOuv4fk2DOKqrA2s3fRHGmk7D2ZNADB64zTF3SKWUSUxDHgM3rs42z7XuZOEfUd
- ssRuXTWD7qEFvCwZcj8iXU3upJyPstpm3I986pBP8MeFJtN+VbCdqUwUUgLPFoV9qhT17e58V9j
- efZzQW+ulcXFzC4Y5vrp2oeU=
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id bcd78634b59a6ec0;
-	Wed, 07 Oct 2026 03:23:58 +0000
-X-Mizu-Trace-ID: bcd78634b59a6ec0
-X-Migadu-Flow: FLOW_OUT
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5bcc04c71f5so4629e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 20:23:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByhHo6I47MRkuS4oKo7wfGJhlo/K0wyauzosylx39BsyX2ZTqu05GXfPs2Y31l5pCxPCcFfE1+M30ZFhU7RrXNqMA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKuo2ONfrvveB0u0bi+4J1P3ys4WhlXCN/PWDcPEMEmfMsKwcV3
-	fPmoEMun7Jhgnk/FyCrPefCPZe+MXCEdsCyOawsPgXat8z5g4YKqPP1AVtDDdZibyJ/PY+AoVg5
-	9xAqjrfKBekLVvPSO+5FwO6YjBVDoXW5jzyfOi45n
-X-Received: by 2002:a05:6512:6289:b0:5ba:3602:4343 with SMTP id
- 2adb3069b0e04-5bcca678614mr260864e87.16.1791343437807; Tue, 06 Oct 2026
- 20:23:57 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sAxtiXM+"
+Received: from [192.168.0.43] (chfd-03-b2-v4wan-176392-cust229.vm15.cable.virginm.net [82.19.20.230])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 336201494;
+	Wed,  7 Oct 2026 12:26:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1791368805;
+	bh=weuBvweQFZVt/7mS7Fc95N/a2AlwcIYomOHyPpIYkUY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sAxtiXM+kPXP9eOSagM8GbX9NBuru7NkPy9Et0DiMeTUz7aXf6MmZ0jzFEYfmi2zH
+	 t1z1kcCavBJ6tWWJLLf2wYktu7hrB/312nhJ1kpZInpw67LgAU334nxEU9QdTUMS8o
+	 co6LO9BEO7edkyEKXfFy7tEDz5SxCEIAEcKlpO84=
+Message-ID: <6e22143e-92f0-4611-90df-9d1674083cff@ideasonboard.com>
+Date: Wed, 7 Oct 2026 11:28:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260923180749.3906547-1-fuad.tabba@linux.dev>
-In-Reply-To: <20260923180749.3906547-1-fuad.tabba@linux.dev>
-From: Fuad Tabba <fuad.tabba@linux.dev>
-Date: Wed, 7 Oct 2026 05:23:21 +0200
-X-Gmail-Original-Message-ID: <CA+EHjTwPsMqjBgfqAWHxwp1Ujpk7b_BCu_u8WcOekfczFXAMHQ@mail.gmail.com>
-X-Gm-Features: AclHuK_rKcz2_xdGb_jpyCXvstLTuyZHAt_pcvOQTxgAvV4JtvZe-_kS7YT5K2Q
-Message-ID: <CA+EHjTwPsMqjBgfqAWHxwp1Ujpk7b_BCu_u8WcOekfczFXAMHQ@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI: rcar-gen4: Fix device_node leak in rcar_gen4_pcie_host_msi_addr()
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Will Deacon <will@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linusw@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Rob Herring <robh@kernel.org>, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org>
+ <20260922-mali-c55-renesas-dts-v1-1-cd63cdb51033@kernel.org>
+ <CAMuHMdVkhSNDn3BpBt-9K8FPKhmODYVF-PCKr+AH8B+o4GHuJA@mail.gmail.com>
+ <CAD++jLk6015ShhR0XAB+NfKF1Gf9ZWA8Z_=9uU6zNZ+wHS97fg@mail.gmail.com>
+ <b9db2577-77f1-466e-b6b8-1eb6501d079f@ideasonboard.com>
+ <CAMuHMdVMt95DBV1DeLa5zVkMV4sYj8v_uA1TTJiZFi_QKvMkAA@mail.gmail.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <CAMuHMdVMt95DBV1DeLa5zVkMV4sYj8v_uA1TTJiZFi_QKvMkAA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Geert
 
-Gentle ping on this fix.
+On 25/09/2026 11:10, Geert Uytterhoeven wrote:
+> Hi Dan,
+> 
+> On Fri, 25 Sept 2026 at 11:48, Dan Scally <dan.scally@ideasonboard.com> wrote:
+>> Huh; not sure why I never followed up on this. I haven't touched the board in some time, so it must
+>> have slipped my mind. I can pick it back up and address the comments, including adding the other
+>> interrupts.
+> 
+> Same for "[PATCH] arm64: dts: renesas: r9a09g057h48-kakip: Enable eth0"?
 
-Cheers,
-/fuad
+Ah - yes! I'll revive that since Linus is handling the IVC / ISP ones
+
+Thanks
+Dan
+
+> Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
+
