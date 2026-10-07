@@ -1,626 +1,398 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27FB4E56EB
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2026 23:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A592222AC;
+	Wed,  7 Oct 2026 02:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791328813; cv=none; b=gNsLu3Hbq2Q2/A6qFyzuwBKn3k916qbjhZgvM9Gf7eYd8ftTkWrsheHf17Izo4PZ4mgYPkitKkxjsZkDFSLRsaLJ2SCyws2nVb7goaNpTJHOcRtByZMvPkuIyFDXpB1wVUKZ5+RtJf/G1WoGZ5igtzr3wi7i1hRVgnZwMxMi1EU=
+	t=1791339136; cv=none; b=BttDTLQbRDWqKRo7VxiyZXmkc9zleKT2gkpIk0KknBEzqfU0nhiPE6tksNIz7rGqNcEDurQW6fU2HGSiN2r+bf3N1tOuLujQMqx/7TCsbVCRX3EfZB3cD0p2KqWkJY5wqbbMXf7YYcbiq0uTfhhTItQRXfiiKDy4vAP3/ygO+jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791328813; c=relaxed/simple;
-	bh=wK2aCxJ9U+ub/DEV7X7hyoaxaqGtj9ujkt+2WBRc93E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QUVEVnkAcJEnvkuUMF2Qfkhol5bL4yGZmH/5A1pW04YRBNlqDiVakfhIw5V3jdO1AtTIuod4H7APtIFh0l26bl9GoHsO4ln2IRyVk+9uZrXEJXEFGIcFOg+SYiJtvekRBAZXnIcxAyDhqh6b/IZovwfFW7rs8Pigk/sTLgng24E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V8Hk/RP+; arc=none smtp.client-ip=74.125.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1791339136; c=relaxed/simple;
+	bh=HcbHlyDAa4Gm/J9dEMUmk3W5T7P3RyRYVDy2NfHxVUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n0Ah9yMoRFMxpOLrfOB4RZG+ABjIFmIfn4cDm6wFXh1ie/4qPE8bjiHViGG/T86bdafgg8HnqMll1SXgqu6oEeiOoxx5KiygsAJY4w+vY8pGv5Zh+C/msD5ab+qLm9dBPSJ4wxWOfEAtuZFdOXFlKNArhFdMV3nL0W3tK4i/psg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LPux/eGE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V8Hk/RP+"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-3282db206d3so9901410eec.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2026 16:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1791328792; x=1791933592; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=SeuThS77cf851FYkL3wNU27hfqCIdrf/bvhf8WRGatA=;
-        b=V8Hk/RP+kuvRSmUDjqqQ/YnCUKREu5ecv+q0RYafOkmX5TtOSMUGD7nJkTH5csG7a0
-         SE/K+oZQYMvrADbcqSMW+rC3333+fD91KMMYYsYPjobYsUBN0SPJZW3bpBm87OTNtVk6
-         QkJR/l1yRgQBUy1iU4SWIR2p93DdMn6QJSXzI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791328792; x=1791933592;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=SeuThS77cf851FYkL3wNU27hfqCIdrf/bvhf8WRGatA=;
-        b=g2JwMd65lVyK7PORWSMfy3nKAwBStp7HXoxtewpl/S1WPvB9dORGk8ORvyg8F6f4yj
-         jO8jB6m0afUDktJ4peoRRZ1+dHuojLxPAwiFtmn1NkBmc4goceaz+IOpr1G3f2s3KT19
-         EuEG5iDISbZO9gS6vfAIjZFgUeBZWPPOPWOVhQWq51lV5XqPtQVj3pA1fq+g0zYRE0rk
-         8b8eWkOonVRcLmIuaa3vDtVNL1xKG1w6+qsPWCxG8UI/gtjcVHE6MJHgNUVlPWPsR3jK
-         z7Vt013MDT9bLe/uOq64uCZJM3BoTO59nN8RGWcqrIcBlvImrdbcQM6k3iOVJGFwrDjg
-         M4NQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzLd+Cw8Mg3CBehGO9RQTscZqUIvHxIKQv0Zrks0Fsfz7W4e+Q102ftJ4+EhhuLPCCzXNDAdEhqS6Dz3niQ5oi3zw==@vger.kernel.org
-X-Gm-Message-State: AFuF++mtIRnjPz6raZ4r0pZVSUYldIOwqxNzOfQHX4PRYbRNkBE6tFtl
-	N4z8rtoQkdUuFspOgSGmwInLApp2OVa2UCGMrX+c/f02LUlP41Bf7kNAphjtiYuuvw==
-X-Gm-Gg: AYBFou0Hf8dMR3g4aipRUSZfjwkXhLm+iQzqZuuPll9YNotEfeAzVVGLeZIvGvBYFwc
-	Pa0GhhZfn7bNMjqeFcQ8IePIhyAb1hNe31exTtI5fbe1vP69O+zyvod9etlOH8uw839XporzC67
-	MtokGYEM1WVvtdFE5IZWjxK0WiWgnEPyt/WFewuy+CeRz1HFseyR7VHxBM/IPH8OKxpOHpakFhQ
-	FbE0lr0w1Y139obfZgW195o+PS7EmWZYUaSOPB6pnJolSd/xxRtT/PaeXOCzfKspKZ65DCrQe+/
-	9HkRC+91bSaZT0D+CKkNYSPNf1Bhl9tTAv2I0/xMWf/HB1A/4A5nrDMrRhxQk/jKz7MvzCwe/5D
-	xl1vQOMCog1eVQa279Y50FmiSS5ERPKqV+7HgIYBlv3BFzgmOU6S+p4/UPn6nYG90hN/UDITcsJ
-	E3EwApjAxBKTGQLyTQQVVPKc6schEwBui9g0rB7oMLF1Xy01eAnNV5k0mQ34cpiYHJqVOvIJlSu
-	6c6loYR7CEFY0YXEU4ylQwVX8HVecujIEPCJg==
-X-Received: by 2002:a05:7300:3a97:b0:343:f1fc:9006 with SMTP id 5a478bee46e88-3515de7effbmr291244eec.30.1791328792383;
-        Tue, 06 Oct 2026 16:19:52 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:63eb:e7f9:1d47:7d47])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-3515b01ea9csm1659478eec.27.2026.10.06.16.19.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Oct 2026 16:19:51 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	Ulf Hansson <ulfh@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LPux/eGE"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CB05540E03BE;
+	Wed,  7 Oct 2026 02:12:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id pBR29GntPvhf; Wed,  7 Oct 2026 02:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1791339120; bh=edrBKizi8Y/o+NoHr6PB6dvEJtTx1JjOPN8f3xwfv9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LPux/eGELh8vaNuJWr8dk8iSCdGcGJiwmBuUuuFqYoeD47MpG7Hh5cV/mpRq8s4jr
+	 Rwc20VcjFSg3ALXfNOVf/VzdPOw9mSuoq49eUSBmoGADabvavw9N8qo8tYKfZfxP8i
+	 77tQKPXAL2+a7vwSqRCZKbsjlFErczhxLETPkAui+7qUXALxxvxOx4dHqwFYXug0eH
+	 o2BGxUTTx1zrX0INN4UnR+y1MdGj56HnwlSZ4hhuwx+IeQKr7yzfjcZKsfH6td2Ze4
+	 f9SU9UdskazsAISTc72zElEE80U5ohBrw5UZq8c6XWHdPSVYApkvtBzw87J4vo1+Eb
+	 oQQbgH4AJv9G8nLqBGRhker9oWuovMZYV0OSbRNUFAR5DGSNspX/YP2G67FePQSPno
+	 vjVdGBpHvgxsVN8sDL9vqUj3YP1rAO8M1T852LdwsMUr/ZHQTdiVJ8WGUj0E8nbNCQ
+	 GqmQ49x0mcXb6gvtsdCmSSz7QctWfoMfULNx85OcDMm6JfVftQgY6OdUR9kbHjla+y
+	 kmXHu1jdwoGZxJJIEQR0JrGL1zyPVlsX1jTm3gml3wpYeT40SKkIGWNufHb/pY21Vs
+	 3mPl+/sWu283AioJMvcDIZtLfd/xJ1HnKyGcPTH9M0iMDBdzO7RuV7gZuPOXK4YYLq
+	 3v3WMoTPnwFlTTVSvyqyvkGY=
+Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::2b])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 13CA940E00B9;
+	Wed,  7 Oct 2026 02:11:45 +0000 (UTC)
+Date: Tue, 6 Oct 2026 19:11:42 -0700
+From: Borislav Petkov <bp@alien8.de>
+To: Paul Louvel <paul.louvel@bootlin.com>
+Cc: Tony Luck <tony.luck@intel.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 03/13] iio: Discard pm_runtime_put_autosuspend() return values
-Date: Tue,  6 Oct 2026 16:13:31 -0700
-Message-ID: <20261006161337.3.If2263e6ae9eaa4493881b72922dcde031ce9d81d@changeid>
-X-Mailer: git-send-email 2.56.0.360.g66cac248cb-goog
-In-Reply-To: <20261006231900.3230373-1-briannorris@chromium.org>
-References: <20261006231900.3230373-1-briannorris@chromium.org>
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v5 2/3] EDAC/cadence: Add Cadence DDR EDAC driver
+Message-ID: <20261007021142.GAasWqXsuPpjYUIYIv@fat_crate.local>
+References: <20261005-paul-v7-3-rc1-edac-v5-0-140a0f124bc0@bootlin.com>
+ <20261005-paul-v7-3-rc1-edac-v5-2-140a0f124bc0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261005-paul-v7-3-rc1-edac-v5-2-140a0f124bc0@bootlin.com>
 
-Multiple IIO drivers inspect or propagate the return value of
-pm_runtime_put_autosuspend(), which is not particularly useful.
+On Mon, Oct 05, 2026 at 02:49:23PM +0200, Paul Louvel wrote:
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index a37534300ab9..0d66a072b15c 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -82,6 +82,7 @@ obj-$(CONFIG_EDAC_SYNOPSYS)		+= synopsys_edac.o
+>  obj-$(CONFIG_EDAC_XGENE)		+= xgene_edac.o
+>  obj-$(CONFIG_EDAC_TI)			+= ti_edac.o
+>  obj-$(CONFIG_EDAC_QCOM)			+= qcom_edac.o
+> +obj-$(CONFIG_EDAC_CADENCE)		+= cadence_edac.o
 
-Returning an error code from pm_runtime_put_autosuspend() merely means
-that it has not queued up a timer or work item to check whether or not
-the device can be suspended and there are many perfectly valid
-situations in which that can happen, like after writing "on" to the
-device's runtime PM "control" attribute in sysfs for one example.
+This goes at the end of that file.
 
-For this reason, modify these drivers to simply discard the
-pm_runtime_put_autosuspend() return value, and change the return types
-of fxls8962af_power_off() and fxas21002c_pm_put() to void.
+>  obj-$(CONFIG_EDAC_ASPEED)		+= aspeed_edac.o
+>  obj-$(CONFIG_EDAC_BLUEFIELD)		+= bluefield_edac.o
+>  obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
+> diff --git a/drivers/edac/cadence_edac.c b/drivers/edac/cadence_edac.c
+> new file mode 100644
+> index 000000000000..26b9a7facd57
+> --- /dev/null
+> +++ b/drivers/edac/cadence_edac.c
+> @@ -0,0 +1,399 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2015 Renesas Electronics Europe Ltd.
+> + * Copyright 2026 Bootlin
+> + *
+> + * Based on highbank EDAC driver:
+> + *
+> + * Copyright 2011-2012 Calxeda, Inc.
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/edac.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mm.h>
+> +#include <linux/of_address.h>
+> +#include <linux/string.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/platform_device.h>
 
-This will facilitate a planned change of the
-pm_runtime_put_autosuspend() return type to void in the future, similar
-to commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
-type to void").
+How many of those includes are *actually* needed?
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
-This patch is independent of the rest of the series, except for the end
-(changing the return type). I expect it can be applied by individual
-maintainers, and we pick up the end once the dust is settled.
+> +#include "edac_mc.h"
+> +#include "edac_module.h"
+> +
+> +#define DRV_NAME "cdns_edac"
 
-I couldn't decide if I should split this up by individual driver, or
-just 1 for the whole drivers/iio/ subsystem. Many of these drivers have
-borrowed the same patterns, so I chose to just send 1. Let me know if I
-should split it up.
+"cadence_edac" is a perfectly fine name.
 
- drivers/iio/accel/bmc150-accel-core.c         | 14 +++++-----
- drivers/iio/accel/fxls8962af-core.c           | 11 +++-----
- drivers/iio/accel/kxcjk-1013.c                | 15 ++++++-----
- drivers/iio/accel/mma8452.c                   | 15 +++++------
- drivers/iio/accel/mma9551_core.c              | 15 +++++------
- drivers/iio/adc/rcar-gyroadc.c                |  4 +--
- drivers/iio/adc/ti-ads1015.c                  |  8 +++---
- drivers/iio/chemical/atlas-sensor.c           |  4 +--
- .../common/hid-sensors/hid-sensor-trigger.c   | 14 ++++------
- drivers/iio/gyro/bmg160_core.c                | 17 +++++-------
- drivers/iio/gyro/fxas21002c_core.c            | 12 +++------
- drivers/iio/imu/kmx61.c                       | 17 ++++++------
- drivers/iio/light/apds9960.c                  |  2 +-
- drivers/iio/light/isl29028.c                  | 15 +++--------
- drivers/iio/light/pa12203001.c                |  3 ++-
- drivers/iio/light/rpr0521.c                   | 15 +++++------
- drivers/iio/light/tsl2583.c                   | 27 +++----------------
- drivers/iio/light/us5182d.c                   |  3 ++-
- 18 files changed, 80 insertions(+), 131 deletions(-)
+> +#define REG_BYTE_SZ 4
+> +#define DDR_CTL(n) ((n) * REG_BYTE_SZ)
+> +
+> +#define CDNS_DDR_DDR_STAT DDR_CTL(0)
 
-diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-index 46bb36d9366e..2f7fe28e3e0b 100644
---- a/drivers/iio/accel/bmc150-accel-core.c
-+++ b/drivers/iio/accel/bmc150-accel-core.c
-@@ -332,14 +332,14 @@ static int bmc150_accel_set_power_state(struct bmc150_accel_data *data, bool on)
- 	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_resume_and_get(dev);
--	else
--		ret = pm_runtime_put_autosuspend(dev);
--	if (ret < 0) {
--		dev_err(dev,
--			"Failed: %s for %d\n", __func__, on);
--		return ret;
-+		if (ret < 0) {
-+			dev_err(dev, "%s: failed to resume: %d\n", __func__, ret);
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(dev);
- 	}
- 
- 	return 0;
-diff --git a/drivers/iio/accel/fxls8962af-core.c b/drivers/iio/accel/fxls8962af-core.c
-index 18d7b09bddd2..3a2c4ce0557c 100644
---- a/drivers/iio/accel/fxls8962af-core.c
-+++ b/drivers/iio/accel/fxls8962af-core.c
-@@ -216,16 +216,11 @@ static int fxls8962af_power_on(struct fxls8962af_data *data)
- 	return ret;
- }
- 
--static int fxls8962af_power_off(struct fxls8962af_data *data)
-+static void fxls8962af_power_off(struct fxls8962af_data *data)
- {
- 	struct device *dev = regmap_get_device(data->regmap);
--	int ret;
--
--	ret = pm_runtime_put_autosuspend(dev);
--	if (ret)
--		dev_err(dev, "failed to power off\n");
- 
--	return ret;
-+	pm_runtime_put_autosuspend(dev);
- }
- 
- static int fxls8962af_standby(struct fxls8962af_data *data)
-@@ -692,7 +687,7 @@ fxls8962af_write_event_config(struct iio_dev *indio_dev,
- 			return -EBUSY;
- 
- 		/* Not in buffered mode so disable power */
--		ret = fxls8962af_power_off(data);
-+		fxls8962af_power_off(data);
- 
- 		iio_device_release_direct(indio_dev);
- 	}
-diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-index 166fb786425f..f068753469a8 100644
---- a/drivers/iio/accel/kxcjk-1013.c
-+++ b/drivers/iio/accel/kxcjk-1013.c
-@@ -633,14 +633,15 @@ static int kxcjk1013_set_power_state(struct kxcjk1013_data *data, bool on)
- #ifdef CONFIG_PM
- 	int ret;
- 
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_resume_and_get(&data->client->dev);
--	else
--		ret = pm_runtime_put_autosuspend(&data->client->dev);
--	if (ret < 0) {
--		dev_err(&data->client->dev,
--			"Failed: %s for %d\n", __func__, on);
--		return ret;
-+		if (ret < 0) {
-+			dev_err(&data->client->dev,
-+				"%s: failed to resume: %d\n", __func__, ret);
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(&data->client->dev);
- 	}
- #endif
- 
-diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
-index 7d683686dd9d..711689db8694 100644
---- a/drivers/iio/accel/mma8452.c
-+++ b/drivers/iio/accel/mma8452.c
-@@ -224,15 +224,14 @@ static int mma8452_set_runtime_pm_state(struct i2c_client *client, bool on)
- #ifdef CONFIG_PM
- 	int ret;
- 
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_resume_and_get(&client->dev);
--	else
--		ret = pm_runtime_put_autosuspend(&client->dev);
--	if (ret < 0) {
--		dev_err(&client->dev,
--			"failed to change power state to %d\n", on);
--
--		return ret;
-+		if (ret < 0) {
-+			dev_err(&client->dev, "failed to resume: %d\n", ret);
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(&client->dev);
- 	}
- #endif
- 
-diff --git a/drivers/iio/accel/mma9551_core.c b/drivers/iio/accel/mma9551_core.c
-index 2ccb1fb19b96..d8aa0a062779 100644
---- a/drivers/iio/accel/mma9551_core.c
-+++ b/drivers/iio/accel/mma9551_core.c
-@@ -669,15 +669,14 @@ int mma9551_set_power_state(struct i2c_client *client, bool on)
- #ifdef CONFIG_PM
- 	int ret;
- 
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_resume_and_get(&client->dev);
--	else
--		ret = pm_runtime_put_autosuspend(&client->dev);
--	if (ret < 0) {
--		dev_err(&client->dev,
--			"failed to change power state to %d\n", on);
--
--		return ret;
-+		if (ret < 0) {
-+			dev_err(&client->dev, "failed to resume: %d\n", ret);
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(&client->dev);
- 	}
- #endif
- 
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index d38cf3caeae0..0d3b061d6ec2 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -199,10 +199,8 @@ static int rcar_gyroadc_read_raw(struct iio_dev *indio_dev,
- 		*val = readl(priv->regs + datareg);
- 		*val &= BIT(priv->sample_width) - 1;
- 
--		ret = pm_runtime_put_autosuspend(priv->dev);
-+		pm_runtime_put_autosuspend(priv->dev);
- 		iio_device_release_direct(indio_dev);
--		if (ret < 0)
--			return ret;
- 
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
-diff --git a/drivers/iio/adc/ti-ads1015.c b/drivers/iio/adc/ti-ads1015.c
-index 0fbfa4e499aa..817ec1c73df4 100644
---- a/drivers/iio/adc/ti-ads1015.c
-+++ b/drivers/iio/adc/ti-ads1015.c
-@@ -370,15 +370,13 @@ static const struct iio_chan_spec tla2024_channels[] = {
- #ifdef CONFIG_PM
- static int ads1015_set_power_state(struct ads1015_data *data, bool on)
- {
--	int ret;
- 	struct device *dev = regmap_get_device(data->regmap);
- 
- 	if (on)
--		ret = pm_runtime_resume_and_get(dev);
--	else
--		ret = pm_runtime_put_autosuspend(dev);
-+		return pm_runtime_resume_and_get(dev);
- 
--	return ret < 0 ? ret : 0;
-+	pm_runtime_put_autosuspend(dev);
-+	return 0;
- }
- 
- #else /* !CONFIG_PM */
-diff --git a/drivers/iio/chemical/atlas-sensor.c b/drivers/iio/chemical/atlas-sensor.c
-index 1d4a9919df1a..48598475512f 100644
---- a/drivers/iio/chemical/atlas-sensor.c
-+++ b/drivers/iio/chemical/atlas-sensor.c
-@@ -426,9 +426,7 @@ static int atlas_buffer_predisable(struct iio_dev *indio_dev)
- 	if (ret)
- 		return ret;
- 
--	ret = pm_runtime_put_autosuspend(&data->client->dev);
--	if (ret)
--		return ret;
-+	pm_runtime_put_autosuspend(&data->client->dev);
- 
- 	return 0;
- }
-diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-index 60808e2430ca..d76a6d9f04f6 100644
---- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-+++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-@@ -154,21 +154,17 @@ int hid_sensor_power_state(struct hid_sensor_common *st, bool state)
- {
- 
- #ifdef CONFIG_PM
--	int ret;
--
- 	if (atomic_add_unless(&st->runtime_pm_enable, 1, 1))
- 		pm_runtime_enable(&st->pdev->dev);
- 
- 	if (state) {
- 		atomic_inc(&st->user_requested_state);
--		ret = pm_runtime_resume_and_get(&st->pdev->dev);
--	} else {
--		atomic_dec(&st->user_requested_state);
--		pm_runtime_use_autosuspend(&st->pdev->dev);
--		ret = pm_runtime_put_autosuspend(&st->pdev->dev);
-+		return pm_runtime_resume_and_get(&st->pdev->dev);
- 	}
--	if (ret < 0)
--		return ret;
-+
-+	atomic_dec(&st->user_requested_state);
-+	pm_runtime_use_autosuspend(&st->pdev->dev);
-+	pm_runtime_put_autosuspend(&st->pdev->dev);
- 
- 	return 0;
- #else
-diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
-index d611341a0e2a..e8e511daa7c4 100644
---- a/drivers/iio/gyro/bmg160_core.c
-+++ b/drivers/iio/gyro/bmg160_core.c
-@@ -319,18 +319,15 @@ static int bmg160_set_power_state(struct bmg160_data *data, bool on)
- 	struct device *dev = regmap_get_device(data->regmap);
- 	int ret;
- 
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_get_sync(dev);
--	else
--		ret = pm_runtime_put_autosuspend(dev);
--
--	if (ret < 0) {
--		dev_err(dev, "Failed: bmg160_set_power_state for %d\n", on);
--
--		if (on)
-+		if (ret < 0) {
-+			dev_err(dev, "%s: failed to resume: %d\n", __func__, ret);
- 			pm_runtime_put_noidle(dev);
--
--		return ret;
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(dev);
- 	}
- #endif
- 
-diff --git a/drivers/iio/gyro/fxas21002c_core.c b/drivers/iio/gyro/fxas21002c_core.c
-index a88670207cec..408f88f12fe7 100644
---- a/drivers/iio/gyro/fxas21002c_core.c
-+++ b/drivers/iio/gyro/fxas21002c_core.c
-@@ -369,11 +369,11 @@ static int  fxas21002c_pm_get(struct fxas21002c_data *data)
- 	return pm_runtime_resume_and_get(regmap_get_device(data->regmap));
- }
- 
--static int  fxas21002c_pm_put(struct fxas21002c_data *data)
-+static void fxas21002c_pm_put(struct fxas21002c_data *data)
- {
- 	struct device *dev = regmap_get_device(data->regmap);
- 
--	return pm_runtime_put_autosuspend(dev);
-+	pm_runtime_put_autosuspend(dev);
- }
- 
- static int fxas21002c_temp_get(struct fxas21002c_data *data, int *val)
-@@ -396,9 +396,7 @@ static int fxas21002c_temp_get(struct fxas21002c_data *data, int *val)
- 
- 	*val = sign_extend32(temp, 7);
- 
--	ret = fxas21002c_pm_put(data);
--	if (ret < 0)
--		goto data_unlock;
-+	fxas21002c_pm_put(data);
- 
- 	ret = IIO_VAL_INT;
- 
-@@ -430,9 +428,7 @@ static int fxas21002c_axis_get(struct fxas21002c_data *data,
- 
- 	*val = sign_extend32(be16_to_cpu(axis_be), 15);
- 
--	ret = fxas21002c_pm_put(data);
--	if (ret < 0)
--		goto data_unlock;
-+	fxas21002c_pm_put(data);
- 
- 	ret = IIO_VAL_INT;
- 
-diff --git a/drivers/iio/imu/kmx61.c b/drivers/iio/imu/kmx61.c
-index c288437d53ea..a8d37aa549ae 100644
---- a/drivers/iio/imu/kmx61.c
-+++ b/drivers/iio/imu/kmx61.c
-@@ -747,16 +747,15 @@ static int kmx61_set_power_state(struct kmx61_data *data, bool on, u8 device)
- 		data->mag_ps = on;
- 	}
- 
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_resume_and_get(&data->client->dev);
--	else
--		ret = pm_runtime_put_autosuspend(&data->client->dev);
--	if (ret < 0) {
--		dev_err(&data->client->dev,
--			"Failed: kmx61_set_power_state for %d, ret %d\n",
--			on, ret);
--
--		return ret;
-+		if (ret < 0) {
-+			dev_err(&data->client->dev,
-+				"%s: failed to resume: %d\n", __func__, ret);
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(&data->client->dev);
- 	}
- #endif
- 	return 0;
-diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
-index afe520de60e2..611e59d6b027 100644
---- a/drivers/iio/light/apds9960.c
-+++ b/drivers/iio/light/apds9960.c
-@@ -495,7 +495,7 @@ static int apds9960_set_power_state(struct apds9960_data *data, bool on)
- 			usleep_range(data->als_adc_int_us,
- 				     APDS9960_MAX_INT_TIME_IN_US);
- 	} else {
--		ret = pm_runtime_put_autosuspend(dev);
-+		pm_runtime_put_autosuspend(dev);
- 	}
- 
- 	mutex_unlock(&data->lock);
-diff --git a/drivers/iio/light/isl29028.c b/drivers/iio/light/isl29028.c
-index 33deb1726689..190ce67d2efe 100644
---- a/drivers/iio/light/isl29028.c
-+++ b/drivers/iio/light/isl29028.c
-@@ -395,9 +395,7 @@ static int isl29028_write_raw(struct iio_dev *indio_dev,
- 	if (ret < 0)
- 		return ret;
- 
--	ret = pm_runtime_put_autosuspend(dev);
--	if (ret < 0)
--		return ret;
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
- }
-@@ -408,7 +406,7 @@ static int isl29028_read_raw(struct iio_dev *indio_dev,
- {
- 	struct isl29028_chip *chip = iio_priv(indio_dev);
- 	struct device *dev = regmap_get_device(chip->regmap);
--	int ret, pm_ret;
-+	int ret;
- 
- 	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0)
-@@ -464,14 +462,7 @@ static int isl29028_read_raw(struct iio_dev *indio_dev,
- 	if (ret < 0)
- 		return ret;
- 
--	/**
--	 * Preserve the ret variable if the call to
--	 * pm_runtime_put_autosuspend() is successful so the reading
--	 * (if applicable) is returned to user space.
--	 */
--	pm_ret = pm_runtime_put_autosuspend(dev);
--	if (pm_ret < 0)
--		return pm_ret;
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
- }
-diff --git a/drivers/iio/light/pa12203001.c b/drivers/iio/light/pa12203001.c
-index c0f4db8d95f7..d4e197e05d26 100644
---- a/drivers/iio/light/pa12203001.c
-+++ b/drivers/iio/light/pa12203001.c
-@@ -188,7 +188,8 @@ static int pa12203001_set_power_state(struct pa12203001_data *data, bool on,
- 	if (on)
- 		return pm_runtime_resume_and_get(&data->client->dev);
- 
--	return pm_runtime_put_autosuspend(&data->client->dev);
-+	pm_runtime_put_autosuspend(&data->client->dev);
-+	return 0;
- 
- err:
- 	mutex_unlock(&data->lock);
-diff --git a/drivers/iio/light/rpr0521.c b/drivers/iio/light/rpr0521.c
-index 7d82efc31f3a..60c5e85bac2c 100644
---- a/drivers/iio/light/rpr0521.c
-+++ b/drivers/iio/light/rpr0521.c
-@@ -357,15 +357,14 @@ static int rpr0521_set_power_state(struct rpr0521_data *data, bool on,
- 	 * Note: If either measurement is re-enabled before _suspend(),
- 	 * both stay enabled until _suspend().
- 	 */
--	if (on)
-+	if (on) {
- 		ret = pm_runtime_resume_and_get(&data->client->dev);
--	else
--		ret = pm_runtime_put_autosuspend(&data->client->dev);
--	if (ret < 0) {
--		dev_err(&data->client->dev,
--			"Failed: rpr0521_set_power_state for %d, ret %d\n",
--			on, ret);
--		return ret;
-+		if (ret < 0) {
-+			dev_err(&data->client->dev, "Failed to resume: %d\n", ret);
-+			return ret;
-+		}
-+	} else {
-+		pm_runtime_put_autosuspend(&data->client->dev);
- 	}
- 
- 	if (on) {
-diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
-index 53fd423aa7ae..deaa71485468 100644
---- a/drivers/iio/light/tsl2583.c
-+++ b/drivers/iio/light/tsl2583.c
-@@ -640,7 +640,7 @@ static int tsl2583_read_raw(struct iio_dev *indio_dev,
- 			    int *val, int *val2, long mask)
- {
- 	struct tsl2583_chip *chip = iio_priv(indio_dev);
--	int ret, pm_ret;
-+	int ret;
- 
- 	ret = pm_runtime_resume_and_get(&chip->client->dev);
- 	if (ret < 0)
-@@ -709,19 +709,7 @@ static int tsl2583_read_raw(struct iio_dev *indio_dev,
- read_done:
- 	mutex_unlock(&chip->als_mutex);
- 
--	if (ret < 0) {
--		pm_runtime_put_autosuspend(&chip->client->dev);
--		return ret;
--	}
--
--	/*
--	 * Preserve the ret variable if the call to
--	 * pm_runtime_put_autosuspend() is successful so the reading
--	 * (if applicable) is returned to user space.
--	 */
--	pm_ret = pm_runtime_put_autosuspend(&chip->client->dev);
--	if (pm_ret < 0)
--		return pm_ret;
-+	pm_runtime_put_autosuspend(&chip->client->dev);
- 
- 	return ret;
- }
-@@ -773,16 +761,9 @@ static int tsl2583_write_raw(struct iio_dev *indio_dev,
- 
- 	mutex_unlock(&chip->als_mutex);
- 
--	if (ret < 0) {
--		pm_runtime_put_autosuspend(&chip->client->dev);
--		return ret;
--	}
-+	pm_runtime_put_autosuspend(&chip->client->dev);
- 
--	ret = pm_runtime_put_autosuspend(&chip->client->dev);
--	if (ret < 0)
--		return ret;
--
--	return 0;
-+	return ret;
- }
- 
- static const struct iio_info tsl2583_info = {
-diff --git a/drivers/iio/light/us5182d.c b/drivers/iio/light/us5182d.c
-index ab518311fd79..e76c40b422f4 100644
---- a/drivers/iio/light/us5182d.c
-+++ b/drivers/iio/light/us5182d.c
-@@ -366,7 +366,8 @@ static int us5182d_set_power_state(struct us5182d_data *data, bool on)
- 	if (on)
- 		return pm_runtime_resume_and_get(&data->client->dev);
- 
--	return pm_runtime_put_autosuspend(&data->client->dev);
-+	pm_runtime_put_autosuspend(&data->client->dev);
-+	return 0;
- }
- 
- static int us5182d_read_value(struct us5182d_data *data,
+Align all defines vertically like this:
+
+#define REG_BYTE_SZ		4
+#define DDR_CTL(n)		((n) * REG_BYTE_SZ)
+
+#define CDNS_DDR_DDR_STAT	DDR_CTL(0)
+...
+
+> +#define CDNS_DDR_DDR_STAT_DRAM_CLASS GENMASK_U32(11, 8)
+> +#define CDNS_DDR_DDR_STAT_DRAM_DDR2 BIT(2)
+> +#define CDNS_DDR_DDR_STAT_GET_DRAM_CLASS(reg) FIELD_GET(CDNS_DDR_DDR_STAT_DRAM_CLASS, reg)
+
+Also, I would shorten those long mouthfuls so that the code remains relatively
+readable. The "DDR_DDR" thing above is the first I'd whack. And so on.
+
+> +#define CDNS_DDR_ECC_STAT DDR_CTL(36)
+> +#define CDNS_DDR_ECC_STAT_ENABLED BIT(16)
+> +#define CDNS_DDR_ECC_STAT_IS_ENABLED(reg) FIELD_GET(CDNS_DDR_ECC_STAT_ENABLED, reg)
+> +#define CDNS_DDR_ECC_STAT_FWC BIT(24)
+> +
+> +#define CDNS_DDR_ECC_XOR DDR_CTL(37)
+> +#define CDNS_DDR_ECC_XOR_CHECK_BITS GENMASK_U32(13, 0)
+> +
+> +#define CDNS_DDR_BUS_CTRL DDR_CTL(54)
+> +#define CDNS_DDR_BUS_CTRL_REDUC BIT(1)
+> +
+> +/* DDR Controller Error Registers */
+> +
+> +#define CDNS_DDR_ECC_U_ERR_ADDR DDR_CTL(38)
+> +#define CDNS_DDR_ECC_U_ERR_STAT DDR_CTL(39)
+> +
+> +#define CDNS_DDR_ECC_C_ERR_ADDR DDR_CTL(41)
+> +#define CDNS_DDR_ECC_C_ERR_STAT DDR_CTL(42)
+> +
+> +#define CDNS_DDR_ECC_ERR_STAT_GET_SYNDROME(reg) FIELD_GET(GENMASK(6, 0), reg)
+> +
+> +#define CDNS_DDR_PORT_CMD_ERR_ADDR DDR_CTL(61)
+> +#define CDNS_DDR_PORT_CMD_ERR_TYPE DDR_CTL(62)
+> +#define CDNS_DDR_PORT_CMD_ERR_TYPE_GET(reg) FIELD_GET(GENMASK_U32(10, 8), reg)
+> +
+> +/* DDR Controller Interrupt Registers */
+> +
+> +#define CDNS_DDR_ECC_INT_STAT DDR_CTL(56)
+> +#define CDNS_DDR_ECC_INT_STAT_CE BIT(3)
+> +#define CDNS_DDR_ECC_INT_STAT_MULTIPLE_CE BIT(4)
+> +#define CDNS_DDR_ECC_INT_STAT_UE BIT(5)
+> +#define CDNS_DDR_ECC_INT_STAT_MULTIPLE_UE BIT(6)
+> +#define CDNS_DDR_ECC_INT_STAT_PORT_CMD_CHAN BIT(7)
+> +
+> +#define CDNS_DDR_ECC_INT_ACK DDR_CTL(57)
+> +#define CDNS_DDR_ECC_INT_ACK_MASK GENMASK_U32(21, 0)
+> +
+> +#define CDNS_DDR_ECC_INT_CTRL DDR_CTL(58)
+> +#define CDNS_DDR_ECC_INT_CTRL_MASK GENMASK_U32(21, 0)
+> +#define CDNS_DDR_ECC_INT_CTRL_MASK_ALL BIT(22)
+> +#define CDNS_DDR_ECC_INT_CTRL_UNMASK(i) ((~(i)) & CDNS_DDR_ECC_INT_CTRL_MASK)
+> +
+> +struct cdns_mc_priv {
+
+For all privately used struct names and static functions, drop the "cdns_"
+namespace prefix - it is not necessary.
+
+> +	int irq;
+> +	void __iomem *io_base;
+> +	struct dentry *debugfs;
+> +	spinlock_t lock;
+> +	u16 xor_check_bits;
+> +};
+> +
+> +static irqreturn_t cdns_mc_err_handler(int irq, void *dev_id)
+> +{
+> +	struct mem_ctl_info *mci = dev_id;
+> +	struct cdns_mc_priv *priv = mci->pvt_info;
+> +	u32 addr, status, err_addr, syndrome, reg;
+> +	char other_details_str[32];
+> +	u8 type;
+> +
+> +	/* Read the interrupt status register */
+
+The fact that you have to put an obvious comment above the read of a register
+basically says that your register naming is not optimal enough. If you name it
+properly, you don't need a comment.
+
+> +	status = readl(priv->io_base + CDNS_DDR_ECC_INT_STAT);
+> +	if (!status)
+> +		return IRQ_NONE;
+> +
+> +	/*
+> +	 * We can't know how many CE / UE occurred since last ACK in case of
+
+Please use passive voice: no "we" or "I", etc, and describe things in an
+imperative mood.
+
+> +	 * multiple errors. Just report it.
+> +	 */
+> +
+> +	if ((status & CDNS_DDR_ECC_INT_STAT_UE) || (status & CDNS_DDR_ECC_INT_STAT_MULTIPLE_UE)) {
+
+This is what I mean with too long lines. That one and others like it needs
+shortening.
+
+Also this test can be merged into a single one by ORing the flags.
+
+> +		reg = readl(priv->io_base + CDNS_DDR_ECC_U_ERR_STAT);
+> +		syndrome = CDNS_DDR_ECC_ERR_STAT_GET_SYNDROME(reg);
+> +
+> +		err_addr = readl(priv->io_base + CDNS_DDR_ECC_U_ERR_ADDR);
+> +
+> +		edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci, 1, err_addr >> PAGE_SHIFT,
+> +				     err_addr & ~PAGE_MASK, syndrome, 0, 0, -1, mci->ctl_name, "");
+> +	}
+
+ditto for that one below:
+
+> +	if ((status & CDNS_DDR_ECC_INT_STAT_CE) || (status & CDNS_DDR_ECC_INT_STAT_MULTIPLE_CE)) {
+> +		reg = readl(priv->io_base + CDNS_DDR_ECC_C_ERR_STAT);
+> +		syndrome = CDNS_DDR_ECC_ERR_STAT_GET_SYNDROME(reg);
+> +
+> +		err_addr = readl(priv->io_base + CDNS_DDR_ECC_C_ERR_ADDR);
+> +
+> +		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, 1, err_addr >> PAGE_SHIFT,
+> +				     err_addr & ~PAGE_MASK, syndrome, 0, 0, -1, mci->ctl_name, "");
+> +	}
+> +
+> +	if (status & CDNS_DDR_ECC_INT_STAT_PORT_CMD_CHAN) {
+
+What kind of an error is that one so that you have to call
+edac_mc_handle_error() for it separately?
+
+> +		addr = readl(priv->io_base + CDNS_DDR_PORT_CMD_ERR_ADDR);
+> +		reg = readl(priv->io_base + CDNS_DDR_PORT_CMD_ERR_TYPE);
+> +		type = CDNS_DDR_PORT_CMD_ERR_TYPE_GET(reg);
+> +
+> +		snprintf(other_details_str, sizeof(other_details_str), "type 0x%02x", type);
+> +
+> +		edac_mc_handle_error(HW_EVENT_ERR_INFO, mci, 1, addr >> PAGE_SHIFT,
+> +				     addr & ~PAGE_MASK, 0, 0, 0, -1, mci->ctl_name,
+> +				     other_details_str);
+> +	}
+> +
+> +	/* clear the error, clears the interrupt */
+
+No need for obvious comments. Audit your whole driver pls.
+
+> +	writel(status & CDNS_DDR_ECC_INT_ACK_MASK, priv->io_base + CDNS_DDR_ECC_INT_ACK);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int cdns_get_mem_sz(resource_size_t *mem_sz)
+
+Do not use an I/O function param but return the correct size or an error and
+have call site handle that.
+
+Looking how that function is called only once, simply merge it into the call
+site.
+
+> +{
+> +	struct device_node *np;
+> +	struct resource res;
+> +	int ret;
+> +
+> +	np = of_find_node_by_name(NULL, "memory");
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	ret = of_address_to_resource(np, 0, &res);
+> +
+> +	of_node_put(np);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	*mem_sz = resource_size(&res);
+> +
+> +	return 0;
+> +}
+
+> +
+> +#ifdef CONFIG_EDAC_DEBUG
+> +
+> +static void cdns_rmw(struct cdns_mc_priv *priv, u32 reg, u32 mask, u32 val)
+> +{
+> +	u32 regval;
+> +
+> +	regval = readl(priv->io_base + reg);
+> +	regval &= ~mask;
+> +	regval |= (val << __bf_shf(mask)) & mask;
+> +	writel(regval, priv->io_base + reg);
+> +}
+> +
+> +static ssize_t cdns_force_ecc_error(struct file *file, const char __user *data, size_t count,
+> +				    loff_t *ppos)
+> +{
+> +	struct device *dev = file->private_data;
+> +	struct mem_ctl_info *mci = to_mci(dev);
+> +	struct cdns_mc_priv *priv = mci->pvt_info;
+> +
+> +	spin_lock(&priv->lock);
+> +
+> +	cdns_rmw(priv, CDNS_DDR_ECC_XOR, CDNS_DDR_ECC_XOR_CHECK_BITS, priv->xor_check_bits);
+> +	cdns_rmw(priv, CDNS_DDR_ECC_STAT, CDNS_DDR_ECC_STAT_FWC, 1);
+> +
+> +	spin_unlock(&priv->lock);
+> +
+> +	return count;
+> +}
+> +
+> +static const struct file_operations cdns_ecc_error_fops = {
+> +	.open = simple_open,
+> +	.write = cdns_force_ecc_error,
+> +	.llseek = generic_file_llseek,
+> +};
+
+#else
+static ssize_t cdns_force_ecc_error(struct file *file, const char __user *data, size_t count, loff_t *ppos)
+{
+	return 0
+}
+#endif
+
+and get rid of the ifdeffery below.
+
+> +static void cdns_setup_debugfs(struct mem_ctl_info *mci)
+> +{
+> +	struct cdns_mc_priv *priv = mci->pvt_info;
+> +
+> +	priv->debugfs = edac_debugfs_create_dir(DRV_NAME);
+> +	if (!priv->debugfs) {
+> +		dev_dbg(mci->pdev, "failed to create debugfs dir\n");
+> +		return;
+> +	}
+> +
+> +	edac_debugfs_create_x16("bits", 0644, priv->debugfs, &priv->xor_check_bits);
+> +	edac_debugfs_create_file("inject", 0200, priv->debugfs, &mci->dev, &cdns_ecc_error_fops);
+> +}
+> +
+> +#endif
+
+...
+
+> +
+> +	/*
+> +	 * Unmask ECC recoverable and unrecoverable interrupts, and port
+> +	 * command errors.
+> +	 */
+> +	writel(CDNS_DDR_ECC_INT_CTRL_UNMASK(
+> +		       CDNS_DDR_ECC_INT_STAT_CE | CDNS_DDR_ECC_INT_STAT_MULTIPLE_CE |
+> +		       CDNS_DDR_ECC_INT_STAT_UE | CDNS_DDR_ECC_INT_STAT_MULTIPLE_UE |
+> +		       CDNS_DDR_ECC_INT_STAT_PORT_CMD_CHAN),
+
+Yah, unreadable mess that. Shorten pls.
+
+> +	       io_base + CDNS_DDR_ECC_INT_CTRL);
+> +
+> +	return 0;
+> +}
+
+Thx.
+
 -- 
-2.56.0.360.g66cac248cb-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
