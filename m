@@ -1,279 +1,174 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D78B4854EB;
-	Wed,  7 Oct 2026 14:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCDD4D9F95
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Oct 2026 18:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791383659; cv=none; b=FuNU/W43Pzh7XjsIsps+3JfbSC1Gzx5+upj6BfXEwXoqZtSMVm7dXo2T6648sWlAwR151DaFRLfsjS6dkDpxMiH5MgohDvkU64PiowIvXefgbpofFRH45vE4uKXyWgZ1zby/M7PRWMJ4yvyUeicTUMXyL0RdSVat481v2QYy/iY=
+	t=1791399592; cv=none; b=fhooydy75u81nOco82Ur2SHlHRuWd78CewhvSFDovS3qkmsKAyKqf+i+w2+mFTserjlxaZ+o78Lw6oZdV+Cx5GhbmsgLycN1c4w8lM0bBBSXB3ITMNHsx1geYIC4gz1juaQekmDkka5Dp7goN4KHKxz33orGfgOBeo9Q86ati+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791383659; c=relaxed/simple;
-	bh=d/Kl65sXPl3XG58MSRvKyvhLdGwm1MEO15ONeq3TPBU=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UpnCMvAxn92hmXrz4ApTz+Kd1r4iiC6M5LoChQzITHZTIBkFMNt9uaLB7eM7y93z4daeoFSXXEPQZnhGDZ6566xS67SHZsgbM/xLqtkyars9a4sBVVS8SXNRR8lJD0mTUWPPg0WiG1QsQOpr0LQnVBHV92+D2sxYLrzJPh8W3pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Z0sUZh9K; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1791399592; c=relaxed/simple;
+	bh=tSe0HwHwGaHBzXco/aL/zhpyFQADcXLLOcWq3KMpRAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=khh6BV/DJq2PqAaQ68D2gKH4zrColckHXnbGhwhejn2xurkbC5q4auhR/Fpe7EK67sJv2S/3VP2uagFQZ/p7M6nXmXqaYB2yUJKML0BuDj3XqSjsgaRIX5eFOi0oOGFMVD9fUpRJ5+/Vvcz1zWNAvNZSlJWkGQFsC4b/wqXA/Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=gmtKHQ4I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TytvURHf; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Z0sUZh9K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1791383660; x=1822919660;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=d/Kl65sXPl3XG58MSRvKyvhLdGwm1MEO15ONeq3TPBU=;
-  b=Z0sUZh9KN3Jqr2bd9TmF68XLkiofqln/B9rwB6eFSdPYw0KaVfX957CX
-   PlCy+F9ix8pKtjMonl/Op/6agqrmIaeFuBGr7wVQeJOckPuh473hvud7q
-   2yogA9OEnYLsmkjylvvD68Z+WmlAhDbZwzjSk1iNPkf/MkZOhR0rUHTK9
-   0pxPltfqmdie2TIOqu5ljABDeabUy+GAf0MZ0rgrNGbM/L6qPps3HW4r7
-   wxFc8NGAvSOM4wyazqfFLVT3OXHZAtQciBruJ6tYSTp9JQH/rfc7o/gou
-   9UF4/7+DYRfSkRUx0IKphJleuo+WDj201Fg5BbPMtP2QtgDYxlGAoIvS2
-   w==;
-X-CSE-ConnectionGUID: w3g1qPF4THS/flpQzowRVg==
-X-CSE-MsgGUID: bzbRljVgTHm/71K7UOdV1g==
-X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="231796935"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Oct 2026 07:34:19 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 7 Oct 2026 07:34:13 -0700
-Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 7 Oct 2026 07:34:09 -0700
-Message-ID: <02cce6979c4902e75f2f9b94621f2f81e82b879a.camel@microchip.com>
-Subject: Re: [PATCH net-next v13 2/9] dt-bindings: net: lan9645x: add
- LAN9645X switch bindings
-From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
-To: <netdev-bot+sashiko@kernel.org>
-CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <woojung.huh@microchip.com>,
-	<linux@armlinux.org.uk>, <Steen.Hegelund@microchip.com>,
-	<daniel.machon@microchip.com>, <geert+renesas@glider.be>,
-	<magnus.damm@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>
-Date: Wed, 7 Oct 2026 16:34:09 +0200
-In-Reply-To: <179097565632.434549.4502209637975152299@kernel.org>
-References: <20260929-dsa_lan9645x_switch_driver_base-v13-2-827c2d3617f2@microchip.com>
-	 <179097565632.434549.4502209637975152299@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="gmtKHQ4I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TytvURHf"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id E2F9EEC04E0
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  7 Oct 2026 14:59:48 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 07 Oct 2026 14:59:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1791399588; x=1791485988; bh=eu
+	67nKrl8thChRWWxwnPMWk5WRVt8b81znEUdh6QWzI=; b=gmtKHQ4Ite249oRZBS
+	R/OzwNbgLhQwT1YNACvTb2P30P0IV+uxx0UfWwkksE+LsjiyY6ZitI1y1oozRovl
+	VthxrmiB4QIyOj4kF7wbMVBPTELYVMoxxzycY/EALGKmViVzzn60B0e98RLxKOW8
+	uoSHdSb9JDzGWX6oTfeQ3cQ6i4NFC3TYAZ5aB5BVF0RY2zEzI24c6Mao99rm5RCA
+	0FyGzE1WT+zulcZC8IyZNQ3vd+QAKYnHmQTE8iKmp5jsE2h6wFCUC58f9KKTT6ht
+	hYravdTqIYvy6/Ig+pNHbntHQioC7ESB61RBJqRASnXso07wxPZFdhvpi7gFpQB1
+	iw4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1791399588; x=1791485988; bh=eu67nKrl8thChRWWxwnPMWk5WRVt
+	8b81znEUdh6QWzI=; b=TytvURHfoL/csuhN7TAhmaWtNr9PJa+9GGJ5drh3Mv+2
+	+Z7aed5SRbNXl0CKW2ot5syivNhejjfmG6OQF5/eOBQXp3F6jq8UzaTa1PpOfksx
+	YQ1qrZUlIJPEixlrORdAgKk3YVODaVuGCdG8N6OtZ6yFIs4doN3Vf7G3arIWCkgg
+	FpYNIPJiQZQsQsrPj+uJvd4XalXCrSvwDpBtgDXs925vTx3BdUfOHtc/N987ZGwd
+	pNjBg7Lmj0HQMaCU3bnmcx1qhMWaro09EEG5xWTQOlQvidB047PoEGJVU5DA3gO7
+	YS+BW//5XXwo2S0MRqeGM9DxO6tZn1hTE3hsz2bxVA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791399588; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm1:rsa-sha256:fWUkcwQtSGecpk8szreMr+nxti0ec4R+k4HDEMIrzIJWm3y
+	bw2/9H0wz7FCoGLNVjEyZO3ZEgmFrYLFazObHNsFWo/2I8rzY6uGlgi/T6Ty2H/U
+	LAaRShA4mLRtmuD8RCC51DJwuvWxyZ2rlzg8kiwzWgJ5mVHws0uIUGKB4RvuBLW9
+	t+d5prIaPQ8l56vSRaux2HYKJQdZkKrcSGXwHCbWHLP35QQJqDIra78wRZqOAhcK
+	HNQoXws+ukDL4eHPLbYOIefmae/kxTwmXi0WR2VxyhUFWkHeVG2qrwaCpXAUOobx
+	lmlWg/k9VdMaf2vU8pkOAQd7hORxAM+hJnEG9xw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=mi-m=1; hc=10;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,message-id,mime-version,subject,to;
+Message-Instance: m=1; h=sha256:u6QYGmW7OZIKzHs2Ye6NNfdD1aBVuT/K7VQb3K4RP2c=:tSe0HwHwGaHBzXco/aL/zhpyFQADcXLLOcWq3KMpRAQ=;
+X-ME-Sender: <xms:pJbGaorWb7L91Zv_EoWCU5B_AtbKGgJ72EUC6FGT_O34C-Nidn9fGQ>
+    <xme:pJbGanbwvoT-VoiPirtbWzSvoGUW3YR5ZGe_t2FZYmUc9LK-e-z6L4kljSnFNIcvB
+    625oerUEVmWbl207_ezX4nRQ7UsVMamOg_kXLG_VXjBneRbvI7wmb3C>
+X-ME-Received: <xmr:pJbGar6FvVwymgYSAiIbNvbdsHDjsDKY-pV_oXLNzX5KAuH3Hf4jD24VwKJ9N4lRDsHZ-IY-xQZQa5WoNzas0FgJwy2iOCc>
+X-ME-Proxy-Cause: dmFkZTFM9Id3SBMEkDBtkk2umITVNVd483RkCuPbIFuDihg99GVNhAQlcJJOFsMvT1ULUg
+    jG+qrK4iMdLWSWYIlGPVv74TpPOoRqr+fRJ5Ty3o4U1eoLiBYgfS4AvzyacTOjnn9hyU9s
+    dMvLd96DPfFxNn2/HuHkcyPjode7JtOstfbsJw528Va3NPnvgpaYxdVRyXvqoAfgquugFO
+    wVBbcWizL/9BznUu4hcMsSn2PeJB6CJI/rTEwTZRagy2zLtYbVsjm9icPJgm/bXDdZoYgi
+    TQalMvTOK5mlSVE/jigmazJi0yzqeWBaEr0RVIhTkk6npOE5RgFKAxAg9DKqdlfv6Z7JcH
+    IoCEYt5GD8anjC44DJSAeXBpy1n0aSD7I+4PP5PQgahyRibQigB3z8VUF57AMIGQqvo3Dr
+    fSaJFjF2kfEFcCbcdIlP0MDK0nwHc9lyaiMRIi4cpLCGkrakTULNfDkoPvxc98DIoxO+L7
+    /ytj2bW5x+dMF1Ykz4s520UOTyi7R7Zh/ivVzr0gJ5JtNEtaxL+07i/ye5wuifVF1g0t0f
+    JqOXbmH4Col7HicWh6lQVDjfrVzTjOW4WFPYZP3SNAeY5nHCCjUxN8cpZdYfg01+wl8hyl
+    bfaji2iYvx/8WbHdelOFurwQYBQyruTbngKOoepB9pfH273y01Q1KHGBH9bw
+X-ME-Proxy: <xmx:pJbGaiQ9HTTDhr3Y5kFiimqzzlHn9XAVgx9vhjtqjUQq4l_6YhUhVg>
+    <xmx:pJbGarsfSKazGaVP8_YOoJy7kXUk0-4UmvjHVAEAcml1mMVxzeVSiQ>
+    <xmx:pJbGakY7kgfn8TAEp8uHgE9EPH_ZpMUNpBZZ2ONEAJj4_oE2YJmx1A>
+    <xmx:pJbGal8qsgibOniy7uMnT6x5a4GRxBGTUxvyOONQ0PkNFilrZy53Cg>
+    <xmx:pJbGajD-_8grtwAy5fG9Yhgbh62wIwiUmt4DjbAmVtRDwrLk6bZ2dLz2>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Oct 2026 14:59:47 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"DavidS. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Sergey Shtylyov <sergei.shtylyov@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH net-next v7 0/3] ptp: Add driver for R-Car Gen4
+Date: Wed,  7 Oct 2026 20:59:17 +0200
+Message-ID: <20261007185920.4042783-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2026-10-02 at 21:14 +0000, netdev-bot+sashiko@kernel.org wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e content is safe
->=20
-> Thank you for your contribution! Sashiko AI review found 3 potential
-> issue(s) to consider.
->=20
-> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 2
->=20
-> If you believe none of the issues are legitimate, please reply to each
-> issue of Medium severity or higher and explain why the AI is wrong.
-> If any of them are legitimate and you plan to respin, please let patchwor=
-k
-> know by including "pw-bot: cr" as a separate line at the end of your repl=
-y
-> (one such reply per series is enough).
->=20
-> - [Medium] The binding makes rx/tx-internal-delay-ps on the MAC-side
->   switch port nodes an on/off switch for the full 2 ns RGMII delay=E2=80=
-=A6
-> - [Low] The per-port pattern "^(ethernet-)?port@[0-8]$" in
->   properties/ethernet-ports does not actually limit ports to the 9=E2=80=
-=A6
-> - [Low] The subject "dt-bindings: net: lan9645x: add LAN9645X switch
->   bindings" does not follow=E2=80=A6
->=20
-> --
->=20
-> dt-bindings: net: lan9645x: add LAN9645X switch bindings
->=20
-> This commit adds a DT binding for the Microchip LAN9645x DSA switch. The
-> smallest SKU, microchip,lan96455s-switch, is the fallback compatible. The
-> switch register targets are described through reg and reg-names, followin=
-g
-> mscc,vsc7514-switch.yaml.
->=20
-> > dt-bindings: net: lan9645x: add LAN9645X switch bindings
->=20
-> [Severity: Low]
-> This isn't a bug, but the subject doesn't match what
-> Documentation/devicetree/bindings/submitting-patches.rst asks for. That f=
-ile
-> says "Repeating "binding" again should also be avoided". Its example form=
- is
-> "dt-bindings: iio: adc: Add ROHM BD79100G".
->=20
-> The file lives under net/dsa/, so the usual prefix is "dt-bindings: net: =
-dsa:".
-> Something like "dt-bindings: net: dsa: Add Microchip LAN9645x switch" wou=
-ld
-> fit better.
->=20
+Hello,
 
-I will retitle.
+This series is the first part cleaning up how PTP timer support is
+implemented on R-Car Gen4. Currently there is partial support for it in
+some of the Ethernet devices that can use it, but not all.
 
-> > diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,lan964=
-55s-switch.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,lan96=
-455s-switch.yaml
-> > new file mode 100644
-> > index 0000000000000..9deb7a427804f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/dsa/microchip,lan96455s-swi=
-tch.yaml
->=20
-> [ ... ]
->=20
-> > +  ethernet-ports:
-> > +    type: object
-> > +    additionalProperties: true
-> > +    patternProperties:
-> > +      "^(ethernet-)?port@[0-8]$":
->=20
-> [Severity: Low]
-> Does this pattern actually restrict port nodes to the 9 hardware ports
-> (dev0..dev8)?
->=20
-> ethernet-ports has additionalProperties: true, so nodes that don't match
-> "^(ethernet-)?port@[0-8]$" are not rejected here. The inherited
-> dsa.yaml#/$defs/ethernet-ports and ethernet-switch.yaml both accept any
-> "^(ethernet-)?port@[0-9a-f]+$" node through dsa-port.yaml.
->=20
-> So a node like ethernet-port@9 { reg =3D <9>; ... } or ethernet-port@a pa=
-sses
-> dt_binding_check and dtbs_check. It also skips the local RGMII delay
-> constraints. The problem only shows up at probe time:
->=20
-> net/dsa/dsa.c:dsa_switch_parse_ports_of() {
->     ...
->                 if (reg >=3D ds->num_ports) {
->                         dev_err(ds->dev, "port %pOF index %u exceeds num_=
-ports (%u)\n",
->                                 port, reg, ds->num_ports);
->     ...
-> }
->=20
-> Should the schema reject port nodes outside 0-8?
->=20
-> > +        type: object
-> > +        description: Ethernet switch ports
-> > +        additionalProperties: true
-> > +
-> > +        allOf:
-> > +          - if:
-> > +              properties:
-> > +                phy-mode:
-> > +                  contains:
-> > +                    enum:
-> > +                      - rgmii
-> > +                      - rgmii-rxid
-> > +                      - rgmii-txid
-> > +                      - rgmii-id
-> > +            then:
-> > +              properties:
-> > +                rx-internal-delay-ps:
-> > +                  $ref: "#/$defs/internal-delay-ps"
-> > +                tx-internal-delay-ps:
-> > +                  $ref: "#/$defs/internal-delay-ps"
->=20
-> [ ... ]
->=20
-> > +$defs:
-> > +  internal-delay-ps:
-> > +    description:
-> > +      Disable the delay line using 0 ps, or enable the 2000 ps delay. =
-The
-> > +      delay line is not tunable, so no other phase can be selected.
-> > +    enum: [0, 2000]
-> > +    default: 0
->=20
-> [Severity: Medium]
-> Is it intended that rx/tx-internal-delay-ps on the MAC side port nodes tu=
-rns
-> the full 2 ns RGMII delay on and off, for all four rgmii phy-modes?
->=20
-> Documentation/devicetree/bindings/net/ethernet-controller.yaml says these
-> MAC node properties "should be used to indicate fine tuning performed by =
-the
-> MAC. The values expected here are small. A value of 2000ps, i.e 2ns, and =
-a
-> phy-mode of 'rgmii' will not be accepted by Reviewers."
->=20
-> The same document says that when the MAC adds the delay, it "must modify =
-the
-> phy-mode it passes to the PHY, removing the delay it has added. Failure t=
-o
-> remove the delay will result in a non-functioning link."
->=20
-> This schema accepts phy-mode =3D "rgmii-id" together with
-> rx-internal-delay-ps =3D <2000>. In the driver later in this series,
-> lan9645x_parse_mac_delay() in lan9645x_port.c only checks for 0 or 2000.
-> lan9645x_rgmii_dll_config() in lan9645x_phylink.c then enables the delay =
-line
-> directly from the parsed value:
->=20
-> drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c:lan9645x_rgmii_dll_=
-config() {
->     ...
->         HSIO_DLL_CFG_DLL_ENA_SET(p->rx_internal_delay) |
->         HSIO_DLL_CFG_DELAY_ENA_SET(p->rx_internal_delay),
->     ...
-> }
->=20
-> Nothing there checks phy-mode or removes the delay from the interface tha=
-t
-> phylink passes to the PHY.
->=20
-> Take port 7 or 8 with a phy-handle, phy-mode "rgmii-id" and
-> rx-internal-delay-ps =3D <2000>. Wouldn't the MAC and the PHY each add 2 =
-ns,
-> leaving a DT that passes validation with a link that doesn't work?
->=20
-> The example also uses phy-mode =3D "rgmii" on the CPU port. For any RGMII=
- mode
-> other than 'rgmii-id', ethernet-controller.yaml says it "is probably wron=
-g"
-> unless justified.
->=20
+The partial support have been implemented by hacking the gPTP module
+directly into the first Ethernet device driver that used it, RTSN for
+V4H and RSWITCH for S4. This is understandable as earlier R-Car
+generations had a dedicated gPTP timer for each Ethernet device, but on
+Gen4 there is a single system-wide PTP timer shared by all.
 
-Dismissed. This follows the binding model introduced for sja1105 in
-commit ac41ac81e331 ("dt-bindings: net: dsa: sja1105: add
-{rx,tx}-internal-delay-ps") and used by microchip,lan937x.yaml since
-commit 8926d94e5c50, which also restricts the values to 0 and 2000 ps.
-The MAC delay lines are configured only from rx/tx-internal-delay-ps,
-independently of phy-mode and of whether the port uses a PHY or a
-fixed-link, and phy-mode is passed unmodified to the PHY. The hardware
-has a fixed 2 ns delay line, 0 and 2000 are the only values it can
-express. For the CPU port, phy-mode "rgmii" with a fixed-link matches
-the sja1105 and lan937x examples.
+The current implementation makes it impossible for other Ethernet
+devices on the platform to use the PTP timer without messing around with
+other Ethernet device drivers.
 
-> > +
-> > +examples:
->=20
-> [ ... ]
->=20
-> > +            ethernet-port@7 {
-> > +                reg =3D <7>;
-> > +                ethernet =3D <&cpu_host_port>;
-> > +                phy-mode =3D "rgmii";
->=20
-> [ ... ]
->=20
-> --
-> Sashiko AI review =C2=B7 https://netdev-ai.bots.linux.dev/sashiko/#/patch=
-set/20260929-dsa_lan9645x_switch_driver_base-v13-0-827c2d3617f2%40microchip=
-.com
+The effort to clean this up starts with this series which adds the
+system-wide gPTP timer as its own driver and device tree node.
+
+This series will be followed by work to the RTSN and RSWITCH drivers
+will be be switched from its current partial support by mapping the gPTP
+address space directly to instead use this driver.
+
+Having both this and RTSN/RSWITCH described and enabled (!) in device
+tree will not work as they will try to use the same memory region. For
+this reason this new solution will only be enabled on platforms
+after all user's of the gPTP clock have moved to only use the new
+centralized timer. But in the interim both devices will be described
+(but not enabled) in the platforms base dtsi file.
+
+For some platforms this is straight forward, such as V4H Sparrow Hawk,
+which only have the RAVB Ethernet interface. This platform currently
+have no users of the PTP timer, but still advertise it supports it. This
+and the soon to be posted RAVB patches solves that.
+
+The gPTP driver itself is heavily influence by the existing partial
+support for gPTP in the RTSN and RSWITCH drivers and the Renesas BSP.
+
+Niklas Söderlund (3):
+  dt-bindings: ptp: renesas,rcar-gen4-gptp: Add R-Car Gen4
+  ptp: Add driver for R-Car Gen4
+  arm64: dts: renesas: r8a779g0: Add gPTP node
+
+ .../bindings/ptp/renesas,rcar-gen4-gptp.yaml  |  64 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi     |   9 +
+ drivers/ptp/Kconfig                           |  12 +
+ drivers/ptp/Makefile                          |   1 +
+ drivers/ptp/ptp_rcar_gen4.c                   | 225 ++++++++++++++++++
+ 6 files changed, 318 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ptp/renesas,rcar-gen4-gptp.yaml
+ create mode 100644 drivers/ptp/ptp_rcar_gen4.c
+
+-- 
+2.55.0
 
