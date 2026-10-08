@@ -1,101 +1,96 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AD53B3894
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Oct 2026 18:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467B735DA61;
+	Thu,  8 Oct 2026 19:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791485217; cv=none; b=c2uQZJW4vNImZDlLnfNtxsSn20KKCYn6rB0e3s2cdkuH0vB4MOgxLS7WlJshs9JMOh5kR12ixXXblcBPAj9Z9x2kJN0r+z5AKJsvgoy1fRsRVxjc8W3Ui+0zNAG3WM/jAYJ93FRWx7dMf4sZuCQPDH7BRAz11i67kRTx4kZKaVE=
+	t=1791486230; cv=none; b=J4LBLf/At0pt3jnmrfmSN4ilEd2DxoPSngS/yNOd8UPGfWhTVs0jEflkRGv8dVYJ5gOE0KA1tgwE1qqQiLSCnZCWUl6CfgmjFf0VaZDKkM7q9IU1JWCDfMJijzwnSs+xydLpaBoSi8Z6x1Jw62q8NbLBnbRwNXjdrblKlVMew4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791485217; c=relaxed/simple;
-	bh=WqUMFMPWZ746lMssxYdDiHwYphMtVzEwwCmluHImrxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SGFNz/ZTOwMj4Fw4MF83Rnq/dlg4Bh47O89VrwzIjIApj95MTIvLYLWVlhfhuxrXFu/YImfC6B+F1dFGjiSLtlDcHWcBsxUHuVtcMvthWtyOpyAGVNBCo/yogD/NhVyK8CsJk4r+BWv0TrecY0XFv2HgvDIRcUzjmqlIOXaCodE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fym3bOV5; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1791486230; c=relaxed/simple;
+	bh=B+KhkIeWvO6uLZFfrPHmxb0TaB31dTgKqm8kTdJZZfs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=X/cQRhmX7O8C9gMcgOdM15o1Tlkt9Z/kGAUqeRPD/OxgRWmPtD9CmreiLuAze70RyL+U4uwW+mxjsAbn5pobjDKD7eFbNg9Oqri/l69dvY4zYZq/LL4aEUS/m50JBb2crnW5QnYK1C1W+lC3u2EtgYB79TFiV3366Lae8p9W2kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=savoirfairelinux.com; spf=none smtp.mailfrom=mail.savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=HSzf67fm; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mail.savoirfairelinux.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fym3bOV5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=WqUM
-	FMPWZ746lMssxYdDiHwYphMtVzEwwCmluHImrxE=; b=fym3bOV5SNdgJdg5WnnA
-	3R4Aw8nE/L3VuD1g9ikUnccSIC6ox0UVfUCFJ5kmsoSVvpKMwunqNy0bHw/I4aRA
-	fJeqyXyFbBVYyUbnzu5FpCVqdmLkZSnoGVze+jDgIhOinwupAKs5CmQpwscB2f8y
-	PhRSv/vH1xBs9aPkYfJoCOCyMrW3eO6bFRbNKeojAkUOwPdFti8yoGTw/pSsWqzs
-	U6NW2lBZaBGCcHqY+Gm41YTQLsT4YFhTvEDAa4VaegmdHPU/LhNOBcuIKcFofUcs
-	WO3U49iXOasp8EjqKck8UD6MOiiq2xNDmCxExM3vBXPwIx3GWPjglt4posoM4JtB
-	Og==
-Received: (qmail 862361 invoked from network); 8 Oct 2026 20:40:07 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Oct 2026 20:40:07 +0200
-X-UD-Smtp-Session: l3s3148p1@YqeNj1hdwLXDesiu
-Date: Thu, 8 Oct 2026 20:40:07 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, Frank Li <Frank.Li@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="HSzf67fm"
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id A879F3D81455;
+	Thu,  8 Oct 2026 15:03:46 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id 1WLkzp2Tian5; Thu,  8 Oct 2026 15:03:46 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id DDD8B3D815FA;
+	Thu,  8 Oct 2026 15:03:45 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com DDD8B3D815FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1791486226; bh=B+KhkIeWvO6uLZFfrPHmxb0TaB31dTgKqm8kTdJZZfs=;
+	h=From:To:Date:Message-Id:MIME-Version;
+	b=HSzf67fmgUna6LZP+OmxjaZH8k25ior1ysmvRi3XMvXqKYUVqCt1aNwxR+4XQ5s9Y
+	 HLDcP+rH1aJkeUbpxskqlPAMIrDPuy2ER50w1PkzHJEtxdMPnG6v/uzzXk4exf4xri
+	 2d7nbqfb33O8RBnkpyaDy7SgPWtjWUYUvueALyQ3wByD1cAIqd2bxuWq6tyvXgoDYN
+	 hWTU+4ZyZzG9oJmfi4ZvTjY7ZmVVc/EC8n5Q/CGhGmTq11q+W/uOZJADuLvP9cnEyd
+	 z90/DcR//3SadYou1SFYznIdsrNg7/yH/qUoxu4tubNVG/DkJYouKLjWBshV8jZqgt
+	 /AvW34Y1c9beQ==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 3sfbeNvrWwb1; Thu,  8 Oct 2026 15:03:45 -0400 (EDT)
+Received: from localhost (unknown [192.168.51.254])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 967A63D81455;
+	Thu,  8 Oct 2026 15:03:45 -0400 (EDT)
+From: Marc-Olivier Champagne <marc-olivier.champagne@savoirfairelinux.com>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH v2 0/4] dmaengine: sh: rcar-dmac: add R-Car Gen5 X5H
- support
-Message-ID: <asfjhlIEVX2P1xya@shikoro>
-References: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jon Nettleton <jon@solid-run.com>,
+	Mikhail Anikin <mikhail.anikin@solid-run.com>,
+	Yazan Shhady <yazan.shhady@solid-run.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Marc-Olivier Champagne <marc-olivier.champagne@savoirfairelinux.com>,
+	Jerome Oufella <jerome.oufella@savoirfairelinux.com>,
+	Felix Boucher <felix.boucher@savoirfairelinux.com>,
+	Quentin Lehoux <quentin.lehoux@savoirfairelinux.com>
+Subject: Re: [PATCH RFC 0/2] regulator: raa215300: add support for configurable 32kHz clock output
+Date: Thu,  8 Oct 2026 15:03:43 -0400
+Message-Id: <20261008190343.280102-1-marc-olivier.champagne@savoirfairelinux.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260502-raa215300-clkout-v1-0-fd1c2a240963@solid-run.com>
+References: <20260502-raa215300-clkout-v1-0-fd1c2a240963@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fjv2SOTvqNyKNWTR"
-Content-Disposition: inline
-In-Reply-To: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
-
---fjv2SOTvqNyKNWTR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 09, 2026 at 11:40:09AM +0200, Wolfram Sang wrote:
-> Here is a small series with the needed driver updates to support R-Car
-> Gen5 and X5H for the SYSC-DMAC. Details are in the patch descriptions,
-> but it is all small stuff.
->=20
-> It has been tested on an Ironhide board (X5H) and a SparrowHawk (V4H)
-> for regression testing. The testing branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/x5h/i=
-2c-experimental
->=20
-> The patches here are based on linux-next as of 20260908. DT checks have
-> also been passed.
->=20
-> Looking forward to comments or approval!
+Hi Josua,
 
-Every patch reviewed and tagged twice (thank you, guys!), no complaints
-=66rom Sashiko even - can we have this in 7.4 pretty please?
+On 2026-05-02 18:07, Josua Mayer wrote:
+> Add driver support and extend bindings for Renesas RAA215300 PMIC 32kHz
+> clock output feature on pin MPIO2.
 
+I am interested in this feature being upstreamed. Specifically for the
+Bluetooth LPO on a board using the SolidRun RZ/G2LC SOM.
 
---fjv2SOTvqNyKNWTR
-Content-Type: application/pgp-signature; name=signature.asc
+Do you still plan on sending a v2 addressing the comments gathered by
+this RFC?
 
------BEGIN PGP SIGNATURE-----
+If not, I could pick it back up and work those comments in, with
+credit to you.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrH44YACgkQFA3kzBSg
-KbYuPQ/+M5/jRv3uKEzc2vj5XCf0ehBO4E/vr01TuDrEhOAu6EnIyQKMUcTiSSEA
-+6jv9iTq5GIK7bKBaQZ9MwuYe5Ed46CLbywxV4qErtFPD/Cr8p+KDjvFul+gu+cI
-Yvvy3PJmz2k0zE4VWZqR+8dnBykNP3CRhvc2+yKO1YwiES+nfATAYfAUaxRiBqNV
-sfDF7Q+Ct5DPAB3j10pJufKdTDoYwCJ3CFCb07BIkZ8YHYCyLqtxsx4HAvap59SL
-KrPeB/Z1xYt6SMyiGON69L2zWZS/VrQtM7ZUXgvnRPjugC8tLx+qpU69wjl8tppV
-8sRcXUrso0IguwqcbTKZ5tXDTEkJVZS85uMLBXF2RtMrvI4NLgh5vRnI1urjQV/I
-Z+7/A5aJfoVABS6R6iLEw2KVGMAN51WU5WTRmpMzWNoAxfmVzH12z89TsAKf22ij
-FKGXCQ7AZFVXJZXjVE170Qq3GqGZdVNPR6rrzmPq7N2jolCUYcjHEPIRMOG8hIoV
-h+TtRxNXwacskIg1FC7UPMspFXezoJkuy//6HaHBayAZerST/DxrCurmr4+cO/NM
-ZSVNtU4jXPz8/eyxFWnIBsdx7RwI1WzFIwIjbIXs0UMyPL69fI2m0iLBCW+Jg6qZ
-IFeDE/QCRPv/ikiWAFpInPqiRSeVftQZInLKPD05HCNmSMT3nWw=
-=/9FF
------END PGP SIGNATURE-----
-
---fjv2SOTvqNyKNWTR--
+Sincerely,
+Marc-Olivier
