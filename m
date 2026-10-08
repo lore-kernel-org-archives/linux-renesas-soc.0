@@ -1,80 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B99B37DAAD;
-	Thu,  8 Oct 2026 19:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940DB3CEBB8
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Oct 2026 20:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791488817; cv=none; b=lVTXkuno7mqyuK29iaD6yIegk4lobDQVufAQGKUFedoyPFOj0jrXrqhbVDWMDfzAGtz8WrIXT3sNH4B982805GfyUvCTSjTvsP6emlsf8EgsTZjawtd+WEfiw/MdlWSgWOctRyhS5uvMzD608n3HJgEAJfBsmaTr2qZRGqavUE8=
+	t=1791490806; cv=none; b=D388dqqjZei2n7vsF2B2hX6bN3VWw0/v8g7pHT5yW6BUMxOWJJ6twvrsy+3qZRNe4cSlgqJdTZ67N/ob/g5OzSg0EWQyjNvDfnnhxd3XmmN0CsWA3YxA5LmtIwdHF1JeNhqZXXOiPhcdOOUSAtVOmPc5JDwFTUrAi8V96IoYqC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791488817; c=relaxed/simple;
-	bh=TzGSYNIQECguVj+Yn6KeWD7D+472pF9yVr2EknBGUsY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=G/Q/f7/IRLhj2pC8qxg78azgaGKAtbTfWEfDOcwvEWfoGgFjP22m0+78nF7K9T3zKDOtlylYqrJnC5Flz2vqiny2+U3f9zh4W4Z4yQG25tA39DSd2YdZL55wGl5OaSJ7RypeGiHK54ZsyxkMaQky4n9SCtn+4xcmKXcgORIlZtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aN+Snzfd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791490806; c=relaxed/simple;
+	bh=VcW5lX/0GFj4wZ6y5LNa7QfU2FOTMYFQ9Aapc+Wl1B8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfQz3sUaBxBc5zTU73RtRAoxWSNGnMfTokMIxwDIhP17MczlXOHE4KN2s5f3DVo3gQp5yTAKkKH61YB6lTDG821rIH5HAu4ThONwEG/BGfpHkRUR/6WulmO1lzETJ6BXAv4bo2QsLcjt+F/DDu/gVCOwFDQsOYXTxfBBJ4zQc1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eDewcVAp; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aN+Snzfd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CFCE1F000FF;
-	Thu,  8 Oct 2026 19:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791488815;
-	bh=k/2puUMOQV5M98h+Sa72R8DYJEfL5+feVDZUKEw+8YU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=aN+SnzfdCANo7AE3v2irg+Z8j/dIELbHTR8gg583+p5ElUHvQ537p8n1uW1K+rL67
-	 H2Xhtc+c5Q5bOe2CIf2mVkwbPMzJHUzAf6Ni8ufT4o8IUt9+LvfZVZmPGGz8WhFI9+
-	 VB1d63skLOOYZrCnIn/AWgrEiqMXhe92t5A+rEUlx09e8ewOhuesT0kIPTuV7B47ih
-	 b8oAofEvsmxm83xn6GUWgk5grvSdllrkuU2mqZRlZfYbEblC8HzoSq8ZMGPFur6Ij7
-	 v0wwrT9qpgPl9NAQGMXFda2zBorRf8jh0p6TRjpdkqS9IzVV0c7qawKlkrlec9pXyu
-	 U5d9qVNVa21kA==
-From: Vinod Koul <vkoul@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- dmaengine@vger.kernel.org, Frank Li <Frank.Li@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
-References: <20260909094009.2167-6-wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2 0/4] dmaengine: sh: rcar-dmac: add R-Car Gen5 X5H
- support
-Message-Id: <179148881195.509321.530268466663787780.b4-ty@kernel.org>
-Date: Thu, 08 Oct 2026 21:46:51 +0200
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eDewcVAp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=gIHd/cEMLbu2CQ
+	6QuVPfO/9MhsaaKq2EpnBNUxmUOuA=; b=eDewcVAp+Asle+9iEHW2ujSaLrvgcw
+	dmpoxKmQExy1KK3N4QWPr6pJiRc79mvImAqQHvJdXV44Wgz5vdM/2BBnN+dlF8KC
+	3tylP8i4KLXF8TxO9fuXV8ps/O0jHRslbrsG7VpLVt3WVS1zilIg5dopenwMxaZk
+	YZa/CG7ScScJHhO7RF4sGfS9bBVNb5RZgubkgBs6EfjOOvoWlNxzs19kGi9kkTxa
+	UeRK+NtMUQRhdNC86iGGyEQodV+af7zIbbnv0cvtC/TbHr6f+QrWMA3AY1jeZivv
+	NIiI07jx3/Wj2Po7HoLP8vRKnvfuU2p98BH1ucU0grxySoPBeFg1sb3g==
+Received: (qmail 883508 invoked from network); 8 Oct 2026 22:20:00 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Oct 2026 22:20:00 +0200
+X-UD-Smtp-Session: l3s3148p1@62DL9FldUrbDesiu
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: rtc: rzn1: add resets property
+Date: Thu,  8 Oct 2026 22:16:53 +0200
+Message-ID: <20261008201953.34307-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
+The RTC on R-Car X5H does have a reset unlike the other versions.
 
-On Wed, 09 Sep 2026 11:40:09 +0200, Wolfram Sang wrote:
-> Here is a small series with the needed driver updates to support R-Car
-> Gen5 and X5H for the SYSC-DMAC. Details are in the patch descriptions,
-> but it is all small stuff.
-> 
-> It has been tested on an Ironhide board (X5H) and a SparrowHawk (V4H)
-> for regression testing. The testing branch can be found here:
-> 
-> [...]
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Applied, thanks!
+Passes both DT checks. Kind of fixes 3b3fdc9fd40d ("dt-bindings: rtc:
+rzn1: add R-Car X5H support") in -next, but we don't use Fixes: for
+bindings, or?
 
-[1/4] dmaengine: sh: rcar-dmac: fix style in struct initialization
-      commit: a416b656798317f1c6eb69d7a034b4dc392b3781
-[2/4] dmaengine: sh: rcar-dmac: SMMU doesn't need IPMMU workaround
-      commit: 73812307647a90234cbc1e474f2dec4bfa4ad34f
-[3/4] dt-bindings: renesas,rcar-dmac: Add support for R-Car X5H SoC
-      commit: 8d4237d153174af7cda2b3e45f4f47586a04dc95
-[4/4] dmaengine: sh: rcar-dmac: Add support for R-Car Gen5 SoCs
-      commit: 1d8ae2003de08f61095e4e928b1b8cce6c23cabd
+ .../devicetree/bindings/rtc/renesas,rzn1-rtc.yaml          | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+index b448725671ec..5a869e6c0ae7 100644
+--- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
+@@ -51,6 +51,9 @@ properties:
+   power-domains:
+     maxItems: 1
+ 
++  resets:
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
+@@ -85,7 +88,11 @@ allOf:
+       properties:
+         interrupts: false
+         interrupt-names: false
++      required:
++        - resets
+     else:
++      properties:
++        resets: false
+       required:
+         - interrupts
+         - interrupt-names
 -- 
-~Vinod
-
+2.53.0
 
