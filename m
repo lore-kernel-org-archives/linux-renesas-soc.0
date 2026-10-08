@@ -1,224 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DBC46AA9A
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Oct 2026 10:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7A6492E2D
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Oct 2026 10:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791454239; cv=none; b=elpK1Wydppx+2m7Yts9yK914s5/8kj1AY801Hr0r+N4JIfYHocR9qNp7JG6fZ7lCUUx9pf4DE09UHdbGr6XawKIdjff3BHumqiLn55rUxYIMlLTCAnssfifeuMdIz7ntU+zlkNyxLeHpbKKhgT0yBFRR1HSQ0wQPY6Rhq+1qSEo=
+	t=1791455947; cv=none; b=aRL98CNykmGi+FEbf3sYQdw1yHh1muFjEgPF+CihBfGc52YS59FMgwqGBmaHqtmDLpSecEK8lR8E5UCdJtklOYtTtNYKA4WOY+tQabijgVxqj7yc8u4Ds4kqKjjreC3IvBtQnmOxB8k3uSVC5D7bQnWDBFhKNbOqvbR4GTFP5fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791454239; c=relaxed/simple;
-	bh=4tbUgFiAvEgxtY8UciHDHSbxyHXMGWw4dIFFQgGN1hI=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JqoxJta8vENWrIi5IFjRQCpCZKxy91qM29mpFP44Dn6Ch8p4Pxo7VKNlOUg88hMCcW/Ym7KEAKvRlo+XIgMJtRkfgLFsauRODuKWzBoIihYL7NQS2RwPkGOzok7n/ZIAC5MeyRyckz6clftQzwAwOx6cdEIlfZhI1xKwWLDnyVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwm3R+L5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791455947; c=relaxed/simple;
+	bh=dtrga2aJHDAstvyuSs6qpZWc6QvyFtEPlzZuunhkMfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BmtNtADdxpJItp0s0hebHXQ2lFBIrmLl/C2S7NcTj9Cz2S0zlLZRToMQfnIqUT+U44eMpHZjKRZfGAjT0UPwW8M9b0E/oGKdV21PwJLkSIsfj1fdPw2BtqLmNqCVEqgCZb+NqbnXL/DTgU9YnEo2hlKyBp7szfiUD8Rt88wPbUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UKR3vity; arc=none smtp.client-ip=74.125.82.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwm3R+L5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B3A61F00898
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Oct 2026 10:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791454238;
-	bh=6Cr87NWtSTumqAI3+lv6BChO3Lye59PnJ7E6aWPgSGU=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=hwm3R+L5zS/h87y3KfkxOmQN1SrcOktm1Ml6oJd1pBluYUvH495HVW8N2lZwCPFXm
-	 EtW+yEiJnhU2eBkltA7Y4jf11zQ2CzOelGOgJTjejVqKcVJVHYXlp6PF1zFCqYam2s
-	 /YexWY1f6TbIA6QocjrcoUni135+VqorizQ+OMBAf1ji+qw/kxLALEarEw3C/8EVHY
-	 Css4DE+F/nGfl9uHzFZk3u9C7qKsiHmrR6XZ8fdZ+1c8rwEvnZlNjxYs4F9SJ5pUJE
-	 oJKzaypmeKAHEPo3Sx7iOzY6C6zWX96jHCAX/hmEkZ8zIdsL1eTx5RXJd2hBhQBOny
-	 hb9wAJHXVcdkw==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3a20367cf82so46180211fa.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Oct 2026 03:10:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwas/LjbYy0byC1zU96huZzKwE6XYiv5+r0Uqlixw/NCNY/xmfKzeBgQ+vPMmAsjWuy8wu2YlPDpS7Sq2REFj0FsQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYI9prCScWacZOJrOHgBRsmX/h6Zi2SFESX5H5n6KGIUjHccDqG6
-	vOcU/FzR+ffQpO54Dxd/RvxMnGhIX003z9aQK3XIcbxJjamRY8mbPF5l+eNntjavxGByn2lYkoJ
-	USgTNnf5blpn3U5JVlUouUFWXpqNcykogMlxb4dkDPg==
-X-Received: by 2002:a2e:b8cd:0:b0:3a9:926c:c276 with SMTP id
- 38308e7fff4ca-3a9a2cbc6c9mr12456541fa.17.1791454236809; Thu, 08 Oct 2026
- 03:10:36 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 8 Oct 2026 10:10:34 +0000
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 8 Oct 2026 10:10:34 +0000
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260929122407.219448-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKR3vity"
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-33e6279a1d7so1898611eec.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Oct 2026 03:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791455945; x=1792060745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2hpUwEsGMPkIBbYBiNYjLbx5Pg/A2Eh/bQSXX+ThuQY=;
+        b=UKR3vityW9LcYhaDzuyltK7K673JMJH29PrQtl4pSHImeqxzg98R9e+a6IE3jwXC/L
+         uLgY9+tc3HPDtYPWPgPnkWTC5UQTQyMjpeaU81dptSeICkm7CNpE03A96I9+xT0f5icw
+         RVE5Wv2hltHRuUTi0yxHhXdRJMCdmvcU/hoo1s4Fqcdk1WbrGmFtpo4hGTBAsQSdZNER
+         hFJuOd1bVqpvXw01J5hrvZ9F2v06YSqfW1TA7NQlNPJnGRyIJIsGw5Rt6HHoRHBjWWul
+         x/JNgmSPhv8u217ZewsUS7obnctiW2Sgk1y1E3gFI9Y7mskl9NXGHmI/W9qtBA9UpNMO
+         PzTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791455945; x=1792060745;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=2hpUwEsGMPkIBbYBiNYjLbx5Pg/A2Eh/bQSXX+ThuQY=;
+        b=wFOI5Rnfm6wI56KvQUVfaJCj8CEpbFj1LoF3w9gffeYW94Op7REVm71Qer3YDdXBck
+         +Ttk+iJNQSFa8DasazcZSv65rQh41ZJbYcNPQFRyju8D8rzHDLlAsqaqgyx4J5+J07uB
+         z5ggcQSSJvMJcx+OX3j8vgSBInv3hzl5/kyubiHr/H1+wOXKV/GIRy8qVJyLnIflRP/u
+         ToQMCIrlhDdgQq4+YFY0aKSjaTfjUMDB+r0zasFzj5s+KDWrHnCv/QtwtrpW+m2pxSXL
+         NYRNcuY+bXtXDnHJntjqHQXFIqUN37s4y8K/eQHeWfBKhDMCmB+X9F6LYKNC29rQDyd9
+         RVnA==
+X-Forwarded-Encrypted: i=1; AKwUvBy52XcE0aG+x9iNPEdvUZlT6EZ4qk6/5FKZ/GtGS18RA+d7vLuzB707gVIILd4NHsG8aeEWqZDElQm16gUF436qAQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++lYi3olgVs+2h/bNHYAkedqbnGN+tFgOJYce9hBMt6+sv+A8n9P
+	yRR8NNUg1JEv6F+iJKNJxWSFTR8l/m8DS+1A0GY3z+RQiWdCh/VROyU2
+X-Gm-Gg: AYBFou0E44WCUFwTaEqKmo5CfT1Le7F8J+rl/8dS+yQ+O/O/ffHjEslpCs5oy4xURXf
+	KQyRdMWi0kcEkA0ETxW5De0XGoWYVB15C4a1q6EZyPRbEjZtHC6KAeTpkSyCICM20H/JomfwdYJ
+	Vowe6CvSuEjz7V1EQ046m4lXyh1JyiRCFwXgJ/rTcVwSWS74zAZ1mc7pIOFJEUvtmlPjoaVhRqh
+	+kCJPycA8DMpxWwaV4khRk592m3d68DEJcEqJq1UEv7OoP2AtnbcDGu8tcBRCF6azE5obsS08Ww
+	EhuRaoGdyRFPmrG5qZv+Z+kyGQczub2uNOjg2AdAwj3HQukn0vBSvyoCakUcqEQxfTBWj4U0PVG
+	TjrYpJEzirbwHL98pl0/PY1ptAX/lwxsKzItwb/PiZBGPPVGR+imtGKnbrgKn3EumE793pEayB6
+	KlpUdBFIKZzB9je8L7EGwUpFkLksFgmyWRpWqrwRtO/DB1uycRa99ZPeL9apmfCrqT3A3eg+gLZ
+	X7326jHC0N5WvJYOd1sQUuA7J5WlKma4jBsd/CZIE1eJ9V4TISrFTTVe0D62jO7RfD/BlDnYmT1
+	UCX9zZ4COQE2CQ==
+X-Received: by 2002:a05:693c:8819:10b0:352:2e15:49a9 with SMTP id 5a478bee46e88-3522e154b4amr965099eec.33.1791455944704;
+        Thu, 08 Oct 2026 03:39:04 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3517810b895sm7496369eec.17.2026.10.08.03.38.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2026 03:39:03 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	povik+lin@cutebit.org,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrei Simion <andrei.simion@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Kees Cook <kees@kernel.org>,
+	Syed Saba Kareem <syed.sabakareem@amd.com>,
+	wangdicheng <wangdicheng@kylinos.cn>,
+	Chris Bainbridge <chris.bainbridge@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Neo Chang <YLCHANG2@nuvoton.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	u.kleine-koenig@baylibre.com,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Hemanth Selam <hemanth.selam@gmail.com>,
+	Md Shofiqul Islam <shofiqtest@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Zain Aboobacker <zainaboobacker33@gmail.com>,
+	Sang-Heon Jeon <ekffu200098@gmail.com>,
+	Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+	Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>,
+	Bo Shen <voice.shen@atmel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	linux-sound@vger.kernel.org,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	patches@opensource.cirrus.com,
+	linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-rockchip@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bui duc phuc <phucduc.bui@gmail.com>
+Subject: [PATCH 00/24] ASoC: Fix constraint return value handling
+Date: Thu,  8 Oct 2026 17:38:07 +0700
+Message-ID: <20261008103831.542533-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260929122407.219448-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260929122407.219448-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Date: Thu, 8 Oct 2026 10:10:34 +0000
-X-Gmail-Original-Message-ID: <CAMRc=MckUuLsgqjphOs=fiyz3wCaGbGWpt_fPKStZRAroPkE3Q@mail.gmail.com>
-X-Gm-Features: AclHuK8KhVOCPFFk0C6VCi7XjvWfAzQZ9wqI5WRHeA5xhxr3xFISAjG4IBRvay8
-Message-ID: <CAMRc=MckUuLsgqjphOs=fiyz3wCaGbGWpt_fPKStZRAroPkE3Q@mail.gmail.com>
-Subject: Re: [PATCH 4/5] power: sequencing: renesas-pwrrdy: Add RZ/V2H(P) and
- RZ/V2N A/D converter support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 29 Sep 2026 14:24:06 +0200, Prabhakar <prabhakar.csengg@gmail.com> said:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> On RZ/V2H(P) and RZ/V2N, the SYS_ADC_CFG.SY_MSTP_ADA bit controls
-> A/D converter power-down. RZ/V2H(P) has a single A/D converter unit,
-> while RZ/V2N has three units sharing the same bit.
->
-> Add an "adc" power sequencing target for these SoCs and match it to the
-> RZ/V2H(P) ADC compatible, which is also used as the fallback compatible
-> by RZ/V2N.
->
-> Clear SY_MSTP_ADA when the first A/D converter unit is enabled and set it
-> again when the last unit is disabled. Wait 20 us after clearing the bit
-> before allowing conversion to start, ensuring ADCLK has been running for
-> the required time.
->
-> Bind the power sequencer to the RZ/V2H(P) and RZ/V2N auxiliary devices
-> created by the SYS driver.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->
-> diff --git a/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-> index 0190e53913bf..ab20b7ba9b83 100644
-> --- a/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-> +++ b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-> @@ -5,6 +5,7 @@
->   */
->
->  #include <linux/auxiliary_bus.h>
-> +#include <linux/delay.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/pwrseq/provider.h>
-> @@ -15,11 +16,68 @@
->  #define SYS_PWRRDY_N_DSI_MASK	BIT(1)
->  #define SYS_PWRRDY_N_CSI_MASK	BIT(2)
->
-> +#define RZV2H_SYS_ADC_CFG		0x1600
-> +#define RZV2H_SYS_ADC_CFG_SY_MSTP_ADA	BIT(0)
-> +/* Minimum time with ADCLK running after leaving power-down mode */
-> +#define RZV2H_ADC_POWER_UP_US		20
-> +
->  struct pwrseq_rz_info {
->  	int (*probe)(struct auxiliary_device *adev,
->  		     const struct auxiliary_device_id *id);
->  };
->
-> +static int pwrseq_rzv2h_adc_enable(struct pwrseq_device *pwrseq)
-> +{
-> +	struct regmap *regmap = pwrseq_device_get_drvdata(pwrseq);
-> +	int ret;
-> +
-> +	ret = regmap_clear_bits(regmap, RZV2H_SYS_ADC_CFG,
-> +				RZV2H_SYS_ADC_CFG_SY_MSTP_ADA);
-> +	if (ret)
-> +		return ret;
-> +
-> +	fsleep(RZV2H_ADC_POWER_UP_US);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pwrseq_rzv2h_adc_disable(struct pwrseq_device *pwrseq)
-> +{
-> +	struct regmap *regmap = pwrseq_device_get_drvdata(pwrseq);
-> +
-> +	return regmap_set_bits(regmap, RZV2H_SYS_ADC_CFG,
-> +			       RZV2H_SYS_ADC_CFG_SY_MSTP_ADA);
-> +}
-> +
-> +static const struct pwrseq_unit_data pwrseq_rzv2h_adc_unit = {
-> +	.name = "adc-power-sequence",
-> +	.enable = pwrseq_rzv2h_adc_enable,
-> +	.disable = pwrseq_rzv2h_adc_disable,
-> +};
-> +
-> +static const struct pwrseq_target_data pwrseq_rzv2h_adc_target = {
-> +	.name = "adc-power",
-> +	.unit = &pwrseq_rzv2h_adc_unit,
-> +};
-> +
-> +static const struct pwrseq_target_data *pwrseq_rzv2h_targets[] = {
-> +	&pwrseq_rzv2h_adc_target,
-> +	NULL
-> +};
-> +
-> +static const char * const pwrseq_rzv2h_compats[] = {
-> +	"renesas,r9a09g057-adc",
-> +	NULL
-> +};
-> +
-> +static int pwrseq_rzv2h_match(struct pwrseq_device *pwrseq, struct device *dev)
-> +{
-> +	if (of_device_compatible_match(dev->of_node, pwrseq_rzv2h_compats))
-> +		return PWRSEQ_MATCH_OK;
-> +
-> +	return PWRSEQ_NO_MATCH;
-> +}
-> +
->  static int pwrseq_rzg3l_set_pwrrdy(struct pwrseq_device *pwrseq, u32 mask,
->  				   bool val)
->  {
-> @@ -127,6 +185,20 @@ static int pwrseq_rzg3l_pwrrdy_probe(struct auxiliary_device *adev,
->  	return PTR_ERR_OR_ZERO(devm_pwrseq_device_register(&adev->dev, &config));
->  }
->
-> +static int pwrseq_rzv2h_probe(struct auxiliary_device *adev,
-> +			      const struct auxiliary_device_id *id)
-> +{
-> +	struct pwrseq_config config = {
-> +		.parent = &adev->dev,
-> +		.owner = THIS_MODULE,
-> +		.drvdata = adev->dev.platform_data,
-> +		.match = pwrseq_rzv2h_match,
-> +		.targets = pwrseq_rzv2h_targets,
-> +	};
-> +
-> +	return PTR_ERR_OR_ZERO(devm_pwrseq_device_register(&adev->dev, &config));
-> +}
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-This probe variant looks almost exactly the same as pwrseq_rzg3l_pwrrdy_probe().
-Can't you not just store the match and targets pointers in OF match
-data and keep
-the same code in top-level probe()?
+Hi all,
 
-Bart
+snd_pcm_hw_constraint_minmax() and snd_pcm_hw_constraint_integer()
+may return positive values on success. However, ASoC only marks the
+DAI, link, or component as started or opened when the corresponding
+callback returns 0.
 
-> +
->  static int pwrseq_pwrrdy_probe_common(struct auxiliary_device *adev,
->  				      const struct auxiliary_device_id *id)
->  {
-> @@ -140,7 +212,19 @@ static const struct pwrseq_rz_info pwrseq_rzg3l_info = {
->  	.probe = pwrseq_rzg3l_pwrrdy_probe,
->  };
->
-> +static const struct pwrseq_rz_info pwrseq_rzv2h_info = {
-> +	.probe = pwrseq_rzv2h_probe,
-> +};
-> +
->  static const struct auxiliary_device_id pwrseq_rzg3l_pwrrdy_id_table[] = {
-> +	{
-> +		.name = "rz_sysc.r9a09g056-pwrseq",
-> +		.driver_data = (kernel_ulong_t)&pwrseq_rzv2h_info,
-> +	},
-> +	{
-> +		.name = "rz_sysc.r9a09g057-pwrseq",
-> +		.driver_data = (kernel_ulong_t)&pwrseq_rzv2h_info,
-> +	},
->  	{
->  		.name = "rz_sysc.pwrseq-pwrrdy",
->  		.driver_data = (kernel_ulong_t)&pwrseq_rzg3l_info,
-> --
-> 2.55.0
->
->
+This series fixes affected ASoC drivers to return 0 on success and
+properly handle rollback paths.
+
+Found by manual code inspection.
+
+Compile-tested only.
+
+Best regards,
+Phuc
+
+bui duc phuc (24):
+  ASoC: amd: acp: Fix .close() being skipped on rollback
+  ASoC: amd: ps: Fix acp63_pdm_dma_close() being skipped on rollback
+  ASoC: amd: ps: Fix acp63_sdw_dma_close() being skipped on rollback
+  ASoC: amd: raven: Fix acp3x_dma_close() being skipped on rollback
+  ASoC: amd: renoir: Fix acp_pdm_dma_close() being skipped on rollback
+  ASoC: amd: vangogh: Fix acp5x_dma_close() being skipped on rollback
+  ASoC: amd: yc: Fix acp6x_pdm_dma_close() being skipped on rollback
+  ASoC: apple: mca: Ensure the DAI is marked as started on success
+  ASoC: atmel: atmel-pcm-pdc: Fix atmel_pcm_close() being skipped on
+    rollback
+  ASoC: codecs: cs42l42: Ensure the DAI is marked as started on success
+  ASoC: codecs: nau8325: Ensure the DAI is marked as started on success
+  ASoC: codecs: nau8540: Ensure the DAI is marked as started on success
+  ASoC: codecs: nau8821: Ensure the DAI is marked as started on success
+  ASoC: codecs: nau8824: Ensure the DAI is marked as started on success
+  ASoC: codecs: nau8825: Ensure the DAI is marked as started on success
+  ASoC: codecs: wm8580: Ensure the DAI is marked as started on success
+  ASoC: codecs: wm8782: Ensure the DAI is marked as started on success
+  ASoC: imx-pcm-rpmsg: Fix imx_rpmsg_pcm_close() being skipped on
+    rollback
+  ASoC: intel: atom: Fix .shutdown() being skipped on rollback
+  ASoC: renesas: fsi: Ensure the component is marked as opened on
+    success
+  ASoC: renesas: msiof: Fix msiof_close() being skipped on rollback
+  ASoC: renesas: rz-ssi: Ensure the component is marked as opened on
+    success
+  ASoC: rockchip: rk3399_gru_sound: Mark the link as started on success
+  ASoC: rockchip: rockchip_max98090: Mark the link as started on success
+
+ sound/soc/amd/acp/acp-platform.c             |  2 +-
+ sound/soc/amd/ps/ps-pdm-dma.c                |  2 +-
+ sound/soc/amd/ps/ps-sdw-dma.c                |  2 +-
+ sound/soc/amd/raven/acp3x-pcm-dma.c          |  2 +-
+ sound/soc/amd/renoir/acp3x-pdm-dma.c         |  2 +-
+ sound/soc/amd/vangogh/acp5x-pcm-dma.c        |  2 +-
+ sound/soc/amd/yc/acp6x-pdm-dma.c             |  2 +-
+ sound/soc/apple/mca.c                        | 11 ++++++++---
+ sound/soc/atmel/atmel-pcm-pdc.c              |  2 ++
+ sound/soc/codecs/cs42l42.c                   | 11 ++++++++---
+ sound/soc/codecs/nau8325.c                   | 11 ++++++++---
+ sound/soc/codecs/nau8540.c                   | 11 ++++++++---
+ sound/soc/codecs/nau8821.c                   | 11 ++++++++---
+ sound/soc/codecs/nau8824.c                   | 11 ++++++++---
+ sound/soc/codecs/nau8825.c                   | 11 ++++++++---
+ sound/soc/codecs/wm8580.c                    | 10 ++++++++--
+ sound/soc/codecs/wm8782.c                    |  7 ++++++-
+ sound/soc/fsl/imx-pcm-rpmsg.c                |  2 +-
+ sound/soc/intel/atom/sst-mfld-platform-pcm.c |  2 +-
+ sound/soc/renesas/fsi.c                      |  6 ++++--
+ sound/soc/renesas/rcar/msiof.c               |  6 ++++--
+ sound/soc/renesas/rz-ssi.c                   | 18 +++++++++++++++---
+ sound/soc/rockchip/rk3399_gru_sound.c        |  9 +++++++--
+ sound/soc/rockchip/rockchip_max98090.c       | 10 ++++++++--
+ 24 files changed, 119 insertions(+), 44 deletions(-)
+
+-- 
+2.43.0
+
