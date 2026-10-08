@@ -1,47 +1,47 @@
 Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011037.outbound.protection.outlook.com [52.101.125.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065C73F787E;
-	Thu,  8 Oct 2026 07:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D7F3E49EE;
+	Thu,  8 Oct 2026 07:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.37
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791445544; cv=fail; b=GstjkWFeKsbmN+yxhHGjZiHZlruDkFdovOMR6HJRbX+cVNOyhiWErIzeMvmncQDqO0i3WbkpDVJKcezc2Icc069h0UzYyl1uBX0C2GoCJAVXe2RNAtz7f2pRktCtvORhuAV+OYhwgoz9yw8TNWJlbBb+ztdVWMjr4St37wjT3eM=
+	t=1791445546; cv=fail; b=NAlw6V6HAjD5QXnQcY4wZiXLfchfutbfpwuFCDrgXzhP4QCRXrkXNaPKOHPyyr90lqT6gTVOUXpNAWetsI1MrCcFZ5Zc1Rt01WrIRY1Z6xfpwoRrAhxe0g3bUkoK3nM+E+henmCkEaB3K0r40qzgI4CP2jYBBZifFPka5pXKQhA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791445544; c=relaxed/simple;
-	bh=LO6R5WmRwRaZzbRCptIZYcn5DE6NDqiCo/RXElE0/DM=;
+	s=arc-20240116; t=1791445546; c=relaxed/simple;
+	bh=IMCwNLoiq9ATtBBkwfuxjY6EvBYKqHdIjyI6eQ8VTXM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aQI5IYg6ONlKZALcU+c+HK8TOyFTv+sqAGqtGYotIs9pNS6K5cECdT37OX3O+IHrroJUVRPERs2fpWmdJnswP/3mUYtAplUFUDERdn//mbusRBrdW+JRaSgg3qB+d2iWBCn59FybEwUTfYRn112tIm9fXy+XU1qFRyFVXhEGIdk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ZR7Y9jr0; arc=fail smtp.client-ip=52.101.125.37
+	 Content-Type:MIME-Version; b=YbVKezOr+5TVps6d74XB+eAept/qvSDW2oyT7lvC1kmfVD828aHBajP/KcursaKNCqh8TlZC4pzdVpYRvw2w1pwVQISplP3Wsic90ZC+fK5eMHNzxjWSqzJx5AxePb8NagjCR+2THr7zj1eWYWvM1NC5IEukrvc/3nrL5QoYC/I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=S2pdmHH/; arc=fail smtp.client-ip=52.101.125.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ZR7Y9jr0"
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="S2pdmHH/"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wvYTZsHnOvMPj4jF+YYFtthcVwZAQt30z/5B9D1zlHIpRAJefOZkGahhsISUvZ2Jt59ZYAv85vLkYlCK5qUsjRPXE2X6y9vgl/jG4ABNNHjwAKHrlAZfSo1QuzCi/JDBiilvPdfncNEI4SZFDtfHTaKiVIzqN7gxmWXKFjVwceM1u4/vZf8WmzJYH087ZuBqJqwxMUC1eKgxmJf6SIZHMC8eZqFtarCTM0ZkH4kNI5Gm0V0BchXsm7jUn+Vgw8zANsDN5YBm5LILfjjpJPuU3tcNkDNcKR0ZpJ3wHVgbkecodnWnwEdaWZN2FaFhQp8qRg4JNRjEd/WePbZKDcqtNQ==
+ b=JYq1F+iihFiumR2q8q934beX5TA1YthDQtbt1+X1jPwpwGOWLVlHjuieqsEzi56MUZkNtVLuOY40Om39tDgxTmD3aK78AlLzDFDZRTwd0KzJRodlB5LdbOPp6elvmSADra/RF8fbSjoADaFkXJbdFy5ccuYDl8dYhFjuY8nA5Pt48Qs8d/Mq8/46FdLLO3h0zhMLUugW9EFnaeb9aczKVa4FrLXXrCD9np7M0OxrBNTOvgNyH1D6wI5luRrA45TATgeGw/EbjSGiDIVLse8xl9i4lWAII5ywVrogQwEqDuZHE2X1i1fY4FiCMZVczGojKhFD038CoCzRmYDbCQSKUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JyEHzLxOJtcxgx3g8bvFASAvHBjkvXJwBuKlferE0PQ=;
- b=KppwgU262UGG0fHjN/7eBgH0WdQl2ptDHVQWxH1knNXMHii+MxOwZc6qm2HlLMdZatClhNofFlbR9jrKcG2NJFis2CZeN7w82dNBwpOwweYfW5sJCLv7FrchOVmf/6ZN+wuWdJgLq2fTlDHtkzUKY9vBpPsezHLL9ofsEJpBvP0KZrdS9BB2t3mj0Ii4zNA/6Yf91IlG3V/K+VYQcXBqfhjUsBMK2P7Gwy3sRGh/jCPRp+ltc/aPlkt9WexcqKDmKTarOZCeaPj9gK8eL/t/g5pQvOQWmJHLLZZ2NfBaLgm1OlT3pO8oEE1dL9VMXanHGlDn/dgjCYVqgVgwaAXzkg==
+ bh=DWCvNS7ghFrnO1GqIKFRX+lMgf5rBP9oZR58qkHwxII=;
+ b=O0BfSovOx9eYXPaZ/WmtoQOpFJVA9e5uNrajtDw8K3e06E4kecoakDQQlekLLka6gyZ/J0sUyQ4sFvVvFDwPWyVF1lhpL0ChLRpq/YcG0ZYrQjpRnjTSHLeIdemywd6+dDQkoEggc7Mu9CwjcyqyfcjiCoHxiKPAewuNIjRQdZgvwRrgtRWZqZl11HwPWUEYGnx47gTjfZ2++fH3QaFqdu6GCVGUgYXF9940PLTtX738gHiXMLc7W/+FMAY6gNvcSaQ9PMyL1iYdwqGzsBFIKyU2wzSYU5JUW1qUL6SsWnFIgk2aLE6l5Z4yYEd/OvZZltZnegV07CAm2kVPz82t1w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JyEHzLxOJtcxgx3g8bvFASAvHBjkvXJwBuKlferE0PQ=;
- b=ZR7Y9jr0S+mpCl8Nmm3CchRW+2m5zAS5QbP1iiUBpuS8uxbEnohwlUQpYFv+4J++oT3h6KkXP0f63rf2OLORUk6ilXOb2GBIg88y0nqN9MkSKgEbEhwVr7IlmcM96t94+koiJKxavu8cWWEUs/vLxVk+tvEQYD36pZbkWbju6s8=
+ bh=DWCvNS7ghFrnO1GqIKFRX+lMgf5rBP9oZR58qkHwxII=;
+ b=S2pdmHH/ZkBTEGBY8gLf2E9vVZsZjYf983vrlj5gI4wfWoRun4ah7qsSLi9r3leD1zxXdnkfDr19OdGwgBkLJkU0NjcsPop1t1lBGtD7S2Oob7VKsritDxstGiGdhvoe1zu73jhPC82e+65eIIL5+U+IsYYb6W1ptmItSOpQjdY=
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
  by TYRPR01MB12525.jpnprd01.prod.outlook.com (2603:1096:405:1af::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.17; Thu, 8 Oct
- 2026 07:45:39 +0000
+ 2026 07:45:43 +0000
 Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
  ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
  ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0496.015; Thu, 8 Oct 2026
- 07:45:39 +0000
+ 07:45:43 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: tomm.merciai@gmail.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com
@@ -53,9 +53,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Philipp Zabel <p.zabel@pengutronix.de>,
 	=?UTF-8?q?Alvin=20=C5=A0ipraga?= <alvin.sipraga@analog.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] reset: rzv2h-usb2phy: Add suspend/resume support
-Date: Thu,  8 Oct 2026 09:44:46 +0200
-Message-ID: <da95bad94c99855b960b3566c07671f8c15d5dea.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 2/2] mux: rzv2h-vbenctl: Add suspend and resume support
+Date: Thu,  8 Oct 2026 09:44:47 +0200
+Message-ID: <26da5ba32948a30dd70475ad2ece3c84dcab4eed.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
 References: <cover.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
@@ -72,177 +72,121 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYRPR01MB12525:EE_
-X-MS-Office365-Filtering-Correlation-Id: 451f85fd-0d1c-442a-9636-08df25102580
+X-MS-Office365-Filtering-Correlation-Id: 7a29edd7-565a-47fc-2f7a-08df2510284f
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|52116014|38350700014|56012099006|11063799006|10067099003|22082099003|18002099003|6133799003;
+	BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|52116014|38350700014|56012099006|11063799006|260925021911599003|260925021311599003|260925022911599003|10067099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	xB4Vr6Z0BOqD9+PquS1pR3CPhE0/5W/sbvxaH31KAqk/uO4e1Qzg1Z9Fz8NCwxfWaLL8aETZKlSQNHfy63dMRPHhC02oXX+kHED30Lmu9ozNjLOAw9svUTfFvva6gB7/kk+5LKYTwSXqVaDcltP0K1Idsxx/6cqmGkeOeDdDfAvsY3G9+B8TCoNodUeOoJTrLLyyw8t7NYjEUAgKQzMIxrzgpH3ZsujJCP+gQnyDJDD1kpWXv3/0DdW9lkefq4ii+65aZ3n16U5V4VN0crNItzxEjot9wIljkzNsY8xy3eyUDa2XR+AUmiyAHkO+F9tLEnLQs9UeRECCO6/J3bTZoGZsI0yPCRouLzI4dMNl8s9SWYTD5vZoJ8w2JKjCY0ES8O2fZZjTeuCvwASzo5loHsvzkO0iq0Cco0ox9aiAK82oyZp7+MsSiAZ7/GBSyQIeBY8HvrGbGibrfTd88WFIJBLVgpz8vYOFoetPfXHW2G/r5NuzQZQkthyrdsIhwhCJRfoqAln/J559wYunxoiCVKJR/uWthUYr8AB0iQQlboU5GtwODM5Jz65gqntna1BMBFh/i/G25ZDmjUl1FE7CF76Ep2Ibq5OOoJqth3UCx332jL159X+m3O0LgmjhZu5OnYxTJsQfr6W1+1HN3QD3oiDzd526wsctdd//r+OVkW7O699EiV/dxGhp89xNZbaJXCBPRPedIANOreUwqmXyfjdGydp5JbArlzoqCFrbRc8=
+	3R37n8fGjtGDkcx1lfMIKwHCCZDQDr1QBBCkmmDXmCNEMj9M0/+Uyjj4QMRqS4S7MtFPodgdvLFOvS/rcVyzGh1Z4yN89O/mz3PI7iPtunbxMb9Z7hlm8E80B7jYepCmIDXvzU0MFvq2OKHijPLZEYafvJcUtOp7HL0h/wDVmSQhYMIwpydVOfrIvZq6tW+egNUmW3FkqZEX1wkvvSUhpjCWeIofgvUff7TtyTyZBufG7/iIOSyUilqim4JXCqvX2vdgatMY/8FbGsehLb7X4GurB5wJ7qt0LKR6sNFDfGVkpAuHGQSKhh+qTAku6uUJViRespgs6P32Js3HaHA5i92p2Q6Q/miKQnEd5nNzwARez29RCO57PERupKxJWkLau8tgGyQVKpebkL/rCSWRUTniFWjbXmzmhe19yt9Tq6eVI3t3+Iyg/eUdQrAlPuLYGb+44a81sU5rLfx5HmGhy7vR0lYepHqBf5rI9pvb+a18CYYU0QnZ6NcdN5BYglPjj+vrplptmaBtJbBLRHe6t6cL+1Ph3D5jiWq0Yv3h9jyp/qenbFjux/aeC3akysc9tNB24bUbef/fGjIBYp+beLZ1SczwkqnJPyCVZ6JcrHZqrE2w3np8Eh21Op+kIIXil5S2CRceqxZPVUhcdJiMf967G3w0NXW1S5GQncDfemkbIp0C84+tqenhJZZB5VwQDsuo8NF1mMWCFPU12kgr0U9oqJD80nyuaFOeaaFzCIk=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(52116014)(38350700014)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(52116014)(38350700014)(56012099006)(11063799006)(260925021911599003)(260925021311599003)(260925022911599003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MKCPVEvtGXyfEMRJcOJfAoSmXRt0lp2WYTQ13xKUWGo0G93QEEiKnKzoGc68?=
- =?us-ascii?Q?kPHqlG2fnSUYiVqDsqqRJW0HBcdSAE9BgGFug5A8W5m0dtsGGyepSTtMF6Lu?=
- =?us-ascii?Q?vuj1K4VB2U2c8JZYi2Vux4+zYKYZgEdDpWv6ubH03LS1LV8wgFyWJEsDOKJp?=
- =?us-ascii?Q?vTjfHvZ2756U2kIgW5V0tIpggNAaYja4PIIYezsvdpABp7i4t+A/lM+z1bhW?=
- =?us-ascii?Q?PHksT5ZpFVqizM0sUyfy2+3oTQIfx7yB0k7RwESFzRC8h28vOFEtFhGJozSl?=
- =?us-ascii?Q?LOTuZh3Nbcpsn2p79JpCqhH3B+Dg66G4KAlGDOom5Z+ooCj4OAHuygexA6t7?=
- =?us-ascii?Q?WPcJ6VsrDCTgNu96KJeSGoUv6qaLJKZz7svQXVM1tsFdu6cBo4Nhq8+WjPba?=
- =?us-ascii?Q?nRUFJbclfxD+zuJlyNh4SC9+ve3CIT8ziKFASB4VVS41b6s4HqZCuZdqNAhv?=
- =?us-ascii?Q?MDz+2+Z+y9jEoZv1A2iwpHFMkHpJ7kxuEJFyarLvQNnCY2zOqB1y6U4/MMhe?=
- =?us-ascii?Q?ZH/SxpB3I/PTxj5ifdMS7KEMgEOSsRcf1quzouHTmAAwPgvmpjulqsEndttH?=
- =?us-ascii?Q?TcW9fRCqi++vK/CsNh1o+b5Seu9xlITOkxvAopWTHo81CqmJjOrVP959OjHc?=
- =?us-ascii?Q?6md5fdi3Cj78nmomcs0sH00qLjFtRW1DdhShQt0E2DdeBPeCU2Ma2+bSZLLh?=
- =?us-ascii?Q?B2cXWi0YteMHSUpeiz9P6shfUqjxGapTCzR6tcRL87H0JjZxhJMlQnt36lqM?=
- =?us-ascii?Q?+W+YXccf4hLNf4ugfRP826JagdD4n6ZZr+PB7hGU879fdlgVGLYFKDYTbKqn?=
- =?us-ascii?Q?p+vIO+eMBgnzKwTd9cF6tjN3pQHL4Sw5Sq0GizCmeXOOwFseMvkkrhq8VRry?=
- =?us-ascii?Q?c2icHYyF7C2kombJS2dDNNA6Yt1ALg/B1hpkw+QFiZOMh23hXG7mRnaMqCzq?=
- =?us-ascii?Q?oppBpGR8R0nVkfredIc7QrTIdJtqhI54f1ifHFv1UZG2fVsE+JWV3QmGe6e6?=
- =?us-ascii?Q?AnJuAGwgxx7HEJgaP1gV+Fr7iDpLB/QRGcOH2DJPva54M+sp0OgE6nk4j0gl?=
- =?us-ascii?Q?HcgzTi2q0lc64da6m+JocexDyqaVhXTgFkQ0GOqHxzDu8N5+9QFZo8kFkIUT?=
- =?us-ascii?Q?pq1pxta3CXy4N0Qq33bUvcxKdI05nP0RPvpFqJbrBby7po0Qb/CVgHhmD97V?=
- =?us-ascii?Q?SRNRtj+kJ7sSyPhpXuZ36dmVej/ct1DxlQb/dYi7w8NknDqo/Us6E+pFp5yz?=
- =?us-ascii?Q?tuQIo0c3WR7mSEEjTQn5jluOf2iodxk2vmLLTVVHMSCPu5kypXnDi0NlHyTD?=
- =?us-ascii?Q?Xs+QV6C+Bgi1M1eUlF17Q12TyQ3riW6LjIyKbJrCmnkHZ3Riy1rYmUA2yWyD?=
- =?us-ascii?Q?6rhtZjZ2dkFxfpem9KJOt6o9dLV3YxeET/MN/NXbj76++wFJIauaAQn6g5x9?=
- =?us-ascii?Q?gHGGHJ6NB7ZwcTS1CYNeBFIoOb0u5H+zE/h7hgfwh3fnstJRhX6VR/am7a/u?=
- =?us-ascii?Q?XNlldKDBIdpIrthLC9eD1spw4JQvDQQzhOZUEuQZ/n5GFRgcBpPtc96fwO7T?=
- =?us-ascii?Q?x4YjvEedVZRgJPr8RuD2YscgxoZl8/cG6y2jEXhOjuojYa8Ie872y7VS5fC/?=
- =?us-ascii?Q?W58GTaRNMYQK93TKMRTgV4k+qILq0PtOTGGBix0LDBXpmYCuIDqQwUJUAaOq?=
- =?us-ascii?Q?ZCcuZ0sOe/4ddhJP0skSnZLcYRcw6ruaYJCNfNVyVNaZ+2yIZDwOU5yYCC6F?=
- =?us-ascii?Q?BXMwZ7BRn3vPS+76NTq7Cyji3J3w1/2GRsL8+kuy00tuOSnhFJuy?=
+	=?us-ascii?Q?vifzWuPjWlgca2PSRzF6k2aRTb3HX6PFKhhL1cvaUBppJeYpnvGB7e6vT92G?=
+ =?us-ascii?Q?Vz1HdcU95Ns2S7Yev7ADnL55jBlCre+0+l/P2T1LNx8r8nkdnKuvBv9nfr0O?=
+ =?us-ascii?Q?HmIDMUsBOdYz/qgTE26BzYzxHhoHzX9ZCD8Zm/u6KDEm9rOjL2N+0nueyrMm?=
+ =?us-ascii?Q?n6pQv9aDnMNcc0XYsa41/Dfhy/1Lsoay03neetyucfwmj01VTxn4CahoCyTd?=
+ =?us-ascii?Q?jn79QiQLsmV3CP1pfDCoiCjBjMfvBZ+CuMlWmTRh5PEPMGvwVCmC2yBFB0Q4?=
+ =?us-ascii?Q?t3NmqSuGPYNTuI7AxuEzGT4iYBy2pC0Wuj2q4J6mWjz36B6+G1ovCCI/QEEO?=
+ =?us-ascii?Q?ywV7FGmy7zMZQf7cwq2xn4TVa7CkgiaZY8eKMywDOvZjNn+OYMULlvv69icj?=
+ =?us-ascii?Q?kt8gUCP8Yp9DFAgTiyLDnXUDkiLjVB4lsrxmc6nh35vdGfVFS4iFE6rRTfom?=
+ =?us-ascii?Q?QAK19hFkkViSfkmYUKHjHTH4nNzb37n5kbyqZwk6ZiLn8wX148W4abKmkMhy?=
+ =?us-ascii?Q?oD9IWNyoYW1r/iZJBfuHWpBObIEnwRThuGPnIbs+dZDOJtfwdTji09RRq72D?=
+ =?us-ascii?Q?BEf/dZ4yKYXXbrYP5+nDlEN60n5HTkmu+0xCkiiGu6+Otq0HKDcXUMbAz/ci?=
+ =?us-ascii?Q?SCCOi2Zsk9+lP8xd35dzs48fo/nj7PW7zbt7RpDabtiod7ssYR/Vxlqy5VR8?=
+ =?us-ascii?Q?A61Nh+433j4UyQUR8zs3fpXQB1io7vNyN1YyX39M8Kglp5odeNqX8ibrm60Y?=
+ =?us-ascii?Q?1/0t8M74p3S7dyQOPZCk0+MU8t6K4NzrLh1aZ34tD3epa0Xv4Yyeg5se3xkW?=
+ =?us-ascii?Q?tFiWWnIFPWc38CtNoJm/YyHD0B4cj8cyZJmv4l4Wxgcblg91p+kRmGAeXB38?=
+ =?us-ascii?Q?2S9CJwNNUsbFC7UCRNo9fGl71Iy8cZkUMOipH/Z8cBbgJh4jRIVfKrt/GS7c?=
+ =?us-ascii?Q?VjKDbgmdoC0vBcD07wBBw5G2GUFiUbZkTOfbTOE+kmXIxRqcRoRnMqSXqDVQ?=
+ =?us-ascii?Q?2FD5rnTjZLCkjzSLGCvIuHmYsL7WL3JP7PXRbAGnYTSrd0x14xZNRFQDt0MQ?=
+ =?us-ascii?Q?IhW7ReJPstbpeFM+P/naZj7qa80ehf/IVdk9gNMo4yPpb4g9Gt5WbHwSrj8a?=
+ =?us-ascii?Q?kpgKZISdKu+L90nHhL4Tpt2IjJkOMdOIOQxU/JfBbXeyGC0ByrJHTN0F6mRk?=
+ =?us-ascii?Q?+By/UsXaPytipbMZsP1cEPizu5RtwAD1s0I0TdGCpIJXvVM1zPYmQRedjgAT?=
+ =?us-ascii?Q?CuZlur2ZejKmSVGxmowJ4re2S8GSAX1qPbWZN0GcvQyYFnTmpvh9RdoOH+LV?=
+ =?us-ascii?Q?oRhljlhT45zW0cZdThEjMAwEq48sus7/slb2dN7b57qOVu3Yp+wxvz+JmWBr?=
+ =?us-ascii?Q?yz2EIXISVAriSGXNnhUWwMmxnj54SbrC2uSm/ZA4RLd+vMf9ejMdNxdNHFYs?=
+ =?us-ascii?Q?+Y6nGD6oTeXfHxz4DrZYq8chXNYn0qraCKuvsUaaAAbE7J32aMg88+l0ghVc?=
+ =?us-ascii?Q?h/V0vA+u4uZyL3muUIiTXxHr4TLiNmMl4pABXhlKxWrhGF9irees4h49/wGL?=
+ =?us-ascii?Q?Z3TWWaPeH0HnMJURmpwPpqBf5RA37CqYxODFYAZ5hQSZw6Wlb7I6D7i5ww2A?=
+ =?us-ascii?Q?YZYOxazLaNpV/Ac1mJi4qMYneEHzkklplJqpgBB1TTPIwSaWlv20wknu5SbZ?=
+ =?us-ascii?Q?c0Ycs8ZNQRwKXdBD1zCaZmeWsg7XxVOWszvZdMV+ZtcP9D04AJmOJ2xCJWAi?=
+ =?us-ascii?Q?a0YDmhjyIWDrgePcNlM5uZdqYslAu+tze/MLSkkg0qfbYacR3jfc?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 451f85fd-0d1c-442a-9636-08df25102580
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a29edd7-565a-47fc-2f7a-08df2510284f
 X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2026 07:45:39.3992
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2026 07:45:43.7529
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iAvQchtQrBvKuQeMfzlmK+xa1KKIks+PMOc+lZFh5y92KQL6ZWsbcNdPY/JwjKFZy4WfLCk7R+2CPLfvbk1aUsDaIbfMsVB3Ws9ytw+L8i9m7lCLeIjSi00i4wCp/5V9
+X-MS-Exchange-CrossTenant-UserPrincipalName: i3Qs2WXxFe+5SVMlcr9st7Kme0/cOT6InWNl/Qsh7md02mzMSSd/Ybj/GWu3CVIgBuQJjzi14i7vjkI8FsP9ygUfDeIcRQaCwgdnjIE/9J4lYWFBc9/Y8ReAki4KUdKi
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12525
 
-The RZ/V2H(P) USB2PHY reset driver is also used on the RZ/G3E SoC,
-where deep sleep turns off power to the USB2PHY block.
-Part of the initialization sequence written at probe time is cleared,
-leaving the PHY unprepared to receive assert and deassert requests.
-
-Add suspend/resume support to assert the reset on suspend, and to
-deassert it and rewrite the initialization sequence on resume.
+On deep sleep the USB2PHY block loses power and the VBUS_SEL bit is
+cleared. The mux state is read during suspend and stored in the private
+memory of the mux_chip. Then the state is restored during resume.
 
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/reset/reset-rzv2h-usb2phy.c | 61 +++++++++++++++++++++++++++--
- 1 file changed, 57 insertions(+), 4 deletions(-)
+ drivers/mux/rzv2h-vbenctl.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/reset/reset-rzv2h-usb2phy.c b/drivers/reset/reset-rzv2h-usb2phy.c
-index d96042e28cd5..c14c3fcd7875 100644
---- a/drivers/reset/reset-rzv2h-usb2phy.c
-+++ b/drivers/reset/reset-rzv2h-usb2phy.c
-@@ -37,6 +37,7 @@ struct rzv2h_usb2phy_reset_priv {
- 	const struct rzv2h_usb2phy_reset_of_data *data;
- 	struct regmap *regmap;
- 	struct device *dev;
-+	struct reset_control *rstc;
- 	struct reset_controller_dev rcdev;
+diff --git a/drivers/mux/rzv2h-vbenctl.c b/drivers/mux/rzv2h-vbenctl.c
+index 2699458045f3..d088ac3cab2a 100644
+--- a/drivers/mux/rzv2h-vbenctl.c
++++ b/drivers/mux/rzv2h-vbenctl.c
+@@ -15,6 +15,7 @@
+ 
+ struct mux_rzv2h_vbenctl_priv {
+ 	struct regmap_field *field;
++	unsigned int hardware_state;
  };
  
-@@ -132,7 +133,6 @@ static int rzv2h_usb2phy_reset_probe(struct platform_device *pdev)
- 	const struct rzv2h_usb2phy_reset_of_data *data;
- 	struct rzv2h_usb2phy_reset_priv *priv;
- 	struct device *dev = &pdev->dev;
--	struct reset_control *rstc;
- 	void __iomem *base;
- 	int error;
+ static int mux_rzv2h_vbenctl_set(struct mux_control *mux, int state)
+@@ -60,9 +61,29 @@ static int mux_rzv2h_vbenctl_probe(struct auxiliary_device *adev,
+ 	if (ret < 0)
+ 		return dev_err_probe(dev, ret, "Failed to register mux chip\n");
  
-@@ -151,9 +151,9 @@ static int rzv2h_usb2phy_reset_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->regmap))
- 		return PTR_ERR(priv->regmap);
- 
--	rstc = devm_reset_control_get_shared_deasserted(dev, NULL);
--	if (IS_ERR(rstc))
--		return dev_err_probe(dev, PTR_ERR(rstc),
-+	priv->rstc = devm_reset_control_get_shared_deasserted(dev, NULL);
-+	if (IS_ERR(priv->rstc))
-+		return dev_err_probe(dev, PTR_ERR(priv->rstc),
- 				     "failed to get deasserted reset\n");
- 
- 	error = devm_pm_runtime_enable(dev);
-@@ -188,6 +188,8 @@ static int rzv2h_usb2phy_reset_probe(struct platform_device *pdev)
- 	if (error)
- 		return dev_err_probe(dev, error, "could not register aux mux\n");
- 
-+	platform_set_drvdata(pdev, priv);
++	auxiliary_set_drvdata(adev, priv);
 +
  	return 0;
  }
  
-@@ -229,10 +231,61 @@ static const struct of_device_id rzv2h_usb2phy_reset_of_match[] = {
++static int mux_rzv2h_vbenctl_suspend(struct device *dev)
++{
++	struct mux_rzv2h_vbenctl_priv *priv = dev_get_drvdata(dev);
++
++	return regmap_field_read(priv->field, &priv->hardware_state);
++}
++
++static int mux_rzv2h_vbenctl_resume(struct device *dev)
++{
++	struct mux_rzv2h_vbenctl_priv *priv = dev_get_drvdata(dev);
++
++	return regmap_field_write(priv->field, priv->hardware_state);
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(mux_rzv2h_vbenctl_pm_ops,
++				mux_rzv2h_vbenctl_suspend,
++				mux_rzv2h_vbenctl_resume);
++
+ static const struct auxiliary_device_id mux_rzv2h_vbenctl_ids[] = {
+ 	{ .name = "rzv2h_usb2phy_reset.vbenctl" },
+ 	{ /* sentinel */ }
+@@ -73,6 +94,9 @@ static struct auxiliary_driver mux_rzv2h_vbenctl_driver = {
+ 	.name		= "vbenctl",
+ 	.probe		= mux_rzv2h_vbenctl_probe,
+ 	.id_table	= mux_rzv2h_vbenctl_ids,
++	.driver		= {
++		.pm	= pm_sleep_ptr(&mux_rzv2h_vbenctl_pm_ops),
++	},
  };
- MODULE_DEVICE_TABLE(of, rzv2h_usb2phy_reset_of_match);
+ module_auxiliary_driver(mux_rzv2h_vbenctl_driver);
  
-+static int rzv2h_usb2phy_reset_suspend(struct device *dev)
-+{
-+	struct rzv2h_usb2phy_reset_priv *priv = dev_get_drvdata(dev);
-+	int error;
-+
-+	error = reset_control_assert(priv->rstc);
-+	if (error)
-+		return error;
-+
-+	error = pm_runtime_put_sync(dev);
-+	if (error < 0) {
-+		pm_runtime_get_noresume(dev);
-+		reset_control_deassert(priv->rstc);
-+		return error;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usb2phy_reset_resume(struct device *dev)
-+{
-+	struct rzv2h_usb2phy_reset_priv *priv = dev_get_drvdata(dev);
-+	int error;
-+
-+	error = pm_runtime_resume_and_get(dev);
-+	if (error)
-+		return error;
-+
-+	error = reset_control_deassert(priv->rstc);
-+	if (error)
-+		goto rpm_put;
-+
-+	error = regmap_multi_reg_write(priv->regmap, priv->data->init_seq,
-+				       priv->data->init_nseq);
-+	if (error)
-+		goto reset_assert;
-+
-+	return 0;
-+
-+reset_assert:
-+	reset_control_assert(priv->rstc);
-+rpm_put:
-+	pm_runtime_put_sync(dev);
-+	return error;
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(rzv2h_usb2phy_reset_pm_ops,
-+				rzv2h_usb2phy_reset_suspend,
-+				rzv2h_usb2phy_reset_resume);
-+
- static struct platform_driver rzv2h_usb2phy_reset_driver = {
- 	.driver = {
- 		.name		= "rzv2h_usb2phy_reset",
- 		.of_match_table	= rzv2h_usb2phy_reset_of_match,
-+		.pm		= pm_sleep_ptr(&rzv2h_usb2phy_reset_pm_ops),
- 	},
- 	.probe = rzv2h_usb2phy_reset_probe,
- };
 -- 
 2.54.0
 
