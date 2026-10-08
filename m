@@ -1,192 +1,446 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011037.outbound.protection.outlook.com [52.101.125.37])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D7F3E49EE;
-	Thu,  8 Oct 2026 07:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791445546; cv=fail; b=NAlw6V6HAjD5QXnQcY4wZiXLfchfutbfpwuFCDrgXzhP4QCRXrkXNaPKOHPyyr90lqT6gTVOUXpNAWetsI1MrCcFZ5Zc1Rt01WrIRY1Z6xfpwoRrAhxe0g3bUkoK3nM+E+henmCkEaB3K0r40qzgI4CP2jYBBZifFPka5pXKQhA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791445546; c=relaxed/simple;
-	bh=IMCwNLoiq9ATtBBkwfuxjY6EvBYKqHdIjyI6eQ8VTXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YbVKezOr+5TVps6d74XB+eAept/qvSDW2oyT7lvC1kmfVD828aHBajP/KcursaKNCqh8TlZC4pzdVpYRvw2w1pwVQISplP3Wsic90ZC+fK5eMHNzxjWSqzJx5AxePb8NagjCR+2THr7zj1eWYWvM1NC5IEukrvc/3nrL5QoYC/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=S2pdmHH/; arc=fail smtp.client-ip=52.101.125.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE1547CA84;
+	Thu,  8 Oct 2026 09:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791450354; cv=none; b=HkBn6UkvNWzWeKM0OGm/eWNHXN02Tq48pIYyp64ytwf3f5+dh/C8JCWMiW8tmGEcdjCKicdBtizH/XhJCerjzbXCz6ojX+h2nFsXv+zWn2C+QtrW6XEp3g4qzUvkGEpLmoxj3Dx9khdoJeryPKg+ekbvYkqvQV5H7ayYo6akpQI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791450354; c=relaxed/simple;
+	bh=a8Sgbaec2nSDdYSUV1S23OjUykP2ncywXL7b/KbuS8E=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=rtogSRGIjGPX4qWYv2A9Qd6ZNqfYvmRctCVVhfvRMaAmsmgqNOwalgN4GCCoObnpVc6Mdt7Ync0TWsgKv149UjsIptF8JLl3B0u9pwwCvmrgjdq9EksPV/JkUonZ9PBC+sGs+fj/rXMtMzSGA3xqPZB0rICWySglX5zjgnSS3VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hs6g94jz; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="S2pdmHH/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JYq1F+iihFiumR2q8q934beX5TA1YthDQtbt1+X1jPwpwGOWLVlHjuieqsEzi56MUZkNtVLuOY40Om39tDgxTmD3aK78AlLzDFDZRTwd0KzJRodlB5LdbOPp6elvmSADra/RF8fbSjoADaFkXJbdFy5ccuYDl8dYhFjuY8nA5Pt48Qs8d/Mq8/46FdLLO3h0zhMLUugW9EFnaeb9aczKVa4FrLXXrCD9np7M0OxrBNTOvgNyH1D6wI5luRrA45TATgeGw/EbjSGiDIVLse8xl9i4lWAII5ywVrogQwEqDuZHE2X1i1fY4FiCMZVczGojKhFD038CoCzRmYDbCQSKUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DWCvNS7ghFrnO1GqIKFRX+lMgf5rBP9oZR58qkHwxII=;
- b=O0BfSovOx9eYXPaZ/WmtoQOpFJVA9e5uNrajtDw8K3e06E4kecoakDQQlekLLka6gyZ/J0sUyQ4sFvVvFDwPWyVF1lhpL0ChLRpq/YcG0ZYrQjpRnjTSHLeIdemywd6+dDQkoEggc7Mu9CwjcyqyfcjiCoHxiKPAewuNIjRQdZgvwRrgtRWZqZl11HwPWUEYGnx47gTjfZ2++fH3QaFqdu6GCVGUgYXF9940PLTtX738gHiXMLc7W/+FMAY6gNvcSaQ9PMyL1iYdwqGzsBFIKyU2wzSYU5JUW1qUL6SsWnFIgk2aLE6l5Z4yYEd/OvZZltZnegV07CAm2kVPz82t1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DWCvNS7ghFrnO1GqIKFRX+lMgf5rBP9oZR58qkHwxII=;
- b=S2pdmHH/ZkBTEGBY8gLf2E9vVZsZjYf983vrlj5gI4wfWoRun4ah7qsSLi9r3leD1zxXdnkfDr19OdGwgBkLJkU0NjcsPop1t1lBGtD7S2Oob7VKsritDxstGiGdhvoe1zu73jhPC82e+65eIIL5+U+IsYYb6W1ptmItSOpQjdY=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TYRPR01MB12525.jpnprd01.prod.outlook.com (2603:1096:405:1af::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.17; Thu, 8 Oct
- 2026 07:45:43 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0496.015; Thu, 8 Oct 2026
- 07:45:43 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: tomm.merciai@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Peter Rosin <peda@lysator.liu.se>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	=?UTF-8?q?Alvin=20=C5=A0ipraga?= <alvin.sipraga@analog.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mux: rzv2h-vbenctl: Add suspend and resume support
-Date: Thu,  8 Oct 2026 09:44:47 +0200
-Message-ID: <26da5ba32948a30dd70475ad2ece3c84dcab4eed.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <cover.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
-References: <cover.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: VI1PR0502CA0004.eurprd05.prod.outlook.com
- (2603:10a6:803:1::17) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hs6g94jz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1791450349; x=1822986349;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=a8Sgbaec2nSDdYSUV1S23OjUykP2ncywXL7b/KbuS8E=;
+  b=hs6g94jzfvImyUo0wKAN9Zfv+gBfRlcax4ue03M5Q8GQqmZBxSfbV4E8
+   cipWjuGu+S23RFmwv2RC20+nyKAH1a5W5mU6oI+KjaDNUx6VUw619gC4q
+   PjYQTyt1nKodyiNRqzGkW6+Kn7R43pck+FVNh5ipoDmOgHQd02wNNrEY+
+   IqHaf11HWnLHk+qFJ/f/WZ523UJM1R58A7PY7wrdDrsLReTmx5/bvXYQO
+   jAimTTly4pz2TdsRc6tYsN/My5X0wScTf60MQFuMU8UGGkkeu9w2utjhV
+   MJKiJV2ocYXrVIAC6Hak6e+tc6EZAXxJmIPOhqe6YFvBmjb5JkalEpjGG
+   A==;
+X-CSE-ConnectionGUID: 8vlyX3vPTbmQ3Mzk5tt5WA==
+X-CSE-MsgGUID: iwgUPGAaQ92p55vgWsjCog==
+X-IronPort-AV: E=Sophos;i="6.27,146,1787036400"; 
+   d="scan'208";a="231842014"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2026 02:05:48 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.49; Thu, 8 Oct 2026 02:05:47 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Thu, 8 Oct 2026 02:05:43 -0700
+From: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+Subject: [PATCH net-next v14 0/9] net: dsa: add DSA support for the
+ LAN9645x switch chip family
+Date: Thu, 8 Oct 2026 11:05:19 +0200
+Message-ID: <20261008-dsa_lan9645x_switch_driver_base-v14-0-3d2a72661213@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYRPR01MB12525:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a29edd7-565a-47fc-2f7a-08df2510284f
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|52116014|38350700014|56012099006|11063799006|260925021911599003|260925021311599003|260925022911599003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	3R37n8fGjtGDkcx1lfMIKwHCCZDQDr1QBBCkmmDXmCNEMj9M0/+Uyjj4QMRqS4S7MtFPodgdvLFOvS/rcVyzGh1Z4yN89O/mz3PI7iPtunbxMb9Z7hlm8E80B7jYepCmIDXvzU0MFvq2OKHijPLZEYafvJcUtOp7HL0h/wDVmSQhYMIwpydVOfrIvZq6tW+egNUmW3FkqZEX1wkvvSUhpjCWeIofgvUff7TtyTyZBufG7/iIOSyUilqim4JXCqvX2vdgatMY/8FbGsehLb7X4GurB5wJ7qt0LKR6sNFDfGVkpAuHGQSKhh+qTAku6uUJViRespgs6P32Js3HaHA5i92p2Q6Q/miKQnEd5nNzwARez29RCO57PERupKxJWkLau8tgGyQVKpebkL/rCSWRUTniFWjbXmzmhe19yt9Tq6eVI3t3+Iyg/eUdQrAlPuLYGb+44a81sU5rLfx5HmGhy7vR0lYepHqBf5rI9pvb+a18CYYU0QnZ6NcdN5BYglPjj+vrplptmaBtJbBLRHe6t6cL+1Ph3D5jiWq0Yv3h9jyp/qenbFjux/aeC3akysc9tNB24bUbef/fGjIBYp+beLZ1SczwkqnJPyCVZ6JcrHZqrE2w3np8Eh21Op+kIIXil5S2CRceqxZPVUhcdJiMf967G3w0NXW1S5GQncDfemkbIp0C84+tqenhJZZB5VwQDsuo8NF1mMWCFPU12kgr0U9oqJD80nyuaFOeaaFzCIk=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(52116014)(38350700014)(56012099006)(11063799006)(260925021911599003)(260925021311599003)(260925022911599003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vifzWuPjWlgca2PSRzF6k2aRTb3HX6PFKhhL1cvaUBppJeYpnvGB7e6vT92G?=
- =?us-ascii?Q?Vz1HdcU95Ns2S7Yev7ADnL55jBlCre+0+l/P2T1LNx8r8nkdnKuvBv9nfr0O?=
- =?us-ascii?Q?HmIDMUsBOdYz/qgTE26BzYzxHhoHzX9ZCD8Zm/u6KDEm9rOjL2N+0nueyrMm?=
- =?us-ascii?Q?n6pQv9aDnMNcc0XYsa41/Dfhy/1Lsoay03neetyucfwmj01VTxn4CahoCyTd?=
- =?us-ascii?Q?jn79QiQLsmV3CP1pfDCoiCjBjMfvBZ+CuMlWmTRh5PEPMGvwVCmC2yBFB0Q4?=
- =?us-ascii?Q?t3NmqSuGPYNTuI7AxuEzGT4iYBy2pC0Wuj2q4J6mWjz36B6+G1ovCCI/QEEO?=
- =?us-ascii?Q?ywV7FGmy7zMZQf7cwq2xn4TVa7CkgiaZY8eKMywDOvZjNn+OYMULlvv69icj?=
- =?us-ascii?Q?kt8gUCP8Yp9DFAgTiyLDnXUDkiLjVB4lsrxmc6nh35vdGfVFS4iFE6rRTfom?=
- =?us-ascii?Q?QAK19hFkkViSfkmYUKHjHTH4nNzb37n5kbyqZwk6ZiLn8wX148W4abKmkMhy?=
- =?us-ascii?Q?oD9IWNyoYW1r/iZJBfuHWpBObIEnwRThuGPnIbs+dZDOJtfwdTji09RRq72D?=
- =?us-ascii?Q?BEf/dZ4yKYXXbrYP5+nDlEN60n5HTkmu+0xCkiiGu6+Otq0HKDcXUMbAz/ci?=
- =?us-ascii?Q?SCCOi2Zsk9+lP8xd35dzs48fo/nj7PW7zbt7RpDabtiod7ssYR/Vxlqy5VR8?=
- =?us-ascii?Q?A61Nh+433j4UyQUR8zs3fpXQB1io7vNyN1YyX39M8Kglp5odeNqX8ibrm60Y?=
- =?us-ascii?Q?1/0t8M74p3S7dyQOPZCk0+MU8t6K4NzrLh1aZ34tD3epa0Xv4Yyeg5se3xkW?=
- =?us-ascii?Q?tFiWWnIFPWc38CtNoJm/YyHD0B4cj8cyZJmv4l4Wxgcblg91p+kRmGAeXB38?=
- =?us-ascii?Q?2S9CJwNNUsbFC7UCRNo9fGl71Iy8cZkUMOipH/Z8cBbgJh4jRIVfKrt/GS7c?=
- =?us-ascii?Q?VjKDbgmdoC0vBcD07wBBw5G2GUFiUbZkTOfbTOE+kmXIxRqcRoRnMqSXqDVQ?=
- =?us-ascii?Q?2FD5rnTjZLCkjzSLGCvIuHmYsL7WL3JP7PXRbAGnYTSrd0x14xZNRFQDt0MQ?=
- =?us-ascii?Q?IhW7ReJPstbpeFM+P/naZj7qa80ehf/IVdk9gNMo4yPpb4g9Gt5WbHwSrj8a?=
- =?us-ascii?Q?kpgKZISdKu+L90nHhL4Tpt2IjJkOMdOIOQxU/JfBbXeyGC0ByrJHTN0F6mRk?=
- =?us-ascii?Q?+By/UsXaPytipbMZsP1cEPizu5RtwAD1s0I0TdGCpIJXvVM1zPYmQRedjgAT?=
- =?us-ascii?Q?CuZlur2ZejKmSVGxmowJ4re2S8GSAX1qPbWZN0GcvQyYFnTmpvh9RdoOH+LV?=
- =?us-ascii?Q?oRhljlhT45zW0cZdThEjMAwEq48sus7/slb2dN7b57qOVu3Yp+wxvz+JmWBr?=
- =?us-ascii?Q?yz2EIXISVAriSGXNnhUWwMmxnj54SbrC2uSm/ZA4RLd+vMf9ejMdNxdNHFYs?=
- =?us-ascii?Q?+Y6nGD6oTeXfHxz4DrZYq8chXNYn0qraCKuvsUaaAAbE7J32aMg88+l0ghVc?=
- =?us-ascii?Q?h/V0vA+u4uZyL3muUIiTXxHr4TLiNmMl4pABXhlKxWrhGF9irees4h49/wGL?=
- =?us-ascii?Q?Z3TWWaPeH0HnMJURmpwPpqBf5RA37CqYxODFYAZ5hQSZw6Wlb7I6D7i5ww2A?=
- =?us-ascii?Q?YZYOxazLaNpV/Ac1mJi4qMYneEHzkklplJqpgBB1TTPIwSaWlv20wknu5SbZ?=
- =?us-ascii?Q?c0Ycs8ZNQRwKXdBD1zCaZmeWsg7XxVOWszvZdMV+ZtcP9D04AJmOJ2xCJWAi?=
- =?us-ascii?Q?a0YDmhjyIWDrgePcNlM5uZdqYslAu+tze/MLSkkg0qfbYacR3jfc?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a29edd7-565a-47fc-2f7a-08df2510284f
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2026 07:45:43.7529
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i3Qs2WXxFe+5SVMlcr9st7Kme0/cOT6InWNl/Qsh7md02mzMSSd/Ybj/GWu3CVIgBuQJjzi14i7vjkI8FsP9ygUfDeIcRQaCwgdnjIE/9J4lYWFBc9/Y8ReAki4KUdKi
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12525
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAM9cx2oC/43T24rbMBAG4FcJvq7LzOjcq77HsoTRqRE0zmIHb
+ 5Yl717ZNzFFYF/agm+kmfm/uymNJU3dr9N3N6a5TOU21A+UP05duPDwJ/Ul1h8dAWkghD5OfP7
+ Lg9NSPc7TZ7mHyzmOZU7j2fOUeoHkfQ7CpOi7qnyMKZfHWuKtG9K9H9Lj3r3Xk0uZ7rfxa6094
+ 3q+VhEgdqvM2EPvc7aBUTid1e9rCeMtXMrHz3C7rv5MG5PkvknVzEaBTMKDttgyxcuUB7oxi2o
+ yx2CVUwJ0bJlyY4oDplzuiV4DqMzWm5apXqZCu2+qajpts89C5syiZeqNSWbf1NWUUYLjpGUWo
+ WWal6mPzN0sc6fsIGmjDTTfbl+mAdo37fJ2ILLRes/Ktky3NQ/001UTIiokFqRj854IGxSPLD0
+ s2ySt1Qx1VNjcetxEyYI6oC5ZAjDJB2cFAzfVTZjckQbgkiaKmlk5oSA0Nx83cXLkDqhLniyZQ
+ FFoNJn+V5/P5z+Qet7C1QQAAA==
+To: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew@lunn.ch>, "Vladimir
+ Oltean" <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Woojung Huh
+	<woojung.huh@microchip.com>, Russell King <linux@armlinux.org.uk>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, Daniel Machon
+	<daniel.machon@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Eric Dumazet <edumazet@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>, Eric Dumazet
+	<edumazet@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	=?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+X-Mailer: b4 0.15-dev
 
-On deep sleep the USB2PHY block loses power and the VBUS_SEL bit is
-cleared. The mux state is read during suspend and stored in the private
-memory of the mux_chip. Then the state is restored during resume.
+This series provides the Microchip LAN9645X Switch driver.
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+The LAN9645x is a family of chips with ethernet switch functionality and
+multiple peripheral functions. The switch delivers up to 9 ethernet
+ports and 12 Gbps switching bandwidth.
+
+The switch chip has 5 integrated copper PHYs, support for 2x RGMII
+interfaces, 2x SGMII and one QSGMII interface.
+
+The switch chip is from the same design architecture family as ocelot
+and lan966x, and the driver reflects this similarity. However, LAN9645x
+does not have an internal CPU in any package, and must be driven
+externally. For register IO it supports interfaces such as SPI, I2C and
+MDIO.
+
+The chip supports a variety of network features such as
+
+* Mactable for MDB/FDB functionality
+* Bridge forwarding offload
+* VLAN-aware bridging
+* IGMP/MLD snooping
+* Link aggregation
+* PTP timestamping
+* FRER (802.1CB)
+* Media Redundancy Protocol
+* Parallel Redundancy and High-Availability Seamless Redundancy
+  (HSR/PRP) in DANH/DANP mode
+* Per stream filtering and policing
+* Shapers such as Credit Based Shaping and Time Aware Shaing
+* Frame preemption
+* A TCAM (VCAP) for line-rate frame processing
+
+The LAN9645x family consists of the following SKUs:
+
+LAN96455F
+LAN96457F
+LAN96459F
+LAN96455S
+LAN96457S
+LAN96459S
+
+The difference between the SKUs is the number of supported ports (5, 7
+or 9) and features supported. The F subfamily supports HSR/PRP and TSN,
+while the S subfamily does not.
+
+The intended way to bind this driver is using a parent MFD driver,
+responsible for the register IO protocol, and distributing regmaps to
+child devices. The goal is to use the same approach as the MFD driver in
+drivers/mfd/ocelot-spi.c, which also resets the chip before it
+instantiates its children.
+
+This driver expects to request named regmaps from a parent device. This
+approach is similar to the DSA driver
+
+drivers/net/dsa/ocelot/ocelot_ext.c
+
+which supports being driven by an external CPU via SPI with parent
+device drivers/mfd/ocelot-spi.c.
+
+The MFD driver will come in a later series, because there are
+requirements on the number of child devices before a driver qualifies as
+a MFD device.
+
+Development is done using the LAN966x as a host CPU, running the lan966x
+swichdev driver, using the EVB-LAN9668 EDS2 board.
+
+The datasheet is available here:
+https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/LAN9645xF-Data-Sheet-DS00006065.pdf
+
+This series will deliver the following features:
+
+* Standalone ports
+* Bridge forwarding and FDB offloading
+* Multicast forwarding and MDB offloading
+* VLAN-aware bridge
+* Stats integration
+
+More support will be added at a later stage. Here is a tentative plan of
+future patches for this DSA driver:
+
+* Add LAG support.
+* Add TC matchall mirror support.
+* Add TC matchall police support.
+* Add DCB/qos support.
+* Add simple TC support: mqprio, cbs, tbf, ebf.
+* Add TC flower filter support.
+* Add HSR/PRP offloading support.
+* Add PTP support.
+* Add TC taprio support.
+
+For completeness I include tentative plan of planned patches for
+LAN9645x peripherals:
+
+* Extend pinctrl-ocelot for LAN9645x:
+  https://lore.kernel.org/linux-gpio/20260119-pinctrl_ocelot_extend_support_for_lan9645x-v1-0-1228155ed0ee@microchip.com/
+* Add driver for internal PHY:
+  https://lore.kernel.org/netdev/20260123-phy_micrel_add_support_for_lan9645x_internal_phy-v1-1-8484b1a5a7fd@microchip.com/
+* MFD driver for managing register IO protocol and child device
+  initialization.
+* Extend pinctrl-microchip-sgpio for LAN9645x support.
+* Extend i2c_designware for LAN9645x support.
+* Add driver for outbound interrupt controller.
+* Add serdes driver for lan9645x.
+
+Signed-off-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
 ---
- drivers/mux/rzv2h-vbenctl.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Changes in v14:
+- Individual patches mention specific v14 changes
+- tag: classify untagged and priority tagged frames to VID 0 on xmit,
+  pull the VLAN header before reading it, restore the VLAN tag on rcv
+  whenever one was popped, and add a .flow_dissect callback that
+  accounts for popped VLAN tags.
+- bindings: use the dt-bindings: net: dsa: subject prefix, and describe
+  all switch register targets and the analyzer and PTP interrupts.
+- vlan: use TAG_NO_UNAWARE on ports with only tagged VLANs.
+- mac table: keep a CPU port host entry while another database uses the
+  same MAC table key.
+- mdb: keep the PGID reference when a mac table write fails while
+  widening a group, drop it on a failed narrow that keeps the same PGID,
+  and keep a CPU port host entry while another database uses the same
+  mac table key.
+- bridge: only enable learning on bridged ports, start a joining port
+  disabled so it does not learn before its STP state is applied, and
+  honour host flood requests from bridged ports.
+- stats: return 0 from get_sset_count() for other string sets, leave
+  RMON fragments unset, and describe the pMAC counters correctly.
+- Link to v13: https://lore.kernel.org/r/20260929-dsa_lan9645x_switch_driver_base-v13-0-827c2d3617f2@microchip.com
 
-diff --git a/drivers/mux/rzv2h-vbenctl.c b/drivers/mux/rzv2h-vbenctl.c
-index 2699458045f3..d088ac3cab2a 100644
---- a/drivers/mux/rzv2h-vbenctl.c
-+++ b/drivers/mux/rzv2h-vbenctl.c
-@@ -15,6 +15,7 @@
- 
- struct mux_rzv2h_vbenctl_priv {
- 	struct regmap_field *field;
-+	unsigned int hardware_state;
- };
- 
- static int mux_rzv2h_vbenctl_set(struct mux_control *mux, int state)
-@@ -60,9 +61,29 @@ static int mux_rzv2h_vbenctl_probe(struct auxiliary_device *adev,
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "Failed to register mux chip\n");
- 
-+	auxiliary_set_drvdata(adev, priv);
-+
- 	return 0;
- }
- 
-+static int mux_rzv2h_vbenctl_suspend(struct device *dev)
-+{
-+	struct mux_rzv2h_vbenctl_priv *priv = dev_get_drvdata(dev);
-+
-+	return regmap_field_read(priv->field, &priv->hardware_state);
-+}
-+
-+static int mux_rzv2h_vbenctl_resume(struct device *dev)
-+{
-+	struct mux_rzv2h_vbenctl_priv *priv = dev_get_drvdata(dev);
-+
-+	return regmap_field_write(priv->field, priv->hardware_state);
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(mux_rzv2h_vbenctl_pm_ops,
-+				mux_rzv2h_vbenctl_suspend,
-+				mux_rzv2h_vbenctl_resume);
-+
- static const struct auxiliary_device_id mux_rzv2h_vbenctl_ids[] = {
- 	{ .name = "rzv2h_usb2phy_reset.vbenctl" },
- 	{ /* sentinel */ }
-@@ -73,6 +94,9 @@ static struct auxiliary_driver mux_rzv2h_vbenctl_driver = {
- 	.name		= "vbenctl",
- 	.probe		= mux_rzv2h_vbenctl_probe,
- 	.id_table	= mux_rzv2h_vbenctl_ids,
-+	.driver		= {
-+		.pm	= pm_sleep_ptr(&mux_rzv2h_vbenctl_pm_ops),
-+	},
- };
- module_auxiliary_driver(mux_rzv2h_vbenctl_driver);
- 
+Changes in v13:
+- Individual patches mention specific v13 changes
+- bindings: Drop the commit message paragraph citing
+  Documentation/networking/phy.rst.
+- basic: only redirect the CPU extraction queues to the NPI port while
+  its link is up, and flush the CPU port module on NPI link up.
+- Rebased on net-next, bumping DSA_TAG_PROTO_LAN9645X_VALUE to 37
+- Link to v12: https://lore.kernel.org/r/20260908-dsa_lan9645x_switch_driver_base-v12-0-2d6aa59350cd@microchip.com
+
+Changes in v12:
+- reorder the series so bridge support lands after vlan, mac table and
+  mdb support. port_fast_age() now exists before the STP state handling
+  that needs it, and host address filtering is in place before bridging.
+- include the CPU port module in the flood masks from the start, and
+  remove it again in the bridge patch where port_set_host_flood() takes
+  over on demand host flooding. Previously the host could not receive
+  unicast until the mac table patch.
+- vlan: serialize the VLAN table with fwd_domain_lock, and describe the
+  untagged VLAN, TPID and C-component conformance limitations.
+- tag driver: move an out-of-band VLAN tag into the payload before
+  reading it, instead of relying on the conduit never advertising a VLAN
+  TX offload.
+- tag driver: restore the classified VLAN as a C-tag rather than following
+  the IFH tag type, so a terminated frame lands on the VID the hardware
+  forwarded it on.
+- basic: drop the tail drop watermark setup, which programmed a
+  condition that could not trigger.
+- mdb: handle PGID exhaustion on both the add and delete paths, rather
+  than leaving a departed port in the group.
+- mdb: classify IPv4 multicast on the 01:00:5E prefix alone. Hardware does
+  not apply the 23-bit rule, so some groups were programmed as entries it
+  never matches.
+- stats: give the hardware counters and the software shadow a common
+  baseline, fix some rtnl_link_stats64 fields, and stop reporting the
+  three eth-mac fields the hardware cannot measure.
+- stats: stop the counter poller in .shutdown, which kept reading
+  registers after the parent had been shut down.
+- Link to v11: https://lore.kernel.org/r/20260805-dsa_lan9645x_switch_driver_base-v11-0-007ebc983a0a@microchip.com
+
+Changes in v11:
+- Update comment about vlan tag hwaccel use in tag driver.
+- Bump DSA_TAG_PROTO value in include/net/dsa.h.
+- stats: add comment about calling contexts of sw_lock in
+  lan9645x_stats_get_stats64
+- Link to v10: https://lore.kernel.org/r/20260713-dsa_lan9645x_switch_driver_base-v10-0-a4886a08fb15@microchip.com
+
+Changes in v10:
+- Individual patches mention specific v10 changes
+- Update tag driver after skb ownership model change in DSA taggers.
+- Link to v9: https://lore.kernel.org/r/20260708-dsa_lan9645x_switch_driver_base-v9-0-0d1512a326d7@microchip.com
+
+Changes in v9:
+- Individual patches mention specific v9 changes
+- Drop RGMII muxing to port 4.
+- Link to v8: https://lore.kernel.org/r/20260702-dsa_lan9645x_switch_driver_base-v8-0-90228d8bba58@microchip.com
+
+Changes in v8:
+- Individual patches mention specific v8 changes
+- Do not use the name CPU_PORT for the chips internal CPU port module,
+  as it collides with the DSA CPU port (the NPI front port). Drop the
+  CPU_PORT macro and reference the module as lan9645x->num_phys_ports,
+  mirroring ocelot/felix.
+- Reword the port map and related comments to distinguish the chip CPU
+  port modules (indices 9-10) from the DSA CPU port.
+- Add a port_mux_lock mutex to serialize port mux arbitration in
+  the phylink mac_prepare path.
+- Link to v7: https://lore.kernel.org/r/20260603-dsa_lan9645x_switch_driver_base-v7-0-b2f90e676707@microchip.com
+
+Changes in v7:
+- Individual patches mention specific v7 changes
+- Do not mark the BPDU range 01:80:C2:00:00:0X as offloaded in the tag driver.
+- Refactor cpu queue based frame classification to use categories default, trap
+  and copy, which mirrors usage instead of being based on frame types.
+- Add registers ANA:COMMON:CPUQ_8021_CFG for bpdu cpu queue configuration.
+- Use cpu queue LAN9645X_CPUQ_TRAP for bpdu frames.
+- Refactor IGMP/MLD/IPMC_CTRL to use new LAN9645X_CPUQ_DEF,
+  LAN9645X_CPUQ_TRAP and LAN9645X_CPUQ_COPY queues.
+- Add __aligned(2) to mac variable in lan9645x_mdb_update_dest.
+- Link to v6: https://lore.kernel.org/r/20260527-dsa_lan9645x_switch_driver_base-v6-0-4d409ae64f3c@microchip.com
+
+Changes in v6:
+- Individual patches mention specific v6 changes
+- Rebased on net-next, bumping DSA_TAG_PROTO_LAN9645X_VALUE to 34
+- Link to v5: https://lore.kernel.org/r/20260518-dsa_lan9645x_switch_driver_base-v5-0-968fbf34ffa3@microchip.com
+
+Changes in v5:
+- Individual patches mention specific v5 changes
+- Undo offset fix in postpull_rcsum. The original logic was correct for
+  CHECKSUM_COMPLETE host NICs
+- Use __always_inline in lan9645x_ifh_{get,set}
+- remove double space after = in set_merge_mask
+- remove unused fields dd_dis and tsn_dis, and add SKU supported port validation
+  during setup
+- phylink: remove MAC_2500FD
+- phylink: add comment about empty supported_interfaces for port 5-6.
+- phylink: fix 2:1 rgmii port muxing for port module 4 and 7 to be fully
+  dynamic and validate requested mux settings.
+- phylink: add comment about 2:1 rgmii port muxing for port module 4
+  and 7.
+- rx/tx-internal-delay-ps checked against supported 2ns value
+- init lan9645x->npi = -1 at probe and check port < 0 in npi_deinit
+- use ds->ageing_time_max
+- use packed p->host_flood_req for atomic r/w
+- fix typo in set_ageing_time comment
+- include lan9645x->bridge deref under lock in brige_join
+- switch -EBUSY to -EINVAL for vlan add/del in the reserved range.
+- remove reserved HSR vlan
+- lan9645x_mac_init returns error on table init timeout
+- add comment about skipping LOCKED entries on fdb dump
+- skip igmp/mld redir for npi port
+- make lan9645x_stats_init void
+- add SCNT_TX_BUFDROP to tx_dropped
+- change rmon range {0,64} -> {64, 64}. Runt frames counted elsewhere.
+- remove rx_crc, rx_symbol_err from rx_packets, as they are already
+  counted in SZ_* buckets.
+- add defensive cancel_delayed_work_sync in stats_free
+- Link to v4: https://lore.kernel.org/r/20260430-dsa_lan9645x_switch_driver_base-v4-0-f1b6005fa8b7@microchip.com
+
+Changes in v4:
+- v3 was deferred, but I made some changes based on the Sashiko review
+- Individual patches mention specific v4 changes
+- Fix offset in postpull_rcsum so prefix eth header is cleared, not
+  actual eth header, so tag driver works with CHECKSUM_COMPLETE host
+  NICs
+- Fix untagged rx on vlan aware port with pvid
+- Add comment to QSYS_RES_CFG configuration
+- Phylink_mac_prepare: fix to make sure we can dynamically change rgmii
+  on port 4
+- Move ports allocation to probe
+- tag_npi_setup: reject cascaded setups
+- Skip WARN_ON in lan9645x_to_port
+- set_host_flood changed to per port work to coalesce values and skip
+  atomic allocations
+- Fix clear HOST_PVID vlan membership when a port joins a bridge.
+- Explicit default value write to tag type register for untagged frames
+- Use lan_rmw for ANA_DROP_CFG
+- Add comment for error path in lan9645x_vlan_hw_wr
+- Remove mac_entries list and just do direct IO to mac table from
+  fdb_add/fdb_del.
+- Clean up fresh mdb when hw mac table write fails.
+- Remove rx_uc and tx_uc from ethtool stats list, as they are derivable
+  from the eth-mac group
+- Split stats_init into stats_alloc and stats_init, use alloc in probe
+  and init in dsa_setup
+- Link to v3: https://lore.kernel.org/r/20260410-dsa_lan9645x_switch_driver_base-v3-0-aadc8595306d@microchip.com
+
+Changes in v3:
+- Individual patches mention specific v3 changes.
+- Add guard before vlan_remove_tag on xmit
+- Add pskb_may_pull checks on rx
+- Remove additionalProperties: true in bindings
+- Remove unnecessary | from description in bindings
+- Change top level $ref to dsa.yaml#/$defs/ethernet-ports
+- Use ethernet-ports and ethernet-port
+- Move ethernet-ports under properties instead of patternProperties
+- Move unevaluatedProperties: false after $ref
+- Update bindings example to use ethernet-ports and ethernet-port
+- Move DEV_MAC_TAGS_CFG to port setup, instead of vlan config, so vlan
+  overhead is always included in port frame maxlen calculation.
+- Remove code disabling ipv6 on conduit
+- Use of_property_read_u32 for {rx,tx}-internal-delay-ps
+- Use dsa_user_ports(ds) instead of
+  GENMASK(lan9645x->num_phys_ports - 1, 0) as base flood mask.
+- Add comment explaining obey vlan
+- Allow disabling aging with explicit zero parameters.
+- Fix non-forwarding STP states in bridge fwd calculation.
+- Restore host flood state on bridge leave.
+- Avoid mac_entry dealloc when mac table writes fail.
+- Avoid mdb_entry dealloc when mac table writes fail.
+- Dealloc mac_entries on deinit.
+- Dealloc mdb_entries on deinit.
+- Link to v2: https://lore.kernel.org/r/20260324-dsa_lan9645x_switch_driver_base-v2-0-f7504e3b0681@microchip.com
+
+Changes in v2:
+- Individual patches have specific v2 changes.
+- Ran DSA, and std counters, selftests, which prompted several changes.
+  The following selftests pass, except for some expected failures:
+    - bridge_vlan_aware.sh
+    - bridge_vlan_unaware.sh
+    - bridge_vlan_mcast.sh
+    - no_forwarding.sh
+    - bridge_mdb.sh
+    - bridge_mld.sh
+    - test_fdb_stress_test.sh
+    - .../drivers/net/hw/ethtool_rmon.sh
+    - .../drivers/net/hw/ethtool_std_stats.sh (from Ioana's series)
+- Added new patch for MDB management, as this was required for selftests.
+- Added port_set_host_flood to enable unknown traffic to standalone during
+  promisc/ALL_MULTI (selftests).
+- Remove the dubugfs.
+- Link to v1: https://lore.kernel.org/r/20260303-dsa_lan9645x_switch_driver_base-v1-0-bff8ca1396f5@microchip.com
+
+---
+Jens Emil Schulz Østergaard (9):
+      net: dsa: add tag driver for LAN9645X
+      dt-bindings: net: dsa: add Microchip LAN9645x switch
+      net: dsa: lan9645x: add autogenerated register macros
+      net: dsa: lan9645x: add basic dsa driver for LAN9645X
+      net: dsa: lan9645x: add vlan support
+      net: dsa: lan9645x: add mac table integration
+      net: dsa: lan9645x: add mdb management
+      net: dsa: lan9645x: add bridge support
+      net: dsa: lan9645x: add port statistics
+
+ .../net/dsa/microchip,lan96455s-switch.yaml        |  208 +++
+ MAINTAINERS                                        |   10 +
+ drivers/net/dsa/Kconfig                            |    2 +
+ drivers/net/dsa/microchip/Makefile                 |    1 +
+ drivers/net/dsa/microchip/lan9645x/Kconfig         |   12 +
+ drivers/net/dsa/microchip/lan9645x/Makefile        |   12 +
+ drivers/net/dsa/microchip/lan9645x/lan9645x_mac.c  |  268 +++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_main.c | 1060 +++++++++++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_main.h |  435 +++++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_mdb.c  |  582 ++++++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_npi.c  |  116 ++
+ .../net/dsa/microchip/lan9645x/lan9645x_phylink.c  |  371 ++++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_port.c |  180 ++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_regs.h | 1932 ++++++++++++++++++++
+ .../net/dsa/microchip/lan9645x/lan9645x_stats.c    |  854 +++++++++
+ .../net/dsa/microchip/lan9645x/lan9645x_stats.h    |  229 +++
+ drivers/net/dsa/microchip/lan9645x/lan9645x_vlan.c |  411 +++++
+ include/linux/dsa/lan9645x.h                       |   54 +
+ include/net/dsa.h                                  |    2 +
+ net/dsa/Kconfig                                    |   11 +
+ net/dsa/Makefile                                   |    1 +
+ net/dsa/tag_lan9645x.c                             |  514 ++++++
+ 22 files changed, 7265 insertions(+)
+---
+base-commit: 45ad84d2800e4a092fb8d96006a533b2d0ab13f6
+change-id: 20260210-dsa_lan9645x_switch_driver_base-312bbfc37edb
+
+Best regards,
 -- 
-2.54.0
+Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
 
