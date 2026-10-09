@@ -1,255 +1,130 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB17D499F12
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Oct 2026 09:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1566337E2E9;
+	Fri,  9 Oct 2026 12:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791539993; cv=pass; b=CtHtn7+OhkLBxZcosrBztwNWqoYOznIx2ja5Szv9ZoQbraSGbqVJB74KeyYQOljVXBhav//yNcY4AgU4D1dyk2vSLg9+lTeq8BJadQZDmaP8qd9h/m6r/WT9fqDC0ZWJWgKwMUv2R1YwuviRiK6VoEGtz3oT6TkjINhqUxAqDUU=
+	t=1791548617; cv=pass; b=IgAToC4TOFSiqTcOjHY0g+pAh1akU5Sa9LdBd+9AqgG2x/go7ueiU/JEat+esI++KXL66tCGbEJ7BiOF9ycHG7v8rjtQ5P9AP/ZfQ44k7nAyOP6qcmOXNb7X2+/OBBmsw/XX5AnYWWSORTxU6RJtykdUCroKnTp9410Jju3yq0o=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791539993; c=relaxed/simple;
-	bh=i7++zG8AWQ/7X1mmcKKFhfNKYOrusr69yRalwyg4/cA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VihUm2KVJx8eMwnq72y2twoTFZiLaAMfZQwWn8jIyvuBPAqAn7FJCe4it142ClRu6wJuaNdzKHwjROvY9AZ+mmXaSumVEL4NBnqyeNzJDrP0FnnWx4Fqc8n6JMSDFMERluJqycL8dbcfL4wh4iTcjVPGIy9GCxDrpZNuKqM10Vg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvCv2CsO; arc=pass smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791548617; c=relaxed/simple;
+	bh=bDjswRz2nKNZEO15TWlHQ2LQc2x4BOd4bIxtqUgNqWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ql+s8Ng8rbSs1oPlfw6QoGxMdqnoOITPV3DSQU5gdWDAgoOndDFXmQ80M2fcr9LMijWsDBSc0AuzPljxj+ZR0Q4Aqs4gHnIr4ZP53BsG8cT+FtuyokxdNgvNsBc23OotzUYs9/HToEMsCC9i24lGbsS/85o8jkrkGr/R88SVX48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=cQWk8JMO; arc=pass smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvCv2CsO"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a1880e1bf1so11240165e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Oct 2026 02:59:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791539989; cv=none;
-        d=google.com; s=arc-20260327;
-        b=sImlMdECdkPD7ClqHy6AWNWBId9EWxqhH5NRAJbAlN7jtgOCiwB+mKSjreWtGJ3McK
-         V8XcmThHG2JO1EigQFEBv4qhx0NPR7yHreGOrfMyzB0TSsqULl4xEIYKeFB5eTVRi9jw
-         neyWFPbK9b0aDWUlltbdf+/vgt5/DKmo1kB7ofi9od92xMlsDovL/WvVekkO2dddUIln
-         4eofRpJImIv/KepxYHawUHxjYZqKAaCrvx5Z0H/990gLEt3REEN0ap5FImibDSoWdDN1
-         5+WKI2UTDCgrKjrsAKop9/Yxd80hOePlC2tzcw+tEU9DX2+iitml2pmArvVbwZ6+mZbh
-         3eQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=DP8waD2qmyevQkHk4p1Bx+MKMco6/5BSdUOLT/BBidw=;
-        fh=4E302vzzvFkA8+lWJVOA4BogEnrl3R+I6cBEE0pD+oE=;
-        b=bXdFJkIDhsErNE12OVkoXCiX28VTS9v4tRzBAEDIns8Fi/DKi0Lidn6F4mzRW5Fo0L
-         uv/yn3vaQ4bmxLOwbLE322ZYbDhfLWmSaBfQ8gmuKzpvqmvRaGkERUFzSuxFDcimqdy+
-         U8mQ8oYui/U9RTWowJ5lwKmR42zLzn2Er/eRybKUBzPQH2X75E7PRl3JNldswIXcFkq4
-         Uuh5+S7Vair7/VDPqytecEEZmbErwsK5Vow8kuuaZXlMav6MXy5pMMAG63havydSXOz7
-         1NLDeWWwkWSTn/fglIKNqprZzhzfyZIj+IdTZtfQiouDK2jIWTHC8l22I9CpSwIMtb3T
-         zMXw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791539989; x=1792144789; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DP8waD2qmyevQkHk4p1Bx+MKMco6/5BSdUOLT/BBidw=;
-        b=fvCv2CsOwtAvcyKKRWNfjyCHHmI1iPWsTfH3EawSfSC10aG+ygccxRARgXoVva+/yf
-         37OPSQaoOLgIOxIs1YgOjWvcA8B2daciBl4kN/jO2A4WsJyHEYrDcVx/mIZUwaz1Ac9Y
-         HKRXnu5YYbTQ13q+9I2BtD0vgCdbNFWDHiTXLmyv1aI4dFzjiMIUWaKpLZFgVVZqaAIc
-         PqbAw7bqmjsgP/QRoiCEATXLtRC/LYHq8IQHkyvCsUtI2d7f5V9fEtgT2Vr0bRFIjddA
-         EaAU1wHKUfKRqF/3oU/Mrrat26aDZt6AgnHZN2D8V8A+b7qgDbXCAZ9ojb4RrQuiVLzV
-         dQOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791539989; x=1792144789;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DP8waD2qmyevQkHk4p1Bx+MKMco6/5BSdUOLT/BBidw=;
-        b=bH71xUIgkuuAtx16SU2BspwebW/rU4iBpJoLYPeJ1sAny1DABclw7VVHjh9PHCOUWO
-         xMHBnbG8MKXaBFynPXaJORP0GSma4Xgw19moJNEu2KtHUiwCQ1G36sZ8ab9g2r9MzREb
-         567iNjkPaJvPnWG3ENEmZVcD//IozMOZoPHtsvRcd2f5vkR4jOdTFNOM+ubFK3auhVD5
-         1R42VK0Ho4vLc0Ne5ro7CVV1kqqm6XXYFvoyk1MnvIzkFnNJIYeqivmQ279J55T1YR1M
-         UZDPUJr45COBB1eCFI1uXDrEfZ9DtPGw0mW4+Quf2Vu4kh1CKlLC/1y6pGY21cXWEzJD
-         KxgQ==
-X-Forwarded-Encrypted: i=1; AKwUvBylV16IA8/1hkzaXKApdiX5/1zZamHsvTUV7KaqmgxSKll5KA4NUbxyNB267Z+VoNukA/jIkSzv0dvxMOLUKb0Pmg==@vger.kernel.org
-X-Gm-Message-State: AFuF++koLowqAw9D2/JgZVb0tjoDXTyRfIWyGTlfzZClrc81CUGF9MB+
-	9ZKc9aupaJ05BUCAHPqYw1Qg1v7vNtut42FoYG0aBw1du6KcT7eKmuwC+yc8usaTxnb01Uu8B0A
-	222Zn+XVN3WKrByNQ8k/oPEh8oqkIn70r1ska
-X-Gm-Gg: AYBFou1u5g95LT+wYXKDpLvVObAQPwapPXGAvHPF4bQ/7sOPyNGZeEdqEIMGu1o071t
-	k7UYRyA+GfjZJMjGxjgUKUlq414EIl7qTg3Beoy62Klqm9Df2HeBjSMO3fewvUfyEkixr4ZiHSF
-	YZkh34iBMpmV+roxecYa463RzBiAi7UAV7APCD1UvFxctOHa1eEUrccwv5dF9K486U5iK9qBrec
-	9KhiwMBW3OWLUuTaKtEO8pA+my51Ykc3jybFz6fqIXmlpkuGXXX74X9696xMp35ZvdyxE584dxR
-	5ds4o3ANJt3/Mtphmtx0z6ScM/uF2PWW6bIn+F8AqrzqqMU2Qt6EI2IoSDq16/aLXsYL4Q7SH/B
-	kSC1Ldp5mOBh1tA9rKJOFuY7Cd7kdZZyFAY/sJQFfgQWC6GShf1xgSbs1mJhwishJd7Hjx4YA0A
-	==
-X-Received: by 2002:a05:600c:524a:b0:49b:9202:6f80 with SMTP id
- 5b1f17b1804b1-4a18e4a4f2amr24783385e9.6.1791539988785; Fri, 09 Oct 2026
- 02:59:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="cQWk8JMO"
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id E3B9A202342;
+	Fri, 09 Oct 2026 14:23:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1791548610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QJFlkRJZ93HR5PSvJ5lzD+Fgi1OrHX7JBTtx7M9wPWs=;
+	b=cQWk8JMO2YDk0rjRcgLB2H86KNKaswTIGSvTajLEYNw3WFkWQNfPBS6ik0IzfWqnO1LNzR
+	roiyq23LH2UpdXn+jnkCyoyw6J8iLL4G4bdgRUWmiS3x6oRKAE1mYGZi6qZpgpSlrgw7wP
+	ZTskseTf51v9QDn/lZCSR6bV0l1G8GKFkXb5IQ0RiIhwxcK+vvzSiBTSqK1V7fHDwRbrin
+	8wyHt6Jrg/L8q3RCGFXPaeYxBvkM22Zi59NsIBY8JR82e+b68DExJFZwQxFUs5zdriBIcS
+	1HaRmwG0nPbXkx5zGw8Q+BOtGCcS6o5m2hJUmWKGMOw+0Rv/LUDkzsUsoRIdGw==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1791548610; a=rsa-sha256;
+	cv=none;
+	b=IhAwq4oMN38sDId5oupwkri7G+6MGT6f7YiwWzKji6k7TYOeUerfmowGhGeOu0u1QS6Kri
+	Hz1S32wqQtVrWp3mYESbyKs3XnmVoULbbco6vUZ9urL3p/r65jCkbCQx65uYskMLEdJ+mH
+	jSK18/zR10or2kInLmVSZG5QhEYo4i+nR9xJJtLW0SZYnudZbgooqJ24qLJhXRZsCvwjVz
+	Y1uhjy0Cx7tGGaDIe95Cp+gmnTx+3u+YixfnnrJkkB4UmFDLb8AqbKOA/bcRQrOSGCZNgL
+	HKxGPhRhZGGauF8EzAsfXaub08znJH7FXMkFPk7NKaf238qQjGOTsdc7Yp8HYg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1791548610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QJFlkRJZ93HR5PSvJ5lzD+Fgi1OrHX7JBTtx7M9wPWs=;
+	b=I8EbBTfQ84KLIA7dKxphNv/PAAZeBhfZDkRHwVyKm/1BTaYXvxh3UYu1URw3cjDuu5TH7C
+	zVvWqeBWlHU2Kgkt0uNDLG/qz0IZX/3aiz/Wc15arwyxqr8rtnxvExB1LpJPeP60jFTyCX
+	rw4GGByPAAwAKBpjKzy+CsEQFhN3DmcMlHo/0DmPzfiMx93izRO+OpFPhtqtjyitW136EC
+	nAgP5S8EoF+I96f8SWCT/KqM7Mbx5/nEurBe9nwln8bEgwL/RkmvQPDysQlsugcK9g+5eJ
+	vavGr71kA6ZWKH3lSRel0XJZoVvBKQyP/GgK7CnuY7MEoWIoqwsnzmrOzJqNMQ==
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1xF9dK-0052mJ-2g;
+	Fri, 09 Oct 2026 14:23:30 +0200
+Received: from pengutronix.de (90-182-211-1.rcp.o2.cz [90.182.211.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 404C95BD767;
+	Fri, 09 Oct 2026 12:23:30 +0000 (UTC)
+Date: Fri, 9 Oct 2026 14:23:29 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Restrict resets in
+ top-level
+Message-ID: <20261009-holistic-warping-puffin-3b92fe-mkl@pengutronix.de>
+References: <20261001060825.53335-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260929122407.219448-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260929122407.219448-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMRc=MckUuLsgqjphOs=fiyz3wCaGbGWpt_fPKStZRAroPkE3Q@mail.gmail.com>
-In-Reply-To: <CAMRc=MckUuLsgqjphOs=fiyz3wCaGbGWpt_fPKStZRAroPkE3Q@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 9 Oct 2026 10:59:22 +0100
-X-Gm-Features: AclHuK8v8wJ0xixm3ryTG5vUqFvUu0_BpBhVKHGRmBMB2paMCe66RtJNZrKZm2Y
-Message-ID: <CA+V-a8tV1uoBuRLyZHE_tqL9zU2hzZ9BNkwVMABL4aAEGEFQeA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] power: sequencing: renesas-pwrrdy: Add RZ/V2H(P) and
- RZ/V2N A/D converter support
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iisb6fhlj2ggl6pj"
+Content-Disposition: inline
+In-Reply-To: <20261001060825.53335-2-krzysztof.kozlowski@oss.qualcomm.com>
+
+
+--iisb6fhlj2ggl6pj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Restrict resets in
+ top-level
+MIME-Version: 1.0
 
-Hi Bartosz,
-
-Thank you for the review.
-
-On Thu, Oct 8, 2026 at 11:10=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.or=
-g> wrote:
+On 01.10.2026 08:08:26, Krzysztof Kozlowski wrote:
+> Properties varying per variant of the device should still have the
+> broadest constraints set in the top level, so add such for the "resets".
+> Since top-level part says "reset-names" cannot accept one item, disallow
+> it for the two variants which do not use it in practice.
 >
-> On Tue, 29 Sep 2026 14:24:06 +0200, Prabhakar <prabhakar.csengg@gmail.com=
-> said:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > On RZ/V2H(P) and RZ/V2N, the SYS_ADC_CFG.SY_MSTP_ADA bit controls
-> > A/D converter power-down. RZ/V2H(P) has a single A/D converter unit,
-> > while RZ/V2N has three units sharing the same bit.
-> >
-> > Add an "adc" power sequencing target for these SoCs and match it to the
-> > RZ/V2H(P) ADC compatible, which is also used as the fallback compatible
-> > by RZ/V2N.
-> >
-> > Clear SY_MSTP_ADA when the first A/D converter unit is enabled and set =
-it
-> > again when the last unit is disabled. Wait 20 us after clearing the bit
-> > before allowing conversion to start, ensuring ADCLK has been running fo=
-r
-> > the required time.
-> >
-> > Bind the power sequencer to the RZ/V2H(P) and RZ/V2N auxiliary devices
-> > created by the SYS driver.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 84 +++++++++++++++++++
-> >  1 file changed, 84 insertions(+)
-> >
-> > diff --git a/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c b/drivers=
-/power/sequencing/pwrseq-renesas-pwrrdy.c
-> > index 0190e53913bf..ab20b7ba9b83 100644
-> > --- a/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-> > +++ b/drivers/power/sequencing/pwrseq-renesas-pwrrdy.c
-> > @@ -5,6 +5,7 @@
-> >   */
-> >
-> >  #include <linux/auxiliary_bus.h>
-> > +#include <linux/delay.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/pwrseq/provider.h>
-> > @@ -15,11 +16,68 @@
-> >  #define SYS_PWRRDY_N_DSI_MASK        BIT(1)
-> >  #define SYS_PWRRDY_N_CSI_MASK        BIT(2)
-> >
-> > +#define RZV2H_SYS_ADC_CFG            0x1600
-> > +#define RZV2H_SYS_ADC_CFG_SY_MSTP_ADA        BIT(0)
-> > +/* Minimum time with ADCLK running after leaving power-down mode */
-> > +#define RZV2H_ADC_POWER_UP_US                20
-> > +
-> >  struct pwrseq_rz_info {
-> >       int (*probe)(struct auxiliary_device *adev,
-> >                    const struct auxiliary_device_id *id);
-> >  };
-> >
-> > +static int pwrseq_rzv2h_adc_enable(struct pwrseq_device *pwrseq)
-> > +{
-> > +     struct regmap *regmap =3D pwrseq_device_get_drvdata(pwrseq);
-> > +     int ret;
-> > +
-> > +     ret =3D regmap_clear_bits(regmap, RZV2H_SYS_ADC_CFG,
-> > +                             RZV2H_SYS_ADC_CFG_SY_MSTP_ADA);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     fsleep(RZV2H_ADC_POWER_UP_US);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int pwrseq_rzv2h_adc_disable(struct pwrseq_device *pwrseq)
-> > +{
-> > +     struct regmap *regmap =3D pwrseq_device_get_drvdata(pwrseq);
-> > +
-> > +     return regmap_set_bits(regmap, RZV2H_SYS_ADC_CFG,
-> > +                            RZV2H_SYS_ADC_CFG_SY_MSTP_ADA);
-> > +}
-> > +
-> > +static const struct pwrseq_unit_data pwrseq_rzv2h_adc_unit =3D {
-> > +     .name =3D "adc-power-sequence",
-> > +     .enable =3D pwrseq_rzv2h_adc_enable,
-> > +     .disable =3D pwrseq_rzv2h_adc_disable,
-> > +};
-> > +
-> > +static const struct pwrseq_target_data pwrseq_rzv2h_adc_target =3D {
-> > +     .name =3D "adc-power",
-> > +     .unit =3D &pwrseq_rzv2h_adc_unit,
-> > +};
-> > +
-> > +static const struct pwrseq_target_data *pwrseq_rzv2h_targets[] =3D {
-> > +     &pwrseq_rzv2h_adc_target,
-> > +     NULL
-> > +};
-> > +
-> > +static const char * const pwrseq_rzv2h_compats[] =3D {
-> > +     "renesas,r9a09g057-adc",
-> > +     NULL
-> > +};
-> > +
-> > +static int pwrseq_rzv2h_match(struct pwrseq_device *pwrseq, struct dev=
-ice *dev)
-> > +{
-> > +     if (of_device_compatible_match(dev->of_node, pwrseq_rzv2h_compats=
-))
-> > +             return PWRSEQ_MATCH_OK;
-> > +
-> > +     return PWRSEQ_NO_MATCH;
-> > +}
-> > +
-> >  static int pwrseq_rzg3l_set_pwrrdy(struct pwrseq_device *pwrseq, u32 m=
-ask,
-> >                                  bool val)
-> >  {
-> > @@ -127,6 +185,20 @@ static int pwrseq_rzg3l_pwrrdy_probe(struct auxili=
-ary_device *adev,
-> >       return PTR_ERR_OR_ZERO(devm_pwrseq_device_register(&adev->dev, &c=
-onfig));
-> >  }
-> >
-> > +static int pwrseq_rzv2h_probe(struct auxiliary_device *adev,
-> > +                           const struct auxiliary_device_id *id)
-> > +{
-> > +     struct pwrseq_config config =3D {
-> > +             .parent =3D &adev->dev,
-> > +             .owner =3D THIS_MODULE,
-> > +             .drvdata =3D adev->dev.platform_data,
-> > +             .match =3D pwrseq_rzv2h_match,
-> > +             .targets =3D pwrseq_rzv2h_targets,
-> > +     };
-> > +
-> > +     return PTR_ERR_OR_ZERO(devm_pwrseq_device_register(&adev->dev, &c=
-onfig));
-> > +}
->
-> This probe variant looks almost exactly the same as pwrseq_rzg3l_pwrrdy_p=
-robe().
-> Can't you not just store the match and targets pointers in OF match
-> data and keep
-> the same code in top-level probe()?
->
-Ok I will switch to the proposed approach and send a v2.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Cheers,
-Prabhakar
+Applied to linux-can-next.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--iisb6fhlj2ggl6pj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCasjcvwAKCRDMOmT6rpmt
+0pG1APwPttD1RcoVGSyWM1sNX7bucXyxzpxQdlZFDug/BFTkIwEAv11b5f8V9HEj
+FQAl1XBOu9750fpX58+T0JO/xaWgfgQ=
+=LcM7
+-----END PGP SIGNATURE-----
+
+--iisb6fhlj2ggl6pj--
