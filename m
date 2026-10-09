@@ -1,117 +1,71 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAE33905E0
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Oct 2026 13:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DA42D592D;
+	Fri,  9 Oct 2026 14:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791553093; cv=none; b=V5HpQEVxtf0cq/0cvvMEx55b0dqUWYqbntiD3B3zJ/RBQJSwD4m2Uun48gPXYbGi353HgwLbaN61Ff6a8+8PBkaOWHDzcv8cDeckykXIoRyAkJv+We8QmLTFtw67gHgttSywbJnDaqKfwCIOsWlq9yHZndTLkpgLqzfNli/o7I0=
+	t=1791555759; cv=none; b=BQoZ+zWcC/e3FUfB0R5bAnX0mUvMDT2aV932Jyg1f9e2CSvZiq4iah8l0QpigUZMnMw1owSWGjpQN9ypfHBeNFKKMrRVX/OFEkVJcwA8Uk+A50eEuUlPsS5DbmKlB0BKXgM6QoBGRq+GCChz6leXGRsUMfI+yQZEAxBx6Mv04lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791553093; c=relaxed/simple;
-	bh=nW+ttAH1HDFjgIqrMjZ/WFb/2ac1TN0rjknDAUOkX5c=;
+	s=arc-20240116; t=1791555759; c=relaxed/simple;
+	bh=exHWLYXzTM9mtKFd836x2uxs9t7AR1nHynd6k/ACquo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+yCLmnkzuXPFF2s+imOKfmEgGtRGw+lW+ok7P2Wl28wvt2FrVzEy4bBfkY5hXc91sqax8E28N7M5914FfLtEKf2AQ5ulUwtntU5EX9ujAjvIZv6WbCD/DvHn65Frb+PtegMUn1fWYdZQNIxWm/gRwjBvRAy2mw99FOL2YGE4NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FZmRbA/B; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRH3dfs1RTVsdmxsHtYroWhChFpidmcKI9/S5FSLIIuT443T3d9IgMzsRXChVyF0gL2LGsSK+NK4X7vdFHGHAMj1c47R8Jmw9PLCN0P2WM6Fp+3aJNhWj2jEEMeWqU5BlUF9/Nt+YSGr03PtKUcVkeQq89bwFSWGUDW0uGAFMwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kC5xPhha; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FZmRbA/B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=nW+t
-	tAH1HDFjgIqrMjZ/WFb/2ac1TN0rjknDAUOkX5c=; b=FZmRbA/BD40qOxoA9pPe
-	Qngh35M8bzkQb7zCvP23EX88KCYbL8uvNPVxcaYV9UL8YfKHOuwBlZ7S2ZF2jfqh
-	/OCRESN5abnUz4ayTt5Un5tjMWqjy+E5jDF2N1vwsj/bYcD8uLixE4YXrWnuNTC4
-	FyZpO5Ow8K4xlcl6w+YdCAto699D5edXaDn622m3vGSpNS+btU+MwSp8sogidOp6
-	6ykr13NqlSCYbmpO54PN68vD/xk57XFwMHk5rbvssh/OpWwYYfazIZzFhs8fhHHU
-	WsokddYKGT9zB4ovcPxN4tYw0W96n/Nyp+vbCJJ7NV2AVLgK6yuaIUoy9ueW0sY7
-	ww==
-Received: (qmail 1205793 invoked from network); 9 Oct 2026 15:38:05 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Oct 2026 15:38:05 +0200
-X-UD-Smtp-Session: l3s3148p1@V1NGdWhdPu3Desiu
-Date: Fri, 9 Oct 2026 15:38:05 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Koichiro Den <den@valinux.co.jp>, Frank Li <Frank.li@oss.nxp.com>,
-	linux-renesas-soc@vger.kernel.org, Frank Li <Frank.Li@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kC5xPhha"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF7E21F000FF;
+	Fri,  9 Oct 2026 14:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791555758;
+	bh=akDjDkPdZ0AvHVYfxU8nsaUfV+VZNeoojr+Xd8f2sYs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kC5xPhhaj1OTL5O02pSXnFbEPOuDTp6eWShL6/0dP6yfCEitz4zgsi1aeMlb0kTMP
+	 SS28+vfsPxEOPQjslZxFzB39S/fHzz5IOtvQceYpkuKzDMx7ZeyaqBob+jgso+OSAg
+	 pb5Dp+4URs7GrHZjoc2s0C9O+Nzn/qBfCc5jAIwEZ0dybZqJ++Rvm2wThwWrnkjGMJ
+	 kJg2FbwVrVfYiqdHi/vWfbpNTNoYjE81eYUFE8aE5tXKQNgLCZ6aGKU8lGx8bqe56e
+	 4iqQLpj/6gm2Sl0ThLdcduOBwNCLzjBoLaddrmq++D4LRCX/gYblL72BPvWHlqS8Jt
+	 srSiNK4DTc7rQ==
+Date: Fri, 9 Oct 2026 15:22:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: khendry@reliablecontrols.com
+Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH 2/3] dmaengine: rcar-dmac: Add missing
- dma_descriptor_unmap()
-Message-ID: <asjuOagHYZUsgg7D@shikoro>
-References: <20260917071208.36888-1-wsa+renesas@sang-engineering.com>
- <20260917071208.36888-3-wsa+renesas@sang-engineering.com>
- <aqwXwOiPgRDUQfp_@SMW015318>
- <3odvtlxs62ulw4obrzfy3xlf74k4wltjkj6k4axsmdx3hnyo3a@rx2pm422eozp>
- <arkPcxePb1G1vyZt@shikoro>
- <arkV-ru3aNXDFawM@shikoro>
- <ezlwzpaq54573ewlofeep3zqqajj7ycpanv24ogujtm3alc23l@ehq5obt3bnfn>
- <asizUWUuEdkyKodN@parshuram>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/2] net: pcs: rzn1-miic: Update port
+ numbering for RZ/T2H
+Message-ID: <20261009142233.GD83879@horms.kernel.org>
+References: <20261006-miic-validate-dtb-v3-v3-0-68617b3dca5c@reliablecontrols.com>
+ <20261006-miic-validate-dtb-v3-v3-1-68617b3dca5c@reliablecontrols.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OuIWNwfBYmB2fg6C"
-Content-Disposition: inline
-In-Reply-To: <asizUWUuEdkyKodN@parshuram>
-
---OuIWNwfBYmB2fg6C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20261006-miic-validate-dtb-v3-v3-1-68617b3dca5c@reliablecontrols.com>
 
+On Tue, Oct 06, 2026 at 09:48:11AM -0700, Kyle Hendry via B4 Relay wrote:
+> From: Kyle Hendry <khendry@reliablecontrols.com>
+> 
+> The port numbers on the RZ/T2H are documented as 0 to 3. Update the info
+> structure and change the member name to miic_port_last to be more accurate.
+> 
+> This value was being used as the number of miic registers when setting
+> default values. Add logic to get the total port count and loop over that.
+> 
+> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 
-> > > This is easy to fix. If we can agree on switching unmapping before
-> > > cookie completion, I can update this patch and then send a series to =
-fix
-> > > other drivers, too.
-> >=20
-> > I agree with changing {cookie -> unmap}** to {unmap -> cookie} in this =
-patch.
-> > It looks like an improvement, I don't see any obvious downside to doing=
- so.
-> >=20
-> > Many drivers do {cookie -> unmap}, so it may be worth making the same c=
-hange
-> > there too. I haven't found a specific reason for that order in the hist=
-ory I
-> > checked, but I'd also like to hear Frank's thoughts.
->=20
-> I cna chime in. I think Shashiko is correct here. We should ideally
-> unmap first and then call complete. This would ensure anyone seeing the
-> completion would get the right data buffer and chances of stale data are
-> eliminated.
->=20
-> So Wolfram, can you please reverse the order.
-> Also, lets document this.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Thanks for chiming in, Vinod. It seems we have consensus now, so I will
-work on such a series next week. Thank you, everyone!
-
-
---OuIWNwfBYmB2fg6C
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrI7jkACgkQFA3kzBSg
-KbZhWQ/9G+AZEIswluUtbWdW87IO4KmZ786FAgT89CkE1KqJe7xsRjnr1SYgBTvG
-3K9AdPwHyBFdNOS3d03Yr6+44fjdIXoAVT29TAw7DLuAqA//223afMGzfgUb7fWR
-S2yAdwjO9dIuYvPUIGwra8YEVCtTnTzqSwbGbZ+lqvDSWNap3rZESet3K+lKnTi1
-rmqEqEhhtql/6XQOKfRlta6X2xSXJQwZDDVpi/gxG5PmsuhXJ55uHIW81aojFDLo
-UBQAY0inosiQxqLf3S+kgJ1v0yGmOTkqh6Twm5ZW3qx/IJtjvY7z/+5Eg/YUyILo
-J4sr+siJ940F1sRLLpNm/ZfX9brRuCw1I6bx7V8n4eJPtdZyJMrLQj7lFXRr4E6u
-ZjDprA6Xxri6olYh0/7rp/6zHS0O3yRJ1hjEiyIQLXvy4qmhP+otAUJMwA2k0alm
-pqQ2cU+CqqibQ0Rej9BpaTQ3RMUSRiafxH6xLpxRr14kELy5+0AnCU+0WtYmcY5J
-A4PTSmjcqSdSuEiOdTE0yaiLhx5A83rbDoe+gSa5l5bdb8hDhagDI6jb0HSiOxrh
-c/2ZWe8BrWXnheMYLWcAgJFXpbkKU35ZOgspDHBxQBe2I98/wSuCkLrdsEfgu8sT
-g89zrcIkJbaV775rJCMrz5sZU6U2mni7Cq7KFiH7g/HE5WhZlN8=
-=m/wG
------END PGP SIGNATURE-----
-
---OuIWNwfBYmB2fg6C--
