@@ -1,82 +1,54 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1566337E2E9;
-	Fri,  9 Oct 2026 12:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791548617; cv=pass; b=IgAToC4TOFSiqTcOjHY0g+pAh1akU5Sa9LdBd+9AqgG2x/go7ueiU/JEat+esI++KXL66tCGbEJ7BiOF9ycHG7v8rjtQ5P9AP/ZfQ44k7nAyOP6qcmOXNb7X2+/OBBmsw/XX5AnYWWSORTxU6RJtykdUCroKnTp9410Jju3yq0o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791548617; c=relaxed/simple;
-	bh=bDjswRz2nKNZEO15TWlHQ2LQc2x4BOd4bIxtqUgNqWk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAE33905E0
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Oct 2026 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791553093; cv=none; b=V5HpQEVxtf0cq/0cvvMEx55b0dqUWYqbntiD3B3zJ/RBQJSwD4m2Uun48gPXYbGi353HgwLbaN61Ff6a8+8PBkaOWHDzcv8cDeckykXIoRyAkJv+We8QmLTFtw67gHgttSywbJnDaqKfwCIOsWlq9yHZndTLkpgLqzfNli/o7I0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791553093; c=relaxed/simple;
+	bh=nW+ttAH1HDFjgIqrMjZ/WFb/2ac1TN0rjknDAUOkX5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ql+s8Ng8rbSs1oPlfw6QoGxMdqnoOITPV3DSQU5gdWDAgoOndDFXmQ80M2fcr9LMijWsDBSc0AuzPljxj+ZR0Q4Aqs4gHnIr4ZP53BsG8cT+FtuyokxdNgvNsBc23OotzUYs9/HToEMsCC9i24lGbsS/85o8jkrkGr/R88SVX48=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=cQWk8JMO; arc=pass smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+yCLmnkzuXPFF2s+imOKfmEgGtRGw+lW+ok7P2Wl28wvt2FrVzEy4bBfkY5hXc91sqax8E28N7M5914FfLtEKf2AQ5ulUwtntU5EX9ujAjvIZv6WbCD/DvHn65Frb+PtegMUn1fWYdZQNIxWm/gRwjBvRAy2mw99FOL2YGE4NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FZmRbA/B; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="cQWk8JMO"
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id E3B9A202342;
-	Fri, 09 Oct 2026 14:23:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1791548610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QJFlkRJZ93HR5PSvJ5lzD+Fgi1OrHX7JBTtx7M9wPWs=;
-	b=cQWk8JMO2YDk0rjRcgLB2H86KNKaswTIGSvTajLEYNw3WFkWQNfPBS6ik0IzfWqnO1LNzR
-	roiyq23LH2UpdXn+jnkCyoyw6J8iLL4G4bdgRUWmiS3x6oRKAE1mYGZi6qZpgpSlrgw7wP
-	ZTskseTf51v9QDn/lZCSR6bV0l1G8GKFkXb5IQ0RiIhwxcK+vvzSiBTSqK1V7fHDwRbrin
-	8wyHt6Jrg/L8q3RCGFXPaeYxBvkM22Zi59NsIBY8JR82e+b68DExJFZwQxFUs5zdriBIcS
-	1HaRmwG0nPbXkx5zGw8Q+BOtGCcS6o5m2hJUmWKGMOw+0Rv/LUDkzsUsoRIdGw==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1791548610; a=rsa-sha256;
-	cv=none;
-	b=IhAwq4oMN38sDId5oupwkri7G+6MGT6f7YiwWzKji6k7TYOeUerfmowGhGeOu0u1QS6Kri
-	Hz1S32wqQtVrWp3mYESbyKs3XnmVoULbbco6vUZ9urL3p/r65jCkbCQx65uYskMLEdJ+mH
-	jSK18/zR10or2kInLmVSZG5QhEYo4i+nR9xJJtLW0SZYnudZbgooqJ24qLJhXRZsCvwjVz
-	Y1uhjy0Cx7tGGaDIe95Cp+gmnTx+3u+YixfnnrJkkB4UmFDLb8AqbKOA/bcRQrOSGCZNgL
-	HKxGPhRhZGGauF8EzAsfXaub08znJH7FXMkFPk7NKaf238qQjGOTsdc7Yp8HYg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1791548610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QJFlkRJZ93HR5PSvJ5lzD+Fgi1OrHX7JBTtx7M9wPWs=;
-	b=I8EbBTfQ84KLIA7dKxphNv/PAAZeBhfZDkRHwVyKm/1BTaYXvxh3UYu1URw3cjDuu5TH7C
-	zVvWqeBWlHU2Kgkt0uNDLG/qz0IZX/3aiz/Wc15arwyxqr8rtnxvExB1LpJPeP60jFTyCX
-	rw4GGByPAAwAKBpjKzy+CsEQFhN3DmcMlHo/0DmPzfiMx93izRO+OpFPhtqtjyitW136EC
-	nAgP5S8EoF+I96f8SWCT/KqM7Mbx5/nEurBe9nwln8bEgwL/RkmvQPDysQlsugcK9g+5eJ
-	vavGr71kA6ZWKH3lSRel0XJZoVvBKQyP/GgK7CnuY7MEoWIoqwsnzmrOzJqNMQ==
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1xF9dK-0052mJ-2g;
-	Fri, 09 Oct 2026 14:23:30 +0200
-Received: from pengutronix.de (90-182-211-1.rcp.o2.cz [90.182.211.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 404C95BD767;
-	Fri, 09 Oct 2026 12:23:30 +0000 (UTC)
-Date: Fri, 9 Oct 2026 14:23:29 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Restrict resets in
- top-level
-Message-ID: <20261009-holistic-warping-puffin-3b92fe-mkl@pengutronix.de>
-References: <20261001060825.53335-2-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FZmRbA/B"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=nW+t
+	tAH1HDFjgIqrMjZ/WFb/2ac1TN0rjknDAUOkX5c=; b=FZmRbA/BD40qOxoA9pPe
+	Qngh35M8bzkQb7zCvP23EX88KCYbL8uvNPVxcaYV9UL8YfKHOuwBlZ7S2ZF2jfqh
+	/OCRESN5abnUz4ayTt5Un5tjMWqjy+E5jDF2N1vwsj/bYcD8uLixE4YXrWnuNTC4
+	FyZpO5Ow8K4xlcl6w+YdCAto699D5edXaDn622m3vGSpNS+btU+MwSp8sogidOp6
+	6ykr13NqlSCYbmpO54PN68vD/xk57XFwMHk5rbvssh/OpWwYYfazIZzFhs8fhHHU
+	WsokddYKGT9zB4ovcPxN4tYw0W96n/Nyp+vbCJJ7NV2AVLgK6yuaIUoy9ueW0sY7
+	ww==
+Received: (qmail 1205793 invoked from network); 9 Oct 2026 15:38:05 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Oct 2026 15:38:05 +0200
+X-UD-Smtp-Session: l3s3148p1@V1NGdWhdPu3Desiu
+Date: Fri, 9 Oct 2026 15:38:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Koichiro Den <den@valinux.co.jp>, Frank Li <Frank.li@oss.nxp.com>,
+	linux-renesas-soc@vger.kernel.org, Frank Li <Frank.Li@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	dmaengine@vger.kernel.org
+Subject: Re: [PATCH 2/3] dmaengine: rcar-dmac: Add missing
+ dma_descriptor_unmap()
+Message-ID: <asjuOagHYZUsgg7D@shikoro>
+References: <20260917071208.36888-1-wsa+renesas@sang-engineering.com>
+ <20260917071208.36888-3-wsa+renesas@sang-engineering.com>
+ <aqwXwOiPgRDUQfp_@SMW015318>
+ <3odvtlxs62ulw4obrzfy3xlf74k4wltjkj6k4axsmdx3hnyo3a@rx2pm422eozp>
+ <arkPcxePb1G1vyZt@shikoro>
+ <arkV-ru3aNXDFawM@shikoro>
+ <ezlwzpaq54573ewlofeep3zqqajj7ycpanv24ogujtm3alc23l@ehq5obt3bnfn>
+ <asizUWUuEdkyKodN@parshuram>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -84,47 +56,62 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iisb6fhlj2ggl6pj"
+	protocol="application/pgp-signature"; boundary="OuIWNwfBYmB2fg6C"
 Content-Disposition: inline
-In-Reply-To: <20261001060825.53335-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <asizUWUuEdkyKodN@parshuram>
 
-
---iisb6fhlj2ggl6pj
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--OuIWNwfBYmB2fg6C
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] dt-bindings: can: renesas,rcar-canfd: Restrict resets in
- top-level
-MIME-Version: 1.0
 
-On 01.10.2026 08:08:26, Krzysztof Kozlowski wrote:
-> Properties varying per variant of the device should still have the
-> broadest constraints set in the top level, so add such for the "resets".
-> Since top-level part says "reset-names" cannot accept one item, disallow
-> it for the two variants which do not use it in practice.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Applied to linux-can-next.
+> > > This is easy to fix. If we can agree on switching unmapping before
+> > > cookie completion, I can update this patch and then send a series to =
+fix
+> > > other drivers, too.
+> >=20
+> > I agree with changing {cookie -> unmap}** to {unmap -> cookie} in this =
+patch.
+> > It looks like an improvement, I don't see any obvious downside to doing=
+ so.
+> >=20
+> > Many drivers do {cookie -> unmap}, so it may be worth making the same c=
+hange
+> > there too. I haven't found a specific reason for that order in the hist=
+ory I
+> > checked, but I'd also like to hear Frank's thoughts.
+>=20
+> I cna chime in. I think Shashiko is correct here. We should ideally
+> unmap first and then call complete. This would ensure anyone seeing the
+> completion would get the right data buffer and chances of stale data are
+> eliminated.
+>=20
+> So Wolfram, can you please reverse the order.
+> Also, lets document this.
 
-Thanks,
-Marc
+Thanks for chiming in, Vinod. It seems we have consensus now, so I will
+work on such a series next week. Thank you, everyone!
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
---iisb6fhlj2ggl6pj
-Content-Type: application/pgp-signature; name="signature.asc"
+--OuIWNwfBYmB2fg6C
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCasjcvwAKCRDMOmT6rpmt
-0pG1APwPttD1RcoVGSyWM1sNX7bucXyxzpxQdlZFDug/BFTkIwEAv11b5f8V9HEj
-FQAl1XBOu9750fpX58+T0JO/xaWgfgQ=
-=LcM7
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrI7jkACgkQFA3kzBSg
+KbZhWQ/9G+AZEIswluUtbWdW87IO4KmZ786FAgT89CkE1KqJe7xsRjnr1SYgBTvG
+3K9AdPwHyBFdNOS3d03Yr6+44fjdIXoAVT29TAw7DLuAqA//223afMGzfgUb7fWR
+S2yAdwjO9dIuYvPUIGwra8YEVCtTnTzqSwbGbZ+lqvDSWNap3rZESet3K+lKnTi1
+rmqEqEhhtql/6XQOKfRlta6X2xSXJQwZDDVpi/gxG5PmsuhXJ55uHIW81aojFDLo
+UBQAY0inosiQxqLf3S+kgJ1v0yGmOTkqh6Twm5ZW3qx/IJtjvY7z/+5Eg/YUyILo
+J4sr+siJ940F1sRLLpNm/ZfX9brRuCw1I6bx7V8n4eJPtdZyJMrLQj7lFXRr4E6u
+ZjDprA6Xxri6olYh0/7rp/6zHS0O3yRJ1hjEiyIQLXvy4qmhP+otAUJMwA2k0alm
+pqQ2cU+CqqibQ0Rej9BpaTQ3RMUSRiafxH6xLpxRr14kELy5+0AnCU+0WtYmcY5J
+A4PTSmjcqSdSuEiOdTE0yaiLhx5A83rbDoe+gSa5l5bdb8hDhagDI6jb0HSiOxrh
+c/2ZWe8BrWXnheMYLWcAgJFXpbkKU35ZOgspDHBxQBe2I98/wSuCkLrdsEfgu8sT
+g89zrcIkJbaV775rJCMrz5sZU6U2mni7Cq7KFiH7g/HE5WhZlN8=
+=m/wG
 -----END PGP SIGNATURE-----
 
---iisb6fhlj2ggl6pj--
+--OuIWNwfBYmB2fg6C--
