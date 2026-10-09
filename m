@@ -1,122 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74AA361651;
-	Fri,  9 Oct 2026 15:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E862327C162
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Oct 2026 16:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791560213; cv=none; b=Oyjt+cWyzR3A16+byfZyLdLKwdxRwPYIRVBEgOJt9N0b+rEx1CjD3ruhychHbnDhnHr4cw5SMddqfxtMgb9PMYybmhxkeixPiMDvQ4daj1KXTvI+wOVSSCjH8yR9DxZ+9+A+d9RXUvXqZb+s4yGhP2TqrazNpwkowRGQOa62ydw=
+	t=1791565041; cv=none; b=SAMxtFccj8N4MJvsata1X83wj1eYuD/qzzQtX4prNyTYMYJqREPfg+53mMsNNY9k9d95m+cQ40oDJZNarJ2RtlhSyXaZmPQ20Hnsx30vewOl4Uf13/aMkSlXBZeTFrlVQs/gcu8VfLhcyuMS/toIi0x3HcLN0Xoa2vnPR3iVOYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791560213; c=relaxed/simple;
-	bh=84hAe/1TSuKK66QqhSZq5idGiTsPqshLum2RSxTO+RE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6/tB0hqw9ESlWzWXS6eHWog5rr3EDdMxKHMr9YmpxfPzOo6OFLjS+XeDtAtOLlbyt8bVUsCyByR3LMlob7xly3ylcrtUg8sXNWZ5wA7zzFqqrjqcq3o5ynePG5jAkhh3nEyi+tpbAbArnTJeXna5P5tTZbjVceMNpAacTPVbhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXHIK1/r; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791565041; c=relaxed/simple;
+	bh=K+cFqFZJ2e8EE3VQyV4cjNttyp1R6GBQS+4YkgEMi94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e0YX/7uw0uI5fEpbMwKLJZdoN+OTS15i+r44rW/ZdJ3kv3fxUlK4kt/FdXJx1FRX6EVojAjVjJXO1qb3+DO3wheDazDI+xGXWfFFoMBb8wDuWtHWcurya7qsg4cf3i/mC0IF62UsL6TnAl35+I2MzapBTwxKcOFlAqjjMDnCKZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0NMchFT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXHIK1/r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03D991F000FF;
-	Fri,  9 Oct 2026 15:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791560212;
-	bh=qEJJ+7mD4Baz1SpzT1AGFxKG4IHPQFBm1jwu2Ji5JI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lXHIK1/reBVeGnlsaBujeu/7RMEPkWbJe/SMH1OVqOCq2Ud4LFiMx9eeXAxmKI2/j
-	 Y7o5bxgp+2EhsNGgg3VdYYfFC+JfLUufUmRSVUvyCMnlZRvjqvd+6VAWTiTDOyz/mB
-	 zwzothjRfR6Ee+KzTSp28t7mKFw63nIXMG78+zzUNz+EIDd+UmB4Nv4RLj4goJxEKQ
-	 kVl3I8TQx/Tars23dqUT4DTrMN7z3L6QPSJ13Y2qCFNFBrcanAh3kw3Zui51frsSPD
-	 FHljlBVJf1p7a7tnfQP09iQPr2yHxypWocM7dakpt6YIvkw1JUnY0+/GUGEuz/q10D
-	 ccVwz0il9hUng==
-Date: Fri, 9 Oct 2026 16:36:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0NMchFT"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a1698ea378so508335e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Oct 2026 09:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791565038; x=1792169838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2Ga0/K0vP0EjNnh03yqFX4Maz5FD9gKWYoFQtyD/6jI=;
+        b=H0NMchFTQccCGInVcCCDKBaif6is0tYRdR70pb+4m8I89T18T+OWqqTgrh6oRJDO5e
+         RSzbGN8BZXm1xmOK1eXNdcmAsCTO2ad1I6K8OsuG36ekm71YgydxsVJD+YDyRlAjFmYK
+         zhOVGh50ZEn+Y+Gn7aJaFJWhU7qfhSnYn0a+BOiUu8MWCrl3yzzWfja2PRlG38Rvh1Yx
+         oNq5PAos2Zzgajogn6g+LlxQewe7wYGH8ERNaIWAjgeiSkID9tZSyJTJBCQH7nKj9OT2
+         eLfwghWUvbnMi59OKX8sv3SBc+UWv30Vx78L7u4tz+mg7lrBJFA3R/6rUEyAsutcTVnC
+         qrKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791565038; x=1792169838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=2Ga0/K0vP0EjNnh03yqFX4Maz5FD9gKWYoFQtyD/6jI=;
+        b=PuE6BsjwINLPCiq58HlDQ4+W3Y5yMhKrhsQqCA+IE1CG8fApuSZio+xRheW/7uf6n5
+         kK2P0LOhcZeANzmDH3jrOiDc3aooTbuQMIOFnBLM3cxGd8oKrgBcww/MfxfVbezzHPfX
+         kakPI2YT9lf3JcKH8Wa8RZFFOgYWZpe8lQdVQ4yzXSODsQh44EYlVIg0lXpSdBrPbGoP
+         9yFz4Gilti20oSu1/d0zPTeAXFqL/yGiza1lQdnpzpwJZojuM7SJc1Egqm2wdap0KpZ3
+         DGrTqULKgJgBfQl+vaqSblMS2VIlPkAGkYPyGzG8J5si4doEC5K45j16Jz8mjlZkx0sG
+         OreA==
+X-Forwarded-Encrypted: i=1; AKwUvBw2hd431pJw6zmrTgl/o99FOB0kY9Q9epL3LakmVAWOC8RYmgRVtIDxw94/QQsJfo+nXZKFPATyIaD8oR2fQPjwyQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nArycqSvKue+sY+Yp5cGUK/WJTEniS381iCYQ5LXNQsFqC6LjR
+	F6LGbPI9Qcf5kLPjehT92xOmzl1Y+4A4wot1SECIoiD2eEJbOpbJwE1L
+X-Gm-Gg: AYBFou1bfWFSggnBwiAnLNRnxwZOBx60SSRa1u1Voud4rQQdgtyad8ZqdB6VXpyVhIH
+	4I612TamNcpIAAecm5Uk1LpGrRMTDTZwgHgWPjzqqwSp0go42vguS9riZu30DDgAcNtiwVZUVBB
+	W/429v2LamShY7y3cuIsyhQwZyujMiVQ2sKIs/10Rl6YMDgeS7mBYCDVieamR9kLIR3f7nkTjf9
+	mKKq5QIZQ7QUrdH1CY37YHJ0ME6JaJyVAG/LdBKiRI15wYVj3JJBOPToOKf24hW9+Htk1+Kerti
+	As73OhL4E3PlVDbnpWUfIy86vO4sbSxIKZqkN9k5BQmGoCT0OEve0Qd8Jpdkpg85nXsmhDq6UEq
+	Es5CT8lZBURh87lunYVODDGnXYMmSDFCAdY3FSiNWH36RoOmOtnASHdBXL4ttLfJEqkUIzPIcli
+	q6mi75viIa8Rip7NdXgbk49Qw9HEOSLL/XxDiJz2uajriRYyvrYGNfrxSRJmxnPs8VigHuB9tmf
+	gxbeJLR//OBf9THdyEAHuFs6zCtVRShG19NKBxjIdd+s3uwczVnRyx8FGMq2mGD2hqZHGvficwc
+	9Wa9h+T9OQTIAj7ySw==
+X-Received: by 2002:a05:600c:6989:b0:49e:817a:ca7 with SMTP id 5b1f17b1804b1-4a18e49da65mr45770305e9.8.1791565037785;
+        Fri, 09 Oct 2026 09:57:17 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:e93d:161b:5ff8:cb57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf1358asm70667395e9.4.2026.10.09.09.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Oct 2026 09:57:17 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: rtc: rzn1: add resets property
-Message-ID: <20261009-7b4b54034fafb7ad60ea917d@squawk>
-References: <20261008201953.34307-2-wsa+renesas@sang-engineering.com>
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/5] Add ADC power sequencing support for RZ/V2H(P) and RZ/V2N SoCs
+Date: Fri,  9 Oct 2026 17:57:05 +0100
+Message-ID: <20261009165710.1320233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FWfzAmcVSQzNSq7T"
-Content-Disposition: inline
-In-Reply-To: <20261008201953.34307-2-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 
---FWfzAmcVSQzNSq7T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Oct 08, 2026 at 10:16:53PM +0200, Wolfram Sang wrote:
-> The RTC on R-Car X5H does have a reset unlike the other versions.
->=20
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> Passes both DT checks. Kind of fixes 3b3fdc9fd40d ("dt-bindings: rtc:
-> rzn1: add R-Car X5H support") in -next, but we don't use Fixes: for
-> bindings, or?
+Hi all,
 
-If you want, make it more obvious IMO that this is a correction.
+This patch series adds support for ADC power sequencing on the RZ/V2H(P)
+and RZ/V2N SoCs. It introduces per-SoC probe functions for the
+renesas-pwrrdy power sequencer driver and ensures that the necessary
+Kconfig options are selected for these SoCs.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Note, the ADC driver and binding patches have been posted separately.
 
->=20
->  .../devicetree/bindings/rtc/renesas,rzn1-rtc.yaml          | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml =
-b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-> index b448725671ec..5a869e6c0ae7 100644
-> --- a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-> @@ -51,6 +51,9 @@ properties:
->    power-domains:
->      maxItems: 1
-> =20
-> +  resets:
-> +    maxItems: 1
-> +
->  required:
->    - compatible
->    - reg
-> @@ -85,7 +88,11 @@ allOf:
->        properties:
->          interrupts: false
->          interrupt-names: false
-> +      required:
-> +        - resets
->      else:
-> +      properties:
-> +        resets: false
->        required:
->          - interrupts
->          - interrupt-names
-> --=20
-> 2.53.0
->=20
+Merge strategy:
+option #1:
+ - Once the pwrseq-renesas-pwrrdy driver is merged in only then
+   the sysc driver can be merged via renesas tree.
+option #2:
+ - Merge all the patches via renesas tree.
 
---FWfzAmcVSQzNSq7T
-Content-Type: application/pgp-signature; name=signature.asc
+v1->v2:
+- Passed targets and match pointer info as part of OF data
+  instead of prober pointer to keep probe common.
 
------BEGIN PGP SIGNATURE-----
+v1: https://lore.kernel.org/all/20260929122407.219448-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaskKCwAKCRB4tDGHoIJi
-0q+hAP9dLmw044mVRadnXQzaTwUaybi6fjTRy4wkphrhQ+x5zAD8DrhowHwPYqOj
-W+ilXoW9KA9RS6akP20Z8eR8OaqVMgM=
-=Ajk1
------END PGP SIGNATURE-----
+Cheers,
+Prabhakar
 
---FWfzAmcVSQzNSq7T--
+Lad Prabhakar (5):
+  soc: renesas: rz-sysc: Make power sequencer auxiliary device name SoC
+    specific
+  soc: renesas: r9a09g05[67]-sys: Instantiate power sequencer auxiliary
+    device
+  power: sequencing: renesas-pwrrdy: Support SoC-specific probe
+    configuration
+  power: sequencing: renesas-pwrrdy: Add RZ/V2H(P) and RZ/V2N A/D
+    converter support
+  soc: renesas: Kconfig: Select POWER_SEQUENCING_RENESAS_PWRRDY for
+    RZ/V2H and RZ/V2N
+
+ .../power/sequencing/pwrseq-renesas-pwrrdy.c  | 91 ++++++++++++++++++-
+ drivers/soc/renesas/Kconfig                   |  4 +
+ drivers/soc/renesas/r9a08g046-sysc.c          |  1 +
+ drivers/soc/renesas/r9a09g056-sys.c           |  2 +
+ drivers/soc/renesas/r9a09g057-sys.c           |  2 +
+ drivers/soc/renesas/rz-sysc.c                 |  6 +-
+ drivers/soc/renesas/rz-sysc.h                 |  2 +
+ 7 files changed, 103 insertions(+), 5 deletions(-)
+
+-- 
+2.55.0
+
