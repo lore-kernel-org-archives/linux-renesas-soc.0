@@ -1,65 +1,65 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA65651A140
-	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Oct 2026 18:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B59251AEDF
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  9 Oct 2026 18:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791571301; cv=none; b=asHH364Vuvah3Sn1DnLr+92TStTt5qfuoKIZkOyv895fx6Tej7t2CqQFOd5FGuzqTNaY/tAHbe+XXSncMKpf3R8/HotvErAXefWuEZUsBKV7c6Ec9vPBpJcau9VYSdIpGY30lGyOeK/7W2I1OE81N8K/wVMkc+iSYHPG4G/QbSs=
+	t=1791571302; cv=none; b=E9A0PM94g43uMOz5IhU6l0Isy8yFWRzZ/KcGlQ7J/p/OAyWfMzsmOPVZrjepdcoaes90pBks1FqVpEzKhI9kUzESP1iHexwbVMoPCvSECLo/O/RkHLOh9j2UyTcoUJeJLt2EghISLrkjb9WRgdumjqSSG7L4iWR9Idpk2FK/828=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791571301; c=relaxed/simple;
-	bh=VZ9MFlUOyfdQk5w4IWgVhdMOncD+otSh5cbz9FDpze8=;
+	s=arc-20240116; t=1791571302; c=relaxed/simple;
+	bh=m2hW86t73Z61y1E4Qe5OIGQnu8oxYi3FHfoxX/depZk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FIhOnJ44B4U4iYRSYaLXaayq0SgznMOXYcWK+4NpNbA00sxBz0Vj7DuXz777DPBvR6ngiu7Abw1TfdFe1OhEavE3u0KZxJocAXVrNG8OT50XjTKFzm622hHbC6DgkPSZ++LnnKaVTN8IkCP/zlDqGgOZk7cAAxaOalTpeV3pO6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4puQm4+; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=pZFQF3ZsE3wWd4D2OpW0vwi/hNix6P2SNpuRsH+/XmIV63WAQvfZ1IRiSsahVwRtr7P8qSzycA3tSeAwdbNH3l2I6Ejmruqh0dAt2beFnbbEchWI1Y33e6XU3YaPP2ZuVcLQBwa85fiEBUI9al2PoTCGY6eFdM26Xyk9y6ooifQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9gVdX9r; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4puQm4+"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a018dc1f98so1143275e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Oct 2026 11:41:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9gVdX9r"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a1923f15afso1345765e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Oct 2026 11:41:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791571292; x=1792176092; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791571294; x=1792176094; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=tQ/rPgu28+IKGXoI2cnUBCzKXJ/3423PKk5SsfjhJXA=;
-        b=h4puQm4+0NQ5ch9J7j1VaIKCWI4rnFkCQR+e4eV+ebKIs0UstTfUctK2DEdmcU4JlV
-         CxIBw6t64yqa8zbv3D93GCP2qa6I3tLXwV2QLvlQ6vNPaG5dLGu6slwBGCz91WYYlDxP
-         SbCfU3GvcRWd0Yxp2VxVnTsYOX6dhNaAl5fjd6Iybs4f7y2oJzt+ma7/pt/Cf7BTyDtW
-         aVuRTe1z5O0Avl95hKqd+wot9r0vT6cxTZ0t1P7mBXeMaf4FPbhG6YjvvMl2L7EDlMXg
-         GvOm//RqBQtO+13mDP/XEp/XwFA22FjOPfsFTehR5t8xWU/9RDI9m6D6y0CZbPmlyeta
-         xreg==
+        bh=tW9nxfGnLz8J5bzFvumGC/5zr3/WbJDa5A5l/9bJW1c=;
+        b=V9gVdX9rbLwfx31mTRZ3kya0qU7XR098v7EAGl8PsSteqrN8lbJTlTTRtr+cWgWJwQ
+         wnyz+Tzhb5M/AL++Uxfhb8srY9MXOlIQaAr9jNcus6qIkGHM14+F6t3ICT1jN6pkhYNz
+         HYuMrH8lspCMrCV8zzilfDSwGtss74Qr3jG3m/SJ8edsNp9feBIoh3jOgyIsTBIXOQNl
+         IN6keZGTEBrdqM9WCLeM5W2OZRM84nIsezDWG2icXlDiUvEoKTRsF5gnW04hS1MenWE7
+         KhHdFCcA4jCa19k3B9NG+u4pygxecfTJljjop+O6Y3Jw9n14oPoYVTfzthv96NeVQv3K
+         awBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791571292; x=1792176092;
+        d=1e100.net; s=20260707; t=1791571294; x=1792176094;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=tQ/rPgu28+IKGXoI2cnUBCzKXJ/3423PKk5SsfjhJXA=;
-        b=l/F/7T2G9iRu832+s9Fx5tmnukvmtlEbA9N4msXV2xE/IKlYm9/H1Ei5s9hOEXg1ke
-         NLPjtc5+GOKU/Ww+7YUIyBfS3lI887NiaLwRZ6c+Av+kvahgRo6efpFGyVtmeCYSdddE
-         ZOUzVjMBpgUCaJnZcovrog5iSeQsUdti/eQOQ56rupRxN4gGcSr4yo3Nhr6WEyOJ5fpX
-         byPFH9lh7Og8QLTM3+DrVubHgBUhTyC5n9CPhCQuDAlzS6FQlbiMqRi40JLbZxg3s1Kl
-         N41Nt19mRb19MwDGRV1LQT3ZFSVxq7c3z+cyQ0ivB3XjTWCPsXDz9xV+JeLZ9weT6Y6S
-         XWig==
-X-Forwarded-Encrypted: i=1; AKwUvBzOj/7KAJVtfPMSltUI1B45B7Q7y3bvJlLo51E17IwFu/8/A5y/PxN2UIiXW7EcoVcK1MIfa+l9PiiwKdKF3HK7Dw==@vger.kernel.org
-X-Gm-Message-State: AFuF++nhJfZeQwR5rJsWgff2GkSbkmgYgWdVfKMIFtQ/yhxbxdv9XrUZ
-	n/mnpTALRjeQefw/KCxqfkdbtjYu7I75cnjFcLLio9BNm2BmG41VLNk3
-X-Gm-Gg: AYBFou07QyAr0RUw1FtkD1Nw11wa6RExqqex/x0aBaNcpzWpdwz3CizZ4qqCXzijjz1
-	RTViMGRsSn+spmMaAXXjIwUSbV2UPGqGD2vhteHAAbWkTsWWtcFzXILYIV+1SBbRucPa1ep1D6H
-	PFhcHVoXd7krjlOkzRS5LS+ymTcWXgZjJIl3nt57FgSDUj6XevwDMfnedVrJaypwQADOhgkWQHK
-	JZCHRiOXQ5Or0lnS5Gb3qwFHYCidhgHr24h252TMv6S0594mJEY+YgebwwrSV0aWGR7Hpen0L5c
-	9H0Lb6nIT1/ltTU1NDX6/ZBh8F01zMGjq2qero9MWcANPLHx2UxyeeHAZ9fZwVDG1XUa6YSCkWh
-	Sjdscm+j4SeqvkxmqqKRyA42STM2JENL2ftA/fz2MAgaFsrKh6k3XQ8ABidrrZhZH+A7T+YUQ+k
-	77Qsf8/5DjB6QTGGCvYmC1A5J/simlxaynLcbihMm/ChuSoOIuwa9voUwiLDOG/p/QNFDaFzh90
-	u2kCL+YwJ3Uo3zUw9/V5yiF4W0h8nBBcICZMK6ka3SUoCwJ12+mmeDolRKq+SwEQDXDwUPN19pe
-	WVoUcxk2fRZA2S+/AA==
-X-Received: by 2002:a05:600c:3b1a:b0:49c:fa20:cbfd with SMTP id 5b1f17b1804b1-4a18e4b91f8mr52099645e9.20.1791571292496;
-        Fri, 09 Oct 2026 11:41:32 -0700 (PDT)
+        bh=tW9nxfGnLz8J5bzFvumGC/5zr3/WbJDa5A5l/9bJW1c=;
+        b=aCAcoDDfED9gJ+sPOPAzFZeEutZyTTBfHZsYAwk1uR979xZC8aQJrPBEAXxkNXyhx5
+         dABx1F7FzvJQ7LQGG5d4X4Zeieqh5mRFaPNNrciYLw/6O7TuzX4HAWM+XR1luIk4+j3f
+         k04FVaQ9hy/h6R0KbJSrVWE/VbofjzYKgzD+P6o3lIcZmbG2tOwSHq/NS0YxaiZ5Rms8
+         eE8X1fpFbFQGYY0uXRh4nghaJ5WJ2OOJnkI58v4awj+uKvQ4+YiJhmNJrPUzvDCzbPSK
+         VwuI3fRr1fXEyPBWzSEYD0d07vR5lWeHz7A76eRIpY6iFS61bgQvkdONsoLfzq1/sH4X
+         1nig==
+X-Forwarded-Encrypted: i=1; AKwUvBxpK4yB8xO19ZgnPnqotztohbqsIsDq6wv9PBIo/x5u1MSKPSnULXJtkArSVBgjyTxx5wMLnW/T1amkejV1Vi/KMg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nMZD8+lZPbzGrDsG4ifEtOCAWb91YdeWykFxEh80wdyHLTcc1v
+	YoOc8Ba9JMc/bMRN44djRr47BBQjNZ500tth8EgWClcbj26EXb7JmFlq
+X-Gm-Gg: AYBFou0nmOuDFOVYGCh+xmIf/N7NgNwMcw1b2Gu+dtp3N3+w044uDuuTdQaSGWFDHBe
+	cr0OXErBaq0W+GuCIMhZFFWKVUBpCHJtp8fwVulNupP05wojcWvNxGdNYPXF1dRWIvC5JlCf427
+	IpwK+tvtBpQBIkqf63voOVhOt8f0HTS1FkYIkz82210yHbsyJyylCOf3zTHWrI2QExbstxoj6nQ
+	moursmciUyTNjxFTro5klD65523mBwz4NpbprdeeNTY7qeQ47nZZI++VmSEwbzg321MBghg6bG7
+	iWUNE8y8of5PDt7pXfAFQe4M4Y4kjR0+SygeeKXKF2VRnTDrb/i9OhP8RkvA1sUzT9LcWG/VIqJ
+	IwGcjJvjklXcFgVXrr4u5bWbwbcd8jkwzLlZiXcBhc5h7xi/IGbQVg9w5cRjlMCGvdPo0/sUYDe
+	oKAIICmSZvodNPlavjd2QcjNm6PWxZg+GWnN3vgwge9RSmzNIuB3T+w2lGHYWmoVnhj5eQUeJjq
+	ys19mW1hslv8vn8xpZJ06wGJIFkRLtHczbEq8ZCMmA1t81WJMNwTsNwa7PtS2LD2H2J6ir5oDiL
+	6KneGRWn38zHeqQ6Aw==
+X-Received: by 2002:a05:600c:8b74:b0:4a0:2847:b6ee with SMTP id 5b1f17b1804b1-4a18e4fb8c1mr51194335e9.35.1791571294101;
+        Fri, 09 Oct 2026 11:41:34 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:e93d:161b:5ff8:cb57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18e4225f4sm91761705e9.0.2026.10.09.11.41.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18e4225f4sm91761705e9.0.2026.10.09.11.41.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 11:41:32 -0700 (PDT)
+        Fri, 09 Oct 2026 11:41:33 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
@@ -81,9 +81,9 @@ Cc: linux-iio@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 4/8] iio: adc: rzt2h: Add optional reset support
-Date: Fri,  9 Oct 2026 19:41:18 +0100
-Message-ID: <20261009184122.1378797-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 6/8] iio: adc: rzt2h: Prepare for SoCs with different ADC info
+Date: Fri,  9 Oct 2026 19:41:20 +0100
+Message-ID: <20261009184122.1378797-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -97,96 +97,50 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Prepare the driver for RZ/V2H(P), where the ADC has a module reset line
-that is not present on RZ/T2H.
+Prepare the driver for RZ/V2H(P) support, where the ADC supports 8-bit and
+12-bit conversion modes with channel configurations that differ from
+RZ/T2H.
 
-Assert the optional reset when the ADC is runtime-suspended and deassert it
-on runtime resume before performing calibration. Assert the reset again if
-calibration fails.
-
-Use a shared reset control to support SoCs such as RZ/V2N where the reset
-line is shared between multiple ADC instances.
+Allow each SoC to provide its own IIO info structure and use the
+chip-specific configuration when registering the IIO device.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v1->v2:
 - No change
 ---
- drivers/iio/adc/rzt2h_adc.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ drivers/iio/adc/rzt2h_adc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
-index 58e33fd0249c..62120d218515 100644
+index 9f027d524997..041566f3059d 100644
 --- a/drivers/iio/adc/rzt2h_adc.c
 +++ b/drivers/iio/adc/rzt2h_adc.c
-@@ -20,6 +20,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/property.h>
-+#include <linux/reset.h>
- #include <linux/time64.h>
- 
- #define RZT2H_ADCSR_REG			0x00
-@@ -91,6 +92,7 @@ struct rzt2h_adc {
- 	void __iomem *base;
- 	struct device *dev;
- 	const struct rzt2h_adc_chip_info *chip_info;
-+	struct reset_control *rstc;
- 
- 	phys_addr_t phys_base;
- 	struct rzt2h_adc_dma dma;
-@@ -710,6 +712,10 @@ static int rzt2h_adc_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, adc);
- 
-+	adc->rstc = devm_reset_control_get_optional_shared(dev, NULL);
-+	if (IS_ERR(adc->rstc))
-+		return PTR_ERR(adc->rstc);
-+
- 	ret = rzt2h_adc_parse_properties(adc);
- 	if (ret)
+@@ -68,6 +68,7 @@ struct rzt2h_adc;
+ struct rzt2h_adc_chip_info {
+ 	const struct iio_chan_spec *chan_template;
+ 	int (*sst_to_freq)(struct rzt2h_adc *adc, u8 sst);
++	const struct iio_info *info;
+ 	unsigned int num_channels;
+ 	u8 features;
+ };
+@@ -764,7 +765,7 @@ static int rzt2h_adc_probe(struct platform_device *pdev)
  		return ret;
-@@ -771,10 +777,22 @@ static const struct of_device_id rzt2h_adc_match[] = {
+ 
+ 	indio_dev->name = "rzt2h-adc";
+-	indio_dev->info = &rzt2h_adc_iio_info;
++	indio_dev->info = chip_info->info;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 	indio_dev->channels = adc->channels;
+ 	indio_dev->num_channels = adc->num_channels;
+@@ -779,6 +780,7 @@ static int rzt2h_adc_probe(struct platform_device *pdev)
+ static const struct rzt2h_adc_chip_info rzt2h_adc_info = {
+ 	.chan_template = &rzt2h_adc_chan_template,
+ 	.sst_to_freq = rzt2h_adc_sst_to_freq,
++	.info = &rzt2h_adc_iio_info,
+ 	.num_channels = 16,
+ 	.features = RZT2H_ADC_FEATURE_CALIBRATION | RZT2H_ADC_FEATURE_SAMPLE_STATE,
  };
- MODULE_DEVICE_TABLE(of, rzt2h_adc_match);
- 
-+static int rzt2h_adc_pm_runtime_suspend(struct device *dev)
-+{
-+	struct rzt2h_adc *adc = dev_get_drvdata(dev);
-+
-+	return reset_control_assert(adc->rstc);
-+}
-+
- static int rzt2h_adc_pm_runtime_resume(struct device *dev)
- {
- 	struct rzt2h_adc *adc = dev_get_drvdata(dev);
- 	const struct rzt2h_adc_chip_info *chip_info = adc->chip_info;
-+	int ret;
-+
-+	ret = reset_control_deassert(adc->rstc);
-+	if (ret)
-+		return ret;
- 
- 	if (!(chip_info->features & RZT2H_ADC_FEATURE_CALIBRATION))
- 		return 0;
-@@ -786,11 +804,15 @@ static int rzt2h_adc_pm_runtime_resume(struct device *dev)
- 	 */
- 	fsleep(1);
- 
--	return rzt2h_adc_calibrate(adc);
-+	ret = rzt2h_adc_calibrate(adc);
-+	if (ret)
-+		reset_control_assert(adc->rstc);
-+
-+	return ret;
- }
- 
- static const struct dev_pm_ops rzt2h_adc_pm_ops = {
--	RUNTIME_PM_OPS(NULL, rzt2h_adc_pm_runtime_resume, NULL)
-+	RUNTIME_PM_OPS(rzt2h_adc_pm_runtime_suspend, rzt2h_adc_pm_runtime_resume, NULL)
- };
- 
- static struct platform_driver rzt2h_adc_driver = {
 -- 
 2.55.0
 
