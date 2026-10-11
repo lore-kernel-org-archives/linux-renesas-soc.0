@@ -1,207 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2159455612;
-	Sun, 11 Oct 2026 19:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2FD36F905
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 11 Oct 2026 21:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791747910; cv=none; b=ueCaQwIvh8Exx5q2w6d+eD2iULG6Mpxhc5f0Sq0ldofg4+I/m+X0jKMfvdpH/qWsU1sn2dEBRpl/S2ZiHLu3dJ+xuu85njhf5ZRWHxLD884DuLXz5rkTY1iEWU1xjbpEM776XR9Wbg4ydKlVSW4piJ1AmtkXh1uMtUtmNYqxeXs=
+	t=1791755095; cv=none; b=FOuaLfYd8LOwgjo1QWhQeUHp73Vx3DDu4UZJxJQ/Tcw8Npxfy0l4WCY9OTx5avPo+HDCDgliDwWyy8Rs7A5ARUl6acUeZtwvwyzx0iDConzx9c1eGPxIcTX9/7kmZ4CXlXAaKcTfy+MVepK5Z0qYpTGWcu21xmQppM2QKTz1x0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791747910; c=relaxed/simple;
-	bh=FPdpd8gT29Gh0zUNwmreQcIfpmq56TfSfjT+2tbPxa0=;
-	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JKCW1TCKQ/cQFsK/fG3HkHiyKRAK30Xz6b09NMFYMx5lFqpJBEbPJ8hK8qY+u7lrCMqXaKZR/xwETQIj18JAFbwi8s7vlhOSATGnCCsMQzHSrHhXsa9kDYxaQ0+4AiyjsGRKpvY1WYXQNiPHj1tHFAv7Vyppy9pPc7g8Cej6DqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExFVIFE2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791755095; c=relaxed/simple;
+	bh=nGW8HEyQNRFx5Jts5KN+whE3Only3xOK9HiWcXxqxFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KLnwsozlHkvh4tKyt3BOaaeKDP856N+tejUYro4mGXPXy204yyOF1RNnCQcCtSbe9YAwIvhWFouEs/xY+qYVKdKRTcFZVLUha50SYqhuVirBP3QigNe13bgopJZLTJzIGufj89sTL3oTxp7yKfHY/fEInkNf52XuF4d1f5fjycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dj/1kwSZ; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExFVIFE2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 797401F0089B;
-	Sun, 11 Oct 2026 19:45:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791747901;
-	bh=gSnuH3Zg6RqB1DjI+yADtKmzw9T8Yvd967cSZbfGAzw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=ExFVIFE2EmlnUwD2LAH+ZI6sqT/DSZJSGrw6CIGFOBE8Tk+d96aHm55V9wz2UroZo
-	 ySDWoHLnXdSpmrRtwYpx1U0etk7+7Ogxrs6l3mozzpqBVafapHJLhMoRh2RXRYZ/HN
-	 8CUTJpz8F+chIWjbhbtvvr2siXTIntyyqTKOeqnBLwW2d7h+ohZTuU4e9NnlcaTV30
-	 I6qnP67tm4zp/6LK1mq9RiM6td+d9QhhZ/UHMCcJv3sNgVVvsH1VnvTSolVljYBC/S
-	 IRRxzQwViz7MMtTjIuUNN2YyF5md9ToaRSYVTEROrptFi00uFgB7/ctWwoaMNiKcyE
-	 p5qTl9EHHt5wA==
-Subject:
- Re: [PATCH net-next v7 3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-From: netdev-bot+sashiko@kernel.org
-To: niklas.soderlund+renesas@ragnatech.se
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, richardcochran@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
- sergei.shtylyov@gmail.com, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Date: Sun, 11 Oct 2026 19:44:59 +0000
-Message-ID: <179174789977.434549.2392596985462710897@kernel.org>
-In-Reply-To: <20261007185920.4042783-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20261007185920.4042783-4-niklas.soderlund+renesas@ragnatech.se>
-X-sashiko-severity: High
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dj/1kwSZ"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-5352a876d5aso18690671cf.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 11 Oct 2026 14:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791755092; x=1792359892; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hCERBiOuWhVjqN4P+s7CfX7jNoo06JkyXxoF6Ee2bns=;
+        b=dj/1kwSZcuMyHm99ZJZb6Gik7txUFk5Yes7z1zrn00t940wqhSBG9S9tIowqhwv9OA
+         My2Nbgi3o00AIvCx8p084FdXQ73zi+FBYEoN6iPdOG+TIXRhM8jovLaTvHKjtoQDV+E0
+         fGP4Nkm80cdzfhgP9bAduO4wveq2arvQnvabuOn3qygSj+ontiQuC0KIyjnyXKt9PP5y
+         EYPa/SK46OvlhlLNy8+cDleQwNc0vLVG8pLhQZRKqjIFmL8CLHy7s2IrJNj57UKZX2i2
+         wYG/LkhUzC/8xeUIsUbO6jAHD+O5EbRyzxC707e74/7Y9N7z2k0kfiEZWp6yJ8pwC7tk
+         HzjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791755092; x=1792359892;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=hCERBiOuWhVjqN4P+s7CfX7jNoo06JkyXxoF6Ee2bns=;
+        b=Ojxvu9sj87/g/roLvRxuzHUWHS2X56sVF6qhP5lGCr7Hhk1Q5Lrm8AaB4BeJZjCvuk
+         /CwoFtbKQlI6zrbvGxnieOBO2O0eXVfvZY4MMDhQjVI31Yo1FsGuwjYthWnKEBi5/lLh
+         EoPuTFnjbMKdV8SqjeK8EDqp0leWNoiMQZxV0AaOotR9pvOrsScWgWOA3z/3Pdrf33ng
+         0iokJjuv04uuIZInDDaA1CpMIPXMDFJWYLBItbyFTmtX9N8yZwfOo46+cz7p7pBNeqDk
+         K6ll+OZ1NOmgIlBKw+oLTujDj17SOJRJcUZy07FUwXuaIKqcTqRCMF8V4E3g+tKl24nI
+         nVyw==
+X-Forwarded-Encrypted: i=1; AKwUvBziarTHkCaTeV4UBuJ2QY8Y6VD1syRizHonYM7fpwm1pNEaMSION/v4jsgI7ClJucE1i97L4z1ce87dKAkeB7KcUQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKVROdvz2n9wXlwhPnuP7wzQbzK+IBkEI0647TH58S1kshwZ5yq
+	f4TOLiVwsh4XNdHHTPMGXTsLGphcKCCiysMw1ZErzND3bRE8kyYMfFI=
+X-Gm-Gg: AYBFou0nEIGnqoiKUjAK+eyCa/212qseSVoe19nUvfLHJAWrmiD2i04/NG7LveMCvUH
+	2+NVFKxVsvyOWyCdeZgYcnCKIfV1pO0A08AHtl0xMuHOodnNbkh2FIj1VGO+cIwSaDtP7J1+LGe
+	OaC9SrnkrNrZOG1DgMVTRWSr0c5OmCf/zVaQq2ZlGBVwdz6H6ZplAv6IB5cKLNIgF92q4sSJHz4
+	ClaEnNvhD8vR2Qm6WXcVLZr/YwbC93WEGekW1eEMwHEPpznTponGz9MTWInKYTy1xmhS9lXn00t
+	wDw9Cz6z02XIugXrvGxjsd81iKkr30GRqfJC2RvVnJj1wjpQhCqw0bmx1oOVMP74CQGMRCRfHAu
+	XtJolORHzfpn/oyTqAjcsMZG2y4/6WSnJXBCq4pRwZTX7F6mmqzpIgu18au+1XXNn/hV0keOMs8
+	F4EN8Z48cEhNn9waGZwBlm7FkqEq59BZ1TQMy+Cqvtbn/Bm8onCxrAFp7MEPKsLYG6uCACVn5ix
+	S83KbcD4RYUR/49D0ZA0vovYtH3GzfxXR6iFRTc5hzF9UE5ZYjEM4p0Y7M8Tmy1C5SIshjf17pX
+	foB1i/MJeybK1X/ZXvAAy/qV16IS
+X-Received: by 2002:a05:622a:4d88:b0:535:a5fb:6447 with SMTP id d75a77b69052e-535a5fb692bmr127458581cf.65.1791755091758;
+        Sun, 11 Oct 2026 14:44:51 -0700 (PDT)
+Received: from i4-gl-tmk5904-1.ad.psu.edu ([130.203.156.90])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5359b7ecccdsm65811501cf.30.2026.10.11.14.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Oct 2026 14:44:51 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Niklas =?utf-8?q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ijae Kim <ae878000@gmail.com>,
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH] media: rcar-isp: release the core interrupt before destroying RPPX1
+Date: Sun, 11 Oct 2026 17:44:48 -0400
+Message-ID: <20261011214448.2043581-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issue(s) to consider.
+risp_core_irq() accesses the RPPX1 object before taking core->lock. The
+interrupt is device managed, whereas risp_core_remove() explicitly
+destroys RPPX1 before device-managed cleanup runs. Stopping the video
+queues does not join an interrupt handler that has already started.
 
-Critical: 0 · High: 1 · Medium: 1 · Low: 0 (1)
+Release the core interrupt after stopping the I/O nodes and before
+unregistering the V4L2 device or destroying RPPX1. Request it only after
+RPPX1, the subdevice and the handler's locks have been initialized. This
+also keeps the interrupt out of probe error paths that free RPPX1.
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
+Only treat -ENODEV as an absent optional core when core->base is NULL.
+Resource probe failures clear that pointer, whereas failures after resource
+setup leave it set. An IRQ request returning -ENODEV must therefore fail
+the parent probe after the core has unwound its resources, instead of
+allowing removal to destroy RPPX1 and put the VSP-X device again.
 
-- [High] dts: shared reset line between gptp and tsn0 causes probe
-  failure and state corruption
-- [Medium] The new `gptp: ptp@e6449000` node in r8a779g0.dtsi claims `reg
-  = <0 0xe6449000 0 0x500>`, plus CPG clock 2723 and CPG reset 2723.
+This issue was found by static analysis.
 
-Pre-existing issues:
-- [Low] Documentation/devicetree/bindings/ptp/renesas,rcar-gen4-gptp.yaml
-  lists `resets` as required, and the new r8a779g0 node supplies `resets…
+Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
+Assisted-by: LLM
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+Compile-tested with Clang 22.1.2, W=1 (arm64). No runtime testing.
 
---
+ drivers/media/platform/renesas/rcar-isp/core.c      | 13 +++++++++----
+ drivers/media/platform/renesas/rcar-isp/csisp.c     |  2 ++
+ drivers/media/platform/renesas/rcar-isp/risp-core.h |  2 ++
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
-arm64: dts: renesas: r8a779g0: Add gPTP node
-
-This adds a disabled gPTP node at 0xe6449000 to the R-Car V4H (r8a779g0)
-SoC dtsi. The node uses CPG module clock and reset 2723 and the always-on
-power domain. The commit message says the gPTP module is shared between
-the RAVB and RTSN Ethernet devices.
-
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> index 8a291447b9045..7430b663cf92e 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> @@ -606,6 +606,15 @@ mfis: system-controller@e6260000 {
->  			status = "disabled";
->  		};
->  
-> +		gptp: ptp@e6449000 {
-> +			compatible = "renesas,r8a779g0-gptp", "renesas,rcar-gen4-gptp";
-> +			reg = <0 0xe6449000 0 0x500>;
-
-[Severity: Medium]
-
-Does this window overlap with the existing tsn0 node? The tsn0 node just
-below is not changed by this patch. It still claims the same range as its
-second reg entry and uses the same clock and reset:
-
-	tsn0: ethernet@e6460000 {
-		...
-		reg = <0 0xe6460000 0 0x7000>,
-		      <0 0xe6449000 0 0x500>;
-		reg-names = "tsnes", "gptp";
-		...
-		clocks = <&cpg CPG_MOD 2723>;
-		...
-		resets = <&cpg 2723>;
-
-Both drivers request this region exclusively. rtsn_probe() in
-drivers/net/ethernet/renesas/rtsn.c does:
-
-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp");
-	...
-	ptpaddr = devm_ioremap_resource(&pdev->dev, res);
-
-It then registers its own PHC through rcar_gen4_ptp_register().
-
-ptp_rcar_gen4_probe() in drivers/ptp/ptp_rcar_gen4.c does:
-
-	priv->base = devm_platform_ioremap_resource(pdev, 0);
-
-Both paths go through devm_request_mem_region(), so whichever driver
-probes second fails with -EBUSY.
-
-white-hawk-single.dtsi already enables tsn0. Suppose a V4H board like that
-also enables &gptp so RAVB can reference it through ptp-timer in
-ravb_gen4_ptp_probe(). Would one of the two devices then fail to probe?
-The gptp node comes first in DT order, so RTSN would usually be the one
-that fails, and the TSN Ethernet port would be lost.
-
-The node is disabled and no board enables it yet, so nothing breaks at
-this commit.
-
-The commit message says:
-
-  The gPTP module is shared between the RAVB and RTSN Ethernet devices on
-  the SoC.
-
-RTSN does not seem to be converted to use the shared node, though. It
-still maps the window privately. Should tsn0 and rtsn.c be updated to
-reference this node? If not, should the commit message say that enabling
-&gptp together with &tsn0 is not supported?
-
-> +			clocks = <&cpg CPG_MOD 2723>;
-> +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-> +			resets = <&cpg 2723>;
-
-[Severity: High]
-The existing tsn0 node also uses reset 2723, and rtsn.c treats
-that reset as its own. rtsn_probe() takes it with
-devm_reset_control_get(&pdev->dev, NULL), which is an exclusive get.
-rtsn_reset() then pulses it with reset_control_reset() every time
-rtsn_hw_init() runs, which happens whenever the TSN port is brought
-up.
-
-This node makes the gPTP block a resource that RAVB can reference
-through ptp-timer. Suppose RTSN brings its port up after
-ptp_rcar_gen4 has programmed the timer. The reset pulse clears the
-gPTP registers (PTPTMEC_REG and the rest) under ptp_rcar_gen4 and
-under every RAVB user of that clock. Nothing reprograms them
-afterwards, so PTP synchronisation is lost for the whole system.
-
-This also blocks handing the reset to the gPTP driver later.
-ptp_rcar_gen4_probe() does not request a reset today, but the
-binding requires the property. If the driver ever requests it, the
-second exclusive get of the same line fails with -EBUSY, and one of
-the two devices will not probe.
-
-The node is disabled, so nothing breaks at this commit. But this
-description is what lets both consumers be enabled together. How is
-reset 2723 meant to be owned once gptp and tsn0 are both enabled?
-Should rtsn.c stop pulsing the shared block when an external gPTP
-node is in use, for example by switching to a shared reset that is
-only deasserted? Or should tsn0 drop its reset and its gptp reg
-window and reference this node instead?
-
-[Severity: Low]
-
-This isn't a bug introduced by this patch, but the
-renesas,rcar-gen4-gptp.yaml binding lists resets as required, while
-ptp_rcar_gen4_probe() never gets or deasserts a reset control:
-
-	priv->base = devm_platform_ioremap_resource(pdev, 0);
-	...
-	priv->clk = devm_clk_get(dev, NULL);
-	...
-	pm_runtime_enable(dev);
-	pm_runtime_resume_and_get(dev);
-
-Does the driver depend on the gPTP module already being out of reset when
-it probes? Reset 2723 given here is also used by tsn0.
-
-The binding and the driver both come from earlier patches in this series
-("dt-bindings: ptp: renesas,rcar-gen4-gptp: Add R-Car Gen4" and "ptp: Add
-driver for R-Car Gen4"). Listing the reset in the binding is correct for
-describing the hardware.
-
-> +			status = "disabled";
-> +		};
-> +
-
-[ ... ]
-
--- 
-Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261007185920.4042783-1-niklas.soderlund%2Brenesas%40ragnatech.se
+diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
+index 586a5adbedfa..6bf1dd650486 100644
+--- a/drivers/media/platform/renesas/rcar-isp/core.c
++++ b/drivers/media/platform/renesas/rcar-isp/core.c
+@@ -802,10 +802,7 @@ static int risp_core_probe_resources(struct rcar_isp_core *core,
+ 	if (ret < 0)
+ 		return -ENODEV;
+ 
+-	ret = devm_request_irq(&pdev->dev, ret, risp_core_irq, IRQF_SHARED,
+-			       KBUILD_MODNAME, core);
+-	if (ret)
+-		return ret;
++	core->irq = ret;
+ 
+ 	core->clk = devm_clk_get(&pdev->dev, "core");
+ 	if (IS_ERR(core->clk))
+@@ -887,8 +884,15 @@ int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
+ 	spin_lock_init(&core->lock);
+ 	INIT_LIST_HEAD(&core->risp_jobs);
+ 
++	ret = devm_request_irq(core->dev, core->irq, risp_core_irq, IRQF_SHARED,
++			       KBUILD_MODNAME, core);
++	if (ret)
++		goto err_destroy_mutex;
++
+ 	return 0;
+ 
++err_destroy_mutex:
++	mutex_destroy(&core->io_lock);
+ err_unregister_v4l2:
+ 	v4l2_device_unregister(&core->v4l2_dev);
+ err_destroy_rpp:
+@@ -908,6 +912,7 @@ void risp_core_remove(struct rcar_isp_core *core)
+ 	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++)
+ 		risp_core_io_destroy(&core->io[i]);
+ 
++	devm_free_irq(core->dev, core->irq, core);
+ 	v4l2_device_unregister(&core->v4l2_dev);
+ 
+ 	mutex_destroy(&core->io_lock);
+diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
+index 53ce47020d17..73bf7e42bad2 100644
+--- a/drivers/media/platform/renesas/rcar-isp/csisp.c
++++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
+@@ -563,6 +563,8 @@ static int risp_probe(struct platform_device *pdev)
+ 		isp->subdev.internal_ops = &risp_cs_internal_ops;
+ 		break;
+ 	case -ENODEV:
++		if (isp->core.base)
++			goto error_subdev;
+ 		/* The device don't have an ISP core, that is OK. */
+ 		ret = 0;
+ 		break;
+diff --git a/drivers/media/platform/renesas/rcar-isp/risp-core.h b/drivers/media/platform/renesas/rcar-isp/risp-core.h
+index 627a762d6b19..70432cf4a88c 100644
+--- a/drivers/media/platform/renesas/rcar-isp/risp-core.h
++++ b/drivers/media/platform/renesas/rcar-isp/risp-core.h
+@@ -112,6 +112,7 @@ struct rcar_isp_vspx {
+  * @dev:	(OF) device
+  * @rppaddr:	Hardware address of the RPP ISP (from OF)
+  * @clk:	The clock for the ISP CORE
++ * @irq:	Interrupt for the ISP CORE
+  * @rstc:	The reset for the ISP Core
+  * @csrstc:	The reset for the ISP Channel Selector
+  *
+@@ -138,6 +139,7 @@ struct rcar_isp_core {
+ 
+ 	u32 rppaddr;
+ 	struct clk *clk;
++	int irq;
+ 
+ 	struct reset_control *rstc;
+ 	struct reset_control *csrstc;
