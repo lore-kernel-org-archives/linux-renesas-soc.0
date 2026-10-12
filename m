@@ -1,196 +1,303 @@
-Received: from mail-ej2-f7.google.com (mail-ej2-f7.google.com [74.125.228.135])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C281D4ACC78
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 19:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF874E1C7E
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 20:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791834489; cv=pass; b=K+emxySUal0jPwHTB/iokHU+wez47/3/d4TvAyAHNKVn9z+kcQCX8yqLFPFsaeUEhZ01ix/9LE/GZ/L3tomqEzY4IFI/65URPpFhhMxN1BVNU90Wd8OPv3oQj6q93ZcG7JcxJBT6xxQta+uUjuR3JC5qkNRg1Sh0N/L5JdWzt+A=
+	t=1791836496; cv=pass; b=gLqC+OJ61Kuhtzodu/k/vIpVVWujn7dXavmxZh4CgD6RqzDJQWlqERFSWL8FVa0JvHtpaAFsK4WNg1lM3DteHuiUiZY14zpC/xKxZBCt61aBNn6GFROEfmedz/oGV3dF6ljy6jtjPGrC9VQ/Hd5wzegJm8t0CH9wjAu2w4j5hto=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791834489; c=relaxed/simple;
-	bh=UUoBuGmd8fFx8whvNQfzDXZoaxMzirKFYCsoIfjrUgE=;
+	s=arc-20240116; t=1791836496; c=relaxed/simple;
+	bh=RCQSpzr//uy/KVkDYVkHMEFT4GgArym2rxeSz4PmqKI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=abN+IP2AXh/bPGfswgEzrvZOIBbi8hHCmqiGrHeb2LCqLSv7BwtcgTwqzfLVbfb/8Is0pua9xUU4BnSlOl93D0oH1QLWEj0LCg7ss6OInXk8ilv3FL/v8ohMO5n8ro4vAc9nEYBiUNof1MNPi3F3ylsOsNHye2x9CvoN5mtZWPg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PbfXMxYo; arc=pass smtp.client-ip=74.125.228.135
+	 To:Cc:Content-Type; b=YSn0k/3KioHdZn4WeOaEDT91+vfySD5leZ7s2a73kA/ZMDnIxNWD1BUOn2cBudxWm9yVTifCRh6lY29WqYTfmQ5pnsAB8QQyJ6EpwRwTjVedaEgQSD62g+AHYDNRiaG2EPGSgOJjLIsECY56MZQxKbeEr5KlasWs0dumqX5N8z0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUUg6g+M; arc=pass smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbfXMxYo"
-Received: by mail-ej2-f7.google.com with SMTP id a640c23a62f3a-c2e15e7ab2bso177453466b.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 12:48:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791834486; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUUg6g+M"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48c14a06c95so1715205f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 13:21:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791836492; cv=none;
         d=google.com; s=arc-20260327;
-        b=sv70X7bUqgX6CprE7UNj1bQ3H3w3YJswW3xZRWYWj3P8JHTDJkESppIfOGro8wM6K9
-         f3MiHcDpbTHp1/Ww2+jbgNTqKWB+bsGQPTMlHUykwKP5P2uP+74gqK9ab+7k5LOSqi61
-         KV/Mzo3PgVCVkMT1xhLV2KIYp+Gjur2/vgpuGG30yUZxeEdYEFKiHZtMp/pAS1rHr2Ja
-         iS0Hh96HB/r39t3xEr0lvICSd/Vf4BrRkdt9qsIj7hLjgwINvebqEP3IkmtN0JCrzW+i
-         qXqX/SKg83RUucLmclUbIuZc1YgqO7njyfTOwWL+suP1WrbCinrSwr8gWUDNw2SUYqso
-         XdqQ==
+        b=rw29wW0jS9Y6fUi6VdkT+wwVLVm39mk7ZLH1bWfTE6mTKYgBDPSgk4lR3kEcM3+QZs
+         +rgIr5gdQU2d5/w5LR4gkKH/EgHC3Tm/xLQ/YXV3mdX3gjGjIze8Y/UYBbQsK4uvGgxH
+         amP4Peyx2DvHPcL0OTnozDR0BfdqP9+kG2fUaojLQf5jndFIdNIzKHOwxHFxrCggG4ce
+         Y7aEGtgiMn75EIuscROPaNC1iqWZSoSu+YbdDoPGCxzCkNsoRtTAZxG2rdxrAD2/T6q3
+         CxUA28VlmReSb1fs30Q8LkcRR/xfL13PdxxeCNB8uMWye1zNd80l4MdTAK9y+LBCCX00
+         c2Ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=hePjOQgDk2oAPjPtpp2sw4T2GMv65ZXd7JkCbKndfRI=;
-        fh=lX3Y4IrpUX+/BBUlYDx+KQaYf2cWO8soBybtxn2w1Hk=;
-        b=iWM2+j4E78n+03D/+V4Nl9RoCA7byA8InoeAy+qd6vP5DTWvx3eamYLj9ZNu3h9QsJ
-         SC8Rz47ZA15Qz+YL77/XmoDM+LioAb8kC31tY85lUSvFrs5vjnCMY+T114JXukwnxpWW
-         n8xTwUFVmbFweIkgR6VhBw+PpSNkFyNAt8pnJ9Hw4NqFGBdqGjScXqeFO11O9ndQI461
-         bMD7LEKxRt90+0MlkTEUio27vJ008+3f5cnZ4/dRJj/WVuu6qNmY9ek6p1qvbkZvrCcK
-         ceKo/fmFH5neww5U/C/lk/A6sVbjt4X4QgKHIQIo3tGXj/mhj0NQJK7RqqQgSsVRwBYR
-         lf6A==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=oFdrxz7IDO5EI0kw4vrk/ogosg+7aqS767pWdjMdgj0=;
+        fh=AHf+LmuDeyM6NcTz5BCCn+rb6vfhBUEPOxuOW0KleY4=;
+        b=CGxqCgoHKARDLafe5kVDeRTsAv8cJr0boas6Et0DeZ9/qh0DTV7uCSsccbVNSIPG/S
+         2q1JATVwzGbxB+cptcGsgJKtBesw9mMsEFImk9vS1d8qa/LuDx/aDpniRkAzQ1VRc7Au
+         SrPh80LrvIU6DpK/XbqIRCiWY1IvQoeofPN6rAK/IDOZlkcOPqfsvI33loUYZ2JAVnAR
+         UHLgAJrwAnbbhg7di+HGL6JWqE/NKInMvU+/weQ4lRPnVrzos162cnGzuXSdlP2T1O+A
+         7kFFCQ1wxobhyBzQwn+udBKHPIV3+BcRMUhyuFZH1Tvzm5lg1EQe+dnG8GWie/aQEwgU
+         TrWA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791834486; x=1792439286; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hePjOQgDk2oAPjPtpp2sw4T2GMv65ZXd7JkCbKndfRI=;
-        b=PbfXMxYoV+IJF6WFfYZACO/m2TGUiukl+htKnJ3c3arVPN7w8DiFr79bHOG2XR6U5y
-         x30gxpDgXdwMQlMTN76JFPdGylJo3bQmBSZjoYxk/EyhfoTiId7bXMELzH197SEtpH9/
-         KEBbiwL/x+v15i2bgvu2kuEtKZn60JcpMiUu9xXXwAvMeJW5OWK2WfocRE7n+Rxz5n7k
-         X43nul5EkCvnxhnxYNLlSGeOaQOM1H0IIYrRIXBCZi+1jXvIlor3kDEoN54vhQtt6B40
-         zz1GKPGRvTAX3HDqSHkt1A7549o3VA7x228AZOAxtswbuY87vHALOakHDwRbJcOtLRrW
-         TfiA==
+        d=gmail.com; s=20251104; t=1791836492; x=1792441292; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=oFdrxz7IDO5EI0kw4vrk/ogosg+7aqS767pWdjMdgj0=;
+        b=QUUg6g+MkTonjvrizNKgr6vgNwhUgts7WR9s1McXCqmcVgwdgc6sjgzWQIW0wmWIcH
+         SeThEWH4U+sirFCrJWP0UW407koSK2smZQxfHI2oNu/His2Zsat1g37mHrOUnZpw8tYm
+         bGgXU3xvw3j9S6R68kKuQUTDWV/FNbHkSTeJh+uFFGo/avE1530tr2uAD75VQzlWd/5M
+         elyOVqdQJfS2vdDiMuu4sLr+fbS3aPFtnB6V6jCtDT1raNKjcCAor79R4qg4D+Lg2X/1
+         J2FHCv1qmsvrVGEtNdXudXOmnaZajyfscWSCSUYdwais/rB+3ftwYP+FtgQuAvwJq4sD
+         6XLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791834486; x=1792439286;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=hePjOQgDk2oAPjPtpp2sw4T2GMv65ZXd7JkCbKndfRI=;
-        b=MQER2hYwwbm6NnXX2TeWca8NOvapw3tRnkob+Dk5EyPetsoynnNciwNG3f/C9beNOc
-         1yqGhoDeNILr+wUAaqFpAfvn+7mo828D6n8STILdsJS34gXZtFGWVhoNYkRbn10HIeRp
-         Rtm5dgGFNMSvf2TsN4HVpqb24NobgjmuOiQY65AzL8u0MR2VC4lGRiqR6rh7XLyKT2JL
-         ppB1aSNclbiJpgyH1qcOT/wBzNyu6Cq05B8UiGN2Ttb2Kr8l8UubXgYhzhtm9NvxmlMz
-         /Ulml9gInJ+oeO3xo2wXGHViZrhwZ/Fi6/Kz8hCfOyaAlA/ja6aQ4pfKOvbszvDGxrnU
-         Zv9w==
-X-Forwarded-Encrypted: i=1; AKwUvBzDHxkgByaO9QCka5k/Q+o3BtZ2UBy06LXhHxGPDeu7YCHz9kZCdqRdlUOQ2eCtIgJZEsvfYVVdRGyITulLn1l+BA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIEE8q9VxPhTEiEkEB7oylTKupDhRrGWwkvhZr7A4EtzMsbo2mw
-	tWm99alH0FJ+6VTuP5/PorCMDWU0ABGG9nvBqyDSTJRwfla0Wg/qLcPnnIxcQJpxvOzfB4EaOkE
-	1UBpbgqkWUCpGbxJ2NgWwFyPHG7Rd+hc=
-X-Gm-Gg: AYBFou1Yi+fF6fOpTV5S0/9VO/IvvL+zJWGNvCLl6FEaP0ZxWo06dEbqOiHJ+We2/PJ
-	9GXu1TAKt0ZCmFSmWHtAnb1ntCynFhQJWyfJeSG0t4rWbcgIvJEUkkF29zvSF9qQeAN9nR8/OGf
-	i1H1EED05QvzLZr95uK4IHSGUlnApB+o7WBavkFlxECOphVr3m0UmShwgO+CdCvcxmHvhFiMhyq
-	tFG/xMVV9yGqpSm5S+0tlrTMlCqv5CoSz4b6MBTSmUIU69JcSVQkCMybiHLwuJQBfXUOrA70Pdj
-	fAHwA5YzXN3u76BZUHNggnCnFvROMGDd0UyqdWupLcrc3ufbGaDrfN2bYA==
-X-Received: by 2002:a17:907:7b8d:b0:c2d:d9f4:2c85 with SMTP id
- a640c23a62f3a-c31aa0c129fmr992438966b.41.1791834485955; Mon, 12 Oct 2026
- 12:48:05 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791836492; x=1792441292;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=oFdrxz7IDO5EI0kw4vrk/ogosg+7aqS767pWdjMdgj0=;
+        b=Qj8JQpU5LSPOBlUjd7jePjYzfKimK7OBYXA6ahxvBGjaGSOeUoHs4/wWacqAYsrYhF
+         z55b/WpIijiYj3gPZU1UVpfZy7e4E8ccB6atiNyBgfiXXF0m+qVuYrgJdmGN93wV/axR
+         pMKkIImG7237qVxmrKVj9Lk9O0CDNY+uXQNGbBc/EvaM5X/Ip6hWkd6TGngnhGpqamPw
+         cTY+LwjeQ5XaidmE7N7q6sGNo5GpPUWLiLX/V7z2zDm4hLNx4NVDWrasUiDJHFLtUDRI
+         xCDXXawBfso7hObi6gTPCsjNUQ/+cpSuvXo9jgQUenPAU8mErbzM1O3ImgtzSIKn0t1/
+         gXiw==
+X-Forwarded-Encrypted: i=1; AKwUvBwTvHD9UZl8mrC4jWYVCzpVqrLH1b66eh85ibZviA0cmp5dSe6Ll12BiJsl7fxkoLD5UQzrgBHtyCoBcbGGG8LSnA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJlrXT0Z1yPw6urhSknYS7zg034ezD5X74hMQjO0ZXPP9VU12BC
+	84WML78q2jxV3AFCNxKPZdfBbuG8nfnxnzUPmeYESJeWA8KlT+i3Tp0rPqmuh1D+6fxsl1tJaq/
+	MHJ+lqu6bZeePdSkEDvYhZ5L5+giuHs4=
+X-Gm-Gg: AYBFou3ULNBU2zX8sYteyrkyJ5/vrlp6rTeqkz5hCr9UF7OuKnTXXm9sUrRmhMJmWhr
+	lo4wkvKJKtyAV6qVuP9FFDgj4UYndMC2+gDJoNomu5iDcPNaVfRAzALpHbur0qZcqxACkgNVdEQ
+	6y18qhZ9iqWxefdbCjmy5oIehp23gk7E2K1yt/rp3kHkZh34sMznK2ZsjhgL3v+ONHsA5DA4MYf
+	YS6M1GaEar9DSUvgHCT8vQuvPJ1BRKhwq47SRNW9h8Cj3X4jjvxVluP6pTfvGekZ8ZXXnAmAy85
+	brRZnclD8aHtCd1ITY2UhyLwf/IcLiUDbjznuC0ORJ4nWFk1JjQZ6rCHQp2pDYUkNqu3Gy09iM7
+	PirwNLOzrx37ID0TehXxIdwxVdhGuyWsFPLbUwxmfByI=
+X-Received: by 2002:a05:6000:3108:b0:486:f856:1975 with SMTP id
+ ffacd0b85a97d-48dbaae5c02mr18183316f8f.22.1791836491382; Mon, 12 Oct 2026
+ 13:21:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
- <20260919-s32g_serdes-v3-4-9d68868c1e89@oss.nxp.com> <6aabb56e-406f-4d13-9fd8-54822202039f@bootlin.com>
- <assmUIvWMuZsp8OO@lsv051416.swis.nl-cdc01.nxp.com>
-In-Reply-To: <assmUIvWMuZsp8OO@lsv051416.swis.nl-cdc01.nxp.com>
-From: Coia Prant <coiaprant@gmail.com>
-Date: Tue, 13 Oct 2026 03:47:58 +0800
-X-Gm-Features: AclHuK-mWeAUUjbT2q4HaMO7I1jbUFx_FPbAu9P_i7ekNoCvSs5mbKy3dUi7DkU
-Message-ID: <CALj3r0gQkUARS1e+2CGB3JsrGJ2XrzuoChfz0cWYRpK4kq1Uxg@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 04/12] net: pcs: add NXP SerDes XPCS shared core
-To: Jan Petrous <jan.petrous@oss.nxp.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>, NXP S32 Linux Team <s32@nxp.com>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
+ <20261012-mali-c55-renesas-dts-v4-4-c410e280bf2d@kernel.org> <asz8oEtow_lrUU7K@zed>
+In-Reply-To: <asz8oEtow_lrUU7K@zed>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 12 Oct 2026 21:21:05 +0100
+X-Gm-Features: AclHuK-4f6aEgz84S7166QRmPA4srEwYSx_VGps7yC24cU0L6Xa5D_BUxV8o_-4
+Message-ID: <CA+V-a8tnYhY4cWjy+ddsptAwmRU0KmpuF_EJtxO2h6LmTgym5A@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Linus Walleij <linusw@kernel.org>, Daniel Scally <dan.scally@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
 	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Bogdan Hamciuc <bogdan.hamciuc@nxp.com>, 
-	Ionut Vicovan <ionut.vicovan@nxp.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Clark Wang <xiaoning.wang@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Richard Cochran <richardcochran@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-pci@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Vincent Guittot <vincent.guittot@linaro.org>
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi Jacopo,
 
-Thanks for the pointers. A few thoughts.
+Thank you for looking into this.
 
-> Yes. The S32G accessor is the same DW indirect scheme pcs-xpcs-plat
-> implements (page into the viewport at 0xff, then the low address byte
-> at a 4-byte stride), so there is no reason for S32G to carry its own
-> copy of the XPCS code. The next version drops the shared core, exposes
-> each XPCS instance as a mii_bus from the SerDes PHY driver and creates
-> the PCS with xpcs_create_pcs_mdiodev(), much like the RK3568 glue.
-> Details in my reply to Andrew.
+On Mon, Oct 12, 2026 at 4:47=E2=80=AFPM Jacopo Mondi
+<jacopo.mondi@ideasonboard.com> wrote:
 >
-> The part that does not fit pcs-xpcs-plat as-is is ownership, not
-> access: the XPCS windows sit inside the SerDes subsystem register
-> space, and their bring-up is ordered against the PCIe lane and the
-> other XPCS instance, so the bus is registered by the SerDes PHY driver
-> rather than by a standalone snps,dw-xpcs device. The accessor itself
-> is a few lines; if Alex's pcs-xpcs-regmap is merged first I will use
-> it rather than open-code another bus.
+> Hi Linus
+>
+> On Mon, Oct 12, 2026 at 01:56:26PM +0200, Linus Walleij wrote:
+> > From: Daniel Scally <dan.scally@ideasonboard.com>
+> >
+> > Add the Input Video Control Block and Arm Mali-C55 ISP to the device
+> > tree file for the RZ/V2H(P) SoC.
+> >
+> > [Rebase onto v7.3-rc1, place the nodes in address order, add the missin=
+g
+> >  interrupts in binding order and name them. - Linus Walleij]
+> >
+> > Assisted-by: LLM
+> > Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+> > Signed-off-by: Linus Walleij <linusw@kernel.org>
+>
+> How was this patch tested ?
+>
+> I am rebasing my rz/v2h tree on v7.2 and I've backported this patch.
+>
+> Unfortunately I don't get any frame from the camera, but rather the
+> system hangs in unrecoverable state
+>
+> > ---
+> >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 47 ++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 47 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/bo=
+ot/dts/renesas/r9a09g057.dtsi
+> > index 639693d464a7..228155fa3c76 100644
+> > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > @@ -1839,6 +1839,53 @@ queue3 {
+> >                       };
+> >               };
+> >
+> > +             ivc: isp-input@16040000 {
+> > +                     compatible =3D "renesas,r9a09g057-ivc";
+> > +                     reg =3D <0 0x16040000 0 0x10000>;
+> > +                     clocks =3D <&cpg CPG_MOD 0xe3>, <&cpg CPG_MOD 0xe=
+4>,
+> > +                              <&cpg CPG_MOD 0xe5>;
+>
+> Compared to Dan's original patch I was carrying my tree the first and
+> third ids of clock and reset properties in the ivc and isp nodes respecti=
+velty
+> are swapped
+>
+> This patch
+>
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> @@ -1709,8 +1709,8 @@ ivc_out: endpoint {
+>                 isp: isp@16080000 {
+>                         compatible =3D "arm,mali-c55";
+>                         reg =3D <0 0x16080000 0 0x80000>;
+> -                       clocks =3D <&cpg CPG_MOD 0xe5>, <&cpg CPG_MOD 0xe=
+4>,
+> -                                <&cpg CPG_MOD 0xe2>;
+> +                       clocks =3D <&cpg CPG_MOD 0xe2>, <&cpg CPG_MOD 0xe=
+4>,
+> +                                <&cpg CPG_MOD 0xe5>;
+>                         clock-names =3D "vclk", "aclk", "hclk";
+>                         interrupts =3D <GIC_SPI 859 IRQ_TYPE_LEVEL_HIGH>,
+>                                      <GIC_SPI 865 IRQ_TYPE_EDGE_RISING>,
+> @@ -1719,7 +1719,7 @@ isp: isp@16080000 {
+>                                           "fr_dma_writer_linetick_out",
+>                                           "fr_uv_dma_writer_linetick_out"=
+;
+>                         power-domains =3D <&cpg>;
+> -                       resets =3D <&cpg 0xd3>, <&cpg 0xd1>, <&cpg 0xd2>;
+> +                       resets =3D <&cpg 0xd2>, <&cpg 0xd1>, <&cpg 0xd3>;
+>                         reset-names =3D "vresetn", "aresetn", "hresetn";
+>                         status =3D "disabled";
+>
+> Fixes the issue for me
+>
+It also fixes the issues on my side; I tested it with the RZ/V2H EVK
+using the imx708 sensor,
 
-On the transport split: I think the cleanest path is to split the MMIO
-accessor out into its own module, say pcs-xpcs-mmio, exporting the
-read/write helpers. Then pcs-xpcs-plat can call into those exported
-symbols instead of open-coding the page/stride scheme, and S32G can do
-the same for its indirect window. That way nobody carries a private
-copy of the accessor. If that turns out to be too invasive for plat,
-keeping a separate pcs-xpcs-plat copy is workable too, but I'd rather
-avoid it.
+root@192:~# cam -c2 -C10
+[0:10:13.102940291] [1010]  INFO Camera camera_manager.cpp:330
+libcamera v0.0.0+5679-0b4b0ef3
+[0:10:13.136058708] [1013]  INFO Camera camera_manager.cpp:220 Adding
+camera 'mali-c55 tpg' for pipeline handler mali-c55
+[0:10:13.143446208] [1013]  WARN CameraSensor
+camera_sensor_legacy.cpp:354 'imx708': Recommended V4L2 control
+0x009a0922 not supported
+[0:10:13.143574833] [1013]  WARN CameraSensor
+camera_sensor_legacy.cpp:426 'imx708': The sensor kernel driver needs
+to be fixed
+[0:10:13.143612416] [1013]  WARN CameraSensor
+camera_sensor_legacy.cpp:428 'imx708': See
+Documentation/sensor_driver_requirements.rst in the libcamera sources
+for more information
+[0:10:13.147022541] [1013]  WARN CameraSensor
+camera_sensor_legacy.cpp:594 'imx708': Failed to retrieve the camera
+location
+[0:10:13.147073666] [1013]  WARN CameraSensor
+camera_sensor_legacy.cpp:616 'imx708': Rotation control not available,
+default to 0 degrees
+[0:10:13.254700791] [1013]  INFO Camera camera_manager.cpp:220 Adding
+camera 'imx708' for pipeline handler mali-c55
+Using camera imx708 as cam0
+[0:10:13.258077083] [1010]  INFO Camera camera.cpp:1214 configuring
+streams: (0) 1920x1080-RGB565/Unset
+cam0: Capture 10 frames
+613.444141 (0.00 fps) cam0-stream0 seq: 000000 bytesused: 4147200
+613.459953 (63.24 fps) cam0-stream0 seq: 000001 bytesused: 4147200
+613.478004 (55.40 fps) cam0-stream0 seq: 000002 bytesused: 4147200
+613.496112 (55.22 fps) cam0-stream0 seq: 000003 bytesused: 4147200
+613.514060 (55.72 fps) cam0-stream0 seq: 000004 bytesused: 4147200
+613.532173 (55.21 fps) cam0-stream0 seq: 000005 bytesused: 4147200
+613.550287 (55.21 fps) cam0-stream0 seq: 000006 bytesused: 4147200
+613.568400 (55.21 fps) cam0-stream0 seq: 000007 bytesused: 4147200
+613.586458 (55.38 fps) cam0-stream0 seq: 000008 bytesused: 4147200
+613.604489 (55.46 fps) cam0-stream0 seq: 000009 bytesused: 4147200
+root@192:~#
 
-If Alex's pcs-xpcs-regmap lands first, that's the natural place for
-the S32G accessor; pcs-xpcs-mmio would only be needed if the regmap
-approach doesn't fit.
+I was also able to test this with camshark using my older setup.
 
-> S32G needs the same kind of thing: skip the generic soft reset, and no
-> EEE registers. I will start with the existing PMA-ID mechanism, since
-> that is what TXGBE and FBNIC use today, and switch to a callback if one
-> is agreed in the Rockchip thread. I'll Cc you on those patches.
+> Why is this an issue it's not 100% clear to me.
+>
+> The driver handles both reset and regulators with the bulk API which
+> does not guarantee ordering (and no ordering is specified in the
+> datasheet as far as I can tell). All clocks and resets names are used,
+> so the ordering shouldn't make much difference as far as I can tell.
+>
+Indeed.
 
-On the shared-core duplication: rather than copying the whole XPCS
-core, I'd look at how the existing users express their quirks.
+> I can't access the "additional documentation" from the Renesas website
+> where the clock/reset ids are reported. Could you please check ?
+>
+I will also double check this.
 
-Wangxun has a genuinely different PMA ID, so it can branch on the
-ID before the reset path and keep the generic core untouched.
-
-The older NXP devices do the opposite: they fake the PCS ID at the MDIO
-layer so the core sees a magic value it then interprets. That leaves
-the magic in the core and a fake ID in the glue, and it doesn't scale
-to a third user.
-
-For S32G, I'd prefer one of these two approaches:
-
-- A flag in struct dw_xpcs, e.g. DW_XPCS_NO_RESET, that the glue sets
-  and the core checks before the soft reset and EEE paths. Works when
-  the quirk applies to a whole instance regardless of the PMA ID.
-- A platform callback, e.g. plat->pma_config(), where the glue can
-  return early to skip the parts it doesn't need. More flexible, but
-  also more surface area; I'd only go there if flags aren't enough.
-
-Either is better than another fake ID, because the quirk stays visible
-at the point where it matters instead of being hidden behind a made-up
-value in the transport layer.
-
-One question: how does S32G relate to the earlier NXP devices already
-in pcs-xpcs.c? Same IP, same PCS ID, same quirks, or something else?
-If they're the same family, it would be good to clean all of them up
-in one go rather than adding a third mechanism on top of the old
-fake-ID one.
-
-Separately, I have a plan to propose platform callbacks for the XPCS core
-at some point, regardless of whether S32G ends up needing them. The
-core currently has no way for a platform glue or PMA to limit or override
-parts of the generic behaviour, and I think that gap needs closing.
-The exact shape can be discussed once RK3568 lands. Happy to Cc you on
-the related thread when that happens.
-
-- Coia
+Cheers,
+Prabhakar
+>
+> > +                     clock-names =3D "reg", "axi", "isp";
+> > +                     interrupts =3D <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                  <GIC_SPI 860 IRQ_TYPE_EDGE_RISING>,
+> > +                                  <GIC_SPI 864 IRQ_TYPE_LEVEL_HIGH>;
+> > +                     interrupt-names =3D "isp_vvalid_ifp", "isp_vvalid=
+_irp",
+> > +                                       "isp_int_fstop";
+> > +                     power-domains =3D <&cpg>;
+> > +                     resets =3D <&cpg 0xd4>, <&cpg 0xd1>, <&cpg 0xd3>;
+> > +                     reset-names =3D "reg", "axi", "isp";
+> > +                     status =3D "disabled";
+> > +
+> > +                     port {
+> > +                             ivc_out: endpoint {
+> > +                                     remote-endpoint =3D <&isp_in>;
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             isp: isp@16080000 {
+> > +                     compatible =3D "arm,mali-c55";
+> > +                     reg =3D <0 0x16080000 0 0x80000>;
+> > +                     clocks =3D <&cpg CPG_MOD 0xe5>, <&cpg CPG_MOD 0xe=
+4>,
+> > +                              <&cpg CPG_MOD 0xe2>;
+> > +                     clock-names =3D "vclk", "aclk", "hclk";
+> > +                     interrupts =3D <GIC_SPI 859 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 865 IRQ_TYPE_EDGE_RISING>,
+> > +                                  <GIC_SPI 866 IRQ_TYPE_EDGE_RISING>;
+> > +                     interrupt-names =3D "combined_interrupt",
+> > +                                       "fr_dma_writer_linetick_out",
+> > +                                       "fr_uv_dma_writer_linetick_out"=
+;
+> > +                     power-domains =3D <&cpg>;
+> > +                     resets =3D <&cpg 0xd3>, <&cpg 0xd1>, <&cpg 0xd2>;
+> > +                     reset-names =3D "vresetn", "aresetn", "hresetn";
+> > +                     status =3D "disabled";
+> > +
+> > +                     port {
+> > +                             isp_in: endpoint {
+> > +                                     remote-endpoint =3D <&ivc_out>;
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> >               dsi: dsi@16430000 {
+> >                       compatible =3D "renesas,r9a09g057-mipi-dsi";
+> >                       reg =3D <0 0x16430000 0 0x20000>;
+> >
+> > --
+> > 2.56.0
+> >
+>
