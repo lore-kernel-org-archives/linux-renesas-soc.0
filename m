@@ -1,118 +1,109 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27DD468C3A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 09:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DB6353A8F
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 09:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791796832; cv=none; b=bNSGV9oqMqKaSgtAY3Tg4XFH7liGV/GKKaJawHF5TzbgPu3QjVXjH176pHxzHoPnrDp3f6djcOVsVxdMu7w3dP+jds1ngfXDw7/GqGoNppWU7XGwbYArtY3sSOlqHuyOVCFBdZYHeNfTZ+TzrOURv6wN4ON4B251gjw5ZRJXCpY=
+	t=1791797619; cv=none; b=I7CNyXgKMMp6HrdEUFZLBSqpgXjuRXYT77m9TfY/h9WmW4Ro931eSAunAvwolxefyigDHhbft7coroa2+JmN+nBPG8uZXPNawG64zpunbV4L4m2SkqvOErHWCjFNsFmfWq+rPPisJQMlcA5ZOToZ9RPUOAnyr6RnjYjHz0tLU0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791796832; c=relaxed/simple;
-	bh=gxi33VLZ2gMppChwwo0+nFM5QmAtnoZp4a1bQT4ATik=;
+	s=arc-20240116; t=1791797619; c=relaxed/simple;
+	bh=6OEDWCRMBhUQwuYN96z0QclZTB5fdpiw/4HbCIL4mzI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a7K6fZ2saITYSaviSVG78kcvdXgv1pnc3uewROK/LGfU6tPa9bfWTuLYRGoDo3tc+HN2Y7+hEEJuPzV2gueaK9JOrsnMHilV6JE32cJGJyENx/0kN0ZaC8G/c8SzcKsOqMpGKCE9NG8+40nTZTzkO3qcY0ZXttP03O5L362B9Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+	 To:Cc:Content-Type; b=QRknZEBwwr+T3MWucUbmEkL6MuOTZj9vpaloTKxyjR6p2YzM03ArVcmRj+XD1dhq2JEuOL0rZJP7auahJhO7gYQ4OPciThydqGQ0DROL0/iyrmqJiJZZ7c/+ZKFCCwV02eKls2kfYR/0CzCuDsto3E2draC8HDkxDY4hnBRKxCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5e91e422859so767236e0c.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 02:20:30 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5e507e778e4so534212e0c.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 02:33:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791796830; x=1792401630;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7R9Z4v42/hEW06uLFS0AmempJdev8RXIeASGOWREk38=;
-        b=dW+W9QW+swMxnpt9Ltn/o7fkLABpGCGyhJDNcjp96MRcxEoGAvT7fnBIodni5Zqc/2
-         fywe5ZhE65hcGfEZFzaSIqn+/qXLyj5sIfgZNpM1hbdrnevA1gUD7/zVY5+ZRtlGQRy8
-         N28uzLaOKD3Xoe8H73bLYWntNvLlBdX4omgRoCuz5EKE7Gnvv9IJ1U2BClbRkRJZ+ruC
-         x2bCw50xqXJ0GuWtCiT7ILPcu0v5LGpSlcaSNKg/icM+etdRcjG7VcvYRs3ANsZkVTBg
-         i2QXh9buQVSoiFhUmWZXAgpeE6wxan43NLnOjBOxwvij1Ok8/WwDh7JeNVEpW86rCtZ9
-         tmQQ==
-X-Forwarded-Encrypted: i=1; AKwUvByKxatBLUe5edNxR08uIgdPPiGoTG7C1FU/eHbZzTPLc5mISRPsbJNlBinnjrr2vT6EQJRHZ+2pl3Mr9X6rbZh5Hg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKOizYkwNSmXAMIuT8fAVSuS7/kBIDFeyQTncZTiujf+1Ul4CqC
-	Lm6Onz50ZFf5x7Kz2Y/gZRqJ9f0+w+UurCjVTwcrvPkYMFQLMhwAQXE6g7EPkeHE
-X-Gm-Gg: AYBFou1FkSyrEWjKoX9nKpNgQ+S6zkJJYUOoAynaWWPFc+fXVntHnnOxbL/QehjGSsX
-	K6B/y+UI9kaCOw1J+BPYst2Q5wRzdAgsJf8bkuypjaKIzLSjJF2QOlWqKKAG3kUXSN0B7pyW7Hz
-	NPbyoiVm8zIp6Bo+5v9BJzhIbIJDoy++ApAE8JQkJn7nVA1PaqP9mDjAhur8hHc0z6D6kFUDDLI
-	CsG3De7aDjFhENHNIfaWy9RwEHxTAZ50VXpsh/KghXwOmjO/qMUbnXJrPZcnVvuKxtKnKJDWG9M
-	QxbQrY4zZVjnIRs7mlrQOLm7ayyKZfCVmAPAYBs+fNd/uZITuJRNFvjrgyiDS3vvzV4bo2AAr8d
-	a+rJHRULAfVYLlWJo+o9WcQel7N6q3N0q8vV6pMq2AYdSWCszqMKGGXceRg9Hb2lHEiJt/K8l47
-	iWPj4PZhSeK0h1Bc5UIzWQLsJbGOnPe9x5VcR1SMfmJGEf80IVY5Gq5is3P4QEU/zQAf9+Lyjze
-	Rfm0H4cEXSZNW/LwDm3p6BCH/BTVeQGUohlOOK1GDN8oWE=
-X-Received: by 2002:a05:6102:80a3:b0:7c3:9173:b5f0 with SMTP id ada2fe7eead31-7cb372bae43mr2072850137.20.1791796829711;
-        Mon, 12 Oct 2026 02:20:29 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7cb35471536sm6279377137.11.2026.10.12.02.20.24
+        d=1e100.net; s=20260707; t=1791797617; x=1792402417;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=oEYfT2se9mQPZq99mjf04mY4Ov62RIWvkBSPqPyDyD0=;
+        b=SHeyyTOVAAno2Jz5z0Qnhzax6ocgdHgaYbh8H1SV6POwgjUAYTXCrcoSTW7ELkYd16
+         3MgIlTnUAJFTu9zTTvlbgVCKc0kf/jfqLKVOjdb/bLSwY453SC7kbH1ofD9MVnoTvAF+
+         3AvJS3HHot5m9JAdIAQswt9hyrEJqc8CZa9CaW1ZcA8U1+Fmd8y4vQsRcvMh8JybxKR9
+         zU+x6NBbNBncqli22un8hsC26KHDblCfhhtu0RVVBUPndaW7RElV6Mkv6ePp2zz/maZM
+         4rejfasWu/dPKAij2/4k27mwP8Il5lujL2FvuVskyS50odZauRlIw6OPnhBYvB9G+ycK
+         rGhw==
+X-Forwarded-Encrypted: i=1; AKwUvBz2tSGznoDwyPqSuSPgz0rNXFLSHWBP4M4CSL7weEzSTTRoG8KZqEWHu6yKHVMv6O9MTC2YDdLTQk/DGJ3JP3nBTA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJkNEsbHEvAstilVcC/sdF4C2u9+8rWpkqVH7kicuQ8W8rRO/Ya
+	vc2Nj66Mue4FpR4U5TIZlXO8K1j96Mq/d/WmcpHWrzW5C1927x9JgJig/tWQSHfT
+X-Gm-Gg: AYBFou2SQIfYG+Wjjcs3u1BJr1kHeOmXVmyV+CFBDTA6ggKHyvllh9cf5DTYdZXKOvi
+	0UbkutPotB2JquEsVUydCKepBaw5pZprZouWskkAID/3XKeW9+FkcA0zJ1A4Ii5FV0dyglcMBtg
+	C1UPxGB+MCeenLNalBsK0ehV8fbXzJwuzWe4KBvfxzcXq5Ky/KCQoZC+aFO6l8SM/Uwgkyw4GXq
+	+Cm+Q3MpElesHS+BMXL1TdDSeagXMdHaKvPApzkhBS2v386NLsqeybZ+Iw50ZD9TBpuWEkODFzT
+	PEp9/V8Pme5Jj3tJMSz0Gizm4br0QrJ/u7z8c5BFRJ8atAbbtyRg51rarEBNhnkY0LI8ob5IedR
+	A0Z2PkJzUHZpM1txzCoMgbRD52B7VP50WVxapoc0Gia4vyFK/4aeY7gtet7p12f/dvPFku6UHp1
+	NUxhF6+Rv1vIAhD0h7fTHhEyktFSKiB4RB832MmvY1e5JwwKyCk9KTYTbFb7b7r+8FQWG//cw2I
+	B/0lahU5g4SRXb9V27MCqlR9fdidv/HSsD2Zo/lJ81Bmlo=
+X-Received: by 2002:a05:6122:83d3:b0:5c8:4831:1539 with SMTP id 71dfb90a1353d-5e91f4515c3mr2245230e0c.5.1791797617456;
+        Mon, 12 Oct 2026 02:33:37 -0700 (PDT)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5e91cab8c40sm6927827e0c.3.2026.10.12.02.33.35
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Oct 2026 02:20:24 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-980c4f5c921so308685241.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 02:20:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwO5O4fo0UFIIEk8gfM8+nyYZEK1LHNWfqNoiXGevr79i6hEwVT9x1Xezv9TYa7F9R2lDJtOKt5tMEYOO22QMnjig==@vger.kernel.org
-X-Received: by 2002:a05:6102:5088:b0:7cb:1df0:813a with SMTP id
- ada2fe7eead31-7cb369879damr2230386137.5.1791796823865; Mon, 12 Oct 2026
- 02:20:23 -0700 (PDT)
+        Mon, 12 Oct 2026 02:33:35 -0700 (PDT)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-989a4cab97dso137277241.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 02:33:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwUh4V/dOfO7oCtiWFoPjtUAbuTfuCtXOxoccCvvct+To5Y0LtQUSqrGFLUll0lC6Lh0dpq+QxLhMog6DALJAt/3A==@vger.kernel.org
+X-Received: by 2002:a05:6102:e0f:b0:7a7:198a:c2bf with SMTP id
+ ada2fe7eead31-7cb373c9305mr2142364137.29.1791797614854; Mon, 12 Oct 2026
+ 02:33:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org> <CAD++jL=tRpv_uX8daZqK5+h_dTiUxQBYyNM2-Lb8L6n4azyfHw@mail.gmail.com>
-In-Reply-To: <CAD++jL=tRpv_uX8daZqK5+h_dTiUxQBYyNM2-Lb8L6n4azyfHw@mail.gmail.com>
+References: <20261008201953.34307-2-wsa+renesas@sang-engineering.com> <20261009-7b4b54034fafb7ad60ea917d@squawk>
+In-Reply-To: <20261009-7b4b54034fafb7ad60ea917d@squawk>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Oct 2026 11:20:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUPXv9cw-obvxW6B6Y817VFkZZFzOjTWi3z_TpOnTJGxA@mail.gmail.com>
-X-Gm-Features: AclHuK9gy8WPXA70y2ILBUxdR_nY10la1SOqMg9bhKMA4oPFypGa7yRQ2ztCmtY
-Message-ID: <CAMuHMdUPXv9cw-obvxW6B6Y817VFkZZFzOjTWi3z_TpOnTJGxA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] arm64: dts: renesas: Enable ISP and IVC on RZ/V2H EVK
-To: Linus Walleij <linusw@kernel.org>
-Cc: Daniel Scally <dan.scally@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 12 Oct 2026 11:33:22 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWFsg72nQ+EYYYwLUYvQBULa5Xz=RL3O3pwCECo9H81Ow@mail.gmail.com>
+X-Gm-Features: AclHuK-zPgcfuS_w3EiTe92ek8871OrLWJ4iGuAnS9nipI978vqESTCZAqRzLsI
+Message-ID: <CAMuHMdWFsg72nQ+EYYYwLUYvQBULa5Xz=RL3O3pwCECo9H81Ow@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: rtc: rzn1: add resets property
+To: Conor Dooley <conor@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, 9 Oct 2026 at 17:36, Conor Dooley <conor@kernel.org> wrote:
+> On Thu, Oct 08, 2026 at 10:16:53PM +0200, Wolfram Sang wrote:
+> > The RTC on R-Car X5H does have a reset unlike the other versions.
+> >
+> > Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, 6 Oct 2026 at 00:14, Linus Walleij <linusw@kernel.org> wrote:
-> On Mon, Sep 28, 2026 at 2:21=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
- wrote:
-> > Describe the optional ISP DMA line-tick and IVC frame-start/frame-stop
-> > interrupts. Add the RZ/V2H(P) IVC and Arm Mali-C55 ISP nodes, connect t=
-heir
-> > video endpoints, and enable both blocks on the RZ/V2H EVK.
+s/Suggested/Reported/?
+
+Closes: https://lore.kernel.org/CAMuHMdWy6ksspwvj8jRxf6_OATU5rS5p92KyG4+sEF+ag7S9NA@mail.gmail.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
 > >
-> > After these patches, and enabling the right Linux drivers, we get
-> > this in the console:
-> > mali-c55 16080000.isp: Detected Mali-C55 ISP 9000043.31032022.0
-> >
-> > This was done in order to enable booting mainline with mainline
-> > device trees.
-> >
-> > Assisted-by: LLM
-> > Signed-off-by: Linus Walleij <linusw@kernel.org>
+> > Passes both DT checks. Kind of fixes 3b3fdc9fd40d ("dt-bindings: rtc:
+> > rzn1: add R-Car X5H support") in -next, but we don't use Fixes: for
+> > bindings, or?
 >
-> Rob ACKed the final DT bindings on this v3 patch series so maybe you
-> can apply it?
+> If you want, make it more obvious IMO that this is a correction.
 
-Media DT bindings should go through the media tree.
-Thanks for your understanding!
+Yep.  And without Fixes, it might never end up in the BSP ;-)
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
