@@ -1,97 +1,118 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7D2470130;
-	Mon, 12 Oct 2026 09:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27DD468C3A
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 09:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791796577; cv=none; b=pnv3yZ2Zq8CJuYHUWP/hiPhyccaiirOHxsSoj8ln5hQJnibT6B3uYjbr6ZY09KCgNq9rJDDYv4FKq5Jxxl1vnU48bDijlreoTYylmfFjEdkKSyzDMwQpvScynIySdrUhXDyQPXbMwJhFhaafh/c3uEPJD6ZitCv1H+V/sYnk7GM=
+	t=1791796832; cv=none; b=bNSGV9oqMqKaSgtAY3Tg4XFH7liGV/GKKaJawHF5TzbgPu3QjVXjH176pHxzHoPnrDp3f6djcOVsVxdMu7w3dP+jds1ngfXDw7/GqGoNppWU7XGwbYArtY3sSOlqHuyOVCFBdZYHeNfTZ+TzrOURv6wN4ON4B251gjw5ZRJXCpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791796577; c=relaxed/simple;
-	bh=Q4JU9KpIqco4E3X/lHGLuCUuN5OWqYKKu0TR1+mWIxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=imSrJFFhbIdquX0Kbpt+eFsXHJWGOyyQ0mmZ77K4zBgI4u7CQRz7VpmzU8jBho67gQKFkqsFeFXJjsIgmbV3EcAxNYQC5HoEhX/uFJWWs+AdquoTrn7htUlQ8E1Um/5dkZTpye/yUAdNsHNJNXTMJ7fnRCh4foOCAFRSdlMXHlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KXf0mKLq; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KXf0mKLq"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 6FC901A11E9;
-	Mon, 12 Oct 2026 09:16:13 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 42153601A6;
-	Mon, 12 Oct 2026 09:16:13 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E357711D70194;
-	Mon, 12 Oct 2026 11:16:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791796571; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Sn02TEo+skQseKCCe0yo8KhgJfoqXwV2TUHXH7rQBWA=;
-	b=KXf0mKLql10uD4xoWayinX/w7giW5N1DhzeCpDfhSH2Ar+LXhSl2h+3/4TqW+6jqyWkC2n
-	/RyNNV0foFL7k4c5Xo62zooWLmCByvAoJ5Pps1vCoLCSGgoph8BHC7LUr9HoyOfgzB3/yu
-	Uay8MY6vA0QIhXn9JZIaAbXDLdVw7M8ET3B4z795XuTv+kl6TiTCltwOsFwU7HaHssVAzF
-	rSLTvqSDckV0ZrnkueeOv+gZq9lliLhw8qyQMwos9LYKddwYn2AfhUiW5Pivl0wKpCtxSe
-	w/2j7BSL1sbGLOFW4Y6TIiM3RPBcUwqQ2R72bEmIcyHnFq+bEbY1avnsiQTkBQ==
-Date: Mon, 12 Oct 2026 11:16:06 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Daniel Lezcano
- <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v7 0/4] timers: Add support for RZ/N1 SoCs timers
-Message-ID: <20261012111606.3784d993@bootlin.com>
-In-Reply-To: <8eb0b435-e5d4-4429-a807-24e15b0659fa@oss.qualcomm.com>
-References: <20261001082225.125956-1-herve.codina@bootlin.com>
-	<8eb0b435-e5d4-4429-a807-24e15b0659fa@oss.qualcomm.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1791796832; c=relaxed/simple;
+	bh=gxi33VLZ2gMppChwwo0+nFM5QmAtnoZp4a1bQT4ATik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a7K6fZ2saITYSaviSVG78kcvdXgv1pnc3uewROK/LGfU6tPa9bfWTuLYRGoDo3tc+HN2Y7+hEEJuPzV2gueaK9JOrsnMHilV6JE32cJGJyENx/0kN0ZaC8G/c8SzcKsOqMpGKCE9NG8+40nTZTzkO3qcY0ZXttP03O5L362B9Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5e91e422859so767236e0c.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 02:20:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791796830; x=1792401630;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7R9Z4v42/hEW06uLFS0AmempJdev8RXIeASGOWREk38=;
+        b=dW+W9QW+swMxnpt9Ltn/o7fkLABpGCGyhJDNcjp96MRcxEoGAvT7fnBIodni5Zqc/2
+         fywe5ZhE65hcGfEZFzaSIqn+/qXLyj5sIfgZNpM1hbdrnevA1gUD7/zVY5+ZRtlGQRy8
+         N28uzLaOKD3Xoe8H73bLYWntNvLlBdX4omgRoCuz5EKE7Gnvv9IJ1U2BClbRkRJZ+ruC
+         x2bCw50xqXJ0GuWtCiT7ILPcu0v5LGpSlcaSNKg/icM+etdRcjG7VcvYRs3ANsZkVTBg
+         i2QXh9buQVSoiFhUmWZXAgpeE6wxan43NLnOjBOxwvij1Ok8/WwDh7JeNVEpW86rCtZ9
+         tmQQ==
+X-Forwarded-Encrypted: i=1; AKwUvByKxatBLUe5edNxR08uIgdPPiGoTG7C1FU/eHbZzTPLc5mISRPsbJNlBinnjrr2vT6EQJRHZ+2pl3Mr9X6rbZh5Hg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKOizYkwNSmXAMIuT8fAVSuS7/kBIDFeyQTncZTiujf+1Ul4CqC
+	Lm6Onz50ZFf5x7Kz2Y/gZRqJ9f0+w+UurCjVTwcrvPkYMFQLMhwAQXE6g7EPkeHE
+X-Gm-Gg: AYBFou1FkSyrEWjKoX9nKpNgQ+S6zkJJYUOoAynaWWPFc+fXVntHnnOxbL/QehjGSsX
+	K6B/y+UI9kaCOw1J+BPYst2Q5wRzdAgsJf8bkuypjaKIzLSjJF2QOlWqKKAG3kUXSN0B7pyW7Hz
+	NPbyoiVm8zIp6Bo+5v9BJzhIbIJDoy++ApAE8JQkJn7nVA1PaqP9mDjAhur8hHc0z6D6kFUDDLI
+	CsG3De7aDjFhENHNIfaWy9RwEHxTAZ50VXpsh/KghXwOmjO/qMUbnXJrPZcnVvuKxtKnKJDWG9M
+	QxbQrY4zZVjnIRs7mlrQOLm7ayyKZfCVmAPAYBs+fNd/uZITuJRNFvjrgyiDS3vvzV4bo2AAr8d
+	a+rJHRULAfVYLlWJo+o9WcQel7N6q3N0q8vV6pMq2AYdSWCszqMKGGXceRg9Hb2lHEiJt/K8l47
+	iWPj4PZhSeK0h1Bc5UIzWQLsJbGOnPe9x5VcR1SMfmJGEf80IVY5Gq5is3P4QEU/zQAf9+Lyjze
+	Rfm0H4cEXSZNW/LwDm3p6BCH/BTVeQGUohlOOK1GDN8oWE=
+X-Received: by 2002:a05:6102:80a3:b0:7c3:9173:b5f0 with SMTP id ada2fe7eead31-7cb372bae43mr2072850137.20.1791796829711;
+        Mon, 12 Oct 2026 02:20:29 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7cb35471536sm6279377137.11.2026.10.12.02.20.24
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Oct 2026 02:20:24 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-980c4f5c921so308685241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Oct 2026 02:20:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwO5O4fo0UFIIEk8gfM8+nyYZEK1LHNWfqNoiXGevr79i6hEwVT9x1Xezv9TYa7F9R2lDJtOKt5tMEYOO22QMnjig==@vger.kernel.org
+X-Received: by 2002:a05:6102:5088:b0:7cb:1df0:813a with SMTP id
+ ada2fe7eead31-7cb369879damr2230386137.5.1791796823865; Mon, 12 Oct 2026
+ 02:20:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org> <CAD++jL=tRpv_uX8daZqK5+h_dTiUxQBYyNM2-Lb8L6n4azyfHw@mail.gmail.com>
+In-Reply-To: <CAD++jL=tRpv_uX8daZqK5+h_dTiUxQBYyNM2-Lb8L6n4azyfHw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Oct 2026 11:20:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUPXv9cw-obvxW6B6Y817VFkZZFzOjTWi3z_TpOnTJGxA@mail.gmail.com>
+X-Gm-Features: AclHuK9gy8WPXA70y2ILBUxdR_nY10la1SOqMg9bhKMA4oPFypGa7yRQ2ztCmtY
+Message-ID: <CAMuHMdUPXv9cw-obvxW6B6Y817VFkZZFzOjTWi3z_TpOnTJGxA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] arm64: dts: renesas: Enable ISP and IVC on RZ/V2H EVK
+To: Linus Walleij <linusw@kernel.org>
+Cc: Daniel Scally <dan.scally@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Linus,
 
-On Fri, 2 Oct 2026 11:49:49 +0200
-Daniel Lezcano <daniel.lezcano@oss.qualcomm.com> wrote:
+On Tue, 6 Oct 2026 at 00:14, Linus Walleij <linusw@kernel.org> wrote:
+> On Mon, Sep 28, 2026 at 2:21=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
+ wrote:
+> > Describe the optional ISP DMA line-tick and IVC frame-start/frame-stop
+> > interrupts. Add the RZ/V2H(P) IVC and Arm Mali-C55 ISP nodes, connect t=
+heir
+> > video endpoints, and enable both blocks on the RZ/V2H EVK.
+> >
+> > After these patches, and enabling the right Linux drivers, we get
+> > this in the console:
+> > mali-c55 16080000.isp: Detected Mali-C55 ISP 9000043.31032022.0
+> >
+> > This was done in order to enable booting mainline with mainline
+> > device trees.
+> >
+> > Assisted-by: LLM
+> > Signed-off-by: Linus Walleij <linusw@kernel.org>
+>
+> Rob ACKed the final DT bindings on this v3 patch series so maybe you
+> can apply it?
 
-> On 10/1/26 10:22, Herve Codina (Schneider Electric) wrote:
-> > The Renesas RZ/N1 SoCs family has two timers block controller
-> > available.
-> > 
-> > Each controller is charge of 8 timers (six 16-bit timers + two 32-bit
-> > timers).
-> > 
-> > Each timer has its own interrupt, its own prescaler that can be used to
-> > divide the clock by 25 (timers block are fed with a 25 MHz clock) and
-> > all timers can work in either one-shot or periodic mode.
-> > 
-> > This series adds support for those timers blocks.
-> > 
-> > Best regards,  
-> 
-> Applied, patch 1,2 and 4
-> 
+Media DT bindings should go through the media tree.
+Thanks for your understanding!
 
-Daniel applied almost all patches of the series.
+Gr{oetje,eeting}s,
 
-The only missing one is patch 3 which has to be applied on your tree.
+                        Geert
 
-IMHO, we have the green light to apply it.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Can you consider it?
-
-Best regards,
-Hervé
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
