@@ -1,34 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E3E3B5303;
-	Mon, 12 Oct 2026 11:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CA62D5408;
+	Mon, 12 Oct 2026 11:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791806202; cv=none; b=Swefnm/GUlAMAGxKJvSO7WZtZCJkwFjarE3Gg2k1TQvwwKpL/I0QqlBlYTMu/JQhufOhn1xFcF6BQ00TCGSLgQiY7hKa59TpPtAYGrHKNdmN0SVne9JcikeW1umGblR9OcpGBLNyCoG+mccrGG/98W9wLiLvEWtmb6tiNtk/daE=
+	t=1791806206; cv=none; b=JrVbwmXyWv5C1yCjmNuzY5OKHzDBF/WoE09+EhsHFwdr3cuV1UDjGVtmZ8mIHAPkj1QuWvcOBdKZQP9KvNaOU+qLhVwConJNJIZb9oMZtpzkXc3obH/PXClF5emaY6qJnRHHyKAeIwTFkgJ5I7ITb/BleUERd68og7I90ql+NSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791806202; c=relaxed/simple;
-	bh=SaAJQ/j4CMStWxSTTiAQmiWqLEWMlRxSeVHTZ9f9kLU=;
+	s=arc-20240116; t=1791806206; c=relaxed/simple;
+	bh=+DF1T2DEm/d9TtPUtly+jIdobEtqyYKzSFXcDXXxvqI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=av8KHn6IY1ZHaAnzxRcMwZiN3B9FJ12BWAyurCeIR2kOG3+T5Qz0yapFDVt3DcSaZpn2w3amqMhcUVYxBCvOAcjgqVCev+9a31T6NCTliM5mIjhU9l4jBxM1hu+2dJkP4Fb9ZEAo/Lao37lil3FE6Un/dhuJYOzzmFe3hOHCTxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZ8Rx5R0; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:To:Cc; b=PfyLhbtmyDuhv/mJFmZalKzL1wytryFByVffNJcB7L7fu4K/kUqfvFSQmb8XqBaw2LwHSyXhuP8rNCpiBYc5PDHLu0k/ObjEHayjos2c4n2zV8phIASXxslKGoutkASipUceplHjqtf7SDU6kHfF4WdxCjvOSeiePVDt/1cItec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0W4nNrT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZ8Rx5R0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B987B1F0089C;
-	Mon, 12 Oct 2026 11:56:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0W4nNrT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7EE41F0089B;
+	Mon, 12 Oct 2026 11:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791806201;
-	bh=KYl9/JqaDmytdfZMhITo0WTSRmxf4AyH33viMeBwxRs=;
+	s=k20260515; t=1791806204;
+	bh=De7Tu6FxOS7xi2jGB8c/C9aLw4KNGGWoIqC/0XrX7VA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=mZ8Rx5R05gQ5rFtyNTw86gMvqdK6Zvp6bD+u9kbXzWToPLinPF24L145PNG/9BYLb
-	 TaVRldCE4rYVkD5FDSJbPKwz4T0OAbBbFk2QUI8aeQZBxQFOLwAda3liRxybmtjIrO
-	 95+/55ummUdm3XTBQD/qo2N7KIQEcBbfisZKhSR25U5uftNrLNeLgWGG+XifmEkqi7
-	 kzqxqtseNxmVmL4qfV6lAEG9ThRbjD+wObe+3O/zusA62ez9tXXbpOKR7Icz7cB54r
-	 glV0Gffi/gE/Tde1L+zVyhx1b6KgOnzOy4ZwSMNRzwWi23EJBEMjSv5JdeP9n+i+E9
-	 DM98uBuqd81bg==
+	b=P0W4nNrTJuQMdMuVjOD9A6ceJ+Wc5a3nw1birJsfwVOuUjahDoe96JuQKUdhIUv6v
+	 JjakC1jYqgZa1g9UYcLEwPzZW6Eyy4DzhC69SWx6NWLjkiZrsGSbZe3wBc4HiB6v+y
+	 sHpG5MEcvbYeqGmvl4w00hkIsqSXQWh+51vCiTYd3djihDXPCQLauTkdhXchmdpHCv
+	 2PBVKRvJfQCX6NvnTN+cfukRhGWbopXERealwTQVzfW9Qn3l6P86g2myKMfTFlCffD
+	 +ZpUil/rOwglAOiIqkJa5B3W5uSiMy7hTtUNetqFcrSj601dLhe8NNJQ58JYKuxQfX
+	 YfbYn9KZ927uA==
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 12 Oct 2026 13:56:25 +0200
-Subject: [PATCH v4 3/5] dt-bindings: media: arm,mali-c55: Add power domain
+Date: Mon, 12 Oct 2026 13:56:26 +0200
+Subject: [PATCH v4 4/5] arm64: dts: renesas: r9a09g057: Add IVC and ISP
+ nodes
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -37,7 +38,7 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261012-mali-c55-renesas-dts-v4-3-c410e280bf2d@kernel.org>
+Message-Id: <20261012-mali-c55-renesas-dts-v4-4-c410e280bf2d@kernel.org>
 References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
 In-Reply-To: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
 To: Daniel Scally <dan.scally@ideasonboard.com>, 
@@ -48,48 +49,82 @@ To: Daniel Scally <dan.scally@ideasonboard.com>,
  Geert Uytterhoeven <geert+renesas@glider.be>, 
  Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+ linux-renesas-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>
 X-Mailer: b4 0.16.0
 
-Some Mali-C55 integrations place the ISP in a power domain. In
-particular, RZ/V2H uses the CPG domain to manage its module clocks
-through runtime PM.
+From: Daniel Scally <dan.scally@ideasonboard.com>
 
-Allow a single power domain and describe it in the example. Keep the
-property optional for integrations that do not expose a power domain.
+Add the Input Video Control Block and Arm Mali-C55 ISP to the device
+tree file for the RZ/V2H(P) SoC.
+
+[Rebase onto v7.3-rc1, place the nodes in address order, add the missing
+ interrupts in binding order and name them. - Linus Walleij]
 
 Assisted-by: LLM
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
 Signed-off-by: Linus Walleij <linusw@kernel.org>
 ---
- Documentation/devicetree/bindings/media/arm,mali-c55.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 47 ++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/arm,mali-c55.yaml b/Documentation/devicetree/bindings/media/arm,mali-c55.yaml
-index d04105cd1ecc..23b53faec73d 100644
---- a/Documentation/devicetree/bindings/media/arm,mali-c55.yaml
-+++ b/Documentation/devicetree/bindings/media/arm,mali-c55.yaml
-@@ -46,6 +46,9 @@ properties:
-       - const: aclk
-       - const: hclk
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+index 639693d464a7..228155fa3c76 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+@@ -1839,6 +1839,53 @@ queue3 {
+ 			};
+ 		};
  
-+  power-domains:
-+    maxItems: 1
++		ivc: isp-input@16040000 {
++			compatible = "renesas,r9a09g057-ivc";
++			reg = <0 0x16040000 0 0x10000>;
++			clocks = <&cpg CPG_MOD 0xe3>, <&cpg CPG_MOD 0xe4>,
++				 <&cpg CPG_MOD 0xe5>;
++			clock-names = "reg", "axi", "isp";
++			interrupts = <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 860 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 864 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "isp_vvalid_ifp", "isp_vvalid_irp",
++					  "isp_int_fstop";
++			power-domains = <&cpg>;
++			resets = <&cpg 0xd4>, <&cpg 0xd1>, <&cpg 0xd3>;
++			reset-names = "reg", "axi", "isp";
++			status = "disabled";
 +
-   resets:
-     items:
-       - description: vclk domain reset
-@@ -87,6 +90,7 @@ examples:
-       reg = <0x400000 0x200000>;
-       clocks = <&clk 0>, <&clk 1>, <&clk 2>;
-       clock-names = "vclk", "aclk", "hclk";
-+      power-domains = <&power>;
-       resets = <&resets 0>, <&resets 1>, <&resets 2>;
-       reset-names = "vresetn", "aresetn", "hresetn";
-       /* RZ/V2H interrupt numbers. */
++			port {
++				ivc_out: endpoint {
++					remote-endpoint = <&isp_in>;
++				};
++			};
++		};
++
++		isp: isp@16080000 {
++			compatible = "arm,mali-c55";
++			reg = <0 0x16080000 0 0x80000>;
++			clocks = <&cpg CPG_MOD 0xe5>, <&cpg CPG_MOD 0xe4>,
++				 <&cpg CPG_MOD 0xe2>;
++			clock-names = "vclk", "aclk", "hclk";
++			interrupts = <GIC_SPI 859 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 865 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 866 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "combined_interrupt",
++					  "fr_dma_writer_linetick_out",
++					  "fr_uv_dma_writer_linetick_out";
++			power-domains = <&cpg>;
++			resets = <&cpg 0xd3>, <&cpg 0xd1>, <&cpg 0xd2>;
++			reset-names = "vresetn", "aresetn", "hresetn";
++			status = "disabled";
++
++			port {
++				isp_in: endpoint {
++					remote-endpoint = <&ivc_out>;
++				};
++			};
++		};
++
+ 		dsi: dsi@16430000 {
+ 			compatible = "renesas,r9a09g057-mipi-dsi";
+ 			reg = <0 0x16430000 0 0x20000>;
 
 -- 
 2.56.0
