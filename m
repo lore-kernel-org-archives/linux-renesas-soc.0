@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B6A33262B;
-	Mon, 12 Oct 2026 11:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC90427F84;
+	Mon, 12 Oct 2026 11:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791806190; cv=none; b=u8JmBRdLi/mPIe8pYCNoToKkeRE/chZpYrsF6qqqF4ahI/skWbLUg5AkR2b71uxeeRxVCoEKiD8OuFbOfkuHfODeKei81cuyXsd5ccLu3Di+NWs9MLGZhB8pz/VhsEbXIfqcsgEixC4eW4corEh8UQGvUkmGhRmmsDLjqx4vAVs=
+	t=1791806194; cv=none; b=MMcYq0fOkVFMEYYxZG4LWgvQPPQ4zPlmT5P5rw8yf0kcV05zIoc/M6lZTsLGfXgEGCIfAaH3RHHqKEVx6mJ/fbjG3zHc/RYiX7Iyb2W6OeZ4bJEqFq7tSbXlCK/B6qJm9Wib8/Cw2pcx0EFXY4cl1aVO4nOtQPkC1IkAJ4XUitc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791806190; c=relaxed/simple;
-	bh=zSCPQB27psGP/j4AT24rouHwMrDJK97jxuJP1rVdz2A=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DD0WT/Xb1ZTfsQGX3OosecVj9l31/kXNYW7lr+WJaD2GFc4b9RarvZlwZFSiHvELf2XYWIj1zsAS5bSAaUaWZrJzlHtdMbs2OTnxdJfqfI9CWuB02bN11vIE3OUzi7QCKXzDobmIs4C2Ohyl+9kWwLJ59Bhijiv7pfSIv/0licY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3s2iQcQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791806194; c=relaxed/simple;
+	bh=kp9w9v2ErW4cXAND7B/u5nBau5xmLu87ogx95lCuXVY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qh5gXXWcTWobHipKfEee28hJIsGBITXGdFg1pipoHC7q9vOnRr2HfPXxBvOBLLpmx73RD/qkF15pbln6Y3LwTWwnWVkD/girCi6xHbY9NffZUyt5dYE1mDfX92ws3DufaK9OmkAtugyPik3PdsXGLW9d8mbi8mga8ujp5eWFyHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/YbpYMP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3s2iQcQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE871F0089C;
-	Mon, 12 Oct 2026 11:56:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/YbpYMP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7312D1F0089D;
+	Mon, 12 Oct 2026 11:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791806188;
-	bh=AnW2m65M44wQcLxliLkvKtQrb3sozst0u8XPfhd5pFA=;
-	h=From:Subject:Date:To:Cc;
-	b=i3s2iQcQi5NCIWzAEjZqRLIvnINxEzBfVjRBMYVaZrW4NeRGr8pxVoOVRGB1nCzsQ
-	 8T4ChDaK1jZK1/zg3wyDE8qMI7cVSZ9VeuAXXIJZRjuiVhSQ0savDalJRzhr+cu5dv
-	 t+94+CqffWkU8UQ8FpGeg/dhJ/2El8mF7La5nUEEfD/75uAVYuvNsffXuqJBXaMdoA
-	 6PzMZ4+AtudoiLKzin5W6TCYfpiHjS4kEuONpVVx3hXlmbzhS8SPKaI6Slwxp41MhN
-	 suBk5fMtpT0c8IR3nYxP4E+hRw5k+rlMDQE+MHNSAS2HKS68Hkirh/3fAen/bN8TU0
-	 7DY0sDgYZeDSw==
+	s=k20260515; t=1791806193;
+	bh=x3HPh7lqZwfzrlQDbDfUTcuR+GTgGBnDDtped+TC/SA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=Y/YbpYMPJltHlmSdZOiyIZ1bQ7I/2AF29w6RkqIqGotMkS/GoiSzj44QHAuGUkahJ
+	 wD8513sJ1X9h7/yKuWpGPZrSzvj0cGKT8GsRJTR63AI4w2qzrv8epA50yTXXQ2xfHS
+	 Z7I4g1HQ/HofafOlJCvcV4Ez2v4JVd2xcZdn12gVKcHq4/LgaADpMkA2wENLzR2Rq9
+	 tCa76FNuDP2tV75kBhqbEO604qV5f8d1g8+q7jX+KST7/leQm9x6bVLYN79Gz2pp/8
+	 PW6CkKR/rGSNbDTKGqXQqeAEf/whBUG5n8EPFdXd7abJF9pwAoUnGLkapZgAkC8NIh
+	 yjyeiSK67IsrA==
 From: Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v4 0/5] arm64: dts: renesas: Enable ISP and IVC on RZ/V2H
- EVK
-Date: Mon, 12 Oct 2026 13:56:22 +0200
-Message-Id: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
+Date: Mon, 12 Oct 2026 13:56:23 +0200
+Subject: [PATCH v4 1/5] dt-bindings: media: renesas,r9a09g057-ivc: Describe
+ additional interrupts
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -38,11 +38,9 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XNTQ6CMBQE4KuQrq2B15aCK+9hXPTngVUE0yLRE
- O5uwQ3GGJeTzHwzkoDeYSC7ZCQeBxdc18bANwkxJ9XWSJ2NmUAKeVoC0KtqHDVCUI8tBhWo7QO
- V3HIJshIlChKnN4+Veyzs4fjO4a7PaPrZmhsnF/rOP5ffIZt7fy6GjKbU2JwZq0WWMra/oG+x2
- Xa+JvPHAGtF/FAgKnlZSSgUl1zBl8LWSvFDYVEBU0nUkueo9YcyTdMLsq5KR1cBAAA=
-X-Change-ID: 20260922-mali-c55-renesas-dts-74d4727f59e5
+Message-Id: <20261012-mali-c55-renesas-dts-v4-1-c410e280bf2d@kernel.org>
+References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
+In-Reply-To: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
 To: Daniel Scally <dan.scally@ideasonboard.com>, 
  Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -56,65 +54,65 @@ Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
  Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: b4 0.16.0
 
-Describe the optional ISP DMA line-tick and IVC frame-start/frame-stop
-interrupts. Add the RZ/V2H(P) IVC and Arm Mali-C55 ISP nodes, connect their
-video endpoints, and enable both blocks on the RZ/V2H EVK.
+The RZ/V2H IVC provides input frame-start and frame-stop completion
+interrupts alongside its input frame-end interrupt.
 
-After these patches, and enabling the right Linux drivers, we get
-this in the console:
-mali-c55 16080000.isp: Detected Mali-C55 ISP 9000043.31032022.0
-
-This was done in order to enable booting mainline with mainline
-device trees.
+Describe these optional interrupts and their signal names from Table 3.1
+of the RZ/V2H(P) hardware manual's ISP additional document. Require frame
+end first for compatibility with drivers using index-based IRQ lookup.
+Keep interrupt-names optional and require only the first interrupt to
+preserve support for existing device trees. Extend the example to show
+all three interrupts with their names and RZ/V2H interrupt numbers.
 
 Assisted-by: LLM
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Linus Walleij <linusw@kernel.org>
 ---
-Changes in v4:
-- Provide interrupt names in both bindings, their examples and SoC nodes.
-- Use Renesas RZ/V2H interrupt numbers in the binding examples.
-- Link to v3: https://patch.msgid.link/20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org
+ .../bindings/media/renesas,r9a09g057-ivc.yaml      | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-Changes in v3:
-- Correct the ISP video and register clock/reset mappings by swapping
-  vclk/hclk and vresetn/hresetn.
-- Add an optional ISP power-domain binding and attach the RZ/V2H ISP
-  to the CPG power domain.
-- Link to v2: https://patch.msgid.link/20260925-mali-c55-renesas-dts-v2-0-69f728a474a2@kernel.org
+diff --git a/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml b/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
+index c09cbd8c9e35..75ecb47422b2 100644
+--- a/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,r9a09g057-ivc.yaml
+@@ -21,7 +21,21 @@ properties:
+     maxItems: 1
+ 
+   interrupts:
+-    maxItems: 1
++    description:
++      The image input frame-end interrupt must be specified first to remain
++      compatible with drivers that retrieve it by index.
++    minItems: 1
++    items:
++      - description: Image input frame-end interrupt
++      - description: Image input frame-start interrupt
++      - description: Frame-stop processing completion interrupt
++
++  interrupt-names:
++    minItems: 1
++    items:
++      - const: isp_vvalid_ifp
++      - const: isp_vvalid_irp
++      - const: isp_int_fstop
+ 
+   clocks:
+     items:
+@@ -92,7 +106,11 @@ examples:
+                <&cpg 0xd3>;
+       reset-names = "reg", "axi", "isp";
+ 
+-      interrupts = <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>;
++      /* RZ/V2H interrupt numbers. */
++      interrupts = <GIC_SPI 861 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 860 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 864 IRQ_TYPE_LEVEL_HIGH>;
++      interrupt-names = "isp_vvalid_ifp", "isp_vvalid_irp", "isp_int_fstop";
+ 
+       port {
+         ivc_out: endpoint {
 
-Changes in v2:
-- Add separate IVC and ISP binding patches describing the optional IVC
-  frame-start/frame-stop completion and ISP DMA line-tick IRQs.
-  Show all six IRQs in the examples using consecutive mock numbers.
-- Add the IVC frame-start/stop and ISP DMA line-tick interrupt lines
-  using the confirmed SPI assignments, addressing Geert's IRQ review.
-- Correct the IVC and ISP register sizes to 64 KiB and 512 KiB,
-  respectively, as requested by Geert. GPV_VIDEO0 is a separate bus
-  interconnect region.
-- Compact the clock and reset properties and remove blank lines between
-  properties, following Geert's review.
-- Link to v1: https://patch.msgid.link/20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org
-
----
-Daniel Scally (2):
-      arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
-      arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add ISP and IVC nodes
-
-Linus Walleij (3):
-      dt-bindings: media: renesas,r9a09g057-ivc: Describe additional interrupts
-      dt-bindings: media: arm,mali-c55: Describe DMA line-tick interrupts
-      dt-bindings: media: arm,mali-c55: Add power domain
-
- .../devicetree/bindings/media/arm,mali-c55.yaml    | 27 ++++++++++++-
- .../bindings/media/renesas,r9a09g057-ivc.yaml      | 22 +++++++++-
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi         | 47 ++++++++++++++++++++++
- .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  8 ++++
- 4 files changed, 100 insertions(+), 4 deletions(-)
----
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-change-id: 20260922-mali-c55-renesas-dts-74d4727f59e5
-
-Best regards,
---  
-Linus Walleij <linusw@kernel.org>
+-- 
+2.56.0
 
