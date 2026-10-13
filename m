@@ -1,115 +1,149 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D1E2D738F
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Oct 2026 14:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C51B50129F;
+	Tue, 13 Oct 2026 14:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791900853; cv=none; b=AIwkOUvLM4TbNoCKpGX2BSNB77jHIIEKgGbBc6H/V/x4U8FITMKnwWb+CHKXAn/05kpsU+AGtcYuEv2OkpXOOr2v/A/YMbUEZd8/hLuYNrBf+3TMeUPveT9/fHYWDR1ogFgbQsEFQqH4Rz+X+LJbgEnsQssjKsVmRkFUwWAfDP8=
+	t=1791902251; cv=none; b=NjMrzsouwy2wZKnqq+d5WlGniUxYNKg/9FhxG++YXUXJs8Gm46W+DcMcbzhYMa2lnrdi+6Ui1KPC1haP72j0oD8wWb2I1RnmqXwYeJPLbWBKEBSN8Buk/G+IFHtMMrlODvSdhcr1xEfy8tkOYcChozH4+cZSTubqABGUwC9Nw58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791900853; c=relaxed/simple;
-	bh=er6qEAwzMbZyPYWRjnq94p5k3hkmXXEyv9wll0K0biY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=ag6uTfYNN/uONXFhtDMgHKUGBvi4w9XAF0HEasCMnrePvcCBISA/Pdc45yZEwhHo8937bBmuczzUG16a6PpfVetvkyIPQj8TdFUN77Cs8tFt4qnV8G0hSBHursQVyP+2+Jd8mFxVop93HJWGptd40YwJ/TLVuZ5mU2DwiBTEj9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dv5n4T6I; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dv5n4T6I"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id B49D3C653ED;
-	Tue, 13 Oct 2026 14:15:05 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 221D260362;
-	Tue, 13 Oct 2026 14:14:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6BB8011D71685;
-	Tue, 13 Oct 2026 16:14:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791900848; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=OjiJMLDJKi81kjlh54OdCXaD+MygB3PHImytKEytnC0=;
-	b=Dv5n4T6IWCKNxWspgLl0uTJNV3xIp2zyxj1rHUOrUbqtP3TGicwAume2juBwk4lBEgertj
-	v9HA0pDt4ERO5xBERN8EifTreRhJV4Ef7HLnMiKgYXMQKZJjGab/Dc0IbiK7uB0cFdSv1j
-	69/pFUOs6iW8/8grM7vI7K8kb/JFnX8Z0D6d2/RAI5oCWnyRTzyi7F6EscAjf28qp3GQIH
-	R+KN3FzvEbsNMIIdbhyiS3skASdTjyW9/5IkANfqTBlyaoXFbvG8iCJBwVLbdGnygiMGBv
-	JZv5x5OKWUsWPfG/J8kjxgWb4WSlDnGK0NesTxqEqTMF591HSUYYQfW4fO+vzg==
+	s=arc-20240116; t=1791902251; c=relaxed/simple;
+	bh=5jKPCpzP3ydgQqLnqgc6m8dhumkZpBBD4O7fxHqz170=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+2yvPjwrrOJGDeOy5+7E6AcAqQEfDOPojfllLvOGxnYXgZYhSZSy1UPXFMWYtAtK2JqP1ul6JisMb9QbNDrfqG80rkbIAaWeb87GgK6oFlJFWd0fRN/ZPr3ugXSDKwAVWmn/Ke0AOtv9JGwBXKV3lcVMjFZ8vL45bKq6KVUQCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EC50A1A01A5;
+	Tue, 13 Oct 2026 16:37:21 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C89A01A00E9;
+	Tue, 13 Oct 2026 16:37:21 +0200 (CEST)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 516EE202DA;
+	Tue, 13 Oct 2026 16:37:21 +0200 (CEST)
+Date: Tue, 13 Oct 2026 16:37:21 +0200
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ionut Vicovan <ionut.vicovan@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	imx@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH RFC v3 03/12] dt-bindings: PCI: nxp,s32g-pcie: Fix SerDes
+ PHY phandle in example
+Message-ID: <as5CIYxKJTra4hqM@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
+ <20260919-s32g_serdes-v3-3-9d68868c1e89@oss.nxp.com>
+ <as0qORxP0Roh9ktO@SMW015318>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 13 Oct 2026 16:14:02 +0200
-Message-Id: <DM3RU2UQ7SDU.2FKZGSSLSRT7B@bootlin.com>
-From: "Paul Louvel" <paul.louvel@bootlin.com>
-To: "Miquel Raynal" <miquel.raynal@bootlin.com>, "Paul Louvel"
- <paul.louvel@bootlin.com>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, "Borislav Petkov"
- <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>,
- <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
- <linux-edac@vger.kernel.org>, <devicetree@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Herve Codina"
- <herve.codina@bootlin.com>, "Wolfram Sang"
- <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v6 3/3] ARM: dts: renesas: r9a06g032: add EDAC node
-X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
-References: <20261013-paul-v7-3-rc1-edac-v6-0-2f1d6f2f74db@bootlin.com>
- <20261013-paul-v7-3-rc1-edac-v6-3-2f1d6f2f74db@bootlin.com>
- <CAMuHMdV1nuiSAKbCrD0mWJX7rC4T=fxO5LC5ksRD440YSL_3cw@mail.gmail.com>
- <DM3OXV8IQQKR.36V79A742H52F@bootlin.com> <87se29wvv4.fsf@bootlin.com>
-In-Reply-To: <87se29wvv4.fsf@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <as0qORxP0Roh9ktO@SMW015318>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Tue Oct 13, 2026 at 3:52 PM CEST, Miquel Raynal wrote:
->
->>>> +               edac: memory-controller@4000d000 {
->>>> +                       compatible =3D "renesas,r9a06g032-ddr-edac", "=
-cdns,ddr-edac";
->>>> +                       reg =3D <0x4000d000 0x1000>;
->>>> +                       interrupts =3D <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH=
->;
->>>> +                       clocks =3D <&sysctrl R9A06G032_CLK_DDRC>, <&sy=
-sctrl R9A06G032_HCLK_DDRC>;
->>>> +                       clock-names =3D "ddrc", "pclk";
->>>> +                       status =3D "disabled";
->>>
->>> Should this node be enabled by default, or am I too naive?
->>
->> The bootloader will be responsible to initialize the DDR controller and =
-enable
->> ECC if specified. On this specific platform (r9a06g032), ECC is disabled=
- by
->> default.
->> Enabling the ECC require a specific property to be present under the con=
-troller
->> node in U-Boot. I think it make sense to keep it by default disabled.
->
-> Wouldn't enabling it also require some reserved memory regions? There
-> should be an impact on the amount of available RAM for the system.
+On Mon, Oct 12, 2026 at 01:43:05PM -0500, Frank Li wrote:
+> On Sat, Sep 19, 2026 at 08:54:31AM +0200, Jan Petrous via B4 Relay wrote:
+> > [You don't often get email from devnull+jan.petrous.oss.nxp.com@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >
+> > From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+> >
+> > The example references the SerDes PHY as
+> >
+> >   phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
+> >
+> > i.e. the SerDes node itself with three PHY cells. That does not match
+> > the SerDes binding: the per-lane child node is the generic PHY
+> > provider and carries '#phy-cells = <0>', while the SerDes node itself
+> > has no '#phy-cells' at all.
+> >
+> > Point the example at the PCIe lane child instead, which is also what
+> > the S32G3 board device trees use. The dt-bindings/phy/phy.h include is
+> > dropped along with the now-unused PHY_TYPE_PCIE constant.
+> >
+> > The schema itself is unchanged; 'phys: maxItems: 1' already describes
+> > the corrected form.
+> >
+> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml b/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
+> > index 66a050028278..29323e50bd8b 100644
+> > --- a/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
+> > @@ -82,7 +82,6 @@ unevaluatedProperties: false
+> >  examples:
+> >    - |
+> >      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > -    #include <dt-bindings/phy/phy.h>
+> >
+> >      bus {
+> >          #address-cells = <2>;
+> > @@ -124,7 +123,7 @@ examples:
+> >                  ranges;
+> >
+> >                  device_type = "pci";
+> > -                phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
+> > +                phys = <&serdes0_pcie0>;
+> 
+> I don't think it fix somethings. The "serdes0" just a label, point to
+> provider, which is not neccsary that "#phy-cells" is 0.
+> 
+> Examples just show need how many phys and don't care about phy provider's
+> arguments
+> 
 
-Yes, if the memory controller is configured by the bootloader to enable ECC=
-.
-U-Boot would fixup the memory node to reflect the correct amount of availab=
-le
-RAM in this case.
+The example validates either way, agreed. The three cells are the
+'#phy-cells = <3>' of the downstream nxp,s32cc-serdes binding, which
+was never posted upstream; patch 1 is the only SerDes binding for S32G
+and has no three-cell provider. I would rather have the example match
+it.
 
-At the Linux level, it would not change anything if the EDAC driver is prob=
-ed by
-and ECC is disabled. It would just simply inform the EDAC core that SECDEC =
-is
-not supported and that's it.
+The form depends on the outcome of your patch 1 comment, so I will
+keep this patch in sync with that. If you prefer the phys line
+untouched, I can drop it and keep only the ranges fix v4 adds here.
 
->
-> Thanks,
-> Miqu=C3=A8l
-
---=20
-Paul Louvel, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+BR.
+/Jan
