@@ -1,49 +1,49 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D704FD268;
-	Tue, 13 Oct 2026 14:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CB0518125;
+	Tue, 13 Oct 2026 15:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791903333; cv=none; b=dNL0XUzQ6rA8lWeN0OjfRJx3s78S2NhCJe6h2E62O//hhGUKJ5bJfPvI+vf/fRC6DKx/tQfG/eeBB1T2RGEHWrv8k6hnl5w8aBg4YDxkDYEYz3P7xE7TFzvCITFAz3rDZzPPWbtKDhoNNaWri5rwoMW1csHWRciZfFix6XiKJPc=
+	t=1791904589; cv=none; b=TPFesfHs5yJiDSN7iRuODplFNm6ZmNh4h/BEc2lCSBJLAqknQiRyAMZCFGjCc2+yq5BH4L3SHXJhx3cFLU8GmtPrmch4SWR1IjzPWJK70U9CaxTVhsU+Vkfb4BarKeRmQUZR4SPQI2Hu58uzpX/k6LwFLJlvKqvdsPNq51Y2LWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791903333; c=relaxed/simple;
-	bh=Xo0m7VVIUaPwtcfmUqqVROtWZL9F448ygMk93cgJv9A=;
+	s=arc-20240116; t=1791904589; c=relaxed/simple;
+	bh=ekmIL7LjRSf3QW34G0hNCI8IUhuFbCGP3i3TBzqL1XM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTtIP+hI3DRsjLRb+QZ5N9P//92lkSedL3kRReVJ/1iXt2NzRPp0b4Ee4tYLG86iNwRZOm8vWIz3GtddI74oLs7OQr2L7TlPmKJpK9kEeao07z5MuDXoaSRxfg704TtSFALOLwWMSisqCPsE1wFdfresjsVqj/9gPMgDAg+n3X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fX+oCmtl; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=TopjsKQtQxbGeDqZLuVwmV2Rs8UpT6JzWI1PS8kOYmh+4HAcEin/TejxC+Fhz2V5io82T5MWHayU37QgIQ8xUSUiaGD7LBMBZTIcOOiCPnZNnZRH4nK/AOiQMsQSZvoWb9hWvmgScXPtfOFWVfpqDfC4ujm+Dw8XEQjS+M8kJGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRvqTsjS; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fX+oCmtl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRvqTsjS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1791903333; x=1823439333;
+  t=1791904588; x=1823440588;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Xo0m7VVIUaPwtcfmUqqVROtWZL9F448ygMk93cgJv9A=;
-  b=fX+oCmtlpKND+O8a/5/L9lmU1PEnKq8zLGssQzszrjpDqIqGQjmsnfD3
-   IkDqKf2crtO3XJdN6JdGKTEOP4pqT4EUIyXi6ZXkiB0RBopX5SZTZz+/K
-   QSMFclx1kE/kpO210l/1mcjjszLdZtwUrKnb49Zm+Y+xkCg7IrpCgyaxo
-   mVLjcDqh65w7hDkqf2WXviyA1p+YYwlCq1QTH2IOeo38bZDzbPxS1hn51
-   t5u+qoKimaly9CgQWvW5kyFUNO64aIFqZVsluj8kCA6kAENBHYVyD3E44
-   l6crsgmhFfac4WCq8KpJ+TpU4WdP59khls2Z3iFYa0pAiALPR1q1szh54
-   A==;
-X-CSE-ConnectionGUID: xGjomppiQKKVXKu/gW8lzA==
-X-CSE-MsgGUID: xjkl5iNfQrikAA54z2t+DA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="532643"
+  bh=ekmIL7LjRSf3QW34G0hNCI8IUhuFbCGP3i3TBzqL1XM=;
+  b=VRvqTsjS0a4MNzb+oK6B7YWsCIbpiQAw5XlqJK1Wx44O3IXXhNwQs0Qh
+   5/ehF5s+gKFXm17CMNfFWYhHNxwu6dnFhmO9UCmGNTQNNd/7sEyBEUDcn
+   h8NZeORoCSrEdBKF6Vf5ynIW/kOuBYgOPReIuI1YZ6bjkbUxs0/iRyRyl
+   mNI1NPq0hpqKEiFmS6Rw/JvKXxURgFon1nuFhSWxnaB/Fiulxh6+KWkai
+   HH3Zm+8kGEue5g7Dhi4COv38XUrrYyfOH+JRkuVKy4vxvZAvexnAle+vD
+   UfJ4NOVrRz65gI44Zkltqta2XKuA+bCGP6iqcowwQVkzgHXQbMQJZkOyx
+   Q==;
+X-CSE-ConnectionGUID: yldZJ9vTREafa+7iQRQUZw==
+X-CSE-MsgGUID: 8VWTTsUlS+GtROXkwhbtdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="506681"
 X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
-   d="scan'208";a="532643"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 07:55:32 -0700
-X-CSE-ConnectionGUID: 53eLxZZ8TTWVFx0/oZLHtg==
-X-CSE-MsgGUID: Fed9jcBtSe2kApKT/xbO3A==
+   d="scan'208";a="506681"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 08:16:28 -0700
+X-CSE-ConnectionGUID: bgR5OwZoQOStBkyY7jDMJA==
+X-CSE-MsgGUID: QE9sUGqmRlalTmFGgc6cKg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
-   d="scan'208";a="1125043"
+   d="scan'208";a="1106742"
 Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 07:55:27 -0700
-Date: Tue, 13 Oct 2026 17:55:24 +0300
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 08:16:22 -0700
+Date: Tue, 13 Oct 2026 18:16:19 +0300
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
@@ -62,11 +62,10 @@ Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 2/8] iio: adc: rzt2h: Wait for the analog part to stop
- after a forced stop
-Message-ID: <as5GXPcMKe-CBLXK@ashevche-desk.local>
+Subject: Re: [PATCH v2 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
+Message-ID: <as5LQ6zFzkft2zNJ@ashevche-desk.local>
 References: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20261009184122.1378797-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261009184122.1378797-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -75,33 +74,69 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261009184122.1378797-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20261009184122.1378797-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Oct 09, 2026 at 07:41:16PM +0100, Prabhakar wrote:
+On Fri, Oct 09, 2026 at 07:41:22PM +0100, Prabhakar wrote:
 
-> When ADCSR.ADST is cleared to forcibly stop a conversion, the analog part
-> of the A/D converter can take up to 2 ADCLK cycles to stop operating.
+> Add support for the ADC found on the Renesas RZ/V2H(P) SoC, which shares
+> the RZ/T2H ADC IP but differs in channel count, sampling, calibration and
+> resolution support.
 > 
-> Wait for the write to ADCSR to complete and allow the analog part to stop
-> before reconfiguring or restarting the converter.
+> The RZ/V2H(P) ADC provides 8 channels, has a fixed conversion time of
+> 20 ADCLK cycles, does not support calibration, and supports selectable
+> 12-bit and 8-bit conversion resolution.
 
 ...
 
-> +	/*
-> +	 * When a conversion is forcibly stopped, the analog part of the A/D
-> +	 * converter takes up to 2 ADCLK cycles to stop operating. Read back
-> +	 * ADCSR to make sure the write has reached the hardware before
-> +	 * starting the delay.
-> +	 */
-> +	readw(adc->base + RZT2H_ADCSR_REG);
-> +	ndelay(DIV_ROUND_UP(RZT2H_ADC_STOP_CYCLES * NSEC_PER_SEC,
-> +			    adc->adclk_rate));
+> +static int rzt2h_adc_write_scale(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *chan,
+> +				 int val, int val2)
+> +{
+> +	struct rzt2h_adc *adc = iio_priv(indio_dev);
+> +	unsigned int i;
+> +	u64 scale;
+> +	u32 rem;
+> +
+> +	if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < chan->num_ext_scan_type; i++) {
+> +		scale = (u64)RZT2H_ADC_VREF_mV * NANO >>
+> +			chan->ext_scan_type[i].realbits;
+> +		if (div_u64_rem(scale, NANO, &rem) == val && rem == val2)
+> +			break;
 
-A single line (84 characters) is okay in this case.
+Hmm... AFAICT we can use multiplication as the result of the division is just
+used to compare.
 
-	ndelay(DIV_ROUND_UP(RZT2H_ADC_STOP_CYCLES * NSEC_PER_SEC, adc->adclk_rate));
+> +	}
+> +	if (i == chan->num_ext_scan_type)
+> +		return -EINVAL;
+> +
+> +	/* The scan type changes with the resolution. */
+> +	IIO_DEV_ACQUIRE_DIRECT_MODE(indio_dev, claim);
+> +	if (IIO_DEV_ACQUIRE_FAILED(claim))
+> +		return -EBUSY;
+> +
+> +	adc->resolution = i;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +	ret = reset_control_assert(adc->rstc);
+> +	if (ret)
+> +		pwrseq_enable(adc->pwrseq);
+>  
+> -	return reset_control_assert(adc->rstc);
+> +	return ret;
+
+Hmm... If it was added in the previous patches, add with unfolded check and
+explain in the comments that the code done this way to avoid churn in the
+future changes.
 
 -- 
 With Best Regards,
