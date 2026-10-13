@@ -1,235 +1,200 @@
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011013.outbound.protection.outlook.com [40.107.74.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF8C377ECC
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Oct 2026 19:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791919673; cv=none; b=KNaSXKThGlfCq861BESeRbBBE6xwNMjTjNNif8L37Rf0pPcM21X0l8B90j3msI0YvK8t5+DY1798xvJ8PoSVOEhQioFOP7/PlFLQZL0mt+thH19pgGT6pKkQ1TEp0AA0TtMVfdagYk5krUmTZuZd4N13tuU26kg3qUyD/On/u5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791919673; c=relaxed/simple;
-	bh=Ohen3rZxNLiKkHAShhfXOPV9gxWORaB2IXrMLIJXQqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2E/tHByg8v2RKe27FGyXWxYpqjt+agZ3GvrShgErzuVr4guPts0UEiLVkGeWWbWIRyAdQtRGi+fz9t/5FE3qqmWAg4XMXKijA2nNU803g5qbWlL8dRDs5LoKGOsP/SNcWzT952nic2SCaM0FzPr3vvZ/sS52KpKYWzBKcyzrb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=J0EHjVJf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rqCTUPXW; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65FB4E0B65;
+	Tue, 13 Oct 2026 23:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791934716; cv=fail; b=ULtdc1ym4MclfKcOtiXGg4ehPYpPTUBVuW8Jq9PAO25FUEfcrwSwGDQXlrt1ccil/vwNtAYZnfzfKWGZbGxjryaJXXroQf24oY+fig7XmuLPItqgzAEj/kSKgOqLFCTwcNojpxhTM236h3wC4fyFRggWRR7sm4pqiX3i2EtXCRw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791934716; c=relaxed/simple;
+	bh=Xny6m8MqZypDTUaj4uDv0I6IbX8m77bHnTPKNpsxotc=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=NS411Qn1AjMRTSA1BFPaiGrTEV1R4iHYzSF/NMOloysNVT38pH4KiFSbtSsSIziezd3oJpIbI1yDfgyKIZtJkKDbhjQ8UkXOME/p7f6V21lnpQCE6mak6LDyQKFE42McQ9GUCTCKRxfCRthQNpBTRadHd3ghySAY8E3Detnoss4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=DUpJpENU; arc=fail smtp.client-ip=40.107.74.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="J0EHjVJf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rqCTUPXW"
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EDAD67A0173
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Oct 2026 15:27:50 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Tue, 13 Oct 2026 15:27:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1791919670;
-	 x=1792006070; bh=i71dCF7LLUU6ilX5suQf9vUjY12l6ztj7aDzxt9M6nE=; b=
-	J0EHjVJfDSIu2zGY7bafGgHYWg/e+Hsa0RB1e2cYU4kEZUbrjUSQRwLa/1ets2UM
-	KnxbiXzisNjFG9woMypsUG/AOhydhroHGLeDLSE6bFMRfmcL6pa+xcYAunYib0Ba
-	+qSxtqT+Ppqvg9d8mNoQYS1LTdZ5pzvdbH2ldtO077AptpbiYy2LAyMLhCE+YvM/
-	PU2T2O1I2efzuz0QGcjsHc2FW7dMajKTTrs/YhQD0zS5YrqgfBycit0umBFsrdJP
-	Y+U7a7stpAMSLC2+9oFPrALBYR6MkC2NdSPkGjDoWh7S9y5psWjh4GPbhlPeXNpl
-	j9O5eQtN/iRUoP/fLqcBvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791919670; x=
-	1792006070; bh=i71dCF7LLUU6ilX5suQf9vUjY12l6ztj7aDzxt9M6nE=; b=r
-	qCTUPXWekjqXYFJdrrqky2bMMDVS2ZRDS+VUO1rw9bGHkZFQR4qaME6R+z3V8hik
-	D+Ts61bPVKfmkTvr6WWPoV5LHIrHI8DaE0yCpguo/FS9x4MoXyiCBciAOo45I/3t
-	Eb/QppykYnTz8BbOBTs5i0WGXs/zoxKdXb21UR9zuwr60G6J5Qo0IMr2YDbHII+F
-	caCykknEpCH/sD4TpgiHbjgU3DEeM8/kTNEypXzQQSv697oiFsIHavvg7b/UVE6C
-	dFI67o6D8cfjpt9bPbsUbHkbytFg6O5Zt2D72EuitFF/epuClhIKrucxUETPlkGj
-	J4mkZFO02TWHpb9IV5kCg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791919670; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:S8yDA/OQSRG4w/lg3ICn54NN6hJXTOIBpZSN4+6qfr43bsm
-	SyMN6OPCRDShILTD4xgwIf1eRt3p88Q/CrWoS9KvRbJFWnuiLHhQOr0R3mHK6VUw
-	vmGu6I2ZDbcWIWeNb3sxIG8e011Io1LovJiVS3376FDFok+2JzSJ1A2QxaBDEQLZ
-	uE9MfTIwMx2bPUTStmS7fvElvbtL9sfjbi7+81r6oTgsDvXh7Cy+WQKMfbjg2P8X
-	7+ztFDbfViOvnnl4YJK/ulewjaVSprVtneYCcYdpj5oM8HaW1u8uRYCxR849WPFw
-	GYSzE0rVEeCKBo01qSrfP1QJuq1XAtxTfiL6W/A==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:XMjd31xaX6qY7nO+Hz/DpmweUgB38HmSL0HBamkMtbY=:Ohen3rZxNLiKkHAShhfXOPV9gxWORaB2IXrMLIJXQqA=;
-X-ME-Sender: <xms:NYbOapsN8Oh-hfF5TqiXtncIM8qN8pDtVgIjO9vpgoW1C4zRFZB2Lg>
-    <xme:NYbOaqodxZGvrKYvqZOUSj7MUvSJM611_t-zkFKmTbBNp3JJi-mPCcQeCVarlVdtl
-    XwRgbVi5Z-fX-oRzftBVpNXQneSHv0_tFBxsIFN-gGRUZ4awZitko0B>
-X-ME-Received: <xmr:NYbOaoUfx3dnTUKMjHXHQEHFSMS650xFtnvfo_4y7plRIcUDgRy8R96Kuvv1vTHd_FtbAcK2oyZ_djPlLVnQe8OSbInFp8M>
-X-ME-Proxy-Cause: dmFkZTF1XrOuzvjggCMf66xYGP0beiWESpbYzRHjMH8GlDixX3oUyYJed2yNJ5F/Qv7gNg
-    0BduEPHe6mQsPSJwzkb9bbd0BbodiEo2FEQy/sEdzXE12oZGOZ2gZiIDkeaspvzTHEzAGz
-    ZNjKmh45kOttg39ATECzMlsUiVDwrICXj+z3dMedHfKc68elVM+9qMC1A4oQC4rH7uaI8Q
-    fCFjS90yKcBbzGLjvFeboP1My0ewzXBolI02yV73sZaQR4sbK9Wbw9/02I2quaekrRz4t8
-    sENzLJ2lLrM2vtiVKCk3zj8Y7QA+AX5KqIm8+3qrz03hAtuCn0l1TfZdRHcDNJFCP6DTcH
-    xaOgDFqwwYL696D/4TwQ100dILXl60Sgw6crtEyYlRmvRL0gbFef+S+TcemnBfS1N0q/FU
-    sKcaO452mgL++ZNskIA/rO5wQTjf5QKcV2WVrsm89A52zDHMvFW9tUxRNhA4RVKTkSeOXN
-    I5MUvP2EH5Xm+/kd7QSdvqEkSQ4R/P7JyGftnxV9gtAZsOEIL/Kop7V5QyS2B2ud1sny2b
-    qeRlv0qV+3BumGfx6sfV8APp6ZL3LLD6LieF0RvIr8uyr3BTom8L5lHsJ83k2GxNo6duyE
-    Bhp3lH1Bcqwm/UNIJnMJI89qWvRYknxybGolr2S6jepeAi8uoNCV7M0XvqWg
-X-ME-Proxy: <xmx:NYbOaq1vLq0jK-1ulMKA1UVv8NMtkNOdaQ6kCOmR1p0YDWiehc-tag>
-    <xmx:NYbOals-5WVS3ukfIVp33c7KDzoh-QuDzBfiwcyARks17PFwpO7Cmg>
-    <xmx:NYbOaqUharW2EeeT1pqKAVMQZq_9Y0M-h2-oaVXpa21E55_E9TAytQ>
-    <xmx:NYbOalysUYL50lWRVxjFy6aIxzSe2o1Jm-Y0BIcDimJTB0Hoo77igg>
-    <xmx:NobOaj2Dp76wiwOUq3z5d5GVOfqXDkbYM8UTGHijIwQo4WFaBRUC6NO3>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Oct 2026 15:27:49 -0400 (EDT)
-Date: Tue, 13 Oct 2026 21:27:43 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Myeonghun Pak <mhun512@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="DUpJpENU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H+TyebYn52hGNNENKZEr+pEWa+VFDzn7z7QjbswxO/xFVZ4mQ01sPMoliUQFQakNlazMb78Vt/4hqHp1/wghjd+asxOB6S04xrO3GkjLxU9JwA/vUeukln3UZV3R1VuAjvVqCF0+QxbF0HUunPBzJeoEy3op5kuYjgIeRoOn7qSLJXURd/sf2w8AkWFX7d5i6k53NqSN/52qV7xrmTfbabEvLEUirUHXR8G7CwfFaiXAjcOqWGECY6lcDAeL3sos38AM2D5yjiVe9QBV6WiQHAmCTw4e+wGqmF34v3yK4WSejUnffI20Tk3w4KHYDIUYyJVO2acMUBml9K3qVjx/ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DNjMIbYe7x/VN6lJjjX2RJGkFclmdFsRfB1RcKtZNtA=;
+ b=hJwGBcSVQZr1jVTHpa2PW5ICddG/467OUCn1NEbQ+Bm3EssnayuVSFA1wZz0trkGMg5ih5df1+z/fgwg9E4aNQTDTmS7gcBm4wykKTSYQmJUWpbr9jNDSqdmFItNe/SKI5eirkfIOcL4fbWKFBUzOH1ddgHpGhaKoN0PxWlAZwuqikqe1peUsKgtMT+HdKDIHciwEH6BzUeiBFYdtwUmmt0dYcZj8HsSDchSPvsWTRty4kfAoXI0iKSEhvuV/laYOAiw7SAp7PioS/PtHtx2RELHOEUPE0Jp3sAA8Rk4a6MONf3ax1+lEdoQcZnFKBYghgJj7NC9wjbRCAprv3BcGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DNjMIbYe7x/VN6lJjjX2RJGkFclmdFsRfB1RcKtZNtA=;
+ b=DUpJpENUy1AA2WaZqtZeU9153uyKIvqHBvQfv7QJcMJwi6KJdV0BmJqP6/YOTJRIVwcezWdOiZKAhmF8HUF+hPomcAwcW4bv9TiXoErb5Vid6toMpe3FTHLG8FuAj6TIIQymJ/USTnAenSiqIShO/zGGmVR15fx8Jh/gL0CJx+0=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from OS9PR01MB820914.jpnprd01.prod.outlook.com
+ (2603:1096:604:50f::14) by TYCPR01MB9642.jpnprd01.prod.outlook.com
+ (2603:1096:400:198::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Tue, 13 Oct
+ 2026 23:38:21 +0000
+Received: from OS9PR01MB820914.jpnprd01.prod.outlook.com
+ ([fe80::12e4:c507:3730:2294]) by OS9PR01MB820914.jpnprd01.prod.outlook.com
+ ([fe80::12e4:c507:3730:2294%6]) with mapi id 15.21.0496.021; Tue, 13 Oct 2026
+ 23:38:19 +0000
+Message-ID: <87qzhtyxw6.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Bui Duc Phuc <phucduc.bui@gmail.com>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	povik+lin@cutebit.org,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrei Simion <andrei.simion@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ijae Kim <ae878000@gmail.com>,
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH] media: rcar-isp: release the core interrupt before
- destroying RPPX1
-Message-ID: <20261013192743.GE1193379@fsdn.se>
-References: <20261011214448.2043581-1-mhun512@gmail.com>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kees Cook <kees@kernel.org>,
+	Syed Saba Kareem <syed.sabakareem@amd.com>,
+	wangdicheng <wangdicheng@kylinos.cn>,
+	Chris Bainbridge <chris.bainbridge@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Neo Chang <YLCHANG2@nuvoton.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	u.kleine-koenig@baylibre.com,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Hemanth Selam <hemanth.selam@gmail.com>,
+	Md Shofiqul Islam <shofiqtest@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Zain Aboobacker <zainaboobacker33@gmail.com>,
+	Sang-Heon Jeon <ekffu200098@gmail.com>,
+	Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+	Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>,
+	Bo Shen <voice.shen@atmel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	linux-sound@vger.kernel.org,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	patches@opensource.cirrus.com,
+	linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-rockchip@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 21/24] ASoC: renesas: msiof: Fix msiof_close() being skipped on rollback
+In-Reply-To: <CAABR9nG-YJZEdj6pVD-gbGU6J2EfRMQYsKd7u0UTgfrWOyAPXA@mail.gmail.com>
+References: <20261008103831.542533-1-phucduc.bui@gmail.com>
+	<20261008103831.542533-22-phucduc.bui@gmail.com>
+	<87o6cyxyau.wl-kuninori.morimoto.gx@renesas.com>
+	<CAABR9nHvCfabGfBu85bm1r=hP3b0ZiCsgZfShhOv3gNUfjjhGg@mail.gmail.com>
+	<87se2aw3ot.wl-kuninori.morimoto.gx@renesas.com>
+	<CAABR9nG-YJZEdj6pVD-gbGU6J2EfRMQYsKd7u0UTgfrWOyAPXA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/30.2 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 13 Oct 2026 23:38:18 +0000
+X-ClientProxiedBy: TY4P286CA0081.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:36d::13) To OS9PR01MB820914.jpnprd01.prod.outlook.com
+ (2603:1096:604:50f::14)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261011214448.2043581-1-mhun512@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS9PR01MB820914:EE_|TYCPR01MB9642:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d96b994-ccb8-4879-4bba-08df29831008
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|366016|23010399003|1800799024|11063799006|38350700014|4143699003|56012099006|18002099003|22082099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	GK5KKkYP25Jh8tCvPd70U8oTdLYzvuxJ5D/cVTA66+mFo5DhVmLWk5o7thkpNwyml4l84D2UgLdNzkC6ZM7vUurQSiGBbgQ+uEcc5E7/hMFJB5e2glr/vvFwn6D701dPo+74mQgEdtBkuBds6iLEtRJ3l77+BDyDKYRQJyS9S6XtG1wUloSFbSvemUAk7WSwvRtRqYgZ7kGme+Pd1QXn5LfLMZ5O1WKY8Tiz4TUiL9Iw5F9expXeDeFg9dT2XMACDYwFh/3E2xtM+nCTPyLO9wmDrPgqTVu23irFzDIKB3D5J8JfnkmmpzPr3ZhtPcZp/6gIhdqnuB6raTtOrXnZLo3q8J6ac8HNuijAfVkXy4/dX3KmGk91SBg2777jcWPG2x8PBjAAZfNvl1INjA2mTWb/SQ/gHMbtcljkhjUHOcQmipGMX4f1eLiFelkzwP47Jsb+gbH6XAUM2hxuqJzzmvZzcDSSySITx0PrfWYlnbopu8ZaAhMvTJKSVqO/AGRstGWaqx4hE+Lw/1ADyrrojJNLtvQOx5UHZ/d7sv7YLc5N9be0Jn+glz4I63994p2uJitmfqJLvM7UPis+3O4J+gCKazA3bqis9MWDD+D8xZAD62FQZ4HkYJuYUhEedDu66Z071grpe6zjM8brVDgUl+XelSyI/wNHLl6BkEgyOJ0z6HiIl6f5FSLHhuMTV74fMVeBFU6iQyVDoXDMdfiZv2AT3cdMVzx95EBXKxriqjA=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB820914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(23010399003)(1800799024)(11063799006)(38350700014)(4143699003)(56012099006)(18002099003)(22082099003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UrzHlCRbWQ7VHHR8+3IKlJsg1Jusni4X+Tf8NmYynVO3e48dOPCyxZ0Vs2lt?=
+ =?us-ascii?Q?z0ngWqsn/OfeNGKMLaTGpQ/Nh7y5Vz5ZpLFyKZjoS2Z9Ak+oWR8Ax7GlFT+S?=
+ =?us-ascii?Q?sfbSx+Z8WB1DqMLm44NF1x8JjsfaDup/4Zx1GX6uBJasNExD2uprdOVjN6rD?=
+ =?us-ascii?Q?KG7nY/RwoF+ofwWct7C0cZwkxBqbhhsNzPA2P5yLYrprfr6pkcoHZ0jGDbMi?=
+ =?us-ascii?Q?p5vGljdGeUYwSC57nyrVpHSd9+U6Mpthl+lYWT0KMVDV00/+SvyLtXJpof/N?=
+ =?us-ascii?Q?hb9jftKgUmYfq5/V/j5+L+6ic1EJd8BrPNaX6UfJ//anamlJDt9nR1HxxYTa?=
+ =?us-ascii?Q?36haUuCym2i3ONmSLy3hJsL4VFqqYnvt0lXFI/tGFxxq481BwAScbCXu4XsN?=
+ =?us-ascii?Q?9iNZiY53ToZlYVKrrX82dzF1rN/jaEPxtXTfZb7OXdZLbmYQvyPSer1EL5sF?=
+ =?us-ascii?Q?IRQPtvMphF+3IdYnF5Zqa/89fb4SM62/8TSpH15NTMptY+kM31lB8wh7jRse?=
+ =?us-ascii?Q?GE3Dq/Z/Yj/GKxQzULQRyX2b12rJddRpiD5nUPVI3pcHpTq3CvHACJhG95QY?=
+ =?us-ascii?Q?wo9sw/edkO5A6WUNfDh069LSJr/tPuGDNo99NLnxYSNAZbaiNXHVIks0PRsT?=
+ =?us-ascii?Q?UjPva9zqrux1kmEt8fWb3vEE7rja69KxmjpcomQznzs8Hx/bLgfKtWmnnBzQ?=
+ =?us-ascii?Q?77Te3OB9ADQcuyZf7F7a1Z5Bfzitid4xSkuFvSjWkOC6QQBUD5z7bKegEdtr?=
+ =?us-ascii?Q?g2lR2rpABIlFChnuy0fEWNBef3ncXkQjO+pbp/sAmgaRs0oNBGWmx0uYZwgZ?=
+ =?us-ascii?Q?BOYYgoIY2qJQxCqMk1RuFFio2ClLzYEEDgH8UKjaa/nr0iJ7aabq0f0LiZuz?=
+ =?us-ascii?Q?hRhqEa+3baPjj1BHEdd4GiAFMROs4kk18VkWi0gREiHKyzPJ376T4aHH/fI8?=
+ =?us-ascii?Q?phRhAV79ga5tsbC4kxuN/IDix0M7oPv/bXuFuW6I6Bx6nat2m29WlBKmEk6/?=
+ =?us-ascii?Q?J8qNb90JL68Ovr3+k/jtazRuGzxgWMO3oTdZ9fFI/T+e8MMtFhTYrtobQPz3?=
+ =?us-ascii?Q?DZwSt/BqcuvvqhvJgYBzwEUDQ8GdgAHZwUf4BMI+rrXj1oVMeHqngZY4bAf1?=
+ =?us-ascii?Q?jyWiPPqlb0SzF8XiJ81hOLrEiZxUXFJo+Dz0vc+ph2jM6Z6BCs0ET4IfOG5y?=
+ =?us-ascii?Q?7+6ZglRBnlQGqt11mDnD67/nW3VHIwK4BcnvWlHFPmlRwZdlbgSpHig4fKRX?=
+ =?us-ascii?Q?/q81rGnuQKbPQCOKgFRZYRZgniEtgHNeMIRUwkSg5tODsRRsGsc3rQrVULKD?=
+ =?us-ascii?Q?Vn2l/263Fkaab4QWV/TBXKjzjj8B5PLbUZ2OjlERuBjRqovz1PoBs7xyns5s?=
+ =?us-ascii?Q?pOvG/UMksjXXD/szXG2Xzf7ElmETsEb6ecWp00jVLifhS1dAsEFWBLPwGfsZ?=
+ =?us-ascii?Q?4lg45/gnlxBINPq6QR7bfSbirLKHPJiQhTMY677eAP/HOfw4vZJNg+FPvlTQ?=
+ =?us-ascii?Q?v8F9+viOQMEVPmk+zAcL1nlys/EXM+/lr/bMtKJyn3qY6xOKJdCNvgQszQpb?=
+ =?us-ascii?Q?+yanpkgSIvbSZHCJ51g6EKMcMEtoExibm6wCJKddY9O/hs/ZL+mE1slOVX+0?=
+ =?us-ascii?Q?LmwqYxVfoBJnohkXnkZqCqF2aMl9bsanswSNgeyjrkoiuDIRjvfWAv5CTVbw?=
+ =?us-ascii?Q?k1CYI8HEQKPWx7NdQBwuZmZfcbE8dPpDec9OlWlSDh8YYcYajmY+185B28s3?=
+ =?us-ascii?Q?p3o3vanwSV+oqpzHus+kZRHeWnp881FBth64Z8QiLLaUAT4KahhR?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d96b994-ccb8-4879-4bba-08df29831008
+X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB820914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 23:38:19.7706
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dfy96rc6m6W9BYpy905fbKvLWhuCgPnwOwaRf/cmLXT/nLfxoCHUctYahDIdyvXmlKTMM13jGUKgE1LSwOleTw48338QZhUOitVTV5Ef2L+KomBAVvTup96uIRQlEMEC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9642
 
-Hello Myeonghun,
 
-Thanks for your work.
+Hi Bui, Claudiu
 
-On 2026-10-11 17:44:48 -0400, Myeonghun Pak wrote:
-> risp_core_irq() accesses the RPPX1 object before taking core->lock. The
-> interrupt is device managed, whereas risp_core_remove() explicitly
-> destroys RPPX1 before device-managed cleanup runs. Stopping the video
-> queues does not join an interrupt handler that has already started.
-
-core->lock is also managed by devm. Could you specify which resources 
-are accessed incorrectly?
-
+> For rz-ssi: in DMA mode, the driver registers the generic dmaengine
+> PCM component, whose .open callback already applies the integer
+> PERIODS constraint via snd_dmaengine_pcm_open().
 > 
-> Release the core interrupt after stopping the I/O nodes and before
-> unregistering the V4L2 device or destroying RPPX1. Request it only after
-> RPPX1, the subdevice and the handler's locks have been initialized. This
-> also keeps the interrupt out of probe error paths that free RPPX1.
-> 
-> Only treat -ENODEV as an absent optional core when core->base is NULL.
-> Resource probe failures clear that pointer, whereas failures after resource
-> setup leave it set. An IRQ request returning -ENODEV must therefore fail
-> the parent probe after the core has unwound its resources, instead of
-> allowing removal to destroy RPPX1 and put the VSP-X device again.
+> Could we drop rz_ssi_pcm_open_dma() instead, and keep the return
+> value fix only for rz_ssi_pcm_open_pio()?
 
-This is a different (potential) issue then the first and should be a 
-separate patch.
+It seems fine, but I don't know detail of rz-ssi.
+Claudiu, what do you think ?
 
-> 
-> This issue was found by static analysis.
-> 
-> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
-> Assisted-by: LLM
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
-> ---
-> Compile-tested with Clang 22.1.2, W=1 (arm64). No runtime testing.
-> 
->  drivers/media/platform/renesas/rcar-isp/core.c      | 13 +++++++++----
->  drivers/media/platform/renesas/rcar-isp/csisp.c     |  2 ++
->  drivers/media/platform/renesas/rcar-isp/risp-core.h |  2 ++
->  3 files changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-> index 586a5adbedfa..6bf1dd650486 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
-> @@ -802,10 +802,7 @@ static int risp_core_probe_resources(struct rcar_isp_core *core,
->  	if (ret < 0)
->  		return -ENODEV;
->  
-> -	ret = devm_request_irq(&pdev->dev, ret, risp_core_irq, IRQF_SHARED,
-> -			       KBUILD_MODNAME, core);
-> -	if (ret)
-> -		return ret;
-> +	core->irq = ret;
->  
->  	core->clk = devm_clk_get(&pdev->dev, "core");
->  	if (IS_ERR(core->clk))
-> @@ -887,8 +884,15 @@ int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
->  	spin_lock_init(&core->lock);
->  	INIT_LIST_HEAD(&core->risp_jobs);
->  
-> +	ret = devm_request_irq(core->dev, core->irq, risp_core_irq, IRQF_SHARED,
-> +			       KBUILD_MODNAME, core);
-> +	if (ret)
-> +		goto err_destroy_mutex;
-> +
->  	return 0;
->  
-> +err_destroy_mutex:
-> +	mutex_destroy(&core->io_lock);
->  err_unregister_v4l2:
->  	v4l2_device_unregister(&core->v4l2_dev);
->  err_destroy_rpp:
-> @@ -908,6 +912,7 @@ void risp_core_remove(struct rcar_isp_core *core)
->  	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++)
->  		risp_core_io_destroy(&core->io[i]);
->  
-> +	devm_free_irq(core->dev, core->irq, core);
->  	v4l2_device_unregister(&core->v4l2_dev);
->  
->  	mutex_destroy(&core->io_lock);
-> diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
-> index 53ce47020d17..73bf7e42bad2 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/csisp.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
-> @@ -563,6 +563,8 @@ static int risp_probe(struct platform_device *pdev)
->  		isp->subdev.internal_ops = &risp_cs_internal_ops;
->  		break;
->  	case -ENODEV:
-> +		if (isp->core.base)
-> +			goto error_subdev;
->  		/* The device don't have an ISP core, that is OK. */
->  		ret = 0;
->  		break;
-> diff --git a/drivers/media/platform/renesas/rcar-isp/risp-core.h b/drivers/media/platform/renesas/rcar-isp/risp-core.h
-> index 627a762d6b19..70432cf4a88c 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/risp-core.h
-> +++ b/drivers/media/platform/renesas/rcar-isp/risp-core.h
-> @@ -112,6 +112,7 @@ struct rcar_isp_vspx {
->   * @dev:	(OF) device
->   * @rppaddr:	Hardware address of the RPP ISP (from OF)
->   * @clk:	The clock for the ISP CORE
-> + * @irq:	Interrupt for the ISP CORE
->   * @rstc:	The reset for the ISP Core
->   * @csrstc:	The reset for the ISP Channel Selector
->   *
-> @@ -138,6 +139,7 @@ struct rcar_isp_core {
->  
->  	u32 rppaddr;
->  	struct clk *clk;
-> +	int irq;
->  
->  	struct reset_control *rstc;
->  	struct reset_control *csrstc;
+Thank you for your help !!
 
--- 
-Kind Regards,
-Niklas Söderlund
+Best regards
+---
+Kuninori Morimoto
