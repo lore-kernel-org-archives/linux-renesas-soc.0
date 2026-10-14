@@ -1,206 +1,366 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011055.outbound.protection.outlook.com [52.101.125.55])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1286A4A6CF2;
-	Wed, 14 Oct 2026 10:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791972540; cv=fail; b=WnNBfTGfg2K8O3ylYAH0YYhn+28eaNGT4lsCkHM05HdiQpQSUqPHpbXCJTgCXC6Nqo3vgN4AnVk42pOBAd96Kj64/R4lUSFV/qWHkQSd6rvELuKNOtlET11dVcPmuHMvY79By4ABXf6RP7v4pnQyPvDNn2gdT9jAXm/l+yA+nTc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791972540; c=relaxed/simple;
-	bh=nOTOZF5cIdVSN+CimDfBjEJU0L8Jx5vFuZmlvCx7vvY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HHvOUQwzUcLr+UONZ10zX9canPWgDEtCYplPhsXbXw1HbRmA+ar1coeFlv/nIHcJABUJoMbQ5sWEJ6sIeVZBkAz7iPcFbWToutTWMyt5BXDntmneyrRowNHbMbQLH0OR/8iU+Y94RA/C4iqQphoBip2K01TgbpNwHaFCfBdZJnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=jUx5KEw7; arc=fail smtp.client-ip=52.101.125.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F96548592F;
+	Wed, 14 Oct 2026 10:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791974458; cv=none; b=I+6x6DIRezWns2RnThQp5ub3KBqN+Ddbv8waj58CYVVdejaOHsZJU0ncUlhJEAus4pjxn8h9ByuoLvALUeCqpbqAKZ5RP8gqT7PbRl6+pK5yYRahTLmMNaIBqGu7DjVBdyoP92NQsswdLKAuTfLj81tBokJ7apz9wtO1TqdXU2g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791974458; c=relaxed/simple;
+	bh=IzcfgwfK/dbYwDmJS9r2SHQTK6Rqhjeh3z2M2uaOnQ8=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Kry2xMuTcU3sGVQCpn+zpTm+qkFkR3vziRuJLB7lMVTg0mM7k5Eoq7ZA7DNYMbDD0Xsp/xhf/HWB7UZPDbNH/F4JJs03AsfE5CkekSmfUfBNaIms7YL8f4H8AjpyWCWnsrRFWom6JR5yS2iMVq3mRVMI//XzCEyo/Ngxk2jpWcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CtkBxpEh; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="jUx5KEw7"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=axGLDq4xetc7ncLb5oOnzJ3QNsaq2yLyj+wBLK3tajMZY0j1N5YuGXH8cWg4IYmCj0138s3DjZ8efXBcpxWpKe/MTc4WVROIvezEVOfp7vMB/9idE7drBMOZamE3LxH5vEe4AtSQHdq2uBP0VhOdweQPD/o3RBcON6CbgAPrJrDGPL/HFwAzD31uNKK3ly0BzQL02Bngxv57lU+K8aUvwyJfIQsc4qjwrwJ2wwPRrVla9+LRME0eA2wGW1ekeqada6uIO2jsAkcuXO5sbVOn9RZUTVk7Hy7PBHQaT7lPMAdxsb2xeHxWuaCsv88UPDXWD9Nr8vefNlup1UNlbtOGgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w5hdg3dFTihw1DnBAllAQMLXhgH6s+12Psf+rVwP+nY=;
- b=t2LwobpANHcyWFzjga+cMlNFU8FU8BX/k4na45tDbmav1RXMqXLH6Wx/M3WkFtu+h620r5RONVqclYtVlT7VHiNt+s2bTxXAzxwxpiEKAdZlYUJEpWVP4oaPjgOIua0gJMdhNj3HVZZSbpMzR8Rd44Gb5QuclzV9xsy5pr6tGycJglwwwiNhW0ueFL+FWTtC4QdIwVxZPVOP7pSjK4SN2IeGUYGFZbBCh1NeItdYAXABKtyGHjy3L0D8Em9NZVtfBUR8Ygd9JCiLF5ITb7yBwe2RqQBghggo9C40OTIzaLDQ2b+74Dv6j3l7dXDcwcjakm9zXmVpN55H+80kPSH51A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w5hdg3dFTihw1DnBAllAQMLXhgH6s+12Psf+rVwP+nY=;
- b=jUx5KEw7wX8TKNokqpIGu4AiYdTPtJ5gaWNG8IgrU58Rr4JMDTbqEV7Zwu5A9WRy+0DjihBaPsH8kNrOUDN35u6En9IamxQE/HMFyq7CEN34L2kx3fUmMQtxzVYC40iohcB5YPGa+eEvP0+caRPMqhiHj+xpbDZj47ci2hhOgWc=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSCPR01MB14951.jpnprd01.prod.outlook.com (2603:1096:604:3aa::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Wed, 14 Oct
- 2026 10:08:54 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0496.021; Wed, 14 Oct 2026
- 10:08:54 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Tommaso Merciai
-	<tomm.merciai@gmail.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Au Dang <au.dang.jx@renesas.com>, Thomas Gleixner <tglx@kernel.org>, Radu
- Rendec <radu@rendec.net>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] irqchip/renesas-rzv2h: Preserve TIEN state in
- rzv2h_tint_set_type()
-Thread-Topic: [PATCH] irqchip/renesas-rzv2h: Preserve TIEN state in
- rzv2h_tint_set_type()
-Thread-Index: AQHdW8LS9jwUABy5uEu9aunZjt/+TLb8z24w
-Date: Wed, 14 Oct 2026 10:08:54 +0000
-Message-ID:
- <TY3PR01MB11346E75A9CF528A328CBB7CC869D2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20261014095927.635132-1-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20261014095927.635132-1-tommaso.merciai.xr@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB14951:EE_
-x-ms-office365-filtering-correlation-id: 1869ef28-4b89-4745-a2c0-08df29db272b
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|18002099003|10067099003|22082099003|261009223027099003|38070700021|11063799006|56012099006;
-x-microsoft-antispam-message-info:
- Q4viHZWEq9vn/aSoaYFgX/ZlLf2Sk8Tg9eZDAdvXz4wufW8nHqGVGCLFUtsKemL++MIopLMQgJbE6wkp0R/Gf/7UNVteFctjDp6D5fh1gJbnO7hLDBpTzVzLhlpF/BSY8UJo7fj8AuiwQ1iMcboy70gmsp+9sNyVuBcxjtxN4eVE5Q5n9Wtq+/+S5rED9e3C7wsNiHZm6+7wvGFR1ZzqWBlzjMA3fmUMC3tfECMi/OTudPfCvBWlKUVrCnwtbL+9GIIWMHQH5Nnb4LISifiX6iJW1IdIWSyp27g0n4Vqk3KhPw00AYQscw1WeYUOd8nlITafjiZV75ZylGcdS09NJtErYQTxdOwtQwnz8llSpOKpXRHC4w4+eNAxbI+LPgkPqPp1az5zhy+NalfoyCt/P6xMK0eM5Cdnut1IF8/yMvhsZB1px9R2RjOWdmytUIcl7rL4ZXl/ZkaUANwSTh9midDUyb8YWPtKJilHFiEnsdnZdJY55AtB7fgm2oLelRBaS04nTKV6vCOOIuUpAt7ZPkFx+y+DqicG/NHrlssT/f92nkp6O728lgRNuy2UQ/Hfr3BcpP1FvmR2lG3NYuh6f+AmyBMLjodej9AVQjhTdofxWdFWACF5cKGcZrS9hq6sqoUW/wCJIGHlJZkhgK6BfprFgV6qRYKLxvYLyUBQn7QWR4+1onWOwaqYpLSMxFUxSc+esDhhAMsr1yaOXkblP3zPyKy/DNbTTa9nMYF8tMY=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(18002099003)(10067099003)(22082099003)(261009223027099003)(38070700021)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Lz2Z7bKivmmDcZ0JFvB9LYhDSfQh9q6234Pvtxvm0J9azwj06QG8w/eonrpH?=
- =?us-ascii?Q?kCoiJNHpdGYZqUGKGWxoVF6G8YTwe7hjWXmttShB0hBK6ll4lk54RxJ9LGkW?=
- =?us-ascii?Q?jo6IADQTGy8xKxLPp5oaLXihpRo99JmCpoCjHPioVvAHpLUrPLRgSWAgu02j?=
- =?us-ascii?Q?Cu0Gy3fx4Me5l6Qhw0AxKkOXdzpfvBMTa9uHyVRLNq1bY6J9kRy/1rSA0m5/?=
- =?us-ascii?Q?pQTy+4d/DUdALImRpb/ixBVtUsqZ/37fnQS2TgYr2a1twXYellrBaAXNGA/9?=
- =?us-ascii?Q?GPDqtdufBOrSBwxbsWCcwhRU3R2c++CtWyXc7Yu38cQLq44C10TdE2Dho1Ot?=
- =?us-ascii?Q?IOTcCSfQK+EVNWdwoYRPIuH+JQhtSKB6WLqYdNB6vfS1w5FZcqJp3quOzfkf?=
- =?us-ascii?Q?OvCMkqgFqostRCE+Bnu7DhwfHgSiAqW9McnbbxoRCaufqkZBundmCUo++o/P?=
- =?us-ascii?Q?UnrQgXRHf91Bw11zejOUq4SXVcXom9xpCCO6HfLDEhCGRcsBAlIPNpERChNy?=
- =?us-ascii?Q?UpN63TUnYyFvgf0bqqUoTDkvEFaWDyALyC47DK8aSwI1vuSZCnLE3TFRXk89?=
- =?us-ascii?Q?HcDnrUjGkbo9aHwcT90sLGwmBt46rKyFJdQ8zBB6FmZfi0z7iSxYmqmiqy1P?=
- =?us-ascii?Q?HZDIQipxRSs3l/d/6TjfpDpjdRMYANFWKjmm2/4mQbddbNaSPO4toyzPHO8I?=
- =?us-ascii?Q?/v+KypqJ45HoHQ7Nsw7ia1IAu4bUDKXo9EsIXKb3gNUIcA4ywaMu+5RHJMyp?=
- =?us-ascii?Q?pIq/bnaU4z2XKydBFoqI1PdqW94/2oxRAokBMs88jXzuW236jgHBLyYchPfK?=
- =?us-ascii?Q?Pier8cphF1GXI2dgGatZ1PqNDYBCf9tu/cifE/dEyV8jrTp7jG31EaHXmLAX?=
- =?us-ascii?Q?tlApRG2Op2JTq2DbM2Q+TP9qtcaGiYOh31eLnektDOStZM1qZEnVvymMMtDP?=
- =?us-ascii?Q?bMNLX3qkXgvDhKxssL3UQOhJITmU8Ru4pxV58KWZuWXgk0klGBrnQdk6suOo?=
- =?us-ascii?Q?jWYGvyF3S7HSdK/GhvjaV58w5zZ2LbIBvRSQdB8RATB6LTMBMwSpzMMSsxHt?=
- =?us-ascii?Q?zpl4gAOimQGGc3UkBdvXfq1WFGX+R1modXB4Z1qiOxrwqmuttewgdubtN1zS?=
- =?us-ascii?Q?hZclPnW8RNko1U2ETZE7WM+0yndqvay1+9p97vACD0aS3vPgTicRnQd1TlwU?=
- =?us-ascii?Q?rBeD/RerFGwzUjt5mH/YKhzZTSe0srhEBHduIXr0zzrBn0IJGixD8bzzrAdQ?=
- =?us-ascii?Q?83qQ1Pj7ufaTaPKCK+ZHn4IffxOh5vSVlPX1Fo+FH/V7hNwSbcqmsgcsrZiM?=
- =?us-ascii?Q?wfTL/DZeishRULXDCFdRScmxBedM7xm5PZwGeB6Dn/9HljJBZDd/xbJ7/byV?=
- =?us-ascii?Q?B+aXu2JQzcQKl4ycMoIvKmCBLxxOhNzk86J8SUq3vMQ/SNfF7fiUDetg+YP9?=
- =?us-ascii?Q?XrI1BV53O0a3Lo4Jt8xt5XmmjuB4kgkwtdIPgKIiBATNFjPT6/kvG0zhYyp1?=
- =?us-ascii?Q?Kh+Qg0UWerKngDRKiGuR5UMLOoTWrQqQAe9EML57RloH/TvzFoxqijoheM5e?=
- =?us-ascii?Q?MFqxweh9ClJZvruD5tXD1NEnMl0wS5AKIrkX2G6KoML6hiS0QDiv2jTvoiLF?=
- =?us-ascii?Q?4Ip0eiGgxUInbODDspzGERC5GbeQ0pSaa9uivDVmxBPQQU7WAs/VEDlqvZvU?=
- =?us-ascii?Q?yU7GDf5XsZlopPHc+tWo62mewhC1QMWnINeeY9o+zZKV6cAC3er3GryvgkpW?=
- =?us-ascii?Q?VwomNKxjpw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CtkBxpEh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1791974456; x=1823510456;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=IzcfgwfK/dbYwDmJS9r2SHQTK6Rqhjeh3z2M2uaOnQ8=;
+  b=CtkBxpEhhfp2t11G7J+NB43+WlsxbMABl3uCzu/X0+39p+8RCy9dhEMk
+   gymeZ320F793jd+P2a+p6nOjVvJQ7cg0y7sUXfgfiniR6Yv2h/6ry7ufi
+   aTaLE1w6UhrbrPmHC4Mj34MMUa7baiYZo1etEgCfkGY/Bc/rXrsjsgcJp
+   P4ebiSatwjd+0rpGSWsz8haKfPKBXJAWIl8Fyjaq5uJIpPGnpEK6DzvAN
+   Y8rvZQWxauAI8x9kmDa3tCdILh1iuvKom1KvUUfnTbgmBQEM/nabgmKaF
+   ZjT8QllFne/Zlvra2yXG1zQpnITKz/5SmXluAiTa0+M/3R2vkxvkQTS0U
+   g==;
+X-CSE-ConnectionGUID: voNT75EAQq6y2H38VlsPUA==
+X-CSE-MsgGUID: ZDCbUwLpRACt7E8984bZGQ==
+X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
+   d="scan'208";a="75394086"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2026 03:40:55 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.49; Wed, 14 Oct 2026 03:40:54 -0700
+Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 14 Oct 2026 03:40:50 -0700
+Message-ID: <eadf65283d0f700be558ac4c3725de4fb06c085f.camel@microchip.com>
+Subject: Re: [PATCH net-next v14 4/9] net: dsa: lan9645x: add basic dsa
+ driver for LAN9645X
+From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
+To: <netdev-bot+sashiko@kernel.org>
+CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <woojung.huh@microchip.com>, <linux@armlinux.org.uk>,
+	<Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
+	<geert+renesas@glider.be>, <magnus.damm@gmail.com>, <edumazet@kernel.org>,
+	<richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+Date: Wed, 14 Oct 2026 12:40:49 +0200
+In-Reply-To: <179180428064.434549.5154143843172991562@kernel.org>
+References: <20261008-dsa_lan9645x_switch_driver_base-v14-4-3d2a72661213@microchip.com>
+	 <179180428064.434549.5154143843172991562@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2.1 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1869ef28-4b89-4745-a2c0-08df29db272b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2026 10:08:54.1089
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VvY3o0lMmfgCVk1hmu0lHmU0FMoPkQX724HPjlSFfNKQzyQ4mJOOgxxEOShkeer0GgZ4kekdEPvFk0UTIkg3sFaN/0f4q26Iz42wRMHQjHY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14951
 
-Hi Tommaso,
-
-Thanks for the patch.
-
-> -----Original Message-----
-> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> Sent: 14 October 2026 10:59
-> Subject: [PATCH] irqchip/renesas-rzv2h: Preserve TIEN state in rzv2h_tint=
-_set_type()
+On Mon, 2026-10-12 at 11:24 +0000, netdev-bot+sashiko@kernel.org wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e content is safe
 >=20
-> From: Au Dang <au.dang.jx@renesas.com>
+> Thank you for your contribution! Sashiko AI review found 4 potential
+> issue(s) to consider.
 >=20
-> rzv2h_tint_set_type() clears TIEN while switching the TINT source and the=
-n unconditionally sets it again,
-> enabling the interrupt even if it was disabled before the call.
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 3
 >=20
-> Restore the previous TIEN state instead of forcing it on.
+> If you believe none of the issues are legitimate, please reply to each
+> issue of Medium severity or higher and explain why the AI is wrong.
+> If any of them are legitimate and you plan to respin, please let patchwor=
+k
+> know by including "pw-bot: cr" as a separate line at the end of your repl=
+y
+> (one such reply per series is enough).
 >=20
-> Cc: stable@vger.kernel.org
-> Fixes: 0d7605e75ac2 ("irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU)=
- driver")
-> Signed-off-by: Au Dang <au.dang.jx@renesas.com>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Cheers,
-Biju
-
-> ---
->  drivers/irqchip/irq-renesas-rzv2h.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> - [Medium] In lan9645x_phylink_mac_link_up()
+>   (drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c),=E2=80=A6
+> - [Low] lan_rd(), lan_wr() and lan_rmw() in lan9645x_main.h discard
+>   regmap errors.
+> - [Low] On RGMII ports, the MAC delay handling ignores phy-mode.
+> - [Low] Nothing in the tree can bind this driver.
 >=20
-> diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-re=
-nesas-rzv2h.c
-> index 1a4703a353e9..485c3eea7632 100644
-> --- a/drivers/irqchip/irq-renesas-rzv2h.c
-> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-> @@ -420,9 +420,9 @@ static void rzv2h_clear_tint_int(struct rzv2h_icu_pri=
-v *priv, unsigned int hwirq
-> static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)  {
->  	u32 titsr, titsr_k, titsel_n, tien;
-> +	u32 titsr_cur, tssr_cur, tien_cur;
->  	struct rzv2h_icu_priv *priv;
->  	u32 tssr, tssr_k, tssel_n;
-> -	u32 titsr_cur, tssr_cur;
->  	unsigned int hwirq;
->  	u32 tint, sense;
->  	int tint_nr;
-> @@ -477,6 +477,8 @@ static int rzv2h_tint_set_type(struct irq_data *d, un=
-signed int type)
->  		if (tssr_cur =3D=3D tint && titsr_cur =3D=3D sense)
->  			goto set_parent_type;
->=20
-> +		tien_cur =3D tssr & tien;
-> +
->  		tssr &=3D ~(ICU_TSSR_TSSEL_MASK(tssel_n, priv->info->field_width) | ti=
-en);
->  		tssr |=3D ICU_TSSR_TSSEL_PREP(tint, tssel_n, priv->info->field_width);
->=20
-> @@ -489,7 +491,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, un=
-signed int type)
->=20
->  		rzv2h_clear_tint_int(priv, hwirq);
->=20
-> -		writel_relaxed(tssr | tien, priv->base + priv->info->t_offs + ICU_TSSR=
-(tssr_k));
-> +		writel_relaxed(tssr | tien_cur, priv->base + priv->info->t_offs +
-> +ICU_TSSR(tssr_k));
->  	}
->  set_parent_type:
->  	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
 > --
-> 2.54.0
+>=20
+> net: dsa: lan9645x: add basic dsa driver for LAN9645X
+>=20
+> This commit adds a basic DSA driver for the Microchip LAN9645x switch.
+> It covers switch init, named regmaps obtained from a parent device,
+> NPI/CPU/front port setup and phylink MAC configuration. Only the internal
+> CuPHY ports 0-4 and the RGMII ports 7-8 are wired up. The SerDes modes
+> and the MFD parent are left for later series.
+>=20
+> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c b/drive=
+rs/net/dsa/microchip/lan9645x/lan9645x_main.c
+> > new file mode 100644
+> > index 0000000000000..c7de3836e6967
+> > --- /dev/null
+> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c
+> > @@ -0,0 +1,456 @@
+>=20
+> [ ... ]
+>=20
+> > +static int lan9645x_reset_switch(struct lan9645x *lan9645x)
+> > +{
+> > +     u32 val =3D 0;
+> > +     int err;
+> > +
+> > +     /* The parent must reset the whole chip before instantiating its
+> > +      * children, so the switch core is disabled when we get here. The
+> > +      * sequence below must not run more than once: initializing the
+> > +      * memories on a running core corrupts pointers inside the queue
+> > +      * system, which eventually fills up and stops passing traffic. I=
+f the
+> > +      * core is already enabled the chip was not reset, so skip it.
+> > +      */
+> > +     if (SYS_RESET_CFG_CORE_ENA_GET(lan_rd(lan9645x, SYS_RESET_CFG)))
+> > +             return 0;
+>=20
+> [Severity: Low]
+> What happens here if the regmap_read() under lan_rd() fails? In
+> lan9645x_main.h, lan_rd() only warns and then returns the value it was
+> initialised with:
+>=20
+>     u32 addr, val =3D 0;
+>     ...
+>     WARN_ON_ONCE(regmap_read(lan_tgt2rmap(lan9645x, t, tinst), addr, &val=
+));
+>=20
+>     return val;
+>=20
+> A failed read would look like CORE_ENA=3D0. The CORE_ENA=3D0 / RAM_INIT
+> sequence would then run on a core that may already be enabled. The commen=
+t
+> above says that corrupts pointers inside the queue system. The parent is
+> expected to be SPI based, like ocelot-spi, so bus errors can happen.
+>=20
+> The RAM_INIT write can't be checked either. lan_wr() returns void, and th=
+e
+> self-clearing bit already reads back as 0 if the write was lost.
+>=20
+> The same thing happens in two other places:
+>=20
+>   - lan9645x_set_feat_dis() turns a failed GCB_FEAT_DISABLE read into
+>     num_port_dis =3D 0. That skips the SKU port limit check in
+>     lan9645x_setup().
+>=20
+>   - lan9645x_port_set_maxlen() always returns 0. dsa_user_change_mtu()
+>     therefore raises dev->mtu even when the DEV_MAC_MAXLEN_CFG write
+>     failed.
+>=20
+> Could lan_rd(), lan_wr() and lan_rmw() pass the regmap error back, at lea=
+st
+> on these paths?
+>=20
+> > +
+> > +     lan_wr(SYS_RESET_CFG_CORE_ENA_SET(0), lan9645x, SYS_RESET_CFG);
+> > +     lan_wr(SYS_RAM_INIT_RAM_INIT_SET(1), lan9645x, SYS_RAM_INIT);
+>=20
+> [ ... ]
+>=20
+> > +static int lan9645x_request_target_regmaps(struct lan9645x *lan9645x)
+> > +{
+> > +     const char *resource_name;
+> > +     struct regmap *tgt_map;
+> > +
+> > +     for (int i =3D 0; i < NUM_TARGETS; i++) {
+> > +             resource_name =3D lan9645x_resource_names[i];
+> > +             if (!resource_name)
+> > +                     continue;
+> > +
+> > +             tgt_map =3D dev_get_regmap(lan9645x->dev->parent, resourc=
+e_name);
+> > +             if (IS_ERR_OR_NULL(tgt_map)) {
+> > +                     dev_err(lan9645x->dev, "Failed to get regmap=3D%s=
+\n",
+> > +                             resource_name);
+> > +                     return -ENODEV;
+> > +             }
+>=20
+> [Severity: Low]
+> Does anything in the tree provide these regmaps?
+> lan9645x_request_target_regmaps() needs all 17 named regmaps from
+> dev->parent ("gcb", "qs", ..., "dev0" to "dev8", "qsys", "ana"). If any i=
+s
+> missing it returns -ENODEV. Nothing under drivers/mfd refers to lan9645x
+> or lan96455.
+>=20
+> The commit message says:
+>=20
+>     The MFD driver will come in a later series, because there are
+>     requirements on the number of child devices before a driver qualifies=
+ as
+>     a MFD device.
+>=20
+> Until that lands, the driver cannot probe on any in-tree configuration.
+> Two things can't be tested in-tree:
+>=20
+>   - the regmap naming contract with the parent
+>=20
+>   - the assumption in lan9645x_reset_switch() that the parent has already
+>     reset the chip
+>=20
+> The ocelot_ext driver cited as precedent was merged together with its
+> drivers/mfd/ocelot-spi.c parent.
+>=20
+> Could the parent driver be merged in the same series?
+>=20
+> [ ... ]
+>=20
+> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c b/dr=
+ivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c
+> > new file mode 100644
+> > index 0000000000000..b57beee8329f9
+> > --- /dev/null
+> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c
+> > @@ -0,0 +1,371 @@
+>=20
+> [ ... ]
+>=20
+> > +static void lan9645x_rgmii_dll_config(struct lan9645x_port *p)
+> > +{
+> > +     u32 rx_idx, tx_idx;
+> > +
+> > +     /* DLL register layout:
+> > +      * (N*2):   RGMII_N_RX
+> > +      * (N*2)+1: RGMII_N_TX
+> > +      */
+> > +     rx_idx =3D RGMII_IDX(p->chip_port) * 2;
+> > +     tx_idx =3D RGMII_IDX(p->chip_port) * 2 + 1;
+> > +
+> > +     /* Enable DLL in RGMII clock paths, deassert DLL reset, and start=
+ the
+> > +      * delay tune FSM.
+> > +      */
+> > +     lan_rmw(HSIO_DLL_CFG_DLL_CLK_ENA_SET(1) |
+> > +             HSIO_DLL_CFG_DLL_RST_SET(0) |
+> > +             HSIO_DLL_CFG_DLL_ENA_SET(p->rx_internal_delay) |
+> > +             HSIO_DLL_CFG_DELAY_ENA_SET(p->rx_internal_delay),
+>=20
+> [Severity: Low]
+> Should the MAC delay here depend on the RGMII phy-mode?
+> lan9645x_rgmii_dll_config() enables the RX/TX DLL delays based only on th=
+e
+> rx-/tx-internal-delay-ps values parsed by lan9645x_parse_mac_delay().
+> dsa_port_phylink_create() passes the DT phy-mode unchanged to phylink and
+> the PHY.
+>=20
+> The binding (microchip,lan96455s-switch.yaml) allows 2000 ps for all four
+> RGMII modes, including rgmii-id. Take port 7 or 8 with an external PHY,
+> phy-mode =3D "rgmii-id" and rx/tx-internal-delay-ps =3D <2000>. Both the =
+MAC
+> and the PHY would add 2ns.
+>=20
+> ethernet-controller.yaml says:
+>=20
+>     When the MAC implements the delay, it must
+>     ensure that the PHY does not also implement the same delay. So it
+>     must modify the phy-mode it passes to the PHY, removing the delay it
+>     has added. Failure to remove the delay will result in a
+>     non-functioning link.
+>=20
+> It also says:
+>=20
+>     A value of 2000ps, i.e 2ns, and a phy-mode
+>     of 'rgmii' will not be accepted by Reviewers.
+>=20
+> Should the driver reject this combination, or remove the MAC-added delay
+> from the phy-mode it passes to the PHY?
+>=20
+> [ ... ]
+>=20
+> > +     if (lan9645x_port_is_cuphy(lan9645x, port, interface)) {
+> > +             lan_rmw(CHIP_TOP_CUPHY_PORT_CFG_GTX_CLK_ENA_SET(gtx_clk),
+> > +                     CHIP_TOP_CUPHY_PORT_CFG_GTX_CLK_ENA, lan9645x,
+> > +                     CHIP_TOP_CUPHY_PORT_CFG(p->chip_port));
+> > +     }
+> > +
+> > +     lan_rmw(SYS_PAUSE_CFG_PAUSE_ENA_SET(1),
+> > +             SYS_PAUSE_CFG_PAUSE_ENA,
+> > +             lan9645x, SYS_PAUSE_CFG(p->chip_port));
+> > +
+> > +     /* Flow control */
+> > +     lan_rmw(SYS_MAC_FC_CFG_FC_LINK_SPEED_SET(fc_spd) |
+> > +             SYS_MAC_FC_CFG_FC_LATENCY_CFG_SET(0x7) |
+> > +             SYS_MAC_FC_CFG_ZERO_PAUSE_ENA_SET(1) |
+> > +             SYS_MAC_FC_CFG_PAUSE_VAL_CFG_SET(0xffff) |
+> > +             SYS_MAC_FC_CFG_RX_FC_ENA_SET(rx_pause ? 1 : 0) |
+> > +             SYS_MAC_FC_CFG_TX_FC_ENA_SET(tx_pause ? 1 : 0),
+>=20
+> [Severity: Medium]
+> Can this turn on PAUSE frame transmission on the NPI port? On link up,
+> lan9645x_phylink_mac_link_up() sets PAUSE_ENA to 1 on every port.
+> TX_FC_ENA follows tx_pause, with no exception for lan9645x->npi.
+> lan9645x_npi_port_init() doesn't disable pause on the NPI port either.
+>=20
+> The NPI port has the long prefix extraction header enabled:
+>=20
+> lan9645x_npi_port_init()
+>     lan_rmw(SYS_PORT_MODE_INCL_XTR_HDR_SET(LAN9645X_TAG_PREFIX_LONG) |
+>     ...
+>=20
+> A PAUSE frame sent on the NPI port would get the prefix and IFH like any
+> other extracted frame, so the conduit would not recognise it as PAUSE. Th=
+e
+> port would run in lossless mode while the link partner never honours the
+> pause.
+>=20
+> The DT example in the lan9645x binding gives the NPI port a fixed-link
+> with pause. MAC_SYM_PAUSE is advertised, so phylink resolves
+> tx_pause =3D rx_pause =3D true for the documented example.
+>=20
+> mscc/ocelot uses the same NPI model and had this problem. It was fixed by
+> commit 33cb0ff30cff ("net: mscc: ocelot: don't let phylink re-enable TX
+> PAUSE on the NPI port"). That commit measured CPU termination throughput
+> at 271 Mbit/s before the fix and 926 Mbit/s after.
+>=20
+> felix_npi_port_init() clears SYS_PAUSE_CFG_PAUSE_ENA on the NPI port, and
+> ocelot_phylink_mac_link_up() does:
+>=20
+>     /* Don't attempt to send PAUSE frames on the NPI port, it's broken */
+>     if (port !=3D ocelot->npi)
+>         ocelot_fields_write(ocelot, port, SYS_PAUSE_CFG_PAUSE_ENA,
+>                             tx_pause);
+>=20
+> This also seems to still be the case at the end of the series.
+>=20
+> Should PAUSE_ENA and TX_FC_ENA stay at 0 for lan9645x->npi? And should
+> PAUSE_ENA follow tx_pause on the other ports?
+
+Dismissed, false positive.
+
+In this respect, the chip functions differently from ocelot. The issue has
+been fixed. On lan9645x the MAC formats and transmits PAUSE frames
+itself, after the queue system, so INCL_XTR_HDR does not apply to them
+and they leave the NPI port without the prefix and IFH. Flow control on
+the NPI port works as intended.
+
+PAUSE_ENA only enables the pause request from the queue system to the
+MAC. TX_FC_ENA decides whether the MAC turns it into PAUSE frames, and
+RX_FC_ENA is handled by the MAC on its own. With tx_pause off no PAUSE
+frames are sent and the port tail drops as usual.
+
+
+>=20
+> [ ... ]
+>=20
+> --
+> Sashiko AI review =C2=B7 https://netdev-ai.bots.linux.dev/sashiko/#/patch=
+set/20261008-dsa_lan9645x_switch_driver_base-v14-0-3d2a72661213%40microchip=
+.com
 
