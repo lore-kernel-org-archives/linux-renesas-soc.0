@@ -1,148 +1,157 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB5551D520
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 13:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791983973; cv=none; b=M0vlLOb//yyqLUXG/v9SJi1beGpl5OI3ae36A7GdXF3wYkEQk8/RaNKJVEkGrao0ip8YZNAPvy4mTndfkrC4gsC8Ar8JBWMsE3WjOQjDVlxqoFRUNVSFMvEFyO4IKMaXmslssbzw/MYtzSdMGlh/a522xHlyq8vB7YByZEVFmaY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791983973; c=relaxed/simple;
-	bh=i/s6KUBdap9Z3Ok4iOwoMoNKoc6aOT96NXd4ABGNsy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xdp/BIiad1ieMGggfK5yxCeBWE1tmGxqCvRiMzfb0th8dauq21ycpvfcgenOH/+eif7pb9nZbk2Nuh1IRJKsjqTuA3FBCfCK8tPmwBMaE0uYS63bPifXctj5JNitbeIx91Orr4ESSeDeDdC4A8PFl0lH5LFVA6pVbNujDUnFMps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wdka+eXG; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C717E52CCFF
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 13:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791984997; cv=pass; b=o74df+a2K65/1uDnCGA0mKtYeBi6dQEqSJS2MFsMPzufA5EIumU0O6P5oZamUAhAotEw/ULiEiyZm3ASZZiu1V4GwDKDkfxMxaGEhn/vjsBkvRbVAyTFs/JDhPrAV5aVLU+UE/ZvlpQ+B6f35uUC1Bc+zQ+oKdnLUEqA3yytF80=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791984997; c=relaxed/simple;
+	bh=IT0qggrd1mARJ6zH4Bx5bdn3EzKctPth4DH9TaUm78M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t6874NJRoWhSAu1+B6zNj6wGFrtPuhjyv4lmkEjRJj5eqwl/+1AebMjSjEGZvP2aBMDRXMUP9e7Gb3B0hBlwvUuMaNoZ7z8YGs/FileY5Gu0HuSp8qcgR1UsMo7jCNhz5WJAnRdBzFvhWX+0e6HMLOr8uJzWBkrJRGYHIG2cEP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=stl97STh; arc=pass smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wdka+eXG"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49ff680331aso11288185e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 06:19:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="stl97STh"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6b1aa29e06bso1509537a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 06:36:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791984990; cv=none;
+        d=google.com; s=arc-20260327;
+        b=i0lRXn3iudyQZCGfv35W97VD121BPnh/PthXpokjPFmI10AuTtCO6HFhgvgUqfQ6Xy
+         eK08tB2rMBSU3TzCyDvFVoWBxy2JePl8pQMcHMgGvj3uF8lz+E7TROPn0QGEotzPxIPX
+         yZHjFnXbLecFFaoVewwQtTerHmw+Ahww0vugPncwb08sV4TDshE6/FhZ9Kg4N5lXpg/e
+         o4U3bVPpjDkPBTkiPtnZ4tWiK0ErUS9poZN5Jjp4kE0EUrZkkh+VOIGcymMAQWqgpEXy
+         7JWX+6Lr4xDI4PJq9/cdS1C5Jam02ku/WHtTqCv7+Bbns90HSR0/tjKAgV3P7gM5Z6ix
+         jeVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WzfJaWITDWTXbAq39l/2Sp3XytY3nCJV7TfZMBMIxVs=;
+        fh=+zC+MeXzlEwKGRD016Jv/w/Pc+WIecUFDLSz21SUqK0=;
+        b=ACLeziUkgP7Q5uNl47F0g8CubZNNyQG5lnFqNb6Z8aPn7Z3xP9i3r3Ca1SDUQmTGH3
+         4MaaoaoedVIcfyJ59QAentTAH5xuoeNAd9ovpF5xSp9fTuqkHY7Z0b4k4MkAs/rV4uxK
+         975+p7uwHuhRbbYa6zW0x6qKXTKV/WIaikEKRH1Z4ltC+3xx88XrSmt4qVCR7sdJZAlK
+         USCbjx4RbsvhGNg7suGRgBVzdnc3eHbMjF02ugMCAHexPfIDrNivm2WP1BIIlH/Ny9cE
+         CpnGIqqLSD251IvXqtd8t2LsE/hOPfHQElajqbKMSOFwr3QgJlh4sRsDrQsL9fgS6sbD
+         PgGw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791983966; x=1792588766; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uzahybzV+rPPTOVLReiRhlUbRXkC0hUx0uIZGUpCKiE=;
-        b=Wdka+eXGvuwwuF0qIhHa0UWiWf70k5VrYiUkTOW+ewo7fELR/v+iuJiaZ3UKIL4C88
-         T7mikbizahWjtEDmnCA2C7jCXz/qUEcZ+yo2znZtwHJ/P/+T5ZHBzfs2n4vp9isOhF/4
-         bVoVkQWpvPxyGi+HPLTGG1sVlGQhX7o1KTj3KS191xdm3XFWr3A02zXcjzJoFBQc0C4q
-         9ehdLOrfeNmGo+CaM8bU3Bt/X7WOBS/ZZG6gwWyrFmx/ldI8FSFJY4o69oFqGmI5FdWB
-         KjdMBFuiuL1e0yzFrTjxu/R13jJkWb1vNEODwcWuq0PUsERCNkOIrwILoj7qo87b2CSy
-         Dt5w==
+        d=gmail.com; s=20251104; t=1791984990; x=1792589790; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WzfJaWITDWTXbAq39l/2Sp3XytY3nCJV7TfZMBMIxVs=;
+        b=stl97SThMAAaKpod2Yo9NGY11Ms0uA2KmHC3Qq68BTZNwq3Nozbh/f2/qLMrAmqXOn
+         5c3jcejjbE8lC60StZ16+ykubS3dxO4UA8mbaJAzXuJxyXtSlJsaq76+TwUBiP4e4r1e
+         dU/C/3Hty3fh34T3Zs/9Fi2kMW1m25XJOHTiIQBU0lrnhQKzQG7rB5xV8L+ArmPMHkpU
+         fiV8bpzGHqByTbO9WbfPvQ7BYcEA6kipWSS1PF7J6v/4Jq/o2Ubdc3KyRKFKqPBwQYIg
+         5DWLtQ+eA6KjMnd+kEduCPoJ4pBsoSm8bJquOHX7RDzdfh02iwV4FkL1eENDmnG2DET+
+         WBeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791983966; x=1792588766;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uzahybzV+rPPTOVLReiRhlUbRXkC0hUx0uIZGUpCKiE=;
-        b=zSppBBg5EoZuSooTn3A8v4epjB5vk+RpvEBZb8HH60s5T0jpLudTPpVvUq/XJRIV0g
-         dITmZLjZOQBl3mb9XPq5dbtTjbfSkQw1wsX43QphsOS3aUpqgMOiJ0xLYBsKO1Q8xIOl
-         hgmAdIJXqJAss/HHK+wEpFAlQ7Idj5mjnNO1gmG61jg75QydMUrz/dWQMpaaQMwBZbFW
-         nAI2A/wSyDevQrXnViG2dZcNYZu4PkBI3RuNgP0uu1xJLxFCOaVdUo9mvBreS2eyNFhW
-         DZp+Rfh9w9clnvjZ4PCd48KHXTtK+MfLY6Qm2WoUt2IMzo9CPku5uFGMFxAlFUM38MMp
-         5W2w==
-X-Gm-Message-State: AFq9FYJllF8Jm7J9mEHFzRp7angc0w0BXShtkr7pPzC4piv7eNfh5Egn
-	XoWyPpTokx38q+z57rfrRMRTBQvulvbAC+NAthXDvKCymbPfGeuEBh3I
-X-Gm-Gg: AYBFou3u/lWCmG0WqP5wTx4yNMArG1cqz51DFl3AXC7TCxx9ZTgtHfNL0lrVHofYgD1
-	v9xlLi4fl4G98kaAWLEo/4omUHaPELb/1M0DbF+cz71U/GRBscUGWajeIL7wS0AtXCD3daX9Zgr
-	CsO5tdCw5gQ8V8IZKeRQflhi/b7Q9eLb9WlCbPCWc0MbnkCV1tI3eEjH4H4XbLniuA56jVmdcXx
-	1BsyuDXdNxK4ZGzVIOQ1im4fSP4ISiakTMlLKSEjAXi+NHOWj4hLvdW2X5+6y+ww8bFiL/EyImu
-	iOc53abXhrooK/QQBrfm5A/WTygMUYEsrYSzV3X6DoxlTZM4eEQyPYh3mddyhRcXQlsNk4JFXAc
-	pOtRMlBzvKo4HLKm4+qUO7pLIuXTFf672UZRHf6fKIIiupKPBpGu5BiyUrCKHLI9is1EYVhtHd3
-	ncEJknm23iIzSLC4s/Y1EAUtUIXvQmWyLSzlEnqBQngx3nTvs9D8OFW+QaVFNRZ87JX8RetKEl/
-	8dwY1LB4SndEftzSKw7SRmuYpCKfm5ZSRd3uW7SwIKt529vIaNrXx8K7bTHT0SE7sG2v1nhPUGu
-	7FJFsSSGNCXafJWRBDW4on3WRPxE
-X-Received: by 2002:a05:600d:17:b0:4a1:9663:7639 with SMTP id 5b1f17b1804b1-4a196637a39mr222910695e9.34.1791983965675;
-        Wed, 14 Oct 2026 06:19:25 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:ea0c:b1b4:c6cc:a0af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bcecbd0dsm1413825e9.8.2026.10.14.06.19.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 06:19:25 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v3 13/13] net: dsa: Kconfig: Enable support for RZ/T2H and RZ/N2H SoCs
-Date: Wed, 14 Oct 2026 14:19:01 +0100
-Message-ID: <20261014131906.990077-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261014131906.990077-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261014131906.990077-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20260707; t=1791984990; x=1792589790;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WzfJaWITDWTXbAq39l/2Sp3XytY3nCJV7TfZMBMIxVs=;
+        b=24efwXdomLHz10S6aibjutS09sYhtHvIxOCJeqsRDEo+6AUZsjtp8nJSg0K3mxbb5F
+         pVmCbB1nEMX7JqKgUIJg4/UF9z6hc0QE+Wp55l3H0b+kKCuq5KMKvQcHQVXmo0KP+jjj
+         pmiqkznp+z3P1yFtRt2hciI8w1EGGlcxe33jh4PTcxYFO91akt/p0V13HahpnCvZEoK7
+         ZrAxPz/jY7T6yID1OxHUA5qt3XrRK5evH/WsGKu61GhweFdBU9HmTUARyIOR1eL4zAE9
+         L4Ew4ydbQayoXXva5AqzXG7Rzh/5BMsaYmTSdBTwBW4TyUrMCZp0M5Z7cDDCGysRugRc
+         9lzQ==
+X-Forwarded-Encrypted: i=1; AKwUvByXT8Kr8FqJPuNGDsBPFwObNax7bpKX35MF/GxwOknYnlgQoGgMZHZgs5/fcavwKC1wCU/MJw5ORWgW/8kw0i+Oxg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJBdgDNujAwvCqa8QM0CmstD/6CTSFCNPaWtDthfMVUe2X3ptvl
+	5S5IhUijTRtoAxLsbIRYWqkeKklylt4eHyezhQkFz08Rk7EbDFRBWLTVT0A1FlVLoDtKyQBtXQ7
+	fKnWMEq1Xdw+HfBdy7GDQfGoQ+CQQ0pU=
+X-Gm-Gg: AYBFou1DDyVqVXCrbBOmV3BEZ2QEC5rw+yERL4KVFPqx4vgErGlfg2rqz6iMNO0NG/R
+	cFUDDyikGBMLkaiB4GxdDQU0I6l+1lnNyhys2VkYDPIhr3A4QaW5Nj5KYDxKvEs1k0mCdJpCBZx
+	qO3AE6FXALRiu+eLlKiJydW104jHadVDJ6Wo6iEKUyED5swMv4Ro8vVIJ2OKURnUW0juGvDNiWL
+	NTnRytkfa1cFzqcEI9Bn3VsZYXAhSXZVusJ0yunlUmKaCVihdGCjkQ9e+UAXDApRqrTMiaX8fms
+	BbOvkrMlenqKG8JC9wKrN9Tn+fg7CIII0Sjhzrd+swA5d4uke6gs/VRhK1YcyhgfdMVnxOvd7f0
+	KzgCnU1TFkuk26z/igDAADbYHRXn6RplaqZJpLvs79sTJAyIpW+8sC1emvuDCiWqO+Sp+TYKFqg
+	==
+X-Received: by 2002:a05:6402:461a:b0:6b1:e37c:135f with SMTP id
+ 4fb4d7f45d1cf-6b1e37c1669mr5342555a12.3.1791984989802; Wed, 14 Oct 2026
+ 06:36:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261009184122.1378797-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <as5GXPcMKe-CBLXK@ashevche-desk.local>
+In-Reply-To: <as5GXPcMKe-CBLXK@ashevche-desk.local>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 14 Oct 2026 14:36:03 +0100
+X-Gm-Features: AclHuK-KZvXq9usDlegpOUwMj00FdeLieTauYj8tlmG7JTbxbS1FG7D7z0W2904
+Message-ID: <CA+V-a8sec-ZzMKGZJeNA-iXw-Tkt9mcXv7OoziMtjeh23BjOsg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] iio: adc: rzt2h: Wait for the analog part to stop
+ after a forced stop
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Andy,
 
-Update the Kconfig entry for the Renesas RZ/N1 A5PSW Ethernet switch
-driver to depend on ARCH_RENESAS instead of ARCH_RZN1. This allows
-the driver to be built for other Renesas SoCs that integrate a similar
-Ethernet switch IP, such as RZ/T2H and RZ/N2H.
+Thank you for the review.
 
-Also update the help text and prompt to reflect support for the ETHSW
-variant used on these SoCs.
+On Tue, Oct 13, 2026 at 3:55=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Fri, Oct 09, 2026 at 07:41:16PM +0100, Prabhakar wrote:
+>
+> > When ADCSR.ADST is cleared to forcibly stop a conversion, the analog pa=
+rt
+> > of the A/D converter can take up to 2 ADCLK cycles to stop operating.
+> >
+> > Wait for the write to ADCSR to complete and allow the analog part to st=
+op
+> > before reconfiguring or restarting the converter.
+>
+> ...
+>
+> > +     /*
+> > +      * When a conversion is forcibly stopped, the analog part of the =
+A/D
+> > +      * converter takes up to 2 ADCLK cycles to stop operating. Read b=
+ack
+> > +      * ADCSR to make sure the write has reached the hardware before
+> > +      * starting the delay.
+> > +      */
+> > +     readw(adc->base + RZT2H_ADCSR_REG);
+> > +     ndelay(DIV_ROUND_UP(RZT2H_ADC_STOP_CYCLES * NSEC_PER_SEC,
+> > +                         adc->adclk_rate));
+>
+> A single line (84 characters) is okay in this case.
+>
+>         ndelay(DIV_ROUND_UP(RZT2H_ADC_STOP_CYCLES * NSEC_PER_SEC, adc->ad=
+clk_rate));
+>
+Ok, I will update it as above in the next version.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
----
-v2->v3:
-- No change
+Cheers,
+Prabhakar
 
-v1->v2:
-- Added RB tag
----
- drivers/net/dsa/Kconfig | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/dsa/Kconfig b/drivers/net/dsa/Kconfig
-index fe8cd5338fda..f6894495b9ed 100644
---- a/drivers/net/dsa/Kconfig
-+++ b/drivers/net/dsa/Kconfig
-@@ -101,13 +101,14 @@ source "drivers/net/dsa/xrs700x/Kconfig"
- source "drivers/net/dsa/realtek/Kconfig"
- 
- config NET_DSA_RZN1_A5PSW
--	tristate "Renesas RZ/N1 A5PSW Ethernet switch support"
--	depends on OF && (ARCH_RZN1 || COMPILE_TEST)
-+	tristate "Renesas RZ/N1 A5PSW and RZ/{T2H,N2H} ETHSW Ethernet switch support"
-+	depends on OF && (ARCH_RENESAS || COMPILE_TEST)
- 	select NET_DSA_TAG_RZN1_A5PSW
- 	select PCS_RZN1_MIIC
- 	help
--	  This driver supports the A5PSW switch, which is embedded in Renesas
--	  RZ/N1 SoC.
-+	  This driver supports the Advanced 5-Port Switch (A5PSW) found on
-+	  Renesas RZ/N1 SoCs, and the Ethernet Switch (ETHSW) found on
-+	  Renesas RZ/T2H and RZ/N2H SoCs.
- 
- config NET_DSA_KS8995
- 	tristate "Micrel KS8995 family 5-ports 10/100 Ethernet switches"
--- 
-2.55.0
-
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
