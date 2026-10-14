@@ -1,160 +1,326 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE6F23D7E3
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 09:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791970146; cv=pass; b=NLjJ+ZH2zPd0WNyNqppVIxnNTiIf5MPNbaJHyf692exxFOpaKszI42jLn9eNPP8aBqgWytEEwxsDxTl46c8cC5rIgPqtRqjv9z54KIfxAoN8vMphK1gsYgXCj9Bs07XcsU7aFmDQwzR/D3AxZZ/b/oxc3meNodbHJ7h9gSAtMB0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791970146; c=relaxed/simple;
-	bh=WN/D2DKkPkAtwoVdUzfYLsH4nQOGe29u3pPkyYp+9Rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VuKn3HWzzIK75IuC+W0HhSzrht8F8I/ZnGxkw6MIkbGysHbDixTboplSsQYQmuZYpB+h/4DnjQC5V49IpDUuIX+0Pwge45P6NzqSSFimO6oSLPZGZzNaqgd8NPs3Yxp7tO7VUIGy+zoXCl8Y+KAI79Y9K1C2z9U43hCWv7YaY6E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XESQWpec; arc=pass smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78E74E323D;
+	Wed, 14 Oct 2026 10:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791972005; cv=none; b=HmUsDut8FdMrrDo0QeQUOICul2ZgK44udEVL0d7Z8eo9DgW11oeBlxQUY84OJBFoqQw7WTtGcLIlmPoWbdBGhyv/ug15C8tt3jILCRBc3LO5YeUaBkXCRmYChoxshVphhHZD9Zsd1TlfdGZjVJI1siTiFWg9mBmut6OTYq1CM0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791972005; c=relaxed/simple;
+	bh=k5iO9wvNr9q6UBwSYLG3p7VKauGZZ9xWZCkjcGBVkkA=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z58lfh+k6ie4aT0mHClxDYaoc/Wk1SvGaZOjZjRdblQ1DKkbPyncT6p5N7X22C8W8u4IZXsU2CdjbwMd1GrebM3dEfb8pttf5jaX5X8RLpLbIiSLCoyS2bCLfRN3UeJIPfMqGWnX5HfPA6ZXOVmXcfAEtQZXwoaN8ixkdgeNj48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=y7u+xHRk; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XESQWpec"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48b060ec084so2521943f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 02:29:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791970143; cv=none;
-        d=google.com; s=arc-20260327;
-        b=fwFwefu2PM+AMtPmyKgmy2xjNoo7zAQe8rYpT8SDtUz4g0Zh24AwW0hQezTucEToHj
-         RPhS63HzD5z2NOrXQ0fdvdpUeuN70W8l3P09mkQ+sVe4KkSE8lq9eLEmTGFLoIM1S4tH
-         4hLirwfbHlKu1eBqd/610TRF2Io1S0tMT1eAuZNlV1EiWpzdbrzxbza53wSQVV5TBTee
-         /JpkCG7U3UdF9ftJ8SF0kD58ZPmIqHyaVAhW2oxj80ZgtV8zUaLMqqvUvTPaDqNTs9T7
-         N1jEugye4WcY777bTN38OTZaIpF0e8QRVYO30nVQMIILKGMVlio2M5XA0172wUHND3Za
-         i+oA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UM4snv3HyBXCnT4o3yFHC4lEa74fiilyetDqdq6lntg=;
-        fh=Zf9oWPxNQmRNRAKEFa0Fkaxq8176/Kj2/Brsvs7aIOc=;
-        b=AA2ubJDov583paqTHbQEemS1Kf+vmGw+oJWYcIA9MN0dASS/+C78YssqvuQz5x7sTO
-         1nPxD5qUJjzo28S2nJSO4RNEMVSeblaCvk/5GlOy2rRBuFYH1OSTawbd0i17P/IT848X
-         J2krQDtmWiNf2FIptPEGpxYhLmD4KrK6MPlfdLYgvdMTG8H70ub5hZSU4Bw2aUgF6L5g
-         gTHiB2e0/LYQo9wcqoLQUuDTvPXecBVywWirFqnOCjhoWSfcJaAQEEgnuD/YwV67agLI
-         sn7ML2JfGwkMSLSa9MxBXJmgWlTsZ3vCs374PT3aMMzsvXYfISCKkMuY5O4Y2sihTiqD
-         A30A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791970143; x=1792574943; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=UM4snv3HyBXCnT4o3yFHC4lEa74fiilyetDqdq6lntg=;
-        b=XESQWpecQ1oE77q85jd7V07GxvA9TIdihTc+fZdR/N0Eja6i+3XLI9t+PS+fwAdZi4
-         nbjT9oOMPJ5vPjoYrvueGYNYn9i8ePRypPbpQUVKlFpKrsgy0Mj+ZIYqAnGuGz6GhzQ3
-         T6gdr2ywAMG+lvUt7ahcYlRWlSFO9TxJKCDQc+SN8tv6iTJmPsFSVQkvRTiL47Jt95j8
-         81psHBadDQeZPY7IJUTfFljPpV1yz01QLJAVj3LcCsNyQNejzSAxGtI5uQteoTD/U925
-         Eia+Yb3Ip9bRbUSe0U6JRCdMbhcBcbzPqO20sTTjO++jQxJzavd8vC79w76SYUzRM6Wy
-         NTjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791970143; x=1792574943;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UM4snv3HyBXCnT4o3yFHC4lEa74fiilyetDqdq6lntg=;
-        b=pfEU5GVzEFtx0f15ylyQxCj7XrGKy3AmaApr66XxGbnin2BS6sPho3m/o2HwIQwkTR
-         2skvpQ0hQ5j4EZHsZlpZUX3mNKH6iRyMq8aOPnD+mvkiLCBfvDa6rKBJbc6xL5sQWyIi
-         igeuEkxjL0ag+3pxT23K7QX67wsw5c40g0Pj3O1EEunukHNFP/9Hc7+zPq2J7clbOmX/
-         n+4qhJBU3zeG0Y1zF9SFo92i/8S7O+vDCPRqvL6MkN0PfRYHQv9eIXAZoxFC1CRYMMSj
-         AaVay9reGP1aqd6A0iL7c0zyNKXc7m+D6urIfZvDHkC8VJgkFd4EBgXfwzT5g8tPVtpC
-         c2mg==
-X-Forwarded-Encrypted: i=1; AKwUvBzWr1E1ZRTujgKWdxr1IhFO2+k7vxsfW+H8eQNs/aGK92JqK0cYFWSy120xwJcWO96Bn6iqImAtKUvXNYhncoM6Ug==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKNfBLP12Ox6nWDGDTrhUMDHDHSoLnwpXk8de+DzCp9jL+FT8ob
-	wdJH53AcKtWhTgEBNHavjE8TmPW7Q6CEifpUZMlu0tPtgZGrjZJ0noX/mb1YP4vR5BHDfDd1g1u
-	nMPE+bm1p1F0757Lf1Slp12CQmD/brt8=
-X-Gm-Gg: AYBFou1a1Ai4lWLzArUyZ71MU0cn84EqTpJJNXLF68rtOVIDj7UvioHz4zmgJuT/ZTK
-	QQyKuv/y2kHEXnDUylaolQP9GOwMfL70OkPa+sRJLuGVD2Asy+9QUAHU80eEIWk8v1a2XNBr7Y9
-	fKnx8/3XrYyg6An7IMnLHR4sGnol8ZcDw17nr9XkvSv0YXEdoWSY2B0kQ1L6HPPHoOWRW6UNA1t
-	mfdjcMiJkepw+Dpyw9woyTIf8xkZ0AzAVBxkOVDh1cenOtgnp961Bvv3dpu6rNnriR1GErtN72H
-	DOH6Nagio93HVTDIhlbPnQS+vWMvO/Q6zy89KzNEj7IOpwAmy3PKm7ilxV3HoJ50DkIpp+AH4Fx
-	LYoRGPjgjlVnPKbHj9oG9PE392g+vA8hac5iRxTqh33c=
-X-Received: by 2002:a05:6000:41db:b0:487:1c89:f158 with SMTP id
- ffacd0b85a97d-48dca3433dfmr21443506f8f.14.1791970143295; Wed, 14 Oct 2026
- 02:29:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="y7u+xHRk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1791972003; x=1823508003;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=k5iO9wvNr9q6UBwSYLG3p7VKauGZZ9xWZCkjcGBVkkA=;
+  b=y7u+xHRkq65EgvcR3T2AzMdDE5DfBZ0bHuDj/P1GQLh4l7ufajJ3deeC
+   Dx0AtIYL1pcE4+Y7rqXWTOSLHcShKpseoawLqIYqZakt5NKApOlihBtSS
+   sbeeKGyl6zhdMbpjzxS2EvHWdS+rUwi5FfjRO4OfXRSrNy7ma4p7dcjnd
+   FtmM0GLlUudV08JaPYzWHspKii33lKenQIHoOMcBZHcbKBCeT6PXKXby0
+   cSyrUSzhdC386+FaXxpdFGmjqTi0BLIafSCejMI0nY8oH/rlvSPW4PCWf
+   6eoWflBmbZTJvR0J/qZIMiVPsfzUEIbdXpEMDU9LqGTQX0tInC7x3Xh++
+   Q==;
+X-CSE-ConnectionGUID: +AgjuoQ3Q1yhSnY9YAPcGA==
+X-CSE-MsgGUID: 46xyAabAR4S5eetuz+uEmg==
+X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
+   d="scan'208";a="64075340"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2026 02:59:56 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 14 Oct 2026 02:59:56 -0700
+Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 14 Oct 2026 02:59:52 -0700
+Message-ID: <08cf1da4e15141060ceece86fa1c03ada384ba82.camel@microchip.com>
+Subject: Re: [PATCH net-next v14 1/9] net: dsa: add tag driver for LAN9645X
+From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
+To: <netdev-bot+sashiko@kernel.org>
+CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <woojung.huh@microchip.com>, <linux@armlinux.org.uk>,
+	<Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
+	<geert+renesas@glider.be>, <magnus.damm@gmail.com>, <edumazet@kernel.org>,
+	<richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+Date: Wed, 14 Oct 2026 11:59:52 +0200
+In-Reply-To: <179180427718.434549.18360749106735687436@kernel.org>
+References: <20261008-dsa_lan9645x_switch_driver_base-v14-1-3d2a72661213@microchip.com>
+	 <179180427718.434549.18360749106735687436@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2.1 
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fe117dd44728fe7c96f3e4b3ec88c6ca83c5da9b.1791880574.git.geert+renesas@glider.be>
-In-Reply-To: <fe117dd44728fe7c96f3e4b3ec88c6ca83c5da9b.1791880574.git.geert+renesas@glider.be>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 14 Oct 2026 10:28:36 +0100
-X-Gm-Features: AclHuK_hpJt3R0zDHjAZL75ikzTNtzzFWfnolY7PI7Bi35zqbWZzmjfcVJRiUWc
-Message-ID: <CA+V-a8tpVEqJTKr4JS2aEcgr6yXzmh8j==x=+54o-rAyBwLrRQ@mail.gmail.com>
-Subject: Re: [PATCH] perf/renesas: Remove remaining RISCV_ALTERNATIVE references
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Conor Dooley <conor.dooley@microchip.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 13, 2026 at 9:40=E2=80=AFAM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> As riscv always selects RISCV_ALTERNATIVE, the option was removed.
-> However, a few references were left, making it impossible to enable
-> RZ/Five support (ARCH_R9A07G043).
->
-> Fix this by removing all remaining references.
->
-> Fixes: b924210f542e13c7 ("riscv: remove RISCV_ALTERNATIVE Kconfig option"=
-)
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> To be applied to riscv/for-next, or folded into the original commit.
-> ---
->  drivers/perf/Kconfig        | 2 +-
->  drivers/soc/renesas/Kconfig | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> index 245e7bb763b9947a..8cef4bdef76aecab 100644
-> --- a/drivers/perf/Kconfig
-> +++ b/drivers/perf/Kconfig
-> @@ -117,7 +117,7 @@ config STARFIVE_STARLINK_PMU
->
->  config ANDES_CUSTOM_PMU
->         bool "Andes custom PMU support"
-> -       depends on ARCH_RENESAS && RISCV_ALTERNATIVE && RISCV_PMU_SBI
-> +       depends on ARCH_RENESAS && RISCV_PMU_SBI
->         default y
->         help
->           The Andes cores implement the PMU overflow extension very
-> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-> index a63df28df3b5e7c7..0b6876ef6dca228b 100644
-> --- a/drivers/soc/renesas/Kconfig
-> +++ b/drivers/soc/renesas/Kconfig
-> @@ -461,7 +461,6 @@ config ARCH_R9A07G043
->         bool "RISC-V Platform support for R9A07G043F (RZ/Five)"
->         depends on NONPORTABLE
->         depends on !DMA_DIRECT_REMAP
-> -       depends on RISCV_ALTERNATIVE
->         depends on !RISCV_ISA_ZICBOM
->         depends on RISCV_SBI
->         select ARCH_RZG2L
+On Mon, 2026-10-12 at 11:24 +0000, netdev-bot+sashiko@kernel.org wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e content is safe
+>=20
+> Thank you for your contribution! Sashiko AI review found 3 potential
+> issue(s) to consider.
+>=20
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 (1) =C2=B7 Low: 2
+>=20
+> If you believe none of the issues are legitimate, please reply to each
+> issue of Medium severity or higher and explain why the AI is wrong.
+> If any of them are legitimate and you plan to respin, please let patchwor=
+k
+> know by including "pw-bot: cr" as a separate line at the end of your repl=
+y
+> (one such reply per series is enough).
+>=20
+> - [Medium] In lan9645x_rcv() (net/dsa/tag_lan9645x.c:459), every tag
+>   popped by the hardware is restored as an 802.1Q hwaccel tag with=E2=80=
+=A6
+> - [Low] The comment above skb_postpull_rcsum() in lan9645x_rcv()
+>   (net/dsa/tag_lan9645x.c:416-421) says the bytes to subtract are "what=
+=E2=80=A6
+> - [Low] lan9645x_rcv() (net/dsa/tag_lan9645x.c:450) restores the popped
+>   VLAN tag only when `dsa_port_is_vlan_filtering(dp) && ifh_gap_len`.
+>=20
+> Pre-existing issues:
+> - [Medium] This problem wasn't introduced by this patch, but the new
+>   tagger adds another lockless reader of it.
+>=20
 > --
-> 2.43.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>=20
+> net: dsa: add tag driver for LAN9645X
+>=20
+> This adds a DSA tag driver for the Microchip LAN9645x switch when a front
+> port is used as the CPU (NPI) port. Extraction uses a long prefix plus a
+> 28 byte IFH, and injection uses only the IFH. VLAN tags popped by the
+> hardware are restored on receive as 802.1Q hwaccel tags, and on transmit
+> the VLAN tag is moved from the payload into the IFH.
+>=20
+> > diff --git a/net/dsa/tag_lan9645x.c b/net/dsa/tag_lan9645x.c
+> > new file mode 100644
+> > index 0000000000000..00339daecfcbd
+> > --- /dev/null
+> > +++ b/net/dsa/tag_lan9645x.c
+> > @@ -0,0 +1,514 @@
+>=20
+> [ ... ]
+>=20
+> > +static struct sk_buff *lan9645x_xmit(struct sk_buff *skb,
+> > +                                  struct net_device *ndev)
+> > +{
+> > +     struct dsa_port *dp =3D dsa_user_to_port(ndev);
+> > +     u32 vlan_tci, tag_type;
+> > +     u32 qos_class;
+> > +     void *ifh;
+> > +
+> > +     skb =3D lan9645x_xmit_get_vlan_info(skb, dsa_port_bridge_dev_get(=
+dp),
+> > +                                       &vlan_tci, &tag_type);
+>=20
+> [Severity: Medium]
+> This isn't a bug introduced by this patch, but this adds one more lockles=
+s
+> reader of dp->bridge in the xmit path.
+>=20
+> dsa_port_bridge_dev_get() does this with no READ_ONCE() and no lifetime
+> protection:
+>=20
+>         return dp->bridge ? dp->bridge->dev : NULL;
+>=20
+> On bridge leave, dsa_port_bridge_leave()->dsa_port_bridge_destroy() clear=
+s
+> the pointer and frees the last reference right away:
+>=20
+>         dp->bridge =3D NULL;
+>=20
+>         if (!refcount_dec_and_test(&bridge->refcount))
+>                 return;
+>         ...
+>         kfree(bridge);
+>=20
+> There is no RCU grace period between the two. Can a transmit on the user
+> port that races with the bridge leave load the old dp->bridge and then re=
+ad
+> ->dev from a freed dsa_bridge?
+>=20
+> The window is narrow. tag_ocelot.c, tag_sja1105.c and the
+> dsa_software_vlan_untag() helpers use the same pattern, so the root cause
+> is in the DSA core and not in this tagger.
+>=20
+
+Dismissed, preexisting.
+
+This is the existing DSA core pattern, shared with tag_dsa, tag_ocelot,
+tag_sja1105, tag_vsc73xx_8021q and dsa_software_vlan_untag().
+dsa_port_bridge_destroy() frees the dsa_bridge without waiting for a
+grace period, so a tagger cannot fix this locally. The fix belongs in
+the DSA core.
+
+
+> [ ... ]
+>=20
+> > +     /* Reset skb->data past the actual ethernet header. */
+> > +     skb_pull(skb, ETH_HLEN);
+> > +
+> > +     /* We must deliver the skb so skb->csum only covers the data beyo=
+nd the
+> > +      * real ethernet header. The fake ethernet header in the prefix i=
+s
+> > +      * not part of skb->csum already. We must subtract what remains o=
+f the
+> > +      * prefix, the ifh and the gap. The start is derived from the cur=
+rent
+> > +      * skb->data rather than saved on entry, because the pskb_may_pul=
+l()
+> > +      * calls above may have reallocated skb->head.
+> > +      */
+> > +     skb_postpull_rcsum(skb,
+> > +                        skb->data - LAN9645X_TOTAL_TAG_LEN - ifh_gap_l=
+en,
+> > +                        LAN9645X_TOTAL_TAG_LEN + ifh_gap_len);
+>=20
+> [Severity: Low]
+> This isn't a bug, but the comment doesn't list everything the call
+> subtracts.
+>=20
+> The length is LAN9645X_TOTAL_TAG_LEN + ifh_gap_len, which is 44 + gap
+> bytes. That is 2 bytes of prefix remainder, plus 28 bytes of IFH, plus th=
+e
+> gap, plus the 14 byte real Ethernet header.
+>=20
+> The code looks right, because dsa_switch_rcv() does skb_push(ETH_HLEN) an=
+d
+> then eth_type_trans() without adjusting the checksum. Could the comment
+> also mention the real Ethernet header? Otherwise someone might later
+> shorten the length to match the comment.
+>=20
+> [ ... ]
+>=20
+> > +     dp =3D dsa_user_to_port(skb->dev);
+> > +
+> > +     if (dsa_port_is_vlan_filtering(dp) && ifh_gap_len) {
+>=20
+> [Severity: Low]
+> Can frames lose their VLAN tag while vlan_filtering is changing?
+>=20
+> dsa_port_vlan_filtering() calls the driver op before it updates the
+> software flag:
+>=20
+>         err =3D ds->ops->port_vlan_filtering(ds, dp->index, vlan_filterin=
+g,
+>                                            extack);
+>         ...
+>                 dp->vlan_filtering =3D vlan_filtering;
+>=20
+> In this series, lan9645x_port_vlan_filtering() programs VLAN_POP_CNT righ=
+t
+> away through lan9645x_vlan_port_apply(). Frames that the hardware pops in
+> that window reach lan9645x_rcv() with ifh_gap_len !=3D 0 while
+> dsa_port_is_vlan_filtering(dp) is still false. They are delivered with no
+> tag.
+>=20
+> The reverse transition has the same problem, including bridge leave via
+> lan9645x_vlan_set_hostmode(). Frames popped before the change but handled
+> after dp->vlan_filtering is cleared also lose their tag.
+>=20
+> POP_CNT is 0 on non-filtering ports, so the gap is already 0 there. Would
+> checking only ifh_gap_len keep the CPU view consistent with what the
+> hardware did?
+>=20
+> > +             /* The tag is restored as a C-tag, not as the TAG_TYPE th=
+e IFH
+> > +              * reports. The classifier recognizes both TPIDs as VLAN =
+tags,
+> > +              * so an S-tag has already been used for classification b=
+y the
+> > +              * time we get here. Restoring it as 802.1AD would make t=
+he
+> > +              * bridge push it back into the payload and reclassify th=
+e frame
+> > +              * to the port pvid, on a different VID than the one the
+> > +              * hardware forwarded it on.
+> > +              */
+> > +             __vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vlan_tci)=
+;
+> > +     }
+>=20
+> [Severity: Medium]
+> Is the 802.1Q-only assumption enforced anywhere? The commit message says:
+>=20
+>   This assumes a bridge vlan_protocol of 802.1Q, which is the only
+>   protocol the driver offloads.
+>=20
+> The xmit side of this file does handle non-802.1Q bridges, in
+> lan9645x_xmit_get_vlan_info():
+>=20
+>         br_vlan_get_proto(br, &proto);
+>         ...
+>                 if (ntohs(hdr->h_vlan_proto) =3D=3D proto &&
+>                     ntohs(hdr->h_vlan_TCI) & VLAN_VID_MASK) {
+>         ...
+>         *tag_type =3D (proto !=3D ETH_P_8021Q) ? LAN9645X_IFH_TAG_TYPE_S =
+:
+>                                              LAN9645X_IFH_TAG_TYPE_C;
+>=20
+> DSA doesn't handle SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL.
+> __br_vlan_set_proto() sends that attribute with
+> SWITCHDEV_F_SKIP_EOPNOTSUPP, so setting "vlan_protocol 802.1ad" on the
+> bridge seems to succeed while the lan9645x ports stay offloaded. The swit=
+ch
+> driver in this series doesn't appear to check the bridge vlan_protocol
+> either.
+>=20
+> On such a bridge, every tag restored here has an 0x8100 TPID, and
+> __allowed_ingress() in net/bridge/br_vlan.c then does:
+>=20
+>         if (skb->vlan_proto !=3D br->vlan_proto) {
+>                 /* Protocol-mismatch, empty out vlan_tci for new tag */
+>                 skb_push(skb, ETH_HLEN);
+>                 skb =3D vlan_insert_tag_set_proto(skb, skb->vlan_proto,
+>                                                 skb_vlan_tag_get(skb));
+>=20
+> This pushes the tag back into the payload and classifies the frame to the
+> pvid. Wouldn't frames trapped or copied to the CPU then land on the pvid?
+> That is the same misclassification the C-tag normalization is meant to
+> avoid, only in the opposite configuration.
+>=20
+> Should rcv follow the bridge vlan_protocol the way xmit does? Or should t=
+he
+> driver refuse 802.1ad bridges?
+
+The driver does not support 802.1ad bridges, and rcv is only one part
+of that. The hardware forwarding path does not follow the bridge
+vlan_protocol. The classifier treats both TPIDs as VLAN tags, and the
+egress TPID follows the ingress tag type. Restoring the tag with the
+bridge protocol in rcv would hide one symptom without making 802.1ad
+work. On xmit the protocol is taken from the bridge because the stack
+picks the TPID of the frames it sends.
+
+In v15 I will refuse VLAN filtering on a bridge whose vlan_protocol is
+not 802.1Q. That covers creating or joining a VLAN-aware 802.1ad bridge,
+but not a later protocol change, since DSA does not propagate
+SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL.
+
+
+>=20
+> --
+> Sashiko AI review =C2=B7 https://netdev-ai.bots.linux.dev/sashiko/#/patch=
+set/20261008-dsa_lan9645x_switch_driver_base-v14-0-3d2a72661213%40microchip=
+.com
+
+pw-bot: cr
+
