@@ -1,292 +1,190 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010046.outbound.protection.outlook.com [52.101.69.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DB14EF14D;
-	Wed, 14 Oct 2026 14:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F454281B
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 15:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791987283; cv=fail; b=fMFB7pjgPRrA8FaAIHCNfwhElJPdpM1jhNEO8uDPQh894oSaMpb8ZU24UGuBIRXdp5/5vsGJ3uR4Sspry3sKMcN6nBAqjqUcvS8YxrRY2uoFVB0M9B97hOyVC1XkRNlWzQhKFqtodpanyyjOP6RvegrEfI4FFzGxabKBtyH/Z0I=
+	t=1791990774; cv=pass; b=gdJA5qtXa648wZzMelRNvDVOKjd95FcdFm227Ybfzpi+A9d4vWaWnU1e4p49p5Wz2ad+m73qNJ9EnLxPPVSpYaofRobzFLDo6CFaPQKu8qSJjv8JbOGTI479WvT+Z7gYtIh3VkK68j+mGj9LS1eFQmcHnfWbREbuwuKTO0Qwmjw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791987283; c=relaxed/simple;
-	bh=PN/79TtKG1Twx/if6loW28TPYH3F06rhG3sa7PcQiGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HK9jsbNIchweXOo0vKvx4dSX9jq8spLRSowbW07PiYNsA7LIjHjAtrq7yldKrvQyZzAArAc9KvBulNq4f+fdPyHxUnfYAPEnsNGJnDaWJxfRp6DHDJtrPctOpW4zdtfICdtWJeF95JQEON/jPOw85U9/hVlCsW76ea2BUyzGJRc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=I2nuYJJv; arc=fail smtp.client-ip=52.101.69.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1791990774; c=relaxed/simple;
+	bh=S5zs7o+IvJ94PTcJ859wDkqWMdgUCMYMIGrDaQPMmSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sqhhuVjFEe3w+7fMRKYUqNaR9XyKndzO8WTV5o3UsowcXkkAE5ilrJTBaDhJBJ3DmcHVElSWBO3gI6jPcMwVgHyR4/WPAe5+FnOP1XXeif9gAKGecWVHd3N1w15qKXSmqeIFdXfJ5f2WctQNldg/oT3rvQGJuSeeV7BpZl7ZsDE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DXfwA3nj; arc=pass smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="I2nuYJJv"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nLqBHUx2iXyUx0YPWorspLmuqp72cNpoiVctqwPnb/baq+b8JFJmiu/UDyh66GWBbd+SkCQzwTkShHoageKaL5oUoC2lrahVG/ymRXJAdRjJSE+mZg41BoXBmA+UkHWlp25pH5vR4I3PK3W5l1SBGjCHSy5Xq8D01KgTif7Q0NTG/GnOw6MOaIucLtb3iaAxNKrl0EFC+lYbVSCBI+x4Bb3zCuzTHfqb4n9gTKxN9cL9IR7oL/uPt54P+nu2Vofz27H+X8VC1GvCPYaDMDx9/0UDq0Dx0i972gOqQz2vPTGlX8+wfKQ289em3ZZgmCFmikK2+gTe75iQPOK0BuIlxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y98FdFXP6lNVVSuw4Al/ZqHmCmhFcPmxUMackPfNcdg=;
- b=rz1sxN1YScoJ6mg8zc3LhW9dYVu8DW6UVuTxIFsJQf1qyGPyPGieqNRex3iqSwp6/F6oQ8dPr43CXguGGymRmEDjUUT5lKokPmi+JLPQzGKZAp08DtghWVbBBwgE1QF8CVny48Ios/i0PYhQb/yVDiN1UVElLsG+R9FvBkSxvyM8UzVjKLXr7UDukrZ1adzWZ5RueZmlCeC7CcwfH1eXLl1FuqzXpIlgw9zZXWW6p5B0SbrGwsIMlxndZPUsn6TBm5vizar4FjifOfgp8XLEhrh0xJyZ2ELgUYXTJK4R5ODJUaTh5Zu3iQL7AWI2h27xEGsGOGx+2e517cXpczsYEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y98FdFXP6lNVVSuw4Al/ZqHmCmhFcPmxUMackPfNcdg=;
- b=I2nuYJJvOlctjIeY2K098zVxLJD3Y47lq1ElZY3skq57E3RuHS2Ll263lQyfxS7+skMWYLF3jcbyrG7p95Fe52Ob5D5M2HAXfeXONgFBXPztdE3JvL/lKfjD4gThvzMtaWahZmqUNLM1ai3KRJyZT91y/6n1lA3vv/RYGU7QL92GTmxcdEtMUHQsiW0m6mjg+bfwVmr8tpnOs+SfdLMnquIFg8B+ESPbIsbcfaWSk/FVI8DW1Tq6GXrlM+If+cWHE4hwNhvH/78obPrY0/gaEiu4Wnc1PTHrTtmne/O3B+evdmY/UQYOL68tYEPvSUQfSXN05+6lKPQQZMxWuS0tbw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by BR0PR04MB672694.eurprd04.prod.outlook.com (2603:10a6:2c8:49::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Wed, 14 Oct
- 2026 14:14:32 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0522.012; Wed, 14 Oct 2026
- 14:14:32 +0000
-Date: Wed, 14 Oct 2026 09:14:15 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Jan Petrous <jan.petrous@oss.nxp.com>
-Cc: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
-	Ionut Vicovan <ionut.vicovan@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH RFC v3 01/12] dt-bindings: phy: Add NXP S32G SerDes
- subsystem
-Message-ID: <as-ON6s8sNjQC9NP@SMW015318>
-References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
- <20260919-s32g_serdes-v3-1-9d68868c1e89@oss.nxp.com>
- <as0tiQwquNkdlF2i@SMW015318>
- <as5C7o1joORcdesQ@lsv051416.swis.nl-cdc01.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <as5C7o1joORcdesQ@lsv051416.swis.nl-cdc01.nxp.com>
-X-ClientProxiedBy: CY5PR19CA0063.namprd19.prod.outlook.com
- (2603:10b6:930:69::6) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXfwA3nj"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48b060ec084so2805100f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 08:12:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791990771; cv=none;
+        d=google.com; s=arc-20260327;
+        b=MQEcevSBhxLcRjcTfmKPco0K7g9MygwxEYxvBVEycr88tjK0dw0NcC/gVeAbNeH/Aw
+         oir1cr/j2/TIRis8DdPVtDUYZLwJRuIwwcSj6IWAZxGTuN4XU87R6tUslOF4dNu8PRqb
+         gNxoAxmOhfGqWKx+Pk2yF7aNIR2rw0ireuVVs9d7RrOhIdNZPWWhcb/XETJv5ol8dCeB
+         XgpHx64ALTBYIhiclHDyMm2ezPCfkMaGvkNSQtQLT8o8CjSqKeYZZaWb2NmwcsfdbWoO
+         I3LFu6V6VAyaHVeRMf3FSSwoTh+D6SyczTlhIXMdJTrn2GQz4TEbxneIyCcpiRXTmyMF
+         pGcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WUSTZfpPOOhjEr0q1WimSib8kVLmZYK9NAgp2MPe0uQ=;
+        fh=xU6qlMGHxniw8Vt0XHojqfHHXPM39gpn72c/QPcbqaU=;
+        b=Y9EtOUi9rU5DR82CeOwGqWxS15917OvfWIy9mMNrM7xFdscsCCAuh2j8x4qAwesEaF
+         snchh9cIjOUX900xyjKLdROweLq6H3VZpl10LGIty84d1nOfQvvABQaQylT5yMaHfp5E
+         XCuOvsd0n1FWTeZJz0QRYjTSe8yht0iAd9LPcszL7icgFTJrwVKwYGmr8/86OixdqqtI
+         2ftHKsEnTXTG1XjLY+8aVXpHpkC/q1O0T2EJWjblVR7lpv4U2RQ8OiRb21/OZNkCNIj0
+         aWUprKKnLHLBBk6j3Pd5glWqXb5kXAg5eY1U9O0QA4ZLFFWt6tW/T+R/552YLodQT1OC
+         gsqw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791990771; x=1792595571; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WUSTZfpPOOhjEr0q1WimSib8kVLmZYK9NAgp2MPe0uQ=;
+        b=DXfwA3njbnanK1S+51Hx1cy4UO9CZ0e2Oa4rvzBS+JGEYkWcmjEkvDq+GR1ZTJxFG6
+         Oj0EJKJ8bqP+3ok2+Wv85blS/YJh7EES4pYWOqBVUqzyYNVE9ILJovS2AINGN+jgv5pN
+         kInj8WcsUElThf793hZrtbeANVHIhdQBFlm437b7Kj9PUPhIt+sNJktS6FYBm+YEIc+V
+         jjV9seGNTnk4gP/SHPSzhClmtYryZgyjGb83Jmyfwr/trylUPQhQxcnVZ2f1cwApss1P
+         gDGyDuuLZTuus0hnJyC5zHKL48wkJDff9u+ansoalKQRes4I/vvI82ixp54YABQmQISU
+         HTFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791990771; x=1792595571;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WUSTZfpPOOhjEr0q1WimSib8kVLmZYK9NAgp2MPe0uQ=;
+        b=irs084RV2mcQn07Cf6D2oiL31CxKPAG/R54TtalOYn5wSA8+yvCVP30hEN/7CkIEcP
+         tUPO7Fic2WQpYScLFsJ+jv6fAq4Tl9YRG9GgyMbrScpa+Pz6HBxw/5X3sSPn5O8O4wYS
+         klxSaWxXRtOJEvMshIzhQ0UCSO69e+S6ou+BirE8rmsyRj/u/99HjLf68bwqf3GvRnxx
+         XZDBnDIGSDcKqAHn5QVileNrRy83sYd9H78fBLZ9qq1bZPML03vJYZPdv4LI+D+TjBev
+         nPP505vGXR+6shDpYhjYKG7Ld6fGXp+FVXEJ5icGuf1EAzUy9s4on+ifcTmONFP/R4/M
+         tS1g==
+X-Forwarded-Encrypted: i=1; AKwUvBwa/zol5vflfQtYL3EoK1W6/j/tSDfhMtSV/g9HSyAwxWSMFX+fwZY1X0VIpjb3j0aEb9MurLfMbkyKmwSIjQghiw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLzYCqx2uWWn29fIfVHqbBWJyZAgF4O86a9aUKgTJigeKFRvlOb
+	r/CFIgnnBaonVfui2jXjh/Tth/twb30tVnqVs8/vcHJeYGapwzYT7RrBL4U05cfR+QEoBcLIufk
+	5stuQsirRCAI+ASxBMuEgoP0Miml4eDU=
+X-Gm-Gg: AYBFou1XRX3iEIjdDNZniu4tjX58fa9l4/hJsJS0asHt4dEfwFi0NAOIYhukr6Z0pvm
+	PG7MfQ2jSn6ZKueGQ7CwrFMwt3tZDb5ymyRZYVdXX8pvc+l/jrM/3xkmAGEg4vysMdlBQCIIvFG
+	HmH7st/9AuLlUlOHQ4JWzPoW5P/zG3HaM4tznAkE03xeXcaERhya7J961Ij8TQU5F9RMFWjT0hL
+	SNKt86yddvFERNv4Zi3FTkDYI1XKzKHRCk1hAlD13gbnC2vL4Bw8BUelT9t+7pdfy2if//Ty1yc
+	lk+c1G1AnClqotQdBsKp+4QcK9NzqKB1VijvggBLfnucUvGEOD6wHnBzeS7eq8hr3BSG4usM74u
+	Anr9bXXfhBNtIFZzD6jrQLGAJXuE+NdbnC0Jo0Sdk2hjbuPUeZ6s+SOKg1viHcQTci5NUTRufq0
+	JSYT3g7AwY
+X-Received: by 2002:a05:6000:2085:b0:488:7496:15b5 with SMTP id
+ ffacd0b85a97d-48dbacf126amr30278767f8f.47.1791990771057; Wed, 14 Oct 2026
+ 08:12:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|BR0PR04MB672694:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e211a71-4092-4569-dc7c-08df29fd777b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|7416014|19092799006|366016|376014|261009223027099003|10067099003|3023799007|4143699003|11063799006|5023799004|6133799003|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	iqMi9E1CI8+ZHT4bf1CGCFjhTyhtGc7XZ1Nau/DLYqSUFE3to6qHDos+vLxmA4t/N+oVTc1h0dX7+wqrggRRvN0Ygp9pQFNgzZR65pDZ+EHGtnH6Ey6yZLXe4FPGs6aFDLK8rCNMdHq0vL9tddzs215wT0J2cjcNX9H8c+r0eaU+EnSpUxr7aWkQq9r02fJB5lE1UKvV2mAe7sHfemHyfaOTwJutYWM+mZxnx7xi9pZw0qcwe9RsW1vsQ5Gcn4nko/rdo5JwJZaGJMTsys5dKlv+kt1m1LwhxkmNr14cFxqt62YTI4X2PuuQ7Qwu5LcIkmit81zOiDjtzBbAQOr0Zqn7P8w0ddYa60dbNl0bRClDt0Ban3Mu/bpokGssZz+Y/IA299o/s4FLlvfo+zlfgv/P+52Sr7kDGTTtFj+9ufeK2TTKq5iEw13cnO4VqfMTVj5/aCCW0CZqxpOhDtqg1Z1gXEM2hOfTcB5WEHUwtDQveIuXypokEqNlDVjTtml4rQt82/zKxNPK4N4YqeIaeHRJTdsPhWJq3QzBvInNCuIqcWuLdrbZiZVMv+5+XhCA8ESpMD6ts7cAy3fzcRLzlF6hlTq+pUS9FHUpSh3D7CyMtJ5b9dwDAUNGEVc6/Lto
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(7416014)(19092799006)(366016)(376014)(261009223027099003)(10067099003)(3023799007)(4143699003)(11063799006)(5023799004)(6133799003)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qZb3KyE7u/U2W2UkG+hqSgnTIuPqUukPgDfjVESg+bn/zCqEDjfdJPXi/1Uw?=
- =?us-ascii?Q?ABiZ3+7qQXMKoJ8bQ8EBZV9ox7isY8PlkHkcKaTiKqOoeA3zIiMATcWRnuxw?=
- =?us-ascii?Q?smBWUtS97w/rAFPwdsa/Qqeu+2jES1epyMsdNW9j1K2/d5Fpr+Q7YxZIhWaT?=
- =?us-ascii?Q?uroObGNeKhIxtnfQB0nYJ590sxFlAa5SWKon/bJJ4x6YhB/vj0ogBpObz/z2?=
- =?us-ascii?Q?vd5F7oDXD3nczv6KjaenuVkQCuPJuWIHZ+GZwkjzlTVn+ubAR2hJKPwMXJod?=
- =?us-ascii?Q?TgJK4FyoC92tX1GoimpIFA1AADvxBOZ03X2aztgkJheB7eOK4CimI0wR355c?=
- =?us-ascii?Q?1RBvLq9Bgcs1JkL1liIXuOueKglrkv1EwKzWFKjTirfPt/J8GZnXFYxOLefu?=
- =?us-ascii?Q?Kx+gNAU4RiziFqUiB/pEiKhCmBd/hJJzc3DRi8WNkUiNr1+Ys9t2KbjN5Uxg?=
- =?us-ascii?Q?nmuzlxoyxBRq0/HqGjt1lplLmcdewz57nBbz7NUeSiQ20sh/dCiUyBMxu2rp?=
- =?us-ascii?Q?5Wni5dLXLq+RI3D1LnoAiUg+HM08rN9qivte5LbMNHr2HiJqj1OdO9tDdI3Q?=
- =?us-ascii?Q?i+JVudZuyE9HNULxhNuJ3QrgRnTLb236s1FSqutY4OCUHYNDS6Ip7AGspsyJ?=
- =?us-ascii?Q?dOYI1V1UIKXZtEL4S729QLH2Z1dCKEsunBevUlDgKeMLfxbp6x0P+NJooJML?=
- =?us-ascii?Q?uLvBPdZ+KIYJuMvu4qGUWQlnjLmujahl4JxNQjbtcwgDvnp5GNNVREkPHJ67?=
- =?us-ascii?Q?9/s0x5nEfZ7YG3JemVXGqyuCdZ2qQJS7nXokdW2qA5JdxiPsDYVsJhac6i8b?=
- =?us-ascii?Q?vQuqUZfvnNrZtaYnG6MI14pSvX5MBWeaH0hoosrzqzHXcvSND0pkoudNqNhI?=
- =?us-ascii?Q?1M+nYDaBSksQMISFEKhsNgXdC8U40qJoYmCgzs7e68df4RN84dAewKxqQDc/?=
- =?us-ascii?Q?XwfylmJbom+73OVTOh60v/ddw9biqeczS4riePbwyX4DSJH84e/y6y2cLhFi?=
- =?us-ascii?Q?UVq0TneAbx9Vb09mY4jtJUlvi2o3TQzTh56sFGfXYcB5A2m5kFFfZph132UQ?=
- =?us-ascii?Q?ZA2V8pyxUXSmsx9NO0xSkSHW1OfqyO4/OnjtQ/u9FNPof0iXDjczZVT7bw7l?=
- =?us-ascii?Q?beoxpKZLbMnpm+TpABPhOlnsgRbYatCNujIUcXBNqm5GfzuqjVDL/2qYaNec?=
- =?us-ascii?Q?nFQtNJ91EzvVadwanwA3mBQcQOoyXKdymnN8egzruwTOI+Y796LxuNi4Eh8l?=
- =?us-ascii?Q?ohKRlLxgazVoD8j7gF1Fnb48ELCUkAipnPkCmsr1qKCeR6d6SePIrXna3cgs?=
- =?us-ascii?Q?rJPE6gTcnb+j4vOWFqoVOpQPpc8TTuy3Wp1N3JtT36izvKk04mcOsIKCaxlx?=
- =?us-ascii?Q?CVQ6NIwhX4OVmocsvSYAgEGRyw0u7OPhMv9tXDjmHPfIM1vCLpUNSwIN+Q07?=
- =?us-ascii?Q?dEiLDEyDrwHD06lbLB5a5l5Vs8B6trhQgdX+oG+GbM9KhGwnVoyYGtAYGgdb?=
- =?us-ascii?Q?rbp0CtDKkNc5azwkf1tvyVnd83fkAtw7/yf4NeEPdTf6bksnyL1SUiCTth+b?=
- =?us-ascii?Q?winbqyNMlR4b1QwTlOGbJ3Sev8y7oO0eGbyXKbnNzO9zq29tKlQvbkBkOlaD?=
- =?us-ascii?Q?UX3ZQY6MnzkWJClcgrw+Nh4zL6aDqBn4MzZHxWbP7Jsh9zxON88Y68lur2D8?=
- =?us-ascii?Q?32fdr003fPJRi1bAnR1KO34+HNZz01th8hgNoi6TPG3m4v+cViy4Am4xyjrZ?=
- =?us-ascii?Q?C8LyZ8bm+0sozq690SUzeNBsfobjyidkp+vXTjKmPJaJWro9abVY?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e211a71-4092-4569-dc7c-08df29fd777b
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2026 14:14:32.0856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0M9bjZCrrVK6Oix02h3lHDishrjZt1IeTyhBLKLynv+l5/rcuM6ULuFvCpWDPHRdNJ0+qqxZmKFK4jm6aG521yZWrfKGP9Upo4WGsS35foYgrYo3dlXKxKBoVRHzb5ju
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BR0PR04MB672694
+References: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261009184122.1378797-9-prabhakar.mahadev-lad.rj@bp.renesas.com> <as5LQ6zFzkft2zNJ@ashevche-desk.local>
+In-Reply-To: <as5LQ6zFzkft2zNJ@ashevche-desk.local>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 14 Oct 2026 16:12:24 +0100
+X-Gm-Features: AclHuK_fe1o3s5DtDV5FGIwilMVE-kQkfjxo_HHCOHYJ4usL-K9N52nyOxeW19E
+Message-ID: <CA+V-a8vV80UfHtfrxMFDk_UFH04F=evyAqTvHEMSOiRNTJd+Kw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 13, 2026 at 04:40:46PM +0200, Jan Petrous wrote:
-> On Mon, Oct 12, 2026 at 01:57:13PM -0500, Frank Li wrote:
-> > On Sat, Sep 19, 2026 at 08:54:29AM +0200, Jan Petrous via B4 Relay wrote:
-> > > [You don't often get email from devnull+jan.petrous.oss.nxp.com@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > >
-> > > From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> > >
-> > > The S32G SerDes subsystem multiplexes two lanes between a PCIe PHY and
-> > > two DesignWare XPCS instances. Describe it with one node per SerDes and
-> > > one child node per lane.
-> > >
-> > > Compared to the previous revision, the vendor nxp,sys-mode property is
-> > > removed: the SS_RW_REG_0[SUBSYS_MODE] value is fully derivable from the
-> > > child-node lane mux and the XPCS instance routing (nxp,xpcs-instance).
-> > > Each working mode described here has a unique lane mux, so the mode is
-> > > a pure function of the child nodes. The reference-clock rate is
-> > > validated against the derived mode; it is not used to select it.
-> > >
-> > > The 3.125 Gbit/s working modes are deliberately not described yet.
-> > > Distinguishing them from the 1.25 Gbit/s dual-XPCS mode requires a
-> > > per-lane 2500BASE-X capability that this binding does not express, and
-> > > the reference clock does not distinguish them either - both accept 100
-> > > or 125 MHz. They are added by the 2500BASE-X follow-up.
-> > >
-> > > Only the PCIe lane child gets '#phy-cells'. An XPCS lane is not a
-> > > generic PHY provider; the Ethernet controller references it through the
-> > > standard pcs-handle property instead.
-> >
-> > Is it possible Ether controller use standard phy interface? of use standard
-> > pcs-handle to phy convertion
-> >
-> > pcs-handle = <&pcs>
-> >
-> > pcs: pcs = {
-> > 	compatible = "pcs-to-phy";
-> > 	phys = <&phy ...>;
-> > }
-> >
->
-> The MAC needs a phylink_pcs, not a PHY: the XPCS does the C37 autoneg
-> and link state. pcs-handle is the standard property for that, and in
-> v4 the XPCS is driven by pcs-xpcs. The lane mux is fixed before the
-> SerDes reset is released, so the MAC has nothing to set on a generic
-> PHY, and a "pcs-to-phy" node would describe a block the SoC does not
-> have.
->
-> > >
-> > > S32G2 and S32G3 use distinct compatibles without fallback because the
-> > > full reference-manual mode tables differ per SoC and per SerDes
-> > > instance.
-> > >
-> > > Co-developed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > > ---
-> > >  .../devicetree/bindings/phy/nxp,s32g-serdes.yaml   | 258 +++++++++++++++++++++
-> > >  1 file changed, 258 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/phy/nxp,s32g-serdes.yaml b/Documentation/devicetree/bindings/phy/nxp,s32g-serdes.yaml
-> > > new file mode 100644
-> > > index 000000000000..6343d01bfde4
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/phy/nxp,s32g-serdes.yaml
-> > > @@ -0,0 +1,258 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/phy/nxp,s32g-serdes.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: NXP S32G2xxx/S32G3xxx SerDes PHY subsystem
-> > > +
-> > > +maintainers:
-> > > +  - Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > > +  - Jan Petrous <jan.petrous@oss.nxp.com>
-> > > +
-> > > +description: |
-> > > +  The SerDes subsystem multiplexes two SerDes lanes between one PCIe
-> > > +  controller PHY and two Synopsys DesignWare XPCS (Ethernet PCS) instances,
-> > > +  behind a shared 2-lane combo PHY. The active routing is selected by the
-> > > +  SS_RW_REG_0[SUBSYS_MODE] field.
-> > > +
-> > > +  Reference-manual working modes described by this binding:
-> > > +
-> > > +  Mode  Lane0   Lane1   PHY refclk (MHz)  Description
-> > > +  ------------------------------------------------------------
-> > > +  0     PCIe    PCIe    100               PCIe x2
-> > > +  1     PCIe    XPCS0   100               PCIe x1 + SGMII
-> > > +  2     PCIe    XPCS1   100               PCIe x1 + SGMII
-> > > +  3     XPCS0   XPCS1   100 or 125        dual SGMII, 1.25 Gbit/s
-> > > +
-> > > +  Which Ethernet MAC an XPCS instance feeds is fixed by the SoC integration
-> > > +  and differs per SoC and per SerDes instance - on S32G3 SerDes_0, XPCS0
-> > > +  feeds GMAC0 and XPCS1 feeds PFE_MAC2, while on SerDes_1 the same two
-> > > +  instances feed PFE_MAC0 and PFE_MAC1. That mapping is a property of the
-> > > +  SoC, not of this binding, and is resolved by the driver.
-> >
-> > Roughly look like use argument is little bit better
-> >
-> > <&phys PHY_MODE instance(0/1)>;
-> >
->
-> Rob suggested that in v2 [1]. Child nodes stayed because:
->
-> - SUBSYS_MODE is written before the reset is released, so the SerDes
->   driver needs the whole lane mux at its own probe. With cells it would
->   have to walk the tree for its consumers, including disabled ones, and
->   an unconnected lane has no consumer to carry a cell.
->
-> - The MAC uses pcs-handle, which has no argument cells, so the XPCS
->   instance has nowhere else to go.
->
-> - A type cell duplicates phy_set_mode_ext(PHY_MODE_PCIE) from the PCIe
->   driver.
->
-> - In mode 0 there is one x2 PHY, not two lane PHYs.
->
-> I will put this in the v4 commit message. If you or Rob still prefer
-> cells, let me know.
+Hi Andy,
 
-I think Rob suggestion is better.  ethernet controller should support
-standard phy interface, more devices will share phy between PCI and
-ethernet.
+Thank you for the review.
 
-Frank
 
+On Tue, Oct 13, 2026 at 4:16=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> [1] https://lore.kernel.org/all/CAL_Jsq+SswpTjQShfkdhVwL_k8gJ_5+NrecPCUiFR52UB5zNMA@mail.gmail.com/
+> On Fri, Oct 09, 2026 at 07:41:22PM +0100, Prabhakar wrote:
 >
-> BR.
-> /Jan
+> > Add support for the ADC found on the Renesas RZ/V2H(P) SoC, which share=
+s
+> > the RZ/T2H ADC IP but differs in channel count, sampling, calibration a=
+nd
+> > resolution support.
+> >
+> > The RZ/V2H(P) ADC provides 8 channels, has a fixed conversion time of
+> > 20 ADCLK cycles, does not support calibration, and supports selectable
+> > 12-bit and 8-bit conversion resolution.
 >
+> ...
+>
+> > +static int rzt2h_adc_write_scale(struct iio_dev *indio_dev,
+> > +                              struct iio_chan_spec const *chan,
+> > +                              int val, int val2)
+> > +{
+> > +     struct rzt2h_adc *adc =3D iio_priv(indio_dev);
+> > +     unsigned int i;
+> > +     u64 scale;
+> > +     u32 rem;
+> > +
+> > +     if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
+> > +             return -EINVAL;
+> > +
+> > +     for (i =3D 0; i < chan->num_ext_scan_type; i++) {
+> > +             scale =3D (u64)RZT2H_ADC_VREF_mV * NANO >>
+> > +                     chan->ext_scan_type[i].realbits;
+> > +             if (div_u64_rem(scale, NANO, &rem) =3D=3D val && rem =3D=
+=3D val2)
+> > +                     break;
+>
+> Hmm... AFAICT we can use multiplication as the result of the division is =
+just
+> used to compare.
+>
+Agreed, I will drop it.
+
+> > +     }
+> > +     if (i =3D=3D chan->num_ext_scan_type)
+> > +             return -EINVAL;
+> > +
+> > +     /* The scan type changes with the resolution. */
+> > +     IIO_DEV_ACQUIRE_DIRECT_MODE(indio_dev, claim);
+> > +     if (IIO_DEV_ACQUIRE_FAILED(claim))
+> > +             return -EBUSY;
+> > +
+> > +     adc->resolution =3D i;
+> > +
+> > +     return 0;
+> > +}
+>
+> ...
+>
+> > +     ret =3D reset_control_assert(adc->rstc);
+> > +     if (ret)
+> > +             pwrseq_enable(adc->pwrseq);
+> >
+> > -     return reset_control_assert(adc->rstc);
+> > +     return ret;
+>
+> Hmm... If it was added in the previous patches, add with unfolded check a=
+nd
+> explain in the comments that the code done this way to avoid churn in the
+> future changes.
+>
+Ok while adding reset support I will check the return value to avoid this c=
+hurn.
+
+Cheers,
+Prabhakar
