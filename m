@@ -1,153 +1,110 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40254CF4D
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 15:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E14A551998;
+	Wed, 14 Oct 2026 15:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791991350; cv=none; b=miIRD1lOMsafdzu8XWiKkb+exFPyWIF/1/vsO8mVytPbbuE6QNu0B57oUqiS6UKbeA3uG6G01TO//26d/s2L6fPfARXg0UfIa/8aigpqu/Rr4q/s+K2VRjlHyMQFUgOZ9eKelx0k/FONNgzNuTsum9tloIfIN/5hHm8Wr2Ggh5k=
+	t=1791992022; cv=none; b=Fly+rCVwn4KpLEaNkUZ/ZqQ8QSpFPceTKSnXPI/sqt2mDtnD+Y5Bif52w7KrvXhcCmcOjyfzXWDaQ+EqBiScp8Xa0h9E/7qUC38VzAO8jhPGYxe6ywUPvoiUU7FbneBtyfwLOqTLUM0xUsezkEvrYaPS8URNUl1YoH+jPtzL/8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791991350; c=relaxed/simple;
-	bh=OJYOG4YSV0pLaaOPEwxxy35lIjjZKUEA7jwt74Dr43o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p63UC9igGbGQmw0Pm6y3hRs6CZs2As3Scpoy4uWnKpSoUSUc6H+69/JAXoIVSw76EBQrH+HdVHRhRpoKQAg4qMBlKx1UFNcF2b0+u9NH2qJf6EmAJ8lwTO48SiLk1x8AHkHGNtOEJheTa19QGojFbl9eFX7aUnkI9VNSn6d9Tpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TwrXJ8qN; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1791992022; c=relaxed/simple;
+	bh=mK7HAM4nMy4eEc0HHmNewb99Ljc1vlTbcL9mEAk0cf8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Yy8cvZxWBVZTF3AGmKEUQNET+eiHqtvkF+ZSl2p9FlXTkuvZWqF3nOhj/F1PkazcJjDFE3+iW75nO59AhztZS2J7yBTTN0R/hw2PJbwnTKzFG35q8rgcBg+CIxkStWmU9GXzEMwAUrM4tLg4WM2tY5wKlWK4wAyaoTIAP5Wqa4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/KqMZTE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TwrXJ8qN"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a16c399641so41992135e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 08:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1791991347; x=1792596147; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Js2yXAKJLVFgb+YsCYrtsAgVcbxI+5CvJwak5knEqR8=;
-        b=TwrXJ8qNCIBIfvZ5vaqH0HNVYo5jxBCxdNP4WT1BAOI4HGpqusYbSt51p4DOmcFQW+
-         SfTLiLcWRk5ksnQB0u7htHubUA9hXpmtcva4ZIs4zG4iHLnRPcHJRaI4H4k6rQOf2zxV
-         dAnisya7Ej4yH+2vgh/mDvbvCJa3LRtPIBCJYMqqRRanw0+VfLIUC7hVSg3yPoQU+8Yf
-         BdoT06WioNkHNweW56PaotpWkWOkfmPlPPUEVy9ojZWmHGBOq5x5Dc3OJ3MWVkV8eYQX
-         kVBLATFT1j2rrcrT98a/zwbSyY5HlgWIWIFaSD0Ct/M0CaCU/U3LPEBjpSZXtabPDsRa
-         E8tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791991347; x=1792596147;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Js2yXAKJLVFgb+YsCYrtsAgVcbxI+5CvJwak5knEqR8=;
-        b=Yp5KReKxjdfCZ9sTxn+WpgKLo55frz0N8WjoLrQrZJH7VvPZBPVoekBIuJU/iviGY9
-         VMRjyWrsEEsW8c9Feceu2Wwap16slSp4vawKj9TJou/i0DtVHDwU4bN4dTxUNU75JO+z
-         agU2rooBOye6sfsLQivKjtwfARtLvD98pOFUkHwChSvxm+kyxYsQq7+uHQqExaOAnMzZ
-         BITr/kCC2OR4VA5BIVTVAmWWmMA7lxR/qmbzXF0vVNNYkm55rA1+xRUcQ5xugwA6Bzbt
-         F19B61HQ+QuEl3HXQPCi8XylGqWMcRzIRHS+b2SscFWoVOQ9R59EdD6XRuG7BxtxUzqP
-         mZqg==
-X-Forwarded-Encrypted: i=1; AKwUvBxQtuM/U+EA7bOZ1h7NHKj2L0nEIxlW/BA9w3tCxD/a+9iGv5mL8C06Ihl8JxGJ7vPJZGwIuBZCbPrueLiaEJillg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYL9KdvJtuLYGEW7727Oaxy6jAfojVJxvKmu7zqJXt1VbhRVX/dL
-	0Qt8D5E+bB3PqJFyQCPvk81GBuvp2BbyLSm6UCPm1VYPZf69gltiQcsaSBTyP3D/IEk=
-X-Gm-Gg: AYBFou35GAYJjk4ATUr5wBUJvcFZW47aTyfekVLcvrvdvY9LmQDsn8gmtsDm9nFi1Yq
-	oZK4G2bEiLRxoA58YNTMZo5X0dc7aJdrWWAbQ58PKtxY1MCaQpAYtDd+nU6FpxjZzj8DiRq1dBS
-	JzqH/IJ6XoV7ffi3lEShUENGcCcG8FJeM/WGrgiww2+yCaicxFrV+GuvQQbt7xbES+5LMQUMqVh
-	XbDdpnCXLQtHeBHR1qlR2ZWiOU+FdRGMzZOMZ5Fewh1rHWCQg4ai0Sl27O/QGiJkYzg0My+q28i
-	yDddNNfBuJtlwqnfT2GTN2j6C7G453JtKEaTnl9u5wRviBA+6VCshMy1QItb6tLRyFfLSvZ2fdP
-	rHFmV1+PxqFR59ZRi9Lq+7O+KGsHxxoqVpSRaNEgonP8n6xwK663fQ5eCbTGRIY88rAgSFtA7uJ
-	EU5staguWyl+1/MeMHGdpEqK2J0UvWYVrTGat9V3gU1J8PfZYo/7gQzPTwrX1RAXXEW67fqj9AF
-	u4HRM8=
-X-Received: by 2002:a05:600c:3507:b0:4a1:afcd:3919 with SMTP id 5b1f17b1804b1-4a1afcd393emr93408495e9.7.1791991346614;
-        Wed, 14 Oct 2026 08:22:26 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1bd67502asm974715e9.3.2026.10.14.08.22.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2026 08:22:25 -0700 (PDT)
-Message-ID: <3a6759c7-84bc-46ff-93f1-965c7e8dd4d0@tuxon.dev>
-Date: Wed, 14 Oct 2026 18:22:21 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/KqMZTE"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8E906C2BCF7;
+	Wed, 14 Oct 2026 15:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1791992021;
+	bh=mK7HAM4nMy4eEc0HHmNewb99Ljc1vlTbcL9mEAk0cf8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=X/KqMZTE8v6giUeHvOPGuTfBy0B8Dmnx0UiAzPpAbkQNO5e5zyZGt0ZvRt6+OAy9H
+	 zidE8Kh/VWeoFjbgVk1PYIj++QWm2HJQW/O4E1ysGGGC03Oc9RGvFQAxTN2nhESqYh
+	 /Y0X7XqmI/iBj5LKtVzF39wp5NJdMMMIvtHUbAVlABk1XYfwQQeL9f5LtrX3TozvIz
+	 1059mfX7QDdQRe/lXj5I235bNDPmwcsMEkK2TTtECaBwtet3n7/oiMeY4s937YhxIE
+	 kWT0aXIcFDtYHqZoN1ycQl9nU08regIYzF7Js184P38buKOut70OdStlBjt9d0+w8e
+	 OApv3dzXHR+1g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AFDCC6B1A;
+	Wed, 14 Oct 2026 15:33:41 +0000 (UTC)
+From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
+Subject: [PATCH net-next v4 0/2] net: pcs: rzn1-miic: Validate dtb
+ configuration values
+Date: Wed, 14 Oct 2026 08:32:36 -0700
+Message-Id: <20261014-miic-validate-dtb-v3-v4-0-b7da71b3a106@reliablecontrols.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/24] ASoC: renesas: msiof: Fix msiof_close() being
- skipped on rollback
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Bui Duc Phuc <phucduc.bui@gmail.com>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
- Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- povik+lin@cutebit.org, Andrei Simion <andrei.simion@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Heiko Stuebner <heiko@sntech.de>, Kees Cook <kees@kernel.org>,
- Syed Saba Kareem <syed.sabakareem@amd.com>,
- wangdicheng <wangdicheng@kylinos.cn>,
- Chris Bainbridge <chris.bainbridge@gmail.com>,
- Linus Walleij <linusw@kernel.org>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Neo Chang <YLCHANG2@nuvoton.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- u.kleine-koenig@baylibre.com, Pengpeng Hou <pengpeng@iscas.ac.cn>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Hemanth Selam <hemanth.selam@gmail.com>,
- Md Shofiqul Islam <shofiqtest@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Zain Aboobacker <zainaboobacker33@gmail.com>,
- Sang-Heon Jeon <ekffu200098@gmail.com>,
- Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
- Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>,
- Bo Shen <voice.shen@atmel.com>, Vinod Koul <vkoul@kernel.org>,
- linux-sound@vger.kernel.org, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
- linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev,
- linux-rockchip@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261008103831.542533-1-phucduc.bui@gmail.com>
- <20261008103831.542533-22-phucduc.bui@gmail.com>
- <87o6cyxyau.wl-kuninori.morimoto.gx@renesas.com>
- <CAABR9nHvCfabGfBu85bm1r=hP3b0ZiCsgZfShhOv3gNUfjjhGg@mail.gmail.com>
- <87se2aw3ot.wl-kuninori.morimoto.gx@renesas.com>
- <CAABR9nG-YJZEdj6pVD-gbGU6J2EfRMQYsKd7u0UTgfrWOyAPXA@mail.gmail.com>
- <87qzhtyxw6.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <87qzhtyxw6.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJSgz2oC/22NywrCMBREf6XctZG0sbG68j+kizxu7YU0kSSES
+ um/G4pLYTaHYc5skDASJrg3G0QslCj4CpdTA2ZW/oWMbGXoeCdbznu2EBlWlCOrMjKbNSuCmUm
+ 0Q8eNbvEGdfqOONF6aJ/gMTOPa4axNjOlHOLn+Cvi6H9q+V9dw5kcZHvVwhrVm0dER0o7NMHnG
+ Fw6m7DAuO/7F8fWy9XNAAAA
+To: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>, 
+ Simon Horman <horms@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791992021; l=1495;
+ i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
+ bh=mK7HAM4nMy4eEc0HHmNewb99Ljc1vlTbcL9mEAk0cf8=;
+ b=iQkkI44ZNIWO2ba6mqSz9/slYIXSk9aYbVZBhy9HGZyz/1OfIshgOsbZG7CieLxdkoQN2coYy
+ IgVCN2TP9zUCtQh6vccqZ25NReIH+WqzHB9rCh5473buUPLgBj2H+5r
+X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
+ pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
+X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
+ with auth_id=946
+X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
+Reply-To: khendry@reliablecontrols.com
 
-Hi, Morimoto-san, Bui,
+This series addresses issues found when reviewing another fix:
+https://lore.kernel.org/netdev/20260915-rzn1-miic-fix-array-v5-1-b7173fd5b97d@reliablecontrols.com/
 
-On 10/14/26 02:38, Kuninori Morimoto wrote:
-> 
-> Hi Bui, Claudiu
-> 
->> For rz-ssi: in DMA mode, the driver registers the generic dmaengine
->> PCM component, whose .open callback already applies the integer
->> PERIODS constraint via snd_dmaengine_pcm_open().
->>
->> Could we drop rz_ssi_pcm_open_dma() instead, and keep the return
->> value fix only for rz_ssi_pcm_open_pio()?
-> 
-> It seems fine, but I don't know detail of rz-ssi.
-> Claudiu, what do you think ?
+Invalid values from the dtb could cause out of bounds array access. Checking
+the values as they're parsed should prevent this.
 
-That should work. I'll test v2 once it's out.
+Changes in v4:
+- Remove unnecessary else
+- Link to v3: https://lore.kernel.org/r/20261006-miic-validate-dtb-v3-v3-0-68617b3dca5c@reliablecontrols.com
 
-Thank you,
-Claudiu
+Changes in v3:
+- Squash patches changing miic_port_max
+- Change name of miic_port_max to miic_port_last
+- Remove fixes tags
+- Add another check for configuration value of miic-switch-portin
+- Link to v2: https://lore.kernel.org/r/20260928-miic-validate-dtb-v2-0-1ee3d33748e9@reliablecontrols.com/
+
+Changes in v2:
+- Simplify fixes by making miic_port_max the last documented port number
+- Add fixes tags
+- Link to v1: https://lore.kernel.org/r/20260925-miic-validate-dtb-v1-0-3a6db9bb75ec@reliablecontrols.com
+
+Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
+---
+Kyle Hendry (2):
+      net: pcs: rzn1-miic: Update port numbering for RZ/T2H
+      net: pcs: rzn1-miic: Validate dtb configuration values
+
+ drivers/net/pcs/pcs-rzn1-miic.c | 42 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 35 insertions(+), 7 deletions(-)
+---
+base-commit: 05b5019b01fb9443b09ae4ed34af1135a80a84c8
+change-id: 20261005-miic-validate-dtb-v3-cf31820cb1e9
+
+Best regards,
+-- 
+Kyle Hendry <khendry@reliablecontrols.com>
+
+
