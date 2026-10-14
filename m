@@ -1,351 +1,224 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E884E9C10
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 12:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C154E80BD;
+	Wed, 14 Oct 2026 12:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791981451; cv=none; b=J1qmvKtb5vYo1TRP1olrcrFpXpfWMYUSPs5ZwgT/Uht8Zc7RtzX3b6bwxi6BDiGsfrDmpibDIF7/L7klqe+px9g1XQkj0IaMzl9szKrF+2YK31BSkX8U/bpz3319pl847Mz5vouojj2ON0LCEyaia5oo4GZzIcIk/c4IhQ3HC+M=
+	t=1791981866; cv=none; b=JzN9i6djsAeXFHsqi2833vn4OCkqASTgvdvl5jXEkclFyG0EidXQ5n+JXrhq2VlaqO2M+qFJORKvv4IwSHKdN4Q8lIPC7NkvK3wRonhdCHr9YJJrCaCYiDzkjqGj9UEhXuByf1Q0wQ1KCVDElY284mgacQ/5x1MOJ7hBI7KzH5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791981451; c=relaxed/simple;
-	bh=E5+bN3D+sOSMI+IUMfDwqXdFOaJHc/HOHr/CKTtiO7A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=adGuigSsmg1pjIyrHdKtgZNCE/TtKWGVOeChagnFOGa+7U6StRwZ8L4/RtiwxXaZxEW6T0aKWxmFBPyT84vNR5MncAV6Hpa5LKbdDEKHh4dRBTSUdoUZanr9hvIL7X0f+9+fe76zjk9gsbsusEjZKVg8+/wpsWgiUy4x4095woE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fBAjplYu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=faGsRVj9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fBAjplYu";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="faGsRVj9"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69EBQgv42685347
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 12:37:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XhTimWLRVLL9+eUM2tB3gMhCDeAxv0EnsYkhKM2B8BY=; b=fBAjplYu8rnbz4pl
-	jLxXGNu+kn88qr66sJRjr353pRJXQ+/rBFN+0aqlhl46LDOAWG0LbxNEkTNdR2OG
-	jh1H4R5LqZMmFPyQ2rI2gGs6l1FPP8+SxjtTehM2Wn2Y52Fd9vXWF1RMrxeehR1Z
-	30ev5PQXGqOXNdfEh3a7L5rEzIEnkUv6ZTLcGbCoSADextAVQauEL6bmSfgntujO
-	cfc6vVng1YzOrC3BDEZie98cFbxqcQelZ2fLWqDPFBDD8Ig0I8nXi4F67OMEcwcX
-	7KRryUFURIJdSyn5CN0O+P51SrtDHC6GDcQ/QuFL8EZoeWTYmWzR6+b+uPpd8xDp
-	w1VGGA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ha46u1hyt-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 12:37:28 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-917b7dd3f1dso5278126d6.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 05:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791981447; x=1792586247; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=XhTimWLRVLL9+eUM2tB3gMhCDeAxv0EnsYkhKM2B8BY=;
-        b=faGsRVj9AlHb/TArwZcJ0W15H7t4Rd0HmHV4Y5lHJXMVXyhcwInuL6IK8TuJlCFPes
-         PhdczKFk+PQ2xbtmP9Cx2e6nFZeJ7G/eAI4W3THU/rVOK/8MWj/Adt0KRVgdDfeUDgLY
-         36fmgHJC3BGHEJdF7r5XLPbDSOdD3lIDFb4dGWL9e+Br2QkvyW2OBBAG9uEZd8sFtCzo
-         rq59C9ERv9w9lf1kuLKK1o3EZYXPGlU4FohxkzvCcrE3HMkLl9YqctXNYFXlCz5Cv08I
-         LyAMe8uCyYipWP8VjGnt96MyVkjkFzZ4+6A+CKPMzQA5/vH7toKOX7lStWog17bgW2jV
-         XPsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791981447; x=1792586247;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XhTimWLRVLL9+eUM2tB3gMhCDeAxv0EnsYkhKM2B8BY=;
-        b=Aoi0GYrg84lpZqzWzwxdRZOcyWd1K12jcY18pAi1ntddJ2wmT09baeXyTdcimxkalh
-         nSozAI8UM5QKUTKVdlUy0J2lMNe5BH7KiupWzyIfYy78cNiFtwwKwIUMpVO9PfuZo2E3
-         NMGhbTn6edkt8J+yX52hfSyDxFvcUw8X1H/LSSZXzaeFYxqX/7yR251jf8PZSt1rId/q
-         3BipgdRUR38JKlcBXgEROhhlruQ+E7PvFpoTZDC/cWD5nXws/TJrbj+xM1RX/3rUEaJQ
-         ABufCaOaCwMObs+MWrc+8wIGfzJj8pQwFJzGmaiwN+yFE+ErG56BYiF7nUFaYucpK1lT
-         zIcQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxmGntvrUaU0R747kHU9mRqBVqobOdxU4ALgF9N5pZ39doYvdg6P+CZJm1H2eLYA6HsQ6jX2kq462o5wpdud/tzMQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIwS0QSM6uT2LSLfYCG6AeNR/0ehOfFFqjvJn90R3wUnAkfNU2A
-	L0d62WnnJxpqzzTgJjrBlMX/lM/lyR3+05F1M0gEdMiXmon6YO4mC+mruMhq5EkL42+Tm1TCvms
-	k0Cmo3hiZ7mkW+8Jhj2JL9+2G2YOCokhuBJK/ghz7m4Mrus5qDgxA/tNeI4XW/9K1lSw9Fr77XQ
-	==
-X-Gm-Gg: AYBFou102t+F2hIabDIBwAPAn8PHrW84tUvkepOzKvHeRg+7GlkUSq6n0pRlwDq5l5U
-	ysF7hmLIDNk8V+7gJrkJOjyEgkcFDuqRv7lNik3M5+xQBhF17L/8GKVuYIN6eF1sJTPJGu+6hyI
-	C+JCp9Fu7nWJAlf/S6wUwm+XJF/kUVa3Q5zhn/f4LdMLJKaJaZPwU8ZLuwdeROkWk+Cym5uXYbF
-	Adfi4C6V4g6Yc6/2c5LPxAgS3H1GJ8++3sejJ2GlW9xsqOPRnSJbZAWi09lJNruj9HfOd57SyyS
-	60Pk6+6DFgPTVh0ZfT8bB8b1iLEagxgF1qgRARUXH4htPlTl5CsMkeYKLXT7QbX5pa6nNx3ZjQE
-	vbnaPstJyCqMaqJwPIFktnYrT2bAR
-X-Received: by 2002:a05:620a:2985:b0:939:93a1:1383 with SMTP id af79cd13be357-93ebd2424b1mr2428524185a.32.1791981447336;
-        Wed, 14 Oct 2026 05:37:27 -0700 (PDT)
-X-Received: by 2002:a05:620a:2985:b0:939:93a1:1383 with SMTP id af79cd13be357-93ebd2424b1mr2428515685a.32.1791981446514;
-        Wed, 14 Oct 2026 05:37:26 -0700 (PDT)
-Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19f318c31sm206122615e9.3.2026.10.14.05.37.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 05:37:25 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Wed, 14 Oct 2026 14:36:46 +0200
-Subject: [PATCH net-next v16 7/7] net: stmmac: qcom-ethqos: add support for
- sa8255p
+	s=arc-20240116; t=1791981866; c=relaxed/simple;
+	bh=t0LLjCk7pfpYCLo6U8mdmo7q4oZ94uFEeaVGB3eSSeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAhZNjDz2w++xG6mUOxdVl/k67keCpo9oMPfBSCo2shRgKHHB733WYg1RLBaW0p/5+73AA/1Dd7zqcLWEylxdSMpPl/pRlICQStyOWYeOGbVsSryNQUEVFpqlbfZyf420LswworzkaZbhFVNfeXs9jGz311Sny6tlXN/+qtlAj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 20E9C1A006F;
+	Wed, 14 Oct 2026 14:44:23 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 084D91A0071;
+	Wed, 14 Oct 2026 14:44:23 +0200 (CEST)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D59A2035A;
+	Wed, 14 Oct 2026 14:44:22 +0200 (CEST)
+Date: Wed, 14 Oct 2026 14:44:22 +0200
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Coia Prant <coiaprant@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ionut Vicovan <ionut.vicovan@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	imx@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH RFC v3 04/12] net: pcs: add NXP SerDes XPCS shared core
+Message-ID: <as95JpawMfSSk+Pa@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
+ <20260919-s32g_serdes-v3-4-9d68868c1e89@oss.nxp.com>
+ <6aabb56e-406f-4d13-9fd8-54822202039f@bootlin.com>
+ <assmUIvWMuZsp8OO@lsv051416.swis.nl-cdc01.nxp.com>
+ <CALj3r0gQkUARS1e+2CGB3JsrGJ2XrzuoChfz0cWYRpK4kq1Uxg@mail.gmail.com>
+ <as5EioEfZqMZhyJg@lsv051416.swis.nl-cdc01.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261014-qcom-sa8255p-emac-v16-7-0266c2ead980@oss.qualcomm.com>
-References: <20261014-qcom-sa8255p-emac-v16-0-0266c2ead980@oss.qualcomm.com>
-In-Reply-To: <20261014-qcom-sa8255p-emac-v16-0-0266c2ead980@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Chen-Yu Tsai <wens@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com,
-        Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>,
-        Romain Gantois <romain.gantois@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Eric Dumazet <edumazet@kernel.org>, Radu Rendec <radu@rendec.net>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Drew Fustini <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev,
-        linux-riscv@lists.infradead.org, brgl@kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6602;
- i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=E5+bN3D+sOSMI+IUMfDwqXdFOaJHc/HOHr/CKTtiO7A=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqz3ds1bIQs+DrRQ+UYZftvNuSxlqf0zl+QMIyW
- Tsd+CGnBBuJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCas93bAAKCRAFnS7L/zaE
- w2ziEACOjqFQuy0x40XxJZ/xl0i6ictP/z9z/Go10rQHDy+qpTl8SUcFwtVm8Qeg9H+66IyRoUM
- CTIK+9lLDnklaaK/X7v+vWqiuFN35N63oG+feQwfCu6epUnRbc86UWuVadyneO3VzlZc/RRhT+U
- 6FJxQpcqb0QtjTeCQCHGMJj8+x+viVHyrLS2lStC4LBs014PiFN8XkG6vCOZBFW1XVTiB5kIcLj
- qI6TTqk505KpR5vhFeT3U0Ddt/bpbmZBxTKcWhUj9aGw1kwJS24Ha4UoRMMufJZhJYTyI/4q5cP
- I+V7MdCJZuKjXHoNl6G6BUo/QfTIV76quGOeM6P/z8mdA6QqpMsHnfUGLwyK00XUe7TL8xxIjRZ
- 9EsKu5ggGAgC5b1erWogRHFB6Z3Jx2nQ03tNlDak//JgZU5uj4TeA1Ue0Kt55qj47gbNq8ePzFc
- m9YkpHijAPorQQ+/0tsviy7JXVlYrzIxRQm4nMR8y2ZMPup3PCn55FRJpMqN/0ZoXdq7KAWotwt
- yapYd8yGv6j8+zQ1MMLj7eSU+Z0uzcY0YHiaNRujTBFS7Wb4x3Y+JHZJCIvxWVAAI5MsIkx+1Wk
- r/GkGbq/G3dGmrCXTz/dbejgc26jAb2SdGJD+GJrbszdKXoPuwH5W+Q1JqPX50rbqs4FFKnzc05
- UzwFJ1st9Ah5JDw==
-X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA1MCBTYWx0ZWRfX1W1QXy679tD2
- AnsrKJGLBmvUyprMxqxTBeyv6DdbtdM98cRb2QBb6ejleD4vvx3twrcC8JKmf1XLGjQZaI3EH/f
- jTm5y6Y0p3a+YkwQR7DttgiPyE3cHx8=
-X-Proofpoint-GUID: WX4ERw0cvjOZxpAJQsD7ODOA6h79hyy8
-X-Authority-Analysis: v=2.4 cv=Y6ttIReN c=1 sm=1 tr=0 ts=6acf7788 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8
- a=MNMbB-VoU2yS88OP0PEA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA1MCBTYWx0ZWRfX78BZ64vJUU/v
- 53R+Yqo6yDPpzcbRse5FeOYx9+SGgafLqGlOcCzpeibEN8z8PJbsArIaKtNzaAjo74HFaH/F4Qw
- ebFC1APkZI54C9LRt8pBtVMd31b0LoDv4/oX0kyL2rtjdGWGjrmh+rMyuU5/FfKPU9ot8TE2IH+
- FQ/UpSvIkeawPzrjvx9QM93ebqPJfdGXDvAPhk5Y4yCVJitNfqr2JtfPd2DbHkZ3eSQm8yn0GsX
- lQCjX1mVhOtiBFIUAVJHPDRfX0tb+Lv9N7qUioQBSDCkns2o/9C9XSGBil13kLm/P5zZq+YTsZw
- aOGA8rV40S5H+LNk03wOxUyRP8r9eSm0Zyzg/6Q+8Pt9+k1fn3ITVrJIydqj2+xro4PW+muxtw4
- 3kf26JVp7+S5LiqbBHc6RlWnv4Wtzz4o97XCFnA1MCMw9mLYIc/rIcAkOyxzR5IyVqswrTaLEgI
- p3WNSuCuJhYlI88WGRA==
-X-Proofpoint-ORIG-GUID: WX4ERw0cvjOZxpAJQsD7ODOA6h79hyy8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 suspectscore=0 bulkscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
- definitions=main-2610140050
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <as5EioEfZqMZhyJg@lsv051416.swis.nl-cdc01.nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Extend the driver to support a new model - sa8255p. Unlike the previously
-supported variants, this one's power management is done in the firmware
-over SCMI. This is modeled in linux using power domains so add a new
-emac data variant and a separate setup callback.
+On Tue, Oct 13, 2026 at 04:47:38PM +0200, Jan Petrous wrote:
+> On Tue, Oct 13, 2026 at 03:47:58AM +0800, Coia Prant wrote:
+> > Hi Jan,
+> > 
+> > Thanks for the pointers. A few thoughts.
+> > 
+> > > Yes. The S32G accessor is the same DW indirect scheme pcs-xpcs-plat
+> > > implements (page into the viewport at 0xff, then the low address byte
+> > > at a 4-byte stride), so there is no reason for S32G to carry its own
+> > > copy of the XPCS code. The next version drops the shared core, exposes
+> > > each XPCS instance as a mii_bus from the SerDes PHY driver and creates
+> > > the PCS with xpcs_create_pcs_mdiodev(), much like the RK3568 glue.
+> > > Details in my reply to Andrew.
+> > >
+> > > The part that does not fit pcs-xpcs-plat as-is is ownership, not
+> > > access: the XPCS windows sit inside the SerDes subsystem register
+> > > space, and their bring-up is ordered against the PCIe lane and the
+> > > other XPCS instance, so the bus is registered by the SerDes PHY driver
+> > > rather than by a standalone snps,dw-xpcs device. The accessor itself
+> > > is a few lines; if Alex's pcs-xpcs-regmap is merged first I will use
+> > > it rather than open-code another bus.
+> > 
+> > On the transport split: I think the cleanest path is to split the MMIO
+> > accessor out into its own module, say pcs-xpcs-mmio, exporting the
+> > read/write helpers. Then pcs-xpcs-plat can call into those exported
+> 
+> Fine with me. The S32G accessor is a few lines, so I will move it onto
+> pcs-xpcs-regmap if that lands first, or onto a shared mmio helper if
+> you post one. Until then it stays open-coded in the glue.
+> 
+> > symbols instead of open-coding the page/stride scheme, and S32G can do
+> > the same for its indirect window. That way nobody carries a private
+> > copy of the accessor. If that turns out to be too invasive for plat,
+> > keeping a separate pcs-xpcs-plat copy is workable too, but I'd rather
+> > avoid it.
+> > 
+> > If Alex's pcs-xpcs-regmap lands first, that's the natural place for
+> > the S32G accessor; pcs-xpcs-mmio would only be needed if the regmap
+> > approach doesn't fit.
+> > 
+> > > S32G needs the same kind of thing: skip the generic soft reset, and no
+> > > EEE registers. I will start with the existing PMA-ID mechanism, since
+> > > that is what TXGBE and FBNIC use today, and switch to a callback if one
+> > > is agreed in the Rockchip thread. I'll Cc you on those patches.
+> > 
+> > On the shared-core duplication: rather than copying the whole XPCS
+> > core, I'd look at how the existing users express their quirks.
+> > 
+> > Wangxun has a genuinely different PMA ID, so it can branch on the
+> > ID before the reset path and keep the generic core untouched.
+> > 
+> > The older NXP devices do the opposite: they fake the PCS ID at the MDIO
+> > layer so the core sees a magic value it then interprets. That leaves
+> > the magic in the core and a fake ID in the glue, and it doesn't scale
+> > to a third user.
+> > 
+> > For S32G, I'd prefer one of these two approaches:
+> > 
+> > - A flag in struct dw_xpcs, e.g. DW_XPCS_NO_RESET, that the glue sets
+> >   and the core checks before the soft reset and EEE paths. Works when
+> >   the quirk applies to a whole instance regardless of the PMA ID.
+> > - A platform callback, e.g. plat->pma_config(), where the glue can
+> >   return early to skip the parts it doesn't need. More flexible, but
+> >   also more surface area; I'd only go there if flags aren't enough.
+> > 
+> > Either is better than another fake ID, because the quirk stays visible
+> > at the point where it matters instead of being hidden behind a made-up
+> > value in the transport layer.
+> > 
+> 
+> Agreed on the principle. The problem is that pcs_pre_config and the
+> PMA hook are reached only through the ID-keyed compat table, and S32G
+> needs a pma_config (link timer, lane on MPLLA). Without a platform
+> callback the ID is the only way in.
+> 
+> What I have for v4 is an ID-keyed entry with the two quirks as
+> explicit flags in struct dw_xpcs_desc (no soft reset, no EEE), so at
+> least the table says what the entry does.
+> 
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
----
- .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 111 +++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+A follow-up with measurements, since "the glue needs to skip the soft
+reset" deserved more than my word. I ran the v4 pcs-xpcs patches on an
+S32G399A-RDB3 with both quirks removed, so the S32G entry went through
+the generic xpcs_pre_config() soft reset and the generic EEE path.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index 4e9c534fb240f0e08695282bb66cf6134415cc71..d59be76a20916de3febed400a64aff9763aac45d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -98,6 +98,11 @@ struct ethqos_emac_driver_data {
- 	const char *link_clk_name;
- 	struct dwmac4_addrs dwmac4_addrs;
- 	bool needs_sgmii_loopback;
-+	/* Fixed PTP reference clock rate, used on SCMI platforms where
-+	 * firmware does not implement the clock protocol allowing linux to
-+	 * query it.
-+	 */
-+	unsigned long ptp_clk_rate;
- 	int (*setup)(struct qcom_ethqos *ethqos,
- 		     struct plat_stmmacenet_data *plat_dat);
- };
-@@ -108,6 +113,7 @@ struct qcom_ethqos {
- 	struct clk *link_clk;
- 	struct phy *serdes_phy;
- 	phy_interface_t phy_mode;
-+	struct dev_pm_domain_list *pds;
- 	const struct ethqos_emac_driver_data *data;
- };
- 
-@@ -207,6 +213,8 @@ static void ethqos_set_func_clk_en(struct qcom_ethqos *ethqos)
- 
- static int ethqos_hlos_setup(struct qcom_ethqos *ethqos,
- 			     struct plat_stmmacenet_data *plat_dat);
-+static int ethqos_scmi_setup(struct qcom_ethqos *ethqos,
-+			     struct plat_stmmacenet_data *plat_dat);
- 
- static const struct ethqos_emac_por emac_v2_3_0_por[] = {
- 	{ .offset = RGMII_IO_MACRO_CONFIG,	.value = 0x00C01343 },
-@@ -311,6 +319,30 @@ static const struct ethqos_emac_driver_data emac_v4_0_0_data = {
- 	.setup = ethqos_hlos_setup,
- };
- 
-+static const struct ethqos_emac_driver_data emac_v4_0_0_scmi_data = {
-+	.has_emac_ge_3 = true,
-+	.needs_sgmii_loopback = true,
-+	.dma_addr_width = 36,
-+	.ptp_clk_rate = 230400000,
-+	.dwmac4_addrs = {
-+		.dma_chan = 0x00008100,
-+		.dma_chan_offset = 0x1000,
-+		.mtl_chan = 0x00008000,
-+		.mtl_chan_offset = 0x1000,
-+		.mtl_ets_ctrl = 0x00008010,
-+		.mtl_ets_ctrl_offset = 0x1000,
-+		.mtl_txq_weight = 0x00008018,
-+		.mtl_txq_weight_offset = 0x1000,
-+		.mtl_send_slp_cred = 0x0000801c,
-+		.mtl_send_slp_cred_offset = 0x1000,
-+		.mtl_high_cred = 0x00008020,
-+		.mtl_high_cred_offset = 0x1000,
-+		.mtl_low_cred = 0x00008024,
-+		.mtl_low_cred_offset = 0x1000,
-+	},
-+	.setup = ethqos_scmi_setup,
-+};
-+
- static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
- {
- 	struct device *dev = &ethqos->pdev->dev;
-@@ -759,6 +791,84 @@ static int ethqos_hlos_setup(struct qcom_ethqos *ethqos,
- 	return 0;
- }
- 
-+static const char *const ethqos_scmi_pd_names[] = { "core", "mdio" };
-+
-+static int ethqos_scmi_setup(struct qcom_ethqos *ethqos,
-+			     struct plat_stmmacenet_data *plat_dat)
-+{
-+	const struct dev_pm_domain_attach_data pd_data = {
-+		.pd_names	= ethqos_scmi_pd_names,
-+		.num_pd_names	= ARRAY_SIZE(ethqos_scmi_pd_names),
-+		.pd_flags	= PD_FLAG_DEV_LINK_ON,
-+	};
-+
-+	struct platform_device *pdev = ethqos->pdev;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	ret = devm_pm_domain_attach_list(dev, &pd_data, &ethqos->pds);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to attach power domains\n");
-+
-+	/*
-+	 * The MAC AXI/AHB clocks are owned by firmware and brought up through
-+	 * the "core" and "mdio" SCMI power domains above, while the SerDes
-+	 * lane is powered by the SerDes PHY's own power domain from
-+	 * serdes_powerup() in stmmac_open(). The MAC wrapper itself, however
-+	 * is in the kernel's register space: the wrapper bit that loops the
-+	 * PHY TX clock into the MAC's clk_rx_i - needed because no recovered
-+	 * RX clock exists yet - is not configured by firmware. Without it,
-+	 * clk_rx_i never toggles and the DMA SW-reset polled in
-+	 * dwmac4_dma_reset() never completes.
-+	 *
-+	 * Map the wrapper and program the same loopback/functional clock bits
-+	 * the non-firmware platforms rely on (see ethqos_clks_config) so the
-+	 * RX clock is present by the time the DMA engine is reset.
-+	 */
-+	ethqos->rgmii_base = devm_platform_ioremap_resource_byname(pdev, "rgmii");
-+	if (IS_ERR(ethqos->rgmii_base))
-+		return dev_err_probe(dev, PTR_ERR(ethqos->rgmii_base),
-+				     "Failed to map rgmii resource\n");
-+
-+	/*
-+	 * Register clks_config to run on every subsequent runtime resume,
-+	 * which stmmac performs after the power domains are on but before
-+	 * serdes_powerup() and the DMA reset. This alone isn't enough for
-+	 * the very first reset done from stmmac_open(), though: probe()
-+	 * fakes the device into RPM_ACTIVE without invoking the resume
-+	 * callback, so whether clks_config() has run by then depends on
-+	 * whether the device has already gone through one real suspend/resume
-+	 * cycle in the meantime. Call it here explicitly so the wrapper is
-+	 * always configured before the first DMA reset regardless of that
-+	 * timing.
-+	 */
-+	plat_dat->clks_config = ethqos_clks_config;
-+
-+	ret = ethqos_clks_config(ethqos, true);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(dev, ethqos_clks_disable, ethqos);
-+	if (ret)
-+		return ret;
-+
-+	plat_dat->clk_ptp_rate = ethqos->data->ptp_clk_rate;
-+
-+	switch (ethqos->phy_mode) {
-+	case PHY_INTERFACE_MODE_2500BASEX:
-+	case PHY_INTERFACE_MODE_SGMII:
-+		plat_dat->fix_mac_speed = ethqos_fix_mac_speed_sgmii;
-+		break;
-+	default:
-+		/* The firmware-managed SerDes only supports SGMII modes. */
-+		return dev_err_probe(dev, -EINVAL, "Unsupported phy-mode: %s\n",
-+				     phy_modes(ethqos->phy_mode));
-+	}
-+
-+	return 0;
-+}
-+
- static int qcom_ethqos_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -851,6 +961,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 
- static const struct of_device_id qcom_ethqos_match[] = {
- 	{ .compatible = "qcom,qcs404-ethqos", .data = &emac_v2_3_0_data},
-+	{ .compatible = "qcom,sa8255p-ethqos", .data = &emac_v4_0_0_scmi_data},
- 	{ .compatible = "qcom,sa8775p-ethqos", .data = &emac_v4_0_0_data},
- 	{ .compatible = "qcom,sc8280xp-ethqos", .data = &emac_v3_0_0_data},
- 	{ .compatible = "qcom,sm8150-ethqos", .data = &emac_v2_1_0_data},
+Soft reset: it is a hardware requirement, not a preference. The SGMII
+soft reset writes BMCR_RESET in MMD 31. On the in-band lane the bit
+never self-clears, xpcs_poll_reset() times out after 600 ms, and from
+then on every register of that XPCS reads 0x8000, BMSR and
+VR_MII_DIG_STS included. The block is stuck in reset until the next
+SerDes bring-up.
+On the other two lanes the reset bit did clear, but the receive path
+was dead afterwards: links reported up, TX counted, zero RX frames,
+no ARP across either lane. Restoring only the no-soft-reset flag
+brought back the reference numbers (2.35/2.32 Gbit/s at 2.5G, 941/942
+at 1G, 0 failures in 36 speed changes, 10/10 down/up on each lane).
+The reason is the shared combo PHY: the XPCS reset that works is
+VR_MII_DIG_CTRL1.VR_RST inside the vendor sequence, with the power-good
+wait and the RX reset around it, and that sequence is ordered against
+the PCIe lane and the other XPCS instance, so the SerDes driver has to
+own it.
 
--- 
-2.47.3
+EEE: VR_MII_EEE_MCTRL0/1 read as zero and ignore writes, so the generic
+xpcs_config_eee() does no damage on S32G. I still want the no-EEE flag:
+the registers are not implemented, and a driver should not read and
+write registers it knows are not there, nor let phylink believe the PCS
+configured EEE when it did not. The flag is a statement of fact about
+the integration, not a workaround.
 
+The AN-complete gate in xpcs_get_state_c37_sgmii() also ran ungated in
+that test and the stale-speed race stayed fixed, so I can post it as
+generic behaviour rather than behind a flag if nobody objects. It has
+only been tested on S32G, though.
+
+That leaves S32G needing three things from pcs-xpcs for 1G: skipping
+the soft reset, no EEE register access, and a .pma_config for the PMA.
+(2.5G will later need the PMA hook on every pcs_config, because the
+lane moves between MPLLA and MPLLB with the line rate. That is why a
+PMA entry point stays necessary whatever happens to the quirks.)
+
+On the ID: I would rather not add another synthetic PCS ID either. The
+Nord RFC picked the same 0x30, which makes your collision point for me.
+What the core already has is the dw_xpcs_info platform data that
+pcs-xpcs-plat passes for the PMA generations it cannot read from
+hardware. S32G could do the same: leave the PCS ID native, it reads the
+real 0x7996ced0, and declare an S32G PMA token in dw_xpcs_info, with
+xpcs_identify() matching the desc on the PMA token as well. No faked
+register read, and the token names what actually differs on S32G, the
+PMA integration. The core change is a .pma field in struct dw_xpcs_desc
+and about ten lines. If you prefer glue-set flags, the no-soft-reset and
+no-EEE parts fit them directly; the .pma_config still needs the entry.
+
+Tell me which of the two you would rather review and I will shape next
+series (most likely not v4 as I have it tested and ready for send
+already) accordingly.
+
+BR.
+/Jan
