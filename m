@@ -1,51 +1,50 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F96548592F;
-	Wed, 14 Oct 2026 10:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0956B2EEE75;
+	Wed, 14 Oct 2026 10:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791974458; cv=none; b=I+6x6DIRezWns2RnThQp5ub3KBqN+Ddbv8waj58CYVVdejaOHsZJU0ncUlhJEAus4pjxn8h9ByuoLvALUeCqpbqAKZ5RP8gqT7PbRl6+pK5yYRahTLmMNaIBqGu7DjVBdyoP92NQsswdLKAuTfLj81tBokJ7apz9wtO1TqdXU2g=
+	t=1791974922; cv=none; b=R8WZdviAYcef5Q8103zh9jhF4cUkgt9nJ69HjdA+9vBaCbpmBzrENrPV5twa18We16C1s11DR+1pCJ4VczLJryvYRjnO7drhTWZ2wZPVKDUschIo0aWTd/LPtyyJOb0tTGNQc/6zejTbu+1oxjKL4viImJ32KGGDeXTaIS3azMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791974458; c=relaxed/simple;
-	bh=IzcfgwfK/dbYwDmJS9r2SHQTK6Rqhjeh3z2M2uaOnQ8=;
+	s=arc-20240116; t=1791974922; c=relaxed/simple;
+	bh=QdyQpu2hFChSNt4/Mjsr9hF+BuoJg4ba3p2evjP/Qeg=;
 	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Kry2xMuTcU3sGVQCpn+zpTm+qkFkR3vziRuJLB7lMVTg0mM7k5Eoq7ZA7DNYMbDD0Xsp/xhf/HWB7UZPDbNH/F4JJs03AsfE5CkekSmfUfBNaIms7YL8f4H8AjpyWCWnsrRFWom6JR5yS2iMVq3mRVMI//XzCEyo/Ngxk2jpWcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CtkBxpEh; arc=none smtp.client-ip=68.232.153.233
+	 Content-Type:MIME-Version; b=Fkilf3ys2LibeVRVn0Ajs4cSwjJYVXkWGmoWrdIVJzbxoUlBj8VCO5OzV1i/uUCMSNwmLSrSzclC0KZmxqiJdakJljGGM0FGAflavbCbf7bdOJmKfGu9ut9u/2lhweB/e4VqVusTeDB1LmDrALZdBXu2ISpDYTI0ZR/sWEDHSzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EUEh3wvS; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CtkBxpEh"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EUEh3wvS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1791974456; x=1823510456;
+  t=1791974919; x=1823510919;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=IzcfgwfK/dbYwDmJS9r2SHQTK6Rqhjeh3z2M2uaOnQ8=;
-  b=CtkBxpEhhfp2t11G7J+NB43+WlsxbMABl3uCzu/X0+39p+8RCy9dhEMk
-   gymeZ320F793jd+P2a+p6nOjVvJQ7cg0y7sUXfgfiniR6Yv2h/6ry7ufi
-   aTaLE1w6UhrbrPmHC4Mj34MMUa7baiYZo1etEgCfkGY/Bc/rXrsjsgcJp
-   P4ebiSatwjd+0rpGSWsz8haKfPKBXJAWIl8Fyjaq5uJIpPGnpEK6DzvAN
-   Y8rvZQWxauAI8x9kmDa3tCdILh1iuvKom1KvUUfnTbgmBQEM/nabgmKaF
-   ZjT8QllFne/Zlvra2yXG1zQpnITKz/5SmXluAiTa0+M/3R2vkxvkQTS0U
-   g==;
-X-CSE-ConnectionGUID: voNT75EAQq6y2H38VlsPUA==
-X-CSE-MsgGUID: ZDCbUwLpRACt7E8984bZGQ==
+  bh=QdyQpu2hFChSNt4/Mjsr9hF+BuoJg4ba3p2evjP/Qeg=;
+  b=EUEh3wvS0PTZ9u9759drxwZFbPOhPaAYYoRD5tcbiTEkdiPZLDVxZ34P
+   yUDxYYGNQqC7TFixwmD8ei+/QtHB7hxshMk0LRzTXkm2WPpaSKonvgyR3
+   bTx30ZI+SRr7ZfkhaYyQBUU/RxOFY4VYrBf3qiJTicczs8+SFy4taIbWo
+   oB14iTQNq9E50H8Y1Dy+8YjSJXw020s4Qp2SwxD4ba5WuMWjMzGqQ17lc
+   kwm0Y9kHVDeF9V1Yi5Z2r3VqvG8V1KH+g1eqXt8TcSHj3DoDrrRHCdgV9
+   UIskFXV3L6g5ioo19NO2LcBno+lDn1f0fNwN+w61eFNg/+bmrQys7w8iy
+   Q==;
+X-CSE-ConnectionGUID: HFcwCrfnTUOmZMLW62kSbw==
+X-CSE-MsgGUID: ZpwTliLTS2+LCr1mIXE1AQ==
 X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="75394086"
+   d="scan'208";a="65300032"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2026 03:40:55 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2026 03:48:38 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.49; Wed, 14 Oct 2026 03:40:54 -0700
+ 15.2.2562.49; Wed, 14 Oct 2026 03:48:38 -0700
 Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 14 Oct 2026 03:40:50 -0700
-Message-ID: <eadf65283d0f700be558ac4c3725de4fb06c085f.camel@microchip.com>
-Subject: Re: [PATCH net-next v14 4/9] net: dsa: lan9645x: add basic dsa
- driver for LAN9645X
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 14 Oct 2026 03:48:34 -0700
+Message-ID: <01c0303b65b77a9b737d3346bf58feab8408231e.camel@microchip.com>
+Subject: Re: [PATCH net-next v14 5/9] net: dsa: lan9645x: add vlan support
 From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
 To: <netdev-bot+sashiko@kernel.org>
 CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
@@ -57,10 +56,10 @@ CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
 	<richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
 	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-renesas-soc@vger.kernel.org>
-Date: Wed, 14 Oct 2026 12:40:49 +0200
-In-Reply-To: <179180428064.434549.5154143843172991562@kernel.org>
-References: <20261008-dsa_lan9645x_switch_driver_base-v14-4-3d2a72661213@microchip.com>
-	 <179180428064.434549.5154143843172991562@kernel.org>
+Date: Wed, 14 Oct 2026 12:48:33 +0200
+In-Reply-To: <179180428266.434549.5526720693163836060@kernel.org>
+References: <20261008-dsa_lan9645x_switch_driver_base-v14-5-3d2a72661213@microchip.com>
+	 <179180428266.434549.5526720693163836060@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2.1 
@@ -75,10 +74,10 @@ On Mon, 2026-10-12 at 11:24 +0000, netdev-bot+sashiko@kernel.org wrote:
 > EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
 e content is safe
 >=20
-> Thank you for your contribution! Sashiko AI review found 4 potential
+> Thank you for your contribution! Sashiko AI review found 3 potential
 > issue(s) to consider.
 >=20
-> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 3
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 2
 >=20
 > If you believe none of the issues are legitimate, please reply to each
 > issue of Medium severity or higher and explain why the AI is wrong.
@@ -88,274 +87,198 @@ k
 y
 > (one such reply per series is enough).
 >=20
-> - [Medium] In lan9645x_phylink_mac_link_up()
->   (drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c),=E2=80=A6
-> - [Low] lan_rd(), lan_wr() and lan_rmw() in lan9645x_main.h discard
->   regmap errors.
-> - [Low] On RGMII ports, the MAC delay handling ignores phy-mode.
-> - [Low] Nothing in the tree can bind this driver.
+> - [Medium] The commit message says "DSA does not pass
+>   SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL to drivers, so an 802.1ad=E2=80=
+=A6
+> - [Low] Concern: the commit message promises VLAN support for VLAN-aware
+>   and VLAN-unaware bridges, but at this commit no .port_bridge_join=E2=80=
+=A6
+> - [Low] Concern: runtime VLAN table writes ignore lan9645x_vlan_hw_wr()
+>   failures.
 >=20
 > --
 >=20
-> net: dsa: lan9645x: add basic dsa driver for LAN9645X
+> net: dsa: lan9645x: add vlan support
 >=20
-> This commit adds a basic DSA driver for the Microchip LAN9645x switch.
-> It covers switch init, named regmaps obtained from a parent device,
-> NPI/CPU/front port setup and phylink MAC configuration. Only the internal
-> CuPHY ports 0-4 and the RGMII ports 7-8 are wired up. The SerDes modes
-> and the MFD parent are left for later series.
+> This patch adds VLAN support to the lan9645x DSA driver. HOST_PVID (4095)
+> is the port VLAN for standalone ports and UNAWARE_PVID (0) is the port VL=
+AN
+> for VLAN-unaware bridge ports. The VLAN table and the per-port VLAN state
+> are serialized with fwd_domain_lock.
 >=20
 > > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c b/drive=
 rs/net/dsa/microchip/lan9645x/lan9645x_main.c
-> > new file mode 100644
-> > index 0000000000000..c7de3836e6967
-> > --- /dev/null
+> > index c7de3836e6967..6818b91f4bed2 100644
+> > --- a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c
 > > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_main.c
-> > @@ -0,0 +1,456 @@
 >=20
 > [ ... ]
 >=20
-> > +static int lan9645x_reset_switch(struct lan9645x *lan9645x)
+> > @@ -296,6 +307,59 @@ static void lan9645x_port_phylink_get_caps(struct =
+dsa_switch *ds, int port,
+> >       lan9645x_phylink_get_caps(ds->priv, port, config);
+> >  }
+> >=20
+> > +static int lan9645x_port_vlan_filtering(struct dsa_switch *ds, int por=
+t,
+> > +                                     bool enabled,
+> > +                                     struct netlink_ext_ack *extack)
 > > +{
-> > +     u32 val =3D 0;
-> > +     int err;
+> > +     struct lan9645x *lan9645x =3D ds->priv;
+> > +     struct lan9645x_port *p;
 > > +
-> > +     /* The parent must reset the whole chip before instantiating its
-> > +      * children, so the switch core is disabled when we get here. The
-> > +      * sequence below must not run more than once: initializing the
-> > +      * memories on a running core corrupts pointers inside the queue
-> > +      * system, which eventually fills up and stops passing traffic. I=
-f the
-> > +      * core is already enabled the chip was not reset, so skip it.
-> > +      */
-> > +     if (SYS_RESET_CFG_CORE_ENA_GET(lan_rd(lan9645x, SYS_RESET_CFG)))
-> > +             return 0;
->=20
-> [Severity: Low]
-> What happens here if the regmap_read() under lan_rd() fails? In
-> lan9645x_main.h, lan_rd() only warns and then returns the value it was
-> initialised with:
->=20
->     u32 addr, val =3D 0;
->     ...
->     WARN_ON_ONCE(regmap_read(lan_tgt2rmap(lan9645x, t, tinst), addr, &val=
-));
->=20
->     return val;
->=20
-> A failed read would look like CORE_ENA=3D0. The CORE_ENA=3D0 / RAM_INIT
-> sequence would then run on a core that may already be enabled. The commen=
-t
-> above says that corrupts pointers inside the queue system. The parent is
-> expected to be SPI based, like ocelot-spi, so bus errors can happen.
->=20
-> The RAM_INIT write can't be checked either. lan_wr() returns void, and th=
-e
-> self-clearing bit already reads back as 0 if the write was lost.
->=20
-> The same thing happens in two other places:
->=20
->   - lan9645x_set_feat_dis() turns a failed GCB_FEAT_DISABLE read into
->     num_port_dis =3D 0. That skips the SKU port limit check in
->     lan9645x_setup().
->=20
->   - lan9645x_port_set_maxlen() always returns 0. dsa_user_change_mtu()
->     therefore raises dev->mtu even when the DEV_MAC_MAXLEN_CFG write
->     failed.
->=20
-> Could lan_rd(), lan_wr() and lan_rmw() pass the regmap error back, at lea=
-st
-> on these paths?
->=20
+> > +     /* DSA core does not call this for the CPU port */
+> > +     p =3D lan9645x_to_port(lan9645x, port);
+> > +     mutex_lock(&lan9645x->fwd_domain_lock);
+> > +     p->vlan_aware =3D enabled;
+> > +     lan9645x_vlan_port_apply(p);
+> > +     mutex_unlock(&lan9645x->fwd_domain_lock);
 > > +
-> > +     lan_wr(SYS_RESET_CFG_CORE_ENA_SET(0), lan9645x, SYS_RESET_CFG);
-> > +     lan_wr(SYS_RAM_INIT_RAM_INIT_SET(1), lan9645x, SYS_RAM_INIT);
->=20
-> [ ... ]
->=20
-> > +static int lan9645x_request_target_regmaps(struct lan9645x *lan9645x)
-> > +{
-> > +     const char *resource_name;
-> > +     struct regmap *tgt_map;
-> > +
-> > +     for (int i =3D 0; i < NUM_TARGETS; i++) {
-> > +             resource_name =3D lan9645x_resource_names[i];
-> > +             if (!resource_name)
-> > +                     continue;
-> > +
-> > +             tgt_map =3D dev_get_regmap(lan9645x->dev->parent, resourc=
-e_name);
-> > +             if (IS_ERR_OR_NULL(tgt_map)) {
-> > +                     dev_err(lan9645x->dev, "Failed to get regmap=3D%s=
-\n",
-> > +                             resource_name);
-> > +                     return -ENODEV;
-> > +             }
->=20
-> [Severity: Low]
-> Does anything in the tree provide these regmaps?
-> lan9645x_request_target_regmaps() needs all 17 named regmaps from
-> dev->parent ("gcb", "qs", ..., "dev0" to "dev8", "qsys", "ana"). If any i=
-s
-> missing it returns -ENODEV. Nothing under drivers/mfd refers to lan9645x
-> or lan96455.
->=20
-> The commit message says:
->=20
->     The MFD driver will come in a later series, because there are
->     requirements on the number of child devices before a driver qualifies=
- as
->     a MFD device.
->=20
-> Until that lands, the driver cannot probe on any in-tree configuration.
-> Two things can't be tested in-tree:
->=20
->   - the regmap naming contract with the parent
->=20
->   - the assumption in lan9645x_reset_switch() that the parent has already
->     reset the chip
->=20
-> The ocelot_ext driver cited as precedent was merged together with its
-> drivers/mfd/ocelot-spi.c parent.
->=20
-> Could the parent driver be merged in the same series?
->=20
-> [ ... ]
->=20
-> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c b/dr=
-ivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c
-> > new file mode 100644
-> > index 0000000000000..b57beee8329f9
-> > --- /dev/null
-> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_phylink.c
-> > @@ -0,0 +1,371 @@
->=20
-> [ ... ]
->=20
-> > +static void lan9645x_rgmii_dll_config(struct lan9645x_port *p)
-> > +{
-> > +     u32 rx_idx, tx_idx;
-> > +
-> > +     /* DLL register layout:
-> > +      * (N*2):   RGMII_N_RX
-> > +      * (N*2)+1: RGMII_N_TX
-> > +      */
-> > +     rx_idx =3D RGMII_IDX(p->chip_port) * 2;
-> > +     tx_idx =3D RGMII_IDX(p->chip_port) * 2 + 1;
-> > +
-> > +     /* Enable DLL in RGMII clock paths, deassert DLL reset, and start=
- the
-> > +      * delay tune FSM.
-> > +      */
-> > +     lan_rmw(HSIO_DLL_CFG_DLL_CLK_ENA_SET(1) |
-> > +             HSIO_DLL_CFG_DLL_RST_SET(0) |
-> > +             HSIO_DLL_CFG_DLL_ENA_SET(p->rx_internal_delay) |
-> > +             HSIO_DLL_CFG_DELAY_ENA_SET(p->rx_internal_delay),
->=20
-> [Severity: Low]
-> Should the MAC delay here depend on the RGMII phy-mode?
-> lan9645x_rgmii_dll_config() enables the RX/TX DLL delays based only on th=
-e
-> rx-/tx-internal-delay-ps values parsed by lan9645x_parse_mac_delay().
-> dsa_port_phylink_create() passes the DT phy-mode unchanged to phylink and
-> the PHY.
->=20
-> The binding (microchip,lan96455s-switch.yaml) allows 2000 ps for all four
-> RGMII modes, including rgmii-id. Take port 7 or 8 with an external PHY,
-> phy-mode =3D "rgmii-id" and rx/tx-internal-delay-ps =3D <2000>. Both the =
-MAC
-> and the PHY would add 2ns.
->=20
-> ethernet-controller.yaml says:
->=20
->     When the MAC implements the delay, it must
->     ensure that the PHY does not also implement the same delay. So it
->     must modify the phy-mode it passes to the PHY, removing the delay it
->     has added. Failure to remove the delay will result in a
->     non-functioning link.
->=20
-> It also says:
->=20
->     A value of 2000ps, i.e 2ns, and a phy-mode
->     of 'rgmii' will not be accepted by Reviewers.
->=20
-> Should the driver reject this combination, or remove the MAC-added delay
-> from the phy-mode it passes to the PHY?
->=20
-> [ ... ]
->=20
-> > +     if (lan9645x_port_is_cuphy(lan9645x, port, interface)) {
-> > +             lan_rmw(CHIP_TOP_CUPHY_PORT_CFG_GTX_CLK_ENA_SET(gtx_clk),
-> > +                     CHIP_TOP_CUPHY_PORT_CFG_GTX_CLK_ENA, lan9645x,
-> > +                     CHIP_TOP_CUPHY_PORT_CFG(p->chip_port));
-> > +     }
-> > +
-> > +     lan_rmw(SYS_PAUSE_CFG_PAUSE_ENA_SET(1),
-> > +             SYS_PAUSE_CFG_PAUSE_ENA,
-> > +             lan9645x, SYS_PAUSE_CFG(p->chip_port));
-> > +
-> > +     /* Flow control */
-> > +     lan_rmw(SYS_MAC_FC_CFG_FC_LINK_SPEED_SET(fc_spd) |
-> > +             SYS_MAC_FC_CFG_FC_LATENCY_CFG_SET(0x7) |
-> > +             SYS_MAC_FC_CFG_ZERO_PAUSE_ENA_SET(1) |
-> > +             SYS_MAC_FC_CFG_PAUSE_VAL_CFG_SET(0xffff) |
-> > +             SYS_MAC_FC_CFG_RX_FC_ENA_SET(rx_pause ? 1 : 0) |
-> > +             SYS_MAC_FC_CFG_TX_FC_ENA_SET(tx_pause ? 1 : 0),
+> > +     return 0;
+> > +}
 >=20
 > [Severity: Medium]
-> Can this turn on PAUSE frame transmission on the NPI port? On link up,
-> lan9645x_phylink_mac_link_up() sets PAUSE_ENA to 1 on every port.
-> TX_FC_ENA follows tx_pause, with no exception for lan9645x->npi.
-> lan9645x_npi_port_init() doesn't disable pause on the NPI port either.
+> The commit message says:
 >=20
-> The NPI port has the long prefix extraction header enabled:
+>   "Only bridge vlan_protocol 802.1Q is offloaded. DSA does not pass
+>   SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL to drivers, so an 802.1ad bridge
+>   cannot be refused, and the classifier does not honour it."
 >=20
-> lan9645x_npi_port_init()
->     lan_rmw(SYS_PORT_MODE_INCL_XTR_HDR_SET(LAN9645X_TAG_PREFIX_LONG) |
->     ...
+> Is "cannot be refused" accurate? dsa_port_vlan_filtering() in
+> net/dsa/port.c passes the driver's error back to the bridge:
 >=20
-> A PAUSE frame sent on the NPI port would get the prefix and IFH like any
-> other extracted frame, so the conduit would not recognise it as PAUSE. Th=
-e
-> port would run in lossless mode while the link partner never honours the
-> pause.
+>     err =3D ds->ops->port_vlan_filtering(ds, dp->index, vlan_filtering,
+>                                        extack);
+>     if (err)
+>         return err;
 >=20
-> The DT example in the lan9645x binding gives the NPI port a fixed-link
-> with pause. MAC_SYM_PAUSE is advertised, so phylink resolves
-> tx_pause =3D rx_pause =3D true for the documented example.
+> Could lan9645x_port_vlan_filtering() call br_vlan_get_proto() on the
+> port's bridge and refuse with an extack when the result is not
+> ETH_P_8021Q?
 >=20
-> mscc/ocelot uses the same NPI model and had this problem. It was fixed by
-> commit 33cb0ff30cff ("net: mscc: ocelot: don't let phylink re-enable TX
-> PAUSE on the NPI port"). That commit measured CPU termination throughput
-> at 271 Mbit/s before the fix and 926 Mbit/s after.
+> That would cover two cases: turning on vlan_filtering on an 802.1ad
+> bridge, and joining an 802.1ad bridge that already filters, because the
+> join path syncs vlan_filtering through the same callback. Only a
+> vlan_protocol change on a bridge that is already filtering would still
+> get through.
 >=20
-> felix_npi_port_init() clears SYS_PAUSE_CFG_PAUSE_ENA on the NPI port, and
-> ocelot_phylink_mac_link_up() does:
+> As written, an 802.1ad VLAN-aware bridge is offloaded silently with
+> 802.1Q semantics. lan9645x_vlan_port_apply_ingress() always marks
+> untagged frames as C-tag:
 >=20
->     /* Don't attempt to send PAUSE frames on the NPI port, it's broken */
->     if (port !=3D ocelot->npi)
->         ocelot_fields_write(ocelot, port, SYS_PAUSE_CFG_PAUSE_ENA,
->                             tx_pause);
+>     val =3D ANA_VLAN_CFG_VLAN_VID_SET(pvid) |
+>           ANA_VLAN_CFG_VLAN_TAG_TYPE_SET(0);
 >=20
-> This also seems to still be the case at the end of the series.
+> With TAG_TPID_CFG=3D3, those frames would egress tagged with 0x8100, not
+> 0x88a8. C-tagged frames would be classified by their C-VID, not by the
+> pvid.
 >=20
-> Should PAUSE_ENA and TX_FC_ENA stay at 0 for lan9645x->npi? And should
-> PAUSE_ENA follow tx_pause on the other ports?
+> The tagger already reads br_vlan_get_proto() in
+> lan9645x_xmit_get_vlan_info() in net/dsa/tag_lan9645x.c:
+>=20
+>     *tag_type =3D (proto !=3D ETH_P_8021Q) ? LAN9645X_IFH_TAG_TYPE_S :
+>                                          LAN9645X_IFH_TAG_TYPE_C;
+>=20
+> So on such a bridge, would the CPU injection path and the switch
+> datapath disagree? The later "net: dsa: lan9645x: add bridge support"
+> patch also leaves lan9645x_port_vlan_filtering() unchanged.
 
-Dismissed, false positive.
+Right, the next version refuses enabling VLAN filtering in
+port_vlan_filtering() when the bridge vlan_protocol is not 802.1Q, which
+also covers joining a VLAN-aware 802.1ad bridge. That leaves the
+remaining case of a vlan_protocol change on a bridge that already
+filters. This is not handled since DSA does not pass
+SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL.
 
-In this respect, the chip functions differently from ocelot. The issue has
-been fixed. On lan9645x the MAC formats and transmits PAUSE frames
-itself, after the queue system, so INCL_XTR_HDR does not apply to them
-and they leave the NPI port without the prefix and IFH. Flow control on
-the NPI port works as intended.
-
-PAUSE_ENA only enables the pause request from the queue system to the
-MAC. TX_FC_ENA decides whether the MAC turns it into PAUSE frames, and
-RX_FC_ENA is handled by the MAC on its own. With tx_pause off no PAUSE
-frames are sent and the port tail drops as usual.
-
-
+>=20
+> [ ... ]
+>=20
+> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.h b/drive=
+rs/net/dsa/microchip/lan9645x/lan9645x_main.h
+> > index 3a4abedafa2c1..c61efd115aaa4 100644
+> > --- a/drivers/net/dsa/microchip/lan9645x/lan9645x_main.h
+> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_main.h
+>=20
+> [ ... ]
+>=20
+> > @@ -238,6 +255,11 @@ static inline struct lan9645x_port *lan9645x_to_po=
+rt(struct lan9645x *lan9645x,
+> >       return lan9645x->ports[port];
+> >  }
+> >=20
+> > +static inline bool lan9645x_port_is_bridged(struct lan9645x_port *p)
+> > +{
+> > +     return p->lan9645x->bridge_mask & BIT(p->chip_port);
+> > +}
+>=20
+> [Severity: Low]
+> This isn't a bug, but at this commit nothing writes bridge_mask and there
+> is no .port_bridge_join, so lan9645x_port_is_bridged() always returns
+> false. The bridged branches in lan9645x_vlan_port_get_pvid() and
+> lan9645x_vlan_port_apply_egress() can't be reached until the later "net:
+> dsa: lan9645x: add bridge support" patch adds lan9645x_port_bridge_join()=
+.
+>=20
+> Standalone ports look fine in the meantime. HOST_PVID contains all ports
+> and the CPU, so enabling ANA_VLANMASK drops nothing.
+>=20
+> Could the commit message line "Add VLAN support for VLAN-aware and
+> VLAN-unaware bridges." say that the bridged paths only become active
+> with the bridge support patch?
+>=20
+> [ ... ]
+>=20
+> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_vlan.c b/drive=
+rs/net/dsa/microchip/lan9645x/lan9645x_vlan.c
+> > new file mode 100644
+> > index 0000000000000..751da53375368
+> > --- /dev/null
+> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_vlan.c
+> > @@ -0,0 +1,402 @@
+>=20
+> [ ... ]
+>=20
+> > +int lan9645x_vlan_port_add_vlan(struct lan9645x_port *p, u16 vid, bool=
+ pvid,
+> > +                             bool untagged, struct netlink_ext_ack *ex=
+tack)
+> > +{
+>=20
+> [ ... ]
+>=20
+> > +     if (p->chip_port =3D=3D lan9645x->npi)
+> > +             return lan9645x_vlan_cpu_add(p, vid);
+> > +
+> > +     old_vlan =3D lan9645x->vlans[vid];
+> > +     old_pvid =3D p->pvid;
+> > +
+> > +     v =3D lan9645x_vlan_port_modify(p, vid, pvid, untagged);
+> > +     v->portmask |=3D BIT(p->chip_port);
+>=20
+> [ ... ]
+>=20
+> > +     lan9645x_vlan_hw_wr(lan9645x, vid);
+> > +     lan9645x_vlan_port_apply_ingress(p);
+> > +     lan9645x_vlan_port_apply_egress(p, &info);
+> > +
+> > +     return 0;
+> > +}
+>=20
+> [Severity: Low]
+> The return value of lan9645x_vlan_hw_wr() is dropped here. The same
+> happens in lan9645x_vlan_cpu_add(), lan9645x_vlan_cpu_del(),
+> lan9645x_vlan_port_del_vlan() and lan9645x_vlan_set_hostmode(). In each
+> case vlans[vid] is updated and 0 is returned even if the table write
+> timed out.
+>=20
+> The comment in lan9645x_vlan_hw_wr() says this is intentional: a timeout
+> most likely means the register bus is dead. Also, the next write for the
+> same VID rewrites the whole entry from the shadow portmask.
+>=20
+> If the parent regmap bus can have transient errors, though, would it be
+> better to return the error and restore the old shadow state, as
+> ocelot_vlan_member_add() does? That would keep DSA's refcounted CPU port
+> VLAN state in sync with the hardware.
 >=20
 > [ ... ]
 >=20
