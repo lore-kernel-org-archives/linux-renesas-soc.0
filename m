@@ -1,65 +1,65 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559EF34B1A3
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 01:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7536215D
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 01:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792028706; cv=none; b=CkFW+nWbrx4j4aRFi/yK5rapId2RkUJUp3zAiZr5XvFVqRCNdcR6WkfTp1UuqqBtz6IO5kh9HW+bx2v4kuBq44PQ0GXiIdKW7tGQj3lZ1kZ7RePJfWaJS7mvGvoidJrjjQZYl5PP+C05P7IsBJVSRdKTstrYw1DddEM8Wyu7D38=
+	t=1792028721; cv=none; b=IbnqDCJWlQbM1dhogXSEStScHnM6oASOXfAPU1joCVdyPCU6Yqn0k1HnvPIaErbB6j7f+GFz+mpsNeIGjU3cUbUhmSsLDPOJPCPvzzxPzOFsP5eBpv7n4C4H/Ab1V7pxn29c+7W2ekESPfrxrWX4/8JRoTj7ZpuNCtQqJ3dsBIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792028706; c=relaxed/simple;
-	bh=GOpvHClNFcgwMbCGA4S9aUo3sNtP7+Tu6UirQoDa9Rs=;
+	s=arc-20240116; t=1792028721; c=relaxed/simple;
+	bh=jqJ5MSiUT4wmuGEu7gmmhxIxMq4n2gfyS3RH/x7Sng8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GzedcG+9+E1qvq3MaOikGM89C4yUzeP4WpOqfpSpCjMwRCy3REdcAUZBfV/xj8LMT152Cj+98xRZYM9qZvKRO8M7NBjqkqGO8LF/pBTbsxhidYcYytXQGlVpqGy1yc7kECJo0LAc67ZdMeCGOZi9cG4OLpdx4ATmOyDZrKKH9oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pWe8eaMz; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=LApYgxvEIvkDkAY1UrY4R09YvvR9Derzb3McAsao+Bf49c3JBaGPZ7Nx3WzOAYzC8I5sSWROKPXHg7G017KNTyIWKatYr7wZiT8TNRJJtDryqW5OF//BjR8N3IqlztI73pEOD6czW+aUE2S+w12XmwT8zI8om/ObSYv2aK+/5RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lRLedoTy; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWe8eaMz"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2e95b3b52f2so1418655ad.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 18:45:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRLedoTy"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2df8c28a0b1so22288465ad.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 18:45:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792028705; x=1792633505; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792028719; x=1792633519; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=tHQEAftjxeSOQpgNapgwf4pKKw/+LL69dyB2CtXEGKE=;
-        b=pWe8eaMzFM+2VJHr3s4G3R8lHZ6Wxq4Ic+on315yTHcZJHk/60cnmZPrHjNYJX7rBl
-         vtFOGCdvxcPpVWlNk7cbsGHDv01Mg+2pEC4Idsp+IoKt1z0VlNksf8th4bmdRLeLWYpL
-         PQ3ziUbSK/hjIoFgVL+GonH9SAEy5YYC1AGJbXJDfUdFEbZf4BdxhJdNs0L8HF9Pnp8J
-         I6kDeN+hLxGboyjyEjTHgL1xWRr5akjTxy8QK1gj6Irvq5lsuQL3JJEtlA4aXBcpmp+e
-         TZmrxDuc1TmklT8kBJlUFT+jdvexsX4sMzZrCZmtejW55O1bUEPC6Bhx4fY+vIOCm3j1
-         qyig==
+        bh=LV2XZk4JI85UeqWxHMk6K3Umo8587cjHfY2RFPxWAV0=;
+        b=lRLedoTyMV31PW6xlzkmSc+Jl3ZYaIvC6Zk9aAVnG+NTWxr8tzEUraMx+Uqnw/+C/B
+         sUS8FtoGd3kXhuflLy95LPgx7vmNcB3kXY8fH0T9ipwu/iW3rNfNCWy4BWQ/V329+A7h
+         LMZDE1qEgzURTQyjmuyU8TvoG3vYx9AQp6qeQfeV4y++h5hSIttgrl1DkromJ7WDQrth
+         QbXLrvx2RBIlcKxL1FVL/u7yohPhCmwpF4VkTpJexVRi8CGQPLjDoJNn0QCmqeVR85Dq
+         DgfRjx0sGceIxMSJdxVa7ntLefdsXlcUSRG67qTXPl6Vm/l0VHbL59+jucbS4HwQmQT/
+         XuCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792028705; x=1792633505;
+        d=1e100.net; s=20260707; t=1792028719; x=1792633519;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=tHQEAftjxeSOQpgNapgwf4pKKw/+LL69dyB2CtXEGKE=;
-        b=vnfdGQW1V27Cef8CJTpfx2Pe9wvcCEImdxzQAKMcMbJ18Rbj7IA9rlPMpqqmR2tQvF
-         xxUSV/4UMH5y4XhVh75OuF0vZiWRojibNVHoboONVbI+GBPSjakbjzPy+pVn+XFHTxuN
-         /G+vQy8/2oWMi9llTM1pGAKV3UcQAOEStE9OnNDzwzBvKJ7ZLyf0Zb78477GihPeAOJ0
-         qkUkGhOuBDOcVQlHDq+oNaeu9KD1Lri6FqxVg3BHR4mTd6D3CpTkp7xKcx800l/2cw5W
-         D0mcYyDIEBkof7+HhIeKAANxjCb04b+VIC/L2Lc/Tq+l8S0Xu6+aM1UOTjkDekpXxaDs
-         XTIQ==
-X-Forwarded-Encrypted: i=1; AKwUvBy8PVWb3t6a7KraxT1MFGQpsOy4UxQZaEDszgDGoEAnypC4rVPSOunjYO9DDBSMv7g0tACVgNjroaEOByHJc6cxjA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKf274njjbV9QFUzcJK/rnhC4FlsMuLc1ZemvO4zEcnbsp21V2G
-	bhuSpzx9lD4xS4j/egkPTsmgkWszUpTkCKhULJfv1VjjkQwSYxIlyvXgtgPNuA==
-X-Gm-Gg: AYBFou1k5itXCvwykxjkjRzuHvI1KglMl8q5ZMsp4fwwxrQLKJSbxG7Ke1sAvjYQ/hI
-	Dz3875hM9YRhIZoPKRM4DN7KCVwnps7wQaY554yVEjBzCIq+jXX3uzdt1xQEhW1c4AukMnen2yq
-	1AbIRmz+j1pxR8OEeRP4qkdd3g/g6+2lLGRDEzQFO/WzkpgdGK2M6cNTxpAfywPPPy//BwCfSxR
-	4I/es1X4WFgewMuJJhXSqk14quhX3sv3sHarAifieY7Emj71b9LBifDAxqL/DrOx02O4KbpbYMo
-	eMVFfk0gcpnTc2kyK1c3SgNFHwUqFVhf1/tYNgwU/fUU7WHiNX9JdnFH7wU0p4xuyKnA2XGaLRl
-	Vr4MJ6iU9nPI+USViB+OG9mGpY85meOjxpt3Qe7jt5OQn70lQqedFkdtEtw0mZ108K3lE80V4ai
-	HkttX47I94aNv7Vr+1ochE9NT+JRfJOlw1Ntszby87xIUv8kAqZ8ISJmCifE3joqCNhLKeLLdSy
-	LGH8WlHMCgHTckGwBujrBEMdWVGdZ0G2UxkFIGbDeDAZHgi5XImUcVKlc6v/tKv32NGhDlYRZx4
-	6WIXhtkvEuHY9Q==
-X-Received: by 2002:a17:903:110e:b0:2e9:2a1a:8b69 with SMTP id d9443c01a7336-2e92a1a8ba7mr50722885ad.55.1792028704623;
-        Wed, 14 Oct 2026 18:45:04 -0700 (PDT)
+        bh=LV2XZk4JI85UeqWxHMk6K3Umo8587cjHfY2RFPxWAV0=;
+        b=xLmT1zInqCw+bxmOuU94G2xR8T9Zc0SUud6mb5dcUbKFaPO2ESqgDh+tACHbqEfmiU
+         pMT9x10RBkHyvLCkbLoJgGW7si9LDARXu5lZ27YVajp2esTXzgICeIF1P73ICMVYGw4F
+         08tJ8iMbZn5uj9CaGgC74H/MeOENqQJbne09ypj/5PkjkSXrwvzO9sKKlL7i8g7WeweH
+         LW6zkCKnXoPLCw6eCJTSv3iFv1L/dgjD2GiJp/OL/Zuv88YXkiNGl4RVfpi9TmII3PFp
+         554hMsX2P++gZptLB86WkIT9Y7fk2QXfWmQtg6Rp280J4w9wmdiIJJLuSMq0v1OP4IYH
+         4klg==
+X-Forwarded-Encrypted: i=1; AKwUvByIFyaD7+Iyf5bO/fLDf4G1BwhAsnzEuN5kNxfY30BTHqyFjaSGWI75mfY8yie+FKC3ZDCXVBZYiqkbzp4fX3UBYA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJoBCBq5Kbo9uG+cs5Giwi3InIFg2Bpkb30W0GxBz5eYABTvfRZ
+	xvZlR1mqTcIU0xbCEWbnVV21V4GDxqwVbqa/Pjrb1n9BQvKGp5ZOwVy9
+X-Gm-Gg: AYBFou1O3dZtPtNx/azatSOOGwX1R3dBbKsEnYMJI1Ei3pt2OcfheWgnH1qj8HdO7XL
+	oRbl+gIqpR1zo9UYjj3urXhe40rwtJhizXG1/8FZ+gHlsKMhpXIDhFN5eCDiXNLvSESd7Iec0zM
+	Wgf44wisVURNs+N2A4qkW/siA/MODWhZpsCEClWeIr2dtGYtufAGx4qRRbKcHDTe7uhbvfbodKc
+	BXVME8BLfAXaCkNtNE4lRenbt9qTExE2MWFcZbx/iym5Lo4S6ZhN4lfTYs3Tkeg/Kd7w4pXBPqr
+	6F7tz+/oiCTOAvlxcbt3rUyGPwd5mDf7WGLMHxOqQIVCO4hx9gea5ESju6+CCcMRyWfLG/JjV+X
+	C+AMsfENk3ITThsGEDlN9rlQj2j7gbA1EVBqZdUjsZ3JfEuMA1muz2CtxItgBKs0lD8AWeWt1mX
+	USA5fZGpnkcg9r8jT+4qt8cvm+WVenQY+iW6fJTdfRFY+3eTchhJC0hBge1NbYTEz7UsOc5JHM6
+	+P4/RLeaHmVJ8jW5vhuJ2Rz/4rNSJfoVU7uqOySK9c88RMDzcjYTTwD/0y6o1bHd9egnGvvj8Wz
+	rR1uPj32KKUYAw==
+X-Received: by 2002:a17:902:ecc3:b0:2dd:ad73:5b6b with SMTP id d9443c01a7336-2e8429ab7acmr151706215ad.27.1792028718870;
+        Wed, 14 Oct 2026 18:45:18 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422b8cc1sm73202995ad.54.2026.10.14.18.44.51
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422b8cc1sm73202995ad.54.2026.10.14.18.45.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 18:45:03 -0700 (PDT)
+        Wed, 14 Oct 2026 18:45:18 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
 	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
@@ -120,9 +120,9 @@ Cc: Kees Cook <kees@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH v2 03/25] ASoC: amd: ps: Fix acp63_sdw_dma_close() being skipped on rollback
-Date: Thu, 15 Oct 2026 08:43:02 +0700
-Message-ID: <20261015014324.5569-4-phucduc.bui@gmail.com>
+Subject: [PATCH v2 04/25] ASoC: amd: raven: Fix acp3x_dma_close() being skipped on rollback
+Date: Thu, 15 Oct 2026 08:43:03 +0700
+Message-ID: <20261015014324.5569-5-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261015014324.5569-1-phucduc.bui@gmail.com>
 References: <20261015014324.5569-1-phucduc.bui@gmail.com>
@@ -137,26 +137,26 @@ Content-Transfer-Encoding: 8bit
 From: bui duc phuc <phucduc.bui@gmail.com>
 
 snd_pcm_hw_constraint_integer() may return 1, which is then returned
-from acp63_sdw_dma_open(). ASoC only marks the component as opened
+from acp3x_dma_open(). ASoC only marks the component as opened
 when .open() returns 0, so .close() can be skipped on rollback.
 
 Return 0 explicitly on success.
 
-Fixes: f722917350ee ("ASoC: amd: ps: add SoundWire dma driver dma ops")
+Fixes: 703a6e22888b ("ASoC: amd: Enabling I2S instance in DMA and DAI")
 Reviewed-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 ---
- sound/soc/amd/ps/ps-sdw-dma.c | 8 +++++++-
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/amd/ps/ps-sdw-dma.c b/sound/soc/amd/ps/ps-sdw-dma.c
-index f27ebbd21379..c2640985f54c 100644
---- a/sound/soc/amd/ps/ps-sdw-dma.c
-+++ b/sound/soc/amd/ps/ps-sdw-dma.c
-@@ -337,7 +337,13 @@ static int acp63_sdw_dma_open(struct snd_soc_component *component,
- 	stream->stream_id = cpu_dai->id;
- 	stream->instance = amd_manager->instance;
- 	runtime->private_data = stream;
+diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
+index 37ea5c572eb9..765057499021 100644
+--- a/sound/soc/amd/raven/acp3x-pcm-dma.c
++++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
+@@ -237,7 +237,13 @@ static int acp3x_dma_open(struct snd_soc_component *component,
+ 
+ 	i2s_data->acp3x_base = adata->acp3x_base;
+ 	runtime->private_data = i2s_data;
 -	return ret;
 +
 +	/*
@@ -167,7 +167,7 @@ index f27ebbd21379..c2640985f54c 100644
 +	return 0;
  }
  
- static int acp63_sdw_dma_hw_params(struct snd_soc_component *component,
+ 
 -- 
 2.43.0
 
