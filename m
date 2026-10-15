@@ -1,65 +1,65 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DC636DA04
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 01:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C9330ACF0
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 01:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792028981; cv=none; b=mZf1E00EsEtcK5V3ILytVEFDcmSDS/sX2cZyyFgoeK3rgF9XOh1dmTDURV1bj+bPzwnbX3MSQOuuzstVqsasHUzLN9ny2Ec3zBTh3NcBnpzaRHSWjPqNd5a3oeGF9T9D3aIXUL+OX2x+qouNAEuShzd5alKSm329sQtLlvU7E50=
+	t=1792028995; cv=none; b=oQNq9sbQ7MEQj3IIq4MRIAAtgkJ4Pgux+bCtnkCdHPqfoliOGiIqYHxz0VawwzagVSfvL2KorRVufc9S32uiE71UYEHHMlqio6SA3ssXRq0WMdD3wG5gBurPwm9/cVtbmKjaBpIgwc82nKZklcetUoLtj/AzmpObCD0P23wOgWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792028981; c=relaxed/simple;
-	bh=jlEb+ienncM3LL+BnYDTqkV/y1oGhTtwElRku4Cmr6c=;
+	s=arc-20240116; t=1792028995; c=relaxed/simple;
+	bh=AsRVQlxF+563JjvP+sFHOx3JXC5esmyVVxsSsw++eA0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KeATSsM50vWA+OFEV07cOfFb1LxoXQn8lrPEbb1UwPxsoVXqplD7wA785ZH9OxwA9TlNT6rsf2HT5unvi6l4tZIJyfNpE1syCbpSA2ohQlZpWGkPyFAs2AxdCGB+Rt7jaDOyZZwUVumcAc70hFBXYnI8ge52aIM0KQbmUieSKPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4+BOBkC; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=jhZf5jaOOyONNMjIu0jUN1DMzuyhDWehf62jQr7h6N0ahGbO/CgeuIpL6YUjGkNzOWAO6RV63sN6DBiRMF04Eh1catxDRo2a7jST9Yfs0cWmyzAJzFlWqDuNjtnwe0PHvwkhGPmp1qwGdZi1hQAPq0x8Zo7NNr372+tyLb0so5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkryIyzC; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4+BOBkC"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2dd76b1361dso11015725ad.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 18:49:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkryIyzC"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2e5fb79ce82so26378765ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 18:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792028978; x=1792633778; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792028993; x=1792633793; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=FVU2me1+3bnamRCjCl3aeaOsDD74U7zM2YYw6HaRgfo=;
-        b=V4+BOBkCcVFDOF1oErC3PeurvYWSyTu6yuYe9GubVrhefUyUQMFa1XYlu0vwZvcsha
-         DRTcoyiw2GXHmwfcdbRotSfR0/2ejJ85tomLYYCFeHIPFurFSlwt5d1Onp/oZX/JhHDw
-         PGZsyhQgMIqN1Qwwhapl9SPj0Ym6unO9BMFdwDAGBw80vJ5X3McHjsn4zYBN7ehNQOlo
-         g5TS9xLFTup3+d6PoQ7pzDAXV8Kdn4vZZc9p9sYfqCPIUzwEZJVD5eIPIh2avw6X4x+l
-         /Nzs4BxenfyQa3BW8bLn/qpDLMMjm297eFfQqA/PHZC6De+/7aoIKk+Ahu5yi6oGtfi2
-         B2Mg==
+        bh=X8N5wvVyB4OZfrBnjP1FYFZJGH9J4CpZz0KjhM2upoM=;
+        b=DkryIyzC+tv082WDmMQVrsewKeXzE+KPZ/8Rtaq55xHkoolmBLF6D8VQkhpDkg0yaX
+         9urOZ0d86+xDQyQF/bsvafRWucB57vuCF+QHRewLl4IP8cLnLRERa+kOXa9DSDQ08K/g
+         0CpIVlIGoGgbAx+ewQGE+reu+FSmknkzmwtzyzB7IfbRDhNg+7krNbddFWa/xyuGONXO
+         E6LmGZrVUH4+BF9TSKjblghioSp0R0qxut2ay0ZEZJxf6rnYmLBlCMBkemVrgyxLeKZc
+         vNQQPYkuuwhBZKo/kOP5Vlr+qV95A/Sku2JGzWTN720DL0We0k8+JiIvEkWbgg++3lkw
+         uHZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792028978; x=1792633778;
+        d=1e100.net; s=20260707; t=1792028993; x=1792633793;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=FVU2me1+3bnamRCjCl3aeaOsDD74U7zM2YYw6HaRgfo=;
-        b=eFzI+kpdvJ57t/ZK6/q6bNKznekXof3wIi9YNGrg17UUijV+7aCzLXgBrytamnbUF5
-         I2btIOpbRQ778Dx81wDtuDLJYpC6vM1D5EPt4rLzWu06gaWfSJK8BxD2J+c+wP+3fm1V
-         qbJ34AmXi8BRp5Kct4UVQREpwAdba58S5o2OYP4DuH6oLEsFosQ93MyYgbQwCXV/v/Au
-         mLw5Usop2IOe5a9/yvoeWC8v6ZynZcTC1jMdq3nF3Jn3bBsJ+0U2Wx+5RuShvr+hLzOl
-         QlL7jvdLXcgiaYkXASe5gRKBdTsicwoTIW/lS3qzsdmXgqBCoXGcEVgk1m3Qn6IOi48I
-         7BwA==
-X-Forwarded-Encrypted: i=1; AKwUvBwzZ6G0Do0S9US9eGYj5IG3K0bcSfRjuYk/T1dpSyqvJlhIJ2KoMQWZOLVTCrYRUZj47MPZCD53TAFZ2vRdG2p8Tw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYISlr+ot1F88p/KOhRf9ukGOggmkwjfPwiXiAUu1g+DgNf1QzBn
-	Nyt8ROofLgmSowQmJH67U/eU11TjCh65ONH+6Lz3AvK+LGYCF/Pfqh4R
-X-Gm-Gg: AYBFou10adTtvEDjLCp2eqQBAFHpKvPvK3xPMyX9yWeSlCVgfywjOmOLSes5Gw9n8FI
-	jPophzuPXEM+3bSKBdBsWxYJnWGeGVQtnYPeNUm3CmKKbS+5NMqCDnLGBcIwVE0Tpq1prHN0DdB
-	0IE1RiFIr5f9Z8moA+p8QCfxgAVcfhINU94o7nXjXTFtMaw8B901gQVdjA6jgV9klLq2CoLn2Vd
-	HMWtNI8N2cwi00d4kOFa56KylMNF5GoFulXchZwhsjGwkOrTjVUuUf5wzpTPONA7NgWZs1/OsTo
-	jbmdNw9R9YuezTm8LgmQUikOaXGzFs2ZW2O/BB6CCHtN5QAR+1cvOnF0otMoaHJhyOfvXZlmjcI
-	A45OirxXYtL+A52yD/bRPWkdDslbWvmuS30ftTxqnVsbfKGvnblxxVN+L2IiHkw1H6X/nGexXkG
-	jxJi8pOpEY+p8gygOClJQ2sOdi5Bm2CZYAr435u8taWQFTeuGW1VIwdkM/lWNOfQkZPzF6vS9lm
-	G3/oDsRHasySGOwm4KvGHwfWycURTmTVRFkojndnHc6EsIsGFffGaxEnXSKy1ap4Dsl5mMzNbOS
-	3mAXmWyN55LqOA==
-X-Received: by 2002:a17:903:3243:b0:2dd:ad74:ac32 with SMTP id d9443c01a7336-2e842bc61a1mr152460415ad.27.1792028978441;
-        Wed, 14 Oct 2026 18:49:38 -0700 (PDT)
+        bh=X8N5wvVyB4OZfrBnjP1FYFZJGH9J4CpZz0KjhM2upoM=;
+        b=iDqDpdZNlqSua04PR0IsPFlqx/tDa1Pgqm+o0FhiaXw9me09DTJ94qr5hTu5vvzg7C
+         ivhJdyrUhPxtvIAycOfM8lUQSDNs2FQ0TWVmHHyfQEFiiAVlwKfAxJ3aYNWnYg1XAnIm
+         niLHQ+oI5T3KEXCWxgmAzZ96NeHZ+Mzj0XITrlmByd4jyuNysWa1+MPUnGrX9YH+mV/W
+         K6ACpk8h3dcdPY2l9c04EiXz9lsTMZjC4uDTW8SuM01hUwfdbTf+mBwyQCD0eb7sc5S/
+         BtE95yfVe+Z+JThOiWGWQYwn5WjMA2iyh6cM6GzcbrhXbSa1uU76JMuxH/4pdkuF+hmX
+         y8FQ==
+X-Forwarded-Encrypted: i=1; AKwUvBww3Chex9YXKm0Hifv9kF9MSVEBhtzfXw1X3gAHNhKsm7+knAje5aF5GfFzGYc7fzAMtAvhvpWXbXskjJq3RHl0lg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ1dvcIGriFPXsYlHgVPTO0SwrK9ZdpHPjUt+KdUbxyYOsJuk6e
+	YuwEYTCrAl97pOmmd+90dYlvjWl6Gi8A3ewlXvilnVh+mA/Z1i7b5Pao
+X-Gm-Gg: AYBFou255xrSn5HkvkFergpPl0y+AtAWlX6Np3LFmDSLJe9fK6TNNbC1t+H4lU7SbXa
+	/e0ZVPwjhVeKwNXKS1ZAFa1YHGQpZzm+r3l3J7ITwomxyCQvJQtUSq9ZVQPJLKVcA76+dblBBLR
+	9/CR4WgF91m3z0CGZ5cIAuIwqd5EhTZIWzFS0aTU4+RGq5YCjwSFPQGd2b93ciy17NDgXy5BWmt
+	iodRGDHbcIOr20sw84EAsGcKU6lJgqiS7dp0quvyVQVe5HOQrdivm+WURjT0zt4UIxzSNp/mzZd
+	S6r0zXJkiqutJlf/P80Y6xPdn2qa6rwSfOEtJp89rq1SVDnC7vHBqW6oLuHsMQbpvHuuedk962S
+	OCbe46TMqhSkTDviDWBz3YThkqOm7LrjgqD5nrf3VFcAgZ3/EwQn2eWquiU2Vfe4n2y2A9TYyGs
+	JMDesqUU86z0EtkFLH9oibEdkcdlKlj5ExWq/eJVD3U32Jft0fFHyn+WWM3H6dwz1xEn5ZMFLiq
+	LviFVXt0QK+t081lH/4R5U/5cnzjkcFs7wsCTLWeA7gcnx4JWS9+nu5wA+25UC33JhO9cuUHdxD
+	ci7aCnEKkhnieg==
+X-Received: by 2002:a17:902:ef4f:b0:2e5:c563:c0dc with SMTP id d9443c01a7336-2e842cdb0f8mr158108285ad.42.1792028993312;
+        Wed, 14 Oct 2026 18:49:53 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422b8cc1sm73202995ad.54.2026.10.14.18.49.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422b8cc1sm73202995ad.54.2026.10.14.18.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 18:49:37 -0700 (PDT)
+        Wed, 14 Oct 2026 18:49:52 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
 	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
@@ -120,9 +120,9 @@ Cc: Kees Cook <kees@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH v2 20/25] ASoC: renesas: fsi: Ensure the component is marked as opened on success
-Date: Thu, 15 Oct 2026 08:43:19 +0700
-Message-ID: <20261015014324.5569-21-phucduc.bui@gmail.com>
+Subject: [PATCH v2 21/25] ASoC: renesas: msiof: Remove redundant period constraint
+Date: Thu, 15 Oct 2026 08:43:20 +0700
+Message-ID: <20261015014324.5569-22-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261015014324.5569-1-phucduc.bui@gmail.com>
 References: <20261015014324.5569-1-phucduc.bui@gmail.com>
@@ -136,48 +136,52 @@ Content-Transfer-Encoding: 8bit
 
 From: bui duc phuc <phucduc.bui@gmail.com>
 
-snd_pcm_hw_constraint_integer() may return 1, which is then returned
-from fsi_pcm_open(). ASoC only marks the component as opened when
-.open() returns 0.
+snd_pcm_hw_constraint_integer() is already called by
+snd_dmaengine_pcm_open(). Calling it again in msiof_open() is
+unnecessary, as the constraint is already applied and the second
+call returns 0.
 
-This currently has no functional impact, as fsi_soc_component has no
-.close() callback. Still, return 0 explicitly on success to
-match what ASoC expects and ensure the component is correctly marked
-as opened.
+Remove the redundant constraint call.
 
 Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 ---
- sound/soc/renesas/fsi.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/renesas/fsi.c b/sound/soc/renesas/fsi.c
-index 23b7e63596d3..74e2ea002fbb 100644
---- a/sound/soc/renesas/fsi.c
-+++ b/sound/soc/renesas/fsi.c
-@@ -1811,14 +1811,21 @@ static int fsi_pcm_open(struct snd_soc_component *component,
- 			struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
--	int ret = 0;
-+	int ret;
+Changes in v2: 
+ - Remove redundant integer constraints already applied by 
+   snd_dmaengine_pcm_open().
+
+ sound/soc/renesas/rcar/msiof.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/sound/soc/renesas/rcar/msiof.c b/sound/soc/renesas/rcar/msiof.c
+index 128543fc4fc9..11a6f22ec0ad 100644
+--- a/sound/soc/renesas/rcar/msiof.c
++++ b/sound/soc/renesas/rcar/msiof.c
+@@ -419,18 +419,14 @@ static int msiof_open(struct snd_soc_component *component,
+ 		return PTR_ERR(chan);
  
- 	snd_soc_set_runtime_hwparams(substream, &fsi_pcm_hardware);
- 
- 	ret = snd_pcm_hw_constraint_integer(runtime,
- 					    SNDRV_PCM_HW_PARAM_PERIODS);
-+	if (ret < 0)
+ 	ret = snd_dmaengine_pcm_open(substream, chan);
+-	if (ret < 0)
+-		goto open_err_dma;
+-
+-	snd_soc_set_runtime_hwparams(substream, &msiof_pcm_hardware);
+-
+-	ret = snd_pcm_hw_constraint_integer(substream->runtime, SNDRV_PCM_HW_PARAM_PERIODS);
+-
+-open_err_dma:
+-	if (ret < 0)
++	if (ret < 0) {
+ 		dma_release_channel(chan);
 +		return ret;
++	}
  
 -	return ret;
-+	/*
-+	 * ASoC only marks the component as opened when .open() returns 0.
-+	 * Since snd_pcm_hw_constraint_integer() may return 1, explicitly
-+	 * return 0 to ensure the component is correctly marked as opened.
-+	 */
++	snd_soc_set_runtime_hwparams(substream, &msiof_pcm_hardware);
++
 +	return 0;
  }
  
- static snd_pcm_uframes_t fsi_pointer(struct snd_soc_component *component,
+ static int msiof_close(struct snd_soc_component *component,
 -- 
 2.43.0
 
