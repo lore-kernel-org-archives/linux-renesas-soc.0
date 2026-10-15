@@ -1,140 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E203EFFA6
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 12:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C834521897
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 12:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792067776; cv=none; b=P9VZ9YyOkClk9DzwZOchxZbTMVbpJMoVt07Fz8vbSANCqq9dAaOMjX/3mCrskRx25bFK15JL0yOPtVGjPOVR9yl6e5Q6daVWmXObeB9P1Ij/2MMBgZcocFTzdzhkxZCT6IuL7L1R3TyNw0Ql3DR/IabYQl/ICuyaGH4+jkYvcE4=
+	t=1792069020; cv=none; b=ijhTfEUx9m1coWY1BRI4m1Gzdln42LtkCym1bmKYMoTpKB40n+a3NLqENFNHu1L9XIaRHgmYPhxcAROGkr43pjfMPzpqXAgfunH2wOoPSBPo6bcQJAqcoGpRwfIAHOgTg9599K111VsfBbvfdlH0rHGAdAGtdQFt6ZabeCLuUSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792067776; c=relaxed/simple;
-	bh=HhSSj2Jpbd1NjgZWSsCYeRG5hiO72wvs6suPtxQRAvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PookJiyl6ULEwNQSCjo9qlRqbMuXPsmbgL1yDijYZVP4RWf7jluZnE2poiJDSMdCwzhcsr1oysNHjQFCZq7uxOYh8uysnKhTqKKmL78SA+s4fhcWWgAUmm6yKdZ0w/3Z5wqO/vLo31B56mbz+j0wygsOqsrqXOVtfV9yWkL2YD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohw/PWHM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792069020; c=relaxed/simple;
+	bh=wPEZURz/x2+WcDS1J0Y5mVsZm2GwhUFVDnbKnwOL9Wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMaG+053ZNySv7/KO0zTUqF+IA/d4Q/xj319V61KLWXSW8M160hod0afmOthsjUAvFafLr2OsteKJ804acunLFZsKP1bbjweAEd3Lc7KCrMFRjO4DCWh5YnpciM+XraUz/VfmCW9Ynzzo5s1P9UYVvuluHO1i/7xbw+JNFJJIkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=ekO09FmV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=r7ZUYcuU; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohw/PWHM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0BB1F000C4
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 12:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792067774;
-	bh=UTsn5LMiWlp/JSayb2otn1OhoN0igsWzM/RgKJeMZww=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ohw/PWHMAwUiMqw43scdb8VM0PMHukFCIh7Ln2ZWhcEb59s1OgOklkNJBSBx624ha
-	 M6qzGVOE+wt3ZbKDcu1sdh53G+tXgi/8N1cwDhtS4x/xm1z8SeHDoUNWzH1gmVxFME
-	 OtNnTVWHbxbXabpRuvFmCYREyF+v91UqM4+sRl776qpvZgozBwwQ9ZHAnyoUROJXjP
-	 T9htrhJt/7WGUSldBETTPf0BzPj3UHKuZ4DIxcFMzsrEnjQb6N+5wZlXOxfypBP9CP
-	 97hCdEDFd+4IriUddB5BtDG6XRvu5fcZ1pbHMw+GNkaOakOukrw/Acw+4cbRzUTpgG
-	 7zCc4qZkSf4YQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5ba3ec92031so5384107e87.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 05:36:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxhCib0kkRioTIrHTVbpeGLRs3OP9Oe5kD+J2lweNh1ZxYQvfqWbZ6kY4952pruCG3ayh3wM5ilrrS5kT+YOhg6ZQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKZEUyMjOFTJeW6JuYwPj+ObtEz4FPj9hNdPuZXYaWyf1mGuNDd
-	m0Sl6ieZ1U1/3SI2FFv6ePmozFomlEkYGo5Wm7v8smIk12gdapBjxH/zDAqoCK4CVFZFPLj2e5A
-	mmKh5tRbq9hkSofvyoKEjHh991M2Rg1I=
-X-Received: by 2002:a05:6512:438d:b0:5bc:e906:ad3 with SMTP id
- 2adb3069b0e04-5bce9060f28mr5549281e87.14.1792067772827; Thu, 15 Oct 2026
- 05:36:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="ekO09FmV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="r7ZUYcuU"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D2FAC140012D
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 08:56:55 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 15 Oct 2026 08:56:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1792069015;
+	 x=1792155415; bh=d4Y+UaRCOJkuo10OJNpvuYzS3Fllk0wMeQAn2UVR3P0=; b=
+	ekO09FmVkGOVmeTA/byydZxaei6irAGCLVo/ANEJwnuW6+T+r8ti/pbeH8XtJ+Lz
+	uWb8Cn+6/+H34lNRZ8lsoi78JV/5cZ4dhe+TOKFj6SwTfD18k+RCwIokdPssMdMZ
+	SbYq0pAN2y5WGXkymHizcS6yyAH4vaZDYsE3pqdfIyiqVYaByAucKcAE3bvXrh/U
+	WUeeR1m4Pv/Fr+WiRW/uJ4H3Qw/IpKMsFWfN1Hn5P2sbnWjRKEJgdf13kY4lhA5I
+	efPgaV03x+l624cGCyjHMBPnNK0lVUlxnxQoV1YdiyCLI1HST1P0FQ7Di8CVKTLb
+	CXfYBIGI3Zf/5m8ArXP75g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792069015; x=
+	1792155415; bh=d4Y+UaRCOJkuo10OJNpvuYzS3Fllk0wMeQAn2UVR3P0=; b=r
+	7ZUYcuUBmVh8/XPWUBxjZ4OMsvBMt0mFoc7IUSl6DUCy0/7UM1BeLS1GU71P/mz/
+	AxFlSTDQ8ycJFg4mn0LdwTEagxStgxZLyqu3PQ+RIIpE4d4lW7vTZLWMaw7gObw2
+	3yUsx7PbwcRW7gIXTnPKt2PpdoBvuP5Pks0cpO47h/umsjYifrR6dgZa7f8fLFQN
+	HskZ4V8GdNzVJ/at/qCAqzIhh/UDT6zVQhzNe+ZDTuPBUVHEa5qTdaLTwzxm82bL
+	+6QU303lQw2zZtk3UjErZYxpFyhILbU/CcIGlzPXEO0AET8gJQH15vshXd3x0fQJ
+	w3ZZkEEnAyFyxcx2AEbAQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792069015; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm1:rsa-sha256:Bg6F57705RTA2DZTi1uS1h6m0bwqpHVQzjQvbKMn/x/pMc5
+	0xuB0ngkfwumhHIkVPFP6mmm7q5bJfh57fAj7O21m2Xk4Nx3ZPjOc9B5BLCIUd/3
+	vUU6uLLLuXV0gjhifLz4ywGdf5knyltpzW55CP/v0b0HT/yFh3Qbj29fU2td/PBb
+	VEmnGG5HuvOMaaEgBsjIV/SVFXbSV2Mh86coG7lk0hDpvOXfDC6ugH2u7Cs82NWv
+	1To6jEK0M7xQQxBXM9Wb1C8GR4WM0h0hdFRWa0S8+HuoLQ7hGK/7MKzkxALGM8i/
+	pr0Oq1HsTf2qlqHIKO+JKLTi3VFF3cHvqpu8Tpg==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=mi-m=1; hc=13;
+	hn=cc,content-disposition,content-transfer-encoding,
+	content-type,date,feedback-id,from,in-reply-to,message-id,
+	mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:z3fr53DmWe7SCs30CXbfzp5DURC5bDRztcLg+OV5rnw=:wPEZURz/x2+WcDS1J0Y5mVsZm2GwhUFVDnbKnwOL9Wc=;
+X-ME-Sender: <xms:l83Qauf76PAhMVDL5Es5JJXgRQUMdpPfASekruzkmKO58WF51rp3Cw>
+    <xme:l83Qagbc6jKEwFrj-2VrqExuBtnVvfKKBU4BbK_g_XrAr9epkn5cYfVTqJ4onWvh4
+    WutQdNCtOmkID_0Chaqic5647QxiMon16y4NiDs6oRq_W7lMZSK88U>
+X-ME-Received: <xmr:l83QarHUr0KxatP-HPj87QI0_TvQwjLisx2gWR4rZYZh5mXRx30_i7Da8JPD-LJcCTxdPZ0RmMo-44CLjkMvzSo1mHvX_4c>
+X-ME-Proxy-Cause: dmFkZTEQ56OHvq3vzGL+AyPauqCptT1uyaHJhWuULvfSVS/s5v7seR14SsJmK/ReuoCdC9
+    SCI7kdZIK0LPjySsUdGYpBrC0b0Mgqm6jlCK+vE9rC/zihlJYnWLHgn8WJdHlv39fne2P8
+    DDwQjoYfqsWaDPSTpW94qOuFbjzZIAjwSVt4LuMb/ZQ6aAmPLvveaC5RtZtZ11qpKV3/lY
+    2h3FHf6TL8Lnamlx+oMSh7/Ks5Uuq0+ei3EnJTwQc/7genfnSxgvGTtWrAo7mHfv3UI6ty
+    vFaaVy08u6Ii4iNtGpB5epuJ2OoiRX7KkPktYtHpa+Wv74KMTTiUVl9+IJkUiTpJQxJUhF
+    ZNuoAvXYkavfeNrYIYngI7flY0cuaHtBJwDlcFZ2sAfpwrFw6X+2OgdYM5AACj/gdzFYyP
+    vkqGLT8RHW4TiIS/KdyLXcWPIT1Wd1rtvM5F2BwlzndyzKaocdfy55k29e/z6J+j11ZX1Y
+    zsXtaqDRAgypkmD8pQHUH5gJRFyOq+fPp3kWMMgDmYzCn0vFq3CG7lU/xkQmT/0GX9rVaD
+    4q22Ryk1LKesqHpLVhFWBbsJySgvHM/z6bAbzJuzvHP/izAlLuhXRB7judebj95vToa6z/
+    i0DhCWlxkd+7SERc64n5pOnc4w5aGg2lzzZ8fGFBfvpBeh4Ef7V8uNl48rkw
+X-ME-Proxy: <xmx:l83QamkbmVFZ8DGHL3cuMhI4HHrLFv2nXadcfEEX27SI254mpqR31w>
+    <xmx:l83QamdF65ZqyAIpvdUMhypBLoCMuW5CFXamrwp2DsBpqI0aUyCquw>
+    <xmx:l83QasHpX-bIAqjDRMuG17YvtHQPEmx95bRBpM6xfUu5DPf-E0D8lg>
+    <xmx:l83QakgIke7tMckHE6YBzvOy0_QFVMMSKK7as43bgVSEu-f3kZfOyw>
+    <xmx:l83QaukG9lfI-0NIiKYWmiBhLPmStIxrL3iHo-2ydOpGC2Ij0vM9tZ76>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 08:56:54 -0400 (EDT)
+Date: Thu, 15 Oct 2026 14:56:52 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Myeonghun Pak <mhun512@gmail.com>
+Cc: mchehab@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ae878000@gmail.com,
+	jacopo.mondi+renesas@ideasonboard.com, sakari.ailus@linux.intel.com
+Subject: Re: [PATCH v2 1/2] media: rcar-isp: distinguish absent cores from
+ registration failures
+Message-ID: <20261015125652.GA3577260@ragnatech.se>
+References: <20261015004159.2202899-1-mhun512@gmail.com>
+ <20261015004159.2202899-2-mhun512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
- <20261012-mali-c55-renesas-dts-v4-4-c410e280bf2d@kernel.org> <asz8oEtow_lrUU7K@zed>
-In-Reply-To: <asz8oEtow_lrUU7K@zed>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 15 Oct 2026 14:36:00 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnnSLXeYzxonkfnZA3OxLE9Hssma9fHsL=U=NmVn7ZVOg@mail.gmail.com>
-X-Gm-Features: AclHuK-ulodNdbkzNaP_Y4BbHHTacK8pusSXYjUamTyP_Oq91RNTtepybaEU-JQ
-Message-ID: <CAD++jLnnSLXeYzxonkfnZA3OxLE9Hssma9fHsL=U=NmVn7ZVOg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Daniel Scally <dan.scally@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261015004159.2202899-2-mhun512@gmail.com>
 
-Hi Jacopo,
+Hi Myeonghun,
 
-On Mon, Oct 12, 2026 at 5:39=E2=80=AFPM Jacopo Mondi
-<jacopo.mondi@ideasonboard.com> wrote:
+Thanks for your patch.
 
-> How was this patch tested ?
+On 2026-10-14 20:41:58 -0400, Myeonghun Pak wrote:
+> risp_core_probe() clears core->base when resource setup fails. Once
+> resource setup has succeeded, it leaves core->base set while unwinding
+> errors from the remaining registration steps, including destruction of
+> core->rpp and release of the VSPX device reference.
+> 
+> risp_probe() treats every -ENODEV from risp_core_probe() as an absent
+> optional core. If a later registration step returns that error, the
+> parent probe can continue and subsequently call risp_core_remove() on
+> resources that have already been released.
+> 
+> Only accept -ENODEV as an absent core when core->base is NULL. Otherwise,
+> propagate the error through the parent probe's subdevice cleanup. This
+> also keeps failures from the later IRQ request in the following patch
+> from being mistaken for an absent core.
 
-I was using the TPG only so far, a camera module is in the mail.
+While it would indeed be nice to propagate the error I don't like this 
+solution. It creates multiple places to check, first the return code of 
+risp_core_probe() and then implicit variable contents ontop of that.
 
-I do have the RPi camera module 3 but didn't get it to work, this
-may explain why...
+Would it not be nicer to add an additional return code to 
+risp_core_probe()? If it returns 0 all good, if it returns -ENODEV the 
+optional device was not described or a new code (maybe -ENXIO or -EIO ?) 
+if the device is described but we fail to initialize it.
 
-> > +             ivc: isp-input@16040000 {
-> > +                     compatible =3D "renesas,r9a09g057-ivc";
-> > +                     reg =3D <0 0x16040000 0 0x10000>;
-> > +                     clocks =3D <&cpg CPG_MOD 0xe3>, <&cpg CPG_MOD 0xe=
-4>,
-> > +                              <&cpg CPG_MOD 0xe5>;
->
-> Compared to Dan's original patch I was carrying my tree the first and
-> third ids of clock and reset properties in the ivc and isp nodes respecti=
-velty
-> are swapped
+For this first check return code, then check some other variable 
+solution,
 
-OK
+Nacked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> -                       resets =3D <&cpg 0xd3>, <&cpg 0xd1>, <&cpg 0xd2>;
-> +                       resets =3D <&cpg 0xd2>, <&cpg 0xd1>, <&cpg 0xd3>;
->                         reset-names =3D "vresetn", "aresetn", "hresetn";
->                         status =3D "disabled";
->
-> Fixes the issue for me
+> 
+> This issue was identified during our ongoing research while reviewing
+> kernel code.
+> 
+> Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
+> Assisted-by: LLM
+> Co-developed-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+> ---
+> Changes in v2:
+> - Split the -ENODEV handling out of the IRQ lifetime fix, as requested
+>   by Niklas Soderlund.
+> 
+> v1: https://lore.kernel.org/r/20261011214448.2043581-1-mhun512@gmail.com
+> 
+> Compile-tested with Clang 22.1.2, W=1 (arm64). No runtime testing.
+> 
+>  drivers/media/platform/renesas/rcar-isp/csisp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> diff --git a/drivers/media/platform/renesas/rcar-isp/csisp.c b/drivers/media/platform/renesas/rcar-isp/csisp.c
+> index 53ce47020d170454b3d208bce7f4d6aad76764d3..73bf7e42bad2ac1ec2493cd8ec81003cce05a3dd 100644
+> --- a/drivers/media/platform/renesas/rcar-isp/csisp.c
+> +++ b/drivers/media/platform/renesas/rcar-isp/csisp.c
+> @@ -563,6 +563,8 @@ static int risp_probe(struct platform_device *pdev)
+>  		isp->subdev.internal_ops = &risp_cs_internal_ops;
+>  		break;
+>  	case -ENODEV:
+> +		if (isp->core.base)
+> +			goto error_subdev;
+>  		/* The device don't have an ISP core, that is OK. */
+>  		ret = 0;
+>  		break;
 
-OK
-
-> Why is this an issue it's not 100% clear to me.
-
-Can you try this?
-
-diff --git a/drivers/media/platform/arm/mali-c55/mali-c55-core.c
-b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
---- a/drivers/media/platform/arm/mali-c55/mali-c55-core.c
-+++ b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
-@@ -703,6 +703,12 @@
-                return ret;
-        }
-
-+       /*
-+        * Allow the ISP's 2500-vclk reset recovery time.
-+        * 200 us cover the RZ/V2H's documented minimum of 20 MHz.
-+        */
-+       usleep_range(200, 300);
-+
-        /* Use "software only" context management. */
-        mali_c55_update_bits(mali_c55, MALI_C55_REG_MCU_CONFIG,
-                             MALI_C55_REG_MCU_CONFIG_OVERRIDE_MASK, 0x01);
-
-When we now retrieve the reset and assert it, it matters that
-we give the hardware time to recover. (If this works I will make
-a separate patch.)
-
-> I can't access the "additional documentation" from the Renesas website
-> where the clock/reset ids are reported. Could you please check ?
-
-These changes contradicts the manual so we can't change things
-like this unless we know more, it'd be too much trial-and-horror.
-
-The manual says:
-
-Video/ISP core
-0xe5, isp_sclk
-0xd3, isp_sresetn
-
-Register-interface bridge
-0xe2, reg_aclk
-0xd2, reg_aresetn
-
-Yours,
-Linus Walleij
+-- 
+Kind Regards,
+Niklas Söderlund
