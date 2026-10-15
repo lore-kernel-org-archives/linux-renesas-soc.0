@@ -1,123 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C494D09F3;
-	Thu, 15 Oct 2026 11:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFDA49E5C9
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 12:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792062753; cv=none; b=IqTPoZbpwfGdoCjiaXKUrjXJwJK0GYWFicUs7plDLUFxVXTQywduuu7f/rizTpX8Ljngz5gDiTkaiZ3xmbcVePjN5qJqMHpTURGKQKA8m2VCbYAHm82tcMlkWULIUwYTlpq/yC70TdzpORX/lsosMbV58f8RiiKAK/va+yRdmd4=
+	t=1792066126; cv=none; b=f8uTyTYpp0OU+CqxIjsTe4OupSNFG1zLgbwONg2Cu+Im14FaGpW3UlBD04z/sWFrdh3v1o6N646j745xqJjBswVE5LYd/0D6+KROQ4RJZZsMU/9B0YHFgA0uKWYhT8xrhtE3VL26JDDGAPSmg1/kDyAkfX7ZCkdTUAmkNXcguR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792062753; c=relaxed/simple;
-	bh=bkweXtoihosFshd+ODeZ15r+eBZfG4aT59zz7MBbLuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlEjjGp6ZjUmKurL5QTi1zw4+0vnP86WOupPWupb77fBt2wFWe3Tm0XvseHwvTL5xKQQDOM3XtUkO2irLlLF5rX2HeMxifzDyuvYeF/1fbIfbUFhtQg7Nj9XsNL9flgs8IEOHwrV0GwGu9AAoKzkDwUPd7KsJZAmu5XaxAawFYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+8xOXUk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792066126; c=relaxed/simple;
+	bh=rwve/lrMelILXHO8EI1RG1qfxEqofbz4qV/vULi2MVs=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ndl5sabz3nFqPf2t4hrneUfJN4eE9QPczxsZBis2qrkU5vyu44rtyk8/hNT8N6ydBifGApYsYNT4dkheyj8/nkRE98lIJy5PGiF+nr1V2bvYVY/5kWCtXlATSQIP+o49WMnY3Uz31t5v9xSmRQH8yBqK8ZEadQ7oTYlVjjmt9kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3/KyA7k; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+8xOXUk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5727F1F000C4;
-	Thu, 15 Oct 2026 11:12:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3/KyA7k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 252E11F000C9
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 12:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792062751;
-	bh=Hd6BBnEO5pGpbCON7Q87RSeR9u1q3VXpiWY+WMKFASs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=R+8xOXUkDkZ9pKZHBmcNtj8NyuP6cR0oqQgoZ8UCc+tB3DzT4QCvEJXW8Nh+PAHLO
-	 l4qO7p4Clap8JJBD57iJA17dF9oaApVDpvp9NMyxi2p9zza3C5/jxCXVuqp97P3kH/
-	 6RncdVn38CsHW39zcgI8DIfqy4X+t2GhIU9JFMzzboPBxl+hGJOmX6ojQV+MHKJjzv
-	 keBaU7H/dW4cHXdRTPAOoj3PXUzd0obz4/xGRkI4yhpdkI4hjeNJmNTCIIZMIQGcGL
-	 wUvK5fhMpbxaZqaxQQpRrEEA+IDFwqvTiLrkNMorRjRdP64wUDyKUMoYHX3QYp6pVZ
-	 cc0SD3e32mliw==
-Date: Thu, 15 Oct 2026 12:12:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: phucduc.bui@gmail.com
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	povik+lin@cutebit.org, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrei Simion <andrei.simion@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Heiko Stuebner <heiko@sntech.de>, Kees Cook <kees@kernel.org>,
-	Syed Saba Kareem <syed.sabakareem@amd.com>,
-	wangdicheng <wangdicheng@kylinos.cn>,
-	Chris Bainbridge <chris.bainbridge@gmail.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Neo Chang <YLCHANG2@nuvoton.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	u.kleine-koenig@baylibre.com, Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Hemanth Selam <hemanth.selam@gmail.com>,
-	Md Shofiqul Islam <shofiqtest@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Zain Aboobacker <zainaboobacker33@gmail.com>,
-	Sang-Heon Jeon <ekffu200098@gmail.com>,
-	Bo Shen <voice.shen@atmel.com>, Vinod Koul <vkoul@kernel.org>,
-	linux-sound@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
-	linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev,
-	linux-rockchip@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/25] ASoC: Fix constraint return value handling
-Message-ID: <ad722297-5ca5-42c5-a07e-59fa958387c1@sirena.org.uk>
-References: <20261015014324.5569-1-phucduc.bui@gmail.com>
+	s=k20260515; t=1792066125;
+	bh=NKeQ1khZ10IWq/8SFcICGZaXJTG9uvUp0paqGQCwHMs=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=m3/KyA7k3Q+mDBsFfee0dNGtPvTPVgJ5m45kRDVxjBd+q94ZSc1egaKLnETZclZx6
+	 kTwo7OyqcFdFJUvw8V3OnSZaFOvwdiKE5L2rxMx6hMsnqKQUMI7wQSQy1cWf37v/cV
+	 NUF4vS60tH/2g+3JUFOHl/a2M0v7kysemgXxRAQs84YB0FUMfj3TM4HCvKmwGl+4H7
+	 FNHr1FyFQT3pWK+pSqKDanorxP4AzqcjveEczSHOMS0kNTQWAinx2C9mDmRqDQb2nF
+	 IEbJyw0/fDbq0AlShGeYEsVgO4qyy/8foeocW+mWcmfN28UaS9uFTQwY7R7NhGCph8
+	 CBSuBLHO0Idkg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5bcb440d1cbso1234137e87.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 05:08:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx1Sa7FIJ0MFrCQuGtt7/nlyILLF+nqkFY4SprpPj8maDAYaQ0KtPy66mlcdEERVyfSel7TfBfnfuH6eWUL48k20g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKfl5pRIcDpsg5466rZtqzkW5vft2dpgCKVgh6ru3VGQWrbhxS5
+	kx+cfTdQxYO+J3CA4kvhlmEBVPqy2GrndZEn9mDcPUNN00XFIX2yn4e2gAgas/bs2vcbTkIFIeC
+	YQXGml8B61R+vJzVNHdf9JWXNi/YWMFdLTurJQWkVcA==
+X-Received: by 2002:a05:6512:318a:b0:5ba:430e:f627 with SMTP id
+ 2adb3069b0e04-5bcdd1c318amr5442326e87.1.1792066123844; Thu, 15 Oct 2026
+ 05:08:43 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 15 Oct 2026 12:08:42 +0000
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 15 Oct 2026 12:08:42 +0000
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <CA+V-a8uVxwP+AFbRYb-weN+EHQ5rFxo7gXPus4muSrMri1QAAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="syrl3Afg657kytt3"
-Content-Disposition: inline
-In-Reply-To: <20261015014324.5569-1-phucduc.bui@gmail.com>
-X-Cookie: Tax and title extra.
-
-
---syrl3Afg657kytt3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20261009165710.1320233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMRc=MdcWS0c9E0V3cJj9B9WMAe0vSs9e2s2EauRH5zFkOng+w@mail.gmail.com> <CA+V-a8uVxwP+AFbRYb-weN+EHQ5rFxo7gXPus4muSrMri1QAAA@mail.gmail.com>
+Date: Thu, 15 Oct 2026 12:08:42 +0000
+X-Gmail-Original-Message-ID: <CAMRc=McjH1CE9wZpqWVWOa23oQn-Zxsq64akB4FgW=dA28vGTA@mail.gmail.com>
+X-Gm-Features: AclHuK8HS_70o7anX2R8BK89-XyAWV79pV1PxwdAxZDse4-3BBRpa5S1S2t4q0M
+Message-ID: <CAMRc=McjH1CE9wZpqWVWOa23oQn-Zxsq64akB4FgW=dA28vGTA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Add ADC power sequencing support for RZ/V2H(P) and
+ RZ/V2N SoCs
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 15, 2026 at 08:42:59AM +0700, phucduc.bui@gmail.com wrote:
+On Thu, 15 Oct 2026 13:05:10 +0200, "Lad, Prabhakar"
+<prabhakar.csengg@gmail.com> said:
+> Hi Bartosz,
+>
+> On Thu, Oct 15, 2026 at 10:43=E2=80=AFAM Bartosz Golaszewski <brgl@kernel=
+.org> wrote:
+>>
+>> On Fri, 9 Oct 2026 18:57:05 +0200, Prabhakar <prabhakar.csengg@gmail.com=
+> said:
+>> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>> >
+>> > Hi all,
+>> >
+>> > This patch series adds support for ADC power sequencing on the RZ/V2H(=
+P)
+>> > and RZ/V2N SoCs. It introduces per-SoC probe functions for the
+>> > renesas-pwrrdy power sequencer driver and ensures that the necessary
+>> > Kconfig options are selected for these SoCs.
+>> >
+>> > Note, the ADC driver and binding patches have been posted separately.
+>> >
+>> > Merge strategy:
+>> > option #1:
+>> >  - Once the pwrseq-renesas-pwrrdy driver is merged in only then
+>> >    the sysc driver can be merged via renesas tree.
+>> > option #2:
+>> >  - Merge all the patches via renesas tree.
+>> >
+>>
+>> IIUC there are no build-time dependencies, so the pwrseq and soc parts c=
+an be
+>> queued separately?
+>>
+> Yes there are no build-time dependencies, and since renesas-soc is
+> closed for v7.4, the pwrseq patches can go via your tree.
+>
 
-> Changes in v2:=20
->  - Add Reviewed-by tags from Vijendar Mukunda and Chancel Liu.
->  - Remove redundant integer constraints already applied by=20
->    snd_dmaengine_pcm_open().
+It's rc7 so I prefer to leave it for the next cycle too.
 
-v1 was applied, please send incremental changes for the differences.
-
---syrl3Afg657kytt3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrQtRAACgkQJNaLcl1U
-h9DzAQf/WcguhgqKmLmBlSGrfAmohZap9b+qyUgyk3gBcdL4pfDRN2N0m/jg80sq
-EGu7yBR6LzgAalcEkMLnjACfVsi4kZuopa6nijef9rrYX/cJcxUrOSjK3l2G+rD8
-U6h20fO6YVWgAkmtLtV9G7PU+gy+06ZO8snDL9dTODv9DYyWZvQ4mTgJvAK7rYQP
-mBKi2rhlpXe2rMyRIvXW4FQtX1kqOzt+gtSHjApzltjchxaDuM6/jThE4a8+o4Ms
-XpUeCo9/Bg4u29Zt4okIN1S1up/cOjyNcEQwgf+5Lf0qlZXbV4Dyk43TNms3vuED
-ZSE26kZ6DpaP/lgPoejNuYeJrPX9Pw==
-=HbjQ
------END PGP SIGNATURE-----
-
---syrl3Afg657kytt3--
+Bart
