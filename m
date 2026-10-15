@@ -1,55 +1,57 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B30C475350;
-	Thu, 15 Oct 2026 20:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EA3598C0A;
+	Thu, 15 Oct 2026 20:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792095009; cv=none; b=M04xUKrPYJ8EUK+SAixn8UKqvROJ3nqBvDi1YbA0DW6utEhZPOu5gFT6sSMj6OGUhG/OIS++6WX8KvBFjVH+8gF0sgP0wIqK4jFxO8Mn65tM/guN4gWhyYLk+ee3krCZ0WSmAQ9mX/G0AM+u2qL+2kQv8LX4+AUg9uv7gbUyedk=
+	t=1792096750; cv=none; b=Xz2rWp9uFPhSKwxrEnpxST2bIdWPdfbl4WMw1soBXbaichG/8d4KQlFifTz/Ev70sh10VBpAwT9hpJr+fRWqvUMSp7UI91qce592lgUpGIcMUw56HtGOrSC68pr5sUILtNwjrDMC4IIniZoZrwCGhEWDpS+7DNDvT8+/GBahLb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792095009; c=relaxed/simple;
-	bh=5+ITx/IV/BoxeXsLcjNXvtzt06iKyo8dX2YvX/hAwNU=;
+	s=arc-20240116; t=1792096750; c=relaxed/simple;
+	bh=gndoiN0HGGrSX8vXu1lvn7okm6dRgbzBufiibmcRMKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jR8AY+Bv1B6WuAHrAMrYxguwjKokalnwBaVq9r3ACpmHhiZMeQ0QI5XNOnS6/C6b8xf/JMz012uMZWObfEoclPj0pGHNhYEW6V7ER7XvVRisbqkum9Fpl4sEmrIFyoVPmGmm4qu6zRfn9OdmQQumPqAkQ/bxpt6P1YWZBw3jvos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcaNxYGX; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvrIv65qb8jNsyDw/+JJPOTp6Ua+Y/+07xX+XI2ZTinRkPKHDrnZDFjMIZJdbs4qtBhht6rPraJ2WX75rT2EzSxnyAy8XZFWJ+pkItvalkBmBfPhFNMzpadtO+IcY6igaRPfyvnn8R1hgJUhMz0uS/4O5p0UWIHpImdog/936AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQpKjQBy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcaNxYGX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 349D41F000C4;
-	Thu, 15 Oct 2026 20:10:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQpKjQBy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FA71F000C4;
+	Thu, 15 Oct 2026 20:39:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792095007;
-	bh=vGkzpNU4gEbEI0HBSrDSBMbVcu/OtmqB0nVCCkvCRSg=;
+	s=k20260515; t=1792096742;
+	bh=d62YmESqtgY8UCW/mdTw/JJnpWt2aagGW+KCVm98MR8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZcaNxYGXNMGp5Yrju7JyTI4kvcvqFC4t+hvx5QEaD6PRkpeipBX8SBeRfajgWY/7v
-	 lXlooyOgiHXpgjqwREXb3WXmjLNroziatAm4oYrY1/4exZyN/48+uKSxbiaE0rR/Lm
-	 ENDS0EnqpqLWCyZSzXDJ8QvwBGyHkMMNQlCKIoV7VtsRHv1dW3QzrVIUUwyIua8mZL
-	 bxHEumb73EhE/PYOTL8HSmdSUVaXd8cRpwG19kfCJK4WIjK6xdEonXQ8qjCIHRvExS
-	 bEe+dCquaRNw34y6xMaICo5G9Bpe1XV/rOmYLseSlwPBtNPaw4pjhRaJOT2J2x+P2K
-	 1JpPIlW4ZiarA==
-Date: Thu, 15 Oct 2026 15:10:05 -0500
+	b=kQpKjQByrEICicmMWr+wQGdGKMF2OggpserEgG2Y3YkxkDS+Kx8FVuhFu33Cr78W4
+	 Ax0eh09IllwZT9ANuVLkPdWBh5i49beZz7SZWhkCJBqpQp3yJlLDPzb5fqE/nYF8jv
+	 M48O2eFcvf69MbXCcNE936pHksotcEtR6Gi3R1N0Bn8cGqw6rS3ks7AitnqRjwSLDo
+	 7w9Jk7Ew8dTSNkmpN8zOTfphsvhRBNb53cGlHQ4u9/6z8IVT9O7oooQvWnNmr+PBsE
+	 Zr0Z4BiHv+HjZ6qrBbOQGvAj5g0bk2WjgOqyGhvAMjPLYvqu+Cn8WforgRIy4ZMjri
+	 GXlgNugbXAVJw==
+Date: Thu, 15 Oct 2026 15:39:00 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: Frank Li <Frank.Li@nxp.com>, Wilfred Mallawa <wilfred.mallawa@wdc.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Paolo Abeni <pabeni@redhat.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	Eric Dumazet <edumazet@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v4 04/18] dt-bindings: PCI: rcar-gen4: Add optional "aer"
- interrupt for R-Car Gen4 SoCs
-Message-ID: <179209500464.2848447.6678039207382562663.robh@kernel.org>
-References: <20261015033103.3076869-1-den@valinux.co.jp>
- <20261015033103.3076869-5-den@valinux.co.jp>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>
+Subject: Re: [PATCH net-next v3 05/13] dt-bindings: net: dsa:
+ renesas,rzn1-a5psw: Add RZ/T2H and RZ/N2H ETHSW support
+Message-ID: <179209673997.3126689.17711678980732766735.robh@kernel.org>
+References: <20261014131906.990077-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261014131906.990077-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -58,32 +60,39 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261015033103.3076869-5-den@valinux.co.jp>
+In-Reply-To: <20261014131906.990077-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
-On Thu, 15 Oct 2026 12:30:49 +0900, Koichiro Den wrote:
-> The intreq_pcim_lperr interrupt carries Root Port AER notifications,
-> separately from the integrated MSI receiver interrupt. Describe it with
-> the "aer" name so the controller driver can use it for Root Port error
-> reporting.
+On Wed, 14 Oct 2026 14:18:53 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Keep the fifth interrupt optional on R-Car Gen4 SoCs so existing device
-> trees remain valid. Extend the example accordingly.
+> Extend the A5PSW DSA binding to cover the ETHSW variant used on newer
+> Renesas RZ/T2H and RZ/N2H SoCs. ETHSW is derived from the A5PSW switch
+> found on RZ/N1 but differs in register layout, clocking and interrupt
+> topology, and exposes four ports in total (including the CPU/management
+> port) instead of five.
 > 
-> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> Add a dedicated compatible for RZ/T2H and use it as the fallback
+> compatible for RZ/N2H, since both SoCs integrate the same ETHSW IP.
+> 
+> Also make interrupts and interrupt-names required for all supported
+> variants. The existing RZ/N1 SoC DTSI already provides both properties,
+> so this change does not require updates to existing RZ/N1 device trees.
+> 
+> Add myself as a co-maintainer of the binding to support ongoing work on
+> the ETHSW family across RZ/T2H and RZ/N2H devices.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> Changes since v3:
->   - Rebase on Marek's Gen5 AER binding fix:
->     https://lore.kernel.org/r/20261003215710.792518-1-marek.vasut+renesas@mailbox.org/
->     This requires "aer" for the Gen5 SoC PCIe4 controller from the
->     beginning. Update the subject to clarify that it is optional only
->     on Gen4 SoCs, for compatibility with existing DTs.
->   - Drop R-b tags due to the changes.
+> v2->v3:
+> - Added a restriction to disallow port@4
+> - Updated commit message
 > 
-> v3: https://lore.kernel.org/r/20261006084638.3821710-5-den@valinux.co.jp/
-> 
->  .../devicetree/bindings/pci/rcar-gen4-pci-host.yaml | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
+> v1->v2:
+> - Added full names for SoCs
+> ---
+>  .../bindings/net/dsa/renesas,rzn1-a5psw.yaml  | 157 +++++++++++++++---
+>  1 file changed, 133 insertions(+), 24 deletions(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
