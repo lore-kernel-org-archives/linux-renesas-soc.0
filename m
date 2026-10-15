@@ -1,187 +1,154 @@
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83502D12EC
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 00:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792024928; cv=none; b=dBVLIxVQ1ZxFS3VhShEJrhFGdeiAp8Gj6JAIaEHuK53RkhPyn5geNuCtirxYRks1XRyZ2Iiwp0QVG1lzEZ1nq8KTOBq1Cqkiutb+gBjVZE+AAWV+Ut+jQ3JGyj5RYPDHaMZLsQmx0PgNKhNFl5KzlyjfV1601kupUM2NkDdalAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792024928; c=relaxed/simple;
-	bh=+a/OKUtIrEnquOjSF4TKvW8Wf2d4YlbORphsb2iVCy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=roN+JlQdcxhJIs+FnYShL/njC9Po78JtJl9I1hTm42R8gyWAWN+Jy+i6/S2A9FquK8dhSjmvCHywwSD8RaZ9PyS8mrJL0anHMIRc0TTn0F/bSwl2+PSkJeCkQQJi9pvzlaryorXICaNqe4yNVCRUF2DehGe+IcDniC2Bl2JKra0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7SlaTyF; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B737333C194
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 01:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792028385; cv=pass; b=uTkPixqrlnH55zq3Q8ANKaXN0DO+cjZRmV2h09vRafrBNmqm2rF/UwkPqZ/c5eYFick1UHtW7D5IfVhe40++UVJLz2a5H3I9pCFdCgkh21h7jnimJZyU7qcqsj311uYyADySdLEy1RbOFID677MEe6GbywP3SqROenoaznqItLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792028385; c=relaxed/simple;
+	bh=7UAKkSVFiLjeCKqwwiBA8/TCsyeb/yPhvR9ZVVpCVjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZQaptMtqmpCjlXWkGcpE0a9bPrFcbMKkFvXmVXFNLpjlrDUObdQLo78KZSwsgYM3FsyIecXjlIaoPlWwQzLaf4Mxglj7ew92uC9TN07F54AGAzLsxzKZKSN/IY8Hs45Op7p6LwCeEBDWaOC5nkKjDzDdQHWG56Cp2sHTZB0p4Hs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1n/68Qs; arc=pass smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7SlaTyF"
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-917d595138fso6189906d6.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 17:42:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1n/68Qs"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cd6028ff33fso1918047a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2026 18:39:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792028383; cv=none;
+        d=google.com; s=arc-20260327;
+        b=NgjSS9mVizsRMdtVjVFkUOY91DmkGC+ryZAVUeKfvq+zfpUhhCBmf3MsWozHHP8bO5
+         kNyDxn2NBSX6f8Z/wzmCJS/YwqJHeSL+n3pe6qstsuahaLA106Vmg5FHJIKwcEmGt6sE
+         mCWrREMyK68Fdk8+rhcQBpHXMF9MDoSUE179RhrOuVJT9TTb0Nf/H93tSI2JqXKmZDYe
+         dd19MjC2iQe7+bmXMymdnGfkUbPcMoK6gOiwBteAx3AyGConnHN8qzpwGc+spT9fTZ9s
+         toQl7aIJ4m+qXuYr6Z3GWuGo3qjq+p5CQgbQVMwQ9A8gxcb1kFZ/bRAVfzHS6A9kMABV
+         /r+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=7UAKkSVFiLjeCKqwwiBA8/TCsyeb/yPhvR9ZVVpCVjM=;
+        fh=WTcP3b/3wIAtyj5d552xNPvDZ5QJP2qOHOR3ysVREtE=;
+        b=Slm9UQYL5RD25/2ML3ouCLsa2azT2mg9gSlQv3QgjukEn4jk0bq4cE7UoZDXkjSBR3
+         d82B5diZtyepOwNEyDwHSowVhDXRRKkSQRaHfuEXSwExboq+9ONd09P+q4YKelk9Md11
+         tMPVwabxf5km6ITdETaea3ATtIyqiEAcK3jUu08qt4cG370SK1z4n3RoY2wFHLT55MgU
+         D+sg2O9eRLzBoTDfbX2gLJtFeBSmJIQyLgn3BHpLu1/MXSGAyCYise+jss29sLo0ZZ4i
+         Tg9XRGV2LlPYBO3wsEiOOWJUksc12xvPXVrHXQ+1m6dexsOxJaY938jEx8VGilatt51i
+         noqQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792024926; x=1792629726; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=BEZUBFo8nRaoj8VHLSEwqMGAs0iozVKtPiCZ6gjjOMs=;
-        b=g7SlaTyFWvzROrs/KuY05gjrqhTihvFZQVxa9FcgupWB49vqrdNDyyg7slqMeG/BZj
-         OSVwcll3S2IIX64S0lIcPzVqORDUvlgVm5MOqfpGqZ4iCnT/sAStOcUYnsDXqnWcoC8o
-         JRVrIunbuh7zrAJqNxC43MGxp26R1I/5P/kJQXKKPjtSIAs5bYh7rvoAOVgoWz9HuK22
-         JahVxeQd6GqN39ncT3pWBeBsZbD05ysAe3DR4lZf+SSQuaqK0sMozixQ7zBuncBYkjAw
-         pQcppXrL8rLRVBq0J0DmY07oQS9JLlmfi829W9bh1Pni3Fc5uH3H0QQ5GbNICXVg41tF
-         eMtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792024926; x=1792629726;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1792028383; x=1792633183; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=BEZUBFo8nRaoj8VHLSEwqMGAs0iozVKtPiCZ6gjjOMs=;
-        b=hNJNc1pzWymOZZx8eIhPD1fMnNpMfR5dTPITM56P9rOy3NJ98j1EXkkRuW7+NOrp6j
-         oBehcdEkk0KDMfVBtzRkNqL5ucMyBhv7eRQ95BjXwwe4/1AnPG/pfxCr6go4s0G/MWmd
-         jUr5GpsmuWsonVDOlONvrkhkBOIucmz7vYILPN/FEeW9U3x1amexDOWSss4TupNn60p6
-         8lcbGF/zbF6E7liemzHDz3xkK/pCS3o2v/g/5ZAd6Zr1eIv8S4C7VtQr0BXk2opnwh70
-         sBvi0frIsfScrC0FwM0n8Q0FifGhV67JEpSd8Q1VwQLcuwE10E9bJGnGmFgmmFiauiim
-         BWWg==
-X-Forwarded-Encrypted: i=1; AKwUvBwaVozGt+47oMd/Zfmxpwswjv3Ah8pJaea4DIbHeHVGpdzIewM1nq6atb/ThxhpNTFrYlAOU2peNVlF35+PZ38fAg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJLO5ssCdkn33r985P7L0+Q23geagLGAyQkfMce/7H5QDbl+7d2
-	FiF298pZS1vzAxzxpHAU2oGxiEiGqJzHS1GTckDNzhfpfu7QXbj475E=
-X-Gm-Gg: AYBFou2BB9GcP5JC3rgvi0qGCqN10i/bFQpdxwCoQZalbVVIIgmXp5xAgMhSTo14mam
-	r9gR0KQ0bT01nWF16HLQ6F7gw3WvIRWseHItAVe8aeIf7n4QiXj3d7yn6ssOtTNC/+6g+MUy7+q
-	PVK/30gKhJDFGXMON9dp3LGIxIpDRk7hGzHWLotDWJwdzixm+IrD2xWTdLNk8FNeq4nRpmg3g8X
-	Gq7U6BxBoAE1iGJCzVj4RNiZjDEdeeu04xlMBIbfdOHm+kgmpft4LQV6K8jhqPAgP41M+UQWLyH
-	KbJBbmLDaqcmygySXc/bbTIIgj2S1mWngmu0aCsB37cQDpkKazp7J2ZFoGSy+0UrwZdCg/82bFk
-	h8GMKLy2OcG71RkpULLPHZVP3Ezdev7u91KzWVJDDOE3omRoiZvInPmvw7ZyjYIAlLotJ9LxbDN
-	I+fpuT2i9Ea/wrZI/mRR/gADHlD/bAFriveuG2298TiFyZH2zWKPvlX7d9EgLpWP0FTC4OyCwdy
-	BUx/wBmiFd3FfbbVNY0PtRfa5ObxYLzWJ3o5aK+EBNLFkBRT0HaHmaemhdyoNB3BPqUdv5oeoot
-	yOmFvqULRHQ9sXNC
-X-Received: by 2002:a05:6214:458b:b0:91b:8b44:d4be with SMTP id 6a1803df08f44-91b8b44da3bmr147327936d6.28.1792024925532;
-        Wed, 14 Oct 2026 17:42:05 -0700 (PDT)
-Received: from gmail.com ([130.203.156.90])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91b97b7b31esm66811476d6.26.2026.10.14.17.42.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 17:42:04 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: niklas.soderlund@ragnatech.se,
-	mchehab@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com
-Cc: linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ae878000@gmail.com,
-	jacopo.mondi+renesas@ideasonboard.com,
-	sakari.ailus@linux.intel.com
-Subject: [PATCH v2 2/2] media: rcar-isp: release the core interrupt before destroying RPPX1
-Date: Wed, 14 Oct 2026 20:41:59 -0400
-Message-ID: <20261015004159.2202899-3-mhun512@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261015004159.2202899-1-mhun512@gmail.com>
-References: <20261015004159.2202899-1-mhun512@gmail.com>
+        bh=7UAKkSVFiLjeCKqwwiBA8/TCsyeb/yPhvR9ZVVpCVjM=;
+        b=i1n/68QsX5mSayOSTyq612muWvig38beYybjN53xxBowSpgKghyZ6wLe5SrKRhhFLN
+         z7VEKfLPkGfG2/zX+ux25IZEL7f9Xi3dx+zNQtEhna+Fld8jir/Y0appgbtwM9AhTyTn
+         cFtf5G0MM3ZtF2rOfVXOL9T4tCmaBtLml2ExD+NrV2AsIUd0uiADbe6TMwAseyl0fs0l
+         ME3EELltZr+tcP01gHbOPNZmdvrjYY17UkYzSdaZZcxx08jvN5RXef9ZV5nyBLR7zKsL
+         a0OiB70a0Z73i6ukXnGBCyjqZIjM66xUfkL5i1e5QHQSTD2ujy256iZQHFetz10tWtyS
+         hxyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792028383; x=1792633183;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=7UAKkSVFiLjeCKqwwiBA8/TCsyeb/yPhvR9ZVVpCVjM=;
+        b=B7GfqIO6BSZVr/5GZlzCWv+Q8whJD5TPv9FLmBmR86YHGMg7VlVTmn1At8og35518k
+         AXayyk2HN7WfIlKE07yFs7owkrzXkKTUWRZfISgRfFjshbsxtcTlZhde0BQ5ViO+mamh
+         m38aKVY7G2XUPuMW+mgCqlyOZqOn9q2tPPoIjtsaV0i3d+yvQRzQg8dlPsdgrOG8ygpG
+         XLZ+99d3Gqg5QXbdivR15CkOP/xYzrH+aNzDyFDU0BODCSHuV1rCwHGaU3omQBDj8830
+         KX5BVQqJ4uH6PXXp3qShIj0NmFa4Ef9wIdW+MstZ6lhDpZ7io/aZSkAzBi8ve3dvLdUb
+         RfiQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz5QZjsolSLqAcc3M9N9YK9k4XElre3yAJcCJERPJo0mu5dYaGzHVCJY2oF0QIoTqhRdXM6o/leQRNz6/iiTWOVEA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKkdV5u54i5yheLaCtVJXlA+LNOUpsPbcBiD+VBgy4XiFLQoTMn
+	RktFSUjL+lBlCjEfAGpLtV6KvDB1xPNSPahe5gGClIRy5f1m3bO9z1yez0+IbgMAqU6NPO1LWyF
+	lvFjjSLSfpkQoYqeE6SbvTY2BVlMjZ4M=
+X-Gm-Gg: AYBFou1yIcBEhiiW6fAAXiwo1NBbCYjPGBJVN2YEPexXWozTu0Ud7rAkyMd8pORUmRn
+	5VRfc1+DVqHTQ9dYRDSzEDqCugCpJ9UZHOT/BZQlbb8Mdon4jinpxG+NoUVUMpSwQB8cnqPyEPR
+	EHqPyq6P+3fI+HBF+6N85R6M6mmgWWfFI0HJo87Og7Aq3fz5/nknNYVRLW+C9OtKYvN4rp/PzIJ
+	nw+Qs9hOGiguQ+12vOWSBf/OtCWf1J7C+rnLYEDDXdP7zOEkGOcRiGA5AIgM+RhPhCzLWwkMZcC
+	x1JBNmOyIJgyvwwU5CCLu0wX286O3T6A2x2dGdBwnEXEUqwYxkXk0tG1fgcuBvtsCn6wMJKf4pj
+	CXLii1eP12fuFQ8WwyqwJi9yHJ6/nGfbf15PTuOeaj8sH+kCvR9RGacmkbEr4E8Q8hMI=
+X-Received: by 2002:a17:90b:4acc:b0:3a0:e1f7:9b04 with SMTP id
+ 98e67ed59e1d1-3ab3a60ac9amr16312045a91.12.1792028382966; Wed, 14 Oct 2026
+ 18:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20261008103831.542533-1-phucduc.bui@gmail.com>
+ <20261008103831.542533-22-phucduc.bui@gmail.com> <87o6cyxyau.wl-kuninori.morimoto.gx@renesas.com>
+ <CAABR9nHvCfabGfBu85bm1r=hP3b0ZiCsgZfShhOv3gNUfjjhGg@mail.gmail.com>
+ <87se2aw3ot.wl-kuninori.morimoto.gx@renesas.com> <CAABR9nG-YJZEdj6pVD-gbGU6J2EfRMQYsKd7u0UTgfrWOyAPXA@mail.gmail.com>
+ <87qzhtyxw6.wl-kuninori.morimoto.gx@renesas.com> <3a6759c7-84bc-46ff-93f1-965c7e8dd4d0@tuxon.dev>
+In-Reply-To: <3a6759c7-84bc-46ff-93f1-965c7e8dd4d0@tuxon.dev>
+From: Bui Duc Phuc <phucduc.bui@gmail.com>
+Date: Thu, 15 Oct 2026 08:39:29 +0700
+X-Gm-Features: AclHuK8C1u90VDPCucQhY3afyuLfcxP0SCIJrlA3M2hLxVwcjMsqinLCGr2nhSI
+Message-ID: <CAABR9nFA5p=5hnMoxFHLtmGEj4kvfrN6M6UFPnm9hRQv_CAP6Q@mail.gmail.com>
+Subject: Re: [PATCH 21/24] ASoC: renesas: msiof: Fix msiof_close() being
+ skipped on rollback
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	povik+lin@cutebit.org, Andrei Simion <andrei.simion@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, Shengjiu Wang <shengjiu.wang@gmail.com>, 
+	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
+	Nicolin Chen <nicoleotsuka@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Cezary Rojewski <cezary.rojewski@intel.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Kees Cook <kees@kernel.org>, Syed Saba Kareem <syed.sabakareem@amd.com>, 
+	wangdicheng <wangdicheng@kylinos.cn>, Chris Bainbridge <chris.bainbridge@gmail.com>, 
+	Linus Walleij <linusw@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Neo Chang <YLCHANG2@nuvoton.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, u.kleine-koenig@baylibre.com, 
+	Pengpeng Hou <pengpeng@iscas.ac.cn>, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Hemanth Selam <hemanth.selam@gmail.com>, 
+	Md Shofiqul Islam <shofiqtest@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Zain Aboobacker <zainaboobacker33@gmail.com>, Sang-Heon Jeon <ekffu200098@gmail.com>, 
+	Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>, 
+	Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>, Bo Shen <voice.shen@atmel.com>, 
+	Vinod Koul <vkoul@kernel.org>, linux-sound@vger.kernel.org, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, 
+	linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev, 
+	linux-rockchip@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-core->rpp is a separately allocated struct rppx1: rppx1_create()
-allocates it with kzalloc_obj(), and rppx1_destroy() frees it with
-kfree(). It is not part of the device-managed core allocation.
+Hi Claudiu, Morimoto-san,
 
-risp_core_irq() calls rppx1_interrupt(core->rpp, ...) before taking
-core->lock. rppx1_interrupt() accesses rpp->base through rppx1_read()
-and rppx1_write(), and can also use rpp->dev. An interrupt handler that
-has passed the ISPCORE status check can still be using this object when
-risp_core_remove() frees it. Stopping the video queues and taking
-core->lock do not join that earlier part of the handler. The managed IRQ
-is otherwise released only after remove returns.
+> >
+> >> For rz-ssi: in DMA mode, the driver registers the generic dmaengine
+> >> PCM component, whose .open callback already applies the integer
+> >> PERIODS constraint via snd_dmaengine_pcm_open().
+> >>
+> >> Could we drop rz_ssi_pcm_open_dma() instead, and keep the return
+> >> value fix only for rz_ssi_pcm_open_pio()?
+> >
+> > It seems fine, but I don't know detail of rz-ssi.
+> > Claudiu, what do you think ?
+>
+> That should work. I'll test v2 once it's out.
+>
 
-Request the IRQ after the RPPX1 object, subdevice, locks and job list have
-been initialized, so probe error paths cannot leave a handler using an
-uninitialized or freed RPPX1 object. Release and synchronize the IRQ after
-stopping the I/O nodes but before unregistering the V4L2 device and
-destroying RPPX1.
+Thanks for your help and feedback. I'll send v2 now.
 
-This issue was identified during our ongoing research while reviewing
-kernel code.
-
-Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
-Assisted-by: LLM
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
-Changes in v2:
-- Identify the separately allocated RPPX1 object and the rpp->base/rpp->dev
-  accesses in the interrupt handler, rather than the core lock lifetime.
-- Move -ENODEV handling into a separate prerequisite patch.
-- No code changes relative to the IRQ portion of v1.
-
-Compile-tested with Clang 22.1.2, W=1 (arm64). No runtime testing.
-
- drivers/media/platform/renesas/rcar-isp/core.c      | 13 +++++++++----
- drivers/media/platform/renesas/rcar-isp/risp-core.h |  2 ++
- 2 files changed, 11 insertions(+), 4 deletions(-)
-diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-index 586a5adbedfa87025d4258fd75a312a9a7b05ae2..6bf1dd6504862a50299893270e68f06b0d6ed25d 100644
---- a/drivers/media/platform/renesas/rcar-isp/core.c
-+++ b/drivers/media/platform/renesas/rcar-isp/core.c
-@@ -802,10 +802,7 @@ static int risp_core_probe_resources(struct rcar_isp_core *core,
- 	if (ret < 0)
- 		return -ENODEV;
- 
--	ret = devm_request_irq(&pdev->dev, ret, risp_core_irq, IRQF_SHARED,
--			       KBUILD_MODNAME, core);
--	if (ret)
--		return ret;
-+	core->irq = ret;
- 
- 	core->clk = devm_clk_get(&pdev->dev, "core");
- 	if (IS_ERR(core->clk))
-@@ -887,8 +884,15 @@ int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
- 	spin_lock_init(&core->lock);
- 	INIT_LIST_HEAD(&core->risp_jobs);
- 
-+	ret = devm_request_irq(core->dev, core->irq, risp_core_irq, IRQF_SHARED,
-+			       KBUILD_MODNAME, core);
-+	if (ret)
-+		goto err_destroy_mutex;
-+
- 	return 0;
- 
-+err_destroy_mutex:
-+	mutex_destroy(&core->io_lock);
- err_unregister_v4l2:
- 	v4l2_device_unregister(&core->v4l2_dev);
- err_destroy_rpp:
-@@ -908,6 +912,7 @@ void risp_core_remove(struct rcar_isp_core *core)
- 	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++)
- 		risp_core_io_destroy(&core->io[i]);
- 
-+	devm_free_irq(core->dev, core->irq, core);
- 	v4l2_device_unregister(&core->v4l2_dev);
- 
- 	mutex_destroy(&core->io_lock);
-diff --git a/drivers/media/platform/renesas/rcar-isp/risp-core.h b/drivers/media/platform/renesas/rcar-isp/risp-core.h
-index 627a762d6b192c6cac454ba30cde708406f550ce..70432cf4a88ca97fa1c93cf4a42bf7454b7739e8 100644
---- a/drivers/media/platform/renesas/rcar-isp/risp-core.h
-+++ b/drivers/media/platform/renesas/rcar-isp/risp-core.h
-@@ -112,6 +112,7 @@ struct rcar_isp_vspx {
-  * @dev:	(OF) device
-  * @rppaddr:	Hardware address of the RPP ISP (from OF)
-  * @clk:	The clock for the ISP CORE
-+ * @irq:	Interrupt for the ISP CORE
-  * @rstc:	The reset for the ISP Core
-  * @csrstc:	The reset for the ISP Channel Selector
-  *
-@@ -138,6 +139,7 @@ struct rcar_isp_core {
- 
- 	u32 rppaddr;
- 	struct clk *clk;
-+	int irq;
- 
- 	struct reset_control *rstc;
- 	struct reset_control *csrstc;
+Best regards,
+Phuc
