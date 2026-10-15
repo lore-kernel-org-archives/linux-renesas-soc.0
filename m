@@ -1,140 +1,123 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C0E4BEE58
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 11:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792062340; cv=pass; b=tTDIj8P5Gi8R5wdlRzZZyXlFWWVtnbhuMvVHnOk+RVav+eb6DVfK1xzlsiqPyTTv955i6z1llTSrgK1hLBallj0fgN+A7fRT1hmYJ5EHzThMCq0tvtdi5++JWis5vAU2rH6rNt2aHb5FTw2kQ2yM6UWWrG3juY19GHt7VQ4kZXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792062340; c=relaxed/simple;
-	bh=yPSLsauNWO+8YHpLu3P066P8SvE3P0pPuLQr766NovY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ni649TGMCeF4PitR1WEUgyuXDVc/EMYhHvRFnZwhcXBoOfnRAjPJntSG6D3/zLM6wyocH8+weVoMInEoLXOcYEfukCDDaWwAhOMcAbHw99z1nySC9M3Ipjbed2zZyfPA0TZvX93SO3k0m+Bi7WaVVeSUF8/kj8bmEyD6oZcqLjI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xxeg+l4K; arc=pass smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C494D09F3;
+	Thu, 15 Oct 2026 11:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792062753; cv=none; b=IqTPoZbpwfGdoCjiaXKUrjXJwJK0GYWFicUs7plDLUFxVXTQywduuu7f/rizTpX8Ljngz5gDiTkaiZ3xmbcVePjN5qJqMHpTURGKQKA8m2VCbYAHm82tcMlkWULIUwYTlpq/yC70TdzpORX/lsosMbV58f8RiiKAK/va+yRdmd4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792062753; c=relaxed/simple;
+	bh=bkweXtoihosFshd+ODeZ15r+eBZfG4aT59zz7MBbLuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlEjjGp6ZjUmKurL5QTi1zw4+0vnP86WOupPWupb77fBt2wFWe3Tm0XvseHwvTL5xKQQDOM3XtUkO2irLlLF5rX2HeMxifzDyuvYeF/1fbIfbUFhtQg7Nj9XsNL9flgs8IEOHwrV0GwGu9AAoKzkDwUPd7KsJZAmu5XaxAawFYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+8xOXUk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xxeg+l4K"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6ac76a02368so4866341a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 04:05:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792062337; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ogzyIQs+e8KhZdqcEbGeRgJQsviyEO7iVn9uMS0++RTRoCPxLHLsRAfqtAQUvV6mAx
-         yU42VBG2hca5vXuUKdAI1A5fBv+b2XtH8KKqfMzGRirUv0iqlCFMyL+fOPAfx9R/hyyr
-         H19nUKjjr35XaxlZVKnBXedpn7i1iQND6sN87lx/9uL3cQzn5y44u/4ANBJ+fU8PxZqz
-         x9uJhp/66m9ez1AyxficvVo3Z+bcF3EhyT34RWjeDxdwsfmay0RaMx4JtFsdDFaBiHaP
-         pQPN8e3KMkTmxI+VkzFA7wps13n+OIgSe1ctAXdu516AXvLbCXN10nqOIG8AALToueoZ
-         x62Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=rt6zLrcxhkT/9F91e1q6oOlpV0iVcuAdHVJ3g/kDDn0=;
-        fh=z/CaBeHCUebYHTxlSayFNE1Wtfmh5ec/gjZQ57vhobs=;
-        b=Qk0g7muKUzyZVQvVllfkxBmnK2zOjqBUoYBoY+mJaHOiasahWsfGoA6Lro+/+Bvjku
-         lEom3sbwqz4nCfr/JBF4Gpmate5fHWuTlm4jBOipMGbo4pbs9gDVm9RZZD0xgWRqk3qQ
-         uFsbG0dqHBJzIs4iC0QzkHcYkksvGr0YuIWDVJTrPApU5XYAA24co5SyXxk/rwnvhe6z
-         xCpQ04aDcCtFg/gBxbt9kaN9OMQdyf1f24cNMmO3TBuJQWYWn9o7qZsWoVt8rwXWNULf
-         bX5ofK0C/u0KoWaxqB3a+Pdh46yMIJKkci+j50FtUmvKMI65fZb+CduoKte0jG2dUH6C
-         3e+A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792062337; x=1792667137; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=rt6zLrcxhkT/9F91e1q6oOlpV0iVcuAdHVJ3g/kDDn0=;
-        b=Xxeg+l4KOR/hsGeSlEtXAcxY2ztBs/3XMF9Zf5ioIf4704ptJCJ9M0CbGOlx+WtEg4
-         pjjTBpvuLzPEZ+R3zsErZQqDbyGffSeDsMIO2aNLa7I8i7WGf0EELZibZoIUGPTNz4Uz
-         kAo8VazbOQXtmOoXZBr64vKG/t+mc2sgPOTHgeLEbmJhtfwjhU+cROP1zn0PU9xj+UFG
-         /AFjLLEvuutKivJMy0178xoMDWnUkMjLPCJCKaQ6E/ZCTp9hkc7crEyha8UHVwlpnNQI
-         kw51zaMdvwlYgcblAxEc4+3oZx52SyrTWG1H3tDDu198O6pbsRQggTJhoMI1ji0QdPGK
-         qz/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792062337; x=1792667137;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=rt6zLrcxhkT/9F91e1q6oOlpV0iVcuAdHVJ3g/kDDn0=;
-        b=ibGtokJnL/I6sa5hCN7m2BUdzacJQQ+kVMpsv7dEh0uprXueeUNGd61kc+EM9PLPPF
-         QpGV/RvcEgN/AA3Nuxlto52v/6/HYdXsAsUS43SQALebims0JbLPXbwMF77kN0iMcdCQ
-         xLNMRNeAU7jvjX25aUwAGolpCnzqEIYCrFRZ0eqeFGmROxFErSVDOS+oiga2eDJekf0r
-         0380DJaN9FA8mY4KLnJP2da+Sl6bmYVLRmeOKumm+wFceov3myV24w6IQ4tJBqNE/a2v
-         eDALC3BOcoyExSC0hgXVZ6m1wYwwYXUMGUcmFJN/0IqjX7wfIJ8x0i8GGPSW/P72echE
-         0bIg==
-X-Forwarded-Encrypted: i=1; AKwUvByVAL+BXGwcKL2NaJc0vMRCLETFR8u6LA5ouf0FbF2HuYhQ1i3plycWnvsnusVrCRj6MJGemyfkgxNRJVImMmtH7Q==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIVvS/FRMLftnzv87gaIAqpsyqx9KSdLhmYiDvVcnTwL80tiuse
-	YMm6xX74aiO+RAjfsqF9Y8ItWnlQMw+g2EzWjlFj6/rxRTmy5Kfr5Ycu4dnpdnmmZrakMPxnjjh
-	VMOTJRdR9zh9ZQXqu4YPUEfzqLJcMz+w=
-X-Gm-Gg: AYBFou1xh86S7me1Hrp0CmUuG3a56WYDWMb6Q9SMEc6QZZU5ywDlxzmoAQ24YvSXFrW
-	ZyN/Oc6w7TTbdggOrE04sQtxl30QONjJjp3l+mw5VuUL1/fqykPiDMDsVicEBBrCGH1QQ/ftAic
-	dQc54eOXxxGNolCaqlcn4hExnqfxjBK8xkTJrnkdNWHOR5ooUJot2X01jM5dqQzPGKRjj18VytJ
-	dxtvdUagFQcNjXO1hpcsc1LIdcSw7sj7u6blyxP6vUa2hTKfkjajDFXKFbfoeug/tF8wlsvzF1b
-	CFVPBI0LqmIw6OfSrZAHlCVn8Iq5culYae9KQlK13Ly16bHC4iSB+mHkHnI4fLRHY5AHfFD63rk
-	LVBiEOryHoOtKdTUElF5MHtXXos7w/yAMH5YQO51GydCHe6H0nzLE39ipEYjZavOnVFSp+Z5QjX
-	o=
-X-Received: by 2002:a05:6402:52d8:b0:6a7:ea54:38f with SMTP id
- 4fb4d7f45d1cf-6b17c272132mr13118289a12.32.1792062337050; Thu, 15 Oct 2026
- 04:05:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+8xOXUk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5727F1F000C4;
+	Thu, 15 Oct 2026 11:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792062751;
+	bh=Hd6BBnEO5pGpbCON7Q87RSeR9u1q3VXpiWY+WMKFASs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=R+8xOXUkDkZ9pKZHBmcNtj8NyuP6cR0oqQgoZ8UCc+tB3DzT4QCvEJXW8Nh+PAHLO
+	 l4qO7p4Clap8JJBD57iJA17dF9oaApVDpvp9NMyxi2p9zza3C5/jxCXVuqp97P3kH/
+	 6RncdVn38CsHW39zcgI8DIfqy4X+t2GhIU9JFMzzboPBxl+hGJOmX6ojQV+MHKJjzv
+	 keBaU7H/dW4cHXdRTPAOoj3PXUzd0obz4/xGRkI4yhpdkI4hjeNJmNTCIIZMIQGcGL
+	 wUvK5fhMpbxaZqaxQQpRrEEA+IDFwqvTiLrkNMorRjRdP64wUDyKUMoYHX3QYp6pVZ
+	 cc0SD3e32mliw==
+Date: Thu, 15 Oct 2026 12:12:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: phucduc.bui@gmail.com
+Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	povik+lin@cutebit.org, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrei Simion <andrei.simion@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Heiko Stuebner <heiko@sntech.de>, Kees Cook <kees@kernel.org>,
+	Syed Saba Kareem <syed.sabakareem@amd.com>,
+	wangdicheng <wangdicheng@kylinos.cn>,
+	Chris Bainbridge <chris.bainbridge@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Neo Chang <YLCHANG2@nuvoton.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	u.kleine-koenig@baylibre.com, Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Hemanth Selam <hemanth.selam@gmail.com>,
+	Md Shofiqul Islam <shofiqtest@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Zain Aboobacker <zainaboobacker33@gmail.com>,
+	Sang-Heon Jeon <ekffu200098@gmail.com>,
+	Bo Shen <voice.shen@atmel.com>, Vinod Koul <vkoul@kernel.org>,
+	linux-sound@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
+	linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev,
+	linux-rockchip@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/25] ASoC: Fix constraint return value handling
+Message-ID: <ad722297-5ca5-42c5-a07e-59fa958387c1@sirena.org.uk>
+References: <20261015014324.5569-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261009165710.1320233-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMRc=MdcWS0c9E0V3cJj9B9WMAe0vSs9e2s2EauRH5zFkOng+w@mail.gmail.com>
-In-Reply-To: <CAMRc=MdcWS0c9E0V3cJj9B9WMAe0vSs9e2s2EauRH5zFkOng+w@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 15 Oct 2026 12:05:10 +0100
-X-Gm-Features: AclHuK9XNtyctc4-zz7ILqGJPTJfzfoX5rtUFZXlnBV5qOrrlt95vuLzAJaAEjs
-Message-ID: <CA+V-a8uVxwP+AFbRYb-weN+EHQ5rFxo7gXPus4muSrMri1QAAA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Add ADC power sequencing support for RZ/V2H(P) and
- RZ/V2N SoCs
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="syrl3Afg657kytt3"
+Content-Disposition: inline
+In-Reply-To: <20261015014324.5569-1-phucduc.bui@gmail.com>
+X-Cookie: Tax and title extra.
+
+
+--syrl3Afg657kytt3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bartosz,
+On Thu, Oct 15, 2026 at 08:42:59AM +0700, phucduc.bui@gmail.com wrote:
 
-On Thu, Oct 15, 2026 at 10:43=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.o=
-rg> wrote:
->
-> On Fri, 9 Oct 2026 18:57:05 +0200, Prabhakar <prabhakar.csengg@gmail.com>=
- said:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Hi all,
-> >
-> > This patch series adds support for ADC power sequencing on the RZ/V2H(P=
-)
-> > and RZ/V2N SoCs. It introduces per-SoC probe functions for the
-> > renesas-pwrrdy power sequencer driver and ensures that the necessary
-> > Kconfig options are selected for these SoCs.
-> >
-> > Note, the ADC driver and binding patches have been posted separately.
-> >
-> > Merge strategy:
-> > option #1:
-> >  - Once the pwrseq-renesas-pwrrdy driver is merged in only then
-> >    the sysc driver can be merged via renesas tree.
-> > option #2:
-> >  - Merge all the patches via renesas tree.
-> >
->
-> IIUC there are no build-time dependencies, so the pwrseq and soc parts ca=
-n be
-> queued separately?
->
-Yes there are no build-time dependencies, and since renesas-soc is
-closed for v7.4, the pwrseq patches can go via your tree.
+> Changes in v2:=20
+>  - Add Reviewed-by tags from Vijendar Mukunda and Chancel Liu.
+>  - Remove redundant integer constraints already applied by=20
+>    snd_dmaengine_pcm_open().
 
-Cheers,
-Prabhakar
+v1 was applied, please send incremental changes for the differences.
+
+--syrl3Afg657kytt3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrQtRAACgkQJNaLcl1U
+h9DzAQf/WcguhgqKmLmBlSGrfAmohZap9b+qyUgyk3gBcdL4pfDRN2N0m/jg80sq
+EGu7yBR6LzgAalcEkMLnjACfVsi4kZuopa6nijef9rrYX/cJcxUrOSjK3l2G+rD8
+U6h20fO6YVWgAkmtLtV9G7PU+gy+06ZO8snDL9dTODv9DYyWZvQ4mTgJvAK7rYQP
+mBKi2rhlpXe2rMyRIvXW4FQtX1kqOzt+gtSHjApzltjchxaDuM6/jThE4a8+o4Ms
+XpUeCo9/Bg4u29Zt4okIN1S1up/cOjyNcEQwgf+5Lf0qlZXbV4Dyk43TNms3vuED
+ZSE26kZ6DpaP/lgPoejNuYeJrPX9Pw==
+=HbjQ
+-----END PGP SIGNATURE-----
+
+--syrl3Afg657kytt3--
