@@ -1,165 +1,240 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D1447986C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 11:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BD84CB8D7;
+	Fri, 16 Oct 2026 13:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792149971; cv=pass; b=CQE6nOaxmNHjicGb7pl3ZI1d0SeqytaYaqo+ApBZ4vhLZNN996OxkoNlUx+krfb9C8osujz6aBljqe/7+MGQu1hKwU18scMocEONHs6jgiXelttCeQjx0h2/VMGsH0tiWx/v4qUatXJYuQGOhw2+yAxNxFXSHuQQkzDmyfolBPk=
+	t=1792157667; cv=pass; b=NNylHP7DTYz596za3QEgaufgUxL52QRHIWPvA2T8CNZ/Jtb8hhKhxWHWy53l8rz8CsowVVQoAhpg9WSXqk+JQwuPowPL2HO2a/uruLzCzLbWnoP/kQZ3souPvueWTKpJxzUc/oZb3XfuboCiCzsqs1CqNv1M01IYhCz7/bby0No=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792149971; c=relaxed/simple;
-	bh=R7fc9o/O4yqhA3W/kJmDsBhaIBU4bJflgTG28U+KE44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qEkN45gGdlseiVrYi2UEoCDgVjw4JBWk7kJ3dREJ4kV5Uu7Y4w/QbP1274eQsGrPUnVT35Q1/7z6umW4naaeSl95B4cLqG3m81rQBY/N/NFHpTIGCvmdkc7eLR7UL1oj+H4JaHUc6eiuzlzbifcmboMBiC/iPCFh1WPyplEHMxg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JDUOhPxJ; arc=pass smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792157667; c=relaxed/simple;
+	bh=vccj/ifJc7BK2XQhk38NP+nrVX4c4SiXTzDhAs0eU9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XyMCRBhTmR5v7mlKdXGDyZHn5Ea/eh53xRtt9hU2+xZp51+Mf6GuScJr5kJop9ItYh1TM5H4e3H3vmXJeyJvODy7ls46sRD4cWRtDTTVUACoqKCiCjtT+hA4/3JxnwuXZekPzAvAr1lcBtKBESahkt8tO9mBRIqajhSRssVcqi0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=VQ4LSMIm; arc=pass smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDUOhPxJ"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2db80fcdf8bso37339595ad.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 04:26:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792149968; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Evgm2JW2qyvKbGVFzZwNme39cLldrU/8+siRWo2L3jXApW3kqE/BwVT+26bT4/wDRy
-         e+NOHu9WoYybAJ5UAAV7XQwL4ToyW85uxrL8U/UBnDDltuWY3B74sQPkqG5STB8dlhhZ
-         VrINCJZBRpJDMian3QnBvI88Ir6aLzGdPhOWqR2MohvJ3tHN3ToV9JEAqGSn6NaurFnZ
-         73VG8k9ZSJYRLhJ62feetN9tQ4oXr9HOYEF6izPQT07A8uD8KfVDHINu5J/oTepx277K
-         4FAf3xs1NArrZVHJH9XwQVAFK10DbHhaAXJhH6FqRJW/AKS5v+WBXZYgUmXQea+7p/RK
-         E3TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=vApPRxEqpGQADna5mwyiV+wtnRS+6fLHQ7GBxAw9kX8=;
-        fh=en/b2OxX2qo5MWhDThlEAxF3GPH6gGg4EtQqVVwZjns=;
-        b=hCdkhOgwIJXb+knLbH90XmKkQinNScnHffKrTcb87nTERRUyC3UmAi/pCBWHKQrITp
-         o5nG4L/6a3HvfyslVK92qOFvvwtycDr2AhUNd5j+RLU8eYLKOMUuYH2dLcLV+NBzr8yE
-         /PwcVoSaGw/mk5l3QtoHMLaN/CU9SfjK6PdLC8LF8/twt2NAIPcock0U+U6NOPa+AZa0
-         SztIWOh8h/iP5DAaOP+SPa+U2s4+OJrFoInHvBPhpN/zjBEJAR6CJsTpLh04GS86VZm2
-         OlcBXjbLbXx9elOoqCV9EMgb11PKydcyakh6nsw9JnrpNyhK/VU/mM666A22AEzkSbDQ
-         tsaA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792149968; x=1792754768; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vApPRxEqpGQADna5mwyiV+wtnRS+6fLHQ7GBxAw9kX8=;
-        b=JDUOhPxJFfNqGzF6qKagGJ9RdRyuEtlDsg+3/BmwOi8JRKOFv69C/T58mLShzd9MLR
-         P4lD88hLeJxqC/81P7wQ53ZoLv+i68KSQCpKcKcJfrTplRaSwkyHF9JOQS+TRyVtR2GJ
-         ynQGWzn8Zc8IG6In2A46KxGeym75SzVyTOUSEG3ZzyQLMuuDdyep816xIYjogWDEEwp3
-         3LywSes+jn2igaxBP5OqlRJ5hZLuboyXNJghCSwRjbQkzKZ9TkR7T/Hw9iZa6V/FBa7G
-         JsLPrG8QIVh1537rgYtGIKaIpXnlHN3ECjvINIepxb/jmZxy3P1u65/S6l99rhkiF2mE
-         3sfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792149968; x=1792754768;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=vApPRxEqpGQADna5mwyiV+wtnRS+6fLHQ7GBxAw9kX8=;
-        b=C1rlXXa+K4m3YP5QfbABC9y4ey7EjnJGngFmbrJiKh1uTHHrAVK1EI4RjpUuYlaBqZ
-         G9u1/h9FajozjTo6HqLPdj6nmAL+IXAtYNegV/kU7YykZhK3Y2k00KSWx3cF00gqAkCt
-         R0QENUXhONuHnOVhx+rkpGaaiSl4ajl3rW40vuQ5kaTRieBw0+0qxoqepCRu8jYkmjYC
-         ECPxlZO8NrzbtUs0ShfHzeejTk/xfEzgx4vnxSjHQvZ72eatjwB4kEF6Zt0qqoMgIvmK
-         zuSier70fkmNTz691QjbLzuQzceCbppQ/zd4U13fvK90gbcERnOhD3lRpPdDLduVviDQ
-         d/BA==
-X-Forwarded-Encrypted: i=1; AKwUvByWVcTHwFucgwCu03OtAZIfrYqC4YhQuHKz6ijFHXamlDjzsTpbdwe2frhbfeArZ+m3h9WUYQjnzk1pc9m3nbM/WQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLTnEyXye0Eu5DVdnHZ1HXuac2KhDrIq86S9o5AEfMkaA6HhKw3
-	hC9sGA7eEQygvjzDPSwWdM+zim0ZFMnz2Ss7hrcRC+3kX+K4yCvypMpR7NxxeVHBAhpnxCtesBa
-	NHrit3Nm7oXvoMFhD3Y8YzsZH310eIu0=
-X-Gm-Gg: AYBFou07IisHpE2WmsXM8WKpVhBFjhlYoQbXcRk21TP2MMKTE7K5Rt4PaeWIPX/XLL6
-	KKeBDo/1EAojv46C84OZklVSMdpA9ZUpwYwHadhoQmF6bLUNas687M2JKUvGan2/XLNapZQLRrk
-	S5t4/NVAlo1XhjWriYHrz9i1nvkK95ec+iL+GCNPLbf/YHO4nzjjEEI81hnP5yZfsW5/W3KIW6S
-	7YZ2rVo3ICXHUhLrqHhF7NY10xQ7UzHwXR2ltl4QxiSeLrshf5opXkEJlT/EkrjpYuOSkVf1/HJ
-	Snd5R8UvCTCxHPkUSiSRSbyM2LWwFvs0UXrh5SOyEs1uNTWRNFHCRYgaue5WarxiBwtozGs+Vwa
-	kn/Mkl4qBlxzeR8pefS+ILZzFBq9ulGPKyPFBU7SJTbCIXwKoK65/0jNANCNhzoLvHfg2
-X-Received: by 2002:a17:903:11ce:b0:2e9:4e83:1979 with SMTP id
- d9443c01a7336-2e94e836527mr62789995ad.32.1792149967287; Fri, 16 Oct 2026
- 04:26:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="VQ4LSMIm"
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 50E5A2027F4;
+	Fri, 16 Oct 2026 15:34:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1792157662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3nLMiQqnLjn6aVre0f/RZP2YyGl1quEq2a7eoQjxaGY=;
+	b=VQ4LSMImcv/161xpQDs9ZVPDfT8fHJo/N/IY8+Ku8osLUz1bb8+5sLdwVKJd4Lwa/b1/N5
+	gKo1UBGdafjmyy0RoZZ2tSvFVEic0kOV6mN8bF5IKlXgWCV0MU9DX4tt2Qa96keQHkp27/
+	ICIApdgKHAz+KKenLFqPeJoSKP29qgQwz6q464ZtmlxsUr99YRAzCqdxcAFApHhjxptTFk
+	zqziyYzXqaDASJc6owOtOwClrtbjOQXGCzaANm5Szs38jjqJCpa38iTI3tq8CU6tUACyZx
+	Yu61lvwpyeqr1JFITEbDsWiAGz7S9GUV5sgp1kjJY6rFZ+ORLosgNzA/hbWChA==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1792157662; a=rsa-sha256;
+	cv=none;
+	b=MOGWQ2pyh9Mts1lppt+K/8bdG0dNIGJjN5lpy7hygtApxbAM+GwgDz28lJsLj2nQZOKn6t
+	NvI8r01cEwb+3cyNL4+ZI6qg+UpQZQlamKK19vCdl3gx3M0jtmoHk500cX3ND1afAikjfm
+	4oGTN/sCYvFgpMV3Ms3wPehVuFztfcgWfiGM4IXeGmwGnlJ1Bw1MZnGHjMHWia2CWzltnV
+	vsYSou3csltxXlcE2WaCNf2rz/nsdVGWUCk5vSU7KCjcLFgchqu4PlzCc4t9JkqT7vrHr9
+	kQPgIKiz4NwW8tKZOe0KRLeiohaWYAru7XOKNgWo2+jTRSJLiPxtxjDF3yU6yA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1792157662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3nLMiQqnLjn6aVre0f/RZP2YyGl1quEq2a7eoQjxaGY=;
+	b=QzerExYjwIYLepg2PZUXx9ywvJL2YKpH/DaR9XLGuYLh9bYXqnpbh4FpLhCQXE+nuOOiRs
+	9Fe48Jhd07dH9KRQPx//wK3Cp0Y1tP1ueYo6T3CwCr/HLvsi9voxsbeeQN/jndNI5qU1ps
+	vhAmRlQvDR6w9BBvwH2qTftw8687joe+BDsPDG5nFVMUAKw4ONgptvljE1ZFWyHtesPNIJ
+	lakGP+fhQTA5DcdnJr73hefMjCKaMztMY0hpMO/JG0tQthSGhXEG3TsFAY241lAACC3Mkq
+	/4W8Rkev/h96p0pVdsfnKWgyofYgMCxzROdZEXz2A75f+bl9tHK/7LFpaSFpvg==
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1xHi4k-006BzY-0j;
+	Fri, 16 Oct 2026 15:34:22 +0200
+Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D884F5C6255;
+	Fri, 16 Oct 2026 13:34:21 +0000 (UTC)
+Date: Fri, 16 Oct 2026 15:34:21 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+Cc: mailhol@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, claudiu.beznea@tuxon.dev, 
+	linux-can@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 1/7] dt-bindings: can: renesas,rcar-canfd: Document
+ RZ/G3S SoC
+Message-ID: <20261016-elite-feathered-rook-5dcf2b-mkl@pengutronix.de>
+References: <20260902141544.565763-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260902141544.565763-2-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261015014324.5569-1-phucduc.bui@gmail.com> <20261016040048.506531-1-phucduc.bui@gmail.com>
- <46a96bc8-2ee7-4c6f-ad8e-94321f8b9630@sirena.org.uk>
-In-Reply-To: <46a96bc8-2ee7-4c6f-ad8e-94321f8b9630@sirena.org.uk>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Fri, 16 Oct 2026 18:25:56 +0700
-X-Gm-Features: AclHuK9bobvuHZz0ZvKJfKfhAJdiG3c7XQlmqU2uHEyUuNfyFRrkKv-rn3SiKZ0
-Message-ID: <CAABR9nG8PeQS4GBGwENfHTRBUnroKYQiEu29iztix+py=Arprg@mail.gmail.com>
-Subject: Re: [PATCH v2 25/25] ASoC: rockchip: rockchip_max98090: Mark the link
- as started on success
-To: Mark Brown <broonie@kernel.org>
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
-	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, povik+lin@cutebit.org, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrei Simion <andrei.simion@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, Shengjiu Wang <shengjiu.wang@gmail.com>, 
-	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
-	Nicolin Chen <nicoleotsuka@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Cezary Rojewski <cezary.rojewski@intel.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Kees Cook <kees@kernel.org>, Syed Saba Kareem <syed.sabakareem@amd.com>, 
-	wangdicheng <wangdicheng@kylinos.cn>, Chris Bainbridge <chris.bainbridge@gmail.com>, 
-	Linus Walleij <linusw@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Neo Chang <YLCHANG2@nuvoton.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, u.kleine-koenig@baylibre.com, 
-	Pengpeng Hou <pengpeng@iscas.ac.cn>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Hemanth Selam <hemanth.selam@gmail.com>, 
-	Md Shofiqul Islam <shofiqtest@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Zain Aboobacker <zainaboobacker33@gmail.com>, Sang-Heon Jeon <ekffu200098@gmail.com>, 
-	Bo Shen <voice.shen@atmel.com>, Vinod Koul <vkoul@kernel.org>, linux-sound@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org, 
-	imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tyz6trijudgkdey6"
+Content-Disposition: inline
+In-Reply-To: <20260902141544.565763-2-claudiu.beznea+renesas@tuxon.dev>
 
-Hi Mark,
 
-> Can you please resubmit this as a separate patch as a new thread without
-> the series numbering?  This is really going to mess with the tooling :(
+--tyz6trijudgkdey6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 1/7] dt-bindings: can: renesas,rcar-canfd: Document
+ RZ/G3S SoC
+MIME-Version: 1.0
+
+On 02.09.2026 17:15:38, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Please don't send new patches in reply to old patches or serieses, this
-> makes it harder for both people and tools to understand what is going
-> on - it can bury things in mailboxes and make it difficult to keep track
-> of what current patches are, both for the new patches and the old ones.
+> The CAN FD controller found on the Renesas RZ/G3S SoC is largely compatib=
+le
+> with the variant present on the RZ/G3E SoC. The main differences are:
+> - the RZ/G3S provides only two CAN FD channels
+> - the RZ/G3S supports only CAN FD operation; the Channel n CAN FD
+>   Configuration Register does not implement the bits used to select
+>   classical CAN-only mode (bit 30) or CAN FD-only mode (bit 28);
+>   consequently, bit 31 (CAN FD Frame Distinction Enable) of the same
+>   register is also not implemented
+> - some bits in several registers (mainly reserved or status bits) are
+>   read-write on the RZ/G3S but read-only on the RZ/G3E; their behavior is
+>   otherwise identical: the bits read back as 0 on both SoCs and software
+>   is allowed to write only 0 to them on the RZ/G3S
+> - the RZ/G3S provides 256 acceptance filters, compared to 768 on the
+>   RZ/G3E
+> - the RZ/G3S can use PCLK clock as the CAN FD clock source through an
+>   internal clock divider, while also supporting an external CAN FD clock
+>   source
 >
-> Series numbering only makes sense within a series for ordering, if
-> you're sending something separately to a series or a new series then
-> preserving the ordering of the series just causes confusion.
+> Since:
+> - the SoC clock generator provides to the CAN IP only the peripheral and
+>   the RAM clocks
+> - when sourced from the peripheral clock, the CAN-FD clock is obtained
+>   inside the IP itself by dividing the peripheral clock
+> - the assigned-clocks and assigned-clock-rates properties are specific to
+>   the CAN-FD clock
+> the assigned-clocks and assigned-clock-rates properties were dropped from
+> the required properties list of the Renesas RZ/G3S SoC.
+>
+> Add documentation for the Renesas RZ/G3S SoC.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Sorry for the inconvenience.
+the netdev review bot has found a nitpick, it's about the comment in
+"rcar_canfd.c". Can you fix it, if you re-spin the series.
 
-This was patch 25 of v2. I had only managed to send the first 24
-patches previously.
-Patch 25 failed to send due to an error, so I sent it afterward to
-complete the series history.
+regards,
+Marc
 
-Link to v2:
-https://lore.kernel.org/all/20261015014324.5569-1-phucduc.bui@gmail.com/
+pw-bot: cr
 
-Since you had already applied v1, this patch does not necessarily need
-to be resubmitted,
-so please feel free to ignore it.
+--- Patch [11]: [PATCH net-next 11/37] dt-bindings: can: renesas,rcar-canfd=
+: Document RZ/G3S SoC ---
+commit 69b4e37d18e5229e1c800b45a5df061af8a98eb9
+Author: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Link v1 :
-https://lore.kernel.org/all/20261008103831.542533-1-phucduc.bui@gmail.com/
+dt-bindings: can: renesas,rcar-canfd: Document RZ/G3S SoC
 
-I have also sent the incremental changes in a separate thread, as you requested:
+This adds the renesas,r9a08g045-canfd compatible for the RZ/G3S CAN FD
+controller. It adds the compatible to the existing conditional blocks. It
+also forbids renesas,no-can-fd and renesas,fd-only on RZ/G3S, and makes
+assigned-clocks and assigned-clock-rates required only for the other SoCs.
 
-https://lore.kernel.org/all/20261016040946.521195-1-phucduc.bui@gmail.com/
+Link: https://patch.msgid.link/20260902141544.565763-2-claudiu.beznea+renes=
+as@tuxon.dev
 
-Best regards,
-Phuc
+> diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd=
+=2Eyaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+> index b9d9dd7a7967..bbaaef8f4282 100644
+> --- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+
+[ ... ]
+
+> @@ -350,6 +352,20 @@ allOf:
+>        properties:
+>          reset-names: false
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a08g045-canfd
+> +    then:
+> +      properties:
+> +        renesas,no-can-fd: false
+
+Discovered by: opus-5-5 =C2=B7 Missed by: fable-5-1, gpt-6-astra, sashiko-g=
+emini =C2=B7 Confirmed by: fable-5-1
+This isn't a bug, but should the renesas,no-can-fd description be updated
+to match this new constraint?
+
+The property description in the same binding still says that every
+controller can run in Classical CAN mode:
+
+  renesas,no-can-fd:
+    $ref: /schemas/types.yaml#/definitions/flag
+    description:
+      The controller can operate in either CAN-FD mode (default) or FD-Only
+      mode (RZ/{G2L,G3E} and R-Car Gen4) or Classical CAN mode. Specify this
+      property to put the controller in Classical CAN mode.
+
+With this patch the property is forbidden for renesas,r9a08g045-canfd,
+because RZ/G3S does not have the mode select bits.
+
+The header comment in drivers/net/can/rcar/rcar_canfd.c says the same
+thing:
+
+ * To switch the controller to Classical CAN (CAN 2.0) only mode, add
+ * "renesas,no-can-fd" optional property to the device tree node. A h/w res=
+et is
+ * also required to switch modes.
+
+Neither text is changed later in the series. Both now contradict the schema
+for RZ/G3S, and for RZ/G3L once it is added the same way.
+
+Could the description exclude the SoCs that only support CAN FD mode?
+
+> +        renesas,fd-only: false
+> +    else:
+> +      required:
+> +        - assigned-clocks
+> +        - assigned-clock-rates
+> +
+>  unevaluatedProperties: false
+>
+>  examples:
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--tyz6trijudgkdey6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCatIn2wAKCRDMOmT6rpmt
+0tQbAP9Ug/X3eNIoM36oizDYKKb/napIJJRBsaKLAK0rUnv0+QEAgDyu9tkc4gs1
+3oMi7A5Lbxqc30SHapAOToYedxza7QE=
+=DPtZ
+-----END PGP SIGNATURE-----
+
+--tyz6trijudgkdey6--
