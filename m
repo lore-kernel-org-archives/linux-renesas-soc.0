@@ -1,65 +1,63 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410FA1DF736
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 04:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAAC31DDBB
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 04:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792123277; cv=none; b=Xxs4y6BW0lWAT7W5pepS9/4P/eksviedCPAIK70z9P7AadG0H7AGbX7VOk8KLSedMsLo49KM7IXkDxnZMVhzMBgIELCSQ9nNGedbpBcKdWBynSvfbO8OQKnw263FeSC882K4bo4CC/WCF1JFnnBWAj8BIaxBMWKUK7XCLAm6UEM=
+	t=1792123811; cv=none; b=G5lFE0FdPbR/y5GGyErdrK6KaugwL/ocGQTQQvDMUaUw/nZQtNGZdcoC7YbajvCcoOxLb/rOZnueTvUFWiuZTdyYSnTkOh5GG526+AUsQWswV8BbNMdFR18vnhC24eerK+sP4tYbQ9fYVE5Nm6RQDQKIJUEJG1PJ5J8d7RE3SIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792123277; c=relaxed/simple;
-	bh=kz6hWgoXjwzN/plzsOuupJpm8SEQMOhxfOMvvFLoLo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F2rHRQDqG4xcCgfV69/OpsnfvZ14KhkTFXP7FgCIzVsPegNTCzI5e0sptBd8Lvq7nV7QaGIuhg/My5TXcAqNdzqnaAIG4PUeJ6Xjd50MjAyYLxYelRYjk1zDsjX/VKeadf0v8mGf9DDfgkRXAfUz6RulQfJyEpeqIB8akvJafKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YiU6kWI3; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1792123811; c=relaxed/simple;
+	bh=r3T6KsS5uqRgrtiSAYChS0Ck5zpfD1Or1gG0Bl9B9YY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KFwI2WVFR+UZi+gTLeTUe4coNp0uDWdrZCCM1AG15C/TrU0GkaAKTjpzZATypHp9AxCxedXf1PNHyY05SBXreUTsyjmywXqEjY9tz3pEtHCg+4ECxMB9fuxthu6z/qR4suELqITGvxZ6MzfWq1fkzc/OWzy+yLHDJbwfyXsdn3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sml8tb8l; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiU6kWI3"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3ac5b090d16so432556a91.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 21:01:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sml8tb8l"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2e934449bb0so21407755ad.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Oct 2026 21:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792123274; x=1792728074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5Qhe5E4dgThyJhSYyDtuQ9hNBBoGOWOTPXhOMe7iZzE=;
-        b=YiU6kWI38o7n8Ng0a9H5qDIsVqCAnrHCHj1sdVAJsUntfAoVin71Cn3xhsDnYP/Exn
-         pcZYJ/86txoykL0YK/CjwFnX6J9y+wBaG5FO1sKU/6/amBr78Qs8jXJHi1FiptgiM9+M
-         ILBrXV3rcdDaEZinW8tA7y+yGf/RIEj+VDMQm89ey18mr6j+yvxpibG8qGgxaFPvQO6F
-         svObyTy2lSHy+sgyySDEspbm9DJqRqkL0Ce5lJD2BcNfUQSSIiKo3ums+6bpcfBem/Tp
-         IhnWn8kdo1BAmkQMg8YDJlLcmiXHpTpCqqmiZXzE2FFE2Jf4pL6WBF+BjGLoGmoQYu2k
-         Spmg==
+        d=gmail.com; s=20251104; t=1792123809; x=1792728609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SYnQxKBL88L7bG0SnRsZyN/ibAKxj/QjIVLFKTNculY=;
+        b=Sml8tb8lzGkYEv2SUFTYh/0FtPwal/k4AqOSIHw1TYsCbQoZLCy6mRi4NJkNpjolMb
+         731BAmGhHCQNLTHbKhIMiZ0488FHeivNbrPnn2oFjvIFG1JbT27V2XzWLku2vyRT8niB
+         t42PLXzDNaqthmzSI8lEw+SAl3WdI421P5YyRiieI/2WWCzVl7BuWhl4+uwyq6zoXc4s
+         4ulku9fCuRHFZmfpjQlSq3f/AMmLzIP76QemZzYr/Pvz88tmYxZ9ymg7uOxk0pny88BL
+         51twx1ftCSo6w5znalpNa8Tf/QJyEVO980gAb4HGicVauxzXRXpRDkTQwb4seR+CYPIt
+         SD2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792123274; x=1792728074;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5Qhe5E4dgThyJhSYyDtuQ9hNBBoGOWOTPXhOMe7iZzE=;
-        b=U8qxnfZGsCE46j0TQZV2Ksyi0a1K8XHa2C9SpGkqwOdjwIVMYjS1koKF2HIE9GkZmM
-         WGhECqXsE9ihmgNLcSKWr3siT6Dee+uIaAPW68hMuzoKaxy0ckPnWwpOxB1gbep4fIBm
-         b8RGGc+W4Jdm6DKrvjKzqpgMjOswiPGkR2TceutDGTA/mH3gT6F03T9ra6uiN6f2igJn
-         6DAoEWvBcapwYuR94a+d+MBAJHRrs2K4ViYorfaliP9RPuwYjXbizw2GhLfLW3ngAAD2
-         90bkKgjJH3489ZbvPzOGUy4Y87wGz2UvS7V5T6/Tf01lUKieF+5+q9dj8sSxkFJqMSBN
-         PxoA==
-X-Forwarded-Encrypted: i=1; AKwUvBy1ACNPgn1dRsN2+INwqsnWrS2HBxUmgpIX5En9GJhDSDKlzQL9FIwkNs+rBq4Wp1UrUxRcCRufIthWmUXz3NL6zw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJJKLMKIBUFyOcPvDy+Q9F5wMaio8m8vZfdQ4z4FrMPRVLVBdnX
-	wnxTjxQQBQx3BbKlUUgVamLzZzCK4EnZPrRylIhtKe7WPQmKMlI4ja4o
-X-Gm-Gg: AYBFou23Kqjo2Pyjk8YM9CHsDRh9BsVlFMFg1IvfuINhBJyQV0sk5S9LYUPo9B5XkJt
-	p72uNW15ia+bcUo1j01zgNc3UlkYBqM2+LayQ81MHvfzt7F6am/GTN1BIXc4Z4VNi3sOUVlHLoI
-	ANInzCj7oAOl6JVYf1R5lxFCZ+J6nkwNURv2l7yghPICDUp0hpLZxPS9ROK3gu5mYlovXX2SRiG
-	lZn2w2cA+f91RxMkYZUVC41cV5diYWxQuLr19WFLMUzMtrBZANiwWJCzZabUesImW/EdCYHuxA9
-	D4+qXJqdDumLrvJTjCAyG5+bEFyvpF7fA3bKIHXV9La3sAcMzpwr39X8rlBzuL5Rc79PFQccJ3k
-	HyzlUg3Jev3a9pU0ijbYqC14TLoc/fR07mJHPfdhvqYXupq/9b1lHzcP9Ie2vraMRJcv4pJVyxk
-	thzXJDdEfCNI6o/Yln56eRL3D9xh49xRm9ApX1bnlLdRfs1pdqPTBjD3N/btfg9xi1tSmE0DB79
-	AhxGILsArt12IQvYlRZp3lcC46gDltl4ZWJ1U9C1QGIGA+vzO/XfckG/p8MN/jINSG/NV+XwVJl
-	1kjJ1kbj/7+sR+o=
-X-Received: by 2002:a17:90b:39a4:b0:3ac:b764:8521 with SMTP id 98e67ed59e1d1-3acbb9255ccmr1718768a91.38.1792123274359;
-        Thu, 15 Oct 2026 21:01:14 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1792123809; x=1792728609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SYnQxKBL88L7bG0SnRsZyN/ibAKxj/QjIVLFKTNculY=;
+        b=zFoxPilvt4a440Lcch+Lo3UZ1HI87/F+zYBh8YIytOy9gNwHjqm73imj9uyM1yVBSR
+         d4wkvRB9uEYs+v8VcJv/OtkYZFHM3TfxZ/NTBMR3nuG6HnV70pDFjaB0zLy78eMEwXJp
+         3dP5WSNmCxwVRyCdzmPFgnpsBv6biWbBvef2mFKVPQW6g4ub6wCfa7K+eh9LnCvd+qnJ
+         KsJQUWOadJyDtGHFFtyNMMGj1qU7hKoos5QMn2QAabpTkwSNkQE2zuiMn+x6Mn++EUzA
+         XrhbVU3jARgGCdg8CclfgZ8Jyeryv64chLVQ0CYTC7fvvjSHYzVcLzTGzNZBTp/isAAP
+         L9hw==
+X-Forwarded-Encrypted: i=1; AKwUvByPMIZLxgMsDWCLBkagsd997B+h6u0qa7nLvxup6HhmvzQIgCJ9Qicc1p6L781DIJqlpKEeseYK0JaFmBBbI/IYWg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLhFvm/coJ1fkR3zqpq3175P/8nXqjo4nyYxAvhlX5C52F46QzM
+	XXApAquhzDO6wrSgxMu787LgCEOnS0/hIBQYbS3zVK5H4sDMrthqeb/Y
+X-Gm-Gg: AYBFou1W5pmH6tKW6U1JgpKv/WmvV76QaYkcuAS3b/i7nvoh0d1/Hj7EWffPt6/Qgtc
+	jpoX7tgM0AVvoKYIa2HIMm/MQKbc2XVfimj3xyeAXPXpkda8k1wJZyjYEvaLNKa8in0gdIOo4/W
+	z5Hq27XcIANfOHZKSCI4QIlcS35z/mHPJiW0jk6gaemps4QvQwE0HqPf67Otd4p8F70mdZId4sF
+	RtLqDmLFLTepchwTBn0oAT+AjAo12oFmiyqG3tclJtRFCM09qJiwUhzSikC/wm53miHTFnHKXfj
+	ztR7Zcc2Y8FLNJKgfEZMSTBNsSQd7QkKXAjBqEZuXIkllz0KtC6J8Ryw8+NjHxgOWvs/t81TRpr
+	G1rT+j1l9cOg4Iu7R0aq2goDXgeMf1nsDAaEGsJ1w8RnGQUQCcxKcEwGJfPmTezqgOpTZy0fDFc
+	2qnE6V0oChM+ACqr5L5r8GDHAb1Pub3SqRh/XiuesALWCks9IKVpEmTd2Kim5EMo4xNCGYe7FG7
+	AXjRevIjodPX7vcGfmMRZQJIYmEGW463uEbvmhwuUNpCzvkNQ0Kugj+37cCCRiksKiO8gskuppr
+	C1rkQ4JBRUlPNw==
+X-Received: by 2002:a17:902:cec2:b0:2db:7941:9e11 with SMTP id d9443c01a7336-2e842cd431cmr197979565ad.9.1792123809100;
+        Thu, 15 Oct 2026 21:10:09 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acc4872861sm2304450a91.7.2026.10.15.21.01.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e97e8ab443sm3815785ad.65.2026.10.15.21.09.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 21:01:13 -0700 (PDT)
+        Thu, 15 Oct 2026 21:10:08 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
 	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
@@ -120,12 +118,10 @@ Cc: Kees Cook <kees@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH v2 25/25] ASoC: rockchip: rockchip_max98090: Mark the link as started on success
-Date: Fri, 16 Oct 2026 11:00:48 +0700
-Message-ID: <20261016040048.506531-1-phucduc.bui@gmail.com>
+Subject: [PATCH 00/11] ASoC: Address remaining PCM constraint issues
+Date: Fri, 16 Oct 2026 11:09:35 +0700
+Message-ID: <20261016040946.521195-1-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261015014324.5569-1-phucduc.bui@gmail.com>
-References: <20261015014324.5569-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -136,50 +132,66 @@ Content-Transfer-Encoding: 8bit
 
 From: bui duc phuc <phucduc.bui@gmail.com>
 
-snd_pcm_hw_constraint_minmax() may return 1, which is then returned
-from rk_aif1_startup(). ASoC only marks the DAI link as started
-when .startup() returns 0.
+Hi all,
 
-This currently has no functional impact, as there is no .shutdown()
-callback in the relevant snd_soc_ops. Still, return 0 explicitly on
-success to match what ASoC expects and ensure the DAI link is correctly
-marked as started.
+Since v1 has already been applied, this series provides incremental 
+changes to address the remaining items from v2:
+ - Add comments explaining why .open() and .startup() must return 0 
+   on success to prevent the issue from being reintroduced.
+ - Add Reviewed-by tags from Vijendar Mukunda and Chancel Liu, 
+   and Acked-by tags from Morimoto-san and Cezary.
+ - Remove redundant integer constraints already applied 
+   by snd_dmaengine_pcm_open().
 
-Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
----
- sound/soc/rockchip/rockchip_max98090.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Link v1: 
+https://lore.kernel.org/all/20261008103831.542533-1-phucduc.bui@gmail.com/
+Link v2: 
+https://lore.kernel.org/all/20261015014324.5569-1-phucduc.bui@gmail.com/
 
-diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-index 426506a8e18e..de392b420ebd 100644
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -191,12 +191,23 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
- 
- static int rk_aif1_startup(struct snd_pcm_substream *substream)
- {
-+	int ret;
- 	/*
- 	 * Set period size to 240 because pl330 has issue
- 	 * dealing with larger period in stress testing.
- 	 */
--	return snd_pcm_hw_constraint_minmax(substream->runtime,
--			SNDRV_PCM_HW_PARAM_PERIOD_SIZE, 240, 240);
-+	ret = snd_pcm_hw_constraint_minmax(substream->runtime,
-+					   SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
-+					   240, 240);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * ASoC only marks the DAI link as started when .startup() returns 0.
-+	 * Since snd_pcm_hw_constraint_minmax() may return 1, explicitly
-+	 * return 0 to ensure the DAI link is correctly marked as started.
-+	 */
-+	return 0;
- }
- 
- static const struct snd_soc_ops rk_aif1_ops = {
+Compile-tested only.
+
+Best regards,
+Phuc
+
+bui duc phuc (11):
+  ASoC: amd: Explain component open return value handling
+  ASoC: apple: Explain DAI startup return value handling
+  ASoC: atmel: Explain component open return value handling
+  ASoC: codecs: Explain DAI startup return value handling
+  ASoC: imx-pcm-rpmsg: Explain component open return value handling
+  ASoC: intel: atom: Explain DAI startup return value handling
+  ASoC: renesas: msiof: Explain component open return value handling
+  ASoC: renesas: msiof: Remove redundant period constraint
+  ASoC: renesas: rz-ssi: Explain component open return value handling
+  ASoC: renesas: rz-ssi: Remove redundant component open callback
+  ASoC: rockchip: Explain DAI link startup return value handling
+
+ sound/soc/amd/acp/acp-platform.c             |  5 +++++
+ sound/soc/amd/ps/ps-pdm-dma.c                |  6 ++++++
+ sound/soc/amd/ps/ps-sdw-dma.c                |  6 ++++++
+ sound/soc/amd/raven/acp3x-pcm-dma.c          |  6 ++++++
+ sound/soc/amd/renoir/acp3x-pdm-dma.c         |  6 ++++++
+ sound/soc/amd/vangogh/acp5x-pcm-dma.c        |  6 ++++++
+ sound/soc/amd/yc/acp6x-pdm-dma.c             |  6 ++++++
+ sound/soc/apple/mca.c                        |  5 +++++
+ sound/soc/atmel/atmel-pcm-pdc.c              |  5 +++++
+ sound/soc/codecs/cs42l42.c                   |  5 +++++
+ sound/soc/codecs/nau8325.c                   |  5 +++++
+ sound/soc/codecs/nau8540.c                   |  5 +++++
+ sound/soc/codecs/nau8821.c                   |  5 +++++
+ sound/soc/codecs/nau8824.c                   |  5 +++++
+ sound/soc/codecs/nau8825.c                   |  5 +++++
+ sound/soc/codecs/wm8580.c                    |  5 +++++
+ sound/soc/codecs/wm8782.c                    |  5 +++++
+ sound/soc/fsl/imx-pcm-rpmsg.c                |  6 ++++++
+ sound/soc/intel/atom/sst-mfld-platform-pcm.c |  5 +++++
+ sound/soc/renesas/fsi.c                      |  5 +++++
+ sound/soc/renesas/rcar/msiof.c               | 10 ++--------
+ sound/soc/renesas/rz-ssi.c                   | 19 +++++--------------
+ sound/soc/rockchip/rk3399_gru_sound.c        |  5 +++++
+ sound/soc/rockchip/rockchip_max98090.c       |  5 +++++
+ 24 files changed, 124 insertions(+), 22 deletions(-)
+
 -- 
 2.43.0
 
