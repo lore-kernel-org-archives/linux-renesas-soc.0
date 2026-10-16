@@ -1,263 +1,306 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4F1494266
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 18:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB973D5C05
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 20:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792174035; cv=none; b=Qg2p6viDOJdoEGk0eJpcTyEUKFaxRaAacMVgibOdQDCgOZWGJw0BZBCHetLD0MT89uXEPd+c3Co9STAueSaNta7NHfFe8FHszWhNv1ZoEbhKpwXDJsyO+ODpjPO1eZy2QhTe+zsd1IZkqYBs64aI4nHrgc6xd40c4l6xziAserM=
+	t=1792181400; cv=none; b=CLtziw7XHlagcN7JayrbD6VwRKrqj3nCMrEpx4d1aXKF2eNSfQqcQZOZ6jVu3NPQtwr9M++MfzSSTnmsonbRcbIKA6rADD/otNfn40xwO0M77DR3YPl9Mas0oonx0pXlf+vfd1HC8u5/6yVqi87AXQErLgQwmyie+SKvdSIKu7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792174035; c=relaxed/simple;
-	bh=eiUiQoopFUDmGr3UYzTNNVOWWiP061mHHX8TFI39C1E=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f61LZsssaHFIhcBe7sNz3HVTJ/ufiaHNuyHQU/SU5LldUzE6dwkTLp66SF+POGv5u5ae2FKUPZwghtNv3kUmD4Chi73qzRVm8pkqvBtR4xQD+Jk92FG4isuQDkLzB/M366WJNXFLqyJdg0UROXdrSgkWvzx7LI8HFqqdNCKUJtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=n9W2csVA; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1792181400; c=relaxed/simple;
+	bh=3Xo5TzdolWQcfafl4qIvqEfw1npWTLKaN02Y8Wn+Hlg=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=crBYjXeo3BXkOvXQvL/PhxBLMjXa20KvUFTI5N8pHSAkEsIzTn75EdFaoUTKuEeBRLRFAbIGJ8JahyFSc8rNKLUiZCwMv1jSeivBtwVChDa6I6R1nzCMZnT/gMpNXBbxJPaHH5HslG21mmLu7bgm/vsAVngqA6DlsX7Oi/Sz/WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7iVzj+Q; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="n9W2csVA"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a19cba5c14so2132625e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2026 11:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1792174030; x=1792778830; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=kwqs7mz873M28LjIKl95AhngO7J7OiavOqidLa4FRNc=;
-        b=n9W2csVAyuaKikh+vFpNLESUTmENQTssuKfmrIM+YSorZ1ZkkF5CMXJA8WDhb/T5MW
-         fxCUR5v3YRDv0gExwQijst1t38gDNULmLv9drqfSoyC8+ezQ+3klEGLnlVd65Mkfz1+W
-         Dj5QgGAj4UgRTVRdnVsWj/6GyuSO2MSIa/uaunLvqG0mSmTo6JpEkPtwA22CY3LD0iIj
-         3vg7L0qFpoLviFWL7Sm9bUILhSkcXsKRptFhlEFG862xfNHn1mbb+rnF+zYKDVOT5n9h
-         jp9HxbAocXwILVeAdA2rUpD4MEZSmTDIOU1d0zKWfkvtpgoY1xySyluU8/NzdWf6vK1U
-         BWdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792174030; x=1792778830;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=kwqs7mz873M28LjIKl95AhngO7J7OiavOqidLa4FRNc=;
-        b=Wn/KljF35LjklFyc2AP/wpNp9PqwXklPTvqK8eI4fJ7io4mGPzP3huYezK3svppL2b
-         2SAMJ4dd21BBl51IPoFa/GawY0EFUME7hEeltUzaJQCg9ZUNTeK4fd9QtpvpVooFkYdg
-         qBVJ9eT1AWtXYmL9fsSFZKZvF1iuftgUaESL2m4D6xq3yaX5GZB+svRGZ9Uwj+FE5rUR
-         +s7gKwiVURt79Y8j04RTDPy7cpoth/PxkiDOe/S6Eg5Z9aETdXeZfMHtUjbHGgekFtDB
-         2bDG5ZnFSvrlQLEoYdCsrhEYkbFaFU93dPdqHYAAfxYtVf8cruUApgRVRNcmk3teTYjY
-         kR4A==
-X-Forwarded-Encrypted: i=1; AKwUvBzdi2UgybhBw93Xg2LBMDFb4ewKUGx5rK4+gfYNUInBd2SgAEtt+NGsgVwCxZol2n2bOhLo4bCG6WERbELijSA69w==@vger.kernel.org
-X-Gm-Message-State: AFq9FYI/mxKkDChty3VkV0SQA3SmlpFzZv+clqHxDLZ+HRp8iY/5K5Dn
-	2m+cLbOu27qNZ5mJYJdMfnmp9chnKJ0LVpt98Qdzjq9oD4U93iSFld8ve2qK33PzpJc=
-X-Gm-Gg: AYBFou2Ef1w6IDM+tOVMmUUxR+ZvAhmsAg4cu+pDLXGj8/t+L5291OcdjvVAjSoNzUj
-	gT+5MhBFAMwCTf1CyqFs/593H00+DuG0qJS/cTEKcGYSYRbIyCYHqwdLi+QQezQSFZk04WNBpUX
-	WM7F+DI/QcRppQgPoIqu+CIFlMWsqWpBzrZVY+qQD3rqMQiVYYBDu+hX4X4Do0E4UM1iD5eAnS+
-	OZ4hvVnVdefsRWd7S9ec1Oo6k16zCwqO5UMsOI+o3+/f1bOm7WNRWqbOXa/RoqvrHrNASGvZqiR
-	gzMKMYZOVyFdZ/JCb0r6Qzk4Y86ojq9adnQgfEly5AnwEsxreIj4tSc3Yj2/XggcPCRAn+mKaKJ
-	R4DF2WzdRCH97GrC9lKuT/AkTYKK2fmSYp27WzstUROxzONkzvhrKLluU4kNXrVNRwg43+ntHTO
-	9nYCY5fZADmaVMQl5YNJytUgmYKazeLFDZrcNiBMLt6hazirefuUgdrne66knkhQc0d/JyNryyK
-	IsJZ+3rvmvyj36miA==
-X-Received: by 2002:a05:600c:6215:b0:4a1:d41b:5060 with SMTP id 5b1f17b1804b1-4a1d762b705mr10663215e9.22.1792174029743;
-        Fri, 16 Oct 2026 11:07:09 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1d3e2e602sm40486255e9.5.2026.10.16.11.07.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Oct 2026 11:07:09 -0700 (PDT)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Message-ID: <69826962-0c21-4616-9cd8-6eb0478a422b@tuxon.dev>
-Date: Fri, 16 Oct 2026 21:07:07 +0300
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7iVzj+Q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792181400; x=1823717400;
+  h=date:from:to:cc:subject:message-id;
+  bh=3Xo5TzdolWQcfafl4qIvqEfw1npWTLKaN02Y8Wn+Hlg=;
+  b=R7iVzj+QsJd0/cfLec8iD4Zg2MIZhcldZJrI+47S9CSPMHQbU8EE4Peq
+   zEIvos4idVlVMg0vnBV6xS3zl5711S1szlBDa5GfpMm14VEOuX+jffbuU
+   31AsHk/kOTEHAwaT0d623uu/uTuqNn36XS2EHSZDtFScSWEYFWTvU1Idn
+   dD/vo7UNXIWGhq9DlKBUgbFhtpNbH1Uk/9nRQ1+qvNiJn0w94s/DRYx7J
+   ucSSOiGie/zmeU8/GAO4Toss4lzrJ1RI3j7JCZ3IygAWfj5VGJmOVyyTy
+   GXxo8LnigYDLDRekaWWOuQ+Zm96f+i9fLFsFdeKCjO0Xme3KLG5KwKurT
+   w==;
+X-CSE-ConnectionGUID: UcPxrzqASHC15eEKG5vyLw==
+X-CSE-MsgGUID: h1nYQ6CBSMWNTkjYDu/9gA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11937"; a="1072992"
+X-IronPort-AV: E=Sophos;i="6.27,162,1787036400"; 
+   d="scan'208";a="1072992"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2026 13:09:59 -0700
+X-CSE-ConnectionGUID: BHfNLKG7Qle/kGNsLninNg==
+X-CSE-MsgGUID: k+Sbo0T5SeW+GAz6ps8AVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,162,1787036400"; 
+   d="scan'208";a="2089452"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 16 Oct 2026 13:09:57 -0700
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xHoFW-00000000IdK-2pzq;
+	Fri, 16 Oct 2026 20:09:54 +0000
+Date: Sat, 17 Oct 2026 04:09:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:master] BUILD SUCCESS
+ 7c5978e33c0df274c11d6c041098bb11d8cf6769
+Message-ID: <202610170447.TN1Il5Ak-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] can: rcar_canfd: Allow the CAN FD clock to be
- sourced from fck
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: mailhol@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
- claudiu.beznea@tuxon.dev, linux-can@vger.kernel.org,
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20260902141544.565763-1-claudiu.beznea+renesas@tuxon.dev>
- <20260902141544.565763-4-claudiu.beznea+renesas@tuxon.dev>
- <20261016-durable-meticulous-owl-7a9eed-mkl@pengutronix.de>
-Content-Language: en-US
-In-Reply-To: <20261016-durable-meticulous-owl-7a9eed-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: 7c5978e33c0df274c11d6c041098bb11d8cf6769  [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
 
+elapsed time: 4497m
 
-On 10/16/26 16:39, Marc Kleine-Budde wrote:
-> On 02.09.2026 17:15:40, Claudiu Beznea wrote:
->> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
->> index b7c4fe3477ac..f9173774387f 100644
->> --- a/drivers/net/can/rcar/rcar_canfd.c
->> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> 
-> [...]
-> 
->>
->>   /* Helper functions */
->> @@ -2190,13 +2196,20 @@ static int rcar_canfd_probe(struct platform_device *pdev)
->>   	 */
->>   	gpriv->can_clk = devm_clk_get(dev, "can_clk");
->>   	if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) == 0)) {
->              ^^^^^^^^^^^^^^^^^^^^^
-> 
-> As sashiko.dev [1] pointed out here's no check for -EPROBE_DEFER.
+configs tested: 229
+configs skipped: 4
 
-This looks to me a pre-existing issue.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-The newly added support does:
+tested configs:
+alpha                              allnoconfig    gcc-16.1.0
+alpha                             allyesconfig    gcc-16.1.0
+alpha                                defconfig    gcc-16.1.0
+alpha                randconfig-r2104-20261013    clang-22   cocci
+alpha                randconfig-r2106-20261013    clang-22   cocci
+arc                               allmodconfig    gcc-16.1.0
+arc                                allnoconfig    gcc-16.1.0
+arc                               allyesconfig    gcc-16.1.0
+arc                                  defconfig    gcc-16.1.0
+arc                   randconfig-2000-20261013    gcc-8.5.0
+arc                   randconfig-2001-20261013    gcc-8.5.0
+arc                  randconfig-r2107-20261013    clang-22   cocci
+arc                  randconfig-r2300-20261013    gcc-8.5.0  sparse
+arc                         vdk_hs38_defconfig    gcc-16.1.0
+arm                                allnoconfig    clang-17
+arm                               allyesconfig    gcc-16.1.0
+arm                                  defconfig    clang-24
+arm                            h3600_defconfig    gcc-16.1.0
+arm                   randconfig-2000-20261013    gcc-8.5.0
+arm                   randconfig-2001-20261013    gcc-8.5.0
+arm64                             allmodconfig    clang-24
+arm64                              allnoconfig    gcc-16.1.0
+arm64                                defconfig    gcc-16.1.0
+arm64                 randconfig-1000-20261016    gcc-8.5.0
+arm64                 randconfig-1001-20261016    clang-19
+arm64                 randconfig-1002-20261016    gcc-8.5.0
+arm64                 randconfig-1003-20261016    clang-17
+arm64                 randconfig-2000-20261013    gcc-9.5.0
+arm64                 randconfig-2001-20261013    gcc-9.5.0
+arm64                randconfig-r2306-20261013    gcc-10.5.0 sparse
+csky                              alldefconfig    gcc-16.1.0
+csky                              allmodconfig    gcc-16.1.0
+csky                               allnoconfig    gcc-16.1.0
+csky                                 defconfig    gcc-16.1.0
+csky                  randconfig-1000-20261016    gcc-13.4.0
+csky                  randconfig-1001-20261016    gcc-11.5.0
+csky                  randconfig-2000-20261013    gcc-9.5.0
+csky                  randconfig-2001-20261013    gcc-9.5.0
+hexagon                           allmodconfig    clang-24
+hexagon                            allnoconfig    clang-24
+hexagon                              defconfig    clang-24
+hexagon               randconfig-1000-20261016    clang-24
+hexagon               randconfig-1001-20261016    clang-17
+hexagon               randconfig-2000-20261013    gcc-9.5.0
+hexagon               randconfig-2001-20261013    gcc-9.5.0
+hexagon              randconfig-r2101-20261013    clang-24   cocci
+hexagon              randconfig-r2103-20261013    clang-24   cocci
+i386                               allnoconfig    gcc-14
+i386        buildonly-randconfig-1000-20261016    clang-22
+i386        buildonly-randconfig-1001-20261016    gcc-14
+i386        buildonly-randconfig-1002-20261016    gcc-13
+i386        buildonly-randconfig-1003-20261016    clang-22
+i386        buildonly-randconfig-1004-20261016    clang-22
+i386        buildonly-randconfig-1005-20261016    clang-22
+i386                                 defconfig    clang-22
+i386                  randconfig-1007-20261016    clang-22
+i386                  randconfig-1008-20261016    gcc-14
+i386                  randconfig-1009-20261016    gcc-13
+i386                  randconfig-1010-20261016    clang-22
+i386                  randconfig-1011-20261016    clang-22
+i386                  randconfig-1012-20261016    gcc-14
+i386                  randconfig-1013-20261016    gcc-12
+i386                  randconfig-2000-20261013    gcc-8.5.0
+i386                  randconfig-2001-20261013    gcc-8.5.0
+i386                  randconfig-2100-20261013    gcc-14     cocci
+i386                  randconfig-2101-20261013    gcc-14     cocci
+i386                  randconfig-2102-20261013    gcc-14     cocci
+i386                  randconfig-2103-20261013    gcc-14     cocci
+i386                  randconfig-2104-20261013    gcc-14     cocci
+i386                  randconfig-2105-20261013    gcc-14     cocci
+i386                  randconfig-2200-20261013    gcc-14     smatch
+i386                  randconfig-2300-20261013    gcc-14     sparse
+i386                  randconfig-2301-20261013    gcc-14     sparse
+i386                  randconfig-2302-20261013    gcc-14     sparse
+i386                 randconfig-r2102-20261013    clang-24   cocci
+i386                 randconfig-r2111-20261013    clang-22   cocci
+loongarch                         allmodconfig    clang-19
+loongarch                          allnoconfig    clang-20
+loongarch                            defconfig    clang-24
+loongarch             randconfig-1000-20261016    gcc-16.1.0
+loongarch             randconfig-1001-20261016    clang-24
+loongarch             randconfig-2000-20261013    gcc-11.5.0
+loongarch             randconfig-2001-20261013    gcc-11.5.0
+loongarch            randconfig-r2201-20261013    clang-24   smatch
+m68k                              allmodconfig    gcc-16.1.0
+m68k                               allnoconfig    gcc-16.1.0
+m68k                              allyesconfig    gcc-16.1.0
+m68k                                 defconfig    gcc-16.1.0
+m68k                        m5235evb_defconfig    gcc-16.1.0
+microblaze                         allnoconfig    gcc-16.1.0
+microblaze                        allyesconfig    gcc-16.1.0
+microblaze                           defconfig    gcc-16.1.0
+mips                              allmodconfig    gcc-16.1.0
+mips                               allnoconfig    gcc-16.1.0
+mips                              allyesconfig    gcc-16.1.0
+mips                       maltaaprp_defconfig    clang-17
+mips                 randconfig-r2301-20261013    gcc-8.5.0  sparse
+mips                 randconfig-r2302-20261013    gcc-8.5.0  sparse
+mips                 randconfig-r2310-20261013    gcc-10.5.0 sparse
+nios2                             allmodconfig    gcc-11.5.0
+nios2                              allnoconfig    gcc-11.5.0
+nios2                                defconfig    gcc-11.5.0
+nios2                 randconfig-1000-20261016    gcc-11.5.0
+nios2                 randconfig-1001-20261016    gcc-8.5.0
+nios2                 randconfig-2000-20261013    gcc-11.5.0
+nios2                 randconfig-2001-20261013    gcc-11.5.0
+openrisc                          allmodconfig    gcc-16.1.0
+openrisc                           allnoconfig    gcc-16.1.0
+openrisc                             defconfig    gcc-16.1.0
+openrisc             randconfig-r2100-20261013    clang-24   cocci
+parisc                            allmodconfig    gcc-16.1.0
+parisc                             allnoconfig    gcc-16.1.0
+parisc                            allyesconfig    gcc-16.1.0
+parisc                               defconfig    gcc-16.1.0
+parisc                randconfig-1000-20261016    gcc-15.2.0
+parisc                randconfig-1001-20261016    gcc-8.5.0
+parisc                randconfig-2000-20261013    gcc-11.5.0
+parisc                randconfig-2001-20261013    gcc-11.5.0
+parisc               randconfig-r2108-20261013    clang-24   cocci
+parisc               randconfig-r2311-20261013    gcc-10.5.0 sparse
+parisc64                             defconfig    gcc-16.1.0
+powerpc                           allmodconfig    gcc-16.1.0
+powerpc                            allnoconfig    gcc-16.1.0
+powerpc                    microwatt_defconfig    gcc-16.1.0
+powerpc                       pasemi_defconfig    clang-24
+powerpc               randconfig-1000-20261016    clang-17
+powerpc               randconfig-1001-20261016    clang-17
+powerpc               randconfig-2000-20261013    gcc-14
+powerpc               randconfig-2001-20261013    gcc-14
+powerpc              randconfig-r2110-20261013    clang-22   cocci
+powerpc              randconfig-r2305-20261013    gcc-8.5.0  sparse
+powerpc64             randconfig-1000-20261016    clang-24
+powerpc64             randconfig-1001-20261016    clang-21
+powerpc64             randconfig-2000-20261013    gcc-14
+powerpc64             randconfig-2001-20261013    gcc-14
+riscv                             allmodconfig    clang-24
+riscv                              allnoconfig    gcc-16.1.0
+riscv                             allyesconfig    clang-24
+riscv                                defconfig    clang-24
+riscv                 randconfig-1000-20261016    clang-24
+riscv                 randconfig-1001-20261016    clang-24
+riscv                 randconfig-2000-20261013    gcc-15.2.0
+riscv                 randconfig-2001-20261013    gcc-15.2.0
+riscv                randconfig-r2308-20261013    gcc-10.5.0 sparse
+s390                              allmodconfig    clang-24
+s390                               allnoconfig    clang-24
+s390                              allyesconfig    gcc-16.1.0
+s390                                 defconfig    clang-18
+s390                  randconfig-1000-20261016    clang-24
+s390                  randconfig-1001-20261016    gcc-8.5.0
+s390                  randconfig-2000-20261013    gcc-15.2.0
+s390                  randconfig-2001-20261013    gcc-15.2.0
+s390                 randconfig-r2109-20261013    clang-24   cocci
+s390                 randconfig-r2304-20261013    gcc-8.5.0  sparse
+s390                 randconfig-r2307-20261013    gcc-10.5.0 sparse
+s390                        zfcpdump_defconfig    clang-22
+sh                                allmodconfig    gcc-16.1.0
+sh                                 allnoconfig    gcc-16.1.0
+sh                                allyesconfig    gcc-16.1.0
+sh                    randconfig-1000-20261016    gcc-16.1.0
+sh                    randconfig-1001-20261016    gcc-15.2.0
+sh                    randconfig-2000-20261013    gcc-15.2.0
+sh                    randconfig-2001-20261013    gcc-15.2.0
+sparc                              allnoconfig    gcc-16.1.0
+sparc                                defconfig    gcc-16.1.0
+sparc                 randconfig-1000-20261016    gcc-16.1.0
+sparc                 randconfig-1001-20261016    gcc-15.2.0
+sparc                 randconfig-2000-20261013    gcc-16.1.0
+sparc                 randconfig-2001-20261013    gcc-16.1.0
+sparc                randconfig-r2303-20261013    gcc-8.5.0  sparse
+sparc64               randconfig-1000-20261016    clang-20
+sparc64               randconfig-1001-20261016    clang-24
+sparc64               randconfig-2000-20261013    gcc-16.1.0
+sparc64               randconfig-2001-20261013    gcc-16.1.0
+sparc64              randconfig-r2200-20261013    clang-24   smatch
+um                                allmodconfig    clang-17
+um                                 allnoconfig    clang-17
+um                                allyesconfig    gcc-14
+um                    randconfig-1000-20261016    gcc-14
+um                    randconfig-1001-20261016    gcc-14
+um                    randconfig-2000-20261013    gcc-16.1.0
+um                    randconfig-2001-20261013    gcc-16.1.0
+x86_64                             allnoconfig    clang-22
+x86_64      buildonly-randconfig-1000-20261016    gcc-14
+x86_64      buildonly-randconfig-1001-20261016    clang-22
+x86_64      buildonly-randconfig-1002-20261016    gcc-14
+x86_64      buildonly-randconfig-1003-20261016    clang-22
+x86_64      buildonly-randconfig-1004-20261016    gcc-14
+x86_64      buildonly-randconfig-1005-20261016    gcc-14
+x86_64                                   kexec    clang-22
+x86_64                randconfig-1006-20261016    clang-22
+x86_64                randconfig-1007-20261016    clang-22
+x86_64                randconfig-1008-20261016    clang-22
+x86_64                randconfig-1009-20261016    clang-22
+x86_64                randconfig-1010-20261016    clang-22
+x86_64                randconfig-1011-20261016    gcc-14
+x86_64                randconfig-1012-20261016    gcc-14
+x86_64                randconfig-1013-20261016    gcc-12
+x86_64                randconfig-1014-20261016    gcc-14
+x86_64                randconfig-1015-20261016    gcc-14
+x86_64                randconfig-1016-20261016    clang-22
+x86_64                randconfig-1017-20261016    clang-22
+x86_64                randconfig-2000-20261013    gcc-14
+x86_64                randconfig-2001-20261013    gcc-14
+x86_64                randconfig-2100-20261013    clang-22   cocci
+x86_64                randconfig-2101-20261013    clang-22   cocci
+x86_64                randconfig-2102-20261013    clang-22   cocci
+x86_64                randconfig-2103-20261013    clang-22   cocci
+x86_64                randconfig-2104-20261013    clang-22   cocci
+x86_64                randconfig-2105-20261013    clang-22   cocci
+x86_64                randconfig-2200-20261013    gcc-13     smatch
+x86_64                randconfig-2300-20261013    gcc-14     sparse
+x86_64                randconfig-2301-20261013    gcc-14     sparse
+x86_64                randconfig-2302-20261013    gcc-14     sparse
+x86_64               randconfig-r2202-20261013    gcc-14     smatch
+x86_64                                rhel-9.4    clang-22
+x86_64                            rhel-9.4-bpf    clang-22
+x86_64                           rhel-9.4-func    clang-22
+x86_64                     rhel-9.4-kselftests    clang-22
+x86_64                          rhel-9.4-kunit    clang-22
+x86_64                            rhel-9.4-ltp    clang-22
+x86_64                           rhel-9.4-rust    clang-22
+xtensa                             allnoconfig    gcc-16.1.0
+xtensa                randconfig-1000-20261016    gcc-11.5.0
+xtensa                randconfig-1001-20261016    gcc-9.5.0
+xtensa                randconfig-2000-20261013    gcc-16.1.0
+xtensa                randconfig-2001-20261013    gcc-16.1.0
+xtensa               randconfig-r2105-20261013    clang-22   cocci
+xtensa               randconfig-r2309-20261013    gcc-10.5.0 sparse
 
-fcan_freq = clk_get_rate(gpriv->clkp);
-
-At the time this is executed the clkp was already checked against any errors 
-(above) including -EPROBE_DEFER.
-
-Please let me know what is the procedure now. Should I re-send the series and 
-address the fixes? Should I send follow up patches?
-
-> 
-> [1] https://lore.kernel.org/all/sashiko-outbox-173569@kernel.org/
-> 
-> The netdev bot found more issues.
-> pw-bot: cr
-> 
-> regards,
-> Marc
-> 
-> --- Patch [15]: [PATCH net-next 15/37] can: rcar_canfd: Allow the CAN FD clock to be sourced from fck ---
-> commit 4ef0042ccf34457229cdde398a008bebaab54e69
-> Author: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> can: rcar_canfd: Allow the CAN FD clock to be sourced from fck
-> 
-> This commit adds an fcan_pclk hardware info flag. With it set, the fCAN
-> clock falls back to the peripheral clock (fck) when the external can_clk
-> is unavailable, the rate is divided by info->postdiv and can_clk is set
-> to NULL. All existing rcar_canfd_hw_info instances now set fcan_pclk = 0
-> explicitly.
-> 
-> Link: https://lore.kernel.org/all/1d9719e3-10ff-4cd8-b729-55fea93c37ce@wanadoo.fr
-> Link: https://patch.msgid.link/20260902141544.565763-4-claudiu.beznea+renesas@tuxon.dev
-> 
->> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
->> index b7c4fe3477ac..f9173774387f 100644
->> --- a/drivers/net/can/rcar/rcar_canfd.c
->> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> 
-> [ ... ]
-> 
->> @@ -2190,13 +2196,20 @@ static int rcar_canfd_probe(struct platform_device *pdev)
->>   	 */
->>   	gpriv->can_clk = devm_clk_get(dev, "can_clk");
->>   	if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) == 0)) {
->> -		gpriv->can_clk = devm_clk_get(dev, "canfd");
->> -		if (IS_ERR(gpriv->can_clk))
->> -			return dev_err_probe(dev, PTR_ERR(gpriv->can_clk),
->> -					     "cannot get canfd clock\n");
->> +		if (info->fcan_pclk) {
->> +			fcan_freq = clk_get_rate(gpriv->clkp);
->> +			gpriv->can_clk = NULL;
->> +		} else {
-> 
-> Discovered by: opus-5-5 · Missed by: gpt-6-astra, sashiko-gemini · Confirmed by: gpt-6-astra
-> Should the clock comments and the probe banner be updated for this new
-> fck source? 
-> Several places still describe only the external and canfd
-> clocks.
-> 
-> The comment just above this block in rcar_canfd_probe() still says:
-> 
-> 	/* fCAN clock: Pick External clock. If not available fallback to
-> 	 * CANFD clock
-> 	 */
-> 
-> With fcan_pclk set, the fallback is fck (gpriv->clkp), not the canfd
-> clock.
-
-We can update the comment as follows to comply with the clock name in the driver:
-
-/* fCAN clock: Pick External clock. If not available fallback to
-  * CANFD clock or peripheral clock in case fcan_pclk = 1
-  */
-
-or, to comply with the clock name in the bindings:
-
-/* fCAN clock: Pick External clock. If not available fallback to
-  * CANFD clock or fck in case fcan_pclk = 1
-  */
-
-Please let me know what is prefered.
-
-
-> 
-> In struct rcar_canfd_global, the field comments also don't cover this
-> case. Here can_clk is NULL and the fCAN source is clkp:
-> 
-> 	struct clk *can_clk;		/* fCAN clock */
-> 	...
-> 	bool extclk;			/* CANFD or Ext clock */
-
-There is already a pointer covering the clkp:
-
-         struct clk *clkp;		/* Peripheral clock */
-
-> 
-> The banner at the end of rcar_canfd_probe() wasn't changed either:
-> 
-> 	dev_info(dev, "global operational state (%s clk, %s mode)\n",
-> 		 gpriv->extclk ? "ext" : "canfd",
-> 
-> On this path extclk stays false. Won't the banner then say "canfd clk"
-> for a controller that has no canfd clock and runs from fck / postdiv?
-
-That could be updated with "clkp" to comply with the driver name or "fck" to 
-comply with the bindings or with "peripheral". Please let me know what is 
-preferred.
-
-> 
-> The later "can: rcar_canfd: Add support for Renesas RZ/G3S" patch sets
-> .fcan_pclk = 1 in r9a08g045_hw_info. After that, an RZ/G3S board whose
-> can_clk is missing or has a rate of 0 would print this label.
-> 
-> Also, the new bitfield comment calls this clock pclk:
-> 
-> 	unsigned fcan_pclk:1;		/* Has fcan sourced from pclk. */
-> 
-> The commit message and the code call it fck. 
-
-The commit message mentions: ...the CAN FD clock can be sourced either from fck
-(the peripheral clock) or from an external clock (can_clk).
-
-The driver uses clkp (peripheral clock) to refer to the fck.
-
-fck is the clock name used in the bindings. In bindings I kept the same clock 
-name and provided the proper phandle in the device tree. I don't consider we 
-should change the driver and the bindings for this thing. Please let me know 
-otherwise.
-
-The clock diagram is something like:
-
-                         +----+
-pclk (fck) -> 1/2 div ->|    |
-                         | mux|---> fcan
-ext  (can_clk)--------->|    |
-                         ++++++
-
-b/w () are the clock names in bindings.
-
-The full HW block with the clocks involved can be found at 
-https://github.com/claudiubeznea/logs/blob/master/canfd-clk.png
-
-Please let me know what is the procedure for this. Should I re-spin the series? 
-Should I send follow up patches?
-
-Thank you,
-Claudiu
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
