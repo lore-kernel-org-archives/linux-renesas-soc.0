@@ -1,237 +1,295 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011035.outbound.protection.outlook.com [52.101.125.35])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B434DAFB3;
-	Fri, 16 Oct 2026 14:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F15B3955F9;
+	Fri, 16 Oct 2026 14:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792159993; cv=fail; b=lfcD+dHqerVIXHJYjkl4y9IQKLFcEHlmj3XSgqIh/P6tJ4JrfOxUBgqblDJNkw+94RPUseBGh50BmYmpYaL07TeWd93v0D5YJ0VEgKKTZxAK7WokFCM8QGomyC1GkQGdXG8zqSQLRjRrSPrVqOYRHYyZqaFcTS7lMgrxRAHtCDw=
+	t=1792160472; cv=pass; b=WWR9Nl8n9ntD+G2XsxglBdtqDHhRe+avEKNXa/PKJsM+DDRfo7YH+IvCD0SDug2IVF/dbkQCQxfJklfAKdE2XVxm6O+BL8forvuTwweJjayZ0FA0pBG1u0xfb6uToA1F/58hEehpQlTr3HnuEPhCRRVO7jvoyiLFY4NSpnIEJOA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792159993; c=relaxed/simple;
-	bh=AzKqC1k47EuIIR/k3bN9LQAZj4Iist/M/VUROyksOgI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QBjeUSg3Httmws124/hgiMKNSseyINP8ynqTFfmGjrlD3kRmxMVvQdg/tc8Tx7AQG8MpAQ7hbRgCyrjCmmTpQUJGLf78zj5t9ACAieALvGEMs1CtjIibJnJjRYRGakqy3cBEPCg8EZSi+02fiBLI0m4DYl2dNYUdsWBs9Vh23/M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=djru1SF3; arc=fail smtp.client-ip=52.101.125.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1792160472; c=relaxed/simple;
+	bh=ri1l9nXhKfM1bIfHjH5AIAVXJjef9768xWdpZlXYhw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adyYza6AV7683jJa5vS5KQnAYVaiWc0NDCfrvidYOYDXCEQTqEBWrqOkFVggsBdLQcV6oq0viFdi/rJs9tsKIKhSkX4HmyZXT0kMRQVlNsOZaiKQ+NIKeR7hm9t10ywRi+T4VSV9GCk0shiaKmonMZ8HUITiTEpcB0XGqtEAhEs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=CPEYDfL9; arc=pass smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="djru1SF3"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f1gxtU7U/ulEm1ENxHq3ooxrpi7aoYWiSCafTuZMS1t5Q5x+AjbJ/rFC/hF+XecgfZ8pKE3mJeadpc/QFSE674zRmCYlxK062KNuESmbImgy0nmvRGM94wU53HDE1Wj1cW+guUjCYGWi0fU0vlChuC413A30zn61UYbFYH4Bv6LO9TXYww4YJ2hj6dgUt3r2KFIziYJ/9IDEgPFwoDo78gpCY0F3xkaLs5w6SOdNLXNzE64YJjNHmedHxnaXvoTih9IjC00WxWPiN3UpCM+ErfMG0WuxbopZcVQO/E9c9jLC43yTXzjGlLux8r0qFCTLKZ5FBfA8wBoscbCiu1idtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AzKqC1k47EuIIR/k3bN9LQAZj4Iist/M/VUROyksOgI=;
- b=RsTEhXquwR+ym5bMBsDskpf4N+rWi0kxQQ7J+fLWU8iL78rKVjLHWGsyxSpLjinwH1uebxilF16pVHaL35PfzkGWgazwQggTycnhZ+RDOV/dWUWf/DDOEYK1lx8ctKl2AQpV0VvHEbdOHBpxCsNRTuv3HXlZa9FQduloPmE/Afm+uB/AKiviyqFNs0vlHT69n5YCjEv2uqQuOXacAFxmHeh5Yf7bRwkCPkrHa0PbqCsNt6T0a0sEKMjWjXWfQt3ry/5/eA8h2dpgQz4/CL3ovwRWgVbNcixI0Jpx0DD4Z6WfKxplotGsCDP8xZlnYbpLjEHEx6K48qhmdbsybwp/FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AzKqC1k47EuIIR/k3bN9LQAZj4Iist/M/VUROyksOgI=;
- b=djru1SF3+B5AjPXl04GsBIfZtYuGmDMRyw9vFz8t/uiuxIvsPSdbUcmPwHgPrHQWyoQAt7uCCaN+CGgw/70/SiVvYwBn5GhOiiRg0Z50h5o3uZx4vjVwNWkg9UFZuMtsxBS/CsoarxgVSGetHPm/Fg6yQjCnXo+B5qBKkU8p44I=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYWPR01MB10693.jpnprd01.prod.outlook.com (2603:1096:400:2a5::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
- 2026 14:12:59 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0496.021; Fri, 16 Oct 2026
- 14:12:58 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>
-CC: Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, "magnus.damm"
-	<magnus.damm@gmail.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Chris Paterson <Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@oss.qualcomm.com>
-Subject: RE: [PATCH v4 1/3] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3L SoC
-Thread-Topic: [PATCH v4 1/3] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3L SoC
-Thread-Index: AQHdUXqWGJYcQwxreka0VFtI2IFYOLcAS3kAgAABusA=
-Date: Fri, 16 Oct 2026 14:12:58 +0000
-Message-ID:
- <TY3PR01MB113465234171180FFB5F1B6FD869B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="CPEYDfL9"
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id F16722022C9;
+	Fri, 16 Oct 2026 16:21:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1792160463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NBDbBDxCYOmi0zU6LSmui73qHGJ2obUNIbsCQeuGJMI=;
+	b=CPEYDfL9N3zV794tHJfGNINZWZFSzby0eG6zAJVYEO9uGF1kUbz41BJfwnMJvfsaXEiATP
+	YhF1KS4Kv/nmqSxJUBZaQsOEO18BYwUH3wPOW5WUIRRbQRMw+PBAEyEBKUVA08MpeY9E0G
+	whHasXMxwN5BevkGJuY5QBJiA2vmoHwWMPexSNMMfbslaBSlUlbJgiRepaOexw8G4JgaMP
+	iy6LsOmTqzwdBqxwTMj4EEs7kHjMmUjc+xJyClvgl55kxUEgzcZ4YfdUYqb/QxQPHy45o3
+	LTJ+P3C+BaCNNJBLCMKHZgprPzbOqyRLnsk67dzgxJFtV9C8RYyy3C8EUdK4VA==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1792160463; a=rsa-sha256;
+	cv=none;
+	b=ejPFQu/0ez+DTGQoPSMPrY9oI7N8uUyZHLcGiVnhJXIWVmVi77OGKnHAUkfXKGZIs7ENKC
+	WtgiUnHthX9GxbFf22qQZ2tXLl2JrAgzqnVbpJ/SkfXhzYJdH73dJ1M58g+wcV/S+J1QXl
+	3W3KaIwIlFE0M+l/AU+TnKMbDECGSSqFo6L2Xslc8UHYpQfcDHgVd9+CBRQ4E8bBHaT/wM
+	ZAViYjSiJnU7vxs8xE+MI/XEymP+gdoZZFCNnR5uk88DDWSM+lcGmE5OyzrM+gY9cIdFsb
+	+PAZWQBnprKmck9Bn1ebhBiLoboRzTlO3awASBm9MqKJrIWDrqdFXc4BmcZ/6A==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1792160463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NBDbBDxCYOmi0zU6LSmui73qHGJ2obUNIbsCQeuGJMI=;
+	b=dFED9ZtVWw8UtXZ5wP1ShTIifM4dPXxQSV9zIDdpAYYjAPTKzpyTdS/llXM4PEvnRk642y
+	Q/su+z9A3YFpvNyU0cB1JxMQlLTZaIAxdL0aceBv8pKr170CwRJ0+BFRG9UoKg0QwPwkWN
+	zRSjWTTUEbwmFp+zQjHh76xHltUU4D/bK5oy1393eB0mmVOODS89ZydKw2W27c6QjnULa8
+	W4fzgyUOm5IfivvJ5G0G8ZNqLNZmFLmVyKsdH/WyP8C3YvT9Bq9uQCNYujU5bdU+VTbORD
+	b01jT45MrAkXhGrV79hMAjYtJYtOyAp8IZP4398AvhQCG9x02ZyaUo5z0WLuog==
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1xHinv-006CN7-2s;
+	Fri, 16 Oct 2026 16:21:03 +0200
+Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 8EC765C62D6;
+	Fri, 16 Oct 2026 14:21:03 +0000 (UTC)
+Date: Fri, 16 Oct 2026 16:21:03 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Tu Nguyen <tu.nguyen.xg@renesas.com>, linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v4 3/3] can: rcar_canfd: Add support for Renesas RZ/G3L
+Message-ID: <20261016-enchanted-poetic-beagle-61cca6-mkl@pengutronix.de>
 References: <20261001075742.21961-1-biju.das.jz@bp.renesas.com>
- <20261001075742.21961-2-biju.das.jz@bp.renesas.com>
- <20261016-rebel-ostrich-from-vega-f759c8-mkl@pengutronix.de>
-In-Reply-To: <20261016-rebel-ostrich-from-vega-f759c8-mkl@pengutronix.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYWPR01MB10693:EE_
-x-ms-office365-filtering-correlation-id: 4d66d6c3-489f-434c-3ce7-08df2b8f94e3
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|23010399003|376014|7416014|1800799024|38070700021|56012099006|4143699003|11063799006|261009223027099003|10067099003|22082099003|18002099003;
-x-microsoft-antispam-message-info:
- fXf70G3zdohaUpyJ68kckGLQLX7cC5/PU3hAlhjXMsdjsu45Mx1RHFxeHyVKtQagDDcQQaWPQ+KsHqwl6xybXj/CfugP9Ps7ae45TEEheWroJ4+VDSBSGm+x96eSts/UVbhgkVC6Zgys8r15i+w3gepadhcbya6qPupJdmgLGskLOKt9VQE+mmOn6ri7dFxHyoCBQjCs9KSfVkw56WxqAcj3RaZuqGPlqob0xFjTQ/FkEy9iXvvUdakPsOMtQulCOjiJuIM8o2vCgK9m1xXPjxtqVBV+MQ8eLAsMYxQxD14VHzsc0qKL9XPNvU5xoMSnY3QAjrR70MYj1h0R5NHCFiadeJ7gfLB8rr2kE4wMUwP4hm+cViGj0pnhH7ysXUBIZhPGDT3gRAuev894Oiz6ztW9uXhYcP/ozYFPp6VQAVAKKCb4U7K7J4Rxg7HDrCrr/3JiK3c4V5Of8BLSLOafoTXP/Y6clwjN8/tldScD4PAUUxmQrH9xMo4B1I+TSHxovbV8BVlggZVL31AOiGafWBwQSAPNNYO1VoEPy4ptqyZZIJCOWNK5pc4vvloUMu9J2spKk8kxFiSPK/iVQQBYh85x8ihhZOCSHzXZaQozzmNOmoHCKLp7gs4Slf+AJ9Vbmvvj+b3hQti1S/ZyrfFgxv7S1FJawpckLY0v3yyarPY=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(7416014)(1800799024)(38070700021)(56012099006)(4143699003)(11063799006)(261009223027099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZWo2Y2NwZnJ1OFFTcUxEUUdQdnBhYlVJY0ZycjJWNldDYWV3TWF0NkpFUUVn?=
- =?utf-8?B?TnJlWUxqdGo5UFo4TjRwVDdXUlJjdkNpVkdxbzV3WVVVcS9lcWhiNHk5cEds?=
- =?utf-8?B?eDBSR21VQ1JGUEFBcG9nNDBEbTRGMVE0UXVSY2cyTjdzMUVVQ1MzVS9SYWRU?=
- =?utf-8?B?Rk1iL0EydWpyc3FLQzR5TjRNUWJ4TDlkUlkrL0Iya2NjUUJXdVNMZjErMXRN?=
- =?utf-8?B?UGl3S2VTRkJNWExJVnNQSHhSRk1rNHZ3dEx5K08rS3duYm9zVHFSNEhSS05X?=
- =?utf-8?B?VnJyT0MxRkUvZXp0bm9YdW5MeWY5endQeXFLaEZKalVpVUgrcmlVMDdudG1K?=
- =?utf-8?B?SHFJaUU3VXNSVnJaK1BnOVFFMUgzYjUvL0llaVhwZis1amJFb3doV0NmL1hx?=
- =?utf-8?B?a1o2WHFQN29iVEUxUDAxczVYS0ZmdFJ3Vk9nOEFLZ2VKN2tpelNFY290SFRS?=
- =?utf-8?B?djY2L01nYWFjc3JjOTIyYUdqdE8zblRiVlNiSi9PVksrUlRoWTFpbXNnQm9V?=
- =?utf-8?B?eVl6YmRncmNtSGJEVXRBS3dSdTRnNTF2MzdVajd4dkprbFp1MDhwaEhmcWt0?=
- =?utf-8?B?UjBTVXVQZkRNY0IyL1Y2ZGdoR3VVdHFRVzk2SlZHTGk2aW50M2JkUmR4M2V4?=
- =?utf-8?B?UGhTOHVHQzhvMlBVSlNEalFWN0QxazJWc2RzNm5Velk3WTlzN3RSQTJoRlZw?=
- =?utf-8?B?Y0pNN3hHa1d5bld5YjlaWFE0WlorY2dsQmFvMzRuNDRyTkJHbVhJQ0JYUEhX?=
- =?utf-8?B?OVlZTkV1M0NSVmFTMnhqVUc3VzVsd2ZrVVdTVE9TOExBSHMwMmw0RFVBa1o2?=
- =?utf-8?B?MDA1NHRYc2ZyS1B4c20yUzFHTEtlRysyRXMyQmZpVmVPOHp0K1kyWlRCSVk2?=
- =?utf-8?B?YU9DNEtUWWFWSkV1K3o2OXlYM05NUVFWQnliNVlCWVgybms2eGM4eU1IU1A5?=
- =?utf-8?B?T1V2bTF2YWV5UXYwRlVPdnc4SURMblhRcVNsd09GU1NpWkpFaGpnd21VRDJI?=
- =?utf-8?B?UzAxdm1RTHE3MnZ2SmlYdTRjSVY0clNKZlhFM2NLVGVLK3A2ckMxZ3VkblBh?=
- =?utf-8?B?YUlIdXFncjZVWGFZT2FZS21vNGpCWUYzdmVvMzVMdEZ3SjhpcEwzY0tjTTAx?=
- =?utf-8?B?SkFQUFA1aGRYY0xKQ2VXRk80U3M0d2cvZnJWWEpLQWh2MHBwUXdWR0s2Y3JQ?=
- =?utf-8?B?V2Rucll4cmhSUXRrQkZWMW1iV0djc2VDQlpuRjhycjV4dHUvcUZJL01Za3NF?=
- =?utf-8?B?MmZ5d2ltRmxMZjdBMEordjNjNnZGcHA0VmdNRERTY0ZlSHAzUkl1N0lLaHNp?=
- =?utf-8?B?VFdqK2VIcnhDbWxyQmh6cnBJQnk0ei8xVE1lRFhOS2pkOHY4YWNKczhuUlhY?=
- =?utf-8?B?VURDUTJvVGE2RHZxYWNsK2VZZTdQcW5XcWkrWVlKc1MyNHp3QytTTkJIb3hK?=
- =?utf-8?B?Ymx4RHI2OElUcG1VRlJzUHU2T0NlT0FpR0NPUVdTWWFYZm83SFc4ZWt0MEEv?=
- =?utf-8?B?SDd2ajNsZkNTRENHeEZxSmEvOFpsSWlXcDNrdGpjeTJObzFTb0JQb3lrQlM2?=
- =?utf-8?B?OStHTUhxVVhkQWQ4TGtUQ0FWOWRQRGMyOUhjd25seDRaa2NPU1ozbXh6L2NK?=
- =?utf-8?B?bjZJYmxLck5vY0hPK0pqRTBTQWhpTTk2ek1tamFrMVJmaUZhSnVQWTZjM1pt?=
- =?utf-8?B?V040MjlWQlFWQ2ViTzMxN0xlZm5jcWl2MHFrbmc2VXN0SWxvU1RvUjZsT1pG?=
- =?utf-8?B?cmNvV3pMNUU5OCswdHh3bWczN3MzQnpucUtDdjI0SmNWaG1jRmZDY1gwcG1y?=
- =?utf-8?B?LzRSZEptOUYyL3lMTmowM1ZsNjVCSGI3cjAxVG1sN0R5MFFRNmcxbHhLOUVC?=
- =?utf-8?B?UlBwUXV0K2NnRUM1VWtVRVFxanYwazB1dEVyTU53dlJJakJpbDdoRGdDdzhs?=
- =?utf-8?B?cm54ZnVtQ3VBMmlOalNBdVdXM2JCQTNKWktMQTRCV0JTODhwRXlJbVM2N0Fk?=
- =?utf-8?B?WEc1K3Y1KzYyVWptVDl6ZkYrcW4ycjFiYkhFT1VuV3Rwa0lzNUR1Sy9kTDRy?=
- =?utf-8?B?K2JLeVZjTjN6TU9SVXEwdWJZcGJDRlRsb3ZzbmxVNGNpZElMYlEyU0x3R1NN?=
- =?utf-8?B?ZUFFSWdjbFFQRGU2REFCQjRZdGNYQ0svZy9WbEd4aVdZa2JxRXpkZXRhZUt1?=
- =?utf-8?B?eFUzbkEvenVXTjRnenpkY0k4RjVKWEw4VUpFWklvck1zYWN2bkRsUWcwUkdh?=
- =?utf-8?B?bUlxM3NTVWt0TkZobGc3M0RLbjh1V0N3ZE9rYkluSHpoSDZFN2RaL0dEYlVJ?=
- =?utf-8?B?bExVMGJjTjNoT2FCZnJjZUw5YVNXZ2hYNzZ3cStaUGdOU0R6ZS9vZz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <20261001075742.21961-4-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d66d6c3-489f-434c-3ce7-08df2b8f94e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2026 14:12:58.7689
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rmN6tfBRnHTJrcrMAY9/l3ZdSTmUHIjwCWWeRboEKCMoaL8sSmhvW4oqOOa4RtZLMZucoLYMGXOIV/5V6EBxUFvKuhI4LJqMRj1vfengHFc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10693
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7ff2d7fc2rwade7x"
+Content-Disposition: inline
+In-Reply-To: <20261001075742.21961-4-biju.das.jz@bp.renesas.com>
 
-SGkgTWFyYy8gS3J6eXN6dG9mLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZy
-b206IE1hcmMgS2xlaW5lLUJ1ZGRlIDxta2xAcGVuZ3V0cm9uaXguZGU+DQo+IFNlbnQ6IDE2IE9j
-dG9iZXIgMjAyNiAxNTowNA0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDEvM10gZHQtYmluZGlu
-Z3M6IGNhbjogcmVuZXNhcyxyY2FyLWNhbmZkOiBEb2N1bWVudCBSWi9HM0wgU29DDQo+IA0KPiBP
-biAwMS4xMC4yMDI2IDA4OjU3OjM3LCBCaWp1IERhcyB3cm90ZToNCj4gPiBEb2N1bWVudCB0aGUg
-UlovRzNMIChSOUEwOEcwNDYpIFNvQyBzdXBwb3J0Lg0KPiA+DQo+ID4gUlovRzNMIGhhcyAxMSBp
-bnRlcnJ1cHRzIGFuZCAzIENBTkZEIGNoYW5uZWxzIGNvbXBhcmVkIHRvIDggaW50ZXJydXB0cw0K
-PiA+IGFuZCAyIENBTkZEIGNoYW5uZWxzIG9uIFJaL0czUy4gUlovRzNMIGhhcyAyODggYnVmZmVy
-cyBpbiB0b3RhbA0KPiA+IGNvbXBhcmVkIHRvIDE5MiBidWZmZXJzIGluIFJaL0czUy4NCj4gPg0K
-PiA+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVy
-LmJlPg0KPiA+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpDQo+ID4gPGtyenlzenRv
-Zi5rb3psb3dza2lAb3NzLnF1YWxjb21tLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERh
-cyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+IA0KPiBuZXRkZXYncyBzYXNoaWtvIGlz
-IG5vdCBoYXBweToNCj4gDQo+IHJlZ2FyZHMsDQo+IE1hcmMNCj4gDQo+IHB3LWJvdDogY3INCj4g
-DQo+IC0tLSBQYXRjaCBbMTldOiBbUEFUQ0ggbmV0LW5leHQgMTkvMzddIGR0LWJpbmRpbmdzOiBj
-YW46IHJlbmVzYXMscmNhci1jYW5mZDogRG9jdW1lbnQgUlovRzNMIFNvQyAtLS0NCj4gY29tbWl0
-IGZjNjk1MDc5YTFkMjdlNGYzYzIyZGI4ZjVlMmY0NGUyY2FhNDRkYjUNCj4gQXV0aG9yOiBCaWp1
-IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+IA0KPiBkdC1iaW5kaW5nczogY2Fu
-OiByZW5lc2FzLHJjYXItY2FuZmQ6IERvY3VtZW50IFJaL0czTCBTb0MNCj4gDQo+IFRoaXMgYWRk
-cyB0aGUgUlovRzNMIChSOUEwOEcwNDYpIGNvbXBhdGlibGUgdG8gdGhlIHJlbmVzYXMscmNhci1j
-YW5mZCBiaW5kaW5nLiBJdCBhZGRzIGEgY29uZGl0aW9uYWwNCj4gYmxvY2sgZm9yIDExIGludGVy
-cnVwdHMsIDIgcmVzZXRzIGFuZCAzIGNoYW5uZWxzLCBhbmQgcHV0cyB0aGUgbmV3IGNvbXBhdGli
-bGUgaW4gdGhlIGJsb2NrIHRoYXQgZGlzYWxsb3dzDQo+IHJlbmVzYXMsbm8tY2FuLWZkIGFuZCBy
-ZW5lc2FzLGZkLW9ubHkuDQo+IA0KPiBMaW5rOiBodHRwczovL3BhdGNoLm1zZ2lkLmxpbmsvMjAy
-NjEwMDEwNzU3NDIuMjE5NjEtMi1iaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbQ0KPiANCj4gPiBk
-aWZmIC0tZ2l0DQo+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0L2Nh
-bi9yZW5lc2FzLHJjYXItY2FuZmQueWFtbA0KPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL25ldC9jYW4vcmVuZXNhcyxyY2FyLWNhbmZkLnlhbWwNCj4gPiBpbmRleCAxYTdh
-OWNlNDVlOTcuLjRiOTRiYzhkOTExYiAxMDA2NDQNCj4gPiAtLS0NCj4gPiBhL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvY2FuL3JlbmVzYXMscmNhci1jYW5mZC55YW1sDQo+
-ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9jYW4vcmVuZXNh
-cyxyY2FyLWNhbmZkLnlhbQ0KPiA+ICsrKyBsDQo+IA0KPiBbIC4uLiBdDQo+IA0KPiA+IEBAIC0y
-OTQsNiArMjk1LDI1IEBAIGFsbE9mOg0KPiA+ICAgICAgICBwYXR0ZXJuUHJvcGVydGllczoNCj4g
-PiAgICAgICAgICAiXmNoYW5uZWxbNi03XSQiOiBmYWxzZQ0KPiA+DQo+ID4gKyAgLSBpZjoNCj4g
-PiArICAgICAgcHJvcGVydGllczoNCj4gPiArICAgICAgICBjb21wYXRpYmxlOg0KPiA+ICsgICAg
-ICAgICAgY29udGFpbnM6DQo+ID4gKyAgICAgICAgICAgIGNvbnN0OiByZW5lc2FzLHI5YTA4ZzA0
-Ni1jYW5mZA0KPiA+ICsgICAgdGhlbjoNCj4gPiArICAgICAgcHJvcGVydGllczoNCj4gPiArICAg
-ICAgICBpbnRlcnJ1cHRzOg0KPiA+ICsgICAgICAgICAgbWluSXRlbXM6IDExDQo+ID4gKw0KPiA+
-ICsgICAgICAgIGludGVycnVwdC1uYW1lczoNCj4gPiArICAgICAgICAgIG1pbkl0ZW1zOiAxMQ0K
-PiA+ICsNCj4gPiArICAgICAgICByZXNldHM6DQo+ID4gKyAgICAgICAgICBtaW5JdGVtczogMg0K
-PiANCj4gRGlzY292ZXJlZCBieTogc2FzaGlrby1nZW1pbmkgwrcgTWlzc2VkIGJ5OiBvcHVzLTUt
-NSwgZ3B0LTYtYXN0cmEgwrcgQ29uZmlybWVkIGJ5OiBvcHVzLTUtNSBTaG91bGQgdGhpcw0KPiBi
-bG9jayBhbHNvIGNhcCBpbnRlcnJ1cHRzIGFuZCBpbnRlcnJ1cHQtbmFtZXMgYXQgMTE/DQoNCkty
-enlzenRvZiwNCg0KRG8geW91IGFncmVlIHdpdGggc2FzaGlrbydzIGNvbW1lbnQ/IEkgZHJvcHBl
-ZCBtYXhJdGVtcyBiYXNlZCBvbiB0aGUgcmV2aWV3IGNvbW1lbnQgWzFdDQoNClsxXSBodHRwczov
-L2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNjEwMDEtY2h1YmJ5LXRvbWF0by12dWx0dXJlLWUxYTY5
-Y0BxdW9sbC8NCg0KQ2hlZXJzLA0KQmlqdQ0KDQo+IA0KPiBUaGUgY29tbWl0IG1lc3NhZ2Ugc2F5
-cyBSWi9HM0wgaGFzIGV4YWN0bHkgMTEgaW50ZXJydXB0cywgYnV0IG9ubHkNCj4gbWluSXRlbXM6
-IDExIGlzIHNldCBoZXJlLiBUaGUgdXBwZXIgYm91bmQgdGhlcmVmb3JlIGNvbWVzIGZyb20gdGhl
-IHRvcC1sZXZlbCBpbnRlcnJ1cHRzIGFuZCBpbnRlcnJ1cHQtDQo+IG5hbWVzIGl0ZW1zIGxpc3Rz
-LiBUaG9zZSBhbGxvdyB1cCB0bw0KPiAyMCBlbnRyaWVzIHRvIGNvdmVyIHRoZSBzaXggY2hhbm5l
-bCBwYXJ0cy4NCj4gDQo+IEFzIGEgcmVzdWx0LCBhIHJlbmVzYXMscjlhMDhnMDQ2LWNhbmZkIG5v
-ZGUgbGlzdGluZyBhbnl3aGVyZSBmcm9tIDEyIHRvDQo+IDIwIGludGVycnVwdHMsIHdpdGggdGhl
-IG1hdGNoaW5nIG5hbWVzIGZvciBjaGFubmVscyAzIHRvIDUsIHBhc3NlcyBkdF9iaW5kaW5nX2No
-ZWNrIGFuZCBkdGJzX2NoZWNrLiBUaGF0DQo+IGlzIGluY29uc2lzdGVudCB3aXRoIHRoaXMgc2Ft
-ZSBibG9jayByZWplY3RpbmcgIl5jaGFubmVsWzMtN10kIiBmb3IgdGhlIFNvQywgc2luY2UgdGhl
-IGV4dHJhIGludGVycnVwdHMNCj4gZGVzY3JpYmUgY2hhbm5lbHMgdGhhdCBjYW5ub3QgZXhpc3Qu
-DQo+IA0KPiBXYXMgdGhlIGludGVudCB0byBhZGQgbWF4SXRlbXM6IDExIG5leHQgdG8gbWluSXRl
-bXM6IDExIGZvciBib3RoIGludGVycnVwdHMgYW5kIGludGVycnVwdC1uYW1lcz8gVGhhdA0KPiB3
-b3VsZCBwaW4gdGhlIGNvdW50IGV4YWN0bHksIHRoZSB3YXkgdGhlIG90aGVyIHZhcmlhbnQgYmxv
-Y2tzIGJvdW5kIHRoZWlyIGludGVycnVwdCBjb3VudHMuDQo+IA0KPiBTaG91bGQgcmVuZXNhcyxy
-OWEwOGcwNDYtY2FuZmQgYWxzbyBiZSBpbiB0aGUgZXhpc3RpbmcgYWxsT2YgYmxvY2sgdGhhdCBt
-YWtlcyByZXNldHMgYW5kIHJlc2V0LW5hbWVzDQo+IHJlcXVpcmVkPyBSaWdodCBub3cgdGhhdCBi
-bG9jayBsaXN0cyBvbmx5IHRoZSBvdGhlciBSWiB2YXJpYW50czoNCj4gDQo+ICAgLSBpZjoNCj4g
-ICAgICAgcHJvcGVydGllczoNCj4gICAgICAgICBjb21wYXRpYmxlOg0KPiAgICAgICAgICAgY29u
-dGFpbnM6DQo+ICAgICAgICAgICAgIGVudW06DQo+ICAgICAgICAgICAgICAgLSByZW5lc2FzLHI5
-YTA4ZzA0NS1jYW5mZA0KPiAgICAgICAgICAgICAgIC0gcmVuZXNhcyxyOWEwOWcwNDctY2FuZmQN
-Cj4gICAgICAgICAgICAgICAtIHJlbmVzYXMscnpnMmwtY2FuZmQNCj4gICAgIHRoZW46DQo+ICAg
-ICAgIHJlcXVpcmVkOg0KPiAgICAgICAgIC0gcmVzZXRzDQo+ICAgICAgICAgLSByZXNldC1uYW1l
-cw0KPiANCj4gVGhlIG1pbkl0ZW1zOiAyIGNvbnN0cmFpbnQgYWJvdmUgb25seSBhcHBsaWVzIHdo
-ZW4gcmVzZXRzIGlzIHByZXNlbnQuIFRoZSB0b3AtbGV2ZWwgcmVxdWlyZWQgbGlzdCBoYXMNCj4g
-bmVpdGhlciByZXNldHMgbm9yIHJlc2V0LW5hbWVzLiBBcyBhIHJlc3VsdCwgYW4gUlovRzNMIGNh
-bmZkIG5vZGUgd2l0aCBubyByZXNldHMgcGFzc2VzIGR0X2JpbmRpbmdfY2hlY2sNCj4gYW5kIGR0
-YnNfY2hlY2suDQo+IA0KPiBUaGUgZHJpdmVyIHdpbGwgbm90IGNhdGNoIHRoZSBtaXN0YWtlIGVp
-dGhlci4gcmNhcl9jYW5mZF9wcm9iZSgpIGdldHMgYm90aCByZXNldHMgYXMgb3B0aW9uYWw6DQo+
-IA0KPiAJZ3ByaXYtPnJzdGMxID0gZGV2bV9yZXNldF9jb250cm9sX2dldF9vcHRpb25hbF9leGNs
-dXNpdmUoZGV2LCAicnN0cF9uIik7DQo+IAkuLi4NCj4gCWdwcml2LT5yc3RjMiA9IGRldm1fcmVz
-ZXRfY29udHJvbF9nZXRfb3B0aW9uYWxfZXhjbHVzaXZlKGRldiwgInJzdGNfbiIpOw0KPiANCj4g
-SWYgdGhlIERUIGxlYXZlcyBvdXQgdGhlIHJlc2V0IGxpbmVzLCBib3RoIGhhbmRsZXMgY29tZSBi
-YWNrIE5VTEwuIFByb2JlIHN0aWxsIHN1Y2NlZWRzLCBidXQgdGhlDQo+IGNvbnRyb2xsZXIgaXMg
-bmV2ZXIgZXhwbGljaXRseSB0YWtlbiBvdXQgb2YgcmVzZXQuDQo+IA0KPiBUaGlzIGlzIHN0aWxs
-IHRoZSBjYXNlIGF0IHRoZSBlbmQgb2YgdGhlIHNlcmllcy4gVGhlIHJlcXVpcmVkLXJlc2V0cyBl
-bnVtIGRvZXMgbm90IGluY2x1ZGUgcjlhMDhnMDQ2LA0KPiBldmVuIGFmdGVyICJjYW46IHJjYXJf
-Y2FuZmQ6IEFkZCBzdXBwb3J0IGZvciBSZW5lc2FzIFJaL0czTCIgYWRkcyB0aGUgZHJpdmVyIG1h
-dGNoIGVudHJ5Lg0KPiANCj4gPiArDQo+ID4gKyAgICAgIHBhdHRlcm5Qcm9wZXJ0aWVzOg0KPiA+
-ICsgICAgICAgICJeY2hhbm5lbFszLTddJCI6IGZhbHNlDQo+ID4gKw0KPiANCj4gWyAuLi4gXQ0K
-PiANCj4gLS0NCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAgICAgfCBNYXJjIEtsZWlu
-ZS1CdWRkZSAgICAgICAgICB8DQo+IEVtYmVkZGVkIExpbnV4ICAgICAgICAgICAgICAgICAgIHwg
-aHR0cHM6Ly93d3cucGVuZ3V0cm9uaXguZGUgfA0KPiBWZXJ0cmV0dW5nIE7DvHJuYmVyZyAgICAg
-ICAgICAgICAgfCBQaG9uZTogKzQ5LTUxMjEtMjA2OTE3LTEyOSB8DQo+IEFtdHNnZXJpY2h0IEhp
-bGRlc2hlaW0sIEhSQSAyNjg2IHwgRmF4OiAgICs0OS01MTIxLTIwNjkxNy05ICAgfA0K
+
+--7ff2d7fc2rwade7x
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/3] can: rcar_canfd: Add support for Renesas RZ/G3L
+MIME-Version: 1.0
+
+On 01.10.2026 08:57:39, Biju Das wrote:
+> Add support for Renesas RZ/G3L CANFD IP. RZ/G3L has 3 channels and
+> 11 interrupts, compared 2 channels and 8 interrupts on RZ/G3S.
+> RZ/G3L has 288 buffers compared to 192 buffers on RZ/G3S.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+netdev sashiko is not happy.
+
+regards,
+Marc
+
+--- Patch [22]: [PATCH net-next 22/37] can: rcar_canfd: Add support for Ren=
+esas RZ/G3L ---
+commit 1811b72e7e6100246f7fbb9e3871869d81790a54
+Author: Biju Das <biju.das.jz@bp.renesas.com>
+
+can: rcar_canfd: Add support for Renesas RZ/G3L
+
+This patch adds the renesas,r9a08g046-canfd compatible to
+rcar_canfd_of_table and maps it to the existing RZ/G3S hw_info
+(r9a08g045_hw_info). The commit message says RZ/G3L has 3 channels,
+11 interrupts and 288 buffers.
+
+Link: https://patch.msgid.link/20261001075742.21961-4-biju.das.jz@bp.renesa=
+s.com
+
+> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rca=
+r_canfd.c
+> index 41c395118949..c64387967368 100644
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -2403,6 +2403,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, =
+rcar_canfd_suspend,
+>  static const __maybe_unused struct of_device_id rcar_canfd_of_table[] =
+=3D {
+>  	{ .compatible =3D "renesas,r8a779a0-canfd", .data =3D &rcar_gen4_hw_inf=
+o },
+>  	{ .compatible =3D "renesas,r9a08g045-canfd", .data =3D &r9a08g045_hw_in=
+fo },
+> +	{ .compatible =3D "renesas,r9a08g046-canfd", .data =3D &r9a08g045_hw_in=
+fo },
+
+Discovered by: gpt-6-astra, opus-5-5 =C2=B7 Missed by: sashiko-gemini
+With this patch, RZ/G3L probes and resets exactly like RZ/G3S. Should
+the binding also make resets and reset-names required for RZ/G3L?
+
+In Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml,
+r9a08g046 is missing from the allOf block that requires them:
+
+  - if:
+      properties:
+        compatible:
+          contains:
+            enum:
+              - renesas,r9a08g045-canfd
+              - renesas,r9a09g047-canfd
+              - renesas,rzg2l-canfd
+    then:
+      required:
+        - resets
+        - reset-names
+
+The RZ/G3L block only has "resets: minItems: 2", which applies only when
+the property is present. So an RZ/G3L node without resets would pass
+dt_binding_check and dtbs_check.
+
+The driver would not catch this either. rcar_canfd_probe() gets both
+resets as optional:
+
+    gpriv->rstc1 =3D devm_reset_control_get_optional_exclusive(dev, "rstp_n=
+");
+    ...
+    gpriv->rstc2 =3D devm_reset_control_get_optional_exclusive(dev, "rstc_n=
+");
+
+In that case reset_control_reset(NULL) in rcar_canfd_global_init()
+does nothing and returns 0. Could the IP then stay in reset with
+nothing printed to explain it?
+
+The same RZ/G3L block also sets minItems: 11 for interrupts and
+interrupt-names, but has no maxItems: 11. Is that intended?
+
+The schema gap comes from "dt-bindings: can: renesas,rcar-canfd:
+Document RZ/G3L SoC" earlier in this series. It is still there at the
+end of the series.
+
+Discovered by: gpt-6-astra, opus-5-5 =C2=B7 Missed by: sashiko-gemini =C2=
+=B7 Ranked Critical by: gpt-6-astra
+This isn't a bug introduced by this patch, but RZ/G3L adds a third
+channel, so is the register_candev() failure path in
+rcar_canfd_channel_probe() safe?
+
+gpriv->ch[ch] is set before registration. The failure path then frees
+ndev, and priv with it, without clearing gpriv->ch[ch]:
+
+rcar_canfd_channel_probe() {
+    ...
+	gpriv->ch[priv->channel] =3D priv;
+	err =3D register_candev(ndev);
+	if (err) {
+		...
+		goto fail_candev;
+	}
+    ...
+fail_candev:
+	netif_napi_del(&priv->napi);
+fail:
+	free_candev(ndev);
+	return err;
+}
+
+rcar_canfd_probe() then calls remove for every enabled channel:
+
+fail_channel:
+	for_each_set_bit(ch, &gpriv->channels_mask, gpriv->max_channels)
+		rcar_canfd_channel_remove(gpriv, ch);
+
+The only check in rcar_canfd_channel_remove() is for a NULL priv:
+
+	if (priv) {
+		unregister_candev(priv->ndev);
+		netif_napi_del(&priv->napi);
+		free_candev(priv->ndev);
+	}
+
+For the channel that just failed, does this read priv->ndev from freed
+memory? It would also call unregister_candev() on a netdev that was
+never registered, then free_candev() on the same net_device again.
+
+The early assignment to gpriv->ch[] goes back to at least commit
+c5048a7b2c23a.
+
+Discovered by: gpt-6-astra =C2=B7 Missed by: opus-5-5, sashiko-gemini =C2=
+=B7 Confirmed by: opus-5-5 =C2=B7 Called a false positive by: gpt-6-astra
+This is a pre-existing issue, but when rcar_canfd_global_init() fails,
+does rcar_canfd_probe() release the clocks and resets a second time?
+
+rcar_canfd_global_init() already cleans up on its own error paths:
+
+fail_mode:
+	rcar_canfd_disable_global_interrupts(gpriv);
+fail_reset2:
+	reset_control_assert(gpriv->rstc2);
+fail_reset1:
+	reset_control_assert(gpriv->rstc1);
+fail_ram_clk:
+	clk_disable_unprepare(gpriv->clk_ram);
+fail_clk:
+	clk_disable_unprepare(gpriv->clkp);
+	return err;
+
+But rcar_canfd_probe() still sends every error to fail_mode:
+
+	err =3D rcar_canfd_global_init(gpriv);
+	if (err)
+		goto fail_mode;
+    ...
+fail_mode:
+	rcar_canfd_global_deinit(gpriv, false);
+
+rcar_canfd_global_deinit() calls rcar_canfd_disable_global_interrupts(),
+which writes GCTR/GERFL while clkp is off and the resets are asserted.
+It then asserts the resets again and calls clk_disable_unprepare() on
+clk_ram and clkp a second time.
+
+Would this trigger the clock core's "already disabled" and "already
+unprepared" warnings? If the clocks are shared, could it also remove
+another consumer's enable reference?
+
+Possible triggers are a reset_control_reset() error, or a
+readl_poll_timeout() timeout in rcar_canfd_reset_controller() or in
+the GOPM mode check. The global_init/global_deinit split came from
+commit fa5f4ec8fff8b.
+
+pw-bot: cr
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--7ff2d7fc2rwade7x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCatIyzAAKCRDMOmT6rpmt
+0oAnAQDvQTELyr2BZnfOp5yXpwez5ecSnOJC7UJF81msvm1GkAD+NRr2lcKZCQQ2
+lasVEmD/+EP1pI8AJARsYgeKmKIOmww=
+=M3nd
+-----END PGP SIGNATURE-----
+
+--7ff2d7fc2rwade7x--
