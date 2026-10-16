@@ -1,295 +1,196 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F15B3955F9;
-	Fri, 16 Oct 2026 14:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792160472; cv=pass; b=WWR9Nl8n9ntD+G2XsxglBdtqDHhRe+avEKNXa/PKJsM+DDRfo7YH+IvCD0SDug2IVF/dbkQCQxfJklfAKdE2XVxm6O+BL8forvuTwweJjayZ0FA0pBG1u0xfb6uToA1F/58hEehpQlTr3HnuEPhCRRVO7jvoyiLFY4NSpnIEJOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792160472; c=relaxed/simple;
-	bh=ri1l9nXhKfM1bIfHjH5AIAVXJjef9768xWdpZlXYhw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adyYza6AV7683jJa5vS5KQnAYVaiWc0NDCfrvidYOYDXCEQTqEBWrqOkFVggsBdLQcV6oq0viFdi/rJs9tsKIKhSkX4HmyZXT0kMRQVlNsOZaiKQ+NIKeR7hm9t10ywRi+T4VSV9GCk0shiaKmonMZ8HUITiTEpcB0XGqtEAhEs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=CPEYDfL9; arc=pass smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672752F0673;
+	Fri, 16 Oct 2026 15:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792163221; cv=none; b=SHlb/HtVZBl+LC9wpLP8F3ZlU7F9dZAMOlDOe2WgaOfle/jU4vVtCsQGnGarY3uAh0y5hkoNQ4myTlQyHFEMpgVtZQ68UHO7D0ZQNjmqRmiRSwl1i5XXb1hIn5fFrJzLSRbQlq0g71I2K+1C4wVofG5whXUs2ZIyB1PwxToUpD0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792163221; c=relaxed/simple;
+	bh=P+D1coLaWlUWcuOYCNhGprq5d7AjHHkdzoc1rc2e8A0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B8a2ugQ0yU0t7z310sNIKVvxgxLMcnjw7vkAGjMEu0MNuMjd9u5GGYbOR/th9vtTdguc6tOyWNSCBfedlXwr/4zxvpITEhEWIKsTe1C34n4ENvyYBB5KkDKd2M9qKXZ/Xk+NlMOe/98gBzmu9hfG+YLpb8lVs2AsWULopNm/mgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eV18hT0G; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="CPEYDfL9"
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id F16722022C9;
-	Fri, 16 Oct 2026 16:21:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1792160463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NBDbBDxCYOmi0zU6LSmui73qHGJ2obUNIbsCQeuGJMI=;
-	b=CPEYDfL9N3zV794tHJfGNINZWZFSzby0eG6zAJVYEO9uGF1kUbz41BJfwnMJvfsaXEiATP
-	YhF1KS4Kv/nmqSxJUBZaQsOEO18BYwUH3wPOW5WUIRRbQRMw+PBAEyEBKUVA08MpeY9E0G
-	whHasXMxwN5BevkGJuY5QBJiA2vmoHwWMPexSNMMfbslaBSlUlbJgiRepaOexw8G4JgaMP
-	iy6LsOmTqzwdBqxwTMj4EEs7kHjMmUjc+xJyClvgl55kxUEgzcZ4YfdUYqb/QxQPHy45o3
-	LTJ+P3C+BaCNNJBLCMKHZgprPzbOqyRLnsk67dzgxJFtV9C8RYyy3C8EUdK4VA==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1792160463; a=rsa-sha256;
-	cv=none;
-	b=ejPFQu/0ez+DTGQoPSMPrY9oI7N8uUyZHLcGiVnhJXIWVmVi77OGKnHAUkfXKGZIs7ENKC
-	WtgiUnHthX9GxbFf22qQZ2tXLl2JrAgzqnVbpJ/SkfXhzYJdH73dJ1M58g+wcV/S+J1QXl
-	3W3KaIwIlFE0M+l/AU+TnKMbDECGSSqFo6L2Xslc8UHYpQfcDHgVd9+CBRQ4E8bBHaT/wM
-	ZAViYjSiJnU7vxs8xE+MI/XEymP+gdoZZFCNnR5uk88DDWSM+lcGmE5OyzrM+gY9cIdFsb
-	+PAZWQBnprKmck9Bn1ebhBiLoboRzTlO3awASBm9MqKJrIWDrqdFXc4BmcZ/6A==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1792160463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NBDbBDxCYOmi0zU6LSmui73qHGJ2obUNIbsCQeuGJMI=;
-	b=dFED9ZtVWw8UtXZ5wP1ShTIifM4dPXxQSV9zIDdpAYYjAPTKzpyTdS/llXM4PEvnRk642y
-	Q/su+z9A3YFpvNyU0cB1JxMQlLTZaIAxdL0aceBv8pKr170CwRJ0+BFRG9UoKg0QwPwkWN
-	zRSjWTTUEbwmFp+zQjHh76xHltUU4D/bK5oy1393eB0mmVOODS89ZydKw2W27c6QjnULa8
-	W4fzgyUOm5IfivvJ5G0G8ZNqLNZmFLmVyKsdH/WyP8C3YvT9Bq9uQCNYujU5bdU+VTbORD
-	b01jT45MrAkXhGrV79hMAjYtJYtOyAp8IZP4398AvhQCG9x02ZyaUo5z0WLuog==
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1xHinv-006CN7-2s;
-	Fri, 16 Oct 2026 16:21:03 +0200
-Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8EC765C62D6;
-	Fri, 16 Oct 2026 14:21:03 +0000 (UTC)
-Date: Fri, 16 Oct 2026 16:21:03 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Vincent Mailhol <mailhol@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tu Nguyen <tu.nguyen.xg@renesas.com>, linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v4 3/3] can: rcar_canfd: Add support for Renesas RZ/G3L
-Message-ID: <20261016-enchanted-poetic-beagle-61cca6-mkl@pengutronix.de>
-References: <20261001075742.21961-1-biju.das.jz@bp.renesas.com>
- <20261001075742.21961-4-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eV18hT0G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15781F000C4;
+	Fri, 16 Oct 2026 15:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792163220;
+	bh=qgiGef4Ohy6VRaPUYC6AlFmNRyKjxhooP4OqvSap8is=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=eV18hT0GJUaQWHwp7Ud3PDO7D6hZRb8bZhmXgdps3B8BS6n8oNJ0JGllQiOIL5tDP
+	 Sm/steBjr2D+Yo32uchtTymDOoEIcPaq4VI6WSikDzpGouECjbWUVLW7w9yFeVcsgN
+	 02VFgdWQOgAJ5by5jdKCTaA2WhUV2wFYDSyfDULQTbvubLT8hniX199/Slm0vXbZR2
+	 IQZm0/IZz7DZlUj5ENSfYBHMLo8QtFx+/3Njn/IvMWTwBJYMk/0rkA4a76NRnaV3YZ
+	 uopDBKWTIAyxKjcdyOUu7Z1DGoMj7Z2ldUbBCAWjfTtDyVPCr1XX9oKF9XIN6QoIXc
+	 wR5wn+tLG2xuQ==
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Dave Airlie <airlied@redhat.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Ian Ray <ian.ray@gehealthcare.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Alison Wang <alison.wang@nxp.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Yongbang Shi <shiyongbang@huawei.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	imx@lists.linux.dev,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jianmin Lv <lvjianmin@loongson.cn>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Qianhai Wu <wuqianhai@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	spice-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Iker Pedrosa <ikerpedrosam@gmail.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Hans de Goede <hansg@kernel.org>,
+	LiangCheng Wang <zaq14760@gmail.com>,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+	Ruben Wauters <rubenru09@aol.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	nouveau@lists.freedesktop.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Aditya Garg <aditya.garg@linux.dev>
+Subject: Re: (subset) [PATCH 00/75] drm/connector: Convert all drivers to atomic_create_state and remove reset
+Date: Fri, 16 Oct 2026 17:06:53 +0200
+Message-ID: <179216309041.2383329.5085571920107795525.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org>
+References: <20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7ff2d7fc2rwade7x"
-Content-Disposition: inline
-In-Reply-To: <20261001075742.21961-4-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Wed, 14 Oct 2026 19:26:23 +0200, Maxime Ripard wrote:
+> This is a follow-up to the plane and CRTC reset removal series, and
+> part of a larger effort to remove the reset hook from all KMS objects.
+> 
+> The connector reset hook is overloaded: it is called both at probe
+> time to create the initial software state and during suspend/resume to
+> reset hardware and software state. These two roles have different
+> requirements, and the reset hook is not fallible, making error
+> handling difficult for the initial state allocation path.
+> 
+> [...]
 
---7ff2d7fc2rwade7x
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 3/3] can: rcar_canfd: Add support for Renesas RZ/G3L
-MIME-Version: 1.0
+Applied to misc/kernel.git (drm-misc-next)
 
-On 01.10.2026 08:57:39, Biju Das wrote:
-> Add support for Renesas RZ/G3L CANFD IP. RZ/G3L has 3 channels and
-> 11 interrupts, compared 2 channels and 8 interrupts on RZ/G3S.
-> RZ/G3L has 288 buffers compared to 192 buffers on RZ/G3S.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+[05/75] drm/arm: komeda: Switch to drm_atomic_helper_connector_create_state
+        commit: 849b1119cb1f429667bf3e79cba86ad397087ab7
+[11/75] drm/bridge: lontium-lt8912b: Switch to drm_atomic_helper_connector_create_state
+        commit: 80512a4f295c52caf1394677d9c80738b68c8831
+[12/75] drm/bridge: megachips: Switch to drm_atomic_helper_connector_create_state
+        commit: 9a4a55df74880acf7c2b954d6011aab579db5f5e
+[24/75] drm/hyperv: Switch to drm_atomic_helper_connector_create_state
+        commit: 7b9c28149a291451ada4c3e9fc7fd2ae13f36bc5
+[25/75] drm/imx: ipuv3: Switch to drm_atomic_helper_connector_create_state
+        commit: 75da1ba5a3c36dca76206ec8e90bebcfc3641c64
+[35/75] drm/solomon: ssd130x: Switch to drm_atomic_helper_connector_create_state
+        commit: 9ec42580ccceb54bd8e0b044729a98e4f345b522
+[39/75] drm/sysfb: Switch to drm_atomic_helper_connector_create_state
+        commit: af36b2313c54e10b832298033b8be2fd50746c96
+[51/75] drm/vc4: Switch to drm_atomic_helper_connector_create_state
+        commit: c81e4d88c3ed73483a99a90f56cc80c80eebc863
+[67/75] drm/malidp: Convert to atomic_create_state
+        commit: 8b32d0652db9bb6b01055311e1cce5e3c4b70137
 
-netdev sashiko is not happy.
-
-regards,
-Marc
-
---- Patch [22]: [PATCH net-next 22/37] can: rcar_canfd: Add support for Ren=
-esas RZ/G3L ---
-commit 1811b72e7e6100246f7fbb9e3871869d81790a54
-Author: Biju Das <biju.das.jz@bp.renesas.com>
-
-can: rcar_canfd: Add support for Renesas RZ/G3L
-
-This patch adds the renesas,r9a08g046-canfd compatible to
-rcar_canfd_of_table and maps it to the existing RZ/G3S hw_info
-(r9a08g045_hw_info). The commit message says RZ/G3L has 3 channels,
-11 interrupts and 288 buffers.
-
-Link: https://patch.msgid.link/20261001075742.21961-4-biju.das.jz@bp.renesa=
-s.com
-
-> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rca=
-r_canfd.c
-> index 41c395118949..c64387967368 100644
-> --- a/drivers/net/can/rcar/rcar_canfd.c
-> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> @@ -2403,6 +2403,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, =
-rcar_canfd_suspend,
->  static const __maybe_unused struct of_device_id rcar_canfd_of_table[] =
-=3D {
->  	{ .compatible =3D "renesas,r8a779a0-canfd", .data =3D &rcar_gen4_hw_inf=
-o },
->  	{ .compatible =3D "renesas,r9a08g045-canfd", .data =3D &r9a08g045_hw_in=
-fo },
-> +	{ .compatible =3D "renesas,r9a08g046-canfd", .data =3D &r9a08g045_hw_in=
-fo },
-
-Discovered by: gpt-6-astra, opus-5-5 =C2=B7 Missed by: sashiko-gemini
-With this patch, RZ/G3L probes and resets exactly like RZ/G3S. Should
-the binding also make resets and reset-names required for RZ/G3L?
-
-In Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml,
-r9a08g046 is missing from the allOf block that requires them:
-
-  - if:
-      properties:
-        compatible:
-          contains:
-            enum:
-              - renesas,r9a08g045-canfd
-              - renesas,r9a09g047-canfd
-              - renesas,rzg2l-canfd
-    then:
-      required:
-        - resets
-        - reset-names
-
-The RZ/G3L block only has "resets: minItems: 2", which applies only when
-the property is present. So an RZ/G3L node without resets would pass
-dt_binding_check and dtbs_check.
-
-The driver would not catch this either. rcar_canfd_probe() gets both
-resets as optional:
-
-    gpriv->rstc1 =3D devm_reset_control_get_optional_exclusive(dev, "rstp_n=
-");
-    ...
-    gpriv->rstc2 =3D devm_reset_control_get_optional_exclusive(dev, "rstc_n=
-");
-
-In that case reset_control_reset(NULL) in rcar_canfd_global_init()
-does nothing and returns 0. Could the IP then stay in reset with
-nothing printed to explain it?
-
-The same RZ/G3L block also sets minItems: 11 for interrupts and
-interrupt-names, but has no maxItems: 11. Is that intended?
-
-The schema gap comes from "dt-bindings: can: renesas,rcar-canfd:
-Document RZ/G3L SoC" earlier in this series. It is still there at the
-end of the series.
-
-Discovered by: gpt-6-astra, opus-5-5 =C2=B7 Missed by: sashiko-gemini =C2=
-=B7 Ranked Critical by: gpt-6-astra
-This isn't a bug introduced by this patch, but RZ/G3L adds a third
-channel, so is the register_candev() failure path in
-rcar_canfd_channel_probe() safe?
-
-gpriv->ch[ch] is set before registration. The failure path then frees
-ndev, and priv with it, without clearing gpriv->ch[ch]:
-
-rcar_canfd_channel_probe() {
-    ...
-	gpriv->ch[priv->channel] =3D priv;
-	err =3D register_candev(ndev);
-	if (err) {
-		...
-		goto fail_candev;
-	}
-    ...
-fail_candev:
-	netif_napi_del(&priv->napi);
-fail:
-	free_candev(ndev);
-	return err;
-}
-
-rcar_canfd_probe() then calls remove for every enabled channel:
-
-fail_channel:
-	for_each_set_bit(ch, &gpriv->channels_mask, gpriv->max_channels)
-		rcar_canfd_channel_remove(gpriv, ch);
-
-The only check in rcar_canfd_channel_remove() is for a NULL priv:
-
-	if (priv) {
-		unregister_candev(priv->ndev);
-		netif_napi_del(&priv->napi);
-		free_candev(priv->ndev);
-	}
-
-For the channel that just failed, does this read priv->ndev from freed
-memory? It would also call unregister_candev() on a netdev that was
-never registered, then free_candev() on the same net_device again.
-
-The early assignment to gpriv->ch[] goes back to at least commit
-c5048a7b2c23a.
-
-Discovered by: gpt-6-astra =C2=B7 Missed by: opus-5-5, sashiko-gemini =C2=
-=B7 Confirmed by: opus-5-5 =C2=B7 Called a false positive by: gpt-6-astra
-This is a pre-existing issue, but when rcar_canfd_global_init() fails,
-does rcar_canfd_probe() release the clocks and resets a second time?
-
-rcar_canfd_global_init() already cleans up on its own error paths:
-
-fail_mode:
-	rcar_canfd_disable_global_interrupts(gpriv);
-fail_reset2:
-	reset_control_assert(gpriv->rstc2);
-fail_reset1:
-	reset_control_assert(gpriv->rstc1);
-fail_ram_clk:
-	clk_disable_unprepare(gpriv->clk_ram);
-fail_clk:
-	clk_disable_unprepare(gpriv->clkp);
-	return err;
-
-But rcar_canfd_probe() still sends every error to fail_mode:
-
-	err =3D rcar_canfd_global_init(gpriv);
-	if (err)
-		goto fail_mode;
-    ...
-fail_mode:
-	rcar_canfd_global_deinit(gpriv, false);
-
-rcar_canfd_global_deinit() calls rcar_canfd_disable_global_interrupts(),
-which writes GCTR/GERFL while clkp is off and the resets are asserted.
-It then asserts the resets again and calls clk_disable_unprepare() on
-clk_ram and clkp a second time.
-
-Would this trigger the clock core's "already disabled" and "already
-unprepared" warnings? If the clocks are shared, could it also remove
-another consumer's enable reference?
-
-Possible triggers are a reset_control_reset() error, or a
-readl_poll_timeout() timeout in rcar_canfd_reset_controller() or in
-the GOPM mode check. The global_init/global_deinit split came from
-commit fa5f4ec8fff8b.
-
-pw-bot: cr
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---7ff2d7fc2rwade7x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCatIyzAAKCRDMOmT6rpmt
-0oAnAQDvQTELyr2BZnfOp5yXpwez5ecSnOJC7UJF81msvm1GkAD+NRr2lcKZCQQ2
-lasVEmD/+EP1pI8AJARsYgeKmKIOmww=
-=M3nd
------END PGP SIGNATURE-----
-
---7ff2d7fc2rwade7x--
+Thanks!
+Maxime
