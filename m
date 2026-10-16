@@ -1,180 +1,307 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5ED4D2EDF;
-	Fri, 16 Oct 2026 15:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEA7312815;
+	Fri, 16 Oct 2026 15:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792163562; cv=none; b=QzWePHxITPuaQT2UqB5Az6EXWxzIf7bMHl3Ll22mBKUFgDQ3Z2TVUpUpUthG+D9hjXvXmxJ41KoJK6hiLhTSZdmJLbjZQZpAIXYmljjKQXZmMRcqQHoc7bHoMCRze3lTAZOdZ2TadiWdo1M2L3zcEyh6k9G/DXj6dYRBiGqDPjw=
+	t=1792166165; cv=none; b=K9Y+T+46K67ILLVPEP7hCQGIwTjaNO0pc1iGTKc3dlsK3YX/rOSMt9ZCMVLQG0lb5J2gxri0wTHG+sp2MkqKGLkggRXVB6zxTQVFP4qHb6tLlXT0/i/cq8F6nisSXv4X8z+qRBDKR2dgIe1Kb2FS7JuGPSHx1koUEoiI9uCm3uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792163562; c=relaxed/simple;
-	bh=wArVxH9jZInnASIQLwCgvMc3lzkEDaLjNnutL2oFwVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EWkofqE05R6o0DFiTVm5+qXn4e9jvSpvs/e79Jf3Gxu44nQhNbXZL1Ndg7LvkYj40qU0bL/EVDypcE/twaEwBbaJGSDVaJ46a5l6Up8ItTindUMg93h7qsHvdJshBJktGlhGEkUJUD5ec+OoZwagCYj603S8yHQhRg4mI7XlPiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeXH2eNd; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeXH2eNd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F291F000C4;
-	Fri, 16 Oct 2026 15:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792163561;
-	bh=zExOvzSfNAOGhWyHayoCJYIMW12XGItswYYl/21/DBA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=HeXH2eNd0qTi1KJWMDpX2qurIIHfELGudDOFsBVj38SK5hgtwRmtRu++Y/B5kYqqd
-	 A4blc5Fp2xS9ugu94PJEByj6vIlDtKLwiWnVuaMsxRz0Ir4yLDMdWRBi4NsEDJfgYI
-	 dTCWHHQPHA4O4L72QOauM8WSJ4JjVCneqoIAwA1rVTR79Lh6W41DTt4LcokcrG/DS7
-	 QghFRktl0qmqBt0Q2454sV5etB2cRZSEkJVEe4jVB1iPvoqhJu/FGnl3nmWT7TfuCi
-	 kYiPGdYgWB0PP3fl0nc6yx6ZWW1MUxK7rfa2DXZnz9GRXCns4+n+2ph4Izy2R1nkwe
-	 CPOLN30xIOzMQ==
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>,
-	Dave Airlie <airlied@redhat.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Ian Ray <ian.ray@gehealthcare.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Alison Wang <alison.wang@nxp.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Tian Tao <tiantao6@hisilicon.com>,
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	Yongbang Shi <shiyongbang@huawei.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Long Li <longli@microsoft.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	s=arc-20240116; t=1792166165; c=relaxed/simple;
+	bh=wztALUNuE0vYtHbvlXjd4oOg6S2sV7XQq3KPmzy2IHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n8jf9JVWqWrrsxbvQ+wLT1nZDQp0/qyWcPD7iN22cVrlb69Wm25KHH134cUAWczRXtEc5ZNY8vcqKsEKXzwZ/xhZaewwqmGqpuEk1ikjKmVpHouixJ2ESxBb70gVPd3avhJxBXyMElCQ9nKJtMh8CyDzgSwyvPUWJskpGZFeOd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8C41F000C4;
+	Fri, 16 Oct 2026 15:55:58 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	imx@lists.linux.dev,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Jianmin Lv <lvjianmin@loongson.cn>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Qianhai Wu <wuqianhai@loongson.cn>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	spice-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Iker Pedrosa <ikerpedrosam@gmail.com>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sunxi@lists.linux.dev,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Hans de Goede <hansg@kernel.org>,
-	LiangCheng Wang <zaq14760@gmail.com>,
-	Alex Lanzano <lanzano.alex@gmail.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-	Ruben Wauters <rubenru09@aol.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
 	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lyude Paul <lyude@redhat.com>,
-	nouveau@lists.freedesktop.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Aditya Garg <aditya.garg@linux.dev>
-Subject: Re: (subset) [PATCH 00/75] drm/connector: Convert all drivers to atomic_create_state and remove reset
-Date: Fri, 16 Oct 2026 17:12:34 +0200
-Message-ID: <179216354629.2387589.2597043397406887835.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org>
-References: <20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org>
+	=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clegoffic@baylibre.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 0/8] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
+Date: Fri, 16 Oct 2026 17:55:39 +0200
+Message-ID: <cover.1792163045.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 14 Oct 2026 19:26:23 +0200, Maxime Ripard wrote:
-> This is a follow-up to the plane and CRTC reset removal series, and
-> part of a larger effort to remove the reset hook from all KMS objects.
-> 
-> The connector reset hook is overloaded: it is called both at probe
-> time to create the initial software state and during suspend/resume to
-> reset hardware and software state. These two roles have different
-> requirements, and the reset hook is not fallible, making error
-> handling difficult for the initial state allocation path.
-> 
-> [...]
+	Hi all,
 
-Applied to misc/kernel.git (drm-misc-next)
+TL;DR:
 
-[02/75] drm/adp: Switch to drm_atomic_helper_connector_create_state
-        commit: db1de27aca30ebaad04aea74ac21e4c4fb531a37
+    Describe hardware in DT, and perform mapping to abstractions offered
+    by SCMI in Linux.
 
-Thanks!
-Maxime
+The Renesas R-Car X5H-based Ironhide board is the first Renesas
+SoC/board combination that implements the ARM System Control and
+Management Interface (SCMI).
+
+This means Linux can no longer perform various system operations (e.g.
+clock, power domain, and reset control) by accessing the hardware
+directly.  Instead, these operations are abstracted according to various
+SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
+firmware running on a System Control Processor (SCP).
+More specifically, the R-Car X5H SCP FW SCMI controls access to:
+  1. Core clocks and module clocks,
+  2. Module resets,
+  3. Power domains,
+  4. System power.
+The latter is not relevant for this discussion.
+
+Using SCMI also has an impact on the board DTS: besides the addition of
+a firmware/scmi node with protocol-specific subnodes, devices using
+SCMI-abstracted system resources now have to refer to these resources
+using resource specifiers containing phandles to the SCMI protocol
+subnodes, and firmware-specific object IDs[1].
+
+Unfortunately we encountered several issues with this:
+  - The clock, reset, and power domain IDs are not stable by design,
+    causing DT incompatibilities.
+    SCMI requires that the ID space exposed to an agent (i.e. Linux)
+    starts at zero and is contiguous.  Hence any change in system
+    partitioning (Application CPU core vs. Realtime CPU core,
+    virtualization, ...) may mean a renumbering of all SCMI IDs,
+    implying a massive change to the DT.
+  - There may be different SCP firmware lineages, e.g. proprietary and
+    certified variants, and FLOSS variants,
+  - SCMI features may differ across firmware versions,
+  - SCMI may abstract the hardware in a different way, requiring changes
+    in (possibly existing) DT bindings and drivers to support the same
+    hardware with and without SCMI:
+      - E.g. the number of SCMI clocks inputs to a hardware block may
+	differ from the actual hardware,
+      - E.g. hardware clock inputs may be abstracted as SCMI power
+	domains (or vice versa), like on Qualcomm SA8255P[2].
+    Experience has taught that not describing the hardware in DT may
+    lead to major issues later.
+  - SCMI does not support the concept of a clock domain, so existing
+    drivers can no longer rely on Runtime PM, but need to be changed to
+    manage functional clocks explicitly,
+  - U-Boot IPL (Initial Program Loader) needs a proper hardware
+    description in DT, not using SCMI.
+
+This list deliberately ignores ID instability and the need for SCMI
+quirks during development of the SCMI firmware.  While upstream Linux
+must only support sufficiently mature firmware versions, vendor trees
+(e.g. renesas-lts) may still want to support development firmware
+versions.
+
+During last OSSJ/LPC, Marek Vasut pondered if we could keep our own ID
+lists stable, and perform a mapping to the IDs used by the actual SCMI
+implementation running on the system.  This was also briefly discussed
+at LPC[3].  After some refining of the initial idea, this series takes a
+slightly different approach, by:
+  1. Describing the actual hardware components in DT, plus a minimum
+     SCMI glue,
+  2. Mapping DT hardware descriptions to SCMI-backed objects and
+     abstractions (or replacements, in case they are unusable,
+     unavailable, or too different), in Linux drivers, based on the
+     detected firmware version.
+
+This has the following advantages:
+  1. The DT ABI is stable,
+  2. DT bindings and drivers for existing hardware blocks do not need to
+     be modified,
+  2. Current and future firmware can be handled in driver code,
+  3. U-Boot IPL can use almost the same DT; it just needs stripping of
+     the SCMI node and subnodes,
+  4. If ever needed, the Clock Pulse Generator (CPG) and Module
+     Controller (MDLC) drivers can be extended to program the hardware
+     directly if SCMI is not present,
+
+Last week I gave a presentation about the issues and our solution at
+ELCE2026 in Prague[4].
+
+This series consists of four parts:
+  A. Patches 1-2 prepare and add SCMI remapping support to the R-Car X5H
+     CPG clock driver,
+  B. Patches 3-6 fix and add new interfaces needed for remapping in the
+     R-Car X5H MDLC pmdomain driver,
+  C. Patch 7 adds SCMI remapping support to the R-Car X5H MDLC pmdomain
+     driver,
+  D. Patch 8 enables more SCMI protocols on R-Car X5H Ironhide.
+
+Dependencies:
+  - C depends on B,
+  - D depends on A, B, C, and out-of-tree SCMI quirks.
+
+Changes compared to v3[5]:
+  - Remove dependencies by making assumptions and dropping disputed
+    items, to move this series forward:
+      - Assume all SCMI IDs are stable.
+        This let us drop the addition of scmi_get_base_info(), and
+	support for handling different ID spaces.
+      - Drop the "renesas,scmi-firmware" DT property, and find a device
+        node compatible with "arm,scmi" instead.
+        This let us drop the addition of fw_devlink support for this
+	property, too, but required a new probe deferral fix in the
+	pmdomain code: "pmdomain: Make genpd_get_from_provider() return
+	-EPROBE_DEFER".
+	This will have to be revisited when systems with multiple SCMI
+	providers appear.
+  - Drop unneeded IS_ERR() check after __clk_get_hw(),
+  - Mark scmi_{clk,reset,power}_np __free(device_node),
+  - Include initial mapping tables for R-Car X5H SCP FW SDKv4.31.0 and
+    later, supporting clocks, power domains, and resets used by serial,
+    I2C, and SPI devices.
+  - Try SCMI clocks first, and fall back to the default fixed-frequency
+    clocks when not available, as recent firmware versions no longer
+    restrict access to some bus clocks,
+  - Fall back to the non-SCMI defaults when SCMI provider support is
+    disabled,
+  - Keep RESET_CONTROL_FLAGS_BIT_OPTIONAL clearing in
+    __fwnode_reset_control_get(),
+  - Return directly in __reset_control_get_from_provider(), instead of
+    assigning to a local variable, letting us drop the latter and
+    simplify scoped_guard() to plain guard(),
+  - Add Reviewed-by,
+  - Check for overflow when converting (u64) fwnode args to (uint32_t)
+    OF args,
+  - Document that reset_control_get_from_provider_exclusive() must not
+    be given a reference to a GPIO provider,
+  - Let the dummy return ERR_PTR(-ENOTSUPP) instead of NULL,
+  - Improve patch description,
+  - Let r8a78000_mdlc_attach_dev() return success when the MDLC instance
+    is not found, to avoid breaking users referring in DT to an SCMI
+    power-domain directly,
+  - Extract scmi_get_clk(),
+  - Add support for gateable functional clock parents,
+  - Propagate all reset failures, as SCP FW SDKv4.28.0 which restricted
+    HSCIF0 reset is no longer supported.
+
+Changes compared to v2[6]:
+  - New patches:
+    "[PATCH v3 06/12] reset: Extract __reset_control_get_from_provider()",
+    "[PATCH v3 08/12] clk: renesas: r8a78000: Add clk_hw to clk_map",
+  - Move DT binding patches forward in series,
+  - Add "renesas" vendor prefix and "scmi-" function prefix to the
+    "firmware" property (I still think the vendor property should be
+    dropped, or replaced by "arm"),
+  - Add "of_" prefix to genpd_get_from_provider(),
+  - Replace reset_controller_get_provider() by
+    reset_control_get_from_provider_exclusive(),
+  - Add kerneldoc,
+  - Rebase,
+  - Consistently use /* sentinel */ for zero sentinels,
+  - Call reset_control_*() APIs instead of internal reset_control_ops
+    methods,
+  - Rename struct mod_map to struct mod_map_in,
+  - Add struct mod_map, which also contains a reset_control pointer,
+  - Add fill_mod_map() to obtain all SCMI reset_control structures
+    up-front, as one can no longer use lazy look-up,
+  - Prefix DEFINE_MDLC_RESET_WRAPPER() parameters with underscores.
+
+Changes compared to v1[7]:
+  - Drop SCMI quirks and SCMI mapping tables,
+  - Move CPG/MDLC DT bindings and minimal base drivers to a separate
+    series,
+  - Add that SCMI may provide different abstractions,
+  - Add missing asterisk to blank kerneldoc line,
+  - Let scmi_get_base_info() return -EPROBE_DEFER or -EOPNOTSUPP instead
+    of -ENOENT, and propagate these errors in callers,
+  - Fall back to the default support when SCMI support or firmware is
+    not available, or when the detected SCMI firmware version is not
+    supported by the driver,
+  - Improve error message on scmi_get_base_info() failure,
+  - Check if SCMI firmware node is available,
+  - Use reverse xmas ordering in r8a78000_cpg_probe(),
+  - Replace the scmi_*_np members of struct r8a78000_*_priv by local
+    variables in the probe functions, and pass them to the fill_*_map()
+    functions,
+  - Join split short lines,
+  - Move check for supported firmware version up,
+  - Fix DT misindentations,
+  - Add scmi_clk node, as it is no longer added in earlier commits.
+
+Notes:
+  - In reponse of feedback on v1, I did try to use SCMI IDs in DT, and
+    handle most issues in Linux SCMI drivers and SCMI quirks[8].  While
+    the result worked, it did not solve everything in the issues list
+    above.
+  - This series does not include actual SCMI quirks; the SCMI firmware
+    for R-Car X5H is still under development.
+
+For testing, I have pushed this series plus additional work to[9].
+
+Thanks for your comments!
+
+[1] Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+[2] "[PATCH net-next v11 1/7] dt-bindings: phy: document the serdes PHY on sa8255p"
+    https://lore.kernel.org/20260629-qcom-sa8255p-emac-v11-1-1b7fb95b51f9@oss.qualcomm.com
+[3] "Firmware ABI stability" at Linux Plumbers Conference 2025
+    https://lpc.events/event/19/contributions/2153/
+[4] "Marrying Device Tree and SCMI" (https://sched.co/2RaWR)
+[5] "[PATCH v3 00/12] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+     support"
+    https://lore.kernel.org/cover.1788338320.git.geert+renesas@glider.be/
+[6] "[PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+     support"
+    https://lore.kernel.org/cover.1783505329.git.geert+renesas@glider.be
+[7] "[PATCH/RFC 00/14] R-Car X5H Ironhide SCMI CPG/MDLC remapping"
+    https://lore.kernel.org/cover.1776793163.git.geert+renesas@glider.be
+[8] "[PATCH/RFC 0/9] R-Car X5H Ironhide pure SCMI proof-of-concept"
+    https://lore.kernel.org/cover.1781171705.git.geert+renesas@glider.be/
+[9] topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v4 branch of
+    https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+Geert Uytterhoeven (8):
+  clk: renesas: r8a78000: Add clk_hw to clk_map
+  clk: renesas: r8a78000: Add SCMI remapping support
+  reset: Extract __reset_control_get_from_provider()
+  reset: Add reset_control_get_from_provider_exclusive()
+  pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
+  pmdomain: Make genpd_get_from_provider() public
+  pmdomain: renesas: r8a78000: Add SCMI remapping support
+  arm64: dts: renesas: ironhide: Enable SCMI devpd, sys, clock, and
+    reset
+
+ .../boot/dts/renesas/r8a78000-ironhide.dts    |  19 +
+ drivers/clk/renesas/r8a78000-cpg.c            | 217 +++++++--
+ drivers/pmdomain/core.c                       |  26 +-
+ drivers/pmdomain/renesas/r8a78000-mdlc.c      | 410 +++++++++++++++++-
+ drivers/reset/core.c                          | 116 +++--
+ include/linux/pm_domain.h                     |   7 +
+ include/linux/reset.h                         |   8 +
+ 7 files changed, 698 insertions(+), 105 deletions(-)
+
+-- 
+2.43.0
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
