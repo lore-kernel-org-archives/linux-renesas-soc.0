@@ -1,199 +1,120 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BCD3C3425
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Oct 2026 06:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152794C6F04
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Oct 2026 13:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792306489; cv=none; b=e+Q7c1VzZHajtE3dsE1uciED8VuE5W4IOmNhEbeyvrnxIDWZgVFlmkXc1sYbNUqdearfgkqWJwXY2jsbBBgERB9w9qdlhgrK5Uuox/kYQRBiwOED2OM41giChBsVKVywDXJmu5oqgBSCpHRgmGZegWrvYSAU6dKkCFQ7y6Dbw5A=
+	t=1792331893; cv=none; b=S8SPZRjtQgnS3tzupyTdewBtJdKEyEw90tvD6edwmAtnrrvZLrN6/71G2W+5RjCnHenCZ3s554kpcT9inoR6jWBavtG5QHQtd33CEd4BWM3Kc5dcgp4oswSyEk9/XoID40d0Y24M7eh6KqZ9Xw+L1VAYpN8gfc6S97ifphT0ZeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792306489; c=relaxed/simple;
-	bh=Q4tSKD6D0XahfnZunTxmsWN7BQKMuMqFBs3yEe/WlRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmhOZhAYBRjUZmpQ7S8TmPUTI3urcO73O6uDQOwqA38Vuzg/m9QUkatjhAiac6CxrnkhOJHSFAoMnOlI3IsRoUeycCTIfiuHovSd5wZSdxKETgp49IIUt50Qq4uKGkTX9qMEdil287/xF/p8BrUzYeBQ1mexHpQqnRCF/ub/2QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=g0443Vf2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e5nWGSSl; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="g0443Vf2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e5nWGSSl"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id A2EAD1D000CD
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Oct 2026 02:54:46 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 18 Oct 2026 02:54:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1792306485;
-	 x=1792392885; bh=lN1dyBvzq08m1ZlZfsFoTFeonmBGcGXcOhyZa0SwwO8=; b=
-	g0443Vf2hiJDLQrZolj18knSr7laXlvXXZ9sdrDR/TcF0JMH3vBqX5fNXhbxsLp2
-	yroCrngFLqNpKDXHEXoFaihq6PREYH864CGroliX3ZDVZ2xWVctiMPJrqfe/SEEr
-	gTWf4PpPlv08PvZX7Fwd94qvXS/okyvrYNggc2PzUUxzM/FSmb3nxoo10Bjdf/rD
-	KGbj4R9gYrTFKr54tgjRR1Pk0BollC8byGOXvBLh8EEvHu/Ii8QBwUdxxrXCE0KA
-	0wY68MMDrL7d/hGCQ9jbX4QEaXgtgQakKFmscBGOQR+qPjLzVYoO7xlQLpoS9Die
-	uAJ0uXmBQcx+V5hP0ZjjbA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792306485; x=
-	1792392885; bh=lN1dyBvzq08m1ZlZfsFoTFeonmBGcGXcOhyZa0SwwO8=; b=e
-	5nWGSSlga1yoXMyFtCX49gd7m8DD0uKOH5au4by9jUkzAJDD0Dav7ESJfMuQAaJK
-	WdhKjvFFNx1kkG38VyjwIUfjeLCOfY73spPoQgn0I3pKKVNtTfFGfmi5LfrfFYul
-	l8/lUjml6wZ+Osun3Em6HvQNejM3Fztf6IYACn+sZQDAMtClRZu5CmH48wk4cpWZ
-	uHNGcjUUSbBWG/iR54W74HcCn1XtsSYDzIQttVdKSPYZEHuY4uCMQf7FQOTKG9ba
-	5y2OWwYtxyPK3bpwofQQ9Diw/LUdaLC0FE6uLJW44T8wLOkOxWNllMJGV3dPg1CN
-	a/XkWqn0WeYjTVFl7sL6A==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792306485; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:KmrMslMjq2PYVGhkGQFdAUPjrk4yIGfPFNdALF3PZT885SF
-	H7HfgZX9OSiVdiUROxN9FCcE9BtP770+sOAnOqcFdvjwXBDwYiFgsm4K9VsGfxf4
-	2HybGzfndDhiG3BV//rimk0zPIBtk+7++BzxLpv/zCEhFskzPBu33yDnnieLQihp
-	KroVZrvsXvcI94xCdt3AC5pq8dQ0XLfi6da7lKpVv6rxGmEqUCw7mCPgWS93bswa
-	vgteqF/jazHTQPMbWE7yiTow3EQDvM6ezu2NDVG6msGVN117WKp4kLBI/MEZ2s9f
-	BiEjXW6pWLo7bV6JjhipHH/8a8pD/ZC1HRGLjxg==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:H5P+nTOwYAqJeHBaea3z4tPxD16JsjYqMzGwLayu4Y0=:Q4tSKD6D0XahfnZunTxmsWN7BQKMuMqFBs3yEe/WlRA=;
-X-ME-Sender: <xms:NW3UahzZVwn8GfOYRiAvxQyHmflcF3ouaDspQfT1qie1T2SGRf1X5g>
-    <xme:NW3UapepuBeXyjWBf9ffSnGh-15CTg1xSxu1Y5vIsybeZFzCH3vsQiL2kJUN4CVFD
-    9Rg3D3034fvhOvvMwTPKmxRhlNkBADbxXqRloInsBcYvbnkVuzvXg>
-X-ME-Received: <xmr:NW3Uam6hrNTceO2UBS-XBJoarwlKHfwgrKVIag6c2Ee8Y2rVrdqv7hjGHa3vVT5TKhMExgZUT3SKpbqNLMwHy934HXl1qAI>
-X-ME-Proxy-Cause: dmFkZTGxwGwEgFqOp5XevDFdj3EQQVCsVex7OvjhbSxN2DGdZ9JwfumXz2YEZNnQ4R9ey9
-    vqyFnBRJFpWCfGoSJZ3UeTPdbSOuwGtEn4LcKYYkUF5Y8PbMhOypToaU8zA/pJWAgtTQQE
-    NBvBNmPLqElfV/kuD0G0TefIqYn7X3vSlKSebrWRObxHsgBKh3fUxDJcAwKoEwBDC0y7So
-    qK9d+wvK7TgoCIR8jvcGfHx2KtsJa8ne0rS5wiZNZ6DquHfyZIyGU2YxjEOBW/tG7C9q50
-    /tHrv9ygwHMlBdYtbshjqJ9mml9CUmPXob7IFLqyUxjq3SzMWmmEiGoSHWfE5BmkwfbNMs
-    Zk//DdMvvNaB4UsK0J9Rov763eW6v5ttnTSRuIk5XAsXHlLTtgxyM1u5p04ACstwA7VjJ6
-    S33UmR6udSbdrugfSBV5Wlg6TV1ULZSbBgeWudtm45FqFd3DdCTi3uRCS9bj3J9I7oeRPD
-    D5AhTghVIfojZzr8Kce/IaIs5n+cn6gkcCmm4TP0XFknRmhfyC16KB/ekcYv9OCUoqlcrl
-    2z28a4UeDRizLbbCt/Yp17akRvTW0vZe5/ujU3ZDcyJ7phLPVIEFYe6g6GJ0CH7OM90cz9
-    NJv7CLS0bDpOpu3G7kmBfoMDUWzJbrzmg3F69NBgaLxuG1NsKUvYCOG5wLjw
-X-ME-Proxy: <xmx:NW3UauIVaj40-XgDUwfA2oOOXr7eY4_dd_-qTnkb_o137CNbq7QTlQ>
-    <xmx:NW3UauygegLKQXz7NZoR4IezXdZQeU2mupfwxzYAh1h2u8JXoH3Byw>
-    <xmx:NW3UamJfPzNS6Watz2jhLc6R_e_y7eTYiIcvRbm4T9MCDx6_GUN5VA>
-    <xmx:NW3UatXD0HtVBijKSGw9cqs__4wd1I6LS3tjn2gVuNdSPtUeryjkvw>
-    <xmx:NW3UagbXkR7rq1ggw2hjOB4id2PMRVSpUZ4ft2PmkIITMIyofXLoefHr>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 18 Oct 2026 02:54:44 -0400 (EDT)
-Date: Sun, 18 Oct 2026 08:54:42 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Myeonghun Pak <mhun512@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ijae Kim <ae878000@gmail.com>,
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v3 1/2] media: rcar-isp: distinguish absent cores from
- registration failures
-Message-ID: <20261018065442.GC3577260@ragnatech.se>
-References: <20261018024654.3913088-1-mhun512@gmail.com>
- <20261018024654.3913088-2-mhun512@gmail.com>
+	s=arc-20240116; t=1792331893; c=relaxed/simple;
+	bh=rCFulCS196Fw/DBDyF9OMjFHIxiu7hy/WMzgUHoLoLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pJbqmmZuP8hXF/NLGq7PKXzYmBFXKN/10yaNcK8DtpBta1qDs7O6pjdg8wFLnqrg9BHTNokMj+3MRZpYwSGuUBGRfnrQImXuZab7+8cGtUyCG5rWKqJdpiWoSd43BQrCIrNptZyEy4Zsjcx6DgahJ+SBT9BkI8AMv9CBcklj7cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2db80fcdf8bso6869175ad.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Oct 2026 06:58:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792331891; x=1792936691;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=fhGyumamsbJwvfAtfGydBWyfBrT9VHxtfq0yzwmUVgA=;
+        b=jZQ+IZzL75YKOnSeFuRIpsktmfyQfmz49aHkHRxVUvrmubc0OzVTGDKf/058JHxzN3
+         OZTOYoPwoA8wHeUdlwb3ZbGKw1bEq4xXObRmGkvVyIuINCmUY8nxvdkJypZC6dVbZvOF
+         PWkh3WjdZqjWVEGlsMs+ddJk7P9O7ipZIZ9TepQjmQOUbQyy0/xnZ+Sw42YEHzWfZlIH
+         BtgK/QMouzwxbHjCuMUTzXcgIQ1JEpcKU9XK6kDLoSyM+UQawYAexAEXjPmiuJmoUKR/
+         BpKTejQCbSTMOt2EtdDBzKiQezWM6PccD4usb17zaP+7Q0748mbX4DexzmsQ3HGg6rFT
+         r9XA==
+X-Forwarded-Encrypted: i=1; AKwUvBzsriL0knJs+YrntvpQk7FeHEubFQN/K+SH5tPbiotrh461MrpKsVAwzrhRtUmaaNjYlP3xWkN+H+kDO9PxrO0c7g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJPp3UWgKtcmcQPCY4gDEAdRVg4g6NVq3BfGgKoQZQI/ViHp1wx
+	lOWjznviL2H6KOvY8w8NVE2AVFi1FWtuyiCQAwzhhbh2dLkH6+9EHmqoLp8QJ+cv
+X-Gm-Gg: AYBFou0TGEmmJMQjTlMou2oAh8GTnduG+5xLegc9GOHAUKTpS9q/WpQo1xODdhxBtVd
+	FCTY3hEBLA7UNzUTVIVz6GZp72rMdayCyzXjnDsYtwwKgRgCJYlqFZ3DIICeBsING8HCKSZEhVW
+	fu/BXLID3acOolLy7N2x0ya535LD/3NNyCexSjHVNUEpX02Ep0jfckyPi1VZhSYAXanOWqLcJyL
+	up4/pofw7gVDYtuSY3MgcsGu73Wg6uE4lNE95XmuQFn+OH8EuoOgj3Yw9Ywv/ck0JrAWFJKF2s5
+	5CcZ7zxf9L3xoi4XSig77LcO5qhSDfdpZ4QUMoWICp8XsvwAnG/Ze6UQ/J6xhKYN9sKWW76bSH7
+	5HI2hHY4xmhqN7G4ZHymzMTR9+nZFR2gnVnkogQtfBScQmPja4XW0716VkQn5ueUmcGHhkXIJeP
+	UU7ZJRIKobL1KkWuVcgDjNaWA+aFlIDTiR6BmunK8oATToG5lefy1GmFInCk2kKJBkh7AVCwChr
+	W360KzarEWAGlHuWEAgKKOo0l545gDYOLk=
+X-Received: by 2002:a17:90b:3889:b0:3ac:17c:6e85 with SMTP id 98e67ed59e1d1-3acef0ffa0fmr4262672a91.47.1792331891275;
+        Sun, 18 Oct 2026 06:58:11 -0700 (PDT)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com. [74.125.82.43])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac94798212sm16944055a91.14.2026.10.18.06.58.10
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Oct 2026 06:58:10 -0700 (PDT)
+Received: by mail-dl1-f43.google.com with SMTP id a92af1059eb24-15dd124bbe7so2492122c88.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Oct 2026 06:58:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw8L/SDIDmNjS6xoNdEnomMMZqlS/EOXLw3XvbglUCrqAxQa8bjiERzPZ0JI21hTrahaXCoRDDjN1AgXQwjPSQLUw==@vger.kernel.org
+X-Received: by 2002:a05:6102:5249:b0:7cc:2a3c:9a33 with SMTP id
+ ada2fe7eead31-7cc36b49079mr1291606137.34.1792331517781; Sun, 18 Oct 2026
+ 06:51:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261018024654.3913088-2-mhun512@gmail.com>
+References: <cover.1792163045.git.geert+renesas@glider.be> <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
+ <51d8ba05-76e5-45ab-91da-3c6cb02505d7@mailbox.org>
+In-Reply-To: <51d8ba05-76e5-45ab-91da-3c6cb02505d7@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 18 Oct 2026 15:51:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVzX8fd4NDQi8ow0m+48g8p-LBHMysFi+fOqp1oDtT8LQ@mail.gmail.com>
+X-Gm-Features: AclHuK8HjL2MgNJEhgQ8UPYzZV_qfVLea-QA-Rw_khapKdsDEf1HaCakMPT5y5o
+Message-ID: <CAMuHMdVzX8fd4NDQi8ow0m+48g8p-LBHMysFi+fOqp1oDtT8LQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2026-10-17 22:46:53 -0400, Myeonghun Pak wrote:
-> risp_probe() interprets -ENODEV from risp_core_probe() as an absent
-> optional core and continues with the channel selector. Keep that result
-> for the existing resource-setup fallback, but distinguish it from a
-> failure after core resources have been initialized.
-> 
-> The following patch moves the core IRQ request after RPPX1 and the
-> registration state have been initialized.
+Hi Marek,
 
-No it doesn't.
+On Sat, 17 Oct 2026 at 19:34, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 10/16/26 5:55 PM, Geert Uytterhoeven wrote:
+>
+> [...]
+>
+> >   static int r8a78000_cpg_probe(struct platform_device *pdev)
+> >   {
+> >       struct device *dev = &pdev->dev;
+> >       struct r8a78000_cpg_priv *priv;
+> > -     const struct clk_map *map;
+> > -     int ret;
+> > +     const struct clk_map_in *map;
+>
+> Super-nitpick, use reverse xmas tree ordering here if there will be V5.
 
-> If that request returns
-> -ENODEV, its error path releases RPPX1 and the VSPX device reference.
-> Passing -ENODEV back unchanged would make the parent continue probing,
-> although core->base still indicates a core whose resources have already
-> been released.
-> 
-> Translate -ENODEV to -ENXIO at the registration error exit, after the
-> existing cleanup. The parent can then handle the failure using only the
-> return value, without inspecting core->base. Leave all resource-setup
-> results unchanged, including the existing fallback when VSPX information
-> is absent.
-> 
-> This prepares the error handling for the IRQ lifetime fix in the next
-> patch; it does not depend on an existing -ENODEV return from the V4L2
-> registration helpers.
-> 
-> This issue was identified during our ongoing research while reviewing
-> kernel code.
-> 
-> Suggested-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-> Assisted-by: LLM
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
-> ---
-> Changes in v3:
-> - Express the distinction in the return value, as suggested by Niklas,
->   instead of checking core->base in the caller.
-> - Translate -ENODEV only after resource setup has succeeded, keeping
->   existing resource-setup and channel-selector fallback behavior.
-> - Describe this patch as a prerequisite for the IRQ registration move.
-> 
-> Changes in v2:
-> - Split the error-handling change out of the IRQ lifetime fix.
-> 
-> v2: https://lore.kernel.org/r/20261015004159.2202899-1-mhun512@gmail.com
-> v1: https://lore.kernel.org/r/20261011214448.2043581-1-mhun512@gmail.com
-> 
-> Compile-tested with Clang 22.1.2, W=1 (arm64). No runtime testing.
-> 
->  drivers/media/platform/renesas/rcar-isp/core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-> index 586a5adbedfa8..373d9ca9374fe 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
-> @@ -894,7 +894,8 @@ int risp_core_probe(struct rcar_isp_core *core, struct platform_device *pdev,
->  err_destroy_rpp:
->  	rppx1_destroy(core->rpp);
->  	put_device(core->vspx.dev);
-> -	return ret;
-> +	/* Do not report a registration failure as an absent core. */
-> +	return ret == -ENODEV ? -ENXIO : ret;
+I believe that's already the case. What am I missing?
 
-This completely misses the error code from risp_core_probe_resources() 
-which, as I understand it, is the one you initially wanted to 
-differentiate on? This change still propagates the return code from it 
-and just chnages -ENODEV to -ENXIO if it happens to be returned from 
-v4l2_device_register() or risp_core_create_subdev().
+>
+> >       map = of_device_get_match_data(dev);
+> >       if (!map)
 
-Please stop using an LLM to throw spaghetti at the wall and if you want 
-to have this change read, understand and change the code by hand.
+Gr{oetje,eeting}s,
 
-Nacked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
->  }
->  
->  void risp_core_remove(struct rcar_isp_core *core)
+                        Geert
 
 -- 
-Kind Regards,
-Niklas Söderlund
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
