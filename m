@@ -1,36 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C11548CFC;
-	Sun, 18 Oct 2026 02:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005812EEE92;
+	Sun, 18 Oct 2026 02:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792289452; cv=none; b=eIncVWVYbqsKd7udgJZGFjRUQzMOecrMrxzUvCDfurJ3yoXADsuzaByVL9Yt0LOoPKdGpruuDB12BrVj93AxkuA+T4tuK0n2UHWply3pIx4S3HBUYzxNSuyxg4lNtBhjPKM6WCmmSo+ZwyUjYrtGoq72dxVp3U0+AU0/JWqYdYk=
+	t=1792290380; cv=none; b=Pd6sBLwOEbkgVzSbE4SmTq3oOQywIqjwuGpyaq8acYutBsFu1n65V4til9iJ9ZHjPs3IXiD9pcmTmuVd5ChPuzgcEawqbN5aIUCHO2/k0/MMtbthx5hxF0fVkw9oS+oyFumtakbbD70DEfvOfeocPTDH0hjYdr5kmKyeoBnn7Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792289452; c=relaxed/simple;
-	bh=zpXQBn2XhZVzpp6oTvsw/Ay1RZBgakS+WFRDhrX/Ggk=;
+	s=arc-20240116; t=1792290380; c=relaxed/simple;
+	bh=Ve795yvJwUGgK/kSEsrvMHMiTuVSoavvckp9tX5FzFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uYIhctXsBTy3PbPaEYWb3gjt6gIQUPr+vuKek7BljUyR01SeXxn7ns6wxCOAKKWvDGJUwb+wzMifHNdLgxl1otzdeqpnZSRVBMKHAmrigmczpzDw2muO1sYNP1+etAgNUc3zX/+O8qqX8vtVpe7dxCSu1IzZE+279drvr8+uVs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iftjxYD/; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=p3IJB+qTFqYFj4zHh+E1MkkvDSDm/5pRFqHqepnWlOStgh70CkwvzXm+7U4So932gExFtw4ZEzjE+T8aWRVfxQoEWAjboXkekCSvK9vV/tDqhaNYeaqnqb94JKCgCM1ODtVBmOGCS+5YovSkCSTH/wOXEkL7u9cf0gVgHZ0evuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AO91ovrH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iftjxYD/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DEB1F000C4;
-	Sun, 18 Oct 2026 02:10:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AO91ovrH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9FC1F000C4;
+	Sun, 18 Oct 2026 02:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792289450;
-	bh=cWWC0GEZPuaee9rjIqCpoxEVHOWDSeFCw4ifYzRKZM0=;
+	s=k20260515; t=1792290379;
+	bh=xXKPyHl/LGSTvD/ZR1AJX6i4+EM9IomOsateGYpjTQg=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=iftjxYD/Cna5z8zfd8DxoSbAohksxvrcAuYTCdRRezhplSi5bzGdtU7KAKSN1YDBO
-	 X1/uvYgxMwi3Gx1PvzMQGyZ3Rxuq6zgG8cU6gbAXiDGjHHnj9/C5dK+/nfyMySuiOx
-	 29YAudYM8xq2wIboxkBYcBm28AHIn8aQZY+SWv1t/ytQe0lXwe8eszVrFIEwlHhMJI
-	 rO5DolIt8PFJ54RNSEsTB/2o9+KfIBJkwkfqWuAAcTfpNIjknYPOkq/+KQznwJm9++
-	 zRiebsh/tyLd4YyAOm48AaMaYi420LhCp/STgIvCP7X4SWMeHimBvkk6ES2E93q8gk
-	 19vga3ALxk80g==
-Date: Sun, 18 Oct 2026 03:10:43 +0100
+	b=AO91ovrHR6vvesRRRjx/EALvi0NsHERwcFXNpi0ywuQTqy/HijDrM7j70lbTKOHJ+
+	 KPzNMi5k8dzY71BALFuWTpFCBvXlFa5O3IvfY96ot9jg4mAeLbneyHFs0C8JjuCzoe
+	 Igs7V1q2Gi85rOb3ht81vZpj/vefPnEPJrCWOy7bcnJh4LpEDUK0JCi0XS7NSneoD8
+	 zXwUzcC1buNL2Gh9SDzsW0Imjue31LvVePcbijWgYa76tJUFTWLlr0qJCqxsq1ZhC1
+	 /0xy5TgFHIZgf1vyiXiHVfBzjB3V7YA+FE1vVvXJyLFOg1aV0WVnKfmWdFHzH8pRse
+	 zmEEnHNvCv1wg==
+Date: Sun, 18 Oct 2026 03:26:12 +0100
 From: Jonathan Cameron <jic23@kernel.org>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Cosmin Tanislav
- <cosmin-gabriel.tanislav.xa@renesas.com>, David Lechner
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, David Lechner
  <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
  Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
  Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp
@@ -42,13 +41,11 @@ Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Cosmin Tanislav
  <biju.das.jz@bp.renesas.com>, Fabrizio Castro
  <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
  <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
-Message-ID: <20261018031043.004c9f13@jic23-hlaptop>
-In-Reply-To: <CA+V-a8sj8LnuHGYOV7Et9KXtcKYrSZgP5cgYqxCiE0VCSH_Lkw@mail.gmail.com>
-References: <20260929124248.237032-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<20260929124248.237032-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<arzX2pzq_0JreVJe@ashevche-desk.local>
-	<CA+V-a8sj8LnuHGYOV7Et9KXtcKYrSZgP5cgYqxCiE0VCSH_Lkw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] Add ADC driver support for RZ/V2H(P) and RZ/V2N
+ SoCs
+Message-ID: <20261018032612.3e50ba40@jic23-hlaptop>
+In-Reply-To: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261009184122.1378797-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -59,22 +56,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 30 Sep 2026 18:14:35 +0100
-"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
+On Fri,  9 Oct 2026 19:41:14 +0100
+Prabhakar <prabhakar.csengg@gmail.com> wrote:
 
-> Hi Andy,
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Thank you for the review.
-HI Prabhakar,
+> Hi all,
+> 
+> This patch series aims to add ADC support for the RZ/V2H(P) and RZ/V2N
+> SoCs. The ADC IP on these SoCs is similar to the one found on the RZ/T2H
+> SoC but varies slightly in terms of available channels and configuration
+> options.
 
-Small process thing.
-When you agree to all suggestions, skip the email and instead
-thank Andy in the change log of v2.
-
-Too many emails... 
-Note I send this message about once a week as everyone is
-too polite for efficiency :)
-
-Thanks,
-
-Jonathan
+FWIW, I took a look and this seems very clean to me so hopefully
+I can pick up v3 with the minor tweaks being discussed with other reviewers.
