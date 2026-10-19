@@ -1,236 +1,137 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE354FECF1
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CB74EA397
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792415587; cv=none; b=XbLDzVb9KnsNkE7RYq3ps+Um68bbr4XfKAJb3A/yGdu/qyKE4zP1xHItP9JKU4KOzJbcrwJgvz+02/gwfxaa5d3vZiTco0wi1AmNw7ovkC9sWO73E4bRxiyIPIix/iNGxkLBd9ar3qDmtWeHlDaYop/WgXRzJXXTz/8nljbLBvE=
+	t=1792416972; cv=none; b=rGDS5/RnEohRM/kBvFbjjgJZcVaimcxaKTs0QyEXYjZNz395tVNJemUvbfyt/Yonx2qtpeTxGPPBSBKWF/m7xJb0K+kRjGECXEVXcoalPp8NxBHRObKY77wLRo6w3beEe7AsiLGnaMyhdv/UtWULKCVIxp1INILjkzRn/zTm3Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792415587; c=relaxed/simple;
-	bh=cJTn82pjvFTmv+adSTGav2SLcNIy0UXB7XKTHYaKc7s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o1jWIPH94wR7+jFUoWT2BPr6BuXV3XyEvbFPGlDUsUba4g9yu56aisnZohK8nn5p4EpC13rut/O96iVwNfpc0SE+sCJyXARP+H1+ZcbHcawgXvNRjXBESa2eo4VEDxQ0GoRz/W71rk//hfACWiWLlITZltJhXcevyMaG9EjTc1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xg/1YfD8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EVOKaLT8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1792416972; c=relaxed/simple;
+	bh=0YRsJG0zikzQGyPZCwNj3fX9FQhaRP08kplHGzoklOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRCDrMrceJZncRD/fvHtMQIPwNIXYfL2ZFBOI6Erh4ZatfNEPGhrsITtdMGUIiU0pZOljYGar30ZlOl/C+PY4BdUA516SEsLHtvJ5m0kJ9FxUDMLBJN9Tsn45BVuDlTAu2phhcPTEL/Nkdx/P54rfm0nEXmJ2wwcxxwb9ChhyBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YsGlnA1t; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xg/1YfD8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EVOKaLT8"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69J8P3jJ2753831
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:13:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GjY7yAp2Z8nvcjzi2objk8Dg2AFP5I6RCbBdptwbxXw=; b=Xg/1YfD8EHqVjLCd
-	cSTkcv5ymULTNWeLesqGwFCM3jFTtjmgbly01/uvxugyYBVOsWxKY25puQT98Q9J
-	2c93BPO/NmMV5VAmxi9v9Q4OIY3fyJiHVt52FQRslRJolMqPWhwpN/0+qxKkbwdX
-	9rXp+O+uCKD6+g/l8I/342rKjvR+y6iTKsB9TUyKzN7Shzutsn0NWXvAd+nl23tR
-	SqwG39qcdMwa4ntlLHoALZLa/Aq8+fkYz6JWHyLodWBMPMfxfSgJJrqx3bZ31WZ+
-	sjKo+qLiXOiPhIn1bFN1kbe4K+3hkfI/PVEN0YaRse3InRiXjC5kQLSnM0BSM7JC
-	THInwA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hdf48h707-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:13:04 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-936aa34873bso418569385a.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:13:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YsGlnA1t"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1698ea378so16024175e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792415584; x=1793020384; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GjY7yAp2Z8nvcjzi2objk8Dg2AFP5I6RCbBdptwbxXw=;
-        b=EVOKaLT8r1nhQY4QXPfZk38Tn6FpCOynCdr2bv/5sJixG63oucwfi5gUb5bNpW8uDX
-         jvCuzIQV7QuEZ6QXXWsy7FwpfDMyB2eDviIUvVa5x00s5DObU/GAn9uU59V5iT5EUBNh
-         f/Bk1mrNkqXcN7QcNchDh5dY/nxIUzcOqw4aRFnG3fSFQKOXoFH54PoxV97vtsyv+t4q
-         +Hyz19Ar2hdHjd/P0p456fDUfUil3+teYIpdjUXhLNSu308Fspn+YhsZ/fCKUzjJfRq3
-         oM9Q/KL3NTTxWdOGzpxIy6Ihtc6cpJGA/Ef1dZH5fNzyQEhdhIi5RqW1icJKUzFsoikm
-         3fLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792415584; x=1793020384;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=tuxon.dev; s=google; t=1792416968; x=1793021768; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=GjY7yAp2Z8nvcjzi2objk8Dg2AFP5I6RCbBdptwbxXw=;
-        b=KKaFdFmcdwHJvMvJ7gmbNV7x26tA0NkR144ptgdviuAaUAWkr4ZIH1L25jEQ3L9j9V
-         U/BSR/6fSOchlGFqM7xkPBwd2B/sIMFDoF0YwtJV4s7qrYui5U23ouIitFTZhCRFlDmz
-         hIAWxZqqcA/UojlIz4OXubDIShSOQS5g3GGYtCR5ku2omz8rHLjoRfD2bcYO1c8eZeQp
-         w396tjGSQZdR/hLZgVAw/KHpEjkVqnApT69Tnx3QoA82eNew1/U00ETS6vTE/zc6D1ou
-         teckf5Q2Vc5Rz1W3039m358zjc7Zmdxocg0T01G+NyKcTaLmOL6y7USoulvdkGvGx8gy
-         h17A==
-X-Forwarded-Encrypted: i=1; AKwUvBx1v1FvriWbRP4ay7AXziURH25BE3Se0sxuG8HIsXJjk3flax5qm7CeNoKd3RFciLMoQh58eQzYwWPfZ9ojg09/XA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKzDNBGjHmiUiRJDbG/HQEOBaX3aLeRp4XyOArbi9NHkuFvlTFC
-	QzOg9jF/nTA0LqUt+gwiaXbHzHIuZjNSYTfi1DZlvMPPWQYqEn1+Kl/pSScu2sa/ILK6dFpn+1/
-	CdYG2iA42Y1a0OM530aZhDwvqnWyRVUQcBX6M+mVlJYazxdsd4Vy4g36sljKO2qkwlsu8qetsHQ
-	==
-X-Gm-Gg: AYBFou1ggqmvOg0UdPemgI2ZFsCclJ4xyOVol2ZTvm3q1LGc6jj70pt1vXkuyBemKPG
-	erZf90RBqhsZHjebdVJKtw98I7v/HyASZkcCLUUCfe3IlZm4oOLG4dLb5hU3yFmZkNc8bwwPFZ/
-	9GdGF6c/Dqa/LThiMuZqlOq6oEgLg/53qlv3ZaQB9lpulj6cO1p/TW1WV/D5JDOTwGB2eO/BApe
-	+UTORP4+/qhxDHaZ13TZCRs2rC8z7Udsyv2ImibH0THB4HbUH7YmDBZNcrok5jc1z8SwziI32nJ
-	YuYobw1ksI4rJ2bCmDUQPbupWA6xlYT1UcsAfb4S2B7yP/fHjSFmRUYVAY6NMnhIpUAk2L9GKmv
-	pl1/qs/seaMPDVOJDy9Rz8icHpRnh+FFiInKPLxT6uxNbB+zrKwz4wVR0doymDS/Hc8A+WDLnD1
-	LobArgB4ozcXYG
-X-Received: by 2002:a05:620a:4505:b0:939:6c9a:8f8d with SMTP id af79cd13be357-93f29ceec9bmr1248052985a.28.1792415584221;
-        Mon, 19 Oct 2026 06:13:04 -0700 (PDT)
-X-Received: by 2002:a05:620a:4505:b0:939:6c9a:8f8d with SMTP id af79cd13be357-93f29ceec9bmr1248044185a.28.1792415583536;
-        Mon, 19 Oct 2026 06:13:03 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ab24f5dd5esm23432581fa.6.2026.10.19.06.13.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 06:13:02 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Mon, 19 Oct 2026 16:12:35 +0300
-Subject: [PATCH v7 9/9] drm: writeback: drop the drmm writeback cleanup
- action
+        bh=u7QI1RqFBazH73cHjUm3bJRQ468s8YNQSYzETjY7O2I=;
+        b=YsGlnA1tkkMkyfgl+1EjIKdeVt42ERpVq32kDtbsL4AQzF3AKBAGt4plfMadWyUg3w
+         QS53/OD/qWkvgb9tJMAY3gJqqygFYV/W3Uidq42AXc/wn6aMEFGkFv7whkNPA3Qc1KFH
+         RAngo3ihvgB9c0YLxVa9j3O6KABwzqpCgYVLvoHzSLcu1olVNHyDELClMccU2zO/20Vp
+         Eln5hlyaHuDTsyn56R+JHRFnKpYDwPK5ZbIBVFGlu3p1jvF8h8uMTGtWWUO2wy42YAcp
+         td49/Dbe4i8u10buM5zcthSmGumEc0B8Sq0mqlNCnLIwxh+Brno5ouw3Ah8aaiV5D6x5
+         Po1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792416968; x=1793021768;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=u7QI1RqFBazH73cHjUm3bJRQ468s8YNQSYzETjY7O2I=;
+        b=LRCFhW6wyAR9jL85TfGJ0P9JyidTxTkmHAPWAGlS5vZ3klorsGuLBprmJ8VTWYu9p+
+         p9X1bG3t4v8/LaLTh4+D7yK+4Jokst5xqzE7bnguu8gconVGxGzDrAl1JHIgRTfzshIy
+         1nwMFly9Wyuwxpb/L1bGgmsSRHreS9PMjUzcSCZYKIHSMCCxht4la0dkUXkrLzeOaNv7
+         YJypg5m0qvWJFLzB9Nos3g9ajcD/2Kpac4Sv8n8oKTXNgCCNTh+lCDMcx8cmN1cDU9f5
+         VMqDoFj8rHXwoQAUhZ8gYLYicu/OH25O1dOIB8UgSRwnPS4qtgzkEsypHPy2/h1Z42hO
+         0pWQ==
+X-Forwarded-Encrypted: i=1; AKwUvByRB5bLLGLjWrcL4/RuZRANEGUdkYJTJytOkHCrAtXjMGqCk+iq62qhjuOUnstZiCTFvZyWqNSmgBxs+lv6H7qAsA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIURJJLYSTxC7FujrTLDeqhhxrNBCBOX017B1D7gpdzV8IIuC5W
+	DxLt2EamS5x0N8iVSSo5R7nH4I7txCywCMCP/w0Vck4okAxQ4OaYA5W6TvL3yskYASk=
+X-Gm-Gg: AYBFou3PF9th3D8pnVY+9UYG6+OUnnELtLiuzRwDVjv5XcMbCJMUio64XdgdXd5oP9d
+	O22wnFQA1VVbBKO5G80Iu2c6ffYpMdMyRIwnVZ5Nn1CPlVo7tXHrywYUZyszX1A2WdJZzyL/Bav
+	ANXAVa5XVlapbRWNUUkORenNfhGcEIwr6DgMiaD6wWrropZ8NLbTD9uev4D9ovb7E82z7EtBoB7
+	4d+BDd3zWkdfZ2SY0SrQbTSCudlp2l+oH9+gOH9+L3A673Z1SvjSmJxUhSUWoN/hCziiWYEEaM/
+	bAxS2NP4ZmoF5NADt45TTG070Teouu+zzlSgSa8EWah0OlqDDnJjeNF2AqmBHKoXY73248pDTQR
+	f4QVsjRzyMEvPWwoTpK+sEZdfi1inWGktNal1xGrwYdSs2M/Tog1phg4WfsZYwzH3aMwQ61OEYs
+	KEnBFarb7QqFT1T///bYNKNFgQKfTRxGtbUTm3pGbE0EyLlq1F9fmjeFuM4De3c8KQsJ3AfStpe
+	dGTollR
+X-Received: by 2002:a05:600c:c168:b0:4a1:ed0c:f051 with SMTP id 5b1f17b1804b1-4a1ed0cf21dmr30497355e9.5.1792416967770;
+        Mon, 19 Oct 2026 06:36:07 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.221])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd4f8cfesm20387473f8f.37.2026.10.19.06.36.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2026 06:36:03 -0700 (PDT)
+Message-ID: <0cf7bef8-42fd-475d-b47a-9cb8629644ed@tuxon.dev>
+Date: Mon, 19 Oct 2026 16:35:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/11] ASoC: renesas: rz-ssi: Explain component open
+ return value handling
+To: phucduc.bui@gmail.com, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ povik+lin@cutebit.org, Andrei Simion <andrei.simion@microchip.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Cezary Rojewski <cezary.rojewski@intel.com>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: Kees Cook <kees@kernel.org>, Syed Saba Kareem <syed.sabakareem@amd.com>,
+ wangdicheng <wangdicheng@kylinos.cn>,
+ Chris Bainbridge <chris.bainbridge@gmail.com>,
+ Linus Walleij <linusw@kernel.org>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Neo Chang <YLCHANG2@nuvoton.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ u.kleine-koenig@baylibre.com, Pengpeng Hou <pengpeng@iscas.ac.cn>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Hemanth Selam <hemanth.selam@gmail.com>,
+ Md Shofiqul Islam <shofiqtest@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Zain Aboobacker <zainaboobacker33@gmail.com>,
+ Sang-Heon Jeon <ekffu200098@gmail.com>, Bo Shen <voice.shen@atmel.com>,
+ Vinod Koul <vkoul@kernel.org>, linux-sound@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
+ imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261016040946.521195-1-phucduc.bui@gmail.com>
+ <20261016040946.521195-10-phucduc.bui@gmail.com>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20261016040946.521195-10-phucduc.bui@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261019-wb-drop-encoder-v7-9-d4288a26eb54@oss.qualcomm.com>
-References: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
-In-Reply-To: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        John Harrison <John.Harrison@igalia.com>,
-        Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <siqueira@igalia.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Louis Chauvet <louis.chauvet@bootlin.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Eric Anholt <eric@anholt.net>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Brian Starkey <brian.starkey@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2590;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=cJTn82pjvFTmv+adSTGav2SLcNIy0UXB7XKTHYaKc7s=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq1hdGrWE90+VGNNBzkJup8rA7qU3hQoX7mvzRl
- 8wMEIYTVG6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCatYXRgAKCRCLPIo+Aiko
- 1XcnB/4r2B/SnDa+KqzrY9qAJ+Lmba7KA8Op/9uFQB8E2ydzAXcTOqqgHiv4QFUYGKZ4B/Ra6Jj
- uDzpKki/dgdrqbghElst7BBOD9KgAcrauCvD0jhckc5uI7D9naEe7ld4JjvAXgtGkTQdD+XTqed
- Y5+ic4ZkIHQ/Ft9p92DnUsw9HyCq4LbEd+h16HozGCQOKLqF61cdBWLbIBbTrgZuNWXDtUIQU5Q
- DHLG2TdMuMa3kHgVXeFr//FpfmIS95T+IJnDUsyvTS4UgRQa8RnZVX/tlTEPn63rhGaIDhzCKBn
- BlvmeLAa8FjRjkTzflbzt6nAJQJNnv99VENO8gw8577fKCFc
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE5MDA1MiBTYWx0ZWRfX165qIqFHQ/d+
- Ucpzzp1m2XkOMbGjdoN/fEZ4NE13AyB6omGqhw7sjX9Z227wBtMjOCp/FDv3zBTzAwvDs1/OP2e
- jS2EvU5Gnx7JGli37KjBlv8b7iNmKIXdMB/gds/8BQtjEy10XcjUrOy9QZvtufzj/HeO4CxrU1c
- pl4UgHQFPz/6WbTCsRbtWBOCme4oi8GdmdsuyIw3nqQlVtIZgKlPdvSC7N5fr8TcRZZvy5tcmzj
- SOo5l8eRrL0H+0lY/l02xLeyF52mbfnFUNmtMrnZKzGnX3bxCRIoJYN0RyqJvjbhhehbg/cdVwY
- G2mp3CE5gTwQU8Dp2euhF5l6BqLaanAdtHDrT57yu4T0175+DIYVyL+ePe2PMiM07MlaVW44kQK
- eEdhWlr3ggs0rBslrKpmYZS4Dox5gIcviAtX4InsRitPldqCrQiw0ZAF/XHnwa6yT5rlhHfIzu0
- PlCyS2865N+bWUBCOZQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE5MDA1MiBTYWx0ZWRfX0bxVvngEEqJw
- Ih2UXOdhAiCEPyXQ+kAWq6x/SJnER7OnYmXzmg5sFytrST/sMamTvNFzeJ88CxrT0n/PCu2bGAP
- utu2Vv27R2yhq/zv9AWlEnnm1eNo4rE=
-X-Proofpoint-ORIG-GUID: tHp7oKygc8412efp6bi719WoBJ9gJiUI
-X-Authority-Analysis: v=2.4 cv=Qr/LTlyd c=1 sm=1 tr=0 ts=6ad61760 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8
- a=jfrLVL6Nzc9eZwqZ98kA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: tHp7oKygc8412efp6bi719WoBJ9gJiUI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-19_03,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- impostorscore=0 spamscore=0 adultscore=0 malwarescore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610190052
 
-drmm_connector_init() already registers drm_connector_cleanup() as a
-managed action, and that now cleans up the writeback state too. The
-extra action registered by drmm_writeback_connector_init() just does the
-same work a little earlier, leaving drm_connector_cleanup() nothing to
-do. Drop it.
 
-Assisted-by: LLM
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/drm_writeback.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 272012a70efe..0c5d2fbe7a7c 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -16,7 +16,6 @@
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_framebuffer.h>
--#include <drm/drm_managed.h>
- #include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_property.h>
- #include <drm/drm_writeback.h>
-@@ -303,14 +302,6 @@ void drm_writeback_connector_cleanup(struct drm_connector *connector)
- 	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
- }
- 
--static void drm_writeback_connector_cleanup_action(struct drm_device *dev,
--						   void *data)
--{
--	struct drm_writeback_connector *wb_connector = data;
--
--	drm_writeback_connector_cleanup(&wb_connector->base);
--}
--
- /**
-  * drmm_writeback_connector_init - Initialize a writeback connector
-  *
-@@ -321,7 +312,8 @@ static void drm_writeback_connector_cleanup_action(struct drm_device *dev,
-  * @formats: Array of supported pixel formats for the writeback engine
-  * @n_formats: Length of the formats array
-  *
-- * This function initialize a writeback connector and register its cleanup.
-+ * This function initializes a writeback connector. Cleanup is automatically
-+ * handled with a call to drm_connector_cleanup() in a DRM-managed action.
-  *
-  * This function creates the writeback-connector-specific properties if they
-  * have not been already created, initializes the connector as
-@@ -344,17 +336,8 @@ int drmm_writeback_connector_init(struct drm_device *dev,
- 	if (ret)
- 		return ret;
- 
--	ret = __drm_writeback_connector_init(dev, wb_connector, enc, formats,
--					     n_formats);
--	if (ret)
--		return ret;
--
--	ret = drmm_add_action_or_reset(dev, drm_writeback_connector_cleanup_action,
--				       wb_connector);
--	if (ret)
--		return ret;
--
--	return 0;
-+	return __drm_writeback_connector_init(dev, wb_connector, enc, formats,
-+					      n_formats);
- }
- EXPORT_SYMBOL(drmm_writeback_connector_init);
- 
+On 10/16/26 07:09, phucduc.bui@gmail.com wrote:
+> From: bui duc phuc<phucduc.bui@gmail.com>
+> 
+> Add a comment explaining why .open() must return 0 on success
+> to ensure the component is correctly marked as opened and
+> prevent future changes from reintroducing the issue.
+> 
+> Signed-off-by: bui duc phuc<phucduc.bui@gmail.com>
 
--- 
-2.47.3
+FTR:
 
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
