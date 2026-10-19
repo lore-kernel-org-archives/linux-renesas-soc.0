@@ -1,252 +1,220 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BC44C8465;
-	Mon, 19 Oct 2026 14:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BB24C8480;
+	Mon, 19 Oct 2026 14:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792420982; cv=none; b=Vo8L/TNs0dxY5UhnkDpunqdbV8J+oIOZIAtvMhj2dvoPUkvgbWUlkgY8SVltWUg0wd2PkgKIGtY1i596rucT7OVLLNmdpM3p0DWU5P8TR4DTcGnvntbX8KtswyIHxG7baRsbWP0TZ0+wZyyC1yIrngJwTZhUWY+Ddywp8d1VXXQ=
+	t=1792421054; cv=none; b=ApfazXwiCnG0igylLY++nsbyWhBJpd79VZ/HayGMPUPgjHkBHwnQBGt7opac/so4gkFUVsJItUilLKJWaBdKBZg8BNvlyhe/LQF+L6rSiBXk/CyCkTvZcXfgSPOcalzcDtLAh+N0V3qmek/BHfbZ8F5WVwykmpalCZlrD7XB1/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792420982; c=relaxed/simple;
-	bh=WBjydfmSdmjAb4yteidOozxR8jQfv722RUew5WbpzPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YD/umZe5l1jW/g0ROoe449sRAGtc+ObLEUu5fgdiu9lejMQLV8OgEQOgTTRO5s7XCwiWXZz+vxZ9l3O7e6rULPBeEsCAIAX5rvJuDiqZyoJSt+PsOtMqhBNPQOvi1F5UdOLhEIGvykFDidQLqhLrAFrY7wL+PU+XhT0QGdUQ6Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DYaxapsY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1792421054; c=relaxed/simple;
+	bh=a9qUpHSrVbpwYKSd6ylV0Jh4XUZfn8tQ8ofbyzD6pN0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PqnGxYR4S6ikid0zMFe99RfU3lnn0VhLCAnw83QdjZfFikAaPExNzXrBiV325AE3WHJkjQ1K4+2i42irMsB8fAANJyLlPTjnpp63wcS03DC526SWBq5HBcvcip8Ii+AksF2F4eITUbHqLzy+BtxCxl8D912FjCSLfx0ZPDLorFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bv56tb87; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DYaxapsY"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 82FE334;
-	Mon, 19 Oct 2026 16:40:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1792420851;
-	bh=WBjydfmSdmjAb4yteidOozxR8jQfv722RUew5WbpzPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DYaxapsYKK7FHJTSj6LUPZ5UXAa5DA0aKXN77z1fFVichWqH7BG5XIeHnMXlYcsDV
-	 //y/szcLEdtUj8rWXnT8a9VT6JQPgl6wh+0q77PxPxJu4Qb07dpSLSV8I9suIznrAM
-	 m420vPm6rZ0LL3AyoIT8ed5hJrOFKJS3xkVxZ88g=
-Date: Mon, 19 Oct 2026 17:42:56 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
-Message-ID: <20261019144256.GC763679@killaraus.ideasonboard.com>
-References: <cover.1792163045.git.geert+renesas@glider.be>
- <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bv56tb87"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 10F1F4E4120B;
+	Mon, 19 Oct 2026 14:44:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D140660582;
+	Mon, 19 Oct 2026 14:44:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3432010328C00;
+	Mon, 19 Oct 2026 16:44:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1792421045; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=Pe3ZWwtYKswZmK4MHa4IzVwtiUbu38EtFJGOtnMqhtk=;
+	b=bv56tb87jHVu4cNGJdEKZ+ARP66prMN3hq2UmSswBN/qbRo6aSslgGZlU0G6/9N78wk5V0
+	ksAj3O3OznxJRS1xkE2JqBzqbC6UOx8P8YrS1xxWn0K3nFYTF50jWzCZ+HSYEW5EJTDXtX
+	SJ95G6khL8iQcgWFUlNB/RcVO61iLUvFwKjeko+nxVGZx1zvXrDlXAn333ZIgF5L+ek6NA
+	ROLHnmPk9QzbZuQ1lYW90qtJ82IBEct3ALB4sFhyMt1YkDGge0pr26ghkLdwCpjJP3ID8W
+	qmLbeUAHS7ndFKPo3PLsttXEcIdD0vR8JB5HyY83/5xeY5VkqRzzjruIn5hvAQ==
+From: Paul Louvel <paul.louvel@bootlin.com>
+Subject: [PATCH v7 0/3] Add Renesas RZ/N1x EDAC driver
+Date: Mon, 19 Oct 2026 16:43:24 +0200
+Message-Id: <20261019-paul-v7-3-rc1-edac-v7-0-84c76c6d7595@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5XQTWrDMBAF4KsEr6syo39n1XuULqSR1KikcbAT0
+ xJ890oJFAe7hSwH5n3zmEszxD7HodluLk0fxzzk7lAG87RpaOcO75HlUOaGA9fQomZHd96z0TD
+ BekIWgyOGSZo2tTqRMk0JHvuY8tcVfX27zcPZf0Q6Valu7PJw6vrv69UR696/B0ZkwAIIbS23g
+ nv34rvutM+HZ+o+q3cLc/ln2ICPwpBEh/YuXPuNfN7ArCK8IEkpiyAwQIoPNahhTyhBo8ZItGw
+ gZg24WEVEQZQVaMkJ6Z14qEEN+2BBSac8Wlg2kPMGdhWRBZFa6kIYctQuEfWLIIBaRVRByiccJ
+ OTS00oTPUNw/Re6IDxh0IknI4O/R6Zp+gEe6umm2AIAAA==
+X-Change-ID: 20260916-paul-v7-3-rc1-edac-1f479f96fc57
+To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-edac@vger.kernel.org, devicetree@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Herve Codina <herve.codina@bootlin.com>, 
+ "Paul Louvel (Schneider Electric)" <paul.louvel@bootlin.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792421040; l=5031;
+ i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
+ bh=a9qUpHSrVbpwYKSd6ylV0Jh4XUZfn8tQ8ofbyzD6pN0=;
+ b=3eYKCEkZmc6rkZFyLA8w/aoQ++497fxN9zWG+xmRV4QY+apJ5EZaniCsbqK6Gq1Z9UvtfkGpi
+ NJCCQ6frY1wDjsqBMxoare1BuiI+ajgLxfiwdWpw2xvYTiqc8KmBYYg
+X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
+ pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 16, 2026 at 05:55:40PM +0200, Geert Uytterhoeven wrote:
-> Prepare for mapping to other than fixed-rate clocks by adding a clk_hw
-> pointer to the clk_map structure, and populating it up-front.
-> 
-> Move r8a78000_cpg_priv.fixed_hws into fill_clk_map(), as it is no longer
-> needed afterwards, and drop NUM_FIXED_CLKS.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v4:
->   - No changes,
-> 
-> v3:
->   - New.
-> ---
->  drivers/clk/renesas/r8a78000-cpg.c | 78 +++++++++++++++++++++---------
->  1 file changed, 56 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a78000-cpg.c
-> index b8024e76743ea53d..5ffd7b89cb48e41c 100644
-> --- a/drivers/clk/renesas/r8a78000-cpg.c
-> +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> @@ -16,19 +16,24 @@
->  
->  #include <dt-bindings/clock/renesas,r8a78000-cpg.h>
->  
-> +struct clk_map_in {
+The Cadence memory controller found on Renesas RZ/N1x SoCs supports ECC
+with SECDED.
 
-The "_in" suffix isn't very explicit.
+The memory controller found on the r9a06g032 supports at most a single
+DIMM of DDR2/3, up to 2GB.
 
-> +	int dt_id;		/* DT binding clock ID or -1 sentinel */
-> +	u32 fw_id;		/* FIXED_CLK() ID */
-> +};
-> +
->  struct clk_map {
->  	int dt_id;		/* DT binding clock ID or -1 sentinel */
->  	u32 fw_id;		/* FIXED_CLK() ID */
-> +	struct clk_hw *hw;
->  };
->  
->  enum fixed_clk {
->  	FIXED_CLK_66M,
->  	FIXED_CLK_133M,
->  	FIXED_CLK_266M,
-> -	NUM_FIXED_CLKS
->  };
->  
-> -static const unsigned long fixed_clk_rates[NUM_FIXED_CLKS] = {
-> +static const unsigned long fixed_clk_rates[] = {
->  	[FIXED_CLK_66M] = 66666000,
->  	[FIXED_CLK_133M] = 133330000,
->  	[FIXED_CLK_266M] = 266660000,
-> @@ -41,12 +46,10 @@ static const unsigned long fixed_clk_rates[NUM_FIXED_CLKS] = {
->   *
->   * @dev: CPG device
->   * @map: Mapping from DT clock IDs to fixed-rate clocks
-> - * @fixed_hws: Fixed rate clocks
->   */
->  struct r8a78000_cpg_priv {
->  	struct device *dev;
->  	const struct clk_map *map;
-> -	struct clk_hw *fixed_hws[NUM_FIXED_CLKS];
->  };
->  
->  static const struct clk_map *clk_map_find(const struct clk_map *map, u32 id)
-> @@ -83,8 +86,7 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
->  	}
->  
->  	dev_dbg(dev, "Mapping DT clock %u to fixed clock %u\n", id, map->fw_id);
-> -
-> -	hw = priv->fixed_hws[map->fw_id];
-> +	hw = map->hw;
->  
->  	dev_dbg(dev, "clock %u is %s at %lu Hz\n", id, clk_hw_get_name(hw),
->  		clk_hw_get_rate(hw));
-> @@ -92,35 +94,69 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
->  	return hw;
->  }
->  
-> -static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
-> +static struct clk_hw **register_fixed_clks(struct device *dev)
->  {
-> -	struct device *dev = priv->dev;
-> +	unsigned int n = ARRAY_SIZE(fixed_clk_rates);
-> +	struct clk_hw **hws, *hw;
->  	unsigned long rate;
-> -	struct clk_hw *hw;
->  	const char *name;
->  
-> -	for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
-> +	hws = devm_kcalloc(dev, n, sizeof(*hws), GFP_KERNEL);
-> +	if (!hws)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for (unsigned int i = 0; i < n; i++) {
->  		rate = fixed_clk_rates[i];
->  		name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
->  		if (!name)
-> -			return -ENOMEM;
-> +			return ERR_PTR(-ENOMEM);
->  
->  		hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
->  		if (IS_ERR(hw))
-> -			return PTR_ERR(hw);
-> +			return ERR_CAST(hw);
->  
-> -		priv->fixed_hws[i] = hw;
-> +		hws[i] = hw;
->  	}
->  
-> -	return 0;
-> +	return hws;
-> +}
-> +
-> +static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
-> +					  const struct clk_map_in *map_in)
-> +{
-> +	struct device *dev = priv->dev;
-> +	struct clk_hw **fixed_hws;
-> +	struct clk_map *map;
-> +	unsigned int i;
-> +
-> +	fixed_hws = register_fixed_clks(dev);
-> +	if (IS_ERR(fixed_hws))
-> +		return ERR_CAST(fixed_hws);
-> +
-> +	for (i = 0; map_in[i].dt_id >= 0; i++) { }
+Add the EDAC driver for this memory controller, and the relevant
+device-tree binding. Also add the EDAC node to the existing r9a06g032
+SoC base device-tree.
 
-This is avoidable by passing { map, ARRAY_SIZE(map) } as match data
-instead of just the map.
+Signed-off-by: Paul Louvel (Schneider Electric) <paul.louvel@bootlin.com>
+---
+Changes in v7:
+- Patch 2: fixed weird formatting of cdns_ddr_ctrl_of_match.
+- Patch 3: did not sync trailers added in v5. Added Reviewed-By of Rob Herring.
+- Link to v6: https://patch.msgid.link/20261013-paul-v7-3-rc1-edac-v6-0-2f1d6f2f74db@bootlin.com
 
-> +
-> +	map = devm_kcalloc(dev, i + 1, sizeof(*map), GFP_KERNEL);
-> +	if (!map)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for (i = 0; ; i++) {
-> +		map[i].dt_id = map_in[i].dt_id;
-> +		if (map[i].dt_id < 0)
-> +			break;
-> +
-> +		map[i].fw_id = map_in[i].fw_id;
-> +		map[i].hw = fixed_hws[map[i].fw_id];
-> +	}
-> +
-> +	devm_kfree(dev, fixed_hws);
+Changes in v6:
 
-Why not plain kcalloc/kfree ?
+- Patch 2:
 
-> +	return map;
->  }
->  
->  static int r8a78000_cpg_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct r8a78000_cpg_priv *priv;
-> -	const struct clk_map *map;
-> -	int ret;
-> +	const struct clk_map_in *map;
->  
->  	map = of_device_get_match_data(dev);
->  	if (!map)
-> @@ -131,16 +167,14 @@ static int r8a78000_cpg_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	priv->dev = dev;
-> -	priv->map = map;
-> -
-> -	ret = register_fixed_clks(priv);
-> -	if (ret)
-> -		return ret;
-> +	priv->map = fill_clk_map(priv, map);
-> +	if (IS_ERR(priv->map))
-> +		return PTR_ERR(priv->map);
->  
->  	return devm_of_clk_add_hw_provider(dev, r8a78000_clk_get, priv);
->  }
->  
-> -static const struct clk_map r8a78000_cpg_default[] = {
-> +static const struct clk_map_in r8a78000_cpg_default[] = {
->  	{ R8A78000_CPG_SGASYNCD4_PERW_BUS,	FIXED_CLK(266M) },
->  	{ R8A78000_CPG_SGASYNCD8_PERW_BUS,	FIXED_CLK(133M) },
->  	{ R8A78000_CPG_SGASYNCD16_PERW_BUS,	FIXED_CLK(66M) },
+  - Sorted the includes alphabetically. I have also ran a check with
+    IWYU and, after careful checking, there is no superfluous header.
 
--- 
-Regards,
+  - cdns_get_mem_sz() helper inlined into cnds_setup_mc().
 
-Laurent Pinchart
+  - Debugfs helpers built unconditionally with no-op stubs if debugfs is
+    not selected.
+
+  - Port command channel error reporting removed since it does not
+    belong to an EDAC driver.
+
+  - Removed useless comments.
+
+  - Renamed macro prefix to CDNS_* instead of CDNS_DDR_*. Also indented
+    all the macros definition at the same level.
+
+  - Dropped cnds_ prefix to the private structure.
+
+  - Shortened interrupt unmasking into a single macro to shorten line
+    column length.
+
+  - OR'ing flags to detect type of errors in irq handler.
+
+- Link to v5: https://patch.msgid.link/20261005-paul-v7-3-rc1-edac-v5-0-140a0f124bc0@bootlin.com
+
+Changes in v5:
+
+- Patch 1:
+
+    - Reworded commit title.
+
+    - Dropped unused label.
+
+    - Switch to plain flow scalar for description.
+
+    Note: keeping cdns,ddr-edac compatible after Krzysztof's comment.
+
+- Patch 2:
+
+    - Setup IRQ after allocating and registering the device to EDAC
+      core.
+
+    - Explicitly free the interrupt line with devm_free_irq() to avoid
+      any UAF before releasing MC.
+
+- Link to v4: https://patch.msgid.link/20260928-paul-v7-3-rc1-edac-v4-0-4646a5b7cac9@bootlin.com
+
+Changes in v4:
+- Patch 1 and 3: drop the RZN1 family compatible, as requested by Geert.
+- Patch 2:
+
+    - Instead of using FIELD_MODIFY macro that expect a compile-time
+      constant mask, use binary operators instead. Note that the new
+      code is doing exactly what FIELD_MODIFY do, minus the error if
+      cdns_rmw() is not inlined.
+
+    - Use a spinlock instead of mutex since the locked region will be
+      really fast to execute. Only lock it once for two register rmw.
+
+    - Use edac_debugfs_* facility instead of sysfs attributes. Use a
+      separate "bits" and "inject" file instead of just a single file.
+      This is better since clients can read the previously set syndrome.
+
+    - Cleaned up the probe function in separate functions. Use a remove
+      function instead of registering custom devm action. Use a goto for
+      resources cleaning.
+
+    - Mask all interrupts before un-registering the memory controller.
+
+- Link to v3: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v3-0-bd8054a5b180@bootlin.com
+
+Changes in v3:
+- Patch 2:
+
+    - Added trailing newline to end message.
+
+    - Forgot mutex_init() in probe...
+
+    - Registering the MC at the end of the probe.
+
+- Link to v2: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v2-0-bc1406161ecc@bootlin.com
+
+Changes in v2:
+- Patch 2:
+
+    - FIELD_MODIFY() is always called with a compile-time constant mask
+      in this driver. I see no problem here.
+
+    - Use devm_clk_get_enabled() so the driver does not need to store
+      struct clk_bulk_data outside the stack space.
+      Clocks are not manipulated outside of probe.
+
+    - Introduced a mutex for rmw operations in inject_ctrl_store() sysfs
+      callback. Rename drv to priv in cdns_rmw().
+
+    - Return IRQ_NONE if the stat int register is empty.
+
+    - I see no reason to follow Sashiko last remark on this patch.
+      Is an unhandled interrupt a big deal in this case ?
+
+- Link to v1: https://patch.msgid.link/20260924-paul-v7-3-rc1-edac-v1-0-70be37c41a18@bootlin.com
+
+---
+Paul Louvel (3):
+      dt-bindings: edac: cdns,ddr-edac: add Cadence DDR EDAC
+      EDAC/cadence: Add Cadence DDR EDAC driver
+      ARM: dts: renesas: r9a06g032: add EDAC node
+
+ .../devicetree/bindings/edac/cdns,ddr-edac.yaml    |  61 ++++
+ MAINTAINERS                                        |   7 +
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi           |   9 +
+ drivers/edac/Kconfig                               |  10 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/cadence_edac.c                        | 379 +++++++++++++++++++++
+ 6 files changed, 467 insertions(+)
+---
+base-commit: d9f39b2c0579f313d14954a9ec584511c543aab5
+change-id: 20260916-paul-v7-3-rc1-edac-1f479f96fc57
+
+Best regards,
+--  
+Paul Louvel, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
