@@ -1,77 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792426481;
-	b=f+7AvVq0cvw+GVefna3/0E8jVFpu4zXRdQVqZ8hCI1kflE9kaP825J8Rkvz/lX4zQzvS
-	 4prHgktOhFJ5ZGDVOFKx5/4R2vTpi7Vys5/b5HrVe59HPtOUpHxsl0zP6lP6374SVeX/d
-	 Ffhp5HyZXbuGXcfc2GjwXpC5nAJ2Zn4yy2vQrNDYWQ1UaR8U1LVJkuNi4Ck3KocGgwB+a
-	 0DbcD7XpCIf2yIMf6yUDj1WZNMmquE/zCff3FahY3Vh/IlkxbnPNNOeIxMLojN+F82p7x
-	 zjUwNcD+8ZCla9aTeAjg35E2IdcxKafpvSiC/0HT4tPXheqjlNb2MsHhjrzjBTo1TDQ==
+	t=1792426970;
+	b=u1QDs06YciFMbwWOhK1yo1sAonSGZZ4pz1DeUfgKgWlDj06L7eWZMs9dfrKGqA20cOPj
+	 hUrodHqXHPd59w23t7safVnCLaBBupoMQ0sqtBJVwsq42W319SS1kWZ7HfCVFB8vNe0wk
+	 UYjvIjC1F0TOFnRkcJZg44ZGPHoUbXw9Hn5dA2/f3hThLPBXMy43gAEYlkvzwrVsINSMF
+	 I4vLPtuA71WSw0wuiXjLnIKgImaMDmEDZKMjsxcLtV9V8k9e79CN9fYfNAXFpzYXpTSZ0
+	 2GfZhBgz+V41VbT+ney7ZCfgktVgTiqoENxoY3ElCf5bYUjof/83tqC3zh3fZbYTExg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792426481;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=j+7tIdFx2CZna94rLbvcst0wmmeGVJ2/denMG9ZxUVY=;
-	b=jeywizWefHb9q06dM7RtVpwZMBftJd2I4mrFVMA0P7OuJKBUf+wu4j9z1zA0z7cG7Q9c
-	 pkcXKhwdjQ3r3KZM96wwj3IeS4mLpe96xIkwQCnjqvxeaqlnj/bkL6IDAp4AsAO2EjjE4
-	 Jm+iAO92mXTjsDspM63FBXbQb0q90rbT1sOYF+ezraQhpG2sdKtdV1dNFLII448zAqOn7
-	 IoBEmAlWawQnmZG4gJ7TOADtDRHaFrdtDCl8abvZrDLdYGNa45lzSK3awZM1U2X45qTrP
-	 UZRTIMQvo9Q0XTNQzNuX3ApnrIRo/8GoalGMP0WcGYaftB+6+4ExqMnQoyPbmgl/M6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792426970;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=VNVvlFmAYqdL7e0NbR8n4mhG40CW5PlDGJg9XCAnokY=;
+	b=TEdevWd5Z058Of9auoZC8ItFBr5WsQNGXqtAhHIMJ96lazWJH+TpwzLUoL3SGVYMSsGu
+	 13LJzSyE3U0yNxr6FCKlpZCJ7vdvmQOX3ONelMxkEzh7Ktgo7xH2XlTKuiPFxW/N2aAv9
+	 /NRKnzJn6UmPTSXptZsPfwvBtErVP6D+deyhqxhX3lV0Mj3S/AjXIzlpVmg/jwIgoKIov
+	 zmFQWal2a3Fi249FtNdx6GOsPCKpy+UPXjs4/3BmDiTYUIAtTK0fwe0SaebJU9U/ot4vD
+	 vSdJVQwBS+CNzYjfDmQz+3qVefQdVOnTnmp94ZN0W+Y3e5PIMroATW5qKc/UuH7eBSQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rtq8hxqZ;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.167.47
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB083606A31D;
-	Mon, 19 Oct 2026 16:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CB083606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rtq8hxqZ
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2C320BA;
-	Mon, 19 Oct 2026 18:12:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1792426351;
-	bh=ZIVyyqQnMiQPKh6vfUHB6ETpY3hIiE6ECUkpT8nmUAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rtq8hxqZHb855CpRIjODSktO+Ye4qbFYBQWgoxiOwGPtHvR91oQlHNMOgci85Gjvf
-	 Cb7T2oDCsoqC6UGrLkHp9p82OpVpz0kvNG0p01Lb8DEP+l7U7mEYAL0HykAvtEti/A
-	 PLKBppXhm7TEyUVu6cPP5e1rREnI81Au9CYSw7eQ=
-Date: Mon, 19 Oct 2026 19:14:36 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
-Message-ID: <20261019161436.GD3705@killaraus.ideasonboard.com>
-References: <cover.1792163045.git.geert+renesas@glider.be>
- <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
- <20261019144256.GC763679@killaraus.ideasonboard.com>
- <CAMuHMdWkAvkxHkzRVviF_NkZHP7UeCBjebxciE6jFN_8ViM=aQ@mail.gmail.com>
- <20261019152203.GA5830@killaraus.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924B4606A31B
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 16:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 924B4606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5b8b3c8c4bbso995639e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 09:22:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792426968; x=1793031768;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=VNVvlFmAYqdL7e0NbR8n4mhG40CW5PlDGJg9XCAnokY=;
+        b=cfVeXNvpsdN8qtjo0D6q0ydjWiGuXoVdSEokUZGK3FWI5flT7wiuRHfDuXlhT5/Qea
+         NRtRJ7Dq5zojsvx/rAlHeIrdXGbuGEpTlrkDqs68QbRATYkqVw3IHPD0aRZvPyE304zU
+         xeJULXS9sQdLmcfIwGQTMGHrDc7O3v1DEXCQlche+z3uktHXNESbzQVO9EWG0HUnnEH4
+         WPTw6sVkxzSmvjfOIq16sC58+6buc6VdCXZ3dDOzHpc0y2Yd0HhV/X6BIR5kW+BErfpk
+         /a9z4tsgEYgH4BCAJUaUVTm5ac/7uuAAnH6L0y23kamm3Q2iYn0Q3lKCzGvyvYKvvKJO
+         N0PQ==
+X-Forwarded-Encrypted: i=1; AKwUvByEiRFdL3ZjXg3szUS9/TmePCATCc44c7ceoGqMM7tm9qJsq3Pv8gORmhP28jiNUNdFjnVenj7RhjqLm2asS6b7KA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJc36xvkTzyLxLACJCtd9ojmRyumCg/cetnUtVkjyhBy8lzOGkf
+	esCxIxd8Tj7yJYwnSSSf7+yFxvAnMWcELpC2Z/52B4QQZzS4JLqTf1jbwqKfV97KtoA=
+X-Gm-Gg: AYBFou3cQeKhMM2lmN6jcTTL17e2a1HnshqddHKO+wmTZWn78JGWGRF3DGRhSr3t8l4
+	I6H02KFubeunUiOiT6K4nQKEyizA1ssBDLafGqgBg14yb/ZoXnxh+xn01mQC11BnIidSDL2hbHr
+	G/f4qfyRsbhsii5n4fpbLhMdIyw1Erpn1HqkM1qkxWYrO9cKk0k87IaT3nVjDDvZSFESs22f9cs
+	WDEogzPA8TkietNVipP1KTxxh9pYUIcYWirqWxWqXpE8Pa60vvrSFvIZEyeGHjRgeA0gc66zkpo
+	/0eSR8JJ6j/ghjJ3K5Nxe/Kpg6+1Z73YowEJWw7hCdwV2+A54c56FBR3KHvJRl0QpluV/YQEYNU
+	9Oy/g0MgEl2EPR11g5Nk3riwXaVIJqdWj7eNyPS47KUZg/006DrcW3+U3H/Yt5Mwt42WeG5jSIS
+	Vpo9TpgeGys/Sfi5fJpr0NNW99Cv2dFoc8Ec/tACa36m+vL4BxJCRYG1y1awA4XJk8cVvQO+K15
+	3QMKL3BoGyq46G0XWIHs9ROvQJdZvMlVByGoICGSwHSg8qAtnY=
+X-Received: by 2002:a05:6512:3f14:b0:5bc:e430:9c8e with SMTP id 2adb3069b0e04-5be509f661emr2224245e87.2.1792426967385;
+        Mon, 19 Oct 2026 09:22:47 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5be4a3fcf07sm2084785e87.3.2026.10.19.09.22.46
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2026 09:22:46 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3ab3b29a210so11452071fa.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 09:22:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwPUo39KMxT1aJJEwnXXd8UQravel1i01p2HLGutVTkgRNyeuMUJO1MSFLue+jKHJoOIgu6Hw0iQbfl7hifrX65Pw==@vger.kernel.org
+X-Received: by 2002:a17:906:99c2:b0:c41:825d:ed8c with SMTP id
+ a640c23a62f3a-c41825dfa20mr602336266b.26.1792426550419; Mon, 19 Oct 2026
+ 09:15:50 -0700 (PDT)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -81,211 +79,153 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261019152203.GA5830@killaraus.ideasonboard.com>
+References: <cover.1792163045.git.geert+renesas@glider.be> <c38d744c09dffff550a9b882051c211b572b8daf.1792163045.git.geert+renesas@glider.be>
+ <20261019155619.GB3705@killaraus.ideasonboard.com>
+In-Reply-To: <20261019155619.GB3705@killaraus.ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Oct 2026 18:15:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXDgc+NMFQ2HgkngsvyhVd1+yEgnk3DQpyVmVUQ_aLvEA@mail.gmail.com>
+X-Gm-Features: AclHuK_Wqb_TY8SIlHzico7Y9pGZs0pikimfidJslyUcM_WsFGAezgyxmzAMr2w
+Message-ID: <CAMuHMdXDgc+NMFQ2HgkngsvyhVd1+yEgnk3DQpyVmVUQ_aLvEA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] clk: renesas: r8a78000: Add SCMI remapping support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 19, 2026 at 06:22:04PM +0300, Laurent Pinchart wrote:
-> On Mon, Oct 19, 2026 at 04:56:28PM +0200, Geert Uytterhoeven wrote:
-> > On Mon, 19 Oct 2026 at 16:42, Laurent Pinchart wrote:
-> > > On Fri, Oct 16, 2026 at 05:55:40PM +0200, Geert Uytterhoeven wrote:
-> > > > Prepare for mapping to other than fixed-rate clocks by adding a clk_hw
-> > > > pointer to the clk_map structure, and populating it up-front.
-> > > >
-> > > > Move r8a78000_cpg_priv.fixed_hws into fill_clk_map(), as it is no longer
-> > > > needed afterwards, and drop NUM_FIXED_CLKS.
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > > > --- a/drivers/clk/renesas/r8a78000-cpg.c
-> > > > +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> > > > @@ -16,19 +16,24 @@
-> > > >
-> > > >  #include <dt-bindings/clock/renesas,r8a78000-cpg.h>
-> > > >
-> > > > +struct clk_map_in {
-> > >
-> > > The "_in" suffix isn't very explicit.
-> > 
-> > I can add a comment...
-> 
-> How about calling it clk_id_map ?
-> 
-> > > > +     int dt_id;              /* DT binding clock ID or -1 sentinel */
-> > > > +     u32 fw_id;              /* FIXED_CLK() ID */
-> > > > +};
-> > > > +
-> > > >  struct clk_map {
-> > > >       int dt_id;              /* DT binding clock ID or -1 sentinel */
-> > > >       u32 fw_id;              /* FIXED_CLK() ID */
-> > 
-> > BTW, do you think it would be worthwhile to reuse clk_map_in here?
-> 
-> Possibly. I was about to recommend just using a single structure and
-> leaving the clk_hw pointer NULL and unused in .rodata, but the memory
-> waste isn't very nice, especially if we end up with many entries :-(
+Hi Laurent,
 
-Actually, you could even turns clk_map into
+On Mon, 19 Oct 2026 at 17:56, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Fri, Oct 16, 2026 at 05:55:41PM +0200, Geert Uytterhoeven wrote:
+> > Extend the Clock Pulse Generator driver for R-Car X5H with SCMI support,
+> > to remap DT clock IDs to abstractions (clocks) offered by the SCMI
+> > firmware when running on a system with SCMI, and SCMI support is
+> > enabled.  Take into account some peculiarities of the current SCMI
+> > firmware implementations, and fall-back to fixed-rate clocks as
+> > replacements for SCMI clocks that are not available.
+> > Support for bus clocks used by serial, I2C, and SPI devices is included.
+> >
+> > This lets us avoid putting SCMI IDs in DT, and allows us to use the same
+> > hardware description in SoC DTS for systems with and without SCMI
+> > firmware.
+> >
+> > For now, it is assumed SCMI clock IDs are stable, and match SCP FW
+> > SDKv4.31.0 and later.
+> >
+> > Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-struct clk_map {
-	const struct clk_id_map *map;
-	struct clk_hw *hw;
-};
+> > --- a/drivers/clk/renesas/r8a78000-cpg.c
+> > +++ b/drivers/clk/renesas/r8a78000-cpg.c
 
-It should consume the same amount of space on 64-bit platforms. Doing
-the same in the MDLC driver would save space.
+> > @@ -94,6 +113,21 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
+> >       return hw;
+> >  }
+> >
+> > +static struct device_node *scmi_find_proto(struct device_node *scmi, u32 proto)
+>
+> This is the kind of function name that looks prone to a namespace clash.
+> I'd name it r8a78000_clk_scmi_find_proto().
 
-Or, if you want to save more memory, you could drop clk_map and store
-the clk_hw in a separate array in r8a78000_cpg_priv, using the same
-indices as clk_map_id.
+I deliberately picked that name, as a suggestion for a future common
+helper ;-)
 
-struct r8a78000_cpg_priv {
-	struct device *dev;
+> > @@ -145,7 +184,46 @@ static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
+> >                       break;
+> >
+> >               map[i].fw_id = map_in[i].fw_id;
+> > -             map[i].hw = fixed_hws[map[i].fw_id];
+> > +             if (map[i].fw_id >= FIXED_CLK_OFFSET) {
+> > +                     enum fixed_clk idx = map[i].fw_id - FIXED_CLK_OFFSET;
+> > +
+> > +                     map[i].hw = fixed_hws[idx];
+> > +                     continue;
+> > +             }
+> > +
+> > +             scmi_spec.np = scmi_clk_np;
+>
+> This seems to be safe because a NULL scmi_clk_np implies usage of the
+> default map, which only contains fixed clock offsets, but that makes the
+> code a bit too fragile for my taste.
 
-	const struct clk_id_map *map;
-	unsigned int num_map_entries;
-	struct clk_hw **clks;
+Fair enough, I can add a check for a non-zero scmi_clk_np...
 
-	struct clk_hw *fixed_hws[NUM_FIXED_CLKS];
-};
+>
+> > +             scmi_spec.args_count = 1;
+> > +             scmi_spec.args[0] = map[i].fw_id;
+> > +
+> > +             clk = of_clk_get_from_provider(&scmi_spec);
 
-where clks is a dynamically-allocated array fo struct clk_hw pointers,
-having the same size as the map array.
+... but please note of_clk_get_from_provider() will return -ENOENT
+in that case.
 
-Too many options.
+> > +             if (IS_ERR(clk))
+> > +                     return dev_err_cast_probe(dev, clk,
+> > +                             "Failed to get SCMI clock %u\n", map[i].fw_id);
+> > +
+> > +             hw = __clk_get_hw(clk);
+> > +             if (!hw && fallback != map_in) {
+>
+> And if the above is correct, fallback should always be different from
+> map_in when fw_id corresponds to an SCMI clock.
 
-> > > > +     struct clk_hw *hw;
-> > > >  };
-> > 
-> > > > @@ -92,35 +94,69 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
-> > > >       return hw;
-> > > >  }
-> > > >
-> > > > -static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
-> > > > +static struct clk_hw **register_fixed_clks(struct device *dev)
-> > > >  {
-> > > > -     struct device *dev = priv->dev;
-> > > > +     unsigned int n = ARRAY_SIZE(fixed_clk_rates);
-> > > > +     struct clk_hw **hws, *hw;
-> > > >       unsigned long rate;
-> > > > -     struct clk_hw *hw;
-> > > >       const char *name;
-> > > >
-> > > > -     for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
-> > > > +     hws = devm_kcalloc(dev, n, sizeof(*hws), GFP_KERNEL);
-> > > > +     if (!hws)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +     for (unsigned int i = 0; i < n; i++) {
-> > > >               rate = fixed_clk_rates[i];
-> > > >               name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
-> > > >               if (!name)
-> > > > -                     return -ENOMEM;
-> > > > +                     return ERR_PTR(-ENOMEM);
-> > > >
-> > > >               hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
-> > > >               if (IS_ERR(hw))
-> > > > -                     return PTR_ERR(hw);
-> > > > +                     return ERR_CAST(hw);
-> > > >
-> > > > -             priv->fixed_hws[i] = hw;
-> > > > +             hws[i] = hw;
-> > > >       }
-> > > >
-> > > > -     return 0;
-> > > > +     return hws;
-> > > > +}
-> > > > +
-> > > > +static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
-> > > > +                                       const struct clk_map_in *map_in)
-> > > > +{
-> > > > +     struct device *dev = priv->dev;
-> > > > +     struct clk_hw **fixed_hws;
-> > > > +     struct clk_map *map;
-> > > > +     unsigned int i;
-> > > > +
-> > > > +     fixed_hws = register_fixed_clks(dev);
-> > > > +     if (IS_ERR(fixed_hws))
-> > > > +             return ERR_CAST(fixed_hws);
-> > > > +
-> > > > +     for (i = 0; map_in[i].dt_id >= 0; i++) { }
-> > >
-> > > This is avoidable by passing { map, ARRAY_SIZE(map) } as match data
-> > > instead of just the map.
-> > 
-> > True, and I did consider this.
-> > The same mechanism is used in the MDLC driver, where using ARRAY_SIZE()
-> > would quickly became a bigger burden due to the presence of many
-> > more maps.  So for consistency, I kept it the same in both drivers.
-> > An initialization macro might make it more manageable, though.
-> 
-> Something along the line of the following ?
-> 
-> struct clk_map_in_entry {
-> 	int dt_id;		/* DT binding clock ID or -1 sentinel */
-> 	u32 fw_id;		/* SCMI firmware clock ID or FIXED_CLK() ID */
-> };
-> 
-> struct clk_map_in {
-> 	const struct clk_map_in_entry *entries;
-> 	unsigned int size;
-> };
-> 
-> #define CPG_MAP_INIT(_entries) {	\
-> 	.entries = _entries,		\
-> 	.size = ARRAY_SIZE(_entries),	\
-> }
-> 
-> struct cpg_data {
-> 	const struct clk_map_in *default_map;
-> 	const struct clk_map_in *fw_map;
-> };
-> 
-> ...
-> 
-> static const struct clk_map_in_entries r8a78000_cpg_fw_entries[] = {
-> 	{ R8A78000_CPG_SGASYNCD4_PERW_BUS,	1661 },
-> 	{ R8A78000_CPG_SGASYNCD8_PERW_BUS,	1662 },
-> 	{ R8A78000_CPG_SGASYNCD16_PERW_BUS,	1663 },
-> 	{ R8A78000_CPG_MSO_SCP_MAIN,		1459 },
-> 	{ R8A78000_CPG_MSOCK_PERW_BUS,		1667 },
-> };
-> 
-> static const clk_map_in r8a78000_cpg_fw = CPG_MAP_INIT(r8a78000_cpg_fw_entries);
-> 
-> static const struct cpg_data r8a78000_cpg_data = {
-> 	.default_map = r8a78000_cpg_default,
-> 	.fw_map = r8a78000_cpg_fw,
-> };
-> 
-> > > > +
-> > > > +     map = devm_kcalloc(dev, i + 1, sizeof(*map), GFP_KERNEL);
-> > > > +     if (!map)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +     for (i = 0; ; i++) {
-> > > > +             map[i].dt_id = map_in[i].dt_id;
-> > > > +             if (map[i].dt_id < 0)
-> > > > +                     break;
-> > > > +
-> > > > +             map[i].fw_id = map_in[i].fw_id;
-> > > > +             map[i].hw = fixed_hws[map[i].fw_id];
-> > > > +     }
-> > > > +
-> > > > +     devm_kfree(dev, fixed_hws);
-> > >
-> > > Why not plain kcalloc/kfree ?
-> > 
-> > To avoid having to free it manually at multiple (three) locations,
-> > both in the error paths and the success path?
-> 
-> Isn't __free() your friend ?
-> 
-> > >
-> > > > +     return map;
-> > > >  }
+True.
+
+> What issue does this catch ? Should the fw map contain a fixed clock
+> entry for clocks not available in SCMI ?
+
+Originally it had entries for fixed clocks, too, as the firmware
+restricted access to several bus clocks.
+Recent firmware provides access to more bus clocks than before, hence
+I figured it would be better to use the SCMI clock when available,
+and only use the fixed clock when the SCMI clock is not available.
+
+> > +                     for (unsigned int j = 0; fallback[j].dt_id >= 0; j++) {
+> > +                             if (fallback[j].dt_id == map_in[i].dt_id) {
+> > +                                     enum fixed_clk idx = fallback[j].fw_id - FIXED_CLK_OFFSET;
+> > +
+> > +                                     map[i].hw = fixed_hws[idx];
+> > +                                     break;
+> > +                             }
+> > +                     }
+> > +                     if (map[i].hw)
+> > +                             continue;
+> > +             }
+> > +
+> > +             if (!hw) {
+> > +                     /* CLOCK_ATTRIBUTES is not supported */
+> > +                     dev_warn(dev, "SCMI clock %u is NULL\n", map[i].fw_id);
+> > +                     continue;
+> > +             }
+> > +
+> > +             dev_dbg(priv->dev, "SCMI clock %u is %s at %lu Hz\n",
+> > +                     map[i].fw_id, clk_hw_get_name(hw), clk_hw_get_rate(hw));
+> > +
+> > +             map[i].hw = hw;
+> >       }
+> >
+> >       devm_kfree(dev, fixed_hws);
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
