@@ -1,160 +1,136 @@
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE1F44E05B;
-	Mon, 19 Oct 2026 12:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9630437E5F3
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 12:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792411311; cv=none; b=eEHsU/c8d30oS2N+YoaBcAL6hkeNegVXiafzHkx8JYF5veJKwkBzjHGEVRdVW891pOvjZeqPPelb5ZHUbbUL4+/Y9XLy/tbvrrLsWx6dka7VZZ0pGuMAzrup4EHC/aWFsyVb5jyNzrGYtK7fifA7OfALnTCzTqcPxSg7POUgg54=
+	t=1792411347; cv=none; b=GkkT1cAbQ1NzcbNbHIXevdtn44Ub1m26Ja+cSE03/INjkdVun9NVtIj9iy8zF2/e5G8XJaalZCI2bbgo4/sSTA+Z2XyGQn99Lbr3dVT+dJ16uC31f6tJ1d8Q1DITcPmA0mOrMqVE4s5h9sc9Z8FfHJ1yCwh56zSx+YhVOvn7VSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792411311; c=relaxed/simple;
-	bh=JZLWL4f9y/6jv7F0Z8/fJe97Y7HOZcxGPE2Fl3kg3mA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/FH576dXCu+6Tltc3yOmqgXglPZzhDrnbgWs+f3vYMDAE37lA0NnUgHYFw60PTK8rlqfmrQatDNMdTQKHK5UXq8bTS0rKJQU3OVqPRkSWe5ulTvGtxXvx0UlfysIZnzZiSvQDxlGncx24wFrql/PSF4SK9dh88BsMUa7+XRHdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 25FCB200011;
-	Mon, 19 Oct 2026 14:01:42 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C5AD200007;
-	Mon, 19 Oct 2026 14:01:42 +0200 (CEST)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B4878202B7;
-	Mon, 19 Oct 2026 14:01:41 +0200 (CEST)
-Date: Mon, 19 Oct 2026 14:01:41 +0200
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Frank Li <Frank.li@oss.nxp.com>
-Cc: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	NXP S32 Linux Team <s32@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
+	s=arc-20240116; t=1792411347; c=relaxed/simple;
+	bh=0ZtTflIyQ/Ih9q9zKS2+34drbheFWDbpyOLOT7gZzdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IKC2re8i23GTQGq1eYTFmF8rMy9C/uvYXXck5eyYZ4EKAhiOgcE2y1leIfIun6AIOuj5H+s9smW4bVX7inP24PgALaHIOnEmwMc2aFlT0RDAQpFYLfjFwY+wSi55HglLjk/5dvuLcUqAsk2tMgGzSchzi98aezHNMEhesbELlD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhQcPKk2; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhQcPKk2"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48df54150dfso1526492f8f.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 05:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792411345; x=1793016145; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=85UJNW1kmvdUmgX8wEBdPlUGd6dDmuuDjcTlYqLXCyw=;
+        b=GhQcPKk2ngooLxLHIzhC2YRzyGL9g9I+iRHytXtqUa9pcnTNMT4TiIR26Vad3qdb0v
+         oLaVV/kAtSTkxPdmy7VRRuXCoEUz1DCmV7gVE4tqHaZdVymc7QZxtnHy0Ba4tb3EceKW
+         K0WMME3QIMnbcc6kB+sMHMePu5BvzxMEg8MAFBCAgKpHmurq8C9Z59h6JsxrcpDvpIWT
+         zAA5szhhKw5eVXAlvRFKmdVDt1+b2QcnCVafQ/92FVM3Qhg/wWcnmwArSD1Tdvn90kq+
+         hyDA4vLoN4dQlQ/YeKmELi5sS+AAJPVPu6lTDRrtVPJG6OPR7En0G+U5m5uxfzIlN6Ch
+         +m9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792411345; x=1793016145;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=85UJNW1kmvdUmgX8wEBdPlUGd6dDmuuDjcTlYqLXCyw=;
+        b=HVthG2rdvFkjjm6zYNk9IoQbZBKpbxdFSAGSr64PAfnF+bxmLhU1Qbigpj8dOsceQM
+         xJ1jaOTnJiKBvOhysUM06YAc6x692disz46idEKGQsoyF5+334rzRb7iQRucyxy7Sp9t
+         g4xPZOrRabmh6I6lV8JghB8XStYldJFSj3w4SU8VfhbAOR3x2UINhGVSdUZE1b/dPmQT
+         MAknPJVNPbO0KFcI5VFTDrjcTtURIrCjuPWG+j0E67vEbYi/I83pIun71xIrHRXMWUfR
+         GiROwi0HCgw8KP0K+HBESbCDgzC71XmTTYnKWm/xZhenku40euCgZADmFhWQUvaVlssf
+         tRqw==
+X-Forwarded-Encrypted: i=1; AKwUvBw89Z1U5NUujB7ehy+pRP97ZCDZrBLgmHBSpVSKUB7WzCYusFfeG4H8tJu7qbHsFyBJ7V/MNC5N+u9KCUukscX6Pg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLo98M1S9wws6LWk9cHeYBEbOniWXjXaHhxdxpnIas7Y9JUW1jV
+	+NPNnT+G7ZWGkfj+qVN2hg9Qez+SSEZsojZh3IFPOZ7JUUYLLs6S2Cr7
+X-Gm-Gg: AYBFou32VG7JZbfP/ejWZs7ZXqj0pCVZiQAL8o9/4m7TSNRi7wMiKcEZRNBYpbFItq+
+	dCIYOwgvMXWT2O6p27qMbqTOB9SFB2/BciafeRsLfjguJ8w8RdNQAnIwNNJaYMh89pqy4Dy63yW
+	1HLdcw0gCjBivuHuVQXPdX6us+bcFpPcfKCEeC/UUg1oWqeFkpYRYA9E8wXQhh+oohLN15TJqt7
+	i/oYX1LLH3pKgJsqAKljy/UhWqOyLLiDmP2KfZnlHP3iV1vcEdpuJfke3LfEiAoeoEsT6g3dDJS
+	WcU4Pr6C2iKumA86bHjXanbamUIhNbGU9RFy72U5tYVq2ceGxLnDbGIKGm9AKrWo65nz/eqTnAO
+	hS0/9RAp2tiAwsdjxUmLmSQIOq8pUEA5opnP84So5Y6b7TTnPY75nWurkyVOA139Z6iQrycrUSE
+	c+x7n1u4FqaNL1uuDLFY2IzT8pItA5q5V7b/6U8DMwePSAEA0TvPgh2Ev6I/p2x1+g5/7P96FzZ
+	zyDZuqIVYs+jxngGplcKLAk1hLV+1g/JytbhIBOic9h1jUoM20AaSw=
+X-Received: by 2002:a05:6000:46d9:b0:48d:fa9c:7838 with SMTP id ffacd0b85a97d-48e07985881mr9011954f8f.2.1792411344468;
+        Mon, 19 Oct 2026 05:02:24 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:1439:c865:be43:6676])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfdc4eecasm22400720f8f.13.2026.10.19.05.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 05:02:24 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
-	Ionut Vicovan <ionut.vicovan@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH RFC v3 03/12] dt-bindings: PCI: nxp,s32g-pcie: Fix SerDes
- PHY phandle in example
-Message-ID: <atYGpZpI1ecM10kI@lsv051416.swis.nl-cdc01.nxp.com>
-References: <20260919-s32g_serdes-v3-0-9d68868c1e89@oss.nxp.com>
- <20260919-s32g_serdes-v3-3-9d68868c1e89@oss.nxp.com>
- <as0qORxP0Roh9ktO@SMW015318>
- <as5CIYxKJTra4hqM@lsv051416.swis.nl-cdc01.nxp.com>
- <as-MdloKd-7oJsUU@SMW015318>
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-can@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 0/4] Add support for Renesas RZ/G3L CANFD
+Date: Mon, 19 Oct 2026 13:02:12 +0100
+Message-ID: <20261019120220.166163-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <as-MdloKd-7oJsUU@SMW015318>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 14, 2026 at 09:06:46AM -0500, Frank Li wrote:
-> On Tue, Oct 13, 2026 at 04:37:21PM +0200, Jan Petrous wrote:
-> > On Mon, Oct 12, 2026 at 01:43:05PM -0500, Frank Li wrote:
-> > > On Sat, Sep 19, 2026 at 08:54:31AM +0200, Jan Petrous via B4 Relay wrote:
-> > > > [You don't often get email from devnull+jan.petrous.oss.nxp.com@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > > >
-> > > > From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> > > >
-> > > > The example references the SerDes PHY as
-> > > >
-> > > >   phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
-> > > >
-> > > > i.e. the SerDes node itself with three PHY cells. That does not match
-> > > > the SerDes binding: the per-lane child node is the generic PHY
-> > > > provider and carries '#phy-cells = <0>', while the SerDes node itself
-> > > > has no '#phy-cells' at all.
-> > > >
-> > > > Point the example at the PCIe lane child instead, which is also what
-> > > > the S32G3 board device trees use. The dt-bindings/phy/phy.h include is
-> > > > dropped along with the now-unused PHY_TYPE_PCIE constant.
-> > > >
-> > > > The schema itself is unchanged; 'phys: maxItems: 1' already describes
-> > > > the corrected form.
-> > > >
-> > > > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml | 3 +--
-> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml b/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
-> > > > index 66a050028278..29323e50bd8b 100644
-> > > > --- a/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
-> > > > +++ b/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
-> > > > @@ -82,7 +82,6 @@ unevaluatedProperties: false
-> > > >  examples:
-> > > >    - |
-> > > >      #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > > -    #include <dt-bindings/phy/phy.h>
-> > > >
-> > > >      bus {
-> > > >          #address-cells = <2>;
-> > > > @@ -124,7 +123,7 @@ examples:
-> > > >                  ranges;
-> > > >
-> > > >                  device_type = "pci";
-> > > > -                phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
-> > > > +                phys = <&serdes0_pcie0>;
-> > >
-> > > I don't think it fix somethings. The "serdes0" just a label, point to
-> > > provider, which is not neccsary that "#phy-cells" is 0.
-> > >
-> > > Examples just show need how many phys and don't care about phy provider's
-> > > arguments
-> > >
-> >
-> > The example validates either way, agreed. The three cells are the
-> > '#phy-cells = <3>' of the downstream nxp,s32cc-serdes binding, which
-> > was never posted upstream; patch 1 is the only SerDes binding for S32G
-> > and has no three-cell provider. I would rather have the example match
-> > it.
-> >
-> > The form depends on the outcome of your patch 1 comment, so I will
-> > keep this patch in sync with that. If you prefer the phys line
-> > untouched, I can drop it and keep only the ranges fix v4 adds here.
-> 
-> This patch is not important. suggest drop it.
->
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Dropped. The PCIe nodes in the DTS patch carry the 64-bit ranges on
-their own, so nothing else depends on it.
+Add support for Renesas RZ/G3L CANFD.
+The RZ/G3L CANFD IP has 3 channels and 11 interrupts compared to 2 channels
+and 8 interrupts that of RZ/G3S. RZ/G3L has 288 buffers compared to 192
+buffers on RZ/G3S SoC.
 
-BR.
-/Jan
+This patch series depend upon [1]
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git/commit/?id=2b4a5055d517b11bf4a5671cef32e4d77bc45626
+
+v4->v5:
+ * Added patches for Documenting RZ/G3{L,S} SoC has no Classical CAN mode.
+ * Dropped the patch "can: rcar_canfd: Derive max_channels from the device
+   tree"
+ * Dropped the tags as there are new changes.
+ * Restored maxItems on interrupts and interrupt-names.
+ * Added resets/reset-names required property for RZ/G3L.
+ * Added r9a08g046_hw_info to device data.
+v3->v4:
+ * Dropped maxItems from interrupts,interrupt-names and resets.
+ * Collected tags.
+v2->v3:
+ * Collected tags.
+ * Added check against RCANFD_NUM_CHANNELS, to avoid overrunning the
+   fixed-size rcar_canfd_global.ch[] and transceivers[] arrays.
+ * Fixed typo 198->192 buffers in commit description.
+v1->v2:
+ * Added support for deriving max_channels from the device tree.
+ * Dropped clock patch as it is accepted.
+ * Dropped devicetree patches, will send it later.
+ * Updated commit description
+ * Dropped RZ/G3S fallback as there are lot of differences.
+
+
+Biju Das (4):
+  dt-bindings: can: renesas,rcar-canfd: Document RZ/G3S has no Classical
+    CAN mode
+  can: rcar_canfd: Document that RZ/G3S has no Classical CAN mode
+  dt-bindings: can: renesas,rcar-canfd: Document RZ/G3L SoC
+  can: rcar_canfd: Add support for Renesas RZ/G3L
+
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 32 +++++++++++++++++--
+ drivers/net/can/rcar/rcar_canfd.c             | 31 +++++++++++++++---
+ 2 files changed, 55 insertions(+), 8 deletions(-)
+
+-- 
+2.43.0
 
