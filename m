@@ -1,68 +1,68 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CB74EA397
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4D94F85C0
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792416972; cv=none; b=rGDS5/RnEohRM/kBvFbjjgJZcVaimcxaKTs0QyEXYjZNz395tVNJemUvbfyt/Yonx2qtpeTxGPPBSBKWF/m7xJb0K+kRjGECXEVXcoalPp8NxBHRObKY77wLRo6w3beEe7AsiLGnaMyhdv/UtWULKCVIxp1INILjkzRn/zTm3Gc=
+	t=1792417030; cv=none; b=uEC4Xae9cjLOTiESFYWMy6IFJ2eQ4Cj2TYPFm5nptQxnUlpx3C9vmPb9B3DmH01MHQCpj440bWiassDk9aNqbZNDpO1WeUnQTkexS/vaY0YdH7GVWHTQ1pREa5fK84JMhp8u7ejsVxLaFmbWAtwj5Ia4k2AP14WPokZZnXzLcXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792416972; c=relaxed/simple;
-	bh=0YRsJG0zikzQGyPZCwNj3fX9FQhaRP08kplHGzoklOk=;
+	s=arc-20240116; t=1792417030; c=relaxed/simple;
+	bh=fwAYS3zcXGkdd+Ibq1n5HFY65n1XJA1GPMTC7CY2epw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRCDrMrceJZncRD/fvHtMQIPwNIXYfL2ZFBOI6Erh4ZatfNEPGhrsITtdMGUIiU0pZOljYGar30ZlOl/C+PY4BdUA516SEsLHtvJ5m0kJ9FxUDMLBJN9Tsn45BVuDlTAu2phhcPTEL/Nkdx/P54rfm0nEXmJ2wwcxxwb9ChhyBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YsGlnA1t; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=jJfyyi86Wnhp37j/tKdT1sAqKBPVZH3yGOXKOQmmUZfSmD81aM4se9fpz/MKWruXRzCx5/SkKvKRXeFgN1hrVexOq4o89tya8WhFeNrGPumRLTv/iQ10kTKp+ym1ejDqvWEJdiV78eiSkZRFSA08+gFM9KvKTZnbX0V54VyOcjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Jewcw8c8; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YsGlnA1t"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a1698ea378so16024175e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:36:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Jewcw8c8"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6af9a9451daso3043784a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:37:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1792416968; x=1793021768; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1792417025; x=1793021825; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=u7QI1RqFBazH73cHjUm3bJRQ468s8YNQSYzETjY7O2I=;
-        b=YsGlnA1tkkMkyfgl+1EjIKdeVt42ERpVq32kDtbsL4AQzF3AKBAGt4plfMadWyUg3w
-         QS53/OD/qWkvgb9tJMAY3gJqqygFYV/W3Uidq42AXc/wn6aMEFGkFv7whkNPA3Qc1KFH
-         RAngo3ihvgB9c0YLxVa9j3O6KABwzqpCgYVLvoHzSLcu1olVNHyDELClMccU2zO/20Vp
-         Eln5hlyaHuDTsyn56R+JHRFnKpYDwPK5ZbIBVFGlu3p1jvF8h8uMTGtWWUO2wy42YAcp
-         td49/Dbe4i8u10buM5zcthSmGumEc0B8Sq0mqlNCnLIwxh+Brno5ouw3Ah8aaiV5D6x5
-         Po1w==
+        bh=kc0HBa20pNgTgn9A/dNG9MRjR4EzrI7cz68avvggZvk=;
+        b=Jewcw8c8ACrek60ikgqusPxWnpbvxhf3bLGWoDJ6DdvKTiZQw8i2MJ+9pX/0LINqyw
+         BDiqd7B7+hhgxdnDMG0zUXFP0ZIZowDvAJbzrSzGjweucAHxESNEpiUt0vOcm+F0/8wv
+         /7VaQE9eZbiAbnDw1DQ3mkgm4FRyarMZ502LzgWjGqvuk6QToJ22t8yVYZ0sFtjGQH54
+         rKVkWfRO8ds6z3Hgc2El8YD313HTjVLL6o1qE4j7V+//9FhPTa6bfOii9X6uRQsatSfO
+         8g1jsEbylGzUPu9HyizE2JdZ7g33iznw7N18t18N+picnHrdLFS/HbQ6gz9Y39moQj82
+         jLTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792416968; x=1793021768;
+        d=1e100.net; s=20260707; t=1792417025; x=1793021825;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=u7QI1RqFBazH73cHjUm3bJRQ468s8YNQSYzETjY7O2I=;
-        b=LRCFhW6wyAR9jL85TfGJ0P9JyidTxTkmHAPWAGlS5vZ3klorsGuLBprmJ8VTWYu9p+
-         p9X1bG3t4v8/LaLTh4+D7yK+4Jokst5xqzE7bnguu8gconVGxGzDrAl1JHIgRTfzshIy
-         1nwMFly9Wyuwxpb/L1bGgmsSRHreS9PMjUzcSCZYKIHSMCCxht4la0dkUXkrLzeOaNv7
-         YJypg5m0qvWJFLzB9Nos3g9ajcD/2Kpac4Sv8n8oKTXNgCCNTh+lCDMcx8cmN1cDU9f5
-         VMqDoFj8rHXwoQAUhZ8gYLYicu/OH25O1dOIB8UgSRwnPS4qtgzkEsypHPy2/h1Z42hO
-         0pWQ==
-X-Forwarded-Encrypted: i=1; AKwUvByRB5bLLGLjWrcL4/RuZRANEGUdkYJTJytOkHCrAtXjMGqCk+iq62qhjuOUnstZiCTFvZyWqNSmgBxs+lv6H7qAsA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIURJJLYSTxC7FujrTLDeqhhxrNBCBOX017B1D7gpdzV8IIuC5W
-	DxLt2EamS5x0N8iVSSo5R7nH4I7txCywCMCP/w0Vck4okAxQ4OaYA5W6TvL3yskYASk=
-X-Gm-Gg: AYBFou3PF9th3D8pnVY+9UYG6+OUnnELtLiuzRwDVjv5XcMbCJMUio64XdgdXd5oP9d
-	O22wnFQA1VVbBKO5G80Iu2c6ffYpMdMyRIwnVZ5Nn1CPlVo7tXHrywYUZyszX1A2WdJZzyL/Bav
-	ANXAVa5XVlapbRWNUUkORenNfhGcEIwr6DgMiaD6wWrropZ8NLbTD9uev4D9ovb7E82z7EtBoB7
-	4d+BDd3zWkdfZ2SY0SrQbTSCudlp2l+oH9+gOH9+L3A673Z1SvjSmJxUhSUWoN/hCziiWYEEaM/
-	bAxS2NP4ZmoF5NADt45TTG070Teouu+zzlSgSa8EWah0OlqDDnJjeNF2AqmBHKoXY73248pDTQR
-	f4QVsjRzyMEvPWwoTpK+sEZdfi1inWGktNal1xGrwYdSs2M/Tog1phg4WfsZYwzH3aMwQ61OEYs
-	KEnBFarb7QqFT1T///bYNKNFgQKfTRxGtbUTm3pGbE0EyLlq1F9fmjeFuM4De3c8KQsJ3AfStpe
-	dGTollR
-X-Received: by 2002:a05:600c:c168:b0:4a1:ed0c:f051 with SMTP id 5b1f17b1804b1-4a1ed0cf21dmr30497355e9.5.1792416967770;
-        Mon, 19 Oct 2026 06:36:07 -0700 (PDT)
+        bh=kc0HBa20pNgTgn9A/dNG9MRjR4EzrI7cz68avvggZvk=;
+        b=FuyD3XlTxTjd+f7s8IqBiD6W2gnz7Hnvl/N15VBKXIwE1c2R/xkOLi/Cnavn671vFv
+         ivtr+EdUeC3DCoQ0fTH1NdU6tfEPv810YTSLJJI6dlLE+p2oX91VF7wmyjOUFIa1ECxW
+         j1Mxe9mwuvpMxKthJGXIy0GW3B+g9ExiDOyrcvl+6iIdw5DuEx0lN3FZtBaPk4jttwow
+         33ggNR6vHgPFFnn4x2gENLlVmRzkieNL4fZqE7DSlkB4YQPekpOTbIbZpfTh32Cd/IS9
+         EGCbLyMrV1aDxTOQFe5e27rx/jvL16h/XpVpPOh+VluBf9ddAbrH4oojTouhYSDOA+/j
+         tlUw==
+X-Forwarded-Encrypted: i=1; AKwUvBx2j4nHsJE4bmS1/qtVaq0o2oFJoFAaVE3ImTBYMdJrQyLXi4h4ATwYu+ZGjBrWFmaBvktFuceZBt22PQWZHr+0Ag==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJhvkSl9Bf1tQqdwAAmuu4MLDaVE6XEgZl+3JBHfeZUEnriqWwp
+	M98f+ahzq6fsXHfco4OFG8BT7IfEunHtRe1aI1Z0Z0vfNxzDBWK0vQyNybqGH1nlGpw=
+X-Gm-Gg: AYBFou3MDEDYug7NjH8lsDl2u+5Ci2tw5tvYoP1WeeRva/nJo3zG5lGKEwev6WLZHVZ
+	k+YCKM7Q8DTCoKlJNyXHyQfG5zNisWczdvr1sfsVKd6h1s4N6AA5VUn6qiZazpEUvwIE0ytBIJW
+	cFfxFD5k+3hjlpHYUjljUdoyuR2rLyjNM6XHLbDu0NVXRw1vwX9kmEjswiykB984+YPV5ZPwvyQ
+	ZGuIQ59mjvL2Gn0HaePWV8RdVq5c4Ox+VgZqvniOifkh280LOqXxxCSZPEE4jPZAnbuCNM7vzpI
+	cg85AvoBnXsFu7+7ZQeMNROdRTSQwoXK17XmHiaYlPp6viyjMXYDZbbIT96hHRL+jWsU5aIUFo/
+	tf123A9nGO1plxg7Olt7sEGI/rH+9YEeLDdSDI+iVc3/8UekBbnU6iGMK9zsklwUF1Y3icXmuUX
+	PdfPBkIEgou7fY3WbxSvARN32mpYw4hf+SE0wQhmXfJr8xG5RIoMwLMkGujOrqj5YDSLGza28nq
+	AFE/qs=
+X-Received: by 2002:a05:6402:5489:b0:6af:8a4b:7aad with SMTP id 4fb4d7f45d1cf-6b3a81a6d00mr4333695a12.28.1792417023411;
+        Mon, 19 Oct 2026 06:37:03 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd4f8cfesm20387473f8f.37.2026.10.19.06.36.00
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd4f5177sm22897379f8f.30.2026.10.19.06.36.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Oct 2026 06:36:03 -0700 (PDT)
-Message-ID: <0cf7bef8-42fd-475d-b47a-9cb8629644ed@tuxon.dev>
-Date: Mon, 19 Oct 2026 16:35:59 +0300
+        Mon, 19 Oct 2026 06:37:01 -0700 (PDT)
+Message-ID: <14f60932-9a85-45ee-ad87-593c20cc116b@tuxon.dev>
+Date: Mon, 19 Oct 2026 16:36:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -70,8 +70,8 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/11] ASoC: renesas: rz-ssi: Explain component open
- return value handling
+Subject: Re: [PATCH 10/11] ASoC: renesas: rz-ssi: Remove redundant component
+ open callback
 To: phucduc.bui@gmail.com, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
  Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
@@ -114,10 +114,10 @@ Cc: Kees Cook <kees@kernel.org>, Syed Saba Kareem <syed.sabakareem@amd.com>,
  imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
  linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20261016040946.521195-1-phucduc.bui@gmail.com>
- <20261016040946.521195-10-phucduc.bui@gmail.com>
+ <20261016040946.521195-11-phucduc.bui@gmail.com>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261016040946.521195-10-phucduc.bui@gmail.com>
+In-Reply-To: <20261016040946.521195-11-phucduc.bui@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -126,12 +126,16 @@ Content-Transfer-Encoding: 7bit
 On 10/16/26 07:09, phucduc.bui@gmail.com wrote:
 > From: bui duc phuc<phucduc.bui@gmail.com>
 > 
-> Add a comment explaining why .open() must return 0 on success
-> to ensure the component is correctly marked as opened and
-> prevent future changes from reintroducing the issue.
+> In DMA mode, the generic dmaengine PCM component already applies
+> the integer PERIODS constraint in snd_dmaengine_pcm_open().
+> 
+> Since rz_ssi_pcm_open_dma() only applies this constraint, remove
+> the redundant component .open callback.
 > 
 > Signed-off-by: bui duc phuc<phucduc.bui@gmail.com>
 
 FTR:
 
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
