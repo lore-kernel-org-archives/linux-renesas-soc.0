@@ -1,90 +1,95 @@
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B71511890
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 14:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF05355CE74
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 14:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792419111; cv=none; b=NHzuF1NLVe9EeGeCJQ9UitHbnp0q7arw08c+smmp0ukUBtkPl6xQ0sWuBfY0kJJrJFokkwLnfXKSYEE37PnK0KDM2H6fyNBy0PjjKJuKFRqgf6XbbVADLrZ3GNk3B6/xGRPaiTGH0lxfGIyL4vt8AukmgvxW2t729KQCuRNefcI=
+	t=1792419351; cv=none; b=kh6mW4+sd4cosbrDu8YOOkJbNRsny+M2KGUCzpJn4+ZVH/FbRtgeIRRVlmNSRCsq/0ZeZWWPwBb/EDcusjFfHNkr9THZraTYexn6Ve1Sf4ShhmOZHWQtODOgBxUwXn6SoKRbMaF+UwmCEehKBGFQX21pLSoTLMh1sKQ8vLVmIOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792419111; c=relaxed/simple;
-	bh=OkpEifD2KWm3GsbxAZ0xxE8P5d3Del3yRNhkAe0sUgA=;
+	s=arc-20240116; t=1792419351; c=relaxed/simple;
+	bh=Bw5159SWZK0MfXRnp1tl8h36EKMSwk4lSrReIomW8O8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BIgYfYeKKuqpu6zW8tKWYJXWfhlTXItsMgHBSFXXt2Kyn4CvSNlMG0ump4xIUtjHNKJDnLTlf5qxidodS1RRqnnziTUAewdjkVqaa0k57AmEA6+XJv0HNoix/HP2eSNfGSZP1eNK9jeZCk5RMNrgnEtnuIQ/SCynfbwWgktyhwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+	 To:Cc:Content-Type; b=kG+ZyqJxnWjA195kBjazsrSOpe9azVJuEIPfvdWvI8XaE1SqsepOy4oEElVKx1V+Pfw2lE/LtREWxMQefXsN38Tg63d2n8yxzOmouWuxIP3KlwBVT/4a2ubpyKBHsA6NiPKq1OHqoto9JdsVCbaHNKoH6TfksAFIYd4dCPBV4Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-7c6e6822b11so556026137.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 07:11:49 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-7c4818e4165so2152756137.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 07:15:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792419109; x=1793023909;
+        d=1e100.net; s=20260707; t=1792419348; x=1793024148;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=nUNNwLjM6Li4QaQna+9UtyB3Cj/CRAMDg2QIIEt5PZg=;
-        b=lMPsOVeIpiYiLOJDRtaLy/vrg4q9EIUNOZEy2PGQ4KWl9Mco1mH8umckpeOLezfgWC
-         xb1hgHCKF9mQ/XPOUq4xsmuFWao74z9tUB1oiutn3ElJ26HZj6aM0g2dzNku7NPb0Ase
-         x8ljowYly1rnw2QEk1m5ujMVnxwpyCNakTD352qSdd1Z21LO5gPbytz31sI00UAaFxAG
-         IV5HAJF7LSeM71ETmIFAkdJFN1lsSWhHfu/tVAi2DE1n27P/9N5lOptDRI57sEKZUTMZ
-         x8phRT5ixpHPHg1S/bB8iLSzEPj24KcJmMI8cFfSqCalZUkXokABSPkHiVrDzCxiLfac
-         vEOQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzQ1e/jgeVefuq59GXAPqLNqa+bDj9dvaeeL11aA+oYjMEA15Gtq/+RZCHqPU6DQvw9ekTKTlN2KyBCLBBaQPQeLg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKU/ZuyJEAH4A+8BhKRy+EnGJWOevWAXMI4XJntuEg4sX8qWuAs
-	oOC9Q5P3PMy3Npb2o7c3xPUGfKaleQ3JWGD5aL1M87vJZ0xYeoNwH8WxI6KbGeAqgoY=
-X-Gm-Gg: AYBFou2pY7u42LvDap4hvOYc4/Da72/4dCrahTWhfH17nBuGi1DX6CCRZ7cnb+sykho
-	W9z1+/x0kBE4YPIOPNpGHOX2HkCdHJDWsD16PZ2CG2jZRpfKraMvezDBZwbinA1Y+44JiLjRCHe
-	PQZjlKgkshC8/mZidq+xdZ5F/YXUwOYzUJ+nzF+BpL3mDUSHHsfuON3PDuI2DDivXUtBAUv4S4i
-	mRq4MM8+C29fOFaXcqjdJzIwOdm6zS1vh8Xos7zDIsTlTsOZtJrq1oJ17WCCEo2N5ABw7ZcHp+k
-	RALjDdkViVIy8Pck7/hdasnfR3mcom4Y6T7drDScT8Sdkymfuz4g7mjv3g1+moj1DeOUN8RDIDs
-	2lFGs3ccDIdgOlpGxTVmWOh/031tMzttMjWe/dIonRzwiW9uz39FMl9Y54xadiGdjue5aoeWoNM
-	KLUWCQ0VZ03FvDfrSQHAtdstGGQ/SYmM0pC2EWcFiImOSh91CQQpBPCOJI+DRxMk8Cg0YnInbMV
-	SWocX1r3oAlBOtqpLuMHAntSr+zhdHHGX5C
-X-Received: by 2002:a05:6102:3749:b0:7c9:624:86e1 with SMTP id ada2fe7eead31-7cc36b021c9mr1767883137.35.1792419108731;
-        Mon, 19 Oct 2026 07:11:48 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-990bb392504sm250180241.11.2026.10.19.07.11.46
+        bh=gTsMBv+BX/aLxxsbc3oBL3K2Qt4xiXtXHE4nz5I9X0E=;
+        b=imIU4yYHyHUpPMIZis+cXRBu7JbzT0iJ7yb2srQeirjEAgbAJ9PD57fOI6rz0ublRK
+         yF4vMmG2aygFkuqYmWC9yJfCzbrmTv5/UWu1CtQbsz7BP802yF7lV1EP5fWvJUtI1cRV
+         nI40YC+OZfQNLWl+1wk1ukDhpot65mZDUctElMh/Jjwmg9A3Ocm/EGqyxFP9rhCTbUiz
+         l/GbZ7b7FCmofuw9fqlPW3krHir3W1BEdHaOVjwHwq0GYhfj0YNPi+ccMYC0Ox6u0Qkw
+         zRMlKHYAiflFyC/AdtOu0+xSe6MruSP/eivUpHDWoPg5Jx3qRKqFw6hVqrTSEd0jblWZ
+         HoQg==
+X-Forwarded-Encrypted: i=1; AKwUvBzCXers1Ryx1O8Y7HXBwJjivSKuoGicXPw71IuHvDGOcteetrxSlKIWY0pOH08iSNsY/OtkPeNXQDcH3mOlYtfBzw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKoi3TxGreubk+p6C29S80OSYBwDnmw4pNkNTxSBZxZrOwIl/Cm
+	SmIdSy9z2n/DKSCa87prFIRs6aqmlMOmbhMLEuIa/gAYV/0BPQ0M8kz3JIfUOEeusX0=
+X-Gm-Gg: AYBFou2X28ryA/MgDwIz4E/bWR1qTdCla1AbwNhQ8nlXbAKVh3tc+nA6Fgdq9DWCfEb
+	QwB1O0dj77yXpaGuqDD2fR/SvJdCD+KYgCBJh62CPGwtv6yPqbw1wWmNhIFqxEzMPJ8enm9B+r8
+	klt9I+bcK+FfdEazy883Kn+bjIyzIYuUMwmscQP1yr+5sr4EA0RJj5j4WNt5DqpNrowc8y5/DoM
+	lLPzLnHLISzisPsplBaL9BzAEU8IuJHJyKC5Vjay6JgPxGWTnySC2/rfrCJHjIrDf1HsihSJw0u
+	Im1YGEuarBGUQNQIQYBKp80Rpn5JZoGKe1RFNqENZf5lU+IfL25tYEVq/ynHDwNvQy/s01QscDo
+	aR0PcSj/MLLc8w0bSDtavlRHhteWs/CZ190kWrZpjXuyAHpBlIKLiRsUabP9H2ma5N2w2eD0K8N
+	oRt1cRMZnS2oG6wgRmhczEt+e4R5Smv/ahVVDmdmWeSmWi5L2PvyjY2na1PvouFVC8vYp8icD9d
+	9Z6Hp+L4TpnxNIHvJZCayO/tChM0WNHQ0yA
+X-Received: by 2002:a05:6102:258a:20b0:7cb:be5a:c62b with SMTP id ada2fe7eead31-7cc182ac610mr2096167137.43.1792419348657;
+        Mon, 19 Oct 2026 07:15:48 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-990bb384048sm250855241.9.2026.10.19.07.15.48
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Oct 2026 07:11:48 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-7c03744ef27so564339137.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 07:11:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzT762mmkrdxQekAOr2nKQHoVAH3rFosbjKDCOU0WDYZ+DqS1Dnp1fM6tNJFVAWRU7RS55JdN2pAThNywR6iTgeCA==@vger.kernel.org
-X-Received: by 2002:a05:6102:3749:b0:7c9:624:86e1 with SMTP id
- ada2fe7eead31-7cc36b021c9mr1767854137.35.1792419105797; Mon, 19 Oct 2026
- 07:11:45 -0700 (PDT)
+        Mon, 19 Oct 2026 07:15:48 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9906a5410f5so3042820241.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 07:15:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxxyTjWBDZTGeB4IcOq1AbkxXlmURgdNPfdK4HlDs0PW4TP1T6HTcLL6Q2DuV2dMUWD1gQU/sI1XLEupTrdx96dWA==@vger.kernel.org
+X-Received: by 2002:a05:6102:75a:b0:7ba:7a64:5946 with SMTP id
+ ada2fe7eead31-7cc1823be8bmr2159864137.35.1792419347856; Mon, 19 Oct 2026
+ 07:15:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261003083200.459705-1-yaojiale02@163.com> <20261003083200.459705-3-yaojiale02@163.com>
-In-Reply-To: <20261003083200.459705-3-yaojiale02@163.com>
+References: <20261001082225.125956-1-herve.codina@bootlin.com> <20261001082225.125956-4-herve.codina@bootlin.com>
+In-Reply-To: <20261001082225.125956-4-herve.codina@bootlin.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Oct 2026 16:11:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXpVv2=GHJK49ykUiOcgKuOrW9_0UbQ_nfx2R-MGuhV7w@mail.gmail.com>
-X-Gm-Features: AclHuK-whmRf2m21YwZdvIAowJDZUbKGaSptoysY-titwCbr4PasDFMX4zXs_ms
-Message-ID: <CAMuHMdXpVv2=GHJK49ykUiOcgKuOrW9_0UbQ_nfx2R-MGuhV7w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pinctrl: renesas: rzn1: free maps on DT map failure
-To: Jiale Yao <yaojiale02@163.com>
-Cc: Linus Walleij <linusw@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 19 Oct 2026 16:15:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUXbeTU9ROjHQKje_+-hUCgtBOXEUpvnpRMh_dyJTo+Ew@mail.gmail.com>
+X-Gm-Features: AclHuK91kcP9qOZ_DEuR872u-j2nw4CzwPaKsUs5BANpggKtpgKKO3z0eBpg8xs
+Message-ID: <CAMuHMdUXbeTU9ROjHQKje_+-hUCgtBOXEUpvnpRMh_dyJTo+Ew@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] ARM: dts: r9a06g032: Add support for timers
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 3 Oct 2026 at 10:32, Jiale Yao <yaojiale02@163.com> wrote:
-> rzn1_dt_node_to_map_one() appends mappings for each DT node.  If a
-> node fails after map storage has been reserved, the top-level callback
-> returns without releasing mappings built for the current and previous
-> nodes.
+On Thu, 1 Oct 2026 at 10:22, Herve Codina (Schneider Electric)
+<herve.codina@bootlin.com> wrote:
+> In the Renesas RZ/N1 SoCs family, two timers block are available. Each
+> block contains 8 timers composed of 6 16-bits timers and 2 32-bits
+> timers. Each timer has its own interrupt line.
 >
-> Free the accumulated map on every error path.  The caller ignores the
-> output parameters when the mapping callback returns an error, so they do
-> not need to be reset after freeing the map.
+> Describe those timers blocks.
 >
-> Signed-off-by: Jiale Yao <yaojiale02@163.com>
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.5.
+Thanks, will queue in renesas-devel for v7.5.
 
 Gr{oetje,eeting}s,
 
