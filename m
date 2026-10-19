@@ -1,115 +1,116 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.148
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792438599;
-	b=fDZeJ94cn5AMHAD/VXGujN3CfIUoOYuIDV17fRP8jmsyKOp9g0eQ50d0evp7TNk/30JW
-	 vAqoPQWHFOw8FDK3Usn1Pj+GLnI5M7LpwRg/QlXFqr6Cm62OkNYhngUU+R6PB8zWoBS7q
-	 ABJLLxgVXS7NHtzbzHl5QIOHmxobFxtqpfXnYqc8DVy9lE093w0k7F3X1VVAbz60KdH7p
-	 xy1qg2WW+viss8yIXY1ZuANkRTbjz7rmLuBhFjaN4YppnAQQOTdouflsXdMIfknN6qWva
-	 IpzefXBra0aj405iuTMx9WSEqrnQB/e/HDJb7e5PXbSmeHbJO/KlyyirVxKHzEF/MYg==
+	t=1792438601;
+	b=tkdFG3Pdxzg+C/AeAHO7qh4hPG1tEILYWFW2Geknd62/BNzkDsVO6nu5AnP+tr21pPQA
+	 b+whvakPrLrZSjhLTPctEIHjd7txsP1RKqBdbESDjoSc4oqrXnSb1CC9vng042jAWJdDT
+	 +uvRX1bSJAC5MLJwlwf828sxsP/2af5OpEVpvvvRlfudmIA0XjaBQTeNgQIVRUynetJAO
+	 8vQIZK5Cxsw3TZZ9A28JpjvhGBS32GahtY/CCiUNMFFgHUXi0j2WtpxA6WtE5iQ71mjqY
+	 yKGrtzgk5HUbwmQ+YydRdsRUMkqBQq/dZS1cnbGAKaXF1YgugsrByXYM1SSdS9b2x/A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792438599;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792438601;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
 	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
 	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=T6aAvyR5GJ5zooxqgGF21JtukohT4AaHPFBTAxtWZ50=;
-	b=RkBo1dYjqV45WY2i2w6RWFp6FPKxPRj8BecdAM86evZrxSbomGN0KpbY32bZcDmQe4t2
-	 4H6oPZKdpKxnDWtqXSUhx4bDx8AZq9LaIWyDAVy5CcR9txGHDr7Vc3/RucfsPyNNFEDU9
-	 Izoz5kPag6HBzEWmp36lVobSbQOL62cOqhstIyBG1PRqhBrf1b7WuXhy9J8pSq9QO7CUg
-	 aH+558Qtr4zoMmFsQFvpa3pJROU77t++SPuVUoMq2g7Oib0+IdCtI+61Mtsxrjc4Rrdfk
-	 VS5gU5xPWobP971ftYWr+OXppUJO8qyxk6CGkpxSMq/NXm63t6QrhShsqMwWx+w1gsg==
+	 Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=aeOV6DuhkytjuJuM+Zesl1xHEoJhEfS1hsno21OSBbw=;
+	b=jFwzx6qOwN8ZcnmzsS/wb5Sz25bi/CiNjmlk36r4Kajvl98910G7Zm2DjOqShplf/CuV
+	 iifvq/+Swpg4JxnwFYfGRvIdXLP8XDVLkEGizrISu35Zhv+MDoKegdc+ymY+W0W1pwPOl
+	 LuSN0+8mU1FaVw0vBrVVCiDJkCrUnAs6yMMnPl3nNwE/MzdAsHGrk30cbqKFvbS88QOjg
+	 86IVKg+WqWhO8cqs1Phryo4jHlrgb3PVWbi50WTAi514aYKrMQD8w6WN+fBHIHovEW+Dc
+	 WROylfKejEMZnogfLP13vuO9PGNL9k8PSB12FuBUfnE0Rp0kmcyrJp6ZQS36UJzNM4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ragnatech.se;
 	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm1 header.b=f60kMJkX;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=y+5kh57j;
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm1 header.b="QqvBk/k3";
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=WF9iB2fG;
 	arc=none smtp.remote-ip=103.168.172.148
 Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCE8606A320
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 19:36:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5CCE8606A320
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C670C606A322
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 19:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C670C606A322
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm1 header.b=f60kMJkX;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=y+5kh57j
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 912B5EC00DD
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 15:36:37 -0400 (EDT)
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm1 header.b=QqvBk/k3;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=WF9iB2fG
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 07D34EC00DA
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 15:36:40 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 19 Oct 2026 15:36:37 -0400
+  by phl-compute-04.internal (MEProxy); Mon, 19 Oct 2026 15:36:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1792438597; x=1792524997; bh=T6
-	aAvyR5GJ5zooxqgGF21JtukohT4AaHPFBTAxtWZ50=; b=f60kMJkXUtuVK1dDNG
-	XvJBzgUnjcz79VSme9iSmPaXMHFHpuoghJ0as48YMvvD0zWSh1OYiSqzBWmyPfIZ
-	xDAXdjbUJTFSrD3Ndmz+rKdXFJVAc6RhrztMVmnkz3y+VuYgKQsnUMn0J9JW8xna
-	OCyRo5lj/v2atfgGPInleA9elZfpsF6QNfYcI1Ow77Gr4ZtxyPfPZwT1BXlVWVFA
-	9wBPdln1FHKOY0Y/i5jbemoNZy+meIA7xmXCfxWTXn/Lrp/YLNFValcNl0WfzG3s
-	48v9yWYqZ90kK6zxI7jeqgzc8iJB7Sl5hM1gQ9edKkveko5klXFuBnLm/WTLY9FP
-	hixQ==
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1792438599;
+	 x=1792524999; bh=aeOV6DuhkytjuJuM+Zesl1xHEoJhEfS1hsno21OSBbw=; b=
+	QqvBk/k3woZXRQyxGOu6F4lIv6EGW+CtXDbZX0OvYg0KeOamgGRHBWfcdRYzim0o
+	P3bYHWbokTXLPqPw1UW+mumF+iOisNCau9DEemimK5CvQ8O25oDiQFQKozO/jAkR
+	Q1Biu7iVOlPuOJ8EMiBfBLc99OEuoCQorXdsjF1k6JfqZsssF2U++79KD7OwoOoM
+	oW03ZY7Rr8WhO62HEMNT0h0GVoiwyWhv8Kczp/OyQuvPIagMaT8nRx4QUztTtoWY
+	oKz/8WoLrY9RiiRbUD4at6gF1DZxfMl4NYSdYtU6PowjRMlrbnMnGoeK3Qarla9w
+	lympaVCpwNid+jDVhUg9Tg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1792438597; x=1792524997; bh=T6aAvyR5GJ5zooxqgGF21JtukohT
-	4AaHPFBTAxtWZ50=; b=y+5kh57jz1w+XfqZ7vSX5XnShLWwYO932/2Sr3y74Ej6
-	lh3gbIHWcRUTjyrZphR7/mkpXgNNiKhhNubkULHXyRgcHbBzjtSHb/o916O7NWGp
-	treQDoESBANR519HyvVctJiQJXhTa8B7hMrxlcPyBKiedx7Anxjdgs5TADnIvG5K
-	ZDEOG9ZD2rO5gwFVToZO62uRq5eE0zIcioOZK6xjSclfZEJl1rDaPQL/Xj8U6kNO
-	Qf9a2Wvi/v85asweoh32Qvx7tfqjatKWgnRdOFbgDp+Zy69JVV/INMkUI0sS+PnY
-	yTm757TzjIiH1HmiGnbcOD/U9rjuQCxXMa9zzMzrEw==
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792438599; x=
+	1792524999; bh=aeOV6DuhkytjuJuM+Zesl1xHEoJhEfS1hsno21OSBbw=; b=W
+	F9iB2fGDIw+j6Kk5huVIkDyJht2sBZgsEJ3mtOi7ipf3jXeXbt5HcdXgo1VcG4o5
+	xapJ0+Cbc/Eqah0/Qw+/KP54MSbRRKQRN5YhzNJ64bb6YuRrPktcQ9ol5fGg7Qy8
+	MfS7rUmNMBJGtDxmwrXlBhM0F/1/zSHsWuVyunkokXNDS3PBYaT2vLcKzKmfHple
+	eo1MvkQZgPskiqLtwBnDf3/Zc6lhXqkQpRdKV4FpeJifUX+FJXUUJxIk2MQqm6/G
+	49KbiAPBbYGBKT+Nny7963sLr8vx+KdlWEjAiRrRs3phynTF9jCgCCOxtjR7+AS6
+	X+kJ84R/zXMIzCACACNPQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
 	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
 	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792438597; d=ragnatech.se;
+DKIM2-Signature: i=1; m=1; t=1792438599; d=ragnatech.se;
 	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
 	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:m1MLhUP2wvnIZFmzztE6r7rlOlGi0wSWFSpML8s7zrpruG4
-	arr9NS4XchGldrRSV7xs6bSuYhC2KAL1/cjimtVRlb8vzyjEoICqdWmpOqGUU6Ha
-	oqYxy2c1+IX96RhnmbdWM5SDIzt5L8PAkI5kg/wj13+CWV4+LuE6zxMlMoYkMI6u
-	OHZYc1cInqewqDiy/ZozybOb1dqWLAG0whUj06EgS/ZW/+JuWeThxRaARv+8REpK
-	4XwgGtZeBNOR7EpCjxissvg2BfgUaAFNKiSod1Idt62vquOLGwfHRDHf3vKau28n
-	lbX9v59+48671Zr6q+AqAYZAEuncEuVPGDTfY8g==;
+	s=fm1:rsa-sha256:PCvQ/WGdYkByDPWe5uZ+C6ToMtI9DT2QeN2dAsbwbOWS7TN
+	j+Su00OGEkB1jXs9l4b0mlSoeqD5XtnI9cTSF8Fe0DIQvmE5jpGvUtPrcSlFkQ04
+	xh17JHiO0+6+Ydhmng22FagH+cyqEfj4PMbdIfFZRzr2ntlkgsb/QmY4wqbf9Vqh
+	bvbXULykRKWwOCg9uKZAjzpsURzgFHM6xopqUPUx9518f4JCEAzjZSazHTN5wgYm
+	nxSBHvQ0T2e47AR0qHmDYJAuEHyIQmYCZ5O261uv1lmRy8srwAMkj5lxpNWuSeyq
+	j5vhA6+77X7yAbOWZGZ1Wth9HTp0I0BDSsgBpzw==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
 	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=mi-m=1; hc=10;
+	action=mi-m=1; hc=12;
 	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,message-id,mime-version,subject,to;
-Message-Instance: m=1; h=sha256:7MW1dV7hW2ta5ORbkfN+eXL3vzqHsDcdgGdewD3ALVE=:tRvaq1Hc86SnIMQ4u8N0D13wQgOqHSgMP3x/d00FGJg=;
-X-ME-Sender: <xms:RHHWapLjPuUpuexG6ormGZInFHH8RpeCbHx4GsBGsSJAC0jBvaNrAw>
-    <xme:RHHWah1dfpDVJ5YaaFaD-SwEOxGyQlvUpupFnolzMq4TcT_gDhKHWpL3oprxCG7BO
-    lcAwrSEBqMKpudNfASAQHsoYvNLujYQVkBmz005RFTYSeJVyN_HN3Sf>
-X-ME-Received: <xmr:RHHWalmWH4SiPDfG72SBXhmtVq7UCYWX7FY42bICUAkh7lFa3Jrja6l1iDYCEQRSiusqc467pdaEoYLcuu_IoQAVcib-bPI>
-X-ME-Proxy-Cause: dmFkZTEJRfLlQv53UjQFq0K75BeNFYwR8zcPPdt3Z9BYyYKoZYFxlOwdgBtyk+USRjbpT5
-    CR4QfaqHfVRBTDZr+/Ho1tj58efLzfaN6VAho6nQNr6tD6p0uB+5i3p0uEa4JlWwFVnGFU
-    OKqP01wBJqxoSV5g6xn3Vb7snmQ0lUbvtml45MQeH+CQyvDCms9Buy5gxg2FGz5egQKlnL
-    SWGzgUDOiaprVf7GKc8CT/S/uJd/TIS1l6yLAOPGhsqq+B5SrseiOxo3qgxC+rMyqjuoBA
-    xqHOCcn5LI+9o11z+kcCofeVHTfK5mXzTPvFj78xMn9C/qJGP8V0gDfkd/Z25t9Av+FwtM
-    pbHnvrT6Wc1TqVt8+ENulAFGLQxlyad9ad8xTLAtT7ZULBFlxPlrHEJKCyKNf+lfK2BsPz
-    z1oMMtK6urH7VLY2aQzNUsIGkvN7Tc1quc2GXYqbtPEpAs90D6TR/MXYrApiISX+M9Ga6Y
-    AZdQnJPJKB9zzrbaqZHwtATF6OD8q4XC/niVAgbewFaTN4UMoCB8tH8F6nk+zzIG8lnkpZ
-    d0qB3yx5UoGJLmHPEr23YLzFkNS9itGuqCCzFyN+WBjbTiJaUxEmIXb9vInsSuRhk9q1OX
-    VakCM+otzPEa9lZECZNnsf2F7U5xlMHPPxaxp7RQfNs4uGm4HW+y8Ss0RwyA
-X-ME-Proxy: <xmx:RHHWakjtWAgB1Hb83eMN6Cg38gBuDEcQPUTmS99l_2gRu14oEwn02w>
-    <xmx:RHHWakQF42gLEfUSVH1p-8nJXBBUc0eWin-LXPqc9aWU2dOzS7C2BQ>
-    <xmx:RHHWam-dlKKsV5B-ZX-YQdnx7w6YSoO7RGmRtl6DuesoyInyBg8qeQ>
-    <xmx:RHHWalNKd0LG3nzydTABQcDYyZl4D8do22RSVliuhTWJO91tvQzEZg>
-    <xmx:RXHWak0MsEi-bO1I164WnTzL4vN8lG9CEF3t_qLi5KrQGyRjEBLrt-WL>
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:p5c5nIOqYyQ9SHZFgLsae65c+5n6X4F2wMq87HgC8hE=:gOgfo7CNAnIzBfgDqfseWhqvxPyAr1j5hGNiCYsbBUw=;
+X-ME-Sender: <xms:R3HWar1hBSTZoWJx-zpe9nRlxRYcl-jsyesayTiDw4ecCG2BgyeUig>
+    <xme:R3HWamy3ADqZeDINagLTbht9qBq8lvY_xCTnCfcubbgFhSLC7rc3z3ljdm6Z8bvzv
+    nWvy1zPlnLMjoxkQUI9u3L7OMEyVwSJmA2QaV-_6Az4GG8oJcOORXn0HQ>
+X-ME-Received: <xmr:R3HWavwDl5D3RW_eZeGPMKc6UWpFYfpbADkKWT-ridPKuEFmHo0ONEdacCoUm5sni7PxIdWcjqmFFFiRMLPlsAgK7Y4l8nc>
+X-ME-Proxy-Cause: dmFkZTEmBQwo+sf/j1ocKwc2/RsLqnHk33Sx/VCjkHynw/c/caELFOiXGalx/mofXmjPnL
+    wm+KKOhmvwpj5rVueT42yNXbD5vQKy4cgduUgU3N5hgVFpyQGcqUyfn+XWe0Qez0wARhd9
+    J+uV5sHaLIZEa+WsGRYXGsjXjHEHd+4axWXR5FmzONYIBUSInuSF4nSBLTDsmDjDV+hlcY
+    bJgeQCs0NPbBjuuC4044qPHRbczAJXvNb+umMO+yXtWH3/B4nWGn7WyYrseYv983I+eT59
+    3yqfjlVzMtGd7Yk0/rb/Ct8Xzf6bUKGFQLeCY8mVVP6lI9Ll0Hls25nqi0n3NaKV9xv5qy
+    IbObvxZRzkmwUpsc3+ijSuGrmjpCNXn1Y/Px3KK89VYQc6XWOLqP7jNav5y6uZojfBFijV
+    3icK7D190vkeg2zQWWT7I68tBmamQzJZi1ffBoj8NKuSBJICzrByADcio7jkyw5hBVC37D
+    9O2zhUSBZhbuNHFJEbCDsf90gAV3xqvvkCFvRCyrkEFhWn7T2lfV0p+A2DKZP6g1FfWjA8
+    zMSA5QXPxKyv7gP0accXXcSu1zGXXRF3Y1DcnEAhBzSKADjXoePdwjyNWgtAKRl7/5tb1i
+    3XFxNE8sLA0d8kRDpJZu23VctsgQgkJth+tyxS3rOj0Nmog7S9avdu0exyHw
+X-ME-Proxy: <xmx:R3HWaq8N9w_P659toP9G7p5ZZqp1hT7mL5Me_J3GJfwgTXDAFRZnFw>
+    <xmx:R3HWah9bR-lRR9VNELfggcHm8A2ZUAblsrhtxtd1stmXEIO81ZMuMg>
+    <xmx:R3HWaq7tU4IQkF9txWfbnUPhGFRutaMa_h_yPmV5k487414u2_Hw3A>
+    <xmx:R3HWaiYPGQW3Fecd78Z8ust5HZeatVdMrUGt2LF5OYX6ccqy0bOMfg>
+    <xmx:R3HWamzzOb13jpr8V9f2LvFFmHOyUmJ9AlxGu2sE3voOxCnhRlVBOv8A>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 Oct 2026 15:36:36 -0400 (EDT)
+ 19 Oct 2026 15:36:39 -0400 (EDT)
 From: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/4] media: rcar-isp: Add NV12M support and fix stride
-Date: Mon, 19 Oct 2026 21:35:38 +0200
-Message-Id: <20261019-v4l2-add-nv12-v1-0-4a84736803b6@ragnatech.se>
+Date: Mon, 19 Oct 2026 21:35:39 +0200
+Subject: [PATCH 1/4] media: rcar-isp: ispcore: Honour requested
+ bytesperline on RAW input
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -121,10 +122,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQqEMAxA4atI1gZs/EHnKuJCbaqRoTO0WgTx7
- lZdfov3DvDshD18kgMcB/HysxEqTWCcezsxio4GyqhSmSoxFF/CXmu0QRE2eVlrQ4OpigZi83d
- sZH9+bffab8PC43pP4DwvixixaXEAAAA=
-X-Change-ID: 20261015-v4l2-add-nv12-9358df2bf649
+Message-Id: <20261019-v4l2-add-nv12-v1-1-4a84736803b6@ragnatech.se>
+References: <20261019-v4l2-add-nv12-v1-0-4a84736803b6@ragnatech.se>
+In-Reply-To: <20261019-v4l2-add-nv12-v1-0-4a84736803b6@ragnatech.se>
 To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
  Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
  =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
@@ -138,90 +138,86 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-renesas-soc@vger.kernel.org, 
  =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3066;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2359;
  i=niklas.soderlund+renesas@ragnatech.se; h=from:subject:message-id;
- bh=tRvaq1Hc86SnIMQ4u8N0D13wQgOqHSgMP3x/d00FGJg=;
- b=owEBbQKS/ZANAwAKAQm0/3kE+U0kAcsmYgBq1nE4doLG+W+zV89qwgFIDWRrFDgmTClHqzmxK
- Tsh7x9Cu1SJAjMEAAEKAB0WIQRwy9J0OLNPX3a0+3gJtP95BPlNJAUCatZxOAAKCRAJtP95BPlN
- JE3wD/4oxKSomCcye3QxkHybTw5MrYgyuLE1vKJiYFaYcdFWNd71y40jQg3h4bApG3hj23uRSXQ
- YUuvaU8rSsTv1JxijVrNktuKlIpTY3QktKjLb7Z58SILMyfNZ20Wgl93zsHw9p/9X+5b5PhNp1R
- Vsu/wsKVj5lRFPH1ZhNFWMw4uQBAaEfWjrgOHQshb4ccGQuwA1OXOambEv+xsOTkiDE7phFuIrk
- aPqhe5WcwFIYCObWw/nXqYUC0XPrzVcjpkVd7WIzMPBckd30flMQf1kuN2qFIUp2n0XzUU91zW9
- Fv7rkKB8HyxsCm0nZJSmwkDVaMpDk+PiOXb5tjweIHZQULRD6B4jeieGYN7SQRa814azCsM5G57
- GWtdIqXxjGOFo2CdJlGAHAaU8eBwUJNQbZDI5EBdMBiVwg7NdWlEKmqpgjSjUDe3LRnoyVk4oRv
- EVbI1Q0w0LpHOfn+csgfdFH8RP+dsTq1DV5Fb5y3Q7m3kLH8dWibVUHY5J2CqcIFqEOaGJOE9zX
- jvKUbiF3ft0XazO6gDKH50+QnNjQtsZXPPFO+e714X2LmSHH7WpKvYVr/Nipv2p7Exkg8nBQwYd
- ZiXtiLiBv5iM6agzAd+slh8tlhRH8jUpVrjnP3B9VaSTw4FikbrGxwb9U5CN0LDBx9BHqus+Ghm
- /SjIxp7IUIPki/g==
+ bh=SchXw1vVM9XTrzm2ss7Pvks9LcZSEmXSVUVYUdSqSCo=;
+ b=owEBbQKS/ZANAwAKAQm0/3kE+U0kAcsmYgBq1nFBNurXnY4HDClqCZqqDUQJdgDoTEhE1y9sb
+ Ax0Jj9o36mJAjMEAAEKAB0WIQRwy9J0OLNPX3a0+3gJtP95BPlNJAUCatZxQQAKCRAJtP95BPlN
+ JBAWD/0UCMTOkBKt/NSqoxyNNA4GvcTzQ1IqxYCaSklzp8cbC4WxW4MyospB+ybRC6CVJ++iuMC
+ rekO2rVsQCr/wcIH9Sgx9UWkZpPnw5zUPrrUfS6fVTXeMM372U8xHScTk//ETX+4YJ19Zfx5tIh
+ bjXAdk74IAejJV5iQKB5TtN1Y7TuPEJY0J0B7e/o28ENPMymBubiu4+Si+v6b3c5jHvl2HeQyf5
+ nUGRQklW8vk/DszEFBlxE2zBWo69f3LM/bZTwnK88fXfk+FyzJGc+MWJrMyGNhE1A7NQA9sP6UW
+ S62hSr1jl9nmxp37RODP702SZm76KbPBSHs9dm8yMm/1mYn7XTzZgeHTffx8YtbOs3aPgucGEq+
+ 7Gl6vuPcXVMbBha9E6ifPl72qHMlh/f5RGRuVJPbwrW0tXVeoai747KV27cpRN4o4akGTvp4nQZ
+ PvWsD9q++8Thg1Ir6OgniSCJlyddojJT6yJyukPd5c9nQmJCoK8N6Sr1fdkEImB6D10s8x2kmuU
+ N/eH3O2wRAUKV7OM9Xz9m4G6fgHQuuz5azq0szvWAOIT2iorl4u4p5ojsT/qnNUC+C2ENQ2vQoF
+ HvkxK96oEdTU0ymF0kQtlOggPYgY8GmRDGO+Zk+G4ZEWvniF/yd10mIi1BJOadOAk7XLsQMY4bc
+ mR4AeZ2+BPFTgBg==
 X-Developer-Key: i=niklas.soderlund+renesas@ragnatech.se; a=openpgp;
  fpr=9976695FE98693307BF360A2F1591ABD9588DA5F
 
-Hello,
+From: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
 
-The main part of this series aims to add NV12M output format support and 
-there is a small drive-by fix to honor the image stride from input 
-images in patch 1/4.
+The RAW input video device always overwrote the bytesperline requested
+by userspace with width * bpp. The input buffers are however shared with
+the VIN, which may use a larger line stride (for example 3296 instead of
+3280 bytes for a 1640 pixel wide 10 bit image). The dmabuf exported by
+the ISP was then smaller than the VIN buffer size, and queueing it to
+the VIN failed with -EINVAL:
 
-Patch 2/4 address a confusion around how much data was needed to flush 
-out all pixels to the output buffer. Later versions of the datasheet 
-makes it use clear and how it relates to image strides. This is needed 
-for NV12M support as we need to tightly control it to generate valid 
-NV12M frames.
+  __prepare_dmabuf: invalid dmabuf length 4042752 for plane 0,
+  minimum length 4060672
 
-Patch 3/4 is a quality of life fix where the current driver looks at the 
-pixelformat to figure out how many planes are used. As it only supports 
-RGB (1 plane) and NV16M (2 plane) this worked, but before adding NV12M 
-(2 plane) look at the correct field so we don't have to maintain a list 
-of pixelformats that have two planes ourself.
+Use the requested bytesperline if it is larger than the minimum.
 
-Finally patch 4/4 adds NV12M support. Enabling support for it is 
-straightforward but one snag around how the DMA-engine works.
-
-When the DMA-engine is configured to only output CbCr data from odd or
-even lines it still outputs blanks pixels to the buffer for the line
-where no data is taken.
-
-To work around this and still produce valid NV12 frames the device needs
-to be configured so all blank pixels written to the buffer are part of
-the line padding. In addition to also keeping the same number of padding
-bytes as the Y plane.
-
-The DMA-engine is able to do this as we can set different strides for
-the two planes and haw two DMA-engine lines (one with data + some
-padding and one with only padding) make up a single correctly formatted
-NV12 CbCr line.
-
-For readers comparing the DMA configuration with the datasheet this
-driver takes the CbCr data from even lines, compared to odd lines in the
-datasheet example. The reason for this is that if odd lines are used the
-first even line adds half a NV12 line of padding at the start of the
-CbCr plane. To counter this the CbCr plane would need a padding line at
-the start of the plane which is not supported, or we would need to set
-the plane start address half a line before the buffer actually starts
-and potentially corrupt memory as we write blank bytes outside our
-buffer.
-
-Tested on V4H SparrowHawk without any regressions and the output frames 
-looks good.
-
+Signed-off-by: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
+[Niklas: Use max(min(..)) instead of if statement]
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Niklas Söderlund (3):
-      media: rcar-isp: ispcore: Update image data flush settings
-      media: rcar-isp: ispcore: Look at number of planes when programming
-      media: rcar-isp: ispcore: Add NV12M support
+ drivers/media/platform/renesas/rcar-isp/core-io.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Yuya Hamamachi (1):
-      media: rcar-isp: ispcore: Honour requested bytesperline on RAW input
+diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
+index b60b91f43d42..badde72352c1 100644
+--- a/drivers/media/platform/renesas/rcar-isp/core-io.c
++++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
+@@ -5,6 +5,8 @@
+  * Copyright (C) 2026 Ragnatech AB
+  */
+ 
++#include <linux/sizes.h>
++
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-event.h>
+ #include <media/v4l2-ioctl.h>
+@@ -335,6 +337,7 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
+ 				     struct v4l2_pix_format_mplane *pix)
+ {
+ 	unsigned int bpp = 0;
++	unsigned int bpl;
+ 
+ 	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
+ 			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
+@@ -352,11 +355,17 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
+ 		bpp = risp_io_input_formats[0].bpp;
+ 	}
+ 
++	/*
++	 * Honour the line stride requested by userspace, the buffers are
++	 * shared with the VIN which may use a larger stride than the minimum.
++	 */
++	bpl = max(pix->width * bpp, min(pix->plane_fmt[0].bytesperline, SZ_64K));
++
+ 	pix->field = V4L2_FIELD_NONE;
+ 	pix->colorspace = V4L2_COLORSPACE_RAW;
+ 
+ 	pix->num_planes = 1;
+-	pix->plane_fmt[0].bytesperline = pix->width * bpp;
++	pix->plane_fmt[0].bytesperline = bpl;
+ 	pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
+ }
+ 
 
- drivers/media/platform/renesas/rcar-isp/core-io.c | 78 +++++++++++++++++++++--
- drivers/media/platform/renesas/rcar-isp/core.c    | 45 ++++++++++++-
- 2 files changed, 115 insertions(+), 8 deletions(-)
----
-base-commit: d7e7bca7169873b46e857c025c10f3336c1258d8
-change-id: 20261015-v4l2-add-nv12-9358df2bf649
-
-Best regards,
---  
-Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+-- 
+2.55.0
 
