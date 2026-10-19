@@ -1,141 +1,98 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4D94F85C0
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 13:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B71511890
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 14:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792417030; cv=none; b=uEC4Xae9cjLOTiESFYWMy6IFJ2eQ4Cj2TYPFm5nptQxnUlpx3C9vmPb9B3DmH01MHQCpj440bWiassDk9aNqbZNDpO1WeUnQTkexS/vaY0YdH7GVWHTQ1pREa5fK84JMhp8u7ejsVxLaFmbWAtwj5Ia4k2AP14WPokZZnXzLcXI=
+	t=1792419111; cv=none; b=NHzuF1NLVe9EeGeCJQ9UitHbnp0q7arw08c+smmp0ukUBtkPl6xQ0sWuBfY0kJJrJFokkwLnfXKSYEE37PnK0KDM2H6fyNBy0PjjKJuKFRqgf6XbbVADLrZ3GNk3B6/xGRPaiTGH0lxfGIyL4vt8AukmgvxW2t729KQCuRNefcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792417030; c=relaxed/simple;
-	bh=fwAYS3zcXGkdd+Ibq1n5HFY65n1XJA1GPMTC7CY2epw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJfyyi86Wnhp37j/tKdT1sAqKBPVZH3yGOXKOQmmUZfSmD81aM4se9fpz/MKWruXRzCx5/SkKvKRXeFgN1hrVexOq4o89tya8WhFeNrGPumRLTv/iQ10kTKp+ym1ejDqvWEJdiV78eiSkZRFSA08+gFM9KvKTZnbX0V54VyOcjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Jewcw8c8; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Jewcw8c8"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6af9a9451daso3043784a12.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:37:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1792417025; x=1793021825; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kc0HBa20pNgTgn9A/dNG9MRjR4EzrI7cz68avvggZvk=;
-        b=Jewcw8c8ACrek60ikgqusPxWnpbvxhf3bLGWoDJ6DdvKTiZQw8i2MJ+9pX/0LINqyw
-         BDiqd7B7+hhgxdnDMG0zUXFP0ZIZowDvAJbzrSzGjweucAHxESNEpiUt0vOcm+F0/8wv
-         /7VaQE9eZbiAbnDw1DQ3mkgm4FRyarMZ502LzgWjGqvuk6QToJ22t8yVYZ0sFtjGQH54
-         rKVkWfRO8ds6z3Hgc2El8YD313HTjVLL6o1qE4j7V+//9FhPTa6bfOii9X6uRQsatSfO
-         8g1jsEbylGzUPu9HyizE2JdZ7g33iznw7N18t18N+picnHrdLFS/HbQ6gz9Y39moQj82
-         jLTQ==
+	s=arc-20240116; t=1792419111; c=relaxed/simple;
+	bh=OkpEifD2KWm3GsbxAZ0xxE8P5d3Del3yRNhkAe0sUgA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BIgYfYeKKuqpu6zW8tKWYJXWfhlTXItsMgHBSFXXt2Kyn4CvSNlMG0ump4xIUtjHNKJDnLTlf5qxidodS1RRqnnziTUAewdjkVqaa0k57AmEA6+XJv0HNoix/HP2eSNfGSZP1eNK9jeZCk5RMNrgnEtnuIQ/SCynfbwWgktyhwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-7c6e6822b11so556026137.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 07:11:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792417025; x=1793021825;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=kc0HBa20pNgTgn9A/dNG9MRjR4EzrI7cz68avvggZvk=;
-        b=FuyD3XlTxTjd+f7s8IqBiD6W2gnz7Hnvl/N15VBKXIwE1c2R/xkOLi/Cnavn671vFv
-         ivtr+EdUeC3DCoQ0fTH1NdU6tfEPv810YTSLJJI6dlLE+p2oX91VF7wmyjOUFIa1ECxW
-         j1Mxe9mwuvpMxKthJGXIy0GW3B+g9ExiDOyrcvl+6iIdw5DuEx0lN3FZtBaPk4jttwow
-         33ggNR6vHgPFFnn4x2gENLlVmRzkieNL4fZqE7DSlkB4YQPekpOTbIbZpfTh32Cd/IS9
-         EGCbLyMrV1aDxTOQFe5e27rx/jvL16h/XpVpPOh+VluBf9ddAbrH4oojTouhYSDOA+/j
-         tlUw==
-X-Forwarded-Encrypted: i=1; AKwUvBx2j4nHsJE4bmS1/qtVaq0o2oFJoFAaVE3ImTBYMdJrQyLXi4h4ATwYu+ZGjBrWFmaBvktFuceZBt22PQWZHr+0Ag==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJhvkSl9Bf1tQqdwAAmuu4MLDaVE6XEgZl+3JBHfeZUEnriqWwp
-	M98f+ahzq6fsXHfco4OFG8BT7IfEunHtRe1aI1Z0Z0vfNxzDBWK0vQyNybqGH1nlGpw=
-X-Gm-Gg: AYBFou3MDEDYug7NjH8lsDl2u+5Ci2tw5tvYoP1WeeRva/nJo3zG5lGKEwev6WLZHVZ
-	k+YCKM7Q8DTCoKlJNyXHyQfG5zNisWczdvr1sfsVKd6h1s4N6AA5VUn6qiZazpEUvwIE0ytBIJW
-	cFfxFD5k+3hjlpHYUjljUdoyuR2rLyjNM6XHLbDu0NVXRw1vwX9kmEjswiykB984+YPV5ZPwvyQ
-	ZGuIQ59mjvL2Gn0HaePWV8RdVq5c4Ox+VgZqvniOifkh280LOqXxxCSZPEE4jPZAnbuCNM7vzpI
-	cg85AvoBnXsFu7+7ZQeMNROdRTSQwoXK17XmHiaYlPp6viyjMXYDZbbIT96hHRL+jWsU5aIUFo/
-	tf123A9nGO1plxg7Olt7sEGI/rH+9YEeLDdSDI+iVc3/8UekBbnU6iGMK9zsklwUF1Y3icXmuUX
-	PdfPBkIEgou7fY3WbxSvARN32mpYw4hf+SE0wQhmXfJr8xG5RIoMwLMkGujOrqj5YDSLGza28nq
-	AFE/qs=
-X-Received: by 2002:a05:6402:5489:b0:6af:8a4b:7aad with SMTP id 4fb4d7f45d1cf-6b3a81a6d00mr4333695a12.28.1792417023411;
-        Mon, 19 Oct 2026 06:37:03 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd4f5177sm22897379f8f.30.2026.10.19.06.36.58
+        d=1e100.net; s=20260707; t=1792419109; x=1793023909;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=nUNNwLjM6Li4QaQna+9UtyB3Cj/CRAMDg2QIIEt5PZg=;
+        b=lMPsOVeIpiYiLOJDRtaLy/vrg4q9EIUNOZEy2PGQ4KWl9Mco1mH8umckpeOLezfgWC
+         xb1hgHCKF9mQ/XPOUq4xsmuFWao74z9tUB1oiutn3ElJ26HZj6aM0g2dzNku7NPb0Ase
+         x8ljowYly1rnw2QEk1m5ujMVnxwpyCNakTD352qSdd1Z21LO5gPbytz31sI00UAaFxAG
+         IV5HAJF7LSeM71ETmIFAkdJFN1lsSWhHfu/tVAi2DE1n27P/9N5lOptDRI57sEKZUTMZ
+         x8phRT5ixpHPHg1S/bB8iLSzEPj24KcJmMI8cFfSqCalZUkXokABSPkHiVrDzCxiLfac
+         vEOQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzQ1e/jgeVefuq59GXAPqLNqa+bDj9dvaeeL11aA+oYjMEA15Gtq/+RZCHqPU6DQvw9ekTKTlN2KyBCLBBaQPQeLg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKU/ZuyJEAH4A+8BhKRy+EnGJWOevWAXMI4XJntuEg4sX8qWuAs
+	oOC9Q5P3PMy3Npb2o7c3xPUGfKaleQ3JWGD5aL1M87vJZ0xYeoNwH8WxI6KbGeAqgoY=
+X-Gm-Gg: AYBFou2pY7u42LvDap4hvOYc4/Da72/4dCrahTWhfH17nBuGi1DX6CCRZ7cnb+sykho
+	W9z1+/x0kBE4YPIOPNpGHOX2HkCdHJDWsD16PZ2CG2jZRpfKraMvezDBZwbinA1Y+44JiLjRCHe
+	PQZjlKgkshC8/mZidq+xdZ5F/YXUwOYzUJ+nzF+BpL3mDUSHHsfuON3PDuI2DDivXUtBAUv4S4i
+	mRq4MM8+C29fOFaXcqjdJzIwOdm6zS1vh8Xos7zDIsTlTsOZtJrq1oJ17WCCEo2N5ABw7ZcHp+k
+	RALjDdkViVIy8Pck7/hdasnfR3mcom4Y6T7drDScT8Sdkymfuz4g7mjv3g1+moj1DeOUN8RDIDs
+	2lFGs3ccDIdgOlpGxTVmWOh/031tMzttMjWe/dIonRzwiW9uz39FMl9Y54xadiGdjue5aoeWoNM
+	KLUWCQ0VZ03FvDfrSQHAtdstGGQ/SYmM0pC2EWcFiImOSh91CQQpBPCOJI+DRxMk8Cg0YnInbMV
+	SWocX1r3oAlBOtqpLuMHAntSr+zhdHHGX5C
+X-Received: by 2002:a05:6102:3749:b0:7c9:624:86e1 with SMTP id ada2fe7eead31-7cc36b021c9mr1767883137.35.1792419108731;
+        Mon, 19 Oct 2026 07:11:48 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-990bb392504sm250180241.11.2026.10.19.07.11.46
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Oct 2026 06:37:01 -0700 (PDT)
-Message-ID: <14f60932-9a85-45ee-ad87-593c20cc116b@tuxon.dev>
-Date: Mon, 19 Oct 2026 16:36:57 +0300
+        Mon, 19 Oct 2026 07:11:48 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-7c03744ef27so564339137.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Oct 2026 07:11:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzT762mmkrdxQekAOr2nKQHoVAH3rFosbjKDCOU0WDYZ+DqS1Dnp1fM6tNJFVAWRU7RS55JdN2pAThNywR6iTgeCA==@vger.kernel.org
+X-Received: by 2002:a05:6102:3749:b0:7c9:624:86e1 with SMTP id
+ ada2fe7eead31-7cc36b021c9mr1767854137.35.1792419105797; Mon, 19 Oct 2026
+ 07:11:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] ASoC: renesas: rz-ssi: Remove redundant component
- open callback
-To: phucduc.bui@gmail.com, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
- Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- povik+lin@cutebit.org, Andrei Simion <andrei.simion@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Heiko Stuebner <heiko@sntech.de>
-Cc: Kees Cook <kees@kernel.org>, Syed Saba Kareem <syed.sabakareem@amd.com>,
- wangdicheng <wangdicheng@kylinos.cn>,
- Chris Bainbridge <chris.bainbridge@gmail.com>,
- Linus Walleij <linusw@kernel.org>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Neo Chang <YLCHANG2@nuvoton.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- u.kleine-koenig@baylibre.com, Pengpeng Hou <pengpeng@iscas.ac.cn>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Hemanth Selam <hemanth.selam@gmail.com>,
- Md Shofiqul Islam <shofiqtest@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Zain Aboobacker <zainaboobacker33@gmail.com>,
- Sang-Heon Jeon <ekffu200098@gmail.com>, Bo Shen <voice.shen@atmel.com>,
- Vinod Koul <vkoul@kernel.org>, linux-sound@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
- imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261016040946.521195-1-phucduc.bui@gmail.com>
- <20261016040946.521195-11-phucduc.bui@gmail.com>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261016040946.521195-11-phucduc.bui@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20261003083200.459705-1-yaojiale02@163.com> <20261003083200.459705-3-yaojiale02@163.com>
+In-Reply-To: <20261003083200.459705-3-yaojiale02@163.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Oct 2026 16:11:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXpVv2=GHJK49ykUiOcgKuOrW9_0UbQ_nfx2R-MGuhV7w@mail.gmail.com>
+X-Gm-Features: AclHuK-whmRf2m21YwZdvIAowJDZUbKGaSptoysY-titwCbr4PasDFMX4zXs_ms
+Message-ID: <CAMuHMdXpVv2=GHJK49ykUiOcgKuOrW9_0UbQ_nfx2R-MGuhV7w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: renesas: rzn1: free maps on DT map failure
+To: Jiale Yao <yaojiale02@163.com>
+Cc: Linus Walleij <linusw@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, 3 Oct 2026 at 10:32, Jiale Yao <yaojiale02@163.com> wrote:
+> rzn1_dt_node_to_map_one() appends mappings for each DT node.  If a
+> node fails after map storage has been reserved, the top-level callback
+> returns without releasing mappings built for the current and previous
+> nodes.
+>
+> Free the accumulated map on every error path.  The caller ignores the
+> output parameters when the mapping callback returns an error, so they do
+> not need to be reset after freeing the map.
+>
+> Signed-off-by: Jiale Yao <yaojiale02@163.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v7.5.
 
-On 10/16/26 07:09, phucduc.bui@gmail.com wrote:
-> From: bui duc phuc<phucduc.bui@gmail.com>
-> 
-> In DMA mode, the generic dmaengine PCM component already applies
-> the integer PERIODS constraint in snd_dmaengine_pcm_open().
-> 
-> Since rz_ssi_pcm_open_dma() only applies this constraint, remove
-> the redundant component .open callback.
-> 
-> Signed-off-by: bui duc phuc<phucduc.bui@gmail.com>
+Gr{oetje,eeting}s,
 
-FTR:
+                        Geert
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
