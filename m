@@ -1,44 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.79.60.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.151
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792459703;
-	b=sxUEyhdVv6I7VXDVIrasIui/CRQwHSGunhfC9rS/dQOrEMHK7K9u0IhwgwV54CWVg+Iv
-	 lrfYoTEiiuCzZFdb1Hdiizdk9Vv7XeZHGPbK8R43JQ83Mfrx2TvMI+/UUWYCYi2fGVeAF
-	 NCplDwjuU/wh3pw7bKk6SdV9AccOsSTDckz5bKfPsj9R1/rdn5WiIGHsBtDCCIgb6BrQd
-	 VAWo/EDQ0nNx08/l+Kjv4xqB4Gyeq6M7XmbSH5u3wlpQqOLppguF99a2A1k/0YIKo0gbb
-	 68Cc/jPneSnfc9k1mkuIdi8Q41QyW5+EqE9BQcO5joU479BVViUA+sOR3vFY88p+r7Q==
+	t=1792460292;
+	b=0IkQNeXfKtLiOsPYyeUkhNfbue8wdgSGJjs/VoXrUCSA2E0u0VPwwpyyFPZBNhEDX1nq
+	 8G+5IjCOnh1ii3UfxVMglDS9X9ebnajbAd6rJt5cUKJhy/9mN1tMaKcTgfVgPJ84EGAsM
+	 oEyd5BmBCovxvWkCLqFAR0en2BG0AfQEVV9eP0GTqx4iDz2CmtdUwG+NSBqryzJrG/6O/
+	 1tNuGG+J+YQDZPcL2SGJh43s7IB3zBDMG4UetvDvw50CCxFA3kzhhCn8lM2T7kSnsv/+J
+	 lKK+CMXdzTOLkuWm79FflpuQHqi1DP9s3kgkNodO8mgHDwkB/t6PnpAxdRCkx0dMwLg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792459703;
-	h=DMARC-Filter:Received:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:
-	 X-HM-Spam-Status:DKIM-Signature;
-	bh=bWBcv8C01IwfRuVPSoLR1DOPENxFQuQLLISriS4I3Bo=;
-	b=dHk18wc/w9AZ0/78mxaAokYMP9Qhur6aGqqu6gR9Y4nb/QfJVsfHZG0yl6mYFWq9Ghyd
-	 Lh+Q7cuhcKkmSfHCPS0u5GLlbG0aIhzMCwZp/tFHkeXhzbGC3Bch2qLcRKENFVVXo4VCg
-	 Sxm8sItGxcKbTnHE68iB28Y00XBu8kmj7kAq1UpYAU/pQXs1kBcj4JkJhCv3I7G86J3Kp
-	 g/dAHpHzDsdmfB1D31L44/DzMGVOb3VSejiNi4zToNvWZQ3eMB18chYrYoh+vdfmwpJH/
-	 LUBz1g8BLGT/hVajk9+T6PHCCSlVTn20GYNnHDdVi50Fhgdol7Q9yszJQWx8pcVBsyw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792460292;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-ID:X-MBO-RS-META;
+	bh=2uUBJF342k/4gPby2H7U6z2OOmR9jw+AkFYz58yDUYY=;
+	b=grTzPAflnFdDsjlC7iHRwqkZwe/YZyGPBNcy/YXxZ3+fsgpk6rXcFspImTacMCA2Dbz7
+	 xe++Arizcu3NidKauINn4idLWV6BVo+LtPQdAsqRxm3jpRa6IWk30tL+M4DqKLF2M+a4m
+	 aim36dLRlOaKRsyZlNrq0J3FxqtJvLPQmm4V6N1NnAafdpJdwug3Oa3Owrz3d65la3x2D
+	 udTQKYaT02pwcna0HB9n3sO15e7S7/kW1bzP+ZJkFB+FC3jLuSOP8blIH2pPHllnOjBnY
+	 Ef2RXBRQ9z7u+RV5bbkecNUiCKcZDPFznuZGPImnAVyC1Vd/VwFstRMlC00tQSG8e6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rock-chips.com;
-	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=gTxNTfGS;
-	arc=none smtp.remote-ip=210.79.60.45
-Received: from mail-m6045.netease.com (mail-m6045.netease.com [210.79.60.45])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	arc=none smtp.remote-ip=80.241.56.151
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F212606A31A;
-	Tue, 20 Oct 2026 01:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F212606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=gTxNTfGS
-Received: from [127.0.0.1] (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 51a0a3a65;
-	Tue, 20 Oct 2026 09:28:12 +0800 (GMT+08:00)
-Message-ID: <14852d51-eac2-4933-b786-948fbf0f0706@rock-chips.com>
-Date: Tue, 20 Oct 2026 09:28:00 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3420606A339;
+	Tue, 20 Oct 2026 01:38:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3420606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4j7w676s8vz8vLc;
+	Tue, 20 Oct 2026 03:38:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1792460288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2uUBJF342k/4gPby2H7U6z2OOmR9jw+AkFYz58yDUYY=;
+	b=uFsvpaBfLS9PPBl/Vm7AkkYu8bfV2LF1Nz/xRR8cGTV3zHAFBkLj31WdtTdQAXtRJkwenc
+	gz6JHHEPuJMbgjjFtdUaz8iTh4urWQnO1Ol6zs8maMvjl9po5XzL7GW4PufzVcSoI5OigJ
+	uxg6cmdGv7Fedzo4KovEIjxf72kMgjk1LzXJo6QGj6klCFL21DfXHLZBY6DJYRZtIHY450
+	OkNAcXj7syT1OZouI+KFAMNKeFMMpL+SbZdLeym2XoBAFb3CnVxRM513G7j4WTzF+cK98A
+	oYVznWhJt4eDK414fjyJxErEDvWzqJWGcb3I0UvaBuzfGOnkW1rCPKLwb6fvpg==
+Message-ID: <0fece6ed-e91a-4d35-99ab-ce3f4fd789a9@mailbox.org>
+Date: Mon, 19 Oct 2026 22:18:57 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -49,162 +60,85 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/9] drm: writeback: don't destroy the shared writeback
- properties
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- John Harrison <John.Harrison@igalia.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+Subject: Re: [PATCH v4 09/18] PCI: rcar-gen4: Add Root Port reset support
+To: Koichiro Den <den@valinux.co.jp>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
  Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Louis Chauvet <louis.chauvet@bootlin.com>,
- Mihail Atanassov <mihail.atanassov@arm.com>, Eric Anholt <eric@anholt.net>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Brian Starkey <brian.starkey@arm.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org
-References: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
- <20261019-wb-drop-encoder-v7-7-d4288a26eb54@oss.qualcomm.com>
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Magnus Damm <magnus.damm@gmail.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+ Niklas Cassel <cassel@kernel.org>, Wilfred Mallawa
+ <wilfred.mallawa@wdc.com>, Serge Semin <fancer.lancer@gmail.com>,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261015033103.3076869-1-den@valinux.co.jp>
+ <20261015033103.3076869-10-den@valinux.co.jp>
+ <072cccd1-8fd4-41e5-a64c-3cc4dc0dee07@mailbox.org>
+ <57zypillvon2jsw6ayckcuyhkhmv5kehh7rpxox33dzg2lfkqt@4zqkgpwxob7b>
 Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <20261019-wb-drop-encoder-v7-7-d4288a26eb54@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <57zypillvon2jsw6ayckcuyhkhmv5kehh7rpxox33dzg2lfkqt@4zqkgpwxob7b>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0aa156ec57c703a7kunm0a3e7447726d61
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCSh9NVhlIHU9NH04dTUIaSlYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
-	pKQkxVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=gTxNTfGSyaOOvMaGprXiXKZMOe++RQG0eP8q8U6hl3BtnG/aJfNYC74BwlxSIxLdaFPlnHalBnhZGuY6Ue0lc0Ck3vqRpTOL4qYXs/nsN7K86RyI6Pv7njesYRTmlHDOOwRXHIpWHfU72cr6PQxTfS2gZwn6HUgfyhdaSamIS/A=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=bWBcv8C01IwfRuVPSoLR1DOPENxFQuQLLISriS4I3Bo=;
-	h=date:mime-version:subject:message-id:from;
+X-MBO-RS-ID: b058a89cf9cff052a67
+X-MBO-RS-META: pjb3j94z77kpgpi34dphjsbh5tdgszsp
 
-Hi Dmitry,
+On 10/19/26 5:01 AM, Koichiro Den wrote:
 
-On 10/19/2026 9:12 PM, Dmitry Baryshkov wrote:
-> The writeback properties are created once per device and attached to
-> every writeback connector. Nevertheless, a failing
-> __drm_writeback_connector_init() destroys all three of them. If an
-> earlier writeback connector has already been registered (komeda and
-> rcar-du create one per CRTC), it is left holding stale property
-> pointers. The drmm cleanup action likewise destroys them as soon as the
-> first connector goes away.
+[...]
+
+>>> @@ -563,9 +604,11 @@ static int rcar_gen4_pcie_host_msi_init(struct dw_pcie_rp *pp)
+>>>    	writel(0, rcar->base + AXIINTCCONT);
+>>>    	/* Deconfigure MSI interrupt signal */
+>>> +	raw_spin_lock_irqsave(&rcar->app_lock, flags);
+>>
+>> This is only a small nitpick. I wonder if you could use the same
+>> scoped_guard() {} call here instead of the raw_spin_lock_irqsave() and
+>> raw_spin_unlock_irqrestore() pair?
+>>
+>> scoped_guard(raw_spinlock_irqsave, &rcar->app_lock) {
+>>
+>>>    	val = readl(rcar->base + PCIEINTSTS0EN);
+>>>    	val &= ~MSI_CTRL_INT;
+>>>    	writel(val, rcar->base + PCIEINTSTS0EN);
+>>
+>> }
 > 
-> Leave the properties alone. They are on the device's property list, so
-> drm_mode_config_cleanup() destroys them together with all other
-> properties.
+> Yeah, actually I've been always wondering whether to ask you and the other
+> maintainers about the guard/scoped_guard policy in this driver, or PCI
+> contreoller drivers more broadly. I'm not aware of any documented PCI-specific
+> policy, while netdev as an example, has some guidance on this.
 > 
+> In v2, Sashiko flagged the mix of goto-based cleanup and guard():
+> https://lore.kernel.org/r/20260928170317.B0B331F000FF@smtp.kernel.org/
+> so I switched that part to explicit locking in v3/v4.
 
-If a user attaches a private property to a connector, are they 
-responsible for calling put on that property during cleanup? 
-In that case, can drmm* functions be used to clean up these 
-properties? Thank you.
+Mixing guard and goto makes the code difficult to read, which would most 
+likely lead to bugs, right. I think scoped_guard() and goto is OKish, as 
+long as there is no goto inside the scoped guard (that would be horror).
 
-
-> Fixes: 2f3f4a73631b ("drm: writeback: Add missing cleanup in case of initialization failure")
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/drm_writeback.c | 34 ++++++----------------------------
->  1 file changed, 6 insertions(+), 28 deletions(-)
+> Would you consider an explicit scoped_guard() block (instead of guard()) at the
+> end of the function OK, even though the function still uses goto? Or, maybe I
+> should have just ignored the feedback from Sashiko, and guard() would have been
+> fine here too?
 > 
-> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> index 89c36f1414ce..2f6a7b50336c 100644
-> --- a/drivers/gpu/drm/drm_writeback.c
-> +++ b/drivers/gpu/drm/drm_writeback.c
-> @@ -148,22 +148,6 @@ static int create_writeback_properties(struct drm_device *dev)
->  	return 0;
->  }
->  
-> -static void delete_writeback_properties(struct drm_device *dev)
-> -{
-> -	if (dev->mode_config.writeback_pixel_formats_property) {
-> -		drm_property_destroy(dev, dev->mode_config.writeback_pixel_formats_property);
-> -		dev->mode_config.writeback_pixel_formats_property = NULL;
-> -	}
-> -	if (dev->mode_config.writeback_out_fence_ptr_property) {
-> -		drm_property_destroy(dev, dev->mode_config.writeback_out_fence_ptr_property);
-> -		dev->mode_config.writeback_out_fence_ptr_property = NULL;
-> -	}
-> -	if (dev->mode_config.writeback_fb_id_property) {
-> -		drm_property_destroy(dev, dev->mode_config.writeback_fb_id_property);
-> -		dev->mode_config.writeback_fb_id_property = NULL;
-> -	}
-> -}
-> -
->  /**
->   * __drm_writeback_connector_init - Initialize a writeback connector
->   *
-> @@ -198,20 +182,18 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
->  	int ret = create_writeback_properties(dev);
->  
->  	if (ret != 0)
-> -		goto failed_properties;
-> +		return ret;
->  
->  	connector->interlace_allowed = 0;
->  
->  	ret = drm_connector_attach_encoder(connector, enc);
->  	if (ret)
-> -		goto failed_properties;
-> +		return ret;
->  
->  	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
->  					formats);
-> -	if (IS_ERR(blob)) {
-> -		ret = PTR_ERR(blob);
-> -		goto failed_properties;
-> -	}
-> +	if (IS_ERR(blob))
-> +		return PTR_ERR(blob);
->  
->  	INIT_LIST_HEAD(&wb_connector->job_queue);
->  	spin_lock_init(&wb_connector->job_lock);
-> @@ -234,9 +216,6 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
->  	wb_connector->pixel_formats_blob_ptr = blob;
->  
->  	return 0;
-> -failed_properties:
-> -	delete_writeback_properties(dev);
-> -	return ret;
->  }
->  
->  /**
-> @@ -295,8 +274,8 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
->   * @dev: DRM device
->   * @data: Pointer to the writeback connector to clean up
->   *
-> - * This will decrement the reference counter of blobs and destroy properties. It
-> - * will also clean the remaining jobs in this writeback connector. Caution: This helper will not
-> + * This will decrement the reference counter of blobs. It will also clean the
-> + * remaining jobs in this writeback connector. Caution: This helper will not
->   * clean up the attached encoder and the drm_connector.
->   */
->  static void drm_writeback_connector_cleanup(struct drm_device *dev,
-> @@ -306,7 +285,6 @@ static void drm_writeback_connector_cleanup(struct drm_device *dev,
->  	struct drm_writeback_job *pos, *n;
->  	struct drm_writeback_connector *wb_connector = data;
->  
-> -	delete_writeback_properties(dev);
->  	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
->  
->  	spin_lock_irqsave(&wb_connector->job_lock, flags);
-> 
+> Since I need to respin anyway:
+> https://lore.kernel.org/r/bi3rvyqpdu4iq6pfyrqvx7eplyim6gmg2ijal67mpateobmtlq@gec7zewfm76r/
+> I'm thinking of replacing the lock/unlock pair with scoped_guard() as you suggest.
+
+Please see above, as long as there is no "goto out" inside the 
+scoped_guard, I think it is fine to have scoped_guard in function with goto.
+
+> Thanks for the review!
+Thank you for your help !
+
+[...]
 
 -- 
-Best, 
-Chaoyi
+Best regards,
+Marek Vasut
