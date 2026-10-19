@@ -1,76 +1,169 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792423329;
-	b=B9+wYzBstG1cV92eKZ1NCHq83RAqK/6nK0r47tRg4t4/AIYlR6NvWjgbEuVM8eLlw+BE
-	 GfCKSsrMIwZTigPFRq8ejhB765eILrxjVGog/h4fIZPBwcnkSHLRxKLwTFmqa3KkQh29N
-	 ZzdspqGxPjwT4aUS2zKUW168ttZwGA0XjFbO+/Yc4GCe0NDa8CPDDkChvkPykWNGMHtTx
-	 U4dDsvECXleMsfdnFg7VIixbvWbPc0Edk4ivpP9dfZU38VCotS+E3nBnDzufeOsx5c5tn
-	 HJQbEXgCt1U/F0sfrH4Gs+/I95wKm0WLMJQyAreK54DhxMaiqMsYEtCfERkt8VBH/OA==
+	t=1792422957;
+	b=jHW0zORP5iA4+UEc5f6YJIS7ZLD8DK2yMd0+6CQ1q7slJGd8eXIGczdaIpXP5dBkzZK4
+	 suzgLKjTgGTvbe9jS2XqWCcFHBtaEAoivcF2NviJE2EOTorgQdCYvESa76RtFymgP6mn8
+	 VZhb3BHCc6vcRw0QM5oJXNEpGZemsduNfXUxKlqF73EUeniL92ZvNqJ1mFlDgs3ayKmjk
+	 k88+zg4LjGM6dwjqFjZ1BdOtTwzAbh0QJCf/zu8wvhoeU7d2tyDYkKq7w7PFAXT2RyW4Z
+	 qm43Qo4yMio2n8/yM7y6cXWkLBKnV10mhqBwaRukAbe3He9zZQKp3sWFvwDAFu83OOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792423329;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=pZbrqHjelFF/ENF7fuSBHNbLORwYvUMJmsvdM/z2Rt0=;
-	b=LhInLEkMCJFTs1J3cOctzPI8WH9ELxUPsor8nUL2vW90h3MCyKG97HWOOSpfV+xmwTKT
-	 ri9pLMXaDE51ChZhMPWXh02R2Hc4ed7JM7/y4KVPNKNfGs88PHwgDH/2NVL3co3t4wPYn
-	 HLby6D97a0H1N04JOexhGUhtRXOFDGLlA12Rb5gFoJMh5EjRL8Z+XDA6wGO72EzVW6FMq
-	 FKoErtbhrBLhNSFWVOYWUosGXZXOzKrg7VxL0pkzbmAZFbWzXC+rS3ntnVVXwUeIApUwD
-	 V4ISWrdpbQePJgN3VFkSBEDqBci25pUD30LR+47vovzQym1Tk5gtpsCyQ5rBGPuVz2A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792422957;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=rY7NXz2qfQQtnIEL3eObvxvEOIQ+EeZp99ff3bsp5sk=;
+	b=LfprZZ+hHgUJwDXm+0KS8UOXDah5T4D73bKccUFteS+a45T7K/Lg5yg0xNa86gz/XbXT
+	 Q40udK7liYfEKHxUKKCYfH4t3qwYWMYl76A6tMaR6U5cjVbcPyNM/jsb4HWrCWGtRAI5A
+	 SGt1DSDV1zrAKgB4b/mrGOxD4FgTjgbAITi0XLCYS8CyTad+yzHu321V202WI9EpgJn/9
+	 dRcPfqggG1yc7uu5EhoYcT8vZH1TFeCyFAcfipK0Zr/3q6n0Z5icIcGycvgbJL8RNZIFF
+	 mKY2cSp88gOUY9uwmpl2sArQ7trKK9nNJIfPy/jmGFKRz8K4ffG/G8rBWhT6cPIEU/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ohib2zJR;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CnpQzRLX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820A360AA0D5;
-	Mon, 19 Oct 2026 15:22:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 820A360AA0D5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA27609DCFA;
+	Mon, 19 Oct 2026 15:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ohib2zJR
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F5D256D;
-	Mon, 19 Oct 2026 17:19:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1792423198;
-	bh=zi6O1bKKtP5fbmD4q6sVdFeYgcyHpPs0N69u6EW+gLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ohib2zJRtXKw9eNeErrS5gIwTOKS0MYI24P9PbLxu4lAIn0BPaCU1H/3hS+SWNVuq
-	 4WYOtzkIZlwM/nPtrFF+lsO6V4dKb8C8YvJLWmWBlCW6rAbpUBEAvpMsED9FvrbCtp
-	 JvhR/eDQPd6F3F7/rdOKd5w7vp6A+yBRXnQ4l0go=
-Date: Mon, 19 Oct 2026 18:22:03 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CnpQzRLX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269E71F000C4;
+	Mon, 19 Oct 2026 15:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792422956;
+	bh=rY7NXz2qfQQtnIEL3eObvxvEOIQ+EeZp99ff3bsp5sk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=CnpQzRLX3TYf8k0qu6IYpaMq62MrzgVnzWtCBEbdnX0IUPXFCp6FFVhb6e/W37EY7
+	 oQdkTxuZitFSXzUqh8YM+LI6hW4HWoVv72MiRtWfb/iuVaWOGKHt2j8Piy3XsHY4bv
+	 HfJH5x277Hg+W3vBh+BKJcUHigFzcPtKnByrkz6Qw0vZi1heWwAKuKjDH8y9RjWbAw
+	 ZWzbQHvwqs0XljbKJDetYNNwEqmAYS1SizYC8c9PQJ/+yV3C9kQ+UX6IhimWK6Szh4
+	 MliM2s0jWJxjgBc2N8LAVJSnUAeqxo/k14Kw0U606JcTDsTXyg4NEZpgxA/P9PGn8a
+	 a/NOnXhhwsAXA==
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Dave Airlie <airlied@redhat.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Ian Ray <ian.ray@gehealthcare.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Alison Wang <alison.wang@nxp.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Yongbang Shi <shiyongbang@huawei.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
-Message-ID: <20261019152203.GA5830@killaraus.ideasonboard.com>
-References: <cover.1792163045.git.geert+renesas@glider.be>
- <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
- <20261019144256.GC763679@killaraus.ideasonboard.com>
- <CAMuHMdWkAvkxHkzRVviF_NkZHP7UeCBjebxciE6jFN_8ViM=aQ@mail.gmail.com>
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	imx@lists.linux.dev,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jianmin Lv <lvjianmin@loongson.cn>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Qianhai Wu <wuqianhai@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	spice-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Iker Pedrosa <ikerpedrosam@gmail.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Hans de Goede <hansg@kernel.org>,
+	LiangCheng Wang <zaq14760@gmail.com>,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+	Ruben Wauters <rubenru09@aol.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	nouveau@lists.freedesktop.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Aditya Garg <aditya.garg@linux.dev>
+Subject: Re: (subset) [PATCH 00/75] drm/connector: Convert all drivers to atomic_create_state and remove reset
+Date: Mon, 19 Oct 2026 17:15:50 +0200
+Message-ID: <179242294379.2822300.2839114266297465713.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org>
+References: <20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,181 +173,25 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWkAvkxHkzRVviF_NkZHP7UeCBjebxciE6jFN_8ViM=aQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 19, 2026 at 04:56:28PM +0200, Geert Uytterhoeven wrote:
-> On Mon, 19 Oct 2026 at 16:42, Laurent Pinchart wrote:
-> > On Fri, Oct 16, 2026 at 05:55:40PM +0200, Geert Uytterhoeven wrote:
-> > > Prepare for mapping to other than fixed-rate clocks by adding a clk_hw
-> > > pointer to the clk_map structure, and populating it up-front.
-> > >
-> > > Move r8a78000_cpg_priv.fixed_hws into fill_clk_map(), as it is no longer
-> > > needed afterwards, and drop NUM_FIXED_CLKS.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, 14 Oct 2026 19:26:23 +0200, Maxime Ripard wrote:
+> This is a follow-up to the plane and CRTC reset removal series, and
+> part of a larger effort to remove the reset hook from all KMS objects.
 > 
-> > > --- a/drivers/clk/renesas/r8a78000-cpg.c
-> > > +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> > > @@ -16,19 +16,24 @@
-> > >
-> > >  #include <dt-bindings/clock/renesas,r8a78000-cpg.h>
-> > >
-> > > +struct clk_map_in {
-> >
-> > The "_in" suffix isn't very explicit.
+> The connector reset hook is overloaded: it is called both at probe
+> time to create the initial software state and during suspend/resume to
+> reset hardware and software state. These two roles have different
+> requirements, and the reset hook is not fallible, making error
+> handling difficult for the initial state allocation path.
 > 
-> I can add a comment...
+> [...]
 
-How about calling it clk_id_map ?
+Applied to misc/kernel.git (drm-misc-next)
 
-> > > +     int dt_id;              /* DT binding clock ID or -1 sentinel */
-> > > +     u32 fw_id;              /* FIXED_CLK() ID */
-> > > +};
-> > > +
-> > >  struct clk_map {
-> > >       int dt_id;              /* DT binding clock ID or -1 sentinel */
-> > >       u32 fw_id;              /* FIXED_CLK() ID */
-> 
-> BTW, do you think it would be worthwhile to reuse clk_map_in here?
+[73/75] drm/vmwgfx: Convert to atomic_create_state
+        commit: e6bb593b800813788dc16179d1305747ff974d00
 
-Possibly. I was about to recommend just using a single structure and
-leaving the clk_hw pointer NULL and unused in .rodata, but the memory
-waste isn't very nice, especially if we end up with many entries :-(
-
-> > > +     struct clk_hw *hw;
-> > >  };
-> 
-> > > @@ -92,35 +94,69 @@ static struct clk_hw *r8a78000_clk_get(struct of_phandle_args *spec,
-> > >       return hw;
-> > >  }
-> > >
-> > > -static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
-> > > +static struct clk_hw **register_fixed_clks(struct device *dev)
-> > >  {
-> > > -     struct device *dev = priv->dev;
-> > > +     unsigned int n = ARRAY_SIZE(fixed_clk_rates);
-> > > +     struct clk_hw **hws, *hw;
-> > >       unsigned long rate;
-> > > -     struct clk_hw *hw;
-> > >       const char *name;
-> > >
-> > > -     for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
-> > > +     hws = devm_kcalloc(dev, n, sizeof(*hws), GFP_KERNEL);
-> > > +     if (!hws)
-> > > +             return ERR_PTR(-ENOMEM);
-> > > +
-> > > +     for (unsigned int i = 0; i < n; i++) {
-> > >               rate = fixed_clk_rates[i];
-> > >               name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
-> > >               if (!name)
-> > > -                     return -ENOMEM;
-> > > +                     return ERR_PTR(-ENOMEM);
-> > >
-> > >               hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
-> > >               if (IS_ERR(hw))
-> > > -                     return PTR_ERR(hw);
-> > > +                     return ERR_CAST(hw);
-> > >
-> > > -             priv->fixed_hws[i] = hw;
-> > > +             hws[i] = hw;
-> > >       }
-> > >
-> > > -     return 0;
-> > > +     return hws;
-> > > +}
-> > > +
-> > > +static const struct clk_map *fill_clk_map(struct r8a78000_cpg_priv *priv,
-> > > +                                       const struct clk_map_in *map_in)
-> > > +{
-> > > +     struct device *dev = priv->dev;
-> > > +     struct clk_hw **fixed_hws;
-> > > +     struct clk_map *map;
-> > > +     unsigned int i;
-> > > +
-> > > +     fixed_hws = register_fixed_clks(dev);
-> > > +     if (IS_ERR(fixed_hws))
-> > > +             return ERR_CAST(fixed_hws);
-> > > +
-> > > +     for (i = 0; map_in[i].dt_id >= 0; i++) { }
-> >
-> > This is avoidable by passing { map, ARRAY_SIZE(map) } as match data
-> > instead of just the map.
-> 
-> True, and I did consider this.
-> The same mechanism is used in the MDLC driver, where using ARRAY_SIZE()
-> would quickly became a bigger burden due to the presence of many
-> more maps.  So for consistency, I kept it the same in both drivers.
-> An initialization macro might make it more manageable, though.
-
-Something along the line of the following ?
-
-struct clk_map_in_entry {
-	int dt_id;		/* DT binding clock ID or -1 sentinel */
-	u32 fw_id;		/* SCMI firmware clock ID or FIXED_CLK() ID */
-};
-
-struct clk_map_in {
-	const struct clk_map_in_entry *entries;
-	unsigned int size;
-};
-
-#define CPG_MAP_INIT(_entries) {	\
-	.entries = _entries,		\
-	.size = ARRAY_SIZE(_entries),	\
-}
-
-struct cpg_data {
-	const struct clk_map_in *default_map;
-	const struct clk_map_in *fw_map;
-};
-
-...
-
-static const struct clk_map_in_entries r8a78000_cpg_fw_entries[] = {
-	{ R8A78000_CPG_SGASYNCD4_PERW_BUS,	1661 },
-	{ R8A78000_CPG_SGASYNCD8_PERW_BUS,	1662 },
-	{ R8A78000_CPG_SGASYNCD16_PERW_BUS,	1663 },
-	{ R8A78000_CPG_MSO_SCP_MAIN,		1459 },
-	{ R8A78000_CPG_MSOCK_PERW_BUS,		1667 },
-};
-
-static const clk_map_in r8a78000_cpg_fw = CPG_MAP_INIT(r8a78000_cpg_fw_entries);
-
-static const struct cpg_data r8a78000_cpg_data = {
-	.default_map = r8a78000_cpg_default,
-	.fw_map = r8a78000_cpg_fw,
-};
-
-> > > +
-> > > +     map = devm_kcalloc(dev, i + 1, sizeof(*map), GFP_KERNEL);
-> > > +     if (!map)
-> > > +             return ERR_PTR(-ENOMEM);
-> > > +
-> > > +     for (i = 0; ; i++) {
-> > > +             map[i].dt_id = map_in[i].dt_id;
-> > > +             if (map[i].dt_id < 0)
-> > > +                     break;
-> > > +
-> > > +             map[i].fw_id = map_in[i].fw_id;
-> > > +             map[i].hw = fixed_hws[map[i].fw_id];
-> > > +     }
-> > > +
-> > > +     devm_kfree(dev, fixed_hws);
-> >
-> > Why not plain kcalloc/kfree ?
-> 
-> To avoid having to free it manually at multiple (three) locations,
-> both in the error paths and the success path?
-
-Isn't __free() your friend ?
-
-> >
-> > > +     return map;
-> > >  }
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks!
+Maxime
