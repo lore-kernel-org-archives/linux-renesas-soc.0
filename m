@@ -1,241 +1,228 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5CE291C10;
-	Mon, 19 Oct 2026 10:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792405313; cv=pass; b=WjaLkJK+2BrByu5aJLKtINdUTQefHWNX+6F+ptPWbi0OUFwaRtbuMi1VhLsE4I3VEe/6qI+sarZ+TYGAm1F0+a3fQHS1y+fbNUMgKSprdu4w/dfqeNpMgV5vkQuuPp2T4FuiC6FF8+AzU92ruXhcb9WotviOodIZhG6PfF6Z30w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792405313; c=relaxed/simple;
-	bh=dqsU2k+j2h/jlU9K90a1b8H/2C2guTNSlwlML51Pmxw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4E14C1502;
+	Mon, 19 Oct 2026 10:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792405390; cv=none; b=BZawT3wbbgJpIyWKJZMTXiNekr0QBGYAAjLWNSdophAOiYXLwdgxqEo8tdh1JUTD7SM2f2w90NLbm5VVBLUOzR72s+n1nehq7G+7RRQPe3dIa3Wt72sCZP4UNcQBkFX1Y/5gI7ehSL5eLoavsh7r26JUgN8ZrR6lMSOK0UQ5hCI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792405390; c=relaxed/simple;
+	bh=ELgmHtyUZK6LxZ9ZkLKbgrwvuThezsxfji8fEKzAf+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOQnbVmoEKOjShDJ+uD70Wpq6bPwpTzASX5ygiA9X3yk9uPFvl9Nh5VByGf+C2S3y404ypaegyvB+BD4upv0dX94atRI6L1c6MGzltAlQGxCA8dvskeyjEUUVpUkXYv7Qxtj7144kdlvEzHiBc7Wzrux486HaUNsRUI1+GAAYjA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=XIZIFLNM; arc=pass smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oe5DQgGGYXDYwwxqS/5h4fQxCQT1Azshd1/EQz+tKc3GG/v0SyJqTYbaYqZ/YTdVnbqukzrqaIqHJPXwaAjs1i+koPY5kzaXFfRW3yVkwINTZ+aFcNxQuc9WsC8Q6vOpCDomIqP1ygQWr3UyF7y+iCf/XvDQrhftWCNznh8gS/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lOhO8DPz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="XIZIFLNM"
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 80B242005A6;
-	Mon, 19 Oct 2026 12:21:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1792405307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gLGTyZVae2UoxIdOnGHqtMC2VcU6jvzG6cGMRiNPqg=;
-	b=XIZIFLNMW3e6kz6LqSCkZl8ko9cMp/xXoWh08Iwt1WA3AjxVOenq3kU9oDfN94XoVY5CrG
-	PT2kz3z9i/KdJxpIk7q3o+ccIpnBzaKs1Zlq9JOtR7GwP/lIp2ea4j6nddaMRBwY4s2Y+S
-	NHvpvcT8rT+Rj00s/8q9SyviLw2Tn1YerZdnFwMirHFZxLEAzR/1xD11IRH+eN45fIVbBz
-	cb3kM3t7Z3cmFrG3XxMFQX+Rfom1NDumTSLptgQ8UDZsyCWALtJuKpbcjeTTrVGl5qqu47
-	GQFOnbVqa47tmV87CAZBulg+V6n6N2MXqkmj2ak3QINOWmjH/+3HKoKRFNfU6w==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1792405307; a=rsa-sha256;
-	cv=none;
-	b=enCnV/XP4qDh1aGLyqae6IQ6xIlOdnR7wendVtenyN+fj8sXfGWN4bO2C0T6tL4KM/Lpjg
-	88HRkiFDEayX4RBzhU0uJcSi5m1mrRZSv2rfArbXEG696+fgDjRNLgOdPBPDXsWu0lRZPz
-	zAlDWJMEhMmkU13np3JnsspTJcoXZutyqc5SQH9xmLgunjeAMXCzYhA7vdk4QpkTrLISpk
-	wq4LQsb6P1KpS6xubm7wNXKDAtwZ4pAxuwKeYYk+2cIWt+pPvNdaKGzZUuwPcfC93J/Vg+
-	dwiZpr+LjdAquuOaScfNrv/FSEX6UFqQ2Yui+Oir1kEoUxpEdNv31e/e3/o18Q==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1792405307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gLGTyZVae2UoxIdOnGHqtMC2VcU6jvzG6cGMRiNPqg=;
-	b=bkFSWblRRD9jAm/ia6ooniECkY6l5ntZN/2h6vHvtpO5vol1oVpvCpabbEd/bo1TBYz22z
-	IohVc9tLKDwAoNgFOgvqmxM43mqJj29ELaqs5x5xhOMGSCgXAdV3zMg064oiRh3wGJGbdw
-	fWLYKdPagpJHzKGHU4RzCCanAt1D6a8ka+Td3rADPlz5ejZQo3bCJCi5U1mHCS1APQ9odJ
-	C5pc68iq+PsaCUOLemhsMDa7CocDY8JGWM94fMQ33UxWRDYewcU+VMRzp1reyJJSP/GyWw
-	uQjEkLAXyYblKsSXE1PJHLMHGNHyoWY4kFld99bd+NCchMposw7f6ratYLeDEA==
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1xIkV1-000D3H-1M;
-	Mon, 19 Oct 2026 12:21:47 +0200
-Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 15AA15C8610;
-	Mon, 19 Oct 2026 10:21:47 +0000 (UTC)
-Date: Mon, 19 Oct 2026 12:21:46 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: mailhol@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
-	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v4 3/7] can: rcar_canfd: Allow the CAN FD clock to be
- sourced from fck
-Message-ID: <20261019-fantastic-beaver-of-action-e065bb-mkl@pengutronix.de>
-References: <20260902141544.565763-1-claudiu.beznea+renesas@tuxon.dev>
- <20260902141544.565763-4-claudiu.beznea+renesas@tuxon.dev>
- <20261016-durable-meticulous-owl-7a9eed-mkl@pengutronix.de>
- <69826962-0c21-4616-9cd8-6eb0478a422b@tuxon.dev>
- <20261017-weightless-poetic-mayfly-bbdf75-mkl@pengutronix.de>
- <4a9e32a8-8a2e-4b70-8057-2d51e6d38b98@tuxon.dev>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lOhO8DPz"
+Received: from ideasonboard.com (unknown [93.65.100.155])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DCC5B56D;
+	Mon, 19 Oct 2026 12:20:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1792405259;
+	bh=ELgmHtyUZK6LxZ9ZkLKbgrwvuThezsxfji8fEKzAf+E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lOhO8DPz95h3dpArngaTT90NUp108nwPFN5QsOnlDo8JHBOtjbyfFfsxebbx99NTB
+	 J3wKXdY2yEKHsX9wcPDZeFRSfek51H/Wu12C/vn60tx2KTCc/EmY4wsc/3JUkv2rRL
+	 arRK+qcLbYCEHXg/UEvFHCm7MbCZZ64Jij/IlWTs=
+Date: Mon, 19 Oct 2026 12:23:01 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Daniel Scally <dan.scally@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] arm64: dts: renesas: r9a09g057: Add IVC and ISP
+ nodes
+Message-ID: <atXol9eFjLKxgTpg@zed>
+References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
+ <20261012-mali-c55-renesas-dts-v4-4-c410e280bf2d@kernel.org>
+ <asz8oEtow_lrUU7K@zed>
+ <CAD++jLnnSLXeYzxonkfnZA3OxLE9Hssma9fHsL=U=NmVn7ZVOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zb6jkvi7dmft3zzc"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4a9e32a8-8a2e-4b70-8057-2d51e6d38b98@tuxon.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD++jLnnSLXeYzxonkfnZA3OxLE9Hssma9fHsL=U=NmVn7ZVOg@mail.gmail.com>
 
+Hi Linus
 
---zb6jkvi7dmft3zzc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 3/7] can: rcar_canfd: Allow the CAN FD clock to be
- sourced from fck
-MIME-Version: 1.0
-
-On 19.10.2026 12:58:24, claudiu beznea wrote:
-> Hi, Mark,
+On Thu, Oct 15, 2026 at 02:36:00PM +0200, Linus Walleij wrote:
+> Hi Jacopo,
 >
-> On 10/17/26 23:01, Marc Kleine-Budde wrote:
-> > > > >    /* Helper functions */
-> > > > > @@ -2190,13 +2196,20 @@ static int rcar_canfd_probe(struct platfo=
-rm_device *pdev)
-> > > > >    	 */
-> > > > >    	gpriv->can_clk =3D devm_clk_get(dev, "can_clk");
-> > > > >    	if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) =
-=3D=3D 0)) {
-> > > >               ^^^^^^^^^^^^^^^^^^^^^
-> > > >
-> > > > As sashiko.dev [1] pointed out here's no check for -EPROBE_DEFER.
-> > > This looks to me a pre-existing issue.
-> > >
-> > > The newly added support does:
-> > >
-> > > fcan_freq =3D clk_get_rate(gpriv->clkp);
-> > >
-> > > At the time this is executed the clkp was already checked against any=
- errors
-> >                                     ^^^^
-> > > (above) including -EPROBE_DEFER.
-> > It's not about "clkp".
+> On Mon, Oct 12, 2026 at 5:39 PM Jacopo Mondi
+> <jacopo.mondi@ideasonboard.com> wrote:
+>
+> > How was this patch tested ?
+>
+> I was using the TPG only so far, a camera module is in the mail.
+>
+> I do have the RPi camera module 3 but didn't get it to work, this
+> may explain why...
+>
+> > > +             ivc: isp-input@16040000 {
+> > > +                     compatible = "renesas,r9a09g057-ivc";
+> > > +                     reg = <0 0x16040000 0 0x10000>;
+> > > +                     clocks = <&cpg CPG_MOD 0xe3>, <&cpg CPG_MOD 0xe4>,
+> > > +                              <&cpg CPG_MOD 0xe5>;
 > >
-> > What's missing is, that "gpriv->can_clk" is checked against IS_ERR():
+> > Compared to Dan's original patch I was carrying my tree the first and
+> > third ids of clock and reset properties in the ivc and isp nodes respectivelty
+> > are swapped
+>
+> OK
+>
+> > -                       resets = <&cpg 0xd3>, <&cpg 0xd1>, <&cpg 0xd2>;
+> > +                       resets = <&cpg 0xd2>, <&cpg 0xd1>, <&cpg 0xd3>;
+> >                         reset-names = "vresetn", "aresetn", "hresetn";
+> >                         status = "disabled";
 > >
-> > > > >    	gpriv->can_clk =3D devm_clk_get(dev, "can_clk");
-> > > > >    	if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) =
-=3D=3D 0)) {
-> > but if it's a -EPROBE_DEFER, IS_ERR() returns true. I think in this case
-> > you want to return with dev_err_probe().
-> >
-> > There's also a difference between "can_clk" not found (e.g. not
-> > configured in DT), and there was a problem with "can_clk". I don't know
-> > if this is important for this driver, but if you want to distinguish
-> > between those, you can use devm_clk_get_optional(). I will return NULL
-> > if the clock is not found, -EPROBE_DEFER if not available yet, the clock
-> > or, in case of an error -errno.
-> >
-> > Thinking about it: if "can_clk" is not available, I would consider it
-> > intentional, so the driver should use the other clock. If the clock has
-> > an error, the driver should not fallback to a probably untested clock
-> > configuration.
+> > Fixes the issue for me
 >
->         /* fCAN clock: Pick External clock. If not available fallback to
->          * CANFD clock
->          */
->         gpriv->can_clk =3D devm_clk_get(dev, "can_clk");
->         if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) =3D=
-=3D 0)) {
+> OK
 >
-> Based on the comment on this code "If not available fallback to CANFD clo=
-ck"
-> I think the intention with IS_ERR() is to allow probing go forward, falli=
-ng
-> back to CANFD clock, in case of any error of devm_clk_get().
-
-=46rom my point of view it's not consistent to continue probing if the
-"can_clk" has been configured in the DT, and it fails for some reason.
-
-> The device trees that I've checked sets the can_clk to a fixed clock with
-> rate =3D 0 or have the clock provided directly by the SoC clock
-> provider.
-
-Using a clock rate of 0 to signal something to the driver sounds like a
-hack to me :)
-
-> I
-> think the intention with IS_ERR() was not only for -ENOENT but for any ot=
-her
-> kind of errors. We can return in case of -EPROBE_DEFER, to ensure the
-> expected clock is used, when it's available and sane.
+> > Why is this an issue it's not 100% clear to me.
 >
-> I'll switch to something like:
+> Can you try this?
 >
->  gpriv->can_clk =3D devm_clk_get(&pdev->dev, "can_clk");
-> +if (ERR_PTR(gpriv->can_clk) =3D=3D -EPROBE_DEFER)
-> +	return dev_err_ptr(dev, ...);
+> diff --git a/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> --- a/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> +++ b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> @@ -703,6 +703,12 @@
+>                 return ret;
+>         }
 >
-> The devm_clk_get_optional() would involve changing more lines:
-
-
-
-> -       gpriv->can_clk =3D devm_clk_get(dev, "can_clk");
-> -       if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) =3D=
-=3D 0)) {
-> +       gpriv->can_clk =3D devm_clk_get_optional(dev, "can_clk");
-> +       if (ERR_PTR(gpriv->can_clk) =3D=3D -EPROBE_DEFER)
-> +               return dev_err_probe(dev, -EPROBE_DEFER, "cannot get can_=
-clk");
+> +       /*
+> +        * Allow the ISP's 2500-vclk reset recovery time.
+> +        * 200 us cover the RZ/V2H's documented minimum of 20 MHz.
+> +        */
+> +       usleep_range(200, 300);
 > +
-> +       if (IS_ERR_OR_NULL(gpriv->can_clk) || (clk_get_rate(gpriv->can_cl=
-k) =3D=3D 0)) {
->                 gpriv->can_clk =3D devm_clk_get(dev, "canfd");
->                 if (IS_ERR(gpriv->can_clk))
->                         return dev_err_probe(dev, PTR_ERR(gpriv->can_clk),
+>         /* Use "software only" context management. */
+>         mali_c55_update_bits(mali_c55, MALI_C55_REG_MCU_CONFIG,
+>                              MALI_C55_REG_MCU_CONFIG_OVERRIDE_MASK, 0x01);
 >
-> Please let me know otherwise.
+> When we now retrieve the reset and assert it, it matters that
+> we give the hardware time to recover. (If this works I will make
+> a separate patch.)
 
-I was thinking of not ignoring errors:
+Unfortunately this doesn't help
 
-       gpriv->can_clk =3D devm_clk_get_optional(dev, "can_clk");
-       if (ERR_PTR(gpriv->can_clk))
-               return dev_err_probe(dev, ERR_PTR(gpriv->can_clk), "cannot g=
-et can_clk");
+>
+> > I can't access the "additional documentation" from the Renesas website
+> > where the clock/reset ids are reported. Could you please check ?
+>
 
-       if (!gpriv->can_clk || (clk_get_rate(gpriv->can_clk) =3D=3D 0)) {
+I mapped the dts entries to the clock/reset signals.
 
-If you plan to keep the current logic and always fall back to "canfd",
-please:
-- add -EPROBE_DEFER handling
-- add a comment that all other errors result in fallback to "canfd" clock
-- add a comment that a "can_clk" rate of "0" means don't use the clock
+This is what is implemented by your patch:
 
-regards,
-Marc
+* means the clock/reset is only handled by the IVC/ISP drivers
+** means the clock/reset is handled by both the IVC/ISP drivers
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+(why the IVC has three entries as well, it's not 100% clear to me, but
+this is unrelated)
 
---zb6jkvi7dmft3zzc
-Content-Type: application/pgp-signature; name="signature.asc"
+ivc:
+   clocks:
+   - reg: e3 (227)  -> CGC_ISP_0_pclk         *
+   - axi: e4 (228)  -> CGC_ISP_0_vin_aclk     **
+   - isp: e5 (229)  -> CGC_ISP_0_isp_sclk     **
 
------BEGIN PGP SIGNATURE-----
+   resets:
+   - reg: d4 (212)  -> ISP_0_PRESETN          *
+   - axi: d1 (209)  -> ISP_0_REG_ARESETN      **
+   - isp: d3 (211)  -> ISP_0_ISP_SRESETN      **
 
-iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCatXvOAAKCRDMOmT6rpmt
-0vIjAQDCdKOia/1Z2wcV8Hyu9YLCFuKeIpWcjdfxHAiHwjy3AQEAkQe4TbjPGsBw
-IBsZGeflQTA6q6c9qVsQRViPf33qAgA=
-=W+FB
------END PGP SIGNATURE-----
+isp:
+   clocks:
+   - vclk e5  (229)  -> CGC_ISP_0_isp_sclk    **
+   - aclk e4  (228)  -> CGC_ISP_0_vin_aclk    **
+   - hclk e2  (226)  -> CGC_ISP_0_reg_aclk    *
 
---zb6jkvi7dmft3zzc--
+   resets:
+   - vresetn d3 (211) -> ISP_0_ISP_SRESETN    **
+   - aresetn d1 (209) -> ISP_0_VIN_ARESETN    **
+   - hresetn d2 (210) -> ISP_0_REG_ARESETN    *
+
+As libcamera calls start_streaming on the IVC first the sequence in
+which resets/clocks are bulk_enabled is:
+
+* = number of time the clock/reset signal has been enabled:
+
+        [IVC        ][ISP          ]
+        [e3* e4* e5*][e5** e4** e2*]
+
+        [IVC        ][ISP          ]
+        [d4* d1* d3*][d3** d1** d2*]
+
+This results in the following overall ordering
+
+        e3: CGC_ISP_0_pclk
+        e4: CGC_ISP_0_vin_aclk
+        e5: CGC_ISP_0_isp_sclk
+        e2: CGC_ISP_0_reg_aclk
+
+        d4: ISP_0_PRESETN
+        d1: ISP_0_REG_ARESETN
+        d3: ISP_0_ISP_SRESETN
+        d2: ISP_0_REG_ARESETN
+
+Now, my proposed patch switches e5 with e2 and d3 with d2
+
+        [IVC        ][ISP          ]
+        [e3* e4* e5*][e2* e4** e5**]
+
+        [IVC        ][ISP          ]
+        [d4* d1* d3*][d2* d1** d3**]
+
+What I don't get is why this should make any difference as the overall
+ordering wouldn't change. When the IVC resumes the 0xe5 clock will
+anyway be enabled before the 0xe2 one, regardless of the order in
+which they are specified in the isp node.
+
+        [IVC    ][ISP]
+        e3 e4 e5  e2
+        d4 d1 d3  d2
+
+Unless I don't understand something about the enablement of
+reset/clocks with multiple users...
+
+Also the only indication I find on the V2H manual on the expected
+enablment ordering is:
+
+    All clocks should be turned on and off simultaneously.
+
+Something the doesn't happen today. Maybe we're *very* lucky that
+enabling e2 first in the ISP driver matches some window that is missed
+by enabling it last, but this seems very very far fetched, isn't it ?
+
+> These changes contradicts the manual so we can't change things
+> like this unless we know more, it'd be too much trial-and-horror.
+>
+> The manual says:
+>
+> Video/ISP core
+> 0xe5, isp_sclk
+> 0xd3, isp_sresetn
+>
+> Register-interface bridge
+> 0xe2, reg_aclk
+> 0xd2, reg_aresetn
+
+Do you maybe have any information on how the above signal maps to the
+C55 clocks/reset and if there's any indication that might help better
+understand the issue ?
+
+>
+> Yours,
+> Linus Walleij
