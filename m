@@ -1,50 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792488974;
-	b=TB2FVx+OymI2/mqiUgW56ms6zcH8K+bIN2GW+dgC4crDah+Ja1jQ5IJt4VlbH/6j36nw
-	 pDmTOYjNSHqdzRr2VrFSKWPGBTURp44QS/JaW7cL45tmoz3VSDAl50g7DBPVpjmfPzLmq
-	 h3mGo4ASsswx8nOlqALpkvhRG6/1+rD49r//fl1iqnsLM1sAPOc49v1yLKpuS0wcLOnDC
-	 1lHBQ4Fo0qdGGuQXH/JajE9tyWzg0DmLRE5O7ceMpwKGqItZdqP9T0VEAS/43FZPmdMki
-	 rjsHjqrgEef7EzHFkI4vyIa7kkR8LmPqxLAWXLIneHJLs0ONglKW+G1pseAk7se9JFQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792488974;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:From:Content-Language:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=ynyE+fA5NTfw2+uhvHohwdPTh6sK8d+mcL5qpPLSA1A=;
-	b=WsMtPJOtTkS38KbbHLGtzN2oGi9rnKvhO78Er9o4OmCJ58g6PStZ1FgjLDmZH99Ie+9o
-	 tNnPpcUxh1DPbz5S0n6KoHLjKAnb9prWDHU1N1+AsX7DP+ZnilBUnilibFgG/RIVzavCc
-	 Nth0gnA7MukMdiPtjeI3bkTEGHhc3Hrg0rLH28y/Kuc2se+a+xV4HFFfe41YiF+W4Jx9k
-	 C34AH+jcqrC/AKAMijpaJfP75JaB92oPRRvH1d8+VlX4r2fU3wLQ6VZFLLPL/avjoSFMX
-	 FcnkDqn/jDSFJG7nkISG3zJohKWYFXySZxWKXWbYmVyyLXpCObDrASfKUceM6wNJxOw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ciMiB0Fy;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.17
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792489010;
+	b=D305KR2yM5GGkvmAm9M0MNJQT/hAivvbAFYCE88L57v5/rRrGkRJ/QOR+NkYb0Zof8HF
+	 0l865FzudcYcUyCdG1/UERxbRsVZ+88m/ZvrvfVtS5lyu87TnAmKYzeR4Nr1NXAKUnra9
+	 TM5e7DJ4ogZvvApqlFTgZnvOYhSB8cazwFR2wzHLJLhh18gZkGeRroijB78ajgVZmVDsE
+	 m+f4N1MMqxy0d9Ele97TEL0ofeWZ13SoGxYLwfEnbBQYjbHPBzb0E3lH/4hTlJMGxcCgJ
+	 jikfH9Va27nDNhBzt2GhCq4t23ZttX5iitVgk6+d454+xXZRasXglWIg/sV+TY4VjcA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792489010;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-EOPAttributedMessage:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=LRx8UvWVm9ikAdxF4Wgsmj+ch4zzS3+JSv2XCIzVAzQ=;
+	b=l1PqhnN+lGpaVPY1v9AZrAczmjAuk2Q011fXN9RBLK/Rk6JxMwxKGbNuNs07/KJbgqID
+	 LP5fE63TLIswLxt0x8D6X6OpRkjJBlED02FG6rYagcfRH3hQLAEH4lbbydwJZXOxFu8m6
+	 pKRpAX5l2jR4pcYJPvemDEZzaMouh7HC7Y4+0EaoPvi7lCzzqxD9WUSRjQwnIsvrq+Vb2
+	 vx0miSrG6CnjILzoyV8pe80aiBZsburE8xH0Lvy8rqtKgXLHIXFfiDZO3NadH6iVAa7dZ
+	 DTFwvFZkw2eHdXruG7ruicnV7qMucsjQ3re1DyRuSpjzfFP3LcUi+XmERmuBcESbfog==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=renesas.com;
+	spf=pass smtp.mailfrom=renesas.com;
+	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=jqRThY4Z;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.17
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010017.outbound.protection.outlook.com [52.101.228.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14503606A33E;
-	Tue, 20 Oct 2026 09:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14503606A33E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444C7606A319;
+	Tue, 20 Oct 2026 09:36:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 444C7606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ciMiB0Fy
-Received: from [192.168.33.26] (185.221.141.235.nat.pool.zt.hu [185.221.141.235])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D4112E9;
-	Tue, 20 Oct 2026 11:34:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1792488843;
-	bh=Iv2yHbGaosk29+ndUAO2qtiC5IJ8/X2fH8ie6cTjmyU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ciMiB0FyxDyLFci9A18xtIcNNBLizuaaiATabqgJTpDLfhWLxnp/Wp3QRZKNdzzNj
-	 j2xY6SfbluAM8Yo1FqcVOp7N80Zr0gdLz7nxMN0QanLM7r/12rBdQkhhFgMRPSvod7
-	 m79B/XKKjsmMn9aFCkN9VKm40U+qFpePmdn6kpUk=
-Message-ID: <6c8e77c9-c0a2-40c6-8e7f-7e2d51c71740@ideasonboard.com>
-Date: Tue, 20 Oct 2026 11:36:04 +0200
+	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=jqRThY4Z
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xDcfETciTc3C/pc3q/jbyxT3Ve8+2Ls0Yql1g6G+48ZYFqxUkLffiPM0cM9AVtilaLb858weE9XRA8mZALt03F+zL6ZTuUJq8WEjoJ7kr6NkBvpVSVzC++hPDlvZtczHKexSZ6DQ4yS6wWMyY1iHgyFY7/cRyQkWTvOkErZU3lm98LlazvbExPhaFz/OiUA09AMJo8GneLmyFyW6ZkV/OB1Lm5owV82Nn27cVkju459FmFCgPC8qDewfIlmV6GNwMffaO+w9BasXREJvoK29imTg2+yaZ/CZ7exW+8XpZ8w5ofu83vEu4VvHvLAVNeqlh0ORHcWyQshUKq/kGeLCKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LRx8UvWVm9ikAdxF4Wgsmj+ch4zzS3+JSv2XCIzVAzQ=;
+ b=Xm5eqCTnTa952bnS8Ouy3TQuFOmPFmf7yn5lBJIq1groa5DiYga5DL9hA4xq53o1trZpC4DN7tp/Ga6ofWOZZwqFlFKDNYMU2UrYsiwwEByUALkf+yMjmAyt/KFxP3fTWgknYejJdY/WEnCjpkIf5+VMxK3q+BYUtvXTpRV74Ibmvqa9e+yCqBg97H/6jga6CN5IQCdP5QlgqjApYfWIXTPABwNj2EgSndrVCIqQVZgWvY4OteLoIJHbpit1MJU/iRuLCr52W+lcbeN70bfu2VuN+MrxmK1TBCtxm8JSF/GiLORc1pTJTUiPVN6BP1guG19JeLv6LhkzT3T/FakdTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=bootlin.com smtp.mailfrom=renesas.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LRx8UvWVm9ikAdxF4Wgsmj+ch4zzS3+JSv2XCIzVAzQ=;
+ b=jqRThY4Zi2v9VE84aH45TH55N/GqKqUYC+03XtxxtXLbrjJCnPGY4i3Ju4zGMmcrnGNzqjjix5Njcc0HMLEO087WYWrk3VelWuv1mukjHCX3JKdWf/uOtuT3tq0AT/O9Lyrtgo/JDWnjIckC7ApegcPSmQmOb0DALKpTqQAli7U=
+Received: from OS0P286CA0060.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:9f::11)
+ by TYCPR01MB9643.jpnprd01.prod.outlook.com (2603:1096:400:197::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Tue, 20 Oct
+ 2026 09:36:44 +0000
+Received: from OS3PEPF0000003C.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:9f:cafe::11) by OS0P286CA0060.outlook.office365.com
+ (2603:1096:604:9f::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.19 via Frontend Transport; Tue,
+ 20 Oct 2026 09:36:44 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 8.62.32.50) smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
+ 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
+Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
+ OS3PEPF0000003C.mail.protection.outlook.com (10.167.240.5) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.15
+ via Frontend Transport; Tue, 20 Oct 2026 09:36:43 +0000
+Received: from [192.168.1.82] (unknown [10.226.92.108])
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 3F93C3000250;
+	Tue, 20 Oct 2026 18:36:37 +0900 (JST)
+From: Diogo Ivo <diogo.ivo.sx@renesas.com>
+Date: Tue, 20 Oct 2026 10:36:26 +0100
+Subject: [PATCH 1/3] dt-bindings: i3c: renesas,i3c: Document analog noise
+ filter control
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -54,102 +101,103 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] media: rcar-isp: ispcore: Honour requested
- bytesperline on RAW input
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
- Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- =?UTF-8?Q?Barnab=C3=A1s_P=C5=91cze?=
- <barnabas.pocze+renesas@ideasonboard.com>,
- Yusuke Goda <yusuke.goda.sx@renesas.com>,
- Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20261019-v4l2-add-nv12-v1-0-4a84736803b6@ragnatech.se>
- <20261019-v4l2-add-nv12-v1-1-4a84736803b6@ragnatech.se>
-From: =?UTF-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>
-Content-Language: en-US, hu-HU
-In-Reply-To: <20261019-v4l2-add-nv12-v1-1-4a84736803b6@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261020-divo-ssgrlpcsrc-2966-i3c-anf-v1-1-b7ad60cde650@renesas.com>
+References: <20261020-divo-ssgrlpcsrc-2966-i3c-anf-v1-0-b7ad60cde650@renesas.com>
+In-Reply-To: <20261020-divo-ssgrlpcsrc-2966-i3c-anf-v1-0-b7ad60cde650@renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Diogo Ivo <diogo.ivo.sx@renesas.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792488992; l=2002;
+ i=diogo.ivo.sx@renesas.com; s=20240529; h=from:subject:message-id;
+ bh=OsDiHkQl0rNMt1LGCUhEbRtyt6e5VPNbctXsKp+X02o=;
+ b=smyVoJdPHfqph2Te6ToODkhqHxct1+T59mAwriNOr/NvP30fwZSXcKEw3n2tX7/8pP9/tpipR
+ CT9bBXmu+TqBr6igJHpXRoNUfTf08PZ+nz8RkEViKIGC84KTJNvRETd
+X-Developer-Key: i=diogo.ivo.sx@renesas.com; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3PEPF0000003C:EE_|TYCPR01MB9643:EE_
+X-MS-Office365-Filtering-Correlation-Id: ace5554f-392b-4ae5-3c40-08df2e8da6ac
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700016|376014|7416014|1800799024|23010399003|18002099003|10067099003|20046099003|22082099003|3023799007|261009223027099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	1FG+xykS+7yhynU8TARs2XiR5G4hU0kTaM1AsBl8ClOB955Y/5tpdmOKT0IvHSgoyrtkz8lfoSTgr9RXXI42TexW0lg1zw274+T0ORKZLKArKm8T8JT2n/9I+ZrheWCIn9sfV50vcoBKMh9AC2lJzLWBH48vO/93iwAcSvX2ltOTMAsiGVpW46kajNNxrgas4nM1ehYWold2oA5DQeksmpoODC6SRmbG4nNoT5Y7ARb1HbQffRgPamMlZP+Bk3iN8P1b/muJHSbNwIgjV/c/qnl2/R/V6mR1jFUGehd8UzwpTr7kCZIaYBh+DbWYbE568fX0zwkXLD1IRh+oHoTkL8dV87bgHawLEMnhoCc6+x4JHVmeToPDFzONmzMDRKezaKM4GZIpkAbtr/MSB4gZMw5+kpYGZrLG4Xf3kgM2FUzoDd2LHsVlDuBATSE3H9+/bIeRZMzKV1beUZ2xZE+aO0vSwJ9v+4xNEbzaAdpmZHoOUVb2sPMd/eqckYH4l/+aEuqBXTfFxwDySgUHiFyI59RuJLm2+Kvre2vwu9XVjPfE1aI/8AYyvvfpmDKGgDacR5aMABgjsXn+Nqu96ZlPaT2Qz89G/vcn4eosuZKwko6ixqjXZxP4PyWMw0PlsP2siceHNT8SHjCNjBdq/eP3qj1+4KqcbpTMiU3Ai/NRVlHnZOR6YPiW2Ts87oJkGVZ+xwIPKF5edZkqh2QVYYL1/Q==
+X-Forefront-Antispam-Report:
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(7416014)(1800799024)(23010399003)(18002099003)(10067099003)(20046099003)(22082099003)(3023799007)(261009223027099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	CrhPPnB6us3SQOtDPQr+jVd0oVTr5xkRUY4RLlvxCzw4mhnemnKvNksZCnz1SpJIjtNaZnCGV9yPmFkTLqNpHyoQvwohvofjLu3/rZaASrSdpxyUuRvQ5SlPbUdu9AgQbzr60Cxa0eHvrXJfCeTlsmO3H0rgnPc5oWSU1u25YLP/JKqkWOszWEnsFWvkq2/28jdTvb2i53PLtFjKxQkqnHSmrK3mF6rNSHcYiEsCZl4QFr9qGxJ+p9nP0EInDlSYw1KfrjlKq1d8dMjxjx3cO4VI2kHTIH4ptT5SaPQ/XD9AtsUmI7dHHsyjVnw33ku0NK6pKIPCrNd+Kt86OPEvdTMUfLOjBzFaiOcXaAAaWFHbuP3B43y2E2+HLz8VbJnsYew6YdGiWUHweGP+trzsgMN0J9jwvPztrscCLXbXcMUiWU7guvKvEFRvgu59xW23
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 09:36:43.0850
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ace5554f-392b-4ae5-3c40-08df2e8da6ac
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003C.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9643
 
-Hi
+The analog noise filter for the input terminals (I3C_SDA, I3C_SCL) of
+the Renesas I3C controller is controlled through the SYS_I3C_CFG
+register of the system controller. Document the
+renesas,analog-noise-filter property, which references the system
+controller together with the offset of the SYS_I3C_CFG register and
+the state of the filter: 1 enables the filter and 0 bypasses it.
 
-2026. 10. 19. 21:35 keltezéssel, Niklas Söderlund írta:
-> From: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
-> 
-> The RAW input video device always overwrote the bytesperline requested
-> by userspace with width * bpp. The input buffers are however shared with
-> the VIN, which may use a larger line stride (for example 3296 instead of
-> 3280 bytes for a 1640 pixel wide 10 bit image). The dmabuf exported by
-> the ISP was then smaller than the VIN buffer size, and queueing it to
-> the VIN failed with -EINVAL:
-> 
->    __prepare_dmabuf: invalid dmabuf length 4042752 for plane 0,
->    minimum length 4060672
-> 
-> Use the requested bytesperline if it is larger than the minimum.
-> 
-> Signed-off-by: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
-> [Niklas: Use max(min(..)) instead of if statement]
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->   drivers/media/platform/renesas/rcar-isp/core-io.c | 11 ++++++++++-
->   1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> index b60b91f43d42..badde72352c1 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> @@ -5,6 +5,8 @@
->    * Copyright (C) 2026 Ragnatech AB
->    */
->   
-> +#include <linux/sizes.h>
-> +
->   #include <media/v4l2-ctrls.h>
->   #include <media/v4l2-event.h>
->   #include <media/v4l2-ioctl.h>
-> @@ -335,6 +337,7 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
->   				     struct v4l2_pix_format_mplane *pix)
->   {
->   	unsigned int bpp = 0;
-> +	unsigned int bpl;
->   
->   	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
->   			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-> @@ -352,11 +355,17 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
->   		bpp = risp_io_input_formats[0].bpp;
->   	}
->   
-> +	/*
-> +	 * Honour the line stride requested by userspace, the buffers are
-> +	 * shared with the VIN which may use a larger stride than the minimum.
-> +	 */
-> +	bpl = max(pix->width * bpp, min(pix->plane_fmt[0].bytesperline, SZ_64K));
+The property is optional: device trees not providing it keep the
+filter at its reset value.
 
-   clamp(pix->plane_fmt[0].bytesperline, pix->width * bpp, SZ_64K)
+Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
+---
+ .../devicetree/bindings/i3c/renesas,i3c.yaml          | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-?
+diff --git a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
+index 08fcea89a015..381807844351 100644
+--- a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
++++ b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
+@@ -96,6 +96,25 @@ properties:
+       - const: presetn
+       - const: tresetn
+ 
++  renesas,analog-noise-filter:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      Analog noise filter for the I3C input signals (I3C_SDA, I3C_SCL),
++      controlled through the SYS_I3C_CFG register of the system
++      controller (SYSC). Three entries specifying the system controller,
++      the offset of the SYS_I3C_CFG register and the state of the filter.
++      If not present, the filter keeps its reset state.
++    items:
++      - items:
++          - description: phandle to the system controller node
++          - description: offset of the SYS_I3C_CFG register within the SYSC
++          - enum: [0, 1]
++            description: |
++              state of the analog noise filter:
++               - 1: enable the filter, performing noise reduction on the
++                 I3C_SDA and I3C_SCL input signals
++               - 0: bypass the filter
++
+ required:
+   - compatible
+   - reg
 
-And does the device really accept any value between these two limits?
-
-
-> +
->   	pix->field = V4L2_FIELD_NONE;
->   	pix->colorspace = V4L2_COLORSPACE_RAW;
->   
->   	pix->num_planes = 1;
-> -	pix->plane_fmt[0].bytesperline = pix->width * bpp;
-> +	pix->plane_fmt[0].bytesperline = bpl;
->   	pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
->   }
->   
-> 
+-- 
+2.56.0
 
