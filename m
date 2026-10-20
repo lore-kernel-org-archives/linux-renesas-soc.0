@@ -1,132 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.156
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792503889;
-	b=W85nDXtaYMq9VuITgkGUodAsJHjq3QKXksaiVR50vX3ascqDl1LnhfSoglXr9Fd1j89b
-	 ZhTyjlqqETX2YIAGfcD5HUT+reGsf41XJFxRq39FTuN8cSM2gIPbi1ARRrabn6cCmbD1k
-	 8acDBrX1H5lpmJLGDjZnGcgaImEUzEsn9I8610uTW8mwo1T/WVDSjqMwPrP564EI639vg
-	 QUKAfHt+fWDDwP1sOBG9bIVQ4/2HWf8TPhQmAvRmz/lRNaEtJ3EDCvjG5auv2sLP47xWZ
-	 w5KS1kw3r2kkl2pw4QK4eSrVsB8ON0K5lQYxQVPPkTkqjBK8seP/dtk+CKV51A4nGzw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792503889;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=7sFqYPku9IMCaAgjb1BHGg9OMs1Jn2kXfjeeNqqIfW4=;
-	b=LBvj+jbjabTC70ON5+Qlaotg4PFVM8rV9ENNscfF4UzYyHV5rBBkF4uEct7EHGOCgvdj
-	 IirBJPG9EI3OGkXIjCQnkmUsqNWLF/YknL9P3hOjw3dgIRrVAigcDovQWPDi0Jvo5wxTY
-	 /AtLSjoz7DRldIKyjlsDfg59VunThGsFw8PL2Vk8PaUnncHQ/q+i2q+eTrI0GJ4W+HI/h
-	 ocRdHAmUlRH6KFuJZxlt1GiomdQx8KZDu9bnj7dK4nuhLm+IKIB45QuTPQ+1PV9OyD12y
-	 uzVzXMs+3gT6igsyJTGDJZ/WFXiBc4la2PsTkDtLwGRIO8ryqILT9/4soH115cEIrNA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm1 header.b=Azw65VhM;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=o7Ae6oBD;
-	arc=none smtp.remote-ip=103.168.172.156
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.109
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792503986;
+	b=SZlBg/J95fnhbv8XF9h6EYRvGbPdCo48JSOnxu/tD2mNr8VpEuTaIdZPrB1ABNUzwZJY
+	 gMJtfUJwybsRq2fQBTZJLBopU0tDux2SwpE4enEsbxbUpelPbdQgkXb5LHnqiKOV4AZbp
+	 6moZcw9qA2etm11eVsJPLNce9XiXHCeYmfX/FtEya3Ud3hDDHw4oYl2CR6aXg/Aqmzsb3
+	 81aRLV0qiaU5vc3mexmxhLc34srbombr74DCzUCmSuwkXHOgEq3OuXwZGljcQqI/nmApY
+	 gItUdzQj5Ve5G184zNA04alUiJRJoscsEDmgB5x3LdYXlESk+rCpNLBz8Tvf5pW2ogw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792503986;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=ohxtpPEB0GujAkRh5xWBozRhQNX2xo1JQx/fiZFRbs8=;
+	b=CXULsm4bbFR5VnqLk7MxKFHeR3XkD9db8N2ux95H3BdqUv3fTjpkcXYWIsm1nIY1HGR7
+	 7B+5ZbRxwFEl5D5jXzIKHTLZS4y4PCn2I/uEKBg+Uf3PSNSjbY9KTOsyFOW9DqbBDUls4
+	 2JpRAgwWbLZhc0Dt2FOmGwxG13r3dTrQSFsFRhcc/oltxChSBPmbBj72lv0ljzAdgQBNA
+	 rIT/6hlnmpGEwX/Awu7ZRUjiHJaSMAZpNbYKTPMfnYz4t+MhWdM3JbRWd+0mhdRCdgqEe
+	 8wyI5R2sV+VImUV/7s68NZJRoh2G9Obhnjyqet0mx1vNA0n+qbrnGSBN4oaX0XAr6jA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=valinux.co.jp;
+	spf=pass smtp.mailfrom=valinux.co.jp;
+	dkim=pass header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=MoVWrOtD;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.109
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11020109.outbound.protection.outlook.com [52.101.228.109])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDE7606A33E
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Oct 2026 13:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EDE7606A33E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B492606AB36;
+	Tue, 20 Oct 2026 13:46:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3B492606AB36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm1 header.b=Azw65VhM;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=o7Ae6oBD
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C6CF11400129
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Oct 2026 09:44:47 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 20 Oct 2026 09:44:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1792503887;
-	 x=1792590287; bh=7sFqYPku9IMCaAgjb1BHGg9OMs1Jn2kXfjeeNqqIfW4=; b=
-	Azw65VhMY29Q5fqTJy/B/ERFesM94CIXQfuf1QNF+KlAe3GVPs4G4H1d+m/72BSu
-	rNpUylzVIpHuLZxHy6jLsI90mSWwX9PjWKcbo8ta/P/k3Gl8cNqJPBqcq6MpzKpz
-	Z8NbTUir+JU2o7WX6/oyJCGSW1tywCsLSW/vCL+He6wWSEqYpeBiKvXsuEjzZU56
-	QejeR/yTBML1obHIWWNffMI3yXhDpJjUkpf7MzxPSHG6bPvi4k0YqJg4VYD5p/Zm
-	wyZVnpU2yFid2HLovNiQep0oCRfS+Z4t/VFXnYqsEDKl235QN+0oTfuLghC+KA7u
-	nI4iP5fXaQahnkJ6ByvRPA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792503887; x=
-	1792590287; bh=7sFqYPku9IMCaAgjb1BHGg9OMs1Jn2kXfjeeNqqIfW4=; b=o
-	7Ae6oBDo74Z8A56wSzQSlQ11NhVK3ZiU+yRe8GIpSuktQvXGQzfWVwT9DzDXbfgP
-	xfDnCNPPHyvJu1NeFRcZzM/GpbffW5X7FT0ymYE2GLDAMBo19t+tgVzyZ10tVCfD
-	egDBHZPrrwfI2It4OHDnYs8JrBKrU79bSBOfx/Mg6v25sFN+AJmztw+WBKiftigb
-	p/8rEConEfTgogo3R2iu/S7yVnaTQFGFPe9hZy8XhMx+IGjwAT9TektwbBrJZs36
-	eIxaP9FYT7mhaVdRC9eBw23k56Mai1LaTSLTz5bjw9xaVz7KRLa3B8YkgiLWK/pS
-	JKC0Y0Jgdxl9fBUbmOo3Q==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792503887; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmQrcmVuZXNhc0ByYWduYXRlY2guc2U+;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:P49QSutQldIUZuLHHInG5fxRDJ537HEJakvKFlaX9KDFWWz
-	V/jj1Tqwq2gu7MbtV838gZjIxK4ExxzbHQQpkIg4NRhurxRmDXDMj2o+FyBoC9WP
-	uzgdlCuNj2WmGUpsVMyFYZr+aidKLvnQ0v46QrFyQ2eZlFJRVJ7DN04lxFaPNfrC
-	UJvdm48eUn2xdsdQHaR/1j5gvB3n+TNqmWY5TG3PAAd1aWi7M5tfdQHALVdb1Iko
-	w6t/l70wv1isX4NNpA8Q05D16EnoJtrUN7hGZceETBKxQvAQ2eXrzFLJYi95xmRD
-	U17Awlsj+dPMEzPWJkiUJE8tBA0icUpp5N+QSig==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:IeknNZlS48ZgPlaDg9w+WYE+IXDLDzMZ8dlg4l8Q0UQ=:SBzfYmoygIRTYjuunMl4N8cUIjWvhkSILabDTFdYnZU=;
-X-ME-Sender: <xms:T3DXauoazgYSH4FcNxN3eRbUWtPnn6ixt0AbQK_1eIbku8JD3MkAFg>
-    <xme:T3DXakyDpvhA-MgMURwdi6JDAnN1IkKtpizMe1It0fabOkN91tJwZSpR7gJ7LhOdG
-    qy9lTvJIBLi9r3pMM8EytLKRzg8BBtzkCcC9ZsfMCQHccPNwdFv73jC>
-X-ME-Received: <xmr:T3DXais9hTTl99HJ4uBkgAE8c71HhsxEFIyEQIohCDoH4TWWL15BtI3zynMJ6sNvDb4buBFLio5iVhUU8CMl__o9Q1LmU7M>
-X-ME-Proxy-Cause: dmFkZTFIg3lKdUyp26TRMc44J7IZ/m5v61+2X4w0llVDhQsWoMpOuaqnFv8z1H3n3YbuMg
-    4j2P5cQ3PYMTvpNF0s0HI1l9d7YYvvBWLG0M2jdVqikgQjqckR1pyaijHJjLG5ZBv5dm8Q
-    DM86YskcEFVqyu5+GkXcLICIUi5UOFPXGubhBMhSzrJPYfXBkwDHpF0U15QNP//kE6VGII
-    s1SNFLszlrytpJHzmCi/7CTXOcWjhbbzPd5N58vaPmwpVy19NuIbeolNhWHRmZdjANLCmn
-    39oBAtVxXqF7fHSKOJzhp0it+Uuja9Mhj+mZF+1GX3Bhy/bkyt4NNkPyOKEufgvIg59qrr
-    JlL1o2Zi1MRP1EXMZ7zJmQ+Ea9oISlEIB5tvRHE9wav0CkxE4e4Ax6Sayv79hGk2y0ivlI
-    Yc5TFwaolnno239jDwTbarIk+5LzD6gEoLzZFqu6ypdCdgp010Y6xqO+/7Qgj7btJRuNnk
-    Xq2YWwGqF7wGTfSumHnc94wvbjxhotlZT0txDpTjJv/HMof5zPfAZPyXmV6jHUnH2h/JqA
-    +h6/PFhuaFLlxnQgbYjJNyW3/wPfyGK+ZVAYcLB+wmhp1PeUVGgJrAQaZc5x3sR5BUj+av
-    ba1ujUUuQH7qe98Mw0XiuOPKmJ8j4Fu9PLIPxrPlxe+Fi9PtfbyzHOf5uFAg
-X-ME-Proxy: <xmx:T3DXat0rvhFvXZRavha9VKdASLzD8fovHxs12Sv2_YoRIzg969oWLQ>
-    <xmx:T3DXaqBcDfwrwX3-1yjLh_nRzKRCgFJ45VdyhCzXmZssBc0b8xXF3g>
-    <xmx:T3DXarDP1dt2849R7Ji_csARzez1OrxeTtkI_BqzAGqtgh1ilBJDMg>
-    <xmx:T3DXarmYy2HbAsJ8rTPv5uH9QYHa7O0J7McJ2le4R-hIJDl1AZXc5Q>
-    <xmx:T3DXarAOYE-YRvvjmEicKEFTJX7omJfCr5z6TvOtnn-dDUHtrz_D9tYi>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Oct 2026 09:44:46 -0400 (EDT)
-Date: Tue, 20 Oct 2026 15:44:44 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
-	Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>,
-	Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] media: rcar-isp: ispcore: Honour requested
- bytesperline on RAW input
-Message-ID: <20261020134444.GC1172387@ragnatech.se>
-References: <20261019-v4l2-add-nv12-v1-0-4a84736803b6@ragnatech.se>
- <20261019-v4l2-add-nv12-v1-1-4a84736803b6@ragnatech.se>
- <6c8e77c9-c0a2-40c6-8e7f-7e2d51c71740@ideasonboard.com>
+	dkim=pass (1024-bit key, unprotected) header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=MoVWrOtD
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ABZEV5+APAUxBI0OJWw+hMYvPeRhRZtOTvCFUwRC2Hlfgr4rYCYvr5W4++7ZsShghrEcRvpw73IKOVh7wzbt/DxZNDMKo3j87nqcswQRqfQvRGyH9gqfR5Bl1DOOWxbEFQXpS8LFXfrM1jC9d7LyN4iSW7srSotJsPsuEdE3648mCwPvcIpbj848n5g4gmP1ty2ycp3amyHqIaGiuwAKFPjkGuxTNz2IiazuO+6iyPje0dnE6Oy0mOJQaaaJuV1OAi7m7LxJtZTAped+mY2P8h6+uSAgawWvxKyF+s9vxyC2XUGBHiIITSV4MQop65yVuyx60DIpUICS2TARr+PH9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ohxtpPEB0GujAkRh5xWBozRhQNX2xo1JQx/fiZFRbs8=;
+ b=im0nXGx1Oqds2M/B5etpiXpmIYFvlnHik/9KcOs8GGvlFktyZAISnJT7dcB8KRE3GF8zMXFMKEr0bB2CbTwhk5/GqLrLccUAa2Vgh5V2ym4+L7BgPexnb2S0hoqfOWKIKzVZNsFT0aUmQJF1zHgUQTjyHs5AFx8bMYssS6UVoEjfSp3sO6sdQ0jWzSKe4IGmrbjYz3qleoPLljH7xjAWlSIyi3FsAaqdssuUCKy7i2IsVQTSWfc4t97Kn853+wL+3q7JqDuGdILgcaQ67TTy1EKCASB6V0n14cV0O19pVdbYU1NWqKdm9YV8Vfpg1qnRyDrZSZDb977yRMchWwQdrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ohxtpPEB0GujAkRh5xWBozRhQNX2xo1JQx/fiZFRbs8=;
+ b=MoVWrOtD411A0GbuiiHZwDBrS/8QFk1eFFAZdCMs+lRF4V/duK70EiAjowAwkqq/XwdTj3QDJNcbS9X0QRvzFE8JwSd5nFE2GOgeFdYgXc9Mco82Fz7LDjU9sxdUfe+sxe2e0PZJTWMDZTDicJCZb3YyngYTYUGMIfssorykaco=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:325::11)
+ by OSCP286MB5194.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:34c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Tue, 20 Oct
+ 2026 13:45:22 +0000
+Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::cce5:2aa8:53f9:dba9]) by TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::cce5:2aa8:53f9:dba9%5]) with mapi id 15.21.0522.017; Tue, 20 Oct 2026
+ 13:45:22 +0000
+Date: Tue, 20 Oct 2026 22:45:21 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Shawn Lin <Shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, Niklas Cassel <cassel@kernel.org>, 
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>, Serge Semin <fancer.lancer@gmail.com>, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/17] PCI: dwc: Free the MSI domain after the host
+ .deinit() callback
+Message-ID: <aqjnpvg6mupkoyl5ripnwd4togg6wktbui2cp7yjpjcuv5r2lw@t7blhltn7242>
+References: <20261020031049.969895-1-den@valinux.co.jp>
+ <20261020031049.969895-11-den@valinux.co.jp>
+ <CAMuHMdV2wTNjaT3HacNiAAwSNU9MtvXqdFg6uSk-pZUBh+9tXQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV2wTNjaT3HacNiAAwSNU9MtvXqdFg6uSk-pZUBh+9tXQ@mail.gmail.com>
+X-ClientProxiedBy: TYCP301CA0017.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:381::8) To TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:325::11)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -136,92 +106,101 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c8e77c9-c0a2-40c6-8e7f-7e2d51c71740@ideasonboard.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY7P286MB6866:EE_|OSCP286MB5194:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3e4006c-323b-4701-03bf-08df2eb06311
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|23010399003|7416014|376014|22082099003|18002099003|10067099003|4143699003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	3BIEdhQJv6UgZ2Njvlk2/P9BxfIaWcSOfNJTL4Dp08+5hT5ir2NHG+dUaiVSp5dLCTchsDgo9SOAr4nhXpHoszcctIVJn7wLUE6bH1u/z4CwVZIFpiadBSRjV6OEgOzd3Tiap/JLfDKgKZXyP/KL77/AAVaqUlkH8FVIzAqLEvxidYF/GNN/Ztr7hdzWdk+JyWO3teGNu4vKs/dMixnxmmWfPoJEMl+iBI+du2WdOSCjRYx/kPTFXXbqAX738wnm+RnNszXCpm85XLG0oz7sHA6uz88JzgWb7ZCajYVtlcNTiz3reqLgmwK10JS0Ddo+B+pAQsjFLhFu9eVMdfYOrCevvtm/ZNxYQPOTCk6G6sf0wT+lp6RWw0hy0xw4Z0PZFBVUHT4bhifIidQPLncsIsF0ZDuHBUyCHc3WiNfkTpoCnD5Gn4dET4eTIoAzALwmtSleM3wJryIdgjf+MpdssMr+oPgJEIfymxbRerLuDuLmQXTHXf1fCQnfyqwQ3YrDviMi0F9PU9Elyd9sMpTPHNuGaZt+x07UfO3j69ZbVfCtxy0kKoFVqPNxoz9Xq8MjyUUXhwq0w7hthA6p/ADDHAPcl0Q/4Lgyuxfn1AI23ajCDTy4HwcW+XJ6mHrtgnC9RLokPYNriZ4E+LEkmxrZs9/fKYkiQl2hVy2lyS1GAFM=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(23010399003)(7416014)(376014)(22082099003)(18002099003)(10067099003)(4143699003)(56012099006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zQusJKiK8d6ic5FDc+NVCbOmwV7gt/L7K3xdYskj/MFYy2A4DZ2fqVHqTxTO?=
+ =?us-ascii?Q?i1hdfc4gMDkLB0+Onv0DS3g0234Thqhg/bwGyOZKj3GwayIPRPP8BwSSDHIV?=
+ =?us-ascii?Q?tVcmTSo+es5/K+fEaQywo/Sshuz+i0OqcW9UiiucBXeIrNHrBUUkN6XTF+Y0?=
+ =?us-ascii?Q?Xi4qUruNonp5xcjIsr4EHqI8ynNkDJ91aLmHCCBC14mN3iyVWa/6Jr6//tQn?=
+ =?us-ascii?Q?LHX4qXE0UDTAeKorIX3DrxDVi3qvWU6ll7iz4FC5kEUkpZVt68u6Gn2sSNIg?=
+ =?us-ascii?Q?68YkwpZjUcENRSFC9n5nko0yUwe9Udhlxs0syLwZNmiQIBwOR/j/HNeVOyhU?=
+ =?us-ascii?Q?/cZeU3NzXnkqBScOJUsBgmJa+OSBsnwszg3S3arjfWu+kOPirhNB0YTWy1qP?=
+ =?us-ascii?Q?VvVHygvXNqRZ5Y88z91N0Ibh5iVqJ8qYE53+52wnE5oyZUtOoroJKI96j9rs?=
+ =?us-ascii?Q?2KSvRPXSzduCKa+QKQiFduxdFvSGk/JPYxx3Ls8NoOuyaIpFZAwu2Ub4xZPt?=
+ =?us-ascii?Q?Cg/kmPUknE51Bg6ZSXxNlEdHunnB+nJSo/LAri76wH+y61j+DSd9jYCHgCtI?=
+ =?us-ascii?Q?PRQYd2hiIi+CUCosHKR7KVLOwDz4iPwJ+eOeHELUTONMnGia/Abyn4uKFIfi?=
+ =?us-ascii?Q?BSolbaUBNDcLo10lxb2wj6xVsiicY/etpfVLtBsbbXGV19nNUXblDO97WunW?=
+ =?us-ascii?Q?8KALp6U8AijqqMqiyzPWo04J3jUrfafPCiqakmIhdhbys+1Fe13Zl9F8V18y?=
+ =?us-ascii?Q?bzYXNwhRX241oFHvS5L4fkQ/phnLfNJS3bYKmt/tm1a7Nfi9UzUHBf/W2TJs?=
+ =?us-ascii?Q?O4SuW4K8RkIqCaxsX4ObUHssISft9guBLaAyPJ7+TdcT6EJfvnnV46XKBD4Z?=
+ =?us-ascii?Q?J0b9SJm30I6F6JUKzp90ImDuathM2VKj3IJPXATjz+C4KR5EOkqG0Bv6+34G?=
+ =?us-ascii?Q?ilUHINkuRQuKW+mx2GKnwMN17ov7w7qGWkpPILFisRK/fmklhCovBD4bTJYY?=
+ =?us-ascii?Q?fRXUrmhw3ucBG+Bcpm2B4sLagODttHpGcAp5SRE1k8I5EN32KcW3+D8VII2j?=
+ =?us-ascii?Q?paVoZmWjVsBp4z4vE0OKRABfDxlEnfEZeIvgT7NCNqFn2Sf6iO4OuGPAEJM7?=
+ =?us-ascii?Q?xrkqveYnNR+roN/YSJcxSMQTDjA4DXloMngBZW/oeMp8S6+Hi5rV9LHlbHsm?=
+ =?us-ascii?Q?IZnRYj9JJIJPmGY0N5gAxmvZtfLIsuZOWpNRCFIDjurM0JSilE0EA2gUSxR4?=
+ =?us-ascii?Q?jy9SH8tH+0uRUEXCwFxilZ3gUI74kOjGbzbRrHC1MCrg3d2t+AAYNXZlwr34?=
+ =?us-ascii?Q?DFOaphusp3iw3E7OECofD19AY/6CoPqCmetAqArDvQTJziwPZkGiyytwWiu1?=
+ =?us-ascii?Q?nGJqp8J3yARdNefXk1osoR25DevKYJdO+Q78QPKzWYW0fTbBjiHZOxdkfL3g?=
+ =?us-ascii?Q?1hVxkpWPUC6AxVFE/W/IMBI5muf+u3xat90+Y0C4yUXYelXbZWOnX189H48E?=
+ =?us-ascii?Q?ViNOWJl/5aa1eTTt2ocDXxS6I0HtFhOc7YyDeMXWVxO2DohJxEKDT4rzpxX4?=
+ =?us-ascii?Q?22OBlO/aeScckQMibjoNPTQfuQ3kS8YesYh/X9DMwmyXj86K3ks8RYICmlc8?=
+ =?us-ascii?Q?za/uD1Appxkl1Z1n4myOEhudrdgofzdlwdUKFMfeeig3KuNrHl9C6/LkFnCl?=
+ =?us-ascii?Q?TnOrEbQc2goLD2rBXimml6ie3+UfPp3G6veqj+375ECWznSpvpYUc7hnGdKq?=
+ =?us-ascii?Q?DoKiewYZ+/7y2bzw07MyfUBDvdOjlvFJVS2Yd5AofOjwSKlkh8w7?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3e4006c-323b-4701-03bf-08df2eb06311
+X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 13:45:22.1855
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gHtu4ZfrGETd5R3lmBUplFSGVvc5dQCIWa91GhmO3S7D/r9rne5XKTVvbemH8jzsnDmCt5VtfUDpeMo7bCTFJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCP286MB5194
 
-Hi Barnabás,
-
-Thanks for your review.
-
-On 2026-10-20 11:36:04 +0200, Barnabás Pőcze wrote:
-> Hi
+On Tue, Oct 20, 2026 at 01:47:22PM +0200, Geert Uytterhoeven wrote:
+> Hi Den-san,
 > 
-> 2026. 10. 19. 21:35 keltezéssel, Niklas Söderlund írta:
-> > From: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
-> > 
-> > The RAW input video device always overwrote the bytesperline requested
-> > by userspace with width * bpp. The input buffers are however shared with
-> > the VIN, which may use a larger line stride (for example 3296 instead of
-> > 3280 bytes for a 1640 pixel wide 10 bit image). The dmabuf exported by
-> > the ISP was then smaller than the VIN buffer size, and queueing it to
-> > the VIN failed with -EINVAL:
-> > 
-> >    __prepare_dmabuf: invalid dmabuf length 4042752 for plane 0,
-> >    minimum length 4060672
-> > 
-> > Use the requested bytesperline if it is larger than the minimum.
-> > 
-> > Signed-off-by: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
-> > [Niklas: Use max(min(..)) instead of if statement]
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >   drivers/media/platform/renesas/rcar-isp/core-io.c | 11 ++++++++++-
-> >   1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> > index b60b91f43d42..badde72352c1 100644
-> > --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> > +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> > @@ -5,6 +5,8 @@
-> >    * Copyright (C) 2026 Ragnatech AB
-> >    */
-> > +#include <linux/sizes.h>
-> > +
-> >   #include <media/v4l2-ctrls.h>
-> >   #include <media/v4l2-event.h>
-> >   #include <media/v4l2-ioctl.h>
-> > @@ -335,6 +337,7 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
-> >   				     struct v4l2_pix_format_mplane *pix)
-> >   {
-> >   	unsigned int bpp = 0;
-> > +	unsigned int bpl;
-> >   	v4l_bound_align_image(&pix->width, RISP_MIN_WIDTH, RISP_MAX_WIDTH, RISP_SIZE_ALIGNMENT,
-> >   			      &pix->height, RISP_MIN_HEIGHT, RISP_MAX_HEIGHT, RISP_SIZE_ALIGNMENT,
-> > @@ -352,11 +355,17 @@ static void risp_io_input_try_format(struct rcar_isp_core_io *io,
-> >   		bpp = risp_io_input_formats[0].bpp;
-> >   	}
-> > +	/*
-> > +	 * Honour the line stride requested by userspace, the buffers are
-> > +	 * shared with the VIN which may use a larger stride than the minimum.
-> > +	 */
-> > +	bpl = max(pix->width * bpp, min(pix->plane_fmt[0].bytesperline, SZ_64K));
+> On Tue, 20 Oct 2026 at 05:11, Koichiro Den <den@valinux.co.jp> wrote:
+> > dw_pcie_host_deinit() frees the iMSI-RX domain before calling the host
+> > .deinit() callback. For a core-owned parent interrupt,
+> > dw_pcie_free_msi() removes the chained handler right before the domain.
+> > A glue driver that owns the parent interrupt and demultiplexes the MSIs
+> > itself through dw_handle_msi_irq() can only stop its handler in
+> > .deinit(), after the domain is gone, so a late interrupt can still
+> > dispatch into the freed domain.
+> >
+> > Remove the domain after .deinit(), in dw_pcie_host_deinit() and in the
+> > dw_pcie_host_init() unwind. Keep removing the chained handlers of
+> > core-owned interrupts before .deinit(), which powers the controller
+> > down. Clear pp->irq_domain when the domain is removed so the unwind can
 > 
->   clamp(pix->plane_fmt[0].bytesperline, pix->width * bpp, SZ_64K)
+> FTR, this is now pp->msi_irq_domain since commit 8f0b8cc3a655f56b
+> ("PCI: dwc: Rename pp->irq_domain to pp->msi_irq_domain") in pci/next.
 
-Good idea.
+Yes, thanks! Shawn also pointed that out. I'll rebase once those changes reach
+linux-next, and update the commit message too.
+
+Best regards,
+Koichiro Den
 
 > 
-> ?
+> > tell whether it exists.
+> >
+> > Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> > Signed-off-by: Koichiro Den <den@valinux.co.jp>
 > 
-> And does the device really accept any value between these two limits?
-
-The stride register where this is programmed is 16 bit wide.
-
+> Gr{oetje,eeting}s,
 > 
+>                         Geert
 > 
-> > +
-> >   	pix->field = V4L2_FIELD_NONE;
-> >   	pix->colorspace = V4L2_COLORSPACE_RAW;
-> >   	pix->num_planes = 1;
-> > -	pix->plane_fmt[0].bytesperline = pix->width * bpp;
-> > +	pix->plane_fmt[0].bytesperline = bpl;
-> >   	pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
-> >   }
-> > 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 > 
-
--- 
-Kind Regards,
-Niklas Söderlund
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
