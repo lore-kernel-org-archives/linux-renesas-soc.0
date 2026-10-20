@@ -1,153 +1,114 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.14
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.52
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792516670;
-	b=xBiQMlSRY8vlH6QJN6oXzBpp/ogFMgO/ztnNC7aMdtb91ooH2+lsxn5aVmRD18M+Q7xE
-	 mjebWGMSlmY6doXzrJEaCYxIG0k5p/Sn9HA0szr0NseCF8Xzjhv1NrCnps+rE2P4dAfll
-	 9/Tngy/PfZ+WbuGTSlKm+t2u6fDq6u4SYVKehFq8ghNJUwUETNsL0j/cqG7nBrVBG0djd
-	 f+AcQGgrJTnuVCEtDhRfa7yVBayIaaFmrYfRhyIzBZ4Ox+/mCHt9WVOyOwmgQ5pGVasbD
-	 SUkgJY95xFhWr93yTQXwKW6Zro45wDbpk+NwQ8XWdUOUOqZ6MbLrtGO1UvBQZNUr7sg==
+	t=1792523677;
+	b=FF30gzBqJsB8BWRFmF19HhGrBcBiVHCjll4rT3ba+3PTc3ogbMaW25f1l8Vk6KtRquUG
+	 g5P/rgvqLvPAi4q5cXZprSsmxpNJRHHiJx/HRz0h5n5tVoVUfp18eBHp3gBJ0UZ8d0jXw
+	 neqVgN8LbOO4BEjpIELYZeQKPMTzQtH7qW4Sw98+9hXUT/+BKUT41O48FC+ljm2H4xs7p
+	 vtvI3OAHeTD9M4sAb8W7MLIoKEqN6Cng/Br3vhPAZ9o6WF/7DuRj4tizTxKj8SZNDOrl6
+	 T9OyvBDL4CgQqGnOMkPIzDp7ueNNUHIwkKDHeM/rILJY05P/o7IJ76qlUMbSW6yxq7A==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792516670;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
-	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
-	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
-	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
-	 x-ms-office365-filtering-correlation-id:x-ld-processed:
-	 x-ms-exchange-senderadcheck:x-ms-exchange-antispam-relay:
-	 x-microsoft-antispam:x-microsoft-antispam-message-info:
-	 x-forefront-antispam-report:
-	 x-ms-exchange-antispam-messagedata-chunkcount:
-	 x-ms-exchange-antispam-messagedata-0:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
+	a=rsa-sha256; c=relaxed/relaxed; t=1792523677;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:From:Subject:To:Cc:References:Content-Language:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
 	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-originalarrivaltime:
-	 X-MS-Exchange-CrossTenant-fromentityheader:
-	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-	 X-MS-Exchange-CrossTenant-userprincipalname:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=/VhgduyTXcXNKOPMOwZVzcvhtrDpSe30acwqBs4ZFZA=;
-	b=Eh75BhqBJq+ae2dxyok5HkHSlHXrvQYjyWJ8ztMAkp5Wj/wZHAfKcqgOm1vLkuRSocOd
-	 fTlA7TxNvN9hMVsLQ/r9A8D6SQgz2jJ4vsYLZpHzGLhV1V5+0NnrWb5YRUk3lJQe4bbQu
-	 Ns7/PqsWb77YsStunD/tCFUY7GOnk3nhVS9tUNnEV8E3XdHmEWE9LuRc2uoiWlJzjFgY1
-	 nts4Ll1+4xnWYhoYN6R3UADVwM39dxjo/oGA7M32JUZ8/CUhJg7m8rDclXKivwoNEjH8Q
-	 F+3n+TPD4plBzUaALgBJHWiT3njpyrYomId6trGb++7wBDMXw6CBvJNfmWyBvZlGa2Q==
+	bh=6d4IG9S29wybTx7Exeo1TsHIVy7PUvMX3ckP1t5w5VM=;
+	b=42LfYQkXFN8PqGuyPpxudFYkOnaJihsAue/j9bC1Lhfyq/jG4dJ9iXu4cK3H6KxjQB0W
+	 1/sQmTPaUrfRXaFi/czMmdi+FUeVy2wvNB4tIL1RWci4uYnuGFrHsGQWpmyDKvg3aIE2S
+	 qlyzFi5KpzAtFpWP4mLt/zPF0Q5P1PU4m5dEMBk96AQpwaF/bPv55p8xR5a4CntLtgCLF
+	 xNolbMpTzR9a5lGeSWLgQru/iZNLKm1X1ySM46Hnlo6gVSv0KroS3iV/1Yf3gk4FSCSwN
+	 HzsqzT6pBEfOM5vXchooouR81/AbthVP1Kqi0UoWlGPo381NDyxB/bsns7GdPSn+KzA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=GeSW4yH3;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.14
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011014.outbound.protection.outlook.com [52.101.125.14])
+	dmarc=pass header.from=amd.com;
+	spf=fail smtp.mailfrom=amd.com;
+	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=OYHKC5T0;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.52
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011052.outbound.protection.outlook.com [52.101.57.52])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15C0606AA10;
-	Tue, 20 Oct 2026 17:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F15C0606AA10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726BA606A319;
+	Tue, 20 Oct 2026 19:14:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 726BA606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=GeSW4yH3
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=OYHKC5T0
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GSYXBClMgn2x5AENgsiw5KBeVBppyB56tljUTU2lxPtQ4qXCbp7CX9nHngeOgai3UlQv3oUz2LmU3/Npm4vDzlpob5afHCLKNiRCsawdrRHLAulEfWC1xO4RM6oiRhYVu+JQMpc3R3bpslvYgOEhNjobEyH0iBaT0G2VFLrWFxBKVWTYhzj7nFixrjRX26HfwNHze4uCT4zEFwVACHnPR1QpOH5Dp4knB2YJha1eOeZXivRWcLweouKZR3SI25kQDVcalmI6y+UQ5G4Azn1tfVXonqI0hfxUIgikEJ9X5XpaNBrTOXUftXXXSPlhDnLi/Acc5gikj+sQF8qdc6Ickw==
+ b=CvLTDaYaEqJe1iaEic9vUaYon5aGQHnsFA2kVN0HI+V0+hdikW44pa0SzIDgWyDC2ynCrEr0IZ+HfGr8+AsFi2w1hcDoh9/4r2XhAp40l2OKbgy4g/9d6LGPkQNlevMnHPNKcV6lILES1issACD9QekDuFtyAYoKVfqAa1zYf1L7fmZvFqFPtu3aT2KNOcD4Qb64ybLQa4hUPhteUyuAo9erxL/xGHpc+Nc1w+Q7nmsE3T8YxJuNvcH7l3iVxUxAhaqcrs0StPgEMkilhOIDTe+JR1gnuidbnnkZOjaS68Db62ey4bWk8TBP0MCA5KGgPBq4+d+goDTXHW6vXfXNXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/VhgduyTXcXNKOPMOwZVzcvhtrDpSe30acwqBs4ZFZA=;
- b=OpnfPcamoZc7w+RI2qCbByLujz+Hiyn9WT5vAS4x3KZABiTIaOtjCGVSLLl57huNaojsYp9wD2asEk4YJ55eLtuYds1n6MgSA4s81+AM3GTF0ndTHZmlYRfULbek2x4N6pqids0Xp38LnpeHQ+uCFa1sCWtqwOZzSxKPLSU8ZNBmGQFMZQfYxbV/YHT7Qfbx0lZvsD6Swo34pssbTSThy9zSAIoXSPQt5mGKILRvATKlcUIHwGgNo0LYu8pITwR2JvrsClDqK+57ECtgvJco6P0LMaWgRW31F6SBlM6JfKnlE4qQM1Yd6mBo8xpMgtNVsF72Yjh7EqwZymn6jNm2Cw==
+ bh=6d4IG9S29wybTx7Exeo1TsHIVy7PUvMX3ckP1t5w5VM=;
+ b=hIc8c2FPR7TZYdb3x29G3DqOrQazilurY+YE6PJ/azsNMdREOzZvwUwfoOA/avkegdaTDEvPb3uqJ4HJLpB2vFOeCve/W9ducPlXzyzshMXZATd+r8ozpL52paPbBs44H5uMTpYVkUWcO9kbtICEVlV3sgC5Tfi40sFj121XTHHebqfPpIkfYOiyEHyUlrg+DaQBXz7RUXSZ08jNzKpAopRn8069e87JSaxBcGZBLl9vqFcbDMleaUMgRmsO88TkUTUIVixDcPJvduD+YfTLvkBmZsfp+o/5TTYp3DD8ePqIE/Oi0QPed2bCgYFKGspkIATL98sMo45sKCY+C+O+IA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/VhgduyTXcXNKOPMOwZVzcvhtrDpSe30acwqBs4ZFZA=;
- b=GeSW4yH3CbN0E8Prit2ii31gSNi1owJseig+zPMqbak6GUVewhrtNe3OGpppCX4bNPeBKo8TWmzpT0Ya6o1rvgzHJfxo6PCMMpfi5nP8oT4XTJy1/XwxszvOgz5Bc6lKrv05YIxQRgwyyLLswp+BYNjm/k001s+Mu6NROFc2U4Q=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYRPR01MB14300.jpnprd01.prod.outlook.com (2603:1096:405:221::8) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=6d4IG9S29wybTx7Exeo1TsHIVy7PUvMX3ckP1t5w5VM=;
+ b=OYHKC5T05Ov/sW0JLpJ9XMnG3UM9cwQZ9pdCs8PkxCVj4H0JJPUFYciq4jxPSSbd3W1SYhtuL+zwR1HHCez51ruijVfXOEGDP94t7qznNwJBwlZlD/5PZ2WXV5g3jw8Kez5KOXJhlBKWBR4RYFBOYAiXWFZq7SjWnd/s+uC9wyA=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA6PR12MB893085.namprd12.prod.outlook.com
+ (2603:10b6:208:601::18) by DS0PR12MB8293.namprd12.prod.outlook.com
+ (2603:10b6:8:f3::7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Tue, 20 Oct
- 2026 17:17:45 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%6]) with mapi id 15.21.0496.021; Tue, 20 Oct 2026
- 17:17:45 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Rob Herring <robh@kernel.org>, "biju.das.au" <biju.das.au@gmail.com>
-CC: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>, Fabrizio Castro
-	<fabrizio.castro.jz@renesas.com>, "linux-can@vger.kernel.org"
-	<linux-can@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, Chris Paterson
-	<Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v5 1/4] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3S has no Classical CAN mode
-Thread-Topic: [PATCH v5 1/4] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3S has no Classical CAN mode
-Thread-Index: AQHdX8G4aStep/9cyUCThDKyKA/iO7cGpjQAgAAGNDA=
-Date: Tue, 20 Oct 2026 17:17:45 +0000
-Message-ID:
- <TY3PR01MB11346F23C5532B7D9F23579A286672@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20261019120220.166163-1-biju.das.jz@bp.renesas.com>
- <20261019120220.166163-2-biju.das.jz@bp.renesas.com>
- <20261020164840.GA4094037-robh@kernel.org>
-In-Reply-To: <20261020164840.GA4094037-robh@kernel.org>
-Accept-Language: en-GB, en-US
+ 2026 19:14:33 +0000
+Received: from IA6PR12MB893085.namprd12.prod.outlook.com
+ ([fe80::3f4e:1f38:3db2:270a]) by IA6PR12MB893085.namprd12.prod.outlook.com
+ ([fe80::3f4e:1f38:3db2:270a%5]) with mapi id 15.21.0546.012; Tue, 20 Oct 2026
+ 19:14:33 +0000
+Message-ID: <e39ddfb1-7a42-449d-86c6-92086fec5ae0@amd.com>
+Date: Tue, 20 Oct 2026 15:14:30 -0400
+User-Agent: Mozilla Thunderbird
+From: Harry Wentland <harry.wentland@amd.com>
+Subject: Re: [PATCH v7 1/9] drm/amd/display: embed the writeback encoder in
+ amdgpu_dm_wb_connector
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ John Harrison <John.Harrison@igalia.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Louis Chauvet <louis.chauvet@bootlin.com>,
+ Mihail Atanassov <mihail.atanassov@arm.com>, Eric Anholt <eric@anholt.net>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Brian Starkey <brian.starkey@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
+ <20261019-wb-drop-encoder-v7-1-d4288a26eb54@oss.qualcomm.com>
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYRPR01MB14300:EE_
-x-ms-office365-filtering-correlation-id: ae9286a3-0bf2-4605-b957-08df2ece0e8a
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|376014|1800799024|7416014|366016|56012099006|38070700021|4143699003|11063799006|261009223027099003|10067099003|18002099003|22082099003|3023799007;
-x-microsoft-antispam-message-info:
- /Q5ZXEI6G8sXgM4o8Xys38M3/YHXDAyNkF0HXaSBeuYmKpNPHap6I8COWqFYibYHnOwooPV8PvUVhvLCRbUiizCEeC21PQhdCN5yvnFx9P/0v01PAjXaM4TLYBjwalWeaoxpSBX3u/b7DlNAJzK2MlteNztD/BaQ54P7hYKMl9XXajRGmNbDmUye1GqL6KY37PUdkjl9udJY8en3qkcWmhumCpIaq7Qu9vMrwLm3Qhdbd9CJPa9ORhack7j1m/X3t3FJ7z+qMyEl3ljuGBCPkF9TOQZFMn7dHVi9EGDI1KftiTFMRDzEF6XVD1rjjgUCBuoH8927CO0zLZxx2GsmmlwWblwIJ42PT5RDJP360lOT+9E4tWugojw9uVHMhrJ1gItwOLCfT1Hb9H1YI5skfExSEYNPnPyUUW0dwdA8jw5CKpxh9QmRfCz5cRh3Lywb+rzx1un18mCdLZbwiySRlUp2MsgrHhD3MaDDTqi8sFPqLHLXea4UzEPd3uQEzbUJqGrre9Dn7LEjwqg1PWvlJ6a4jJVX2rocF/cZW5RchSRfoSwrrAMJfAFDOj+YHmYqaTMpSDTrZHjkf5bCr7OcI0nGMrlx30AS4Ho94bjlwF1Hmt8NEq9qb2/JjQ0yUTyoiVG1bU/xlsOjhcObe+PT0OYnrCax6r0zTiY44gWLKFcmnD6su9C+J4xr5LXM4I636VinB6sJIdEnb+or85+gi/LDE8f32GSUgrSJhZyoZFs=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(7416014)(366016)(56012099006)(38070700021)(4143699003)(11063799006)(261009223027099003)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?cVqgEOvaF6JHWvqGJpac29wh5tJOcKiYlxvdxtfHMETnOqgteJiRdOCpvnoA?=
- =?us-ascii?Q?lrOSlQNUXXxx86sVfYoaK1E+elqdNI5lPnblKthiqfPiApO5B08jNpz0sUr5?=
- =?us-ascii?Q?YoGHtuJ3PzTgtY3/yXCa1uvGpXV4GGwZizKu/u4RitkgXIK0ggLsizRRkDLb?=
- =?us-ascii?Q?/6VOYxzsP26K0iaMxR4nbZ3tXaGTcz5xrRK5Fqk53VhXIFOZHqf0HsSmbN9v?=
- =?us-ascii?Q?eor+pE1yaL1wITustXSGWyo/lTHbmdEYrukWwL5DJPAciSHC77w/0UA5i8xF?=
- =?us-ascii?Q?y3gbDNSEjyo4wzL3n9znzmpcPeS/H+uaLenbfrurzeSaSoyzGueffcVpkFRT?=
- =?us-ascii?Q?8zfLqFZbeqKE5zrYXPhzR6P9bt1YaWPvoWO18sgKctDHhNVea9FuB4QE1Fy4?=
- =?us-ascii?Q?n1a8LJzqSfwN50wadMsURNaUHy9H5AjUfTE80b4V+8+P3HE0GALVNUXcaSs/?=
- =?us-ascii?Q?ao8jR9uphKipxMgwlPbNv8DGGlASGDUwJFJAFJuwky8N3xowYgCRn1q2p8q2?=
- =?us-ascii?Q?7Ia6FCSffAzYvl+lo6jWzMrwP4OCB6W+vCWT2u+1AHcDgtiUWSgIynr4QZ3T?=
- =?us-ascii?Q?FDSKKOTRy984I5RAlikxq1mZxeryad5rvgYPGPq65bTXNS3J4U+JAehbrAtx?=
- =?us-ascii?Q?szmyYS11K16YT3l/VAnTGAvuP/FkRVf8z3x1kf8GRWluSozBboz3NS0IZJZM?=
- =?us-ascii?Q?euEcYNM0l724BS2pCIz3OdouvW+cpqaxEco3wGjgrq3ZKmEBqixZ22KrQcaD?=
- =?us-ascii?Q?MOh2WMF8kjCBPhPKaVqM35+6XcfBWkC5w+Jb/gy8yjgZE2XSNzxQlLbcX6Vt?=
- =?us-ascii?Q?pXqPlDUhF5JFv2UWxqRBOqCd6T9khrWwsEumKdX/xcqe2KrQCQVAIJDmY0YI?=
- =?us-ascii?Q?eV59l4lTaCiki0ZJFR9jjr5rEtUiiqJRbFSqPFte6Fu09CcA17hMFwETH5K+?=
- =?us-ascii?Q?6neaXHjg6Fdxe56asEKMxubvTG8x9XkSyWKEQHgWRZp7pvfigrlSdjgVDO1I?=
- =?us-ascii?Q?HFqygS/QXPmSWHM70uskinF9WeUMFHtSjAiNXOeThxpPzWfv7aeU6qBn/snS?=
- =?us-ascii?Q?646IXYspx4Sd5GJTXnPu6PAlxPvPGATriRVqFAvUED+qHwCOeUdG1l8pTFXh?=
- =?us-ascii?Q?Tt8adfI1ZboCBOr8WVwai8Xa2c5dh1KTo/+CzDSGslSeyZLWfmDjSRALGaBC?=
- =?us-ascii?Q?NUM3vZ3/XsINxWIGCxe/ozl4eAYKJoGCkdJdOBBLy2xU6FkiWXH5Xmy5yKjl?=
- =?us-ascii?Q?SBccmAhCQzCT7GZkVqeSebx+KhiH9hE1cy9hkNEgf46MDUprajU2e96jQd+x?=
- =?us-ascii?Q?/alsUA9x7zM0/mlF7KMjvAFo1tSLrOyrM7W4bg+nt1X0P+6vK+14rcZtNH7Y?=
- =?us-ascii?Q?C6CvSUXIkiXn+yGk6TAyJ6n3mYDQBEvm3DYqaoGOIlighA/AA2DlS9AXOpI4?=
- =?us-ascii?Q?VICxVS5eiuai7ZXanZwWRyU9W5LOi5WcrJAbHo3ZrSpw90w78Jlry/dyhrFL?=
- =?us-ascii?Q?hlORrDn7SACRlwa2cVVVqVQuZN8VCa4YxU9F1uX1Ny4TbNneIOYQjT9oG0LT?=
- =?us-ascii?Q?JoF40BR+L0xy5WSrD8UQSLh0ir/3YcAWqsRKEqiiROO+v6IFkw61kuA0ulMX?=
- =?us-ascii?Q?SdRIHoOCEbF/Y0/KEKto3LJSbQyd0rtsZewTzxcEUrjVCBbKGvdG/4eBQNma?=
- =?us-ascii?Q?iqcDCrm3wQgLKlF5GPt6rPmh3p6H1KcJKZw5zcqbiazhrTP8llM2vIV+AU5d?=
- =?us-ascii?Q?5RDKJfMTCQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20261019-wb-drop-encoder-v7-1-d4288a26eb54@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0122.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:87::23) To IA6PR12MB893085.namprd12.prod.outlook.com
+ (2603:10b6:208:601::18)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -157,86 +118,204 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA6PR12MB893085:EE_|DS0PR12MB8293:EE_
+X-MS-Office365-Filtering-Correlation-Id: 746eb3d8-cbce-4d77-7a2e-08df2ede5f6a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|23010399003|1800799024|56012099006|4143699003|11063799006|261009223027099003|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	5yHoSKhoS9fsP4cwEPmA+c1VHyK8Vg3jyUG83BWkT0xV+e9c3Kk1LdV5eahoCy3RHz6u/eoneOgO6E0wxQy0gxxAkRlFoWZoWn112AxyHMIZK/Bmrgf3Mcvh0x6b+6zyu4Dfw5pOBo5DhIlIExPzrAOJCY/Q7Pr2u/IVUBVBOQ6soQyR5+HaiEaknPCrzLxbZa7wr02J2wPAKyoavzr4Y1OuQE7jzpfL+x1Vb3t9dRxsaKPo80jb4g80aZ4+6j5XKHYjrZYepFyz7ytsUCp7DMYGYKXqxX6BWRuG9xvgS4Mfqn5pGIqaomnHXDoq5K6otAZ5ivzzWr+EMm7EZVBc17JVej1apDYMuYjP+uWSn9Vpi7Mnp2mX+s7auUhG5EFUDcUZQg+aAjQxqUedjnE54gQ8s/bwmkIwKVCwuCjzgzT8UjhA6kCXQfMJMde7bXO/TuSXu1+JODdH2usX0lTFNILcFGGQ94OIKtOlyzBI4ixxdhEZ3OclSAtCsOlWvfSjq2FQ7ONV/KIfmSlQahnJadJuW4k/AiC+nzeS/5adRJRnX5FiSDyhyqGCRbigsXM7WqV9dTUjGOr1Y7r0YuoEt1KNQHhDCORRVkfyQoD+zwmcLyStv7EXPKb2C5HD7f5zVQg1Zuso6W5ABfQOUbR+om6MuaPMyMA6EOoCLBOT4Fk=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA6PR12MB893085.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(23010399003)(1800799024)(56012099006)(4143699003)(11063799006)(261009223027099003)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VkJ6NXkrYUJYQm01bjdtS2VqMmRJRXJGU2hwelhHb3VOSDFaVkl2V0V2K0U4?=
+ =?utf-8?B?WENGR0ZGVC85bUxpd0ZGK3J1Ykx1Z2lVUmZBajBkc2E4c25qMUV3WENldFBK?=
+ =?utf-8?B?SmlrTGgvcHpSeThiTUpNQnNMck1jenlRaENydS90Wi9lUkJPcFlvcFdpbS81?=
+ =?utf-8?B?OFJaSzhzS0UwSVJmaEtnOHI2elMzcTVZWEpJOXBIRmNTVFZ5cnptWlJEZHp1?=
+ =?utf-8?B?T3paNVc4QUc3Q3F5czg0MEdDTWw1TGV1MWE2dlZmMVJUYTVUdXgwcHNnS3hZ?=
+ =?utf-8?B?YnU4aXQycWJFTG1WV1U5K2xYVER5ZUZRdXo0QmdTalAzTE9LdzErRmpwV3g4?=
+ =?utf-8?B?Wk8rMmNWNDR3dUYyemhBQjQwbUtvaDNzUXM3NEU4dW5UT2I5YjQwN3U5QTRK?=
+ =?utf-8?B?M0x6NlpNbFhiUXlTYXBsdnFRNUEvSGhOZGtrV0FNNnB6OU95RlR0VWUvZ1hs?=
+ =?utf-8?B?ZEZpSkhmQVl6WFdBNzEwZWhoY29vNFN1QVdhZmk1dWh5eWp6YkpTZFU4QmNs?=
+ =?utf-8?B?b05wZ1FCZ0MvU09CdzgrSlpZQ3pMeDNZMDEvb3dGSWZXcFVIalJIaWw4dnF3?=
+ =?utf-8?B?YnlpTTkrd0JxbHEvZHlXUDBXM1VkUUNKYkRzTndGRXVTUncxeXI3TnZ0OTdC?=
+ =?utf-8?B?QmxRTFl2dlFJK2p6S2xjYUgyZndWQ25nVXl4MXBTS2JEOThvaEowUlE1Q1Fm?=
+ =?utf-8?B?NWJHYWlGamxkQzM1L3Z2UXNOSEVZcnFDRGJodWFVNTBLTlFWT3dmUzlTbWhU?=
+ =?utf-8?B?OVJ4bzdnVC9hWnRIa0pKdlE5TVVUZUdlYWp0SDcwNUVCZ0tHZXo3R21lUDRu?=
+ =?utf-8?B?TEx6SUNveWRidDhmTHZzemUrTkRpdlc3OVJUT3ZDa2J5Uk1Ha25YcFNWNlB0?=
+ =?utf-8?B?dVZacGVkWCs2RkFqUEczd08wWDB2VFRLQ1RrdVFhQjZoby9rb0x4Znp2dHdQ?=
+ =?utf-8?B?QlYyYnlPVmZhRmowVzNUN21XeDZsU3hoUGVoM2lML1k0K2VrOEh4UkROMVRX?=
+ =?utf-8?B?SHRuck1wdkdZeDFxWWFVU1BvSXV5N1lqbWY4dkk2TFl0OVR6d3B1V2w2dGZK?=
+ =?utf-8?B?QWlWVUdHL3luRnpPSHROcE5laWM3dVpMZHgrS3NoNXpnMkgwUlE3YXJoNWtZ?=
+ =?utf-8?B?MzRad3FlL053dHNjcVZGZFY1YmNoTW9oYjZtNTRmWXFOMzFJYzZhdGp5d0lD?=
+ =?utf-8?B?U1dCa1NMYkpEQjhNKzlyK3ExS3VZOGVaTzg1dE5OK3p2ZmpHWUlSQXdIMGho?=
+ =?utf-8?B?MTcya3FWaGxxTlVKaDNSOTdUMmo0a2huTWFVMjlIeVhwU01uVHBJNHpFMkRi?=
+ =?utf-8?B?amNjb0hCN2g4ZU9uN2luYnluSUZqZWpFd1N2Z0QxN3dhaUxuVURqVEpEMnR0?=
+ =?utf-8?B?bzhXV3NpZU5KazhXUFVnby9qUzJaS0tQckRQaEp1cHhoRTNpR0NOZkpNVVZq?=
+ =?utf-8?B?QitQZTV0cUlmQlpTWGN4L3RMRE5lRkpkUkIvWFhYTUpLUm1vOWJ6Uit5YWh5?=
+ =?utf-8?B?RS9HT2VTVVVTa09RTXEvc2FpK3FMSmJRSHVsM2FlZFRTZlZLUUVWZzRHQlJp?=
+ =?utf-8?B?cTE0TzUrWUU3WXlxbkgvS291Qmh2YUY5L3FhZGx6MytQMDFsck1sQ29oQzFu?=
+ =?utf-8?B?bExzN2tncWNDcmErSEk1RUt2Nnd4MU1YaUZGcUNWR3ptN256dG96eVlTTFlo?=
+ =?utf-8?B?Mm9rdXJZWGZxVlJTbkErTGFjNnJLeDRqVnhrd04yaDlqVWRpaW1CWjN1eEph?=
+ =?utf-8?B?eDM2Zjh3cDFVTEYvaWQ1MnlPRThiamtkT2hZakZDWUpRUnJmUVYrRm54ZlNX?=
+ =?utf-8?B?bCsvajIyWTJTVUg0a1J3dU1CKytRbVlWYWhFTG5aOGMwZjhYeXVQSnBhU3RB?=
+ =?utf-8?B?RThXRnlrODl3REVKODJTa0J5SmNiMks3M2M4NGU0V2VxZWd0QXVyYk9USzF6?=
+ =?utf-8?B?ZXRCTzBndVBWN0h6YnN6ZjFvcTBHTVFiNWM2cUg2anR2VUtKUm82WDRISGxL?=
+ =?utf-8?B?OHB1cWNJSWRpQ1ZtZVZycy9MdmM1R3pKaXgyeDZicDdxbE5NL0ltYVJ6eVcr?=
+ =?utf-8?B?dWMrKzNRZXowb0JES1VhSXlhbDZ6SlMxQnUwRWVkQ0ZqS0Y5N2MzK2ZuKzVk?=
+ =?utf-8?B?WUk2eE01UXNiNGtrVEU0eXlKK1pqbVA3d0N4REkwZDNiaDMwMitwZDVQL090?=
+ =?utf-8?B?M3ZBYUFDU09DQ1BjSjloNHBGNVJQQS8vYThQeURDNkJ4U080UTRjN2RjdG9H?=
+ =?utf-8?B?NEp1b3QvdGlvMnI2NnVNVSthalZvTVFqamtRczkzZVh2SzlHRUdJaGRYK1pO?=
+ =?utf-8?B?ZllEbFEveEM1M1RtL2J1bVh0QzZCdk9XTnNGU21Mak1lcTRCdnNQdz09?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 746eb3d8-cbce-4d77-7a2e-08df2ede5f6a
+X-MS-Exchange-CrossTenant-AuthSource: IA6PR12MB893085.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae9286a3-0bf2-4605-b957-08df2ece0e8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2026 17:17:45.1900
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 19:14:32.9392
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nSclax+wWj0TDBAxicZitwtB1rKh+c48IB6SR+H06eIFu/H9Wm/1zv/Za1WI+Gzy0rKGRf1O0JXYFuf0CNcD71YeMHQwrMwVsCL6JIU3sNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB14300
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CwI3NswoR+OSrNhDCWmYueYMMx/1eTBzcpS7bYSgvsbtHjsGTUeXYPrLU6ulMgN1626tf0+WRjVxJYI4c6qekA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8293
 
-Hi Rob,
+On 10/19/26 09:12, Dmitry Baryshkov wrote:
+> drm_writeback_connector_init() hides the encoder inside struct
+> drm_writeback_connector, which is the only reason that structure carries
+> an encoder at all. Every other writeback user already owns its encoder.
+>
+> Embed the encoder in the driver's own structure and register the
+> connector with drm_writeback_connector_init_with_encoder(), so that the
+> encoder can be dropped from drm_writeback_connector.
+>
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Thanks for the feedback.
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: 20 October 2026 17:49
-> Subject: Re: [PATCH v5 1/4] dt-bindings: can: renesas,rcar-canfd: Documen=
-t RZ/G3S has no Classical CAN
-> mode
->=20
-> On Mon, Oct 19, 2026 at 01:02:13PM +0100, Biju wrote:
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > The description of the property that selects Classical CAN mode
-> > implies that every supported SoC can operate in that mode. This is not
-> > true for RZ/G3S, whose CAN-FD controller supports only CAN-FD mode.
-> >
-> > Update the description to say that Classical CAN mode is not available
-> > on RZ/G3S, so the property is not mistakenly used for that SoC.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> > v5:
-> >  * New patch.
-> > ---
-> >  .../devicetree/bindings/net/can/renesas,rcar-canfd.yaml       | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> > b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> > index 1a7a9ce45e97..7d3330f8fc1a 100644
-> > ---
-> > a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> > +++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yam
-> > +++ l
-> > @@ -146,8 +146,8 @@ properties:
-> >      $ref: /schemas/types.yaml#/definitions/flag
-> >      description:
-> >        The controller can operate in either CAN-FD mode (default) or FD=
--Only
-> > -      mode (RZ/{G2L,G3E} and R-Car Gen4) or Classical CAN mode. Specif=
-y this
-> > -      property to put the controller in Classical CAN mode.
-> > +      mode (RZ/{G2L,G3E} and R-Car Gen4) or Classical CAN mode(except =
-RZ/G3S}.
-> > +      Specify this property to put the controller in Classical CAN mod=
-e.
->=20
-> Can't this be expressed as a schema?
+Harry
 
-OK.  I'll express this in the schema with an if/then that disallows renesas=
-,no-can-fd for renesas,r9a08g045-canfd, and Will update the description as =
-"Specify this property to put the controller in Classical CAN mode"
-and will remove the unwanted description "The controller can operate in eit=
-her CAN-FD mode (default) or FD-Only mode (RZ/{G2L,G3E} and R-Car Gen4) or =
-Classical CAN mode."
-
-  - if:
-      properties:
-        compatible:
-          contains:
-            const: renesas,r9a08g045-canfd
-    then:
-      properties:
-        renesas,no-can-fd: false
-
-Cheers,
-Biju
+> ---
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  2 +-
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  1 +
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   | 29 ++++++++++++++++------
+>  .../amd/display/amdgpu_dm/tests/amdgpu_dm_test.c   |  4 +--
+>  .../display/amdgpu_dm/tests/amdgpu_dm_wb_test.c    |  4 +--
+>  5 files changed, 27 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 5e106b65034d..07dd69b42e83 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -4805,7 +4805,7 @@ dm_set_writeback(struct amdgpu_display_manager *dm,
+>  		goto cleanup;
+>  	}
+>  
+> -	acrtc = to_amdgpu_crtc(wb_conn->encoder.crtc);
+> +	acrtc = to_amdgpu_crtc(to_amdgpu_dm_wb_connector(wb_conn)->encoder.crtc);
+>  	if (!acrtc) {
+>  		drm_err(adev_to_drm(adev), "no amdgpu_crtc found\n");
+>  		goto cleanup;
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> index 1d256dce0e4b..d365370d9958 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> @@ -930,6 +930,7 @@ static inline void amdgpu_dm_set_mst_status(uint8_t *status,
+>  
+>  struct amdgpu_dm_wb_connector {
+>  	struct drm_writeback_connector base;
+> +	struct drm_encoder encoder;
+>  	struct dc_link *link;
+>  };
+>  
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
+> index 6f91a992d43f..b5b186e4f81c 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
+> @@ -218,6 +218,10 @@ STATIC_IFN_KUNIT void amdgpu_dm_wb_cleanup_job(struct drm_writeback_connector *c
+>  }
+>  EXPORT_IF_KUNIT(amdgpu_dm_wb_cleanup_job);
+>  
+> +static const struct drm_encoder_funcs amdgpu_dm_wb_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>  static const struct drm_encoder_helper_funcs amdgpu_dm_wb_encoder_helper_funcs = {
+>  	.atomic_check = amdgpu_dm_wb_encoder_atomic_check,
+>  };
+> @@ -246,17 +250,26 @@ int amdgpu_dm_wb_connector_init(struct amdgpu_display_manager *dm,
+>  
+>  	wbcon->link = link;
+>  
+> -	drm_connector_helper_add(&wbcon->base.base, &amdgpu_dm_wb_conn_helper_funcs);
+> -
+> -	res = drm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
+> -					    &amdgpu_dm_wb_connector_funcs,
+> -					    &amdgpu_dm_wb_encoder_helper_funcs,
+> -					    amdgpu_dm_wb_formats,
+> -					    ARRAY_SIZE(amdgpu_dm_wb_formats),
+> -					    amdgpu_dm_get_encoder_crtc_mask(dm->adev));
+> +	drm_encoder_helper_add(&wbcon->encoder, &amdgpu_dm_wb_encoder_helper_funcs);
+> +	wbcon->encoder.possible_crtcs = amdgpu_dm_get_encoder_crtc_mask(dm->adev);
+>  
+> +	res = drm_encoder_init(&dm->adev->ddev, &wbcon->encoder,
+> +			       &amdgpu_dm_wb_encoder_funcs,
+> +			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+>  	if (res)
+>  		return res;
+> +
+> +	drm_connector_helper_add(&wbcon->base.base, &amdgpu_dm_wb_conn_helper_funcs);
+> +
+> +	res = drm_writeback_connector_init_with_encoder(&dm->adev->ddev, &wbcon->base,
+> +							&wbcon->encoder,
+> +							&amdgpu_dm_wb_connector_funcs,
+> +							amdgpu_dm_wb_formats,
+> +							ARRAY_SIZE(amdgpu_dm_wb_formats));
+> +	if (res) {
+> +		drm_encoder_cleanup(&wbcon->encoder);
+> +		return res;
+> +	}
+>  	/*
+>  	 * Some of the properties below require access to state, like bpc.
+>  	 * Allocate some default initial connector state with our reset helper.
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_test.c b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_test.c
+> index e27f6e504395..9d237f2db95c 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_test.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_test.c
+> @@ -4535,7 +4535,7 @@ static void dm_test_clear_writeback_removes_stream(struct kunit *test)
+>  static void dm_test_set_writeback_no_pipe(struct kunit *test)
+>  {
+>  	struct amdgpu_device *adev = dm_kunit_alloc_adev(test);
+> -	struct drm_writeback_connector *wb_conn;
+> +	struct amdgpu_dm_wb_connector *wb_conn;
+>  	struct drm_connector_state *conn_state;
+>  	struct drm_writeback_job *job;
+>  	struct amdgpu_framebuffer *afb;
+> @@ -4565,7 +4565,7 @@ static void dm_test_set_writeback_no_pipe(struct kunit *test)
+>  	conn_state->writeback_job = job;
+>  	crtc_state->stream = dm_kunit_alloc_stream(test, NULL);
+>  
+> -	dm_set_writeback(&adev->dm, crtc_state, &wb_conn->base, conn_state);
+> +	dm_set_writeback(&adev->dm, crtc_state, &wb_conn->base.base, conn_state);
+>  
+>  	KUNIT_EXPECT_NULL(test, acrtc->wb_conn);
+>  	KUNIT_EXPECT_FALSE(test, acrtc->wb_pending);
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_wb_test.c b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_wb_test.c
+> index 03036f906385..2711696f6b9c 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_wb_test.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_wb_test.c
+> @@ -506,8 +506,8 @@ static void dm_test_wb_connector_init_success(struct kunit *test)
+>  	KUNIT_EXPECT_TRUE(test, wbcon->base.base.funcs != NULL);
+>  	KUNIT_EXPECT_TRUE(test, wbcon->base.base.helper_private != NULL);
+>  	KUNIT_EXPECT_TRUE(test, wbcon->base.base.state != NULL);
+> -	KUNIT_EXPECT_TRUE(test, wbcon->base.encoder.funcs != NULL);
+> -	KUNIT_EXPECT_EQ(test, wbcon->base.encoder.possible_crtcs, 0x1);
+> +	KUNIT_EXPECT_TRUE(test, wbcon->encoder.funcs != NULL);
+> +	KUNIT_EXPECT_EQ(test, wbcon->encoder.possible_crtcs, 0x1);
+>  }
+>  
+>  /* Tests for amdgpu_dm_wb_prepare_job / amdgpu_dm_wb_cleanup_job */
 
