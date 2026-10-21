@@ -1,80 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792627264;
-	b=Wjj8lvVIWlPLG177wSO1NymPtipfh6yTkburNgCr15Va5thalJkG9k6k9Ti3wZVsp3Ec
-	 5y2oGPK8tlHmbZWBycP7Kd4InJz4uslxVWFliUZhXsML8U4t85bOlZ2Xu7bBdDXdWO6T8
-	 8mHQDAopjxnSOfFPx9EO4LXTjtqGr2QIOiJiNc6301xkyeZIHdT8jBYNIjICWhO1KbSLY
-	 eLXbF+81HftK6GJySe2I6o2/8FZTEHe1DP8sh4enO1S2RypfP/bbU/g4sZ64as0ZRbaV8
-	 KQejFQbun/LbBjF27IMpa16x+W/QGbD8pHr0az5d7JNj+E0rKEwTax0Yaq8h7+rmxSw==
+	t=1792627285;
+	b=G/xF0WRU7dPLi+Y9pTXKaWgXRpg2b7uVm9kDjE7u6BotrnDLz5XnGqmVkiA5+dMinDg5
+	 deM2dd/RIuEFYvK5Rh2kmG1Zdi7ntv9Hh9kH3SwHG/+hcDkNE864hN0/88h0z6mByam7m
+	 ROTsRXqszo1L6FdMDX5ayT+15jlSFZSN4eHKmI6TWhcFyt3DuLbZSbRKECebLfPnMTkPb
+	 GRft7+w4J3bHpLMBkeD12wZAJnDdNPyStMvhjXjXvoHJ7s/9g4KwvfqWTQNTJGdGCsqx8
+	 m9L0pNc3jHycGa57c/4Mbwf04JLiUf03D/Cy9GfexsQAlwgI4AT6l3punmq6RjhdGTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792627264;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792627285;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=vdQ15CY2t8acOR+daJ/by7IbMKM9K/k4D2pVTlpzkNk=;
-	b=zG36NLnIhyGGW3hFiBzXEqIy8tEIEwII1+2/kYxU3CrtJ9X9J7Hih4RUqHwnt/g5NsbJ
-	 r5fadixGq/kVLrE3b65FakUwYeFOv93NblXbDje7obNdOd873EV8AnTPyBkDKak5wKpwa
-	 bmW7U0K6jCl83PGfGcOlBkyuOo32xTHE0jDPlS2k+Hso9Mr1QqFGlB9PzUSkCa5vnHo/u
-	 IYj5BTzn1kcoVG4uIwfqL1zqyF6QXFiyyaYbu/2mNzK7tXcTUrFP8yjCiPpajTxyZBXCl
-	 YEGWdMGDvSW/fIxxnYXOCujO0Wy/Wf8Db/p85a9NvVHksR3p/e8vfAdG5q/3XzDNmnQ==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=9rsuU/zpvGVZ6N3nvTXW6aQt3MLOdJQFmOTT1iINVYg=;
+	b=ydpju7S7MVIP1MOK5OHeeBFPdPrknf+nCHZ6Qa/tdfG3JRnuPKz2jjBS/Vflk5HYF3rd
+	 nMr++F4C2dyiWpQM0ZqksnZkzaMJiDBxKQhkKkYTG4UUJ/821Q2andjJEpkJcBnb5YSUs
+	 2FscnXOxMU1RdnrWwA+8SmZZwn/J1yBFf3pXf4/arAjc+dr0yygHDmKtDaLn9ZYWgOpAU
+	 jpbMC/mcdxbGgcWDG4mvcknqi+3aoixgEXRoeZWHYn7/CjcT0cIiWHps6QzwrDy/wadud
+	 GpANHxzbDSoVcGX/aBizrdkPCDmGRTXtwYFXMy8lDtWl/mRWvBxwS/5OsDy7qBmIJyw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=UmA2bOuU;
-	arc=none smtp.remote-ip=74.125.82.169
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=m5yg9UoE;
+	arc=none smtp.remote-ip=74.125.82.174
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190EE606A319
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 00:01:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 190EE606A319
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C239F60A2620
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 00:01:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C239F60A2620
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=UmA2bOuU
-Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso1714900eec.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Oct 2026 17:01:03 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=m5yg9UoE
+Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-368581df789so454925eec.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Oct 2026 17:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1792627263; x=1793232063; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vdQ15CY2t8acOR+daJ/by7IbMKM9K/k4D2pVTlpzkNk=;
-        b=UmA2bOuURe6zzZcz6sNdn2qZsqHZK5yINxkcZrAhLL8QDaeRg9nf09OXJdDZpSCRYf
-         +aUzwszLCLnOIgj3vFHUtMtabk1DMoHgTSs8fG9CjMPPuBumBiza6waGhaeaMQRTjq3X
-         8j8BEdih2gmRULB+bP5mlObW3UOjqcRdummgc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792627263; x=1793232063;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=chromium.org; s=google; t=1792627284; x=1793232084; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=vdQ15CY2t8acOR+daJ/by7IbMKM9K/k4D2pVTlpzkNk=;
-        b=0P0TNJ30Hio6lAXpPF/fTFMoeb43oR7OSzPdCq97fiPQ0o8uzMlxKcGoitrClaLrSx
-         vDetkowOgVMBYe+luRb9MRQeX2hrSsUEqvoaVVzgM/XdWLk0sb2vhKxOUS/6euEytIQX
-         p1UMCoJf8TeSNFXQTxw5glRgLxAEYtkeJ7+bVKKpgK12Gm5yL9J0d0tHM7HI9llhWn0w
-         QU9XXaBYZBrsm1700OHpXjxDVPn7G+9tgzJFwRygTvdtv9I7FHSxSMK4EjFMwDyHCnGZ
-         +D7GPwZVND8Ie5Y4DhABQ2dNqYhFn1eEY6pSgGE3OHmw8/3dmKtLQQFbJI+Wqbvp4PRp
-         qJdA==
-X-Forwarded-Encrypted: i=1; AKwUvBzDfLnMHebbhtoLvKCOCXaiJlLfEWgzMluHxc2tyuQ2fpWHrQ3/1XzwXTNUd0gA+ntlCN8iNdNaNM4goz2Kx81r6g==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLdvFXH0rW8n8B+E67L3SXjPsdIY4WbpU8+oT5HpadLDuFDRTLF
-	+ksamFfoHi6xfPkZFV2kwdw/p52u4dIzI28y5/saLqXe2YC1kspnVXrv9joCdew9rg==
-X-Gm-Gg: AYBFou1ZKItYbZZULklPrN5l1C8NsrHljdKIU2PL3S9qsVv6jeaKznusVeLSYmwkoLs
-	bC1OMWD5841ebb0hvVQrkBL/D0WKuCZWJS+quPruBNzRuMku+GcBf7dVlToLbhtRtTuLHOBMHBw
-	bRq+EAzjELS8RNnWkYxMIUAv0Q1H1Ft5EFwNneV1rwy7CGjFfVpjdzbDWYWnrHKvaC90UCCkYqk
-	LBKrL2KqoEXJGdpnX5R+JJN9lottvTF5Au2HJ8BJvkCSfe7nDgVrSwEO7TEKBwPldik7tUaVsO7
-	jOupcZA+32vhVuiKabuYM3NvZM0DVl/UjmKPdYjeV0hjvWbfrtrdOkcM1hbSZdarf/n8LU4xKJW
-	s0kAvW4cxPlY2TT0CojermurfIFySwFs9wuGEGQTwj4PT7xnkmbzcstx14Adk0nYAi0kaUhkBte
-	Wb9Ca0v69Wu2lcPFyIix/wig5bftUvf3UFdNEqQmZ3BCjvhNHjZ0xpDPY/JHLQANgABOAbPT0GJ
-	xZ3qhPJN44cdlyjvwccR30pwSnGMKST/bsNo8L3Ah4xW8vzYgqJPephEuaj+PH2sQgAfmaOnB7R
-	I968mKvELi033MeRJeK/
-X-Received: by 2002:a05:7301:2f1d:b0:361:6dc4:d0b2 with SMTP id 5a478bee46e88-3674b52acc3mr4938338eec.2.1792627262898;
-        Wed, 21 Oct 2026 17:01:02 -0700 (PDT)
+        bh=9rsuU/zpvGVZ6N3nvTXW6aQt3MLOdJQFmOTT1iINVYg=;
+        b=m5yg9UoEpcdYE8egFZeIgIiw+eoQYctsAkRwAViGsNT06ip2KWN83KgAyDKgQ+L1QV
+         SlsKZ13l0t35zjsjJg3dfmFvJP5BVklcHpBUWEIVatgaa2HInySG0PQHaAeLoV6oY8AB
+         +A9l/nh9nQQx8ljsyMwVjjiyaRbLxs2l2hiw4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792627284; x=1793232084;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9rsuU/zpvGVZ6N3nvTXW6aQt3MLOdJQFmOTT1iINVYg=;
+        b=JhW/sO4ZEGrll5wPdZN5ZqQo2tXKhFchqNBwXIZ19H2kvoPPeSDG3Fh1JFaOAc/FpW
+         21yjoQ/ApeSVCrnXTuHY4RLA2OtAjlGt31IHMVp9bjsYQ3AdzHs/8aDU0zporOKD8u2p
+         1EgYipKvFmu9bdIBq7QcH0FBgu8XCdyhGe1uQi/sInlD7nWyGOQFyDTRR/DzD2Jv+3zq
+         bBbkHWaIij77ojZY/OAXCuecJ9x1wPDMTqy68l8gsW6wgZV4XVCFjzJ1ZEqsuIPY8Pc/
+         TByOCuB0NMseHleQqPWX3neQyo7MGV0l98C4pjGwrEkyenTz4hQEnhhRoEwSVq53DSgf
+         7lPQ==
+X-Forwarded-Encrypted: i=1; AKwUvBym9pMNCrb0h9PB/rlTa3nY9k5f8hMlPs/M+7G1VEpAgR6mbBdlYHbxFD2dDN51WQhuJDNycAciPUGDtpXMSH1liQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIvXmjZLhlLuqUjeHlLzsRcylrK403ZuGUFo2dR1zutAenKHkmW
+	Cvrz25up1A7sNh+ByUCU/BwNEHgriqwfvqSZ6u82oW5xBgRenTz8mbmJL2jDRG4GEQ==
+X-Gm-Gg: AYBFou0WCCGC29FBumu1qf7E05VVWz6lPB3UkQTMIrA1Z2ZN0OxmhN3R+2PvgqVqKrE
+	b1RTaeH95qnT0JN9WJzexeo7hIipW+5eh87KI+xu7IqIGiUbqt6vffnVOZZzIJWU0EJiK4lWojY
+	5UhRIlAuwSwEkjCIqdo3ejE1LKghMu187YaHQRaIlqQ6I7dXHy/N7GomcwYhow3jaKfHKOMpGeq
+	MLPMWEGngNIjK9gsqKJy36UiNAvXa2aQ/Z8UlG1HPsX5Nx58wDPPMQ5mV8Ly6YJa+Mza6L3BinW
+	VJIm+Jyq/pGedMAbEcocYt53V6idg46ZcqvYXKxsi1AM+NVD8ikqvHnE2l+e1IJzgWdpRXkEJAE
+	TYcjIVXP1bo3eFZdVOpxWts30U7ZymXpt9sz8JmwZXSQJgZBCx7twEjvrDBAgh9I1dU98ciFl/d
+	8i9BnbeUM66tIFIdln5w9Rn0J3uGlyH17EhQmzRUuf+VDDKYv5Rmk+dr5WMhRuYOpYrh5QFDhVC
+	qVo2iDmMX5nh9WiTybg8AWzFKP6CpG6oCHNY5Wmd0s7dbK5vBY/IQzOT3rGo0PgwgpwyH0y2vq7
+	giwJmkqw8kCiXM0tQ+3B
+X-Received: by 2002:a05:693c:8102:b0:351:606f:2832 with SMTP id 5a478bee46e88-368ae2d4b25mr1068928eec.3.1792627283594;
+        Wed, 21 Oct 2026 17:01:23 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e7c:8:14ab:bfeb:ac88:458f])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-367405ed295sm12097312eec.9.2026.10.21.17.01.01
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-367411bc89fsm13245730eec.16.2026.10.21.17.01.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Oct 2026 17:01:02 -0700 (PDT)
+        Wed, 21 Oct 2026 17:01:23 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Jonathan Cameron <jic23@kernel.org>
 Cc: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
@@ -88,13 +89,14 @@ Cc: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 00/17] iio: Stop looking at pm_runtime_put_autosuspend() return codes
-Date: Wed, 21 Oct 2026 16:57:01 -0700
-Message-ID: <20261021235818.3059519-1-briannorris@chromium.org>
+Subject: [PATCH v2 06/17] iio: adc: rcar-gyroadc: Discard pm_runtime_put_autosuspend() return values
+Date: Wed, 21 Oct 2026 16:57:07 -0700
+Message-ID: <20261021165858.v2.6.Ia4649c7263a5733426a8778ac4b2dc459f3ffef6@changeid>
 X-Mailer: git-send-email 2.56.0.218.g1ec904b173-goog
+In-Reply-To: <20261021235818.3059519-1-briannorris@chromium.org>
+References: <20261021235818.3059519-1-briannorris@chromium.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -107,97 +109,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Similar to this effort:
+This driver propagates the return value of pm_runtime_put_autosuspend(),
+which is not particularly useful.
 
-  Subject: [PATCH v1 00/23] PM: runtime: Convert pm_runtime_put() to a void function
-  https://lore.kernel.org/all/6245770.lOV4Wx5bFT@rafael.j.wysocki/
+Returning an error code from pm_runtime_put_autosuspend() merely means
+that it has not queued up a timer or work item to check whether or not
+the device can be suspended and there are many perfectly valid
+situations in which that can happen, like after writing "on" to the
+device's runtime PM "control" attribute in sysfs for one example.
 
-i.e., commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
-type to void") and friends.
+For this reason, modify this driver to simply discard the
+pm_runtime_put_autosuspend() return value.
 
-As with pm_runtime_put(), there is very little value in return-code
-checking for pm_runtime_put_autosuspend().
+This will facilitate a planned change of the
+pm_runtime_put_autosuspend() return type to void in the future, similar
+to commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
+type to void").
 
-Checking the return code is more likely to produce a race condition
-(fighting with user space writing "on" to the "control" attribute) than
-to tell a consumer useful info.
-
-Because the IIO subsystem has the bulk of drivers that inspect
-pm_runtime_put_autosuspend(), and because those drivers have a lot of
-other issues touching the same code (which Jonathan suggested [1] I
-fix -- I fix some, but not all), I'm sending an IIO-specific series
-under a v2 label (since many of the changes are still borrowed from the
-earlier series).
-
-For reference, the larger v1 series can be found at [2].
-
-- Brian
-
-[1] https://lore.kernel.org/all/20261018211807.66bfea0d@jic23-hlaptop/
-[2] https://lore.kernel.org/all/20261006231900.3230373-1-briannorris@chromium.org/
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
 
 Changes in v2:
- * Split iio into its own series
- * Split into per-driver patches
- * Fix various usage bugs in these iio drivers in the adjacent code
- * Remove now-unnecessary helpers
- * Maintain Reviewed-by from v1 for drivers where there was no
-   additional change (aside from splitting up patches)
+ * Split iio patch into per-driver patches
 
-Brian Norris (17):
-  iio: accel: fxls8962af: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: accel: kxcjk-1013: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: accel: mma8452: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: accel: mma955x: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: accel: bmc150: Discard pm_runtime_put_autosuspend() return values
-  iio: adc: rcar-gyroadc: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: adc: ti-ads1015: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: chemical: atlas-sensor: Discard pm_runtime_put_autosuspend()
-    return values
-  iio: hid-sensors: Discard pm_runtime_put_autosuspend() return values
-  iio: gyro: bmg160: Discard pm_runtime_put_autosuspend() return values
-  iio: gyro: fxas21002c: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: imu: kmx61: Discard pm_runtime_put_autosuspend() return values
-  iio: light: apds9960: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: light: pa12203001: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: light: rpr0521: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: light: tsl2583: Discard pm_runtime_put_autosuspend() return
-    values
-  iio: light: us5182d: Discard pm_runtime_put_autosuspend() return
-    values
+ drivers/iio/adc/rcar-gyroadc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/iio/accel/bmc150-accel-core.c         |  75 +++-----
- drivers/iio/accel/fxls8962af-core.c           |  56 +++---
- drivers/iio/accel/kxcjk-1013.c                | 118 ++++++------
- drivers/iio/accel/mma8452.c                   | 100 ++++++----
- drivers/iio/accel/mma9551.c                   |  21 ++-
- drivers/iio/accel/mma9551_core.c              |  39 +---
- drivers/iio/accel/mma9551_core.h              |   1 -
- drivers/iio/accel/mma9553.c                   |  36 ++--
- drivers/iio/adc/rcar-gyroadc.c                |   4 +-
- drivers/iio/adc/ti-ads1015.c                  |  50 ++---
- drivers/iio/chemical/atlas-sensor.c           |   4 +-
- .../common/hid-sensors/hid-sensor-trigger.c   |  14 +-
- drivers/iio/gyro/bmg160_core.c                | 178 ++++++++----------
- drivers/iio/gyro/fxas21002c_core.c            |  33 +---
- drivers/iio/imu/kmx61.c                       |  25 +--
- drivers/iio/light/apds9960.c                  |  48 ++---
- drivers/iio/light/pa12203001.c                |  26 +--
- drivers/iio/light/rpr0521.c                   |  57 +++---
- drivers/iio/light/tsl2583.c                   |  27 +--
- drivers/iio/light/us5182d.c                   |  32 +---
- 20 files changed, 401 insertions(+), 543 deletions(-)
-
+diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
+index d38cf3caeae0..0d3b061d6ec2 100644
+--- a/drivers/iio/adc/rcar-gyroadc.c
++++ b/drivers/iio/adc/rcar-gyroadc.c
+@@ -199,10 +199,8 @@ static int rcar_gyroadc_read_raw(struct iio_dev *indio_dev,
+ 		*val = readl(priv->regs + datareg);
+ 		*val &= BIT(priv->sample_width) - 1;
+ 
+-		ret = pm_runtime_put_autosuspend(priv->dev);
++		pm_runtime_put_autosuspend(priv->dev);
+ 		iio_device_release_direct(indio_dev);
+-		if (ret < 0)
+-			return ret;
+ 
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
 -- 
 2.56.0.218.g1ec904b173-goog
 
