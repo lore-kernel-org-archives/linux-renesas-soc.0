@@ -1,64 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792608600;
-	b=O/AL67aIDwDwLk4xv9ATEJqgISsB3qXDLHlFLZmvy0X7IK9D6kIL7ah+gN8R3WipIb7Y
-	 AnsAqlZLOfiqSWPGgIQCbYimcRSAsyd/Ys/42dvx6iD6wQ1i+IUZAQja1ykCpTo6qdrBH
-	 grAQNvdxzeJbkMInFdgrFlBbTlhjUN0juGP/js6gsM4q9y/cIQLPoM94ZsPoJpf5TdmOK
-	 +zGYqituJv1zmZKiyUNsNtOF/2l+A214D6h/hqhhH5l1JaPBSjFMQuDtIBLubKocDnZhK
-	 LvW0tpJ6Iw3agkbEwNcoagURcq2GT81ViWjYYDqXk0sS1znsP7Qv6JFLt/jas4tkTcA==
+	t=1792627264;
+	b=Wjj8lvVIWlPLG177wSO1NymPtipfh6yTkburNgCr15Va5thalJkG9k6k9Ti3wZVsp3Ec
+	 5y2oGPK8tlHmbZWBycP7Kd4InJz4uslxVWFliUZhXsML8U4t85bOlZ2Xu7bBdDXdWO6T8
+	 8mHQDAopjxnSOfFPx9EO4LXTjtqGr2QIOiJiNc6301xkyeZIHdT8jBYNIjICWhO1KbSLY
+	 eLXbF+81HftK6GJySe2I6o2/8FZTEHe1DP8sh4enO1S2RypfP/bbU/g4sZ64as0ZRbaV8
+	 KQejFQbun/LbBjF27IMpa16x+W/QGbD8pHr0az5d7JNj+E0rKEwTax0Yaq8h7+rmxSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792608600;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1792627264;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=UP7QKcZoxFf5ukFFf3zgd+8QVhw52yv+EUqhUUTfyb4=;
-	b=KSitFwIZOtJeRj6ftP6CYfDrJOp0J/5sYP1xmYjoFmQAKTF7qpl0hZJo5dFoigzqn2jb
-	 iu3iIsVMqlOcQUQex7fjGhnMgpJSJQyfrCD0fzo0yEpcRX8c71EEFBGz2DaQ2hQPEoXVF
-	 +ch2MG8/IXEBofW8gfNtmLrsqvhgFuO6ibnpepMCcv4vIT1F5nXuQ6ckNZ48vt3YF5i69
-	 Ie2lmyCu2fPpR7si2Txd3qHOHRVqM+KpNZSVrQptpsI+4IEY/4C+ibC/L1I2B8Ly02dcm
-	 RuvshHu2x67Iw3eXDBDOIbX0xHvdVVnFYJTd/i2U8fXhRjZ85ll+4H3iLhmHIDfEMNA==
+	bh=vdQ15CY2t8acOR+daJ/by7IbMKM9K/k4D2pVTlpzkNk=;
+	b=zG36NLnIhyGGW3hFiBzXEqIy8tEIEwII1+2/kYxU3CrtJ9X9J7Hih4RUqHwnt/g5NsbJ
+	 r5fadixGq/kVLrE3b65FakUwYeFOv93NblXbDje7obNdOd873EV8AnTPyBkDKak5wKpwa
+	 bmW7U0K6jCl83PGfGcOlBkyuOo32xTHE0jDPlS2k+Hso9Mr1QqFGlB9PzUSkCa5vnHo/u
+	 IYj5BTzn1kcoVG4uIwfqL1zqyF6QXFiyyaYbu/2mNzK7tXcTUrFP8yjCiPpajTxyZBXCl
+	 YEGWdMGDvSW/fIxxnYXOCujO0Wy/Wf8Db/p85a9NvVHksR3p/e8vfAdG5q/3XzDNmnQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F2aDVkC3;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=UmA2bOuU;
+	arc=none smtp.remote-ip=74.125.82.169
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F3606A319;
-	Wed, 21 Oct 2026 18:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190EE606A319
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 00:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 190EE606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F2aDVkC3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947C51F000C1;
-	Wed, 21 Oct 2026 18:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792608599;
-	bh=UP7QKcZoxFf5ukFFf3zgd+8QVhw52yv+EUqhUUTfyb4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=F2aDVkC3wKHHTT76g49QPHNRr9iHNf/o3pj4tzGIUkjoh8OOPu5FE5dHowS0tIoef
-	 sn3kug7+NGNfS8MV5OvoLU/mFl066DoydpisPFNekOWrs5ZaAe39iXy/ZFdXdmzTPi
-	 hwyMD2j1eAp5ibjgRP5VOD+Nl8WTYFIn3AEdo2mDWJ8O5tP3NQyiYPcPGRA4xk/HDc
-	 N9Ylbfroo/g6m6RCa/p0EVOpUoP8ORnGDu59yLEvf2htR+5ppugdyp6xEZVFb8C998
-	 DEPbgu0vyxON++1Kdf6Bn53W9ORsSFaYYwtpSIvdf8SBFXm/chMV4KwJRob9Jn09qh
-	 5ol4dDmCmogZw==
-Date: Wed, 21 Oct 2026 19:49:51 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, Ulf
- Hansson <ulfh@kernel.org>, linux-kernel@vger.kernel.org, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Marek Vasut
- <marek.vasut+renesas@mailbox.org>, Rui Miguel Silva <rmfrfs@gmail.com>,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 03/13] iio: Discard pm_runtime_put_autosuspend() return
- values
-Message-ID: <20261021194951.7b65c2eb@jic23-hlaptop>
-In-Reply-To: <ataTYER7XM_MEYKL@google.com>
-References: <20261006231900.3230373-1-briannorris@chromium.org>
-	<20261006161337.3.If2263e6ae9eaa4493881b72922dcde031ce9d81d@changeid>
-	<20261018211807.66bfea0d@jic23-hlaptop>
-	<ataTYER7XM_MEYKL@google.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=UmA2bOuU
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso1714900eec.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Oct 2026 17:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1792627263; x=1793232063; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vdQ15CY2t8acOR+daJ/by7IbMKM9K/k4D2pVTlpzkNk=;
+        b=UmA2bOuURe6zzZcz6sNdn2qZsqHZK5yINxkcZrAhLL8QDaeRg9nf09OXJdDZpSCRYf
+         +aUzwszLCLnOIgj3vFHUtMtabk1DMoHgTSs8fG9CjMPPuBumBiza6waGhaeaMQRTjq3X
+         8j8BEdih2gmRULB+bP5mlObW3UOjqcRdummgc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792627263; x=1793232063;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=vdQ15CY2t8acOR+daJ/by7IbMKM9K/k4D2pVTlpzkNk=;
+        b=0P0TNJ30Hio6lAXpPF/fTFMoeb43oR7OSzPdCq97fiPQ0o8uzMlxKcGoitrClaLrSx
+         vDetkowOgVMBYe+luRb9MRQeX2hrSsUEqvoaVVzgM/XdWLk0sb2vhKxOUS/6euEytIQX
+         p1UMCoJf8TeSNFXQTxw5glRgLxAEYtkeJ7+bVKKpgK12Gm5yL9J0d0tHM7HI9llhWn0w
+         QU9XXaBYZBrsm1700OHpXjxDVPn7G+9tgzJFwRygTvdtv9I7FHSxSMK4EjFMwDyHCnGZ
+         +D7GPwZVND8Ie5Y4DhABQ2dNqYhFn1eEY6pSgGE3OHmw8/3dmKtLQQFbJI+Wqbvp4PRp
+         qJdA==
+X-Forwarded-Encrypted: i=1; AKwUvBzDfLnMHebbhtoLvKCOCXaiJlLfEWgzMluHxc2tyuQ2fpWHrQ3/1XzwXTNUd0gA+ntlCN8iNdNaNM4goz2Kx81r6g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLdvFXH0rW8n8B+E67L3SXjPsdIY4WbpU8+oT5HpadLDuFDRTLF
+	+ksamFfoHi6xfPkZFV2kwdw/p52u4dIzI28y5/saLqXe2YC1kspnVXrv9joCdew9rg==
+X-Gm-Gg: AYBFou1ZKItYbZZULklPrN5l1C8NsrHljdKIU2PL3S9qsVv6jeaKznusVeLSYmwkoLs
+	bC1OMWD5841ebb0hvVQrkBL/D0WKuCZWJS+quPruBNzRuMku+GcBf7dVlToLbhtRtTuLHOBMHBw
+	bRq+EAzjELS8RNnWkYxMIUAv0Q1H1Ft5EFwNneV1rwy7CGjFfVpjdzbDWYWnrHKvaC90UCCkYqk
+	LBKrL2KqoEXJGdpnX5R+JJN9lottvTF5Au2HJ8BJvkCSfe7nDgVrSwEO7TEKBwPldik7tUaVsO7
+	jOupcZA+32vhVuiKabuYM3NvZM0DVl/UjmKPdYjeV0hjvWbfrtrdOkcM1hbSZdarf/n8LU4xKJW
+	s0kAvW4cxPlY2TT0CojermurfIFySwFs9wuGEGQTwj4PT7xnkmbzcstx14Adk0nYAi0kaUhkBte
+	Wb9Ca0v69Wu2lcPFyIix/wig5bftUvf3UFdNEqQmZ3BCjvhNHjZ0xpDPY/JHLQANgABOAbPT0GJ
+	xZ3qhPJN44cdlyjvwccR30pwSnGMKST/bsNo8L3Ah4xW8vzYgqJPephEuaj+PH2sQgAfmaOnB7R
+	I968mKvELi033MeRJeK/
+X-Received: by 2002:a05:7301:2f1d:b0:361:6dc4:d0b2 with SMTP id 5a478bee46e88-3674b52acc3mr4938338eec.2.1792627262898;
+        Wed, 21 Oct 2026 17:01:02 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:14ab:bfeb:ac88:458f])
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-367405ed295sm12097312eec.9.2026.10.21.17.01.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2026 17:01:02 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	linux-pm@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	linux-iio@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 00/17] iio: Stop looking at pm_runtime_put_autosuspend() return codes
+Date: Wed, 21 Oct 2026 16:57:01 -0700
+Message-ID: <20261021235818.3059519-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.56.0.218.g1ec904b173-goog
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -68,193 +104,100 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 19 Oct 2026 15:02:08 -0700
-Brian Norris <briannorris@chromium.org> wrote:
+Similar to this effort:
 
-> Hi Jonathan,
-> 
-> On Sun, Oct 18, 2026 at 09:18:07PM +0100, Jonathan Cameron wrote:
-> > On Tue,  6 Oct 2026 16:13:31 -0700
-> > Brian Norris <briannorris@chromium.org> wrote:
-> >   
-> > > Multiple IIO drivers inspect or propagate the return value of
-> > > pm_runtime_put_autosuspend(), which is not particularly useful.
-> > > 
-> > > Returning an error code from pm_runtime_put_autosuspend() merely means
-> > > that it has not queued up a timer or work item to check whether or not
-> > > the device can be suspended and there are many perfectly valid
-> > > situations in which that can happen, like after writing "on" to the
-> > > device's runtime PM "control" attribute in sysfs for one example.
-> > > 
-> > > For this reason, modify these drivers to simply discard the
-> > > pm_runtime_put_autosuspend() return value, and change the return types
-> > > of fxls8962af_power_off() and fxas21002c_pm_put() to void.
-> > > 
-> > > This will facilitate a planned change of the
-> > > pm_runtime_put_autosuspend() return type to void in the future, similar
-> > > to commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
-> > > type to void").
-> > > 
-> > > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > > ---
-> > > This patch is independent of the rest of the series, except for the end
-> > > (changing the return type). I expect it can be applied by individual
-> > > maintainers, and we pick up the end once the dust is settled.
-> > > 
-> > > I couldn't decide if I should split this up by individual driver, or
-> > > just 1 for the whole drivers/iio/ subsystem. Many of these drivers have
-> > > borrowed the same patterns, so I chose to just send 1. Let me know if I
-> > > should split it up.  
-> > 
-> > Hi Brian,
-> > 
-> > Great that you are doing this, but sadly it opens the can of worms that
-> > are the helpers a lot of these drivers have.  They just about made
-> > sense before various recent runtime_pm useability improvements.
-> > Now they make very little sense at all. Dropping the return value
-> > here also removes the reason for a bunch of odd defensive ifdefs.
-> > 
-> > As such, I'm requesting some slightly more involved changes. Some of
-> > them I think are coupled tightly to what you are doing here so should
-> > be in this series, others can be left for later.  
-> 
-> Thanks for the notes. I'll handle the ones that are at least
-> approximately related to the code I'm touching. I think there are a few
-> bugs that get resolved along the way too.
-> 
-> I may not get the more tangential ones though.
-> 
-> Also, unless you'd prefer otherwise, I plan to wait a bit more to send
-> v2, since the merge window only just opened, and some of this series
-> will just be a RESEND. I'd prefer maximizing the chance that the
-> recipients will actually notice the patches, by submitting outside that
-> window.
-> 
-> (OTOH, the bulk of these changes are in IIO, so I can just make IIO its
-> own series if that helps things along.)
+  Subject: [PATCH v1 00/23] PM: runtime: Convert pm_runtime_put() to a void function
+  https://lore.kernel.org/all/6245770.lOV4Wx5bFT@rafael.j.wysocki/
 
-I'd split out an IIO series but take your time as no particular rush
-given these won't merge until next time around.
+i.e., commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
+type to void") and friends.
 
-  
-> > > diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
-> > > index d611341a0e2a..e8e511daa7c4 100644
-> > > --- a/drivers/iio/gyro/bmg160_core.c
-> > > +++ b/drivers/iio/gyro/bmg160_core.c
-> > > @@ -319,18 +319,15 @@ static int bmg160_set_power_state(struct bmg160_data *data, bool on)
-> > >  	struct device *dev = regmap_get_device(data->regmap);
-> > >  	int ret;
-> > >  
-> > > -	if (on)
-> > > +	if (on) {
-> > >  		ret = pm_runtime_get_sync(dev);  
-> > 
-> > gah.  Please just change this to use pm_runtime_resume_and_get() whilst you
-> > are here.
-> > 
-> > Ideally squash the helper in favour of direct calls to the runtime
-> > pm.  Yet another pace that the recent improvements in runtime pm useability
-> > have made what was of minor benefit entirely pointless.
-> > 
-> > The ifdef can go away as well as I think the only thing that helped with
-> > was the return value of the put you are removing.  
-> 
-> One thing I found while looking through this driver:
-> 
-> bmg160_write_event_config() and bmg160_data_rdy_trigger_set_state() do
-> some ghastly things w.r.t. runtime PM. In particular, they seem to
-> perform put_autosuspend() *before* they're done touching the hardware,
-> and then rely on the (very large) autosuspend delay to defer the
-> runtime_suspend() operation. It even has a bunch of comments about the
-> incorrect ordering.
-> 
-> That's one giant race condition. And the autosuspend delay is
-> configurable via user space, so it's extra dangerous.
-> 
-> Anyway, that's to say: I plan to refactor/reorder the put_autosuspend()
-> ordering there while I'm at it.
+As with pm_runtime_put(), there is very little value in return-code
+checking for pm_runtime_put_autosuspend().
 
-Excellent!
+Checking the return code is more likely to produce a race condition
+(fighting with user space writing "on" to the "control" attribute) than
+to tell a consumer useful info.
 
-> 
-> (There's also some strange error handling that potentially leads to
-> runtime PM underflow. I'll fix that one while I'm here.)
-> 
-> I think this one is imitated in another few drivers as well.
+Because the IIO subsystem has the bulk of drivers that inspect
+pm_runtime_put_autosuspend(), and because those drivers have a lot of
+other issues touching the same code (which Jonathan suggested [1] I
+fix -- I fix some, but not all), I'm sending an IIO-specific series
+under a v2 label (since many of the changes are still borrowed from the
+earlier series).
 
-yeah.  We do seem to cut and paste bad practice and bugs around :(
+For reference, the larger v1 series can be found at [2].
 
-> 
-> > > -	else
-> > > -		ret = pm_runtime_put_autosuspend(dev);
-> > > -
-> > > -	if (ret < 0) {
-> > > -		dev_err(dev, "Failed: bmg160_set_power_state for %d\n", on);
-> > > -
-> > > -		if (on)
-> > > +		if (ret < 0) {
-> > > +			dev_err(dev, "%s: failed to resume: %d\n", __func__, ret);
-> > >  			pm_runtime_put_noidle(dev);
-> > > -
-> > > -		return ret;
-> > > +			return ret;
-> > > +		}
-> > > +	} else {
-> > > +		pm_runtime_put_autosuspend(dev);
-> > >  	}
-> > >  #endif
-> > >  
+- Brian
 
-> > > diff --git a/drivers/iio/light/pa12203001.c b/drivers/iio/light/pa12203001.c
-> > > index c0f4db8d95f7..d4e197e05d26 100644
-> > > --- a/drivers/iio/light/pa12203001.c
-> > > +++ b/drivers/iio/light/pa12203001.c
-> > > @@ -188,7 +188,8 @@ static int pa12203001_set_power_state(struct pa12203001_data *data, bool on,
-> > >  	if (on)
-> > >  		return pm_runtime_resume_and_get(&data->client->dev);
-> > >  
-> > > -	return pm_runtime_put_autosuspend(&data->client->dev);
-> > > +	pm_runtime_put_autosuspend(&data->client->dev);
-> > > +	return 0;  
-> > 
-> > This function has evolved to the point of silliness.
-> > Given how minor your change is, feel free to ignore the following however!
-> > 
-> > There is zero shared code in here between the on and off paths so
-> > rename the function pa12203001_runtime_enable() and cover only the
-> > 'on' case.  Then just put the pm_runtime_put_autosuspend() in wherever
-> > on was previously false.  
-> 
-> Ack. But because "runtime_enable()" has a specific runtime PM meaning
-> that is very different than the usage here, I've chosen the name
-> "pa12203001_runtime_resume_and_get()" instead, which I think makes for
-> more API symmetry.
+[1] https://lore.kernel.org/all/20261018211807.66bfea0d@jic23-hlaptop/
+[2] https://lore.kernel.org/all/20261006231900.3230373-1-briannorris@chromium.org/
 
-Good point on naming.
+Changes in v2:
+ * Split iio into its own series
+ * Split into per-driver patches
+ * Fix various usage bugs in these iio drivers in the adjacent code
+ * Remove now-unnecessary helpers
+ * Maintain Reviewed-by from v1 for drivers where there was no
+   additional change (aside from splitting up patches)
 
-> 
-> > Given that presumably one of the things is being turned on whenever
-> > we enable it, also pull the mutex out of the if blocks and use
-> > guard() to simplify that.  
-> 
-> guard() is tricky, since it produces a deadlock if you hold the lock
-> across pm_runtime_resume_and_get(). So I'll skip that part and leave it
-> to someone (or no one) who is more particularly interested in this
-> driver.
-Ah indeed. Should be scoped_guard() but can wait for someone else
-who cares enough to do that and maybe not worth it anyway.  I got
-lost in imagining what the other refactors would look like.
+Brian Norris (17):
+  iio: accel: fxls8962af: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: accel: kxcjk-1013: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: accel: mma8452: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: accel: mma955x: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: accel: bmc150: Discard pm_runtime_put_autosuspend() return values
+  iio: adc: rcar-gyroadc: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: adc: ti-ads1015: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: chemical: atlas-sensor: Discard pm_runtime_put_autosuspend()
+    return values
+  iio: hid-sensors: Discard pm_runtime_put_autosuspend() return values
+  iio: gyro: bmg160: Discard pm_runtime_put_autosuspend() return values
+  iio: gyro: fxas21002c: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: imu: kmx61: Discard pm_runtime_put_autosuspend() return values
+  iio: light: apds9960: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: light: pa12203001: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: light: rpr0521: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: light: tsl2583: Discard pm_runtime_put_autosuspend() return
+    values
+  iio: light: us5182d: Discard pm_runtime_put_autosuspend() return
+    values
 
-Thanks,
+ drivers/iio/accel/bmc150-accel-core.c         |  75 +++-----
+ drivers/iio/accel/fxls8962af-core.c           |  56 +++---
+ drivers/iio/accel/kxcjk-1013.c                | 118 ++++++------
+ drivers/iio/accel/mma8452.c                   | 100 ++++++----
+ drivers/iio/accel/mma9551.c                   |  21 ++-
+ drivers/iio/accel/mma9551_core.c              |  39 +---
+ drivers/iio/accel/mma9551_core.h              |   1 -
+ drivers/iio/accel/mma9553.c                   |  36 ++--
+ drivers/iio/adc/rcar-gyroadc.c                |   4 +-
+ drivers/iio/adc/ti-ads1015.c                  |  50 ++---
+ drivers/iio/chemical/atlas-sensor.c           |   4 +-
+ .../common/hid-sensors/hid-sensor-trigger.c   |  14 +-
+ drivers/iio/gyro/bmg160_core.c                | 178 ++++++++----------
+ drivers/iio/gyro/fxas21002c_core.c            |  33 +---
+ drivers/iio/imu/kmx61.c                       |  25 +--
+ drivers/iio/light/apds9960.c                  |  48 ++---
+ drivers/iio/light/pa12203001.c                |  26 +--
+ drivers/iio/light/rpr0521.c                   |  57 +++---
+ drivers/iio/light/tsl2583.c                   |  27 +--
+ drivers/iio/light/us5182d.c                   |  32 +---
+ 20 files changed, 401 insertions(+), 543 deletions(-)
 
-Jonathan
-
-> 
-> > >  
-> > >  err:
-> > >  	mutex_unlock(&data->lock);
-
+-- 
+2.56.0.218.g1ec904b173-goog
 
