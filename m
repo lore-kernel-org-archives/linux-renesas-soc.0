@@ -1,62 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.97.179.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792600215;
-	b=y9MbtqWhYD8/RmzCoZgpw40YTu6DE80vWz3XF8yHWAJe3ooi22aztFb67Xg2mqhvp6aI
-	 zVKelj8xoY8hiyw62D09OWHv2SW/kZP2OmlqZeCi27BhrEo/tIv7cOdF7AlZgXQ1Q5Qeh
-	 bxBv6hjdUWqID1rWo18GNk2bbBw0c2b1BPP6umzniydhybcx/sMpFU2ERVoHeQVqua+Av
-	 7h4ugRUw4yeq4qXkCAEnqv0XBy2Prjt8l5EDp6yxwDOFsQUBLnckmHmM+Gb4IFORMgc8r
-	 Gdgb5z8Osjj0VWfxE+OoLh5dQCtL78BRPMgl3nTR9jic44Vh3j/vGPDFrFaR/BUMWKQ==
+	t=1792607011;
+	b=eElPKd09NX6+uCpI+EL9JL2Jpa1yq2hwxzdMTUEoNudLokc2yVHIAvQT2Vl0VEZnEvNF
+	 ly40BAn0A67uUJ1YU/CbgEZKLmg/OycajZSNQ0bIBuwInq8jOhVlpbcYLRAlKj9pppHMW
+	 CH7bi9skyoah0pNUA8c0FkMiQApVPKXnWyvqVAdEf8bob/KUZrF8fpW1t1OyGRrhzVgHg
+	 +c4JYZxhT7z6qW7u33cEQimHHXmhtRB7dwL10BVfxhpNsytym/E7hzWgKHHI8eR8yyKzq
+	 tfdO07WydseH5FSX33cWH102Fylixr8jgd2lKXIu4XgGDTUjfU3izxCcKcgkQn2NEXw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792600215;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Sq1GMRHQ/TLvlwjyyTPVb8IVgJu2rafyM/d39zbVB0U=;
-	b=1Mk0HM+JKQlNBBSZ+nkI+BtGsZGE0Brvr7HhmiJ/7tbvYRjW7cKH/VInZMDgQRbOT+3s
-	 DjpF51cLjV1I+9Hqq83GGTn8qlga6neYsKw2pG0fZ+17DWX+q2cCgVPHH7+5EWH4CBpfv
-	 LR61sYnpC937KbghbnPyrh+rPydPqBs/JY9utvMdvmtKMctwOeM76/t02+JWgDuA6cGQ6
-	 eHH4jSKpQPNZnrcQuPx2mhCUiTt5ckS2bclL18+0ePKWoBuTKc7f1erXa4ggfCta+hnm4
-	 /bBtn1+URkw86Ax27bQW1qdz8TmwrSdEXoOd7D365BQbFRi2k+7dxizLH35liGrUgGQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792607011;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=k+mGq79QMKjrSkSLMADnpcKSaAXj7e9cJf4qURAwo/M=;
+	b=3NI11Nxs92dQHavuu/LesKrdWIqmUQCHXW/Z3Zq0t+D9DK4Or8aRKiFKmMBB/Q7IC0AG
+	 3riigFZvOImwYH+Mm4OPIsct+YEBm5rYTdJ2ZeD11LP9EDPhp6jDy9DiQ1v0Agd98Gpqw
+	 RR/d66Eu/s4HwFVcxFMmP+m5V5la6M+b02IU3PsP87sLFkwukvMQe9Gg95TvgJR47Ctbv
+	 tsqlh60o1u2npIfx2FhjhgPs93dD3xTZBNtJ/k58SAY7pAxqmDeTk8FeS4Nz9pyic+E56
+	 LnvpiiPyFzGbf9Rl1H6Yfze0GigVMLPPY1IVYWpP94FyxNC5jBAwmCNx6mea8CngVlw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OHpX6OzB;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=Igalia.com;
+	spf=pass smtp.mailfrom=Igalia.com;
+	dkim=pass header.d=igalia.com header.i=@igalia.com header.a=rsa-sha256 header.s=20170329 header.b=QOXE3p3Q;
+	arc=none smtp.remote-ip=213.97.179.56
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F585606A31B;
-	Wed, 21 Oct 2026 16:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7399E606A319;
+	Wed, 21 Oct 2026 18:23:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7399E606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OHpX6OzB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038CA1F000C2;
-	Wed, 21 Oct 2026 16:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792600214;
-	bh=Sq1GMRHQ/TLvlwjyyTPVb8IVgJu2rafyM/d39zbVB0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OHpX6OzBNu82w+azgJNdcST5K7cXo1Va2OKFluwdybTQ2V1N2sPO47wg+wkBhuaLM
-	 hq0jihigoQodw+2nTOw7Eb0IBATR60XLHhvaXd6CopDreeKbgUTDBtBQ/gfYm1AtvM
-	 mD7WOnb726W86UBufZKZOB5E5ZUu0oNZyZFRdtbcwkMoLRG7WfFmKNmkU6Z/Fi+/HS
-	 hP7y81l6UxjwGrGDUfCr1lptSwt02zAv+zHOf1MNTEdJHyzCmR/X3TrMGfZlJ7dlyK
-	 4tTfbuLyT4DYb0hPpgHMgOcl6PprfljjXJaEftgnOQ6oLPlyZBYCPhiYrXKfl3/qcj
-	 FWi0+Yh+idklA==
-Date: Wed, 21 Oct 2026 17:30:10 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Biju Das <biju.das.au@gmail.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v6 3/4] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3L SoC
-Message-ID: <20261021-uneasy-tactless-3c9969a68fcc@spud>
-References: <20261021-canfd_rzg3l-v6-0-b4abfdba8e70@bp.renesas.com>
- <20261021-canfd_rzg3l-v6-3-b4abfdba8e70@bp.renesas.com>
+	dkim=pass (2048-bit key, unprotected) header.d=igalia.com header.i=@igalia.com header.a=rsa-sha256 header.s=20170329 header.b=QOXE3p3Q
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:From:Cc:To:Subject:
+	MIME-Version:Date:Message-ID:From:Reply-To;
+	bh=k+mGq79QMKjrSkSLMADnpcKSaAXj7e9cJf4qURAwo/M=; b=QOXE3p3QA5L0H+77bQ3KoiWi1C
+	dxNtqz8H2MBSfebJ0xfyMZ5/4VvO42ldY0OHK/L5dAlPXLq4mH5uJrht2a58ZKalFGMcxMU38jhhI
+	ARRh9Lm9BXgd3Dxckb1H98yF+oqJpLGpNYITUlOAsJMAp+gbJhT1ZFJuVTOb5dDFwJ3hMWbzvhJww
+	2IDx0rE0C9n6Em/FqPknxm/wF+xH0rAWGVGL753LiqGls2TvKA4D94WS8fKHkkEzggEhdG6xSJ3mS
+	tkxdBGCec8Uv/a0Y6+7c3T2aGH6i+CysDQjaQFFafb/ZBZw8N3lO7ZjJhn3Nz2/cE7JsFsYtr8XTp
+	WPGom9lQ==;
+Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1xJaxo-005tpt-KC; Wed, 21 Oct 2026 20:23:00 +0200
+Message-ID: <d792066e-c857-4e80-8587-44a58ab75815@Igalia.com>
+Date: Wed, 21 Oct 2026 11:22:48 -0700
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,27 +57,167 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Z3QL3jXAbMGZMSEI"
-Content-Disposition: inline
-In-Reply-To: <20261021-canfd_rzg3l-v6-3-b4abfdba8e70@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 8/9] drm: writeback: clean up writeback connectors in
+ drm_connector_cleanup()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Louis Chauvet <louis.chauvet@bootlin.com>,
+ Mihail Atanassov <mihail.atanassov@arm.com>, Eric Anholt <eric@anholt.net>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Brian Starkey <brian.starkey@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
+ <20261019-wb-drop-encoder-v7-8-d4288a26eb54@oss.qualcomm.com>
+Content-Language: en-GB
+From: John Harrison <John.Harrison@Igalia.com>
+In-Reply-To: <20261019-wb-drop-encoder-v7-8-d4288a26eb54@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Z3QL3jXAbMGZMSEI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10/19/26 06:12, Dmitry Baryshkov wrote:
+> Only drmm_writeback_connector_init() registers
+> drm_writeback_connector_cleanup(). Connectors set up with
+> drm_writeback_connector_init() (amdgpu, komeda, malidp, rcar-du, vc4)
+> never drop the formats blob or free the jobs still on the queue, leaking
+> them together with their framebuffer and fence references.
+>
+> Call drm_writeback_connector_cleanup() from drm_connector_cleanup() for
+> writeback connectors, the same way the HDMI audio and SCDC state is torn
+> down there, so it runs for both kinds of initialization. The drmm action
+> now just wraps it. Clearing the blob pointer makes the second invocation
+> a no-op and also covers drm_connector_cleanup() being called after a
+> failed __drm_writeback_connector_init().
+>
+> Fixes: 935774cd71fe ("drm: Add writeback connector type")
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>   drivers/gpu/drm/drm_connector.c     |  3 +++
+>   drivers/gpu/drm/drm_crtc_internal.h |  3 +++
+>   drivers/gpu/drm/drm_writeback.c     | 30 +++++++++++++++++++++++-------
+>   3 files changed, 29 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 893716a9e489..1c2bef5e0636 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -929,6 +929,9 @@ void drm_connector_cleanup(struct drm_connector *connector)
+>   	if (connector->hdmi.scdc_work_initialized)
+>   		cancel_delayed_work_sync(&connector->hdmi.scdc_work);
+>   
+> +	if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
+> +		drm_writeback_connector_cleanup(connector);
+> +
+Could this be done via a new connector->funcs->cleanup() vfunc or 
+something? Set that inside the writeback init path and it is guaranteed 
+to then only be called for objects that explicitly requested it. That 
+would be more robust and would keep sashiko happy. It would also keep a 
+writeback connector specific declaration out of the crtc_internal header.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+John.
 
---Z3QL3jXAbMGZMSEI
-Content-Type: application/pgp-signature; name=signature.asc
+>   	platform_device_unregister(connector->hdmi_audio.codec_pdev);
+>   
+>   	if (connector->privacy_screen) {
+> diff --git a/drivers/gpu/drm/drm_crtc_internal.h b/drivers/gpu/drm/drm_crtc_internal.h
+> index 3492787c3697..f60216adcd31 100644
+> --- a/drivers/gpu/drm/drm_crtc_internal.h
+> +++ b/drivers/gpu/drm/drm_crtc_internal.h
+> @@ -329,4 +329,7 @@ static inline void drm_panic_unregister(struct drm_device *dev) {}
+>   static inline void drm_panic_init(void) {}
+>   #endif
+>   
+> +/* drm_writeback.c */
+> +void drm_writeback_connector_cleanup(struct drm_connector *connector);
+> +
+>   #endif /* __DRM_CRTC_INTERNAL_H__ */
+> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> index 2f6a7b50336c..272012a70efe 100644
+> --- a/drivers/gpu/drm/drm_writeback.c
+> +++ b/drivers/gpu/drm/drm_writeback.c
+> @@ -21,6 +21,8 @@
+>   #include <drm/drm_property.h>
+>   #include <drm/drm_writeback.h>
+>   
+> +#include "drm_crtc_internal.h"
+> +
+>   /**
+>    * DOC: overview
+>    *
+> @@ -271,21 +273,27 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
+>   
+>   /**
+>    * drm_writeback_connector_cleanup - Cleanup the writeback connector
+> - * @dev: DRM device
+> - * @data: Pointer to the writeback connector to clean up
+> + * @connector: Writeback connector to clean up
+>    *
+>    * This will decrement the reference counter of blobs. It will also clean the
+>    * remaining jobs in this writeback connector. Caution: This helper will not
+>    * clean up the attached encoder and the drm_connector.
+> + *
+> + * Called from drm_connector_cleanup() for all writeback connectors.
+>    */
+> -static void drm_writeback_connector_cleanup(struct drm_device *dev,
+> -					    void *data)
+> +void drm_writeback_connector_cleanup(struct drm_connector *connector)
+>   {
+> -	unsigned long flags;
+> +	struct drm_writeback_connector *wb_connector =
+> +		drm_connector_to_writeback(connector);
+>   	struct drm_writeback_job *pos, *n;
+> -	struct drm_writeback_connector *wb_connector = data;
+> +	unsigned long flags;
+> +
+> +	/* __drm_writeback_connector_init() has failed */
+> +	if (!wb_connector->pixel_formats_blob_ptr)
+> +		return;
+>   
+>   	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
+> +	wb_connector->pixel_formats_blob_ptr = NULL;
+>   
+>   	spin_lock_irqsave(&wb_connector->job_lock, flags);
+>   	list_for_each_entry_safe(pos, n, &wb_connector->job_queue, list_entry) {
+> @@ -295,6 +303,14 @@ static void drm_writeback_connector_cleanup(struct drm_device *dev,
+>   	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+>   }
+>   
+> +static void drm_writeback_connector_cleanup_action(struct drm_device *dev,
+> +						   void *data)
+> +{
+> +	struct drm_writeback_connector *wb_connector = data;
+> +
+> +	drm_writeback_connector_cleanup(&wb_connector->base);
+> +}
+> +
+>   /**
+>    * drmm_writeback_connector_init - Initialize a writeback connector
+>    *
+> @@ -333,7 +349,7 @@ int drmm_writeback_connector_init(struct drm_device *dev,
+>   	if (ret)
+>   		return ret;
+>   
+> -	ret = drmm_add_action_or_reset(dev, drm_writeback_connector_cleanup,
+> +	ret = drmm_add_action_or_reset(dev, drm_writeback_connector_cleanup_action,
+>   				       wb_connector);
+>   	if (ret)
+>   		return ret;
+>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCatjokQAKCRB4tDGHoIJi
-0oUOAQDznDmqSk17mN8OijXoHA9LeSJDLTbGjpLf530JLOaCsQD+PtMz37NZ0aeh
-KXTjX1/lDaxJCnJ6ZL5i1JeYkAwc3g0=
-=cwTD
------END PGP SIGNATURE-----
-
---Z3QL3jXAbMGZMSEI--
