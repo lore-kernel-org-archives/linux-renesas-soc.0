@@ -1,76 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792661032;
-	b=NwSic6e0haBblsG6BqY4ar7p/Rt6P0MttAbDVc5IhiHVTqcAmIE1NCzMqFpLirJnQ8v8
-	 G8lxnLp7xF5oRmBkDD6CYq1cOdTLUG+B1eJkjAx4pWmw0Ll4nFkFOfik5lGuM70DaYyb/
-	 pQA6CQZOT7ml3I45h/wWFyfT9VkgUnfGSPUWuYBreILOnD5EGUQ8pWI6h9IYPpxefHaPQ
-	 PW9TuCMmAqbiwt0aWWDofdOwXg14ADjxXc6T/3uRFB8Hk7Z7J2OaZJ0cR9rR17snBpEyx
-	 mD1EGQxaVE7NNKdT+Twb7AckTXWPkIJTaZ84u6a6PAd3jCbDJhy98gG94yvwgv6BiEw==
+	t=1792661460;
+	b=dP/SUIu1WEUAmM/p7BwBxw2w7lJjjqTBHWXKjrxtCHm2zjI8Pc7DJExwylSMeVxIoh2G
+	 JaisXqFC8Q4kzsSY14JB0YWmyyT7dFyO2COx9EwSUMhnMqSXItRoJtFlcEnoY6r3erG+u
+	 zflRqIDLmJ6qCFu+ODCAA8pAu3EYfDvh3uEvRjdYTTh+YWvuxSRIQB+0UDhMUATHEc8st
+	 XjesS8HnQGvbLuWFSSkqTBPLDpi8lghLbJTSVEWnvrcqBaFv8FVpKLFkfTV+/z7zCftIB
+	 kgfts6y5GcPVGd17frKqKYZL1R16KvINpU+W/OqmhkRVs7kor4aQSFUfP9VRnr3Nb5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792661032;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=gkhBBRoKjdMjfG0Ulhfds5pPtjNKOakoMGJLQPu1F7U=;
-	b=5C9MISVmVLKW096eAVG2liAsNAEIpTvzlcg5pdD3EjRgrSUxxTy8kxGfWunghKsbt00W
-	 wCh4S5y2ehAaxEx952OpXqI/6zimq/yZHP4PS7P4I6XMGaqlOH3TTuIhak1NEBb4plISu
-	 WMLNl4YpzRHw2C2flc/+kvOwbu8UluZp//2z/lfXDrIO8jLS+vIOsEnZPZmRDdv6S56YH
-	 u7Ena+dUzj+t8wrKQvzz2tOiQIPGK9TmAF0Vyz2nGiKS7/ilFwDJhf94xBtQmgCBLhCpc
-	 uXWQMc43LidZYlwqzx+7eapWtX+vT6VgIXf2DFfwZkL2/uR3iW2vGyBSdLjyZJXvVSw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792661460;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=bgMmuHFkYogLF/Eeq6wTohVNZfvdHb4m4Si1W26cc2I=;
+	b=kdEhEIFdUg9e6ft2T8qvfoSrvc4bsa9wkL0MOD6lMCpTtEkUsg8KMq4JOCwt0z0l+R60
+	 9Zc1Qy3KGXWIFjuUryceYzn1Np8PKd8cyKFxqkCbWPxu06CJI09RfrRiFQTFSXNGS1JIL
+	 SVLFjH7anOHPoEW9zYx/S6gikYhwJGzjY8mHyZyII/aRqgVZUgPbt49DstBJig2kWjZal
+	 1cjgXxwhwiSGV6hYOR4Khd/l/BoWBM8hcAwOAyAAPIbsyIOxjMb+PzdxpUdC81Nb02Gss
+	 2DeofLPtkyJPxZYLzdAG4Cgh2LSFpuVES27ThwgmxMvXIBXcHp3PW2XiwQW8ZrqihcA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.53
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=RdnH1TWy;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2CC606A31A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 09:23:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3B2CC606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-7c4818e4165so712833137.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 02:23:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792661031; x=1793265831;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=gkhBBRoKjdMjfG0Ulhfds5pPtjNKOakoMGJLQPu1F7U=;
-        b=uZe6qgpvLDgI/bxvUn9MMh8DnUD+YOKR8LQnH+9wGBm/UQGuH1E6Dkdy650qkkStLH
-         vPppBLHBR4SqI/RYSwgDQXWVwHTat0CntOuFrxDnuUlNUTk0pM3seaPUBmvFiRFutGer
-         bY5W4zKggR8KU3U1FPmJmHbuAiJ7t+HXSq7pAIaoSrtYvc06efdUV36eBDoDxGGAWZL6
-         LvaUO1gv0OzsAJbzrc9f3GShLN4iUsY5oygptcL4wQeCPNvtiDX6cTfu3hVY14gOBCD4
-         ubFBm0pKJqTSP8+QvJWejSyKp0GDrkZifOsJmppABjBkjs2xIb/omZFK2IrYXGSLmKS8
-         Dkpw==
-X-Forwarded-Encrypted: i=1; AKwUvBz3hxg1X0ak0FuB5rKoy9Pe9v+pR1Q4pm2T8ak4fdAbBeWTor1Q4l3moEaq65ydw3a0k8ctFZF2+XqbcAHVApy8WQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIX66P7h2dHEDddvwrEKCF90XvAyRrKYzxfv0bpkNx+3G5ncqyu
-	PdVv/ajSJQKQP/h8hBXArvSmlATquFb4JHuWbnYm+5Z5rCkTbMSJnrxFI8UKeujF
-X-Gm-Gg: AYBFou2j3gt5WyU19Npr9C+Frs9vm5ZZUBa+XyUbBzpUmfS8eFtei2Jsuhk84Tf/34S
-	qQZZg1qP+JhFmjQDPc0Netmlrh1eXjGUUDOzck9aOPJmsFV5BEDvvhSBvQ54OSLelkrk5rPKulS
-	U23U6b8+zO+8KLCQDlZdcIKWWxUMFWbpeA8qWd8BPBel7bb7nVYmTncCoZoxCVkBY91VXxKs4Z2
-	+i2sCbm2uJrXzbZSmiw8pokkEUdFVtc93Y8xa0CsdlP6MCKLgShsvtq711SD/NLy9x1W0dKM9PV
-	zsgvXH//Yle0NgQs1bIn0rvnY4HpfjKlVVpmC4tKorvzV16Npcp748uYVS/RMFj44AmdNW8lQ0C
-	+mRcu+YDSaMhtMoj/FmVxuX46cRScmxPPGeyIO7jjzSgLl5mopgYaHCd6iZ6JG/NvzmQ/A3n7VC
-	O8IYvGapk2cY5Ebt+l4zqx+DqdXZauZLSuVDa26na6D0v3IaVlwo6Lg7Z52Iqwt9b7Ek8sKA5uW
-	1sHscxTrqWb3Z+inCjRxQcYVmWonN6pLjfGQuFDz3KWLT6MktQtPcsuPx5rpnidsZyRPzbYQYnQ
-	zzp0XN+p+hETSeBZag==
-X-Received: by 2002:a05:6102:c4c:b0:7c0:115c:14ca with SMTP id ada2fe7eead31-7cca9735c6fmr549526137.5.1792661031224;
-        Thu, 22 Oct 2026 02:23:51 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-990d12049e1sm5829725241.12.2026.10.22.02.23.50
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Oct 2026 02:23:50 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-78fb1fb9508so566198137.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 02:23:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzdyVYEeyfB0RGEnCfa3HRXiw91bQ2yzWPdfPjOXdo03bGnl0QxuoK7v4YAEFfPv6zQ0HPIEYEmBg3gay69lFhIMw==@vger.kernel.org
-X-Received: by 2002:a05:6102:5093:b0:7b1:3ecd:3d8d with SMTP id
- ada2fe7eead31-7cca9a1a007mr483763137.7.1792661030261; Thu, 22 Oct 2026
- 02:23:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95009606A31E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 09:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 95009606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=RdnH1TWy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=bgMm
+	uHFkYogLF/Eeq6wTohVNZfvdHb4m4Si1W26cc2I=; b=RdnH1TWy6ekLjoFVP53U
+	94XgulBdcTkQPPwtZIXJxxjYUYmpBDAvQvN5dVogERKmDpfiqVLQtHAyDd6Ratmi
+	6NIxTIjQ5UVtvjYkQVJqoAy+/QHT0BO51JVnttmgBjtT+KYNGtd3ObJiK6opRBxx
+	TisXC7ShjvqtnEzeUb0/49RnRglCjeSbYG3njtF0bjdEwzfruAjOXO0no0HzKrxi
+	rnscx+2gatzXkf0qe5e342vijZ+gUKrQv9eD+0Z+U2e060q/NOyqiKNQEzt/wuiL
+	uhTpx3IGz52lFdD4JOLjzxi2PYq2POlIWy+bqIcTl0Kaf5DPPZr28E03TJRhzWJy
+	rQ==
+Received: (qmail 1087945 invoked from network); 22 Oct 2026 11:30:56 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Oct 2026 11:30:56 +0200
+X-UD-Smtp-Session: l3s3148p1@r89FhWpeGIgujns/
+Date: Thu, 22 Oct 2026 11:30:55 +0200
+From: wsa+renesas <wsa+renesas@sang-engineering.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "biju.das.au" <biju.das.au@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v24 08/15] mmc: renesas_sdhi: Add
+ TMIO_MMC_INTERNAL_DIVIDER flag
+Message-ID: <atnXz00Hci6R-7Ux@shikoro>
+References: <20260820171657.62815-1-biju.das.jz@bp.renesas.com>
+ <20260820171657.62815-9-biju.das.jz@bp.renesas.com>
+ <aplBTMnnF1V71BDL@shikoro>
+ <TY3PR01MB1134610EEF7D300BA8890357A86B22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,53 +71,114 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261021235818.3059519-1-briannorris@chromium.org> <20261021165858.v2.6.Ia4649c7263a5733426a8778ac4b2dc459f3ffef6@changeid>
-In-Reply-To: <20261021165858.v2.6.Ia4649c7263a5733426a8778ac4b2dc459f3ffef6@changeid>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Oct 2026 11:23:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWNuVOnn9KwYuRm5TYsMEf362V_4fSwQGp3fOfR_i7jkg@mail.gmail.com>
-X-Gm-Features: AclHuK9DeixcMDu5pJYEJIO6mwWZklXvy1cHSqlxPpUgEBM8a99XYlxTEG_tKGQ
-Message-ID: <CAMuHMdWNuVOnn9KwYuRm5TYsMEf362V_4fSwQGp3fOfR_i7jkg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/17] iio: adc: rcar-gyroadc: Discard
- pm_runtime_put_autosuspend() return values
-To: Brian Norris <briannorris@chromium.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson <ulfh@kernel.org>, linux-pm@vger.kernel.org, 
-	Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3gL2mKKOOA5mRAgO"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB1134610EEF7D300BA8890357A86B22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Thu, 22 Oct 2026 at 02:01, Brian Norris <briannorris@chromium.org> wrote:
-> This driver propagates the return value of pm_runtime_put_autosuspend(),
-> which is not particularly useful.
->
-> Returning an error code from pm_runtime_put_autosuspend() merely means
-> that it has not queued up a timer or work item to check whether or not
-> the device can be suspended and there are many perfectly valid
-> situations in which that can happen, like after writing "on" to the
-> device's runtime PM "control" attribute in sysfs for one example.
->
-> For this reason, modify this driver to simply discard the
-> pm_runtime_put_autosuspend() return value.
->
-> This will facilitate a planned change of the
-> pm_runtime_put_autosuspend() return type to void in the future, similar
-> to commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
-> type to void").
->
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+--3gL2mKKOOA5mRAgO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Biju,
 
-Gr{oetje,eeting}s,
+> > static unsigned int renesas_sdhi_clk_get_rate(struct tmio_mmc_host *hos=
+t,
+> > 					      struct clk *clk)
+> > {
+> > 	unsigned int freq =3D clk_get_rate(clk);
+> >=20
+> > 	return host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER ? freq / 2 : fre=
+q; }
+> >=20
+> > Was this AI generated?
+>=20
+> I kept 2 function as renesas_sdhi_is_internal_divider_enabled() is reused=
+ in
+> renesas_sdhi_set_clock()while adding support for HS400 mode.
+>=20
+> Currently, we decided to focus only for basic RZ/G3L support. So I can me=
+rge it into
+> Single function as you suggested.
 
-                        Geert
+Please do. And if the flag is checked later again, I think we can just
+check the flag. We don't need a helper for checking each flag, or?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>=20
+> >=20
+> > > @@ -184,10 +205,14 @@ static unsigned int
+> > > renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+> > >
+> > >  	clk_set_rate(ref_clk, best_freq);
+> > >
+> > > -	if (priv->clkh)
+> > > +	if (priv->clkh) {
+> > > +		if (host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER)
+> > > +			clkh_shift =3D 1;
+> >=20
+> > No, this needs to be handled a bit above where clkh_shift is initially =
+set up, so we have it all in one
+> > block.
+>=20
+> There is a difference here.
+>=20
+> SDx_Clock (HS clk) Figure 4.4-8 Block Diagram of the Deformed Clock Syste=
+m (7)
+> IMCLK =3D SDx_Clock/2
+>=20
+> SD_Clock  Figure 6.2-2 Functional Diagram of Clock Divider for SD_CLK
+>=20
+> Currently framework request a clk to set, we set HS clk first, followed by
+> SD_CLK.
+>=20
+> On RZ/G3L, SD_CLK value is based on internal divider.
+>=20
+> For HS400 mode, SD_CLK =3D SDx_Clock(HS clk)/2
+>=20
+> For Non-HS400 mode, SD_CLK =3D SDx_Clock(HS clk)/4
+>=20
+> I don't find an easy way to move this logic to the above.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I get an idea what is the problem here, but I am still confused about
+one thing. I'll summarize what I understood:
+
+* as of this patch, HS400 is not supported on G3L
+* so, in renesas_sdhi_clk_update(), 'clk_shift' value is 2 before clock
+  calculation
+* as HS400 is not supported yet, the internal divider is always active
+* so, you need to decrease the 'clk_shift' value from 2 to 1 after clock
+  calculation
+
+So far, so good. My expectation is now that when you add HS400 mode, you
+would need some extra code keeping 'clk_shift' at 2 because the internal
+divider is disabled then. But I don't find such code in later patches.
+
+What am I missing?
+
+Thanks and happy hacking,
+
+   Wolfram
+
+
+--3gL2mKKOOA5mRAgO
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrZ188ACgkQFA3kzBSg
+KbZW+w/9FDXVFDcXzKJv7Zx9UjskHBdfXgUqtxPLq109Y1kdg/Mgvk3oNTJ70IMj
+A125l1ch4FlFZOlulIt+1UXWLqeB5UJgE/mLk+k/t0UGP/XNENddjgT23VhbWZmR
+PDDtqc3VygI+KXQ2DObPnbQedT0OMUM1FZuOxXntrx9ej5izywlYodI3p4tEEzn3
+DP0OEl8OXgiXVFCttHwIIZaqHRxZZxa19ZPVFwsTXgJqucacHIOyzT8PZ7fVnBPq
+YRRqECM1q7WriEJjXV0wf5F1SF6QtJ83sn5cwqMw/+4rfSQgbW+//7KqYqMD0MNn
+TnQVIWPLUlssaekQ2Rvu0LBfQNeKnCfWKxV+Kde2yy6T7lO/yp8wGNuCTxEwRhDq
+UPEPJvsVNsWcFnciqEBgKo1nn2hDHYqRzvgObptvQTFLDiG031zXzX0J8BUvoZgG
+vq799wP09GaGyZw5WUBxqa3FORreEwHfPnUy5OuV4tTBgLCrIiX7QJbdGzDHuWbU
+ULW9HrBbcMYW8BQeVIBznyR2qZp2PYaSO3C7S5JsXK+NdEcnfv0shTAjYXcSXZtc
+wwEi0AtyZURP7DjzPXvt6QDKjGQ8Z/xslWnClrnfLKK6gSWwTqgjsHDcmwAg0eKD
+Mv9Cxz5PP3SWZXWU6x99dXptpPUIFV3zt0BHmk8kbohHWanNsbs=
+=T5Ds
+-----END PGP SIGNATURE-----
+
+--3gL2mKKOOA5mRAgO--
