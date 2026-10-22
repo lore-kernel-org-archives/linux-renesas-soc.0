@@ -1,68 +1,69 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=68.232.153.233
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792669763;
-	b=PC0xztcJotFLLHCKamH6F6OPqpKRKt2DefV8q+ve3zJ3rNilBYe+mlaR9bZBNsuPoZDR
-	 McKBmCYxZT9fjCabx0Zh7RaL2DHTm9/Qd2LKnkHpGFL3OLq/CtRVfy4fzcFT8WEjcpVaf
-	 0T6JEbrNxyjTTxNlo+Lfxwq6IGci1n0rm57Wvfm2B/oPIUVIRJKnIQQJkv4zepXnBAXoa
-	 s6E5LVRZQYk2xo2hl2CnfkagsEIYVRV0CWQQjDj2KJQAfv8fBX/njmOJBDzysfkip8FOr
-	 iDwjzoN5w5Bgvt8daS9KuFjaqYtkltr+9zjFc0jYSYtOwk/pibQxS8PNsds/k4IYh3A==
+	t=1792669931;
+	b=zPWWDHJ/k5KrSttNClwJ4OpQvAA0LCGnW79ua6KchiXDjXgH6+CuByMQWXBzKv4eGw5G
+	 lIgdqbQnUyha5UbTOOzf6BeiNydvVV5IlqbaGEAuuEILM5YDmHz8O5AdEXLnZNm9Kn7Zu
+	 ijYxFMcP9kz8uBA/oM++AP8SI64phHdX/Ev+kmkvAkLr8vPFEOI9H2vnRjmvb2QTTLfU4
+	 RmuZDg+B+a2FlBGQ6EPKd1ZRj6oymqfouNuAQ5EAQKPnLSFoed5FX9/6IckgaKBkf8AIY
+	 VQw06eav9/pamjuU1ywvWi2fNmZuv+qMCnbfCU9yZZ3aXNH5WA+zHUsVxvQ/X1EAjAQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792669763;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792669931;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-Amp-Result:Received:Received:Received:Message-ID:
 	 Subject:From:To:CC:Date:In-Reply-To:References:Content-Type:
 	 Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=/VzV/VZMHqvvinJUfuaB6erP4g4VoHvf1SyJvfY8DD8=;
-	b=pCfJx7G6gkzhhefpxYmc/qiJpGTbfq3Vzz+ixNOXET9k6zHMhZWHQfFRnN8EGSgzhg32
-	 Mr0Y0ElYaFB1H4jXaKV7kN/PuAaj1iNk7hgdt7bV7NLcoQBstfkUIskbC8VKKj6thvPBg
-	 jDTAhv04WwqPUQSbyxuAva6JF7zhNZB9819C7Bnd2Ii9Bv4iNtQkr7/Nx2yu+dNQjBm4l
-	 dkvR5U1zn3m1SBoylowiEVzsjSczjA5kSsRvRsdVyUECVUXkH+SHP4GKtiAvjYcaUD4mS
-	 /4hI8J2ISanCaxDlLxtkkCNabnty8gaQCmXXzn8wMwTI9SO0vT8BOnsvYMYnyvP4zcA==
+	bh=p5tTWHAcP3up0aXcHETS/TW5nhe+pEJEUCXg8wqne3k=;
+	b=NRBFgbixjj4FbcuTwhwjhspnbw1yF9NPh7wVfY1SKF1CEV/n3+gv9a2cYodg4QphzvQW
+	 dUoALQZu1DZn9uDZMTyS6HoSnunsy22cYRvijPV50Bkr85feMQJ9PXvo+0fmlK1nUE8FZ
+	 X1YPSok3thHv2ofYJRKMonORjt7d5oaMVRNz1/0cV4pC+VmUT35zegrJuq/969105OzUC
+	 rpPQk/b+DMvmbnddumla0vAKFvYLKxZIYu3GC/zWYm1+nS+BgCGx37YLj3oeJu+04Dq8f
+	 VsLSkTnlfsWdBWjW/RVHr0waXb++kdCqcZ7SuIhtOFSWpB6PP53R05kF9tWyluvR18g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=microchip.com;
 	spf=pass smtp.mailfrom=microchip.com;
-	dkim=pass header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=Kt7O2QTv;
+	dkim=pass header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=pmZwlbVI;
 	arc=none smtp.remote-ip=68.232.153.233
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DA4606A31A;
-	Thu, 22 Oct 2026 11:49:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94DA4606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4B4606A31F;
+	Thu, 22 Oct 2026 11:52:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0B4B4606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=Kt7O2QTv
+	dkim=pass (2048-bit key, unprotected) header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=pmZwlbVI
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1792669763; x=1824205763;
+  t=1792669931; x=1824205931;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=F4PgbJZxNEcw7r/FJGAa1kPqX9XUD/yLnSSc69tX1Mc=;
-  b=Kt7O2QTvll9TKkjoYJJylWCPHayiMlUZJ4Lymni1GuChXI3NswVGoqJj
-   EGG4V68+it7SGs0/U5iih/qq25bstKNFyIPGIoMNqncqkHqw8LCNqSzMj
-   EbFReMSk5AWzleKaXfgYFhqoyqqBAB744cNhka6RHye9v3i3/8MS4uRBQ
-   whbbX4w90jxvCyMXp4D1lJ5SxLf9YkdncQfr4b9s8rBECP3uytKzs7DMV
-   DNGQ32tCX6meN+QFEj4r6dYLMdA8JB4wxDW1VuzTLVHb00pnaQQotXru8
-   aRBE5hd7wK89vU4XUZXASI4XpIXySLALqm1ZJWicgx5Yde+X6Opl2PVzz
-   A==;
-X-CSE-ConnectionGUID: 6ulqlsPTSq6pnolVVnUwfA==
-X-CSE-MsgGUID: 4oOqcB5GT3S9/oW8xdZ84Q==
+  bh=qvSLYwQyZw17pBQ+bwSsK6HBoBcM99ELUEMZG7MTcVE=;
+  b=pmZwlbVIP+CzXAlm+M3bhe4a4pmKkIyLFad8cCyrHAyKYxKT4czCqqPu
+   sNNwWei277y+pmXlPQCG7y6S+9ckQkNT4tLZDdrlqhmHzWEmABN+kooRY
+   a6fbVCEJCksOPJSs+6ySCvsqX9KK1vSww7X2tD3LTzrvAfn/g0A9KkrrR
+   YvktWSWMFodilAPMYS/AS4LPFPpIaVApEMvLSxCMhk/HYkINeZfKSZrDi
+   UxxOU0q+8tNrNwlXHEtcrAPm4au7WhxcVPMZ35BV45G+Yw+5Fi17cyvzb
+   FpueAyUgH0qSTLaEZTCNGsESqj874YrRjE9hzB+6RucZYmas0hPMuwKNh
+   w==;
+X-CSE-ConnectionGUID: CMRa0V6VSTCQRzDlkb4RrA==
+X-CSE-MsgGUID: 0unnfKbAQ3eaIWARu00bdA==
 X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="296840505"
+   d="scan'208";a="65412090"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Oct 2026 04:49:16 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 04:52:10 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 22 Oct 2026 04:49:15 -0700
+ 15.2.2562.49; Thu, 22 Oct 2026 04:52:09 -0700
 Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 22 Oct 2026 04:49:11 -0700
-Message-ID: <4503da3fc0e046494829c9368756df7fabc6d596.camel@microchip.com>
-Subject: Re: [PATCH net-next v15 1/9] net: dsa: add tag driver for LAN9645X
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 22 Oct 2026 04:52:05 -0700
+Message-ID: <9856209f2cb1ee581c70d4f71aa7674cd86be685.camel@microchip.com>
+Subject: Re: [PATCH net-next v15 2/9] dt-bindings: net: dsa: add Microchip
+ LAN9645x switch
 From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
 To: <netdev-bot+sashiko@kernel.org>
 CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
@@ -74,10 +75,10 @@ CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
 	<richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
 	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-renesas-soc@vger.kernel.org>
-Date: Thu, 22 Oct 2026 13:49:11 +0200
-In-Reply-To: <179240452203.3135.15637760949369416187@kernel.org>
-References: <20261015-dsa_lan9645x_switch_driver_base-v15-1-562f316f78b9@microchip.com>
-	 <179240452203.3135.15637760949369416187@kernel.org>
+Date: Thu, 22 Oct 2026 13:52:04 +0200
+In-Reply-To: <179240452378.3135.9892080157783163049@kernel.org>
+References: <20261015-dsa_lan9645x_switch_driver_base-v15-2-562f316f78b9@microchip.com>
+	 <179240452378.3135.9892080157783163049@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2.1 
@@ -98,7 +99,7 @@ e content is safe
 > Thank you for your contribution! Sashiko AI review found 2 potential
 > issue(s) to consider.
 >=20
-> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 (1) =C2=B7 Low: 1
+> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 1
 >=20
 > If you believe none of the issues are legitimate, please reply to each
 > issue of Medium severity or higher and explain why the AI is wrong.
@@ -108,177 +109,167 @@ k
 y
 > (one such reply per series is enough).
 >=20
-> - [Medium] In lan9645x_rcv() (net/dsa/tag_lan9645x.c), the VLAN tag is
->   restored only if the software VLAN-filtering flag is set: `if=E2=80=A6
-> - [Low] In lan9645x_rcv() (net/dsa/tag_lan9645x.c), the comment above
->   skb_postpull_rcsum() lists what is subtracted from skb->csum as "what=
-=E2=80=A6
->=20
-> Pre-existing issues:
-> - [Medium] This problem wasn't introduced by this patch, but
->   lan9645x_xmit() calls dsa_port_bridge_dev_get(dp) (`dp->bridge ?
+> - [Medium] The binding (microchip,lan96455s-switch.yaml) and its RGMII
+>   delay design contradict the in-tree RGMII contract in ethernet-=E2=80=
+=A6
+> - [Low] The binding (microchip,lan96455s-switch.yaml) does not reject
+>   port nodes beyond port 8, and those nodes escape its RGMII delay=E2=80=
+=A6
 >=20
 > --
 >=20
-> net: dsa: add tag driver for LAN9645X
+> dt-bindings: net: dsa: add Microchip LAN9645x switch
 >=20
-> This adds a DSA tag driver for the Microchip LAN9645x switch. A front por=
-t
-> is used as the NPI (CPU) port. Extraction uses a 16 byte long prefix plus
-> a 28 byte IFH, and injection uses only the IFH.
+> This adds a YAML binding for the Microchip LAN9645x DSA switch family,
+> with microchip,lan96455s-switch as the fallback compatible. The switch
+> registers are described with one reg entry per register target. RGMII
+> ports may set a fixed 0 or 2000 ps MAC internal delay.
 >=20
-> On receive, a VLAN tag popped by the hardware is restored from the IFH as
-> a hwaccel C-tag. On transmit, the VLAN tag of a VLAN-aware port is moved
-> from the payload into the IFH.
->=20
-> > diff --git a/net/dsa/tag_lan9645x.c b/net/dsa/tag_lan9645x.c
+> > diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,lan964=
+55s-switch.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,lan96=
+455s-switch.yaml
 > > new file mode 100644
-> > index 0000000000000..00339daecfcbd
+> > index 0000000000000..517bc4c00de30
 > > --- /dev/null
-> > +++ b/net/dsa/tag_lan9645x.c
-> > @@ -0,0 +1,514 @@
+> > +++ b/Documentation/devicetree/bindings/net/dsa/microchip,lan96455s-swi=
+tch.yaml
+> > @@ -0,0 +1,208 @@
 >=20
 > [ ... ]
 >=20
-> > +static struct sk_buff *lan9645x_xmit(struct sk_buff *skb,
-> > +                                  struct net_device *ndev)
-> > +{
-> > +     struct dsa_port *dp =3D dsa_user_to_port(ndev);
-> > +     u32 vlan_tci, tag_type;
-> > +     u32 qos_class;
-> > +     void *ifh;
-> > +
-> > +     skb =3D lan9645x_xmit_get_vlan_info(skb, dsa_port_bridge_dev_get(=
-dp),
-> > +                                       &vlan_tci, &tag_type);
->=20
-> [Severity: Medium]
-> This isn't a bug introduced by this patch, but is it safe to dereference
-> dp->bridge here?
->=20
-> lan9645x_xmit() runs without rtnl, and dsa_port_bridge_dev_get() uses
-> plain loads with no READ_ONCE() or RCU:
->=20
-> include/net/dsa.h:dsa_port_bridge_dev_get() {
->         return dp->bridge ? dp->bridge->dev : NULL;
-> }
->=20
-> At the same time, dsa_port_bridge_leave()->dsa_port_bridge_destroy() runs
-> under rtnl and frees the dsa_bridge with no grace period:
->=20
-> net/dsa/port.c:dsa_port_bridge_destroy() {
->         ...
->         dp->bridge =3D NULL;
->=20
->         if (!refcount_dec_and_test(&bridge->refcount))
->                 return;
->         ...
->         kfree(bridge);
-> }
->=20
-> Suppose a transmit loads dp->bridge before the NULL store, and the last
-> port leaves the bridge before it reads bridge->dev. Could that read be a
-> use-after-free of the dsa_bridge?
->=20
-> tag_dsa.c, tag_ocelot.c, tag_sja1105.c, tag_vsc73xx_8021q.c and
-> dsa_software_vlan_untag() in net/dsa/tag.h already use this pattern. The
-> root cause looks like the way DSA core manages the lifetime of struct
-> dsa_bridge, not this tagger.
-
-
-Dismissed, preexisting.
-
-As the review notes, this is the DSA core pattern shared with tag_dsa,
-tag_ocelot, tag_sja1105, tag_vsc73xx_8021q and
-dsa_software_vlan_untag(). dsa_port_bridge_destroy() frees the
-dsa_bridge without a grace period, so a tagger cannot fix it locally.
-The fix belongs in the DSA core.
-
-
->=20
-> [ ... ]
->=20
-> > +     /* Reset skb->data past the actual ethernet header. */
-> > +     skb_pull(skb, ETH_HLEN);
-> > +
-> > +     /* We must deliver the skb so skb->csum only covers the data beyo=
-nd the
-> > +      * real ethernet header. The fake ethernet header in the prefix i=
-s
-> > +      * not part of skb->csum already. We must subtract what remains o=
-f the
-> > +      * prefix, the ifh and the gap. The start is derived from the cur=
-rent
-> > +      * skb->data rather than saved on entry, because the pskb_may_pul=
-l()
-> > +      * calls above may have reallocated skb->head.
-> > +      */
-> > +     skb_postpull_rcsum(skb,
-> > +                        skb->data - LAN9645X_TOTAL_TAG_LEN - ifh_gap_l=
-en,
-> > +                        LAN9645X_TOTAL_TAG_LEN + ifh_gap_len);
+> > +  ethernet-ports:
+> > +    type: object
+> > +    additionalProperties: true
+> > +    patternProperties:
+> > +      "^(ethernet-)?port@[0-8]$":
 >=20
 > [Severity: Low]
-> This isn't a bug, but the comment in lan9645x_rcv() doesn't match the
-> length passed here. "what remains of the prefix, the ifh and the gap"
-> comes to 2 + 28 + gap bytes.
+> Can port nodes above port 8 get past this schema?
 >=20
-> The call subtracts LAN9645X_TOTAL_TAG_LEN + ifh_gap_len, which is
-> 44 + gap bytes. That range also covers the 14 byte real ethernet header.
+> The local pattern only matches port@0 through port@8. However,
+> ethernet-ports has additionalProperties: true, and the inherited
+> dsa.yaml#/$defs/ethernet-ports checks "^(ethernet-)?port@[0-9a-f]+$"
+> against dsa-port.yaml. That means port@9 through port@f are evaluated
+> and pass.
 >=20
-> The code looks correct, because dsa_switch_rcv() later calls
-> skb_push(ETH_HLEN) and eth_type_trans() without adjusting csum. Could the
-> comment also list the real ethernet header?
+> Those nodes also skip the local RGMII if/then. For example, port@9 with
+> phy-mode =3D "rgmii" and rx-internal-delay-ps =3D <5000> passes, because
+> ethernet-controller.yaml only types that property as uint32.
+>=20
+> The hardware has only 9 ports, so these nodes are rejected only at probe
+> time:
+>=20
+> net/dsa/dsa.c:dsa_switch_parse_ports_of() {
+>     ...
+>                 if (reg >=3D ds->num_ports) {
+>                         dev_err(ds->dev, "port %pOF index %u exceeds num_=
+ports (%u)\n",
+>     ...
+> }
+>=20
+> The description says the last SKU digit gives 5, 7 or 9 usable front
+> ports. No compatible-based if block limits which port@N nodes the 5-port
+> and 7-port SKUs may declare, so a bare microchip,lan96455s-switch node ca=
+n
+> describe all nine ports.
+>=20
+> renesas,rzn1-a5psw.yaml, which the changelog names as the model, has the
+> same pattern.
+>=20
+> Should the schema reject port nodes outside the range each SKU supports?
+>=20
+> > +        type: object
+> > +        description: Ethernet switch ports
+> > +        additionalProperties: true
+> > +
+> > +        allOf:
+> > +          - if:
+> > +              properties:
+> > +                phy-mode:
+> > +                  contains:
+> > +                    enum:
+> > +                      - rgmii
+> > +                      - rgmii-rxid
+> > +                      - rgmii-txid
+> > +                      - rgmii-id
+> > +            then:
+> > +              properties:
+> > +                rx-internal-delay-ps:
+> > +                  $ref: "#/$defs/internal-delay-ps"
+> > +                tx-internal-delay-ps:
+> > +                  $ref: "#/$defs/internal-delay-ps"
 >=20
 > [ ... ]
 >=20
-> > +     dp =3D dsa_user_to_port(skb->dev);
-> > +
-> > +     if (dsa_port_is_vlan_filtering(dp) && ifh_gap_len) {
+> > +$defs:
+> > +  internal-delay-ps:
+> > +    description:
+> > +      Disable the delay line using 0 ps, or enable the 2000 ps delay. =
+The
+> > +      delay line is not tunable, so no other phase can be selected.
+> > +    enum: [0, 2000]
+> > +    default: 0
 >=20
 > [Severity: Medium]
-> Can a frame lose its VLAN tag here while VLAN filtering is being turned
-> on?
+> Does this delay definition conflict with the RGMII rules in
+> ethernet-controller.yaml?
 >=20
-> lan9645x_rcv() strips the gap whenever the hardware reports a pop, but
-> it only restores the tag if the software flag is also set. Turning on
-> vlan_filtering happens in this order:
+> The if/then above applies this 0/2000 ps enum to all four RGMII modes.
+> That means the schema accepts phy-mode =3D "rgmii" together with
+> tx-internal-delay-ps =3D <2000>. The informative section of
+> ethernet-controller.yaml says:
 >=20
-> br_vlan_filter_toggle()
->   br_opt_toggle(br, BROPT_VLAN_ENABLED, !!val)  /* bridge VLAN-aware */
->   switchdev_port_attr_set()
->     dsa_port_vlan_filtering()
->       ds->ops->port_vlan_filtering()
->         lan9645x_port_vlan_filtering()
->           lan9645x_vlan_port_apply()
->             lan9645x_vlan_port_apply_ingress()
->               ANA_VLAN_CFG_VLAN_POP_CNT_SET(1)  /* hw starts popping */
->       dp->vlan_filtering =3D vlan_filtering;      /* tagger flag set */
+>   # be used to indicate fine tuning performed by the MAC. The values
+>   # expected here are small. A value of 2000ps, i.e 2ns, and a phy-mode
+>   # of 'rgmii' will not be accepted by Reviewers.
 >=20
-> Take a frame extracted after the POP_CNT write but handled before the
-> dp->vlan_filtering store. It arrives with ifh_gap_len =3D=3D 4.
-> lan9645x_rcv() strips the gap but skips __vlan_hwaccel_put_tag().
+> That section also says delays not added by the PCB are software
+> configuration and are not described in DT. If the MAC adds the delay, it
+> has to remove that delay from the phy-mode it passes to the PHY.
 >=20
-> The bridge is already VLAN-aware, so it sees an untagged frame. It
-> classifies the frame to the port pvid, or drops it if there is no pvid,
-> and the original VID and PCP are lost.
+> The schema also accepts rgmii-id, rgmii-rxid or rgmii-txid with a 2000 ps
+> MAC delay. In the driver added later in the series ("net: dsa: lan9645x:
+> add basic dsa driver for LAN9645X"), nothing seems to remove that delay
+> again. lan9645x_parse_mac_delay() in lan9645x_port.c sets the flag only
+> from the DT property:
 >=20
-> The same window opens when a port joins a bridge that already filters,
-> through dsa_port_switchdev_sync_attrs()->dsa_port_vlan_filtering().
+>         *out =3D val =3D=3D 2000;
 >=20
-> The hardware only pops tags on a bridged, VLAN-aware port. Would it be
-> enough to restore the tag based on ifh_gap_len alone?
+> lan9645x_phylink_mac_config() in lan9645x_phylink.c then calls
+> lan9645x_rgmii_dll_config() for any RGMII mode. That function enables the
+> DLL delay whenever the flag is set:
+>=20
+>         if (phy_interface_mode_is_rgmii(state->interface))
+>                 lan9645x_rgmii_dll_config(p);
+>=20
+> Meanwhile phylink passes the unmodified phy-mode to the PHY.
+>=20
+> Take port 7 or 8 with an external PHY, phy-mode =3D "rgmii-id" and
+> tx-internal-delay-ps =3D <2000>. Both the MAC and the PHY would add 2 ns,
+> for about 4 ns of skew. Wouldn't that give a non-working link, even
+> though the DT passes dt_binding_check?
+>=20
+> The if also has no else branch. Non-RGMII ports (gmii, rmii, BASE-X,
+> QSGMII) therefore accept any uint32 value for rx-internal-delay-ps and
+> tx-internal-delay-ps.
+>=20
+> Could the MAC delay be derived from phy-mode instead of these properties,
+> with the phy-mode passed to the PHY adjusted to match?
 
-Correct. The next version restores the tag whenever ifh_gap_len is non-zero=
-,
-without looking at dp->vlan_filtering.
+Dismissed, intended.
+
+This is the binding model of sja1105 and microchip,lan937x.yaml, which
+also limits the values to 0 and 2000 ps on RGMII ports. sja1105 and ksz
+configure the MAC delay lines from rx/tx-internal-delay-ps and pass
+phy-mode unmodified to the PHY in the same way.
 
 
+
+>=20
+> [ ... ]
 >=20
 > --
 > Sashiko AI review =C2=B7 https://netdev-ai.bots.linux.dev/sashiko/#/patch=
 set/20261015-dsa_lan9645x_switch_driver_base-v15-0-562f316f78b9%40microchip=
 .com
-
-pw-bot: cr
 
