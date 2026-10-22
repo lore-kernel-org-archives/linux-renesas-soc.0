@@ -1,86 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792671466;
-	b=qV/yAPDRD6KpEcN0X05jEQp3OrLlnrxRp8MmNU1eU/9fAviqE01hkBndlSk1CnvTSno3
-	 4BkW017ss2/UmQ4Dr8DB5BhApvnSK5an4bwSHntGGrthJOrPFmM5MAfNA/x5BiaohPukL
-	 CezQkNjBVMSH0nGoPMt2s2m4ctqw8MDYLjG9rguQQA3VGTIHaK1YrjRkpAJxC3B6iXKYy
-	 AWAjop0EAa18d90VtKrc8vwU5cQKLWoBM9F0zCTt7xEuUxB+lRI8SWz1rRY68a0ZHaN5y
-	 nR8Q7Mz//65PRsi9DSSEIs4ENjVFpW4rCd/+eERKKlWxIP7hEev0BFqzyYSlgNhYARQ==
+	t=1792672428;
+	b=Q5uemXG2dOGDW2Q7jKOzFSWlsp78SYDU+X5MC3VT4v5K6c1+WEU5kPk0qVt4FSdoGmyj
+	 OnxzOhIqPeWoOGzfag704FRHDKxZaBlPnCEWOFZnh2nk2BOwSwV9dd3FtpmO11PcbkLcz
+	 VKG0ueUmlPDXoMBG2j1GCGfAjV0XSVJsF2s7vGUTNny3we/xSCnSsv5m/FjOyS+tOoyIW
+	 38sHgvvuUkEZxtZG8OiHnVCzOjNIxqoPNCtk4mysRuXOBQjLxSFZVJZqF+maqcL/6YmCi
+	 WhL/V4Bvz8ptFZOlzHKxZrlg4YBE5+8NOTEY1B7D94sR/y2zuWq6zRyTOiaB/bgAeFw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792671466;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-Amp-Result:Received:Received:Received:Message-ID:
-	 Subject:From:To:CC:Date:In-Reply-To:References:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=IDIWgFHtkKN0qFyPZ4ulufZujfYESP26RcU9o6ALHvk=;
-	b=NpI1NPoP90q5IOj7MQazFti1f9eAhJwKmi7VFpOCjYSWe3PitKkXcb2akpGBqPkJbNO3
-	 kLSMSRw5PxVy3R0nwnZENpOeifUi8OmZgx3YUPqSUBKAjfEbwQzuXiQ+WR3LDpHQwnY9W
-	 RfEDxh2iyBYpTG7B2QwysdgrarxtAX5f2LK7GV6J106R1ll9jhqjv4SD10LehmVJ/iVHJ
-	 yDxgRh7576QRtYUN+JkvVBIXcG96fiU8SmNPWf/A9jeltO2maegxOJ76R7v/Rzh6fBCGY
-	 IufL1ppNNNhxrMWfR4IBKP0u9XGtl2z8HNm5Q8JGZLFfXN7Ky3T9AgWZbPtvwyxnQ9Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792672428;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=es0EBw+s01NCevX6p6GYQJTMMjVuoGTr4HClcof2aRA=;
+	b=VPvSQz03FZG9RNYiXdDMAHAQSO7en/Tu59WVOTpwVS40KcSLcw9U5JNRQUMPCNvTf5fa
+	 IBkRoR8fZnuTS2PvNu62FJ/l4H2Jo7bJno0dQw/DGGEHdJIsZ6zr0yZgay+XqP33PlK8R
+	 C2j5DRUiNXrng+JrY70nhDCnMzf6/hZ0vPoHwbaZ7RUSRIpFrV5e+zr9u28jUtg4ZoPN6
+	 5OPreoOr5mZX2DSgYLZ5iSTRlMWNhcA6NQIjh9hl+/JAUEzl59X36iYUVdzfJ5p+ufyqN
+	 V8qJEq8D/re8W9Ywi8uaY6cqSIhETms30xhSb9oBe82etIk/JBgJ+bMDddixf4tdWgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=microchip.com;
-	spf=pass smtp.mailfrom=microchip.com;
-	dkim=pass header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=cD5DgsO5;
-	arc=none smtp.remote-ip=68.232.154.123
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S3UvU8sc;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CA0606A31A;
-	Thu, 22 Oct 2026 12:17:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67CA0606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D52606A31E;
+	Thu, 22 Oct 2026 12:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=cD5DgsO5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1792671465; x=1824207465;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=KoiH/k+AEDOTwxpCk3nZuqPG78kez9SH8DRHyaeSgzQ=;
-  b=cD5DgsO5MT1+E7jmzM2nr3JdDRY/7S4e8ltnGQIPkQKT9Ne0UqwYpqbx
-   sBe9D1dxDSxYpHeYri4pBw3ppf2VUNMqt4x3Tt4qhbVsbHamoL5U5725u
-   6EdOaHPzWtN81JjzPPLCQrACsTMhEd5Cr4PAVC1Doh6Wn9SnCeEx+X2Wm
-   qOkTrhebf1FDKxCpALPCye3FZxkBJjPUypnJKONrWbh7QSDT/n3rB3pS8
-   xXSoK5rUcIC9UfXBuj8W820Np1Suoaz8JOBHvivXfn+XgKoEBPDUuIOqu
-   gUnss3xulzdsnaKGaFQhIOUjSbvvF3KI8oSwY6tgrstwqpTWYm4QJGajE
-   w==;
-X-CSE-ConnectionGUID: DLLUhzt7QoC/ZcAvf6UhMw==
-X-CSE-MsgGUID: zw3vjhGISzGCeK7hSdrd/w==
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="64459479"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Oct 2026 05:17:44 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 22 Oct 2026 05:17:43 -0700
-Received: from DEN-DL-M77643.microsemi.net (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 22 Oct 2026 05:17:40 -0700
-Message-ID: <a1f7a38b614d0b5b802c422dab8ca304fd6b9a81.camel@microchip.com>
-Subject: Re: [PATCH net-next v15 9/9] net: dsa: lan9645x: add port statistics
-From: Jens Emil Schulz Ostergaard <jensemil.schulzostergaard@microchip.com>
-To: <netdev-bot+sashiko@kernel.org>
-CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <woojung.huh@microchip.com>, <linux@armlinux.org.uk>,
-	<Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
-	<geert+renesas@glider.be>, <magnus.damm@gmail.com>, <edumazet@kernel.org>,
-	<richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>
-Date: Thu, 22 Oct 2026 14:17:39 +0200
-In-Reply-To: <179240453307.3135.2065386937763476332@kernel.org>
-References: <20261015-dsa_lan9645x_switch_driver_base-v15-9-562f316f78b9@microchip.com>
-	 <179240453307.3135.2065386937763476332@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S3UvU8sc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C249B1F000C1;
+	Thu, 22 Oct 2026 12:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792672427;
+	bh=es0EBw+s01NCevX6p6GYQJTMMjVuoGTr4HClcof2aRA=;
+	h=From:Subject:Date:To:Cc;
+	b=S3UvU8sc13/k33yf8QZiv/7uF2MDwHf3xjNmGLC6O7vJJqa2EsTAvFV6VERueVqaX
+	 KbJPhoKrsFGl0ozfSDGXqa/gvOSS47YMM8XFNCrI44pNEZqvSNDfaJWIyqXRfn1iyP
+	 tOXWqsMQVlaIgETZvAZJmOinxNRJlL4GE+oet56i8vHfhlkUHk0bd2SyDS2jBSh6vQ
+	 h1EerhG6CTWwTrFq7c9M0Pcy70XfUkLqNu7c6RB5n6ex1Z+WhXV46ZeNTqwY6EKQ25
+	 ZQoQGxFmpJQxsd+P2bJHSXfMBR7cW/PYZfU71VG4HWp9/17BpXUCK4vttjJEgpKJrv
+	 5+yeyF/+Gh3Dg==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v2 00/59] drm/connector: Convert all drivers to
+ atomic_create_state and remove reset
+Date: Thu, 22 Oct 2026 14:30:59 +0200
+Message-Id: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -90,163 +54,262 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32Oyw6CMBBFf4XM2jFt5VVX/odxAWWURml1WomG8
+ O8W2Lu8k3vPnAkCsaUAx2wCptEG610KapeB6Rt3I7RdyqCEKkUlNHY8oPM4eCY03jky0TMyBYq
+ YF0Qy7ypTKgOJ8GS62s9KP1+2zPR6pydxO0LbhAUzDDYeMy2vhSKta5W3sPR7GxL8u8qNch0sH
+ lLI/K/HKFFgUZdGm1Sv1eF0J3b02Hu+wWWe5x/N8Hdo9wAAAA==
+X-Change-ID: 20260709-drm-no-more-connector-reset-45ee14d7c62c
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Ruben Wauters <rubenru09@aol.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>, 
+ Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
+ Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Alison Wang <alison.wang@nxp.com>, Stefan Agner <stefan@agner.ch>, 
+ Tian Tao <tiantao6@hisilicon.com>, 
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+ Yongbang Shi <shiyongbang@huawei.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Huacai Chen <chenhuacai@kernel.org>, 
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jianmin Lv <lvjianmin@loongson.cn>, 
+ Mingcong Bai <jeffbai@aosc.io>, Qianhai Wu <wuqianhai@loongson.cn>, 
+ Xi Ruoyao <xry111@xry111.site>, Gerd Hoffmann <kraxel@redhat.com>, 
+ spice-devel@lists.freedesktop.org, virtualization@lists.linux.dev, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ linux-renesas-soc@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ Iker Pedrosa <ikerpedrosam@gmail.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+ Alexey Brodkin <abrodkin@synopsys.com>, Hans de Goede <hansg@kernel.org>, 
+ LiangCheng Wang <zaq14760@gmail.com>, Alex Lanzano <lanzano.alex@gmail.com>, 
+ Sean Paul <sean@poorly.run>, Chia-I Wu <olvaffe@gmail.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org, Harry Wentland <harry.wentland@amd.com>, 
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org, 
+ intel-xe@lists.freedesktop.org, Danilo Krummrich <dakr@kernel.org>, 
+ Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11112; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=l8HHxUF3ppkOWkHs/T+vPFIyXJxDYh41p1hKBDhkwOM=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm3mHrFm95UZ4hNsDky/UeeVf6r7FOOW/TK/tl9b71/x
+ a/25817HVNZGIQ5GWTFFFmeyISdXt6+uMrBfuUPmDmsTCBDGLg4BWAiMy4xNjz+MKfvS8IPz4Pv
+ 7sXOO3X6TJiz2vrd3oaau3kPeJ+JrzO3E06I6HV5cZGNhTNZfAb7fsb6rHTnrCXTJzyey3v359X
+ WDMVpC+71/xRwmp6k4HY30jBg55GC3SpL7Bqkd32e7+CR4h8DAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Mon, 2026-10-19 at 10:08 +0000, netdev-bot+sashiko@kernel.org wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e content is safe
->=20
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue(s) to consider.
->=20
-> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 0
->=20
-> If you believe none of the issues are legitimate, please reply to each
-> issue of Medium severity or higher and explain why the AI is wrong.
-> If any of them are legitimate and you plan to respin, please let patchwor=
-k
-> know by including "pw-bot: cr" as a separate line at the end of your repl=
-y
-> (one such reply per series is enough).
->=20
-> - [Medium] lan9645x_stats_get_stats64()
->   (drivers/net/dsa/microchip/lan9645x/lan9645x_stats.c) counts error=E2=
-=80=A6
->=20
-> --
->=20
-> net: dsa: lan9645x: add port statistics
->=20
-> This adds port statistics support to the lan9645x DSA driver. The 32 bit
-> hardware counters are polled into a 64 bit software cache, and the pMAC
-> counters are summed into the aggregate source. The cache is exposed throu=
-gh
-> ethtool -S, the standard ethtool groups and ndo_get_stats64.
->=20
-> > diff --git a/drivers/net/dsa/microchip/lan9645x/lan9645x_stats.c b/driv=
-ers/net/dsa/microchip/lan9645x/lan9645x_stats.c
-> > new file mode 100644
-> > index 0000000000000..a21afb4d98532
-> > --- /dev/null
-> > +++ b/drivers/net/dsa/microchip/lan9645x/lan9645x_stats.c
-> > @@ -0,0 +1,854 @@
->=20
-> [ ... ]
->=20
-> > +void lan9645x_stats_get_stats64(struct lan9645x *lan9645x, int port,
-> > +                             struct rtnl_link_stats64 *stats)
-> > +{
->=20
-> [ ... ]
->=20
-> > +     stats->rx_packets =3D c[SCNT_RX_SHORT] +
-> > +                         c[SCNT_RX_JABBER] +
-> > +                         c[SCNT_RX_SZ_64] +
-> > +                         c[SCNT_RX_SZ_65_127] +
-> > +                         c[SCNT_RX_SZ_128_255] +
-> > +                         c[SCNT_RX_SZ_256_511] +
-> > +                         c[SCNT_RX_SZ_512_1023] +
-> > +                         c[SCNT_RX_SZ_1024_1526] +
-> > +                         c[SCNT_RX_SZ_JUMBO] +
-> > +                         c[SCNT_RX_LONG] +
-> > +                         c[SCNT_RX_PMAC_SHORT] +
-> > +                         c[SCNT_RX_PMAC_FRAG] +
-> > +                         c[SCNT_RX_PMAC_JABBER] +
-> > +                         c[SCNT_RX_PMAC_SZ_64] +
-> > +                         c[SCNT_RX_PMAC_SZ_65_127] +
-> > +                         c[SCNT_RX_PMAC_SZ_128_255] +
-> > +                         c[SCNT_RX_PMAC_SZ_256_511] +
-> > +                         c[SCNT_RX_PMAC_SZ_512_1023] +
-> > +                         c[SCNT_RX_PMAC_SZ_1024_1526] +
-> > +                         c[SCNT_RX_PMAC_SZ_JUMBO] +
-> > +                         c[SCNT_RX_PMAC_LONG];
-> > +
-> > +     stats->multicast =3D c[SCNT_RX_MC] + c[SCNT_RX_PMAC_MC];
-> > +
-> > +     stats->rx_errors =3D c[SCNT_RX_SHORT] +
-> > +                        c[SCNT_RX_JABBER] +
-> > +                        c[SCNT_RX_CRC] +
-> > +                        c[SCNT_RX_LONG] +
-> > +                        c[SCNT_RX_PMAC_SHORT] +
-> > +                        c[SCNT_RX_PMAC_JABBER] +
-> > +                        c[SCNT_RX_PMAC_CRC] +
-> > +                        c[SCNT_RX_PMAC_LONG];
->=20
-> [Severity: Medium]
-> Should short, jabber and oversize frames be counted in rx_packets in
-> lan9645x_stats_get_stats64()?
->=20
-> rx_packets and rx_errors both add SCNT_RX_SHORT, SCNT_RX_JABBER and
-> SCNT_RX_LONG, plus their pMAC versions. JABBER and LONG are also added to
-> rx_length_errors. So every malformed frame received on a user port counts
-> once as a good packet and once as an error.
->=20
-> The rtnl_link_stats64 kernel-doc in include/uapi/linux/if_link.h says:
->=20
->   @rx_packets: Number of good packets received by the interface.
->=20
-> The v5 changelog also says CRC and symbol error frames "are already count=
-ed
-> in SZ_* buckets". Since those buckets feed rx_packets, frames with a bad =
-CRC
-> would be counted as good packets as well.
->=20
-> This also gives a different answer from lan9645x_stats_get_eth_mac_stats(=
-),
-> which counts good received frames as UC + MC + BC only:
->=20
->         m->FramesReceivedOK =3D c[SCNT_RX_UC] +
->                               c[SCNT_RX_MC] +
->                               c[SCNT_RX_BC] +
->                               ...
->=20
-> As a result, rx_packets is larger than FramesReceivedOK by the number of
-> errored frames. ocelot_port_get_stats64() uses a similar rx_packets formu=
-la,
-> but that does not match the uAPI description either.
->=20
-> Could rx_packets be derived the same way as FramesReceivedOK?
->=20
-> A separate point: c[SCNT_RX_PMAC_FRAG] is added to rx_packets but not to
-> rx_errors. The comment in lan9645x_stats_get_rmon_stats() says:
->=20
->         /* ... Only SCNT_RX_PMAC_FRAG counts runts with an invalid
->          * CRC, so fragments is left unset rather than reporting the pMAC=
- alone.
->          */
->=20
-> Going by that comment, a pMAC runt with a bad CRC would be counted as a
-> good packet and left out of the error total. Is that intended?
->=20
-> v12 removed the eMAC SCNT_RX_FRAG from rx_packets, but the pMAC version i=
-s
-> still there. Since the pMAC gets no traffic without MAC merge, this has
-> little effect today.
->=20
+This is a follow-up to the plane and CRTC reset removal series, and
+part of a larger effort to remove the reset hook from all KMS objects.
 
-Dismissed, intended.
+The connector reset hook is overloaded: it is called both at probe
+time to create the initial software state and during suspend/resume to
+reset hardware and software state. These two roles have different
+requirements, and the reset hook is not fallible, making error
+handling difficult for the initial state allocation path.
 
-This follows mscc/ocelot. The hardware has no good frames only octet
-counter. rx_oct counts good and bad frames, so rx_bytes cannot follow
-the uapi description. We make sure rx_packets matches by counting the
-same frames as rx_bytes. Bad frames are also reported in rx_errors.
+While reset has the semantics to reset both the software and hardware
+state, the vast majority of implementations and all the helpers only
+reset the software state, making them equivalent to
+atomic_create_state in practice. The atomic_create_state hook makes
+this explicit: it only allocates and initializes a pristine state
+without any side effect, and returns the state pointer or an ERR_PTR
+on failure.
 
-FramesReceivedOK is the 802.3 good frame count and is meant to differ.
+This series converts all connector drivers tree-wide from the reset hook
+to atomic_create_state, then removes the reset hook from struct
+drm_connector_funcs entirely. The conversions were done using a
+combination of Coccinelle semantic patches, mechanical one-line
+replacements and manual adjustments.
 
-SCNT_RX_PMAC_FRAG is the size class below 64 bytes for pMAC runts with
-an invalid CRC, so it belongs in rx_packets next to the size buckets.
-Its frames are already in rx_errors through SCNT_RX_PMAC_CRC, which
-counts CRC errors at any frame size, in the same way a frame of 64
-bytes or more with a bad CRC sits in a size bucket and in SCNT_RX_CRC.
-Adding it to rx_errors would count those runts twice.
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v2:
+- Change the parameter order of __drm_atomic_helper_connector_hdmi_state_init
+- Fixed state argument casing for drm_atomic_helper_connector_tv_margins_state_init
+  and drm_atomic_helper_connector_tv_state_init
+- Put atomic_create_state before atomic_duplicate_state
+- Fix state allocation for MST and WB connectors
+- Link to v1:
+  https://lore.kernel.org/r/20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org
 
-The eMAC SCNT_RX_FRAG is not the same counter. It only counts runts
-with an invalid CRC on half-duplex links, and on full-duplex links
-counts frames received after the port is paused, which is why it is
-not used.
+---
+Maxime Ripard (59):
+      drm/hdmi: Change __drm_atomic_helper_connector_hdmi_state_init parameter order
+      drm/atomic-state-helper: Rename connector_tv_margins_reset to state_init
+      drm/atomic-state-helper: Rename connector_tv_reset to state_init
+      drm/panel: Add atomic_create_state support
+      drm/amdgpu: vkms: Switch to drm_atomic_helper_connector_create_state
+      drm/aspeed: Switch to drm_atomic_helper_connector_create_state
+      drm/ast: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: analogix-anx6345: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: analogix-anx78xx: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: chrontel-ch7033: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: nxp-ptn3460: Switch to drm_atomic_helper_connector_create_state
+      drm/panel: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: synopsys: dw-hdmi: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: tc358767: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: tda998x: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: ti-tfp410: Switch to drm_atomic_helper_connector_create_state
+      drm/exynos: Switch to drm_atomic_helper_connector_create_state
+      drm/fsl-dcu: Switch to drm_atomic_helper_connector_create_state
+      drm/hisilicon: hibmc: Switch to drm_atomic_helper_connector_create_state
+      drm/logicvc: Switch to drm_atomic_helper_connector_create_state
+      drm/loongson: Switch to drm_atomic_helper_connector_create_state
+      drm/mgag200: Switch to drm_atomic_helper_connector_create_state
+      drm/mipi-dbi: Switch to drm_atomic_helper_connector_create_state
+      drm/qxl: Switch to drm_atomic_helper_connector_create_state
+      drm/renesas: shmobile: Switch to drm_atomic_helper_connector_create_state
+      drm/sitronix: st7571: Switch to drm_atomic_helper_connector_create_state
+      drm/sitronix: st7920: Switch to drm_atomic_helper_connector_create_state
+      drm/sti: Switch to drm_atomic_helper_connector_create_state
+      drm/sun4i: Switch to drm_atomic_helper_connector_create_state
+      drm/tegra: Switch to drm_atomic_helper_connector_create_state
+      drm/tests: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: arcpgu: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: bochs: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: cirrus: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: gm12u320: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: pixpaper: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: repaper: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: sharp: Switch to drm_atomic_helper_connector_create_state
+      drm/udl: Switch to drm_atomic_helper_connector_create_state
+      drm/vboxvideo: Switch to drm_atomic_helper_connector_create_state
+      drm/virtio: Switch to drm_atomic_helper_connector_create_state
+      drm/vkms: Switch to drm_atomic_helper_connector_create_state
+      drm/xen: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: synopsys: dw-hdmi: Convert to atomic_create_state
+      drm/meson: Convert to atomic_create_state
+      drm/gud: Convert to atomic_create_state
+      drm/sun4i: hdmi: Convert to atomic_create_state
+      drm/sun4i: tv: Convert to atomic_create_state
+      drm/tests: hdmi: Convert to atomic_create_state
+      drm/vc4: hdmi: Convert to atomic_create_state
+      drm/vc4: vec: Convert to atomic_create_state
+      drm/connector: Remove drm_atomic_helper_connector_reset()
+      drm/amdgpu: dm: Convert to atomic_create_state
+      drm/ast: Convert to atomic_create_state
+      drm/i915: Convert to atomic_create_state
+      drm/nouveau: Convert to atomic_create_state
+      drm/tegra: Convert to atomic_create_state
+      drm/connector: Remove __drm_atomic_helper_connector_reset()
+      drm/connector: Remove reset
 
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |  2 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_connector.c    | 32 ++++----
+ .../amd/display/amdgpu_dm/amdgpu_dm_connector.h    |  3 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 11 ++-
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   | 17 +++-
+ .../amdgpu_dm/tests/amdgpu_dm_connector_test.c     | 90 ++++++++++++++--------
+ drivers/gpu/drm/aspeed/aspeed_gfx_out.c            |  2 +-
+ drivers/gpu/drm/ast/ast_dp.c                       | 18 ++---
+ drivers/gpu/drm/ast/ast_dp501.c                    |  2 +-
+ drivers/gpu/drm/ast/ast_sil164.c                   |  2 +-
+ drivers/gpu/drm/ast/ast_vga.c                      |  2 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |  2 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  2 +-
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |  2 +-
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          | 12 ++-
+ drivers/gpu/drm/bridge/tc358767.c                  |  2 +-
+ drivers/gpu/drm/bridge/tda998x_drv.c               |  2 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  2 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c     |  4 +-
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    |  9 +--
+ drivers/gpu/drm/drm_atomic_state_helper.c          | 67 ++++------------
+ drivers/gpu/drm/drm_connector.c                    |  8 --
+ drivers/gpu/drm/drm_mode_config.c                  |  4 +-
+ drivers/gpu/drm/drm_panel.c                        | 16 +++-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  2 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  2 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |  2 +-
+ drivers/gpu/drm/gud/gud_connector.c                | 20 +++--
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c     |  2 +-
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c   |  2 +-
+ drivers/gpu/drm/i915/display/intel_connector.c     |  6 +-
+ drivers/gpu/drm/i915/display/intel_sdvo.c          |  6 +-
+ drivers/gpu/drm/logicvc/logicvc_interface.c        |  2 +-
+ drivers/gpu/drm/loongson/lsdc_output_7a1000.c      |  2 +-
+ drivers/gpu/drm/loongson/lsdc_output_7a2000.c      |  4 +-
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         | 12 ++-
+ drivers/gpu/drm/mgag200/mgag200_vga.c              |  2 +-
+ drivers/gpu/drm/mgag200/mgag200_vga_bmc.c          |  2 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c            | 11 ++-
+ drivers/gpu/drm/nouveau/nouveau_connector.c        | 27 ++++---
+ drivers/gpu/drm/nouveau/nouveau_connector.h        |  3 +-
+ drivers/gpu/drm/qxl/qxl_display.c                  |  2 +-
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  |  2 +-
+ drivers/gpu/drm/sitronix/st7571.c                  |  2 +-
+ drivers/gpu/drm/sitronix/st7920.c                  |  2 +-
+ drivers/gpu/drm/sti/sti_dvo.c                      |  2 +-
+ drivers/gpu/drm/sti/sti_hda.c                      |  2 +-
+ drivers/gpu/drm/sti/sti_hdmi.c                     |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 17 +++-
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_tv.c                   | 16 +++-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             |  2 +-
+ drivers/gpu/drm/tegra/dsi.c                        | 17 ++--
+ drivers/gpu/drm/tegra/hdmi.c                       |  2 +-
+ drivers/gpu/drm/tegra/sor.c                        | 13 ++--
+ drivers/gpu/drm/tests/drm_atomic_commit_test.c     |  2 +-
+ drivers/gpu/drm/tests/drm_atomic_test.c            |  2 +-
+ drivers/gpu/drm/tests/drm_connector_test.c         |  4 +-
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 17 +++-
+ drivers/gpu/drm/tests/drm_probe_helper_test.c      |  2 +-
+ drivers/gpu/drm/tiny/arcpgu.c                      |  2 +-
+ drivers/gpu/drm/tiny/bochs.c                       |  2 +-
+ drivers/gpu/drm/tiny/cirrus-qemu.c                 |  2 +-
+ drivers/gpu/drm/tiny/gm12u320.c                    |  2 +-
+ drivers/gpu/drm/tiny/pixpaper.c                    |  2 +-
+ drivers/gpu/drm/tiny/repaper.c                     |  2 +-
+ drivers/gpu/drm/tiny/sharp-memory.c                |  2 +-
+ drivers/gpu/drm/udl/udl_modeset.c                  |  2 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c              |  2 +-
+ drivers/gpu/drm/vc4/vc4_hdmi.c                     | 31 ++++++--
+ drivers/gpu/drm/vc4/vc4_vec.c                      | 16 +++-
+ drivers/gpu/drm/virtio/virtgpu_display.c           |  2 +-
+ drivers/gpu/drm/vkms/vkms_connector.c              |  2 +-
+ drivers/gpu/drm/vkms/vkms_writeback.c              |  2 +-
+ drivers/gpu/drm/xen/xen_drm_front_conn.c           |  2 +-
+ include/drm/display/drm_hdmi_state_helper.h        |  4 +-
+ include/drm/drm_atomic_state_helper.h              |  9 +--
+ include/drm/drm_connector.h                        | 12 ---
+ include/drm/drm_mipi_dbi.h                         |  2 +-
+ 82 files changed, 360 insertions(+), 276 deletions(-)
+---
+base-commit: 91f52e99824b0beebb48cad51bbda81437af8664
+change-id: 20260709-drm-no-more-connector-reset-45ee14d7c62c
 
-> --
-> Sashiko AI review =C2=B7 https://netdev-ai.bots.linux.dev/sashiko/#/patch=
-set/20261015-dsa_lan9645x_switch_driver_base-v15-0-562f316f78b9%40microchip=
-.com
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
 
