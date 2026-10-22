@@ -1,95 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792644108;
-	b=er641d6cO9K2FFOGcW8UJeve0qTptVMQ2f0Cn9bRydWe8QwiIwmezorEx0C18wEwoqyv
-	 BnkKjaehDN28E6sdNmaucxEVh2cSG3xZd1HkJe+mOpUTNqA2tb23dQehuL9jzoCw6SMLJ
-	 pS2WZAwf4F6OmN/sl/ta+AvWc1dMFaieS81HlLPBcHrYiGoAIaYSBGk3SqNC+zxs06BZa
-	 NHT/kYretraSEKv/S3kizSnDWcCtumNDsJFWQNcK9VTRGS4ldba8+EscdkQIotj24M3ah
-	 ZJwj+0wtIc5cElkHNEjB9ZRgbK40gG+QM7MfjjEs7akqvmAOuqEbZzL9D12h/ozAp+A==
+	t=1792652482;
+	b=ax1RRcI4XNtTh81m19z9Hx5mdxTyMINOHoq5D90EAnB3okCLQ+8mAaeL4HLO30b64gNN
+	 CsRRqJGtOX4B9q3t32gNid7Oo64UTC6mALADuqrFrAiB0bAfqmcKpQCclagO7j2EgpB5b
+	 Cw17GQd7GALqWzyUDoEOm5D+UumtPd7kfuMatikZXLg6YSY3gJ1cWL7sVm4yCKGMPThd5
+	 dtPp5u1NGzqMi3pdSE8jnCc+Fh7berY0LxnXPZpb+Ynm+wJr8YUYqV1KV4lEDbsSZK9Fn
+	 w1ZIehlBf7dPssCqlJb6jp3Q5B/wZSAzVhgvf7J8KdPd7OiQyJYcLl+93eUcjTdIuMQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792644108;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=+ZUvcnWuT7preQmdUj0IGAmH2t9+0AN8QU0XIqBZyog=;
-	b=3nRwRmFVPaXkMHka7NBYVYJEELVndyd/q/FzB9ilfSSVYSwUvAkDZyyUkGzkhz+xkZ+3
-	 E1vlI3KxXIGI0K2cerNr1jbzEBe2GanQf9jkYKNkMCl24srrPcvFhfrgaBSXgsPOz/BFO
-	 AnKAL0qoYW4GUe48ljLcXCgM53crIN25Mvtv+kUNEUrFh7ImO9LALnL7SBSdkpqqdnpwo
-	 R2t8WeNs75AS+iM++2JvWCMLFXcvIBa0iI6xd9Vf8Ekj/ryKLiOkPNuxperKvcvujwEVQ
-	 /7REYE+47WUgoCEbdMQ/5K9DPZ2Ern7rcpnVDsLmMiYbJk/tg7e9PhAGNl8gq6AdjDQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792652482;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=ltUAnBtou90SNn5Ne2wUoBg+rS3tKtz8jx12czMY9Ds=;
+	b=bjOV3z9pNU0ubrc4Pw2uYXhioQXrqYQShmS6u5c8hj+6jpAmTMC4p037T91Jpls4GFpp
+	 nLc03FCTDP9bhaF+rhCcoYaqJwa2waRUyuQBEFUXanLKLtbKq/UbFwYFicJb+JVu70F9f
+	 wXfhjO6UcRWAMRm7kYYdcahYUjIEGXlFC09SY9C4wVy9ugng6tR+whBd8yStENKeedWcl
+	 h0hwKQ6WUlai5EzAS/MddzMHKzvQWNyMWUkWeDqDkK4TjrD3kkp6vStmLXMZXSaZN1PGa
+	 D5kSHNwliy+VNZvWpmd/Jyde6z+xVaJ64FoemmFqXt37urQ4l0eJfoMrqb02Pnhn/ZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=E1TyOzD5;
-	arc=none smtp.remote-ip=209.85.215.172
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=WnQq+LMS;
+	arc=none smtp.remote-ip=192.198.163.11
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB46606A31B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 04:41:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9CB46606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5145606A319;
+	Thu, 22 Oct 2026 07:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D5145606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=E1TyOzD5
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-cd5cd8d89a7so487934a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Oct 2026 21:41:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792644107; x=1793248907; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+ZUvcnWuT7preQmdUj0IGAmH2t9+0AN8QU0XIqBZyog=;
-        b=E1TyOzD5bPpwzVqP5br99+6oh3FeSycO8lcfeW74GAhw2rlpgT/M/FF22LIEXTZPws
-         kMjM5K0pNbdnWtqZMaR7KrlD+xif3ghDb1IEKVr0vXuA7NcjjUPPySQvRRAihPHtRf9c
-         D5lWNU++NIx4AZi2w43o+3IgjeuvoBoiTLIfCZqRY8RSoxHhTSgrE8kg+T+HEgrz+9Zc
-         wozz2wgsYHkBzBPSyJvixXoUj7D4FqX+jXIsUehMu6KS3+B4SzcKoa+FxYjIHOaGtu6P
-         aGAdzRCj/zFPL8h4c06TnKJ/sSQT3uTHAiPmrcaXJbQ2t1q73Xmdb5XMksw5GJRxrnAC
-         14fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792644107; x=1793248907;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+ZUvcnWuT7preQmdUj0IGAmH2t9+0AN8QU0XIqBZyog=;
-        b=lHsIOPeK1bXvATdzeoRFz+7w0ZPNftwkZWrcZ693haO4lOavegViJ3OWIaYp1TCv+2
-         +lbe2UyqYrTzrfsDJ88DVtXYMEIl65vZNwzoryD4sAsVu2SvOnrTqI6m7/jlJPcqYlVK
-         xuJ6oEFWbMNxf0t+z9u2K17Ph1Z3zNZvx/VXlH0Gfcyuiw7ukDIMTzEavCN7VCxsYJ8Z
-         h3t0Y632rvlGNA6w8P6R8ztjhBKUil2/k5jLfuFk9ucUIdaKqg7PZdjvBX2/+ZEdrbq3
-         4//QHt+yMXFz0C7OtvjA+cBRvUFOlTGCzu45IHh64p9pQrwu0bdDl1H9wIS0MDhiTPT7
-         9clQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzEQklj+eRfVoHNYkIpIY+A911OP6Sjb+YdyG7oQIKHre1UwYNNmGLcWgflRwnjvPK/S1CNfEpnjELei+d4dNlioA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLUC4wfdKCh7hMzc/x2+YseDWh9rDBdw9Y4bCmkujTggTutA1XZ
-	RCjsVJjaWp9GOtHU+3sNi+L1wS45sMHbIWXtDTQHe98HdgXyfc+7TA8z
-X-Gm-Gg: AYBFou0A1fW8s4UN4uYvi8OG2f7sV7kslRWNcuZMAeHCe7SHalRJrcni6YU3+bCcWyk
-	4uxU1qHYHKkukHXiVcOkrO949FkbW6UdShXN4hOgusxBecnmhsXHbNZo7lBwZLEQwVpLH6CFjPF
-	quaWl/Tu6C7Ffiy/l8kRZeh/tHj3HEvgzu3ztqT48dk7BwVKe4OlWYSOWOtR25TqtG8+8fWhOFV
-	42lPDDUCk+I1qhRaRPOXURssU/oNEyanXWkn1okj03IOR/00MzslOACTmaG5coDDe94atPKTBj+
-	Kqi2GfNLleepnaJQxqHV8QzHh61afQqAH/2+NG6rhaIyH/KZUWuyRXN58gDTu/xfd0x59X8murX
-	kx3dIOvUH+QHC51DFTITNlTowyEO4dnhXDwDrdp3+Idkfbw6j3j+l0Ll1DrJvXWM/S9YiaLlDpq
-	7nB65LsydEjkmwiHjR1YdfdAMpHHqWD/xkJP0lM4zq4821ByN2wzEKuSeAqmHnvCSrpPVZf6zq1
-	ddp0/qjqhfVnppvEzZ8iop6ClFxHlh4a82SPhX1HDepKqeu61+6/UdlJrmt2ULGOY5AGnEU34th
-	FTPYt49vQu6LGA==
-X-Received: by 2002:a17:90a:d443:b0:3ad:4a8b:c6fd with SMTP id 98e67ed59e1d1-3ad86d07086mr2617064a91.28.1792644106885;
-        Wed, 21 Oct 2026 21:41:46 -0700 (PDT)
-Received: from archlinux (d173-183-236-7.abhsia.telus.net. [173.183.236.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ad85f42d40sm3351291a91.2.2026.10.21.21.41.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2026 21:41:46 -0700 (PDT)
-From: Artem Novak <artem122novak@gmail.com>
-To: geert+renesas@glider.be
-Cc: daniel.lezcano@linaro.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Artem Novak <artem122novak@gmail.com>
-Subject: [PATCH v2] dt-bindings: timer: renesas,tmu: Add SH7305 support
-Date: Wed, 21 Oct 2026 22:41:35 -0600
-Message-ID: <20261022044135.275485-1-artem122novak@gmail.com>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=WnQq+LMS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792652482; x=1824188482;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sxCKi+fB6UvtVKaiMqUH73/SrcAlNTYOkHoZYOedpjE=;
+  b=WnQq+LMSEiZYYwrkcAkBM5RibwrTzr3UE3tr3qVhu9KF9W29WhjmIQMA
+   2XkNlfYGmNNjvrL/gBfrH2c8ZpNbjzq4RGXko0HqmJ5t2KBfKvfmvGXYH
+   afoHjP2K+klwR1njYP6OVG5Zx2JbvtABtHfLcewpF3pKjq4o/XqT/H7YZ
+   5h6FoDnL8+3ynnYR8V+CviK+3hLJkV5Gx1D0rEzSDdc3US9NNUpufxKSv
+   JkdcWvfmeQmzaQX2n3N+WHUvpPNMsSzkhruwhFl/1iANIOZ7YKOkqoY5U
+   8wh6jgoxWTcpgXtR7s5qoIOkD5zFLQu2jKH1FAIDQSmrOjs7003S6srdu
+   A==;
+X-CSE-ConnectionGUID: EXN/E/NyRwiJcGaxpsTm4w==
+X-CSE-MsgGUID: QBecM9ucTa2IYUdUgGt8sQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1292278"
+X-IronPort-AV: E=Sophos;i="6.27,171,1787036400"; 
+   d="scan'208";a="1292278"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 00:01:21 -0700
+X-CSE-ConnectionGUID: ygzg2km4Tc+VdCIJZWeZqQ==
+X-CSE-MsgGUID: lbV0Lw9HSsa5obFnAv3qWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,171,1787036400"; 
+   d="scan'208";a="3692933"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 00:01:16 -0700
+Date: Thu, 22 Oct 2026 10:01:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, linux-pm@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] iio: Stop looking at
+ pm_runtime_put_autosuspend() return codes
+Message-ID: <atm0umwtxZlQSAhy@ashevche-desk.local>
+References: <20261021235818.3059519-1-briannorris@chromium.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -99,44 +88,42 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261021235818.3059519-1-briannorris@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Add the SH7305 compatible string to the Renesas TMU Device Tree
-binding.
+On Wed, Oct 21, 2026 at 04:57:01PM -0700, Brian Norris wrote:
+> Similar to this effort:
+> 
+>   Subject: [PATCH v1 00/23] PM: runtime: Convert pm_runtime_put() to a void function
+>   https://lore.kernel.org/all/6245770.lOV4Wx5bFT@rafael.j.wysocki/
+> 
+> i.e., commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
+> type to void") and friends.
+> 
+> As with pm_runtime_put(), there is very little value in return-code
+> checking for pm_runtime_put_autosuspend().
+> 
+> Checking the return code is more likely to produce a race condition
+> (fighting with user space writing "on" to the "control" attribute) than
+> to tell a consumer useful info.
+> 
+> Because the IIO subsystem has the bulk of drivers that inspect
+> pm_runtime_put_autosuspend(), and because those drivers have a lot of
+> other issues touching the same code (which Jonathan suggested [1] I
+> fix -- I fix some, but not all), I'm sending an IIO-specific series
+> under a v2 label (since many of the changes are still borrowed from the
+> earlier series).
 
-Exclude SH7305 from the mandatory resets property, following
-the convention used for older SuperH TMU implementations.
+After three patches I stopped because it seems more works needs in each of
+the individual drivers. Yes, the series can be applied as is in exchange for
+a bigger additional churn in the future. My preference is to see everything
+settled down in a single step.
 
-Signed-off-by: Artem Novak <artem122novak@gmail.com>
----
-Changes in v2:
-- Rename the compatible string to renesas,tmu-sh7305.
-- Sort the compatible string alphabetically.
-- Exempt SH7305 from the mandatory resets property.
-
- Documentation/devicetree/bindings/timer/renesas,tmu.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-index b1229595acfb..ed30e0c861c5 100644
---- a/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-+++ b/Documentation/devicetree/bindings/timer/renesas,tmu.yaml
-@@ -51,6 +51,7 @@ properties:
-           - renesas,tmu-r8a779f0 # R-Car S4-8
-           - renesas,tmu-r8a779g0 # R-Car V4H
-           - renesas,tmu-r8a779h0 # R-Car V4M
-+          - renesas,tmu-sh7305  # SH7305
-       - const: renesas,tmu
- 
-   reg:
-@@ -110,6 +111,7 @@ if:
-             - renesas,tmu-r8a7740
-             - renesas,tmu-r8a7778
-             - renesas,tmu-r8a7779
-+            - renesas,tmu-sh7305
- then:
-   required:
-     - resets
 -- 
-2.56.0
+With Best Regards,
+Andy Shevchenko
+
 
