@@ -1,102 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792627285;
-	b=G/xF0WRU7dPLi+Y9pTXKaWgXRpg2b7uVm9kDjE7u6BotrnDLz5XnGqmVkiA5+dMinDg5
-	 deM2dd/RIuEFYvK5Rh2kmG1Zdi7ntv9Hh9kH3SwHG/+hcDkNE864hN0/88h0z6mByam7m
-	 ROTsRXqszo1L6FdMDX5ayT+15jlSFZSN4eHKmI6TWhcFyt3DuLbZSbRKECebLfPnMTkPb
-	 GRft7+w4J3bHpLMBkeD12wZAJnDdNPyStMvhjXjXvoHJ7s/9g4KwvfqWTQNTJGdGCsqx8
-	 m9L0pNc3jHycGa57c/4Mbwf04JLiUf03D/Cy9GfexsQAlwgI4AT6l3punmq6RjhdGTw==
+	t=1792627314;
+	b=0Ssevs7BKgMT+Go5Yf7FgoZmZxh3T6fkDuPhjqZZRMnwDf5sa+RSSegv28etlFzFwAfe
+	 z1NqmsyHzcwDuCSUCUmd041HDAXnuWf1ycriHbOCQp//1dCYdSvhKxrx5j6nGI2jOyzpc
+	 Mx0ZaEVa0A18+BXX28NSs92/Z++nGkWaDxLrf8rrgWnC4UNyCGNJSyLHpc43kGAKM0/gQ
+	 rO3rPHux+CmSaeV3K+UKlCRQYOO7Fq8iRcje76iF6nyNLrnZEAOteMmSxnDCD6mdCt+pD
+	 8hF1O7ALITOt/AQdjk1NzjMC9qNhkubWE23n/4UMGJLXEXPMYfsH4eJhL23jSDMhKnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792627285;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792627314;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=9rsuU/zpvGVZ6N3nvTXW6aQt3MLOdJQFmOTT1iINVYg=;
-	b=ydpju7S7MVIP1MOK5OHeeBFPdPrknf+nCHZ6Qa/tdfG3JRnuPKz2jjBS/Vflk5HYF3rd
-	 nMr++F4C2dyiWpQM0ZqksnZkzaMJiDBxKQhkKkYTG4UUJ/821Q2andjJEpkJcBnb5YSUs
-	 2FscnXOxMU1RdnrWwA+8SmZZwn/J1yBFf3pXf4/arAjc+dr0yygHDmKtDaLn9ZYWgOpAU
-	 jpbMC/mcdxbGgcWDG4mvcknqi+3aoixgEXRoeZWHYn7/CjcT0cIiWHps6QzwrDy/wadud
-	 GpANHxzbDSoVcGX/aBizrdkPCDmGRTXtwYFXMy8lDtWl/mRWvBxwS/5OsDy7qBmIJyw==
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=O094qediP2wRssZ1brE73mgAfR6yZlb+wTlB4/WavvU=;
+	b=H8xfntwvo58pnuuFhkoCPjFMpXKiOeMDJUlzqGsLJ/VZ2SkhgVu6T29mVq4q62EV/YQM
+	 cttBJrrivAs5iMPZCNcZuX/mFgTe3A5BwJSMLvY04UdNIa47zGNz2zXszeh+C2CQPYqsd
+	 cqp0G3aoul1aogqZB3AFdnXKmvk3ZGSaEGloPI0msgrsHMaIgi701Q/nvaAjfFAqd1v9J
+	 lPSXkqVaweshECx5AcTq7sa3CUMWJNj7EYZkZ4dJa6AbUssyctXArOf8ngB51YHgsL0jD
+	 MDKhSQuDmgwXGko5xrvoEL5AE7xHdgQnfvP/+7WxTUvgoEwgR5g7k4ah5c1lX7zft+A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=m5yg9UoE;
-	arc=none smtp.remote-ip=74.125.82.174
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=ZhgsrPKU;
+	arc=none smtp.remote-ip=74.125.82.181
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C239F60A2620
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 00:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C239F60A2620
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271260A5BC8
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 00:01:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D271260A5BC8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=m5yg9UoE
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-368581df789so454925eec.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Oct 2026 17:01:24 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=ZhgsrPKU
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-36661f953e4so2434192eec.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Oct 2026 17:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1792627284; x=1793232084; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+        d=chromium.org; s=google; t=1792627313; x=1793232113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=9rsuU/zpvGVZ6N3nvTXW6aQt3MLOdJQFmOTT1iINVYg=;
-        b=m5yg9UoEpcdYE8egFZeIgIiw+eoQYctsAkRwAViGsNT06ip2KWN83KgAyDKgQ+L1QV
-         SlsKZ13l0t35zjsjJg3dfmFvJP5BVklcHpBUWEIVatgaa2HInySG0PQHaAeLoV6oY8AB
-         +A9l/nh9nQQx8ljsyMwVjjiyaRbLxs2l2hiw4=
+        bh=O094qediP2wRssZ1brE73mgAfR6yZlb+wTlB4/WavvU=;
+        b=ZhgsrPKU4LMXrrq+6Elpeq2DpLIdDfd/eNM9DRANdago8lMKwnsdDh0mSLtOw+1A+B
+         ic3OJYarLxbxRtaozaAXYSLAh2ZnILBpZuCBVWvUoH5hUHeCY+PKP6+auDMbJvtYuHOZ
+         IuK87XGlpA3OKuVwA6bLP4v9MpH7QRvqZ0RJI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792627284; x=1793232084;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1792627313; x=1793232113;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=9rsuU/zpvGVZ6N3nvTXW6aQt3MLOdJQFmOTT1iINVYg=;
-        b=JhW/sO4ZEGrll5wPdZN5ZqQo2tXKhFchqNBwXIZ19H2kvoPPeSDG3Fh1JFaOAc/FpW
-         21yjoQ/ApeSVCrnXTuHY4RLA2OtAjlGt31IHMVp9bjsYQ3AdzHs/8aDU0zporOKD8u2p
-         1EgYipKvFmu9bdIBq7QcH0FBgu8XCdyhGe1uQi/sInlD7nWyGOQFyDTRR/DzD2Jv+3zq
-         bBbkHWaIij77ojZY/OAXCuecJ9x1wPDMTqy68l8gsW6wgZV4XVCFjzJ1ZEqsuIPY8Pc/
-         TByOCuB0NMseHleQqPWX3neQyo7MGV0l98C4pjGwrEkyenTz4hQEnhhRoEwSVq53DSgf
-         7lPQ==
-X-Forwarded-Encrypted: i=1; AKwUvBym9pMNCrb0h9PB/rlTa3nY9k5f8hMlPs/M+7G1VEpAgR6mbBdlYHbxFD2dDN51WQhuJDNycAciPUGDtpXMSH1liQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIvXmjZLhlLuqUjeHlLzsRcylrK403ZuGUFo2dR1zutAenKHkmW
-	Cvrz25up1A7sNh+ByUCU/BwNEHgriqwfvqSZ6u82oW5xBgRenTz8mbmJL2jDRG4GEQ==
-X-Gm-Gg: AYBFou0WCCGC29FBumu1qf7E05VVWz6lPB3UkQTMIrA1Z2ZN0OxmhN3R+2PvgqVqKrE
-	b1RTaeH95qnT0JN9WJzexeo7hIipW+5eh87KI+xu7IqIGiUbqt6vffnVOZZzIJWU0EJiK4lWojY
-	5UhRIlAuwSwEkjCIqdo3ejE1LKghMu187YaHQRaIlqQ6I7dXHy/N7GomcwYhow3jaKfHKOMpGeq
-	MLPMWEGngNIjK9gsqKJy36UiNAvXa2aQ/Z8UlG1HPsX5Nx58wDPPMQ5mV8Ly6YJa+Mza6L3BinW
-	VJIm+Jyq/pGedMAbEcocYt53V6idg46ZcqvYXKxsi1AM+NVD8ikqvHnE2l+e1IJzgWdpRXkEJAE
-	TYcjIVXP1bo3eFZdVOpxWts30U7ZymXpt9sz8JmwZXSQJgZBCx7twEjvrDBAgh9I1dU98ciFl/d
-	8i9BnbeUM66tIFIdln5w9Rn0J3uGlyH17EhQmzRUuf+VDDKYv5Rmk+dr5WMhRuYOpYrh5QFDhVC
-	qVo2iDmMX5nh9WiTybg8AWzFKP6CpG6oCHNY5Wmd0s7dbK5vBY/IQzOT3rGo0PgwgpwyH0y2vq7
-	giwJmkqw8kCiXM0tQ+3B
-X-Received: by 2002:a05:693c:8102:b0:351:606f:2832 with SMTP id 5a478bee46e88-368ae2d4b25mr1068928eec.3.1792627283594;
-        Wed, 21 Oct 2026 17:01:23 -0700 (PDT)
+        bh=O094qediP2wRssZ1brE73mgAfR6yZlb+wTlB4/WavvU=;
+        b=lkRhu9SRHmDkPNHLXbMmDf4QN1yyOv6rcEA2B0fyDOPueO9ayerJX9mR1kMQbJC6uj
+         lP+f+1fPfHuiZ8eqBo12YwQytrKj31w/6njPmxPF2w/57sApd2w8LDfY5fRbLyhkHK9d
+         vt1gkVFvd1yk8ONAIpz/M2fVVnaWEKDgrA+DonOcXA4iZA+nGz77p9nmXJsdInBQ6K//
+         pN3Y+i9J1RA5BdfGCtIQbfT8NPTjZLVcrj32PMWin/KkpORffRqT8KKC5hGc0cXpcL7v
+         W/vugZ8IvmmmaFtGj3rzTuzR1838lMZ8IOqDD2X7/TfkiqI13X3wk4eELJoXgFUOk2Nu
+         tyIA==
+X-Forwarded-Encrypted: i=1; AKwUvByGX8RrLxFN8E6FptCsQtKzfOQsPypmkiUobBKGgZhNZ609FI9Mk5UYOlkmIR9NLWmkQtLXFFCj/eEyjt1IV28lBg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYK3SYjcyj8kuPzJfOqqRrDKzQZ+Dr0/xkbWFomunFp3dfEJLW2g
+	yRV+k9nuK3lyIu3weH11V/ec3wx7UCW+rM7Nm8n7REx8vRTSG33nkRln500Amjvqlg==
+X-Gm-Gg: AYBFou0B4/4eTs7aCiG5dunVYJvow4BQMi5/SkdTpEuTNNHJuc5nJIRZrOKvTGfkPVZ
+	hjcTbjYEo6lOdSOdn/6wMmxqBf/UeZtr5lQRnF13ySDVHMkeckuqPTwFL7tPcp6GBfu/MG6sxDu
+	/Oy7LuxIzWw6CfYpK4m3h6kdUbgcPBeGjiH3IN4CzUkvp1e27KnnSG7ixdUKhnXIylxTh6IeHnS
+	KmozdubKzIxmbzT1DbgD9AqXiuswMAlju4v40YYiKL4TX0VYd7SoqvrjsM4Q+edmEL7Aq8Vwx1w
+	XH8pChzAjpUvSjpxMT31gAQN42HpIIfE+IG5qdjrJ6O6KW9k6QcfO4IN/XwLpAuvia4LjKMgFqj
+	YgktY6X3ETH57bLcf0uJXE0MwEb7e530tSTxqzd5PG+eiBwxELtbKW00T+DkfpdNbP02b1iVVHN
+	fLeZbYhEIFdtvSlrUj53VzC7WS39vyo+uwxeb9iuVAFlPbYsawy/IIPfizieWOTdmRq0kkyY6Gd
+	xzbSq9RkXxX5bkXrq9L6YuSEtCIwY/JkueFbyZnOQhiw0Eqbzj/OSvaKsbVh1Kh1oHO52xYDuXf
+	bXTYpRSSMYkiimeDQ11AGrTMafs02oQ9q57Cl9C0
+X-Received: by 2002:a05:7301:4005:b0:368:536e:c8b9 with SMTP id 5a478bee46e88-368536eda38mr2638548eec.26.1792627312863;
+        Wed, 21 Oct 2026 17:01:52 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e7c:8:14ab:bfeb:ac88:458f])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-367411bc89fsm13245730eec.16.2026.10.21.17.01.22
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-36740cc8c6dsm12073378eec.12.2026.10.21.17.01.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Oct 2026 17:01:23 -0700 (PDT)
+        Wed, 21 Oct 2026 17:01:51 -0700 (PDT)
+Date: Wed, 21 Oct 2026 17:01:50 -0700
 From: Brian Norris <briannorris@chromium.org>
 To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	linux-pm@vger.kernel.org,
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Ulf Hansson <ulfh@kernel.org>, linux-kernel@vger.kernel.org,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	David Lechner <dlechner@baylibre.com>,
-	linux-iio@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	linux-kernel@vger.kernel.org,
+	Rui Miguel Silva <rmfrfs@gmail.com>, linux-iio@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 06/17] iio: adc: rcar-gyroadc: Discard pm_runtime_put_autosuspend() return values
-Date: Wed, 21 Oct 2026 16:57:07 -0700
-Message-ID: <20261021165858.v2.6.Ia4649c7263a5733426a8778ac4b2dc459f3ffef6@changeid>
-X-Mailer: git-send-email 2.56.0.218.g1ec904b173-goog
-In-Reply-To: <20261021235818.3059519-1-briannorris@chromium.org>
-References: <20261021235818.3059519-1-briannorris@chromium.org>
+Subject: Re: [PATCH 03/13] iio: Discard pm_runtime_put_autosuspend() return
+ values
+Message-ID: <atlSbgGb0kEEYhao@google.com>
+References: <20261006231900.3230373-1-briannorris@chromium.org>
+ <20261006161337.3.If2263e6ae9eaa4493881b72922dcde031ce9d81d@changeid>
+ <20261018211807.66bfea0d@jic23-hlaptop>
+ <ataTYER7XM_MEYKL@google.com>
+ <20261021194951.7b65c2eb@jic23-hlaptop>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -106,51 +106,26 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261021194951.7b65c2eb@jic23-hlaptop>
 
-This driver propagates the return value of pm_runtime_put_autosuspend(),
-which is not particularly useful.
+On Wed, Oct 21, 2026 at 07:49:51PM +0100, Jonathan Cameron wrote:
+> On Mon, 19 Oct 2026 15:02:08 -0700
+> Brian Norris <briannorris@chromium.org> wrote:
+> > Also, unless you'd prefer otherwise, I plan to wait a bit more to send
+> > v2, since the merge window only just opened, and some of this series
+> > will just be a RESEND. I'd prefer maximizing the chance that the
+> > recipients will actually notice the patches, by submitting outside that
+> > window.
+> > 
+> > (OTOH, the bulk of these changes are in IIO, so I can just make IIO its
+> > own series if that helps things along.)
+> 
+> I'd split out an IIO series but take your time as no particular rush
+> given these won't merge until next time around.
 
-Returning an error code from pm_runtime_put_autosuspend() merely means
-that it has not queued up a timer or work item to check whether or not
-the device can be suspended and there are many perfectly valid
-situations in which that can happen, like after writing "on" to the
-device's runtime PM "control" attribute in sysfs for one example.
+OK, I've sent out an IIO-specific v2. I'll resend non-IIO separately
+later on.
 
-For this reason, modify this driver to simply discard the
-pm_runtime_put_autosuspend() return value.
-
-This will facilitate a planned change of the
-pm_runtime_put_autosuspend() return type to void in the future, similar
-to commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
-type to void").
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
-
-Changes in v2:
- * Split iio patch into per-driver patches
-
- drivers/iio/adc/rcar-gyroadc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index d38cf3caeae0..0d3b061d6ec2 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -199,10 +199,8 @@ static int rcar_gyroadc_read_raw(struct iio_dev *indio_dev,
- 		*val = readl(priv->regs + datareg);
- 		*val &= BIT(priv->sample_width) - 1;
- 
--		ret = pm_runtime_put_autosuspend(priv->dev);
-+		pm_runtime_put_autosuspend(priv->dev);
- 		iio_device_release_direct(indio_dev);
--		if (ret < 0)
--			return ret;
- 
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
--- 
-2.56.0.218.g1ec904b173-goog
-
+Brian
