@@ -1,109 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.26
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792774136;
-	b=rxrqhG423CT2bXWZQi+q/FPDRnu8MO5zff/nwhwBNqIoog1noUSJzH5J839IELFfY9eR
-	 5LT15XDZk2HKJ8iBLMYLQVMx0Z29kaBXpzr5wj6ZqjvmsbLCdhhmiRIKoqW9etVjgoTcx
-	 SHGZW1k065wi2bwAKaDwtNCMecBN7naCGI7YcwJxESZiniwuyeYJ99as4KLNd9ddNgE7o
-	 FLfIDAf6Ms+cFxg6TQgnQG4byUepjftmn0SB0f9k7hoGJe/8FcragndjZoBIz/pxe+6ej
-	 abtUUKuhCQDNLjjnrPboenCXJyCIuvQSUbhuutXwBXi+5LhXKZMN37PT1EluxK5t/WA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792774136;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=5vrS2pQ7GxmzBxm27FOL3q04HluxVbyJxTzVLGJYGjg=;
-	b=zOijtUtevnTBacR3gVKNvttJvPDQYdVqUgrtzUJIzGTJGZxaL7LHVnmFm+DY0l8Sk2Gj
-	 i5QoGjxxcmzcuY4LhZoG7E8T1opr1LfqtTgYnlJjDWj+sru05UyuwuW8p51kNefcUTnTK
-	 BJpQega3J3e+dGUJ5wZa8xPX4polIpuhUcmKijxmghgL/vwOOte5s7/SB/VAoVqoKyyqx
-	 cTATvv+uwajQXCS8qgBTbsUAEl9F5Nz17MXoOCvfgiGrc/cULWyZGcGSkbnx0b8Mqor5I
-	 IQXA0YzqMAMgKIcpF8j1C2cWXjIcTDdcX8BxuZsuLbGSdDaSIEqjDMSIizxFc7hf0lQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=a5urtvw2;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.26
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010026.outbound.protection.outlook.com [52.101.228.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.172
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792774154;
+	b=pj9mM9GhyhBHh1FC2MHpDrvbKJYsT/fmks8BDOPyWHQeKqkkM7QfQxN51e/+QhB6qsg5
+	 vHO77ne3zz+Sc4zwj7rDrMlBu4oSivqVxi/nGx4yfAY6v6CIeojIfQ57lTZ0PwDuikmRQ
+	 MpOol5RZiWT41hon4kbyAvozcjNx1RJEDi+5pr0mr1RwNnaKdzcQmWUcS3OR2yjo2NuHg
+	 k9VI2YVcZaOJfxHLaTdL6ZNHicequllM3557bwTimUwlElr2Loty3K5bEARHRkqU208gv
+	 8XLRG9IoiEPqjTlPQlkpZALeaB7fEpbUuSFrjRfU+Gdl1clR7iOXagd7JaGNgCKXOhw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792774154;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=IbU6AikASsymoWZcigm5KICcvIS1yLWM5oIUuCyGJFQ=;
+	b=uQvTAyDpBkxCtI8a+v6Dp4L4rcl/Uu77erWhucLDevn/Jw1lLQpEKv0T69PYNPvtceNJ
+	 kTnrD71MPDdbaGE4x1UvHSVJKz9lmQpbU0CQWOqna6QCJ3a2y/r6TA3lUTIISoqfZHzhf
+	 pkdq7QzCkuYhmVHEZaTEiuslkP/FQ5D/j8EGfyLitLg9Yq1T3XF02L1ISbIeA9v2ahcv8
+	 KF3OTy2/GmYC5v1tNzMGLO7MeRUzDsC1nMXIt3r/PiNYz7G2+2aOk5cfpNQtJy9ZuswTC
+	 ff5lusmZ8iKaMLroPs6HKB5hyGIVV5kFyFm25+JEMVg5acBG5Qav3rCSUF7mrV1hXig==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=hluItQ1n;
+	arc=none smtp.remote-ip=209.85.160.172
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC73606A327;
-	Fri, 23 Oct 2026 16:48:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4AC73606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30DA606A31F
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 16:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F30DA606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=a5urtvw2
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YJMPUw0YH3sKKp+J5+DHrY0zjaKhSepgWCyag5GUbnyrIHteHQo1yCpm9u1dKOLBGTP0o6WHLPGpjbpUkzdRjYgr0tC1kmjBLRy8i0msK8cCrce4qeAMsDxhJ5jYm12JHGgbgSt2IrqaSBGa6W5hjy20RWMEgGqgDzRQmuG/9wzJ1x0/zvTyxUcEjETLjMNwj5vIZx+duRozK9lxfEF/LpzmeV87VEpkSU8m36F3jIVURz/U9MdJAO+sLOOxzXRwk5my18Q4PVmmGuoXAihgUkV7whfT0Om4oDQL2Fy/J+RhLFoNFm9QSRU2MfVVWW5pTzstG9oN1hXr+ukV6M8y+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5vrS2pQ7GxmzBxm27FOL3q04HluxVbyJxTzVLGJYGjg=;
- b=MQtgH/2w75RclsVsLJK3M6mONuCE0NkcuJgYuR0iUVgxZart2ujeDP2dDXZYxH8PLW8Kto6dq52i26rGuCk1wqaGAAFFGOXFHNwnQhf16pe0vGhW76yiwSA8xzBze8s7ZepSnosiUhyjqFmhNXNJ5K55+o1j6uSF6tRe8nzvOD0KzM15fA9ILgd3uBmZZgMlXka/6wuSrc3oAFZb6SwICpPNr+FqcWjtJxtSDLzRNcwjc6t+/OJ39ho6a2x87hMrzAXcolJtaSMW6XiMQygXAjDKfllcsKm84ZNDUapQXbAbkQ7EFPeVZqdUG6ZF+UhWPPYc9SGRWpElCM90O1NXgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5vrS2pQ7GxmzBxm27FOL3q04HluxVbyJxTzVLGJYGjg=;
- b=a5urtvw2AQKD8naO8aYpZgi4VsCMypOOLto2yD0JUvCYKJBEo+PfaN0IwZDLUnYaXZ6xStv7tcUtZRLZy9Z3aH896CRZBnge0Jsu4Sew+Pln3IKf/FkBiJ5DiNHjU78rA/JrYF1CrzTM07uywew93QJ1JgtAEB+tWNbQaU9LWX4=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by OS3PR01MB9415.jpnprd01.prod.outlook.com (2603:1096:604:1c6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.19; Fri, 23 Oct
- 2026 16:48:54 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0546.012; Fri, 23 Oct 2026
- 16:48:54 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: tomm.merciai@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=hluItQ1n
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-53669f7b518so10264111cf.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 09:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1792774153; x=1793378953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=IbU6AikASsymoWZcigm5KICcvIS1yLWM5oIUuCyGJFQ=;
+        b=hluItQ1n2k9be/njQlgILZYHaCMMuIM5PsLt1U3FuUAtK/8EQQNXA3YBgVfKoPHs8G
+         qPfev4Rfwz0EgsFCgfINbspKj2EbpDwAKeTzuoS8AVdvMmxHJj1Vc3QYamevkDgrKAmV
+         ddTMDnEMLoYWL1JwQ4zTY86poK5RD8z8ccP9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792774153; x=1793378953;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=IbU6AikASsymoWZcigm5KICcvIS1yLWM5oIUuCyGJFQ=;
+        b=vZeDVsVnk13n2S/8+BN5eWvK4NbkxwNUb9vWap2TaMUqUUP1FYZS5goCUxQaZeAjIG
+         ONtODSKA6mFEswNoWFdv56oeuNDIUGbFElEOXCqOJ0MpWMXz8LmNKfWphiRu/27M3SBI
+         btAlXyJCLqIq/w5Kq+pUBly44sZt4mxQmcjQwjWSakVR/3h07oA0fBSrkzLU9wPF1evm
+         iyL9xfMFLc9MOF6zXQ2dpAV5GsGb+/yyGo7illqOUfl8C2vCIcNCa7zQTPA3E2/WLsjE
+         zPMcCUnRBe8EDWPDdaWWSdEIdEu5JhFH4sFQYQpEvS0nXZduT9RDBvko15uHBujcV8T+
+         fcsQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwqy8ADmjZAzXqdGIL9ociN8b+GNOboHGUI0cPR9u6bE+GAXAi68tZPb7iafzY2b32kF1iinJp4a72XamlaIxK5dA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJSQLyhfHEa+uhOoVEObRl1EBLIbCcYViJk3cQMHok9+9seyOib
+	/5H0szkPFvRIZsjMCYZm9xWQk9/Yg1FQCVGhZZr5d6hJwGtf2SSseiSBIX64K3D3SIc2rVPDjv2
+	E1Lg=
+X-Gm-Gg: AYBFou3nZieLnJ0E5mXBznLUkPg+PV4Yds9fIq+NQY0ecGtn7OElRKN88S3FRDxFdhl
+	eWdtmxX+NBiOj1fOp1zX0Y4aqYm68+0bY4Si4rKggYZvihb5NCMVBsPe6MLf8qZFfjBZfZ6CZZL
+	8PVtpBn0Nvw1g1t4PAoWCJ4j00pp4VRIftXe4JYHRU2WNG45unwFvv80C2+aPSfHVjT4kPEB/UJ
+	NBuMtVAxMqsz6JC2gcV4CuSxoocarIq/BnSRsP+v8GzC1qqTGve6oLOu2R+H6N2pq+SVmIXHNUX
+	Qd2x0hNTr4Y6jRWQP6x2naPckDhGYHQVS6k6DPyVcbW2LaEVY1mIsh3YatHidgNv8RSExL3stid
+	FddsROn/RjeBskSBmo55B7oVppaFO0Saa7J+9mKpjWdQ3HPnG3NGASLVEaZF6ar4qU6eaM4lYhn
+	J90W3zYDxM2dJsF/xBKvV+wCVAfKz1qVxB5XugfMRB37BKQtUkH5bjuhMVbUKfod86/fJGq24Dh
+	ZDpgyhJx4yfQG1bZ3dUoIR+OnFEhRCJme8rnCzW3GZfiN8Ob1G3gv/eIwIZlWqdMfQjU0f49Z+6
+	CTcP2glYp7H4/O5n9pc=
+X-Received: by 2002:a05:7022:4182:b0:144:fc5b:2121 with SMTP id a92af1059eb24-195c56ffe47mr4928192c88.17.1792773838113;
+        Fri, 23 Oct 2026 09:43:58 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:4a1d:784c:3fc4:37a2])
+        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-197e666f0d8sm1435609c88.1.2026.10.23.09.43.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Oct 2026 09:43:57 -0700 (PDT)
+Date: Fri, 23 Oct 2026 09:43:54 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, linux-pm@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 03/10] drm: renesas: rz-du: vsp: Keep the planes in the VSP
-Date: Fri, 23 Oct 2026 18:47:36 +0200
-Message-ID: <388b8b03fd6a955dd89d4b7326bdc22d6e3f44b4.1792770965.git.tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <cover.1792770965.git.tommaso.merciai.xr@bp.renesas.com>
-References: <cover.1792770965.git.tommaso.merciai.xr@bp.renesas.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0031.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c7::15) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] iio: Stop looking at
+ pm_runtime_put_autosuspend() return codes
+Message-ID: <atuOysdhmPRA7Waf@google.com>
+References: <20261021235818.3059519-1-briannorris@chromium.org>
+ <atm0umwtxZlQSAhy@ashevche-desk.local>
+ <atpMNk6ymCpC5BL_@google.com>
+ <atsEql7X20hGytXv@ashevche-desk.local>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -113,188 +107,78 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|OS3PR01MB9415:EE_
-X-MS-Office365-Filtering-Correlation-Id: 009d49da-5946-434b-1f83-08df312585db
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|23010399003|1800799024|261009223027099003|261021121427099003|261021123027099003|261022105027099003|261022075727099003|10067099003|56012099006|18002099003|22082099003|11063799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	N8a5ue41iMlVzIEx5tUQ54li4+I0wSNXAULUXAiNK+AWE/amJEViQKbbLtj3a85ljG/eM3h8Qo+2tzCyyVfDGPrjF18pHcysZDwBYRYS6/6m+almykgZKdp5HOf20Wsdl0R0E/JhScPeKC+9qgOHd7mYKo/LGs0CrdWlHZkGEjZhH1yHPQv82Vv3lgTP1zFYbMvWs283ZlC+Ijpk7YyMQ5BPeO04Z78lz38rb/QSGEBn1GNbUq4EhoQTQUDwyidwFErC8jlXr/fS7kXDQWdVboqbV4EUknPhWgk/kMn7YUNs8VhRmsjGzSSttlv5nvFqcs2YElFVmbtlIOyIOjpa1NYKhLxhq8Cx638iM7GQyXcXtlJgDxT2bPC+1txkmi36AEyJCs810Pwy5wuvm8IWLQ9V75zYMTMo+RaPhA+x4/r6lWxqFn1YU6Rx+JbCa1mbCf1FqSmMGr9q4D1AmUZRY/BkDsbuwq1wq6SDyjMmWvY+hoa5mxdYWPQcaLUzjAyPJixXnEef1cJfMVu27MUnPvyxdNATyTyJaAhZ1WL0qalw/gs2NtgODBlXYkqB+RBz8eTOr4sgv9fN6V7NJhUEBK3YDTSn3d/R+9lq9ilJChm18dDqf1aitfzl9GjMUPmyK9PL/6aIHgAwySIxxnWctwmZXKl5ClyaNN6w6LGP5A0cF3lLzBR6k6Zk9sKZxUGaARSxb/sLv6ioU/chfcZWbZj4i6yoZytoROtaKZKT1Xs=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(23010399003)(1800799024)(261009223027099003)(261021121427099003)(261021123027099003)(261022105027099003)(261022075727099003)(10067099003)(56012099006)(18002099003)(22082099003)(11063799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9c3kzQ9pvZdkUK9JPJE29IfepHXV6F7Vs4Tc/xXo15hV1HzXwG8679QxRRj2?=
- =?us-ascii?Q?ou+18yYR0UcyGJkZTnkq4jjsgC+DZDPXOMXEW0HlBZz9OS5MAunTFTPx3dff?=
- =?us-ascii?Q?gy45Vi+/IKE7SsB9ujwbQ8zozKH2FNpgONbCUz9g3ouCSFkox8avhvk8hXir?=
- =?us-ascii?Q?2zsOJL7QgaDkP/Ve50gtr65wJ2EA/ch0FqxU49Vk46gXi/lxS7RYi5wXlosy?=
- =?us-ascii?Q?sgHq4Wy90Vtc22uUGxzuQbI1LlGvrVvCw89VMtt2FuReRi3bgzAGv7V5CWMb?=
- =?us-ascii?Q?Cpe3nGNOFE/wGviagwirxMtk9jxwi4gaPJwgg58scI4PEOYcdU0PuSh76vvB?=
- =?us-ascii?Q?9Rxx9XUpW4l1BWJkLxLsgPKy2J38ZBPTEeViQCztKgjBGq9wa1Bp608Twd0X?=
- =?us-ascii?Q?QhHiIObO7wih+3ZbYqC2OUXZS5YicHfuaaWQybs3AhKY09xJB06FIUjb1bZW?=
- =?us-ascii?Q?xq4uBGer5J+YWyzd+MboPuEoyfJ81x/eY5W0uBPkeVNdeQijnyMl38EOWLvl?=
- =?us-ascii?Q?aHFRWVPPMZrKRi0nhpgZayndxfdei7chuX6zVoF498y6wOo9spaA/pn4dQSg?=
- =?us-ascii?Q?ZxVk4XuCZMJmMW8GOllElDRJGHuCIFtEsDxt2ZPsNRTp0sWy5irQynDbdYPy?=
- =?us-ascii?Q?CdsXE5UutGBMhnjRt6M9cb0jVpqa4JNaLf/5N1Sre2gyGYjsGlC+WrgOuMH7?=
- =?us-ascii?Q?AI0dz12jPuBFi+fF6iDEFMRvMI6lK2vshcCrR1SFbFpBePQRB9oh6pyUnG5N?=
- =?us-ascii?Q?aURZwHOYd7AE4IRc17pYbDbl2E20uR9bJwteNLIFQ17/9HcqHk0KPrWH6+GE?=
- =?us-ascii?Q?QYqEoW2+p+lmCfOVzO2Csu0QOy54uU7wolzSlzcA9k9jZvXkcsQpNA5uUnc1?=
- =?us-ascii?Q?aZxE6NBt7pBxc50HlwXkQxtRyNhO2wYxC9/8dUkxl64eiUgceoRy5cDYSVLN?=
- =?us-ascii?Q?UR6z5RR692ViqzPp3b2Nv+tgfKMHAvseTqjAyKw8DoiuAwGf/543Fo4ygJAt?=
- =?us-ascii?Q?JAlRBJmWY1RGnbToY1TeB0YTeMM5qftV07F/3lXWOTQXAxlshLlCQIEnktYq?=
- =?us-ascii?Q?w2mwK6hfp91PuJy4rBH8PA3RjIdb036Q2+reFt1I4jR3PlUgFJadqslD+9Oa?=
- =?us-ascii?Q?BraRBYXvFoTH9iXTNHYuPiZb3HqBNTfLXYzvkeF6/xfeAnFgKU77EZy/fAdP?=
- =?us-ascii?Q?zYgN4M/+x8Cw262c3xSqNo30I4tkiHbnzqSWNZvsP+0npMtCAnHvCZarpXgX?=
- =?us-ascii?Q?/2lFDMZP8hvq3bDd+TcEd4LgBLCovSHD/V22wlwunIQW9IlkEk7ic+Yj4OXX?=
- =?us-ascii?Q?+pxtgKXFmTgePSF9Qi0duKlT7HPBepzRCjch/hi8bdnvEwpVm58K/xZHeFjT?=
- =?us-ascii?Q?+Ok8ZgC53VYrjEPC9/9g/NcDn1A3pwvDv6uHX+98EdMD2xHk2ZIg2xrkQ8M9?=
- =?us-ascii?Q?0ee1bvdkZ492OtPB2y3ltHfYy45WBlbUm83idAp8oQDmqoBrHhLl4u/OGDlO?=
- =?us-ascii?Q?+cIterTq+MOyAxTzcQB3H2DdZLw3B4ci1h3If0N6H+8YLChAsmVcKzvu0oUV?=
- =?us-ascii?Q?FeLF7YDEj8FuUD74q8Qjc/huLRdyLDjUHQ/bvlSI5a5iLtZ/GNjaCZdTEFgq?=
- =?us-ascii?Q?smwZTyzi/XVuTT0UophX1qso4NVKh4nxXaa3Qm/U3FenmHg5o6uGTZLqzAeO?=
- =?us-ascii?Q?mFrgRsA4FFdk2SWKRZI8meLw1y1Ldp7RIMF0/TB2khALoJFVaxIePszPYbZi?=
- =?us-ascii?Q?HFyodyQG2FhA0ETlR8id3RtRRi7c2pNpyoWVGtyE1Rl8oz2h/0vH?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 009d49da-5946-434b-1f83-08df312585db
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 16:48:54.0060
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9J/sDtWiaR+Rf4Qs4fKzL1V24n4LbGvUEaCfOUzSv56FZPDABEbqQfrhPYGn4LkOgrgHYhYhutgQVZMXUs9v1KbcrFpUZ3l7hxv/iP1wQc/UljQre7Dy0cMXVb2atPx7
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9415
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <atsEql7X20hGytXv@ashevche-desk.local>
 
-Each VSP numbers its planes from zero, so the device-wide search in
-rzg2l_du_vsp_get_drm_plane() picks the wrong plane as soon as a SoC has
-more than one VSP: the primary plane of the second CRTC is looked up on
-the first VSP, whose possible_crtcs mask does not cover that CRTC.
+On Fri, Oct 23, 2026 at 09:54:34AM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 22, 2026 at 10:47:34AM -0700, Brian Norris wrote:
+> > On Thu, Oct 22, 2026 at 10:01:14AM +0300, Andy Shevchenko wrote:
+> > > After three patches I stopped because it seems more works needs in each of
+> > > the individual drivers. Yes, the series can be applied as is in exchange for
+> > > a bigger additional churn in the future. My preference is to see everything
+> > > settled down in a single step.
+> > 
+> > There are limits in how much work I'm willing to do on a bunch of
+> > drivers I don't use, can't test, and frankly have no actual interest in.
+> > I'm sure if I spent a few more minutes on each driver, I could find
+> > another dozen things to try to improve.
+> > 
+> > I can go back to the v1 approach (fix only what I came to do) if you'd
+> > prefer.
+> > 
+> > Or, I'd prefer to stick with the sentiment Jonathan expressed in
+> > optionally requesting additional refactoring:
+> > https://lore.kernel.org/all/20261018211807.66bfea0d@jic23-hlaptop/
+> > that most of these changes are optional, and that fixing 1 thing is not
+> > a subscription to fixing everything.
+> 
+> Right, but my concerns is that in (some) cases you can do one step further and
+> use PM_RUNTIME_ACQUIRE*() instead of putting first the explicit calls in this
+> series and makes someone to basically do the same again.
 
-In preparation for supporting RZ/G3E, store the planes in the VSP that
-owns them and index the per-VSP array directly from
-rzg2l_du_crtc_create(), as the R-Car DU driver does, and drop the now
-unused search helper.
+I'm not making anyone do anything except stop looking at the return code
+for pm_runtime_put_autosuspend(). Those cleanup-based helpers are
+totally optional, and are not always all that helpful. In fact,
+sometimes they introduce more problems than they're worth.
 
-No functional change intended.
+> To me it sounds like
+> a double effort. Yes, that is_active thing perhaps to much to follow, but even
+> there it can be refactored to something like
+> 
+> 	if (is_active) {
+> 		ret = regmap...
+> 	} else {
+> 		PM_RUNTIME_ACQUIRE*();
+> 		...
+> 		ret = regmap...
+> 	}
+> 
+> without changing the driver logic.
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
-v8->v9:
- - Dropped the vsp_pipe bounds check in rzg2l_du_crtc_create() and the
-   now unused num_planes field, aligning with rcar_du_crtc_create().
- - Updated commit message accordingly.
+Well, IMO, this is adding more trickiness about the scoping, precisely
+because all these drivers have strange logic. Here, it may or may not be
+obvious to someone that the runtime PM acquisition goes out of scope at
+the end of the 'else' and so drops the refcount. Then you have to reason
+about, "what does the rest of the function do?" -- hopefully nothing
+relevant, but that may not always be the case.
 
-v7->v8:
- - New patch.
+Don't get me wrong, I think the cleanup helpers are great for many
+things, and especially for well-structured code. But they're optional,
+and have their own downsides and risks, especially for unfamiliar
+people.
 
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |  4 +---
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c  | 19 ++-----------------
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h  | 10 +++-------
- 3 files changed, 6 insertions(+), 27 deletions(-)
+Anyway, I disagree with piling your personal desires on a submitter to
+"fix" when they're unrelated, unnecessary, and may cause more work and
+problems of their own (or any combination of those 3).
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-index ab2f24cc7683..c57884ab5b9b 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-@@ -409,9 +409,7 @@ int rzg2l_du_crtc_create(struct rzg2l_du_device *rcdu)
- 	init_waitqueue_head(&rcrtc->flip_wait);
- 	rcrtc->dev = rcdu;
- 
--	primary = rzg2l_du_vsp_get_drm_plane(rcrtc, rcrtc->vsp_pipe);
--	if (IS_ERR(primary))
--		return PTR_ERR(primary);
-+	primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe]->plane;
- 
- 	ret = drmm_crtc_init_with_planes(&rcdu->ddev, crtc, primary, NULL,
- 					 &crtc_funcs_rz, NULL);
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-index 944bc9ac9589..12fe35740c62 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-@@ -71,22 +71,6 @@ void rzg2l_du_vsp_atomic_flush(struct rzg2l_du_crtc *crtc)
- 	vsp1_du_atomic_flush(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);
- }
- 
--struct drm_plane *rzg2l_du_vsp_get_drm_plane(struct rzg2l_du_crtc *crtc,
--					     unsigned int pipe_index)
--{
--	struct rzg2l_du_device *rcdu = crtc->vsp->dev;
--	struct drm_plane *plane = NULL;
--
--	drm_for_each_plane(plane, &rcdu->ddev) {
--		struct rzg2l_du_vsp_plane *vsp_plane = to_rzg2l_vsp_plane(plane);
--
--		if (vsp_plane->index == pipe_index)
--			break;
--	}
--
--	return plane ? plane : ERR_PTR(-EINVAL);
--}
--
- static const u32 rzg2l_du_vsp_formats[] = {
- 	DRM_FORMAT_RGB332,
- 	DRM_FORMAT_ARGB4444,
-@@ -303,7 +287,7 @@ int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
- 	struct rzg2l_du_device *rcdu = vsp->dev;
- 	struct platform_device *pdev;
- 	unsigned int num_crtcs = hweight32(crtcs);
--	unsigned int num_planes = 2;
-+	unsigned int num_planes = RZG2L_DU_VSP_MAX_PLANES;
- 	unsigned int i;
- 	int ret;
- 
-@@ -350,6 +334,7 @@ int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
- 
- 		plane->vsp = vsp;
- 		plane->index = i;
-+		vsp->planes[i] = plane;
- 
- 		drm_plane_helper_add(&plane->plane,
- 				     &rzg2l_du_vsp_plane_helper_funcs);
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h
-index a22aaf0843ed..acb41d343297 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h
-@@ -27,11 +27,14 @@ struct rzg2l_du_vsp_plane {
- 	unsigned int index;
- };
- 
-+#define RZG2L_DU_VSP_MAX_PLANES		2
-+
- struct rzg2l_du_vsp {
- 	unsigned int index;
- 	struct device *vsp;
- 	struct device_link *link;
- 	struct rzg2l_du_device *dev;
-+	struct rzg2l_du_vsp_plane *planes[RZG2L_DU_VSP_MAX_PLANES];
- };
- 
- static inline struct rzg2l_du_vsp_plane *to_rzg2l_vsp_plane(struct drm_plane *p)
-@@ -62,8 +65,6 @@ int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
- void rzg2l_du_vsp_enable(struct rzg2l_du_crtc *crtc);
- void rzg2l_du_vsp_disable(struct rzg2l_du_crtc *crtc);
- void rzg2l_du_vsp_atomic_flush(struct rzg2l_du_crtc *crtc);
--struct drm_plane *rzg2l_du_vsp_get_drm_plane(struct rzg2l_du_crtc *crtc,
--					     unsigned int pipe_index);
- #else
- static inline int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
- 				    unsigned int crtcs)
-@@ -74,11 +75,6 @@ static inline int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node
- static inline void rzg2l_du_vsp_enable(struct rzg2l_du_crtc *crtc) { };
- static inline void rzg2l_du_vsp_disable(struct rzg2l_du_crtc *crtc) { };
- static inline void rzg2l_du_vsp_atomic_flush(struct rzg2l_du_crtc *crtc) { };
--static inline struct drm_plane *rzg2l_du_vsp_get_drm_plane(struct rzg2l_du_crtc *crtc,
--							   unsigned int pipe_index)
--{
--	return ERR_PTR(-ENXIO);
--}
- #endif
- 
- #endif /* __RZG2L_DU_VSP_H__ */
--- 
-2.54.0
+Brian
 
+> Whatever, I am not a maintainer here, so if Jonathan is okay with this churn,
+> then it's fine.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
