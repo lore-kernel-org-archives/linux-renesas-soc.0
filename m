@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792778373;
-	b=nJIOWKsSFUXiOxQLT8is7b5GQxruqZCopPqZvLFTcgWO/Sxkp1LqmtE5CVodNJkXodiH
-	 eZQsISJDQCZq6otnWZi3WvUVjLTqFrGT/12rjKhy1rLQOWxHnp0xZRUWQp0V2WtsTer7w
-	 hvDV/WQqRuCA/VB4IX2PtY1pGcIMoKGpPb+Y4Lv9YRgcRX3WTG/7Hj1lmYh3CEUwkNhaR
-	 ehRj2E0ClBPFq1Z9U+yjk/j6rnilJbiC7mMR/xZ++a8UJ7BCXRHVeEs/MLMF5i4ltJYkl
-	 PSQOT3OPqXOV02EsalgcITVceVJsbc9EAh+JGHlCuNsqpy3X0CeIh7OWP0BexKVh/6g==
+	t=1792778375;
+	b=IKrFLjlivv8OvFLt7vkK7HeyEt2/MZLahYFSJ0/kmk0VFCi1aEjt76AS8V4eddxknvxk
+	 QOt5FJxMdATJ+i1tVVw2A46DqkNMIQnjCl4pTVzcpfLrkUBWWdmpa4IHgyyemC+na2QhI
+	 Swxee+Re6nNIXknrB9g4JknoVeshX54kp70jXTQDmFDOijyLrQz5Z9MF9uui8m3g30eQ8
+	 bW+7EvfgBpL2OCv80wISv1hBJXr2IgCaoCqOvenef+5FlsMJNjdRwNIWp98B4qdH4qyQQ
+	 RGjbnBwpWJHXKDFHgWdQJvsdlGtkVJBid17sHeHItNwhtDeUkNgY7/Q8zNsa9kwcWKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792778373;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792778375;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=2YMg5NPi7NvaRXzD5WHLcrPWeRT8sqhBxohUakTspaw=;
-	b=vPVz1AXYrsZqbbOI7bgROw8X0gmmYGe/HSyUhf7lzragGmnSylzFgm10FaAbi2R/3cV9
-	 i/3bh0hPS1nWATWjLgSa/SO6xxcKdvaC+E1tjAMqvcXeM0vYj+pcKVdwLPueGjx8ZXW1t
-	 5Gan6h7jNSTT3Zs/G5swJYsS1YVgeb85vywEIWrhQCH3l5IJNedkX6mqjRnDuVCBGqeeJ
-	 mTIOwJd6YaXLQG9ckvqE2WKGHL6wK/llWL7k7IapGEgFAPPdLC8PbFuspQ1S6is/btPWr
-	 uCl0Wqqgj9Jawa4Yam8ufFxxg0Ycjo+VhqUYYcv0ovMU2pe2VHESdxuX9VUcZG0ZH6A==
+	bh=HsASSsYkcsYXD5c9vRssQgLjjk2C9ftFBDoea0YZIyk=;
+	b=23RDFG7UmB02KbudlXPGUKbPOoCt8iEJlUFuNXEgEjYej41a8Fba66R+yYeNzFTnjhBr
+	 fiNcEw4cjH59ieMqcWB/XIZT8n7DKOs+6zam6dU56o8Ol9lITJBsHHLy4LbC09TM6ZBNr
+	 lF+Cn5tRhn07oAiSbkW9k9fVSGUytXjYKblmURdSIKoZlkKKX5BpQjIQYUA+myX20wUg/
+	 aXUzloGAGt4LJPUAiT85eOsVXKeY+Yxuts0PBRh5cfoutTifz4j6D904cQYrbJApjThDT
+	 EBASTk3N0Bqh70zuqAmPm971yf8Q5g122rltgXVNI2Awr46NDY0i+Da9LBEXbG/mTkA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b="jH/5CyJx";
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=OMxHs6oU;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6898060A2637
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 17:59:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6898060A2637
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6220E60A2603
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 17:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6220E60A2603
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jH/5CyJx
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a1dede3c2cso13397295e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 10:59:33 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=OMxHs6oU
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48afcd7ba9bso723844f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 10:59:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792778372; x=1793383172; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792778373; x=1793383173; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=2YMg5NPi7NvaRXzD5WHLcrPWeRT8sqhBxohUakTspaw=;
-        b=jH/5CyJxasgvY+0HhkFIIm2P0gmCd6I7Z8tSrHqM2RBWOyvZtww24dtS7KOA51Ut4N
-         KaMcTeRuN5SCws1rkHUNAR38QfSLU95B5dSwlw0gxbtXVyW9brsPeEgitDa1uCzyRdsh
-         cKX/O8m+QaDZt5xDYBrSJIk3kbOFB9+mVQBJYabTGfvEEb0k7QoKTdXhm1LLC1TOb0SF
-         +CvNSLxZxDI2WbqiERTyVu0iPklbrkUApbFf+h93/ynY9z4Ee7J4hTFgmlCnwcA8wNjV
-         KZVbRaKp56L9klE+sl0egFwENzL1scaYTKFtwumDEqh+aAIsAUU5p0a7gftDDSuX3B0s
-         TpeA==
+        bh=HsASSsYkcsYXD5c9vRssQgLjjk2C9ftFBDoea0YZIyk=;
+        b=OMxHs6oUhvubJij7+kLnqMhKaWj1uTQLPLOlOZ6ercnKo2dZNpu6oxW2tv38LGay0t
+         VVBQJEtWYpjDpruzg21QobnDYzJJNuLmZCHeWonkvTz/hXF43f0JFC4AtaEuWiUogFAU
+         kolqriz7VCemQn7sqwxmTY74s3rpO/mcO7T8VSxCnBqhRFU7g+Ds3bMNbp010W2006eY
+         2xiVFlSQLT8OspyGFyZKxX1ZYMGm0DcVZQX9NWMGjxtMT6wVKzS8BruSgOA7nASADetj
+         YXPg9z7MSRVHSi8VCL/31y8Jpr1iul5WGLj6tGQd+yrrze0Va3wBVdujr/3G109b4JKE
+         tSTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792778372; x=1793383172;
+        d=1e100.net; s=20260707; t=1792778373; x=1793383173;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2YMg5NPi7NvaRXzD5WHLcrPWeRT8sqhBxohUakTspaw=;
-        b=gNFoa0KBu/UIdWyqorQNm/AwbTdrnApm7RYbtXfZIcNnN7Fndwt+yPlLAIeEBFPJLx
-         6ioo53rXSKC0L0NrdN5bSl8s6baEK+9/mtG1Tp7kKG0SvLIG4KGk5NCjUexEyq5rx4Uw
-         2zZWeDwN+g83q53KSORwSyUTpr8c26vo+kqkFK81Oswx5TsZHz5AgIaSSpw95/ENw0iK
-         5ib2+SMTQN87IWiwZ2gOdhjJZYSsA55tFUIxqZp8B2ojx5wvtBN6D4JoN4cikE5l0xZE
-         cUaPOEoTxQ/PqumU3uv3Lu1l/gOHafEr4rJd+1KJeH4VTpML84zsn3byUY4KxvFGUrWK
-         QkUQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwcO/7h1A7p9S5v5F854fQK3VnoqEAGL+VkXX9pt1oX7LUL5ddPJo7vaUHb1cDYElMq22bb3Tfjrue2ILnRkeW3vQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJRHgkX/iMoujYKeXpBMYr7kK2abB3nj3wK4mWjZOf6lUORRKbs
-	j5mxlJ00C8/c+QhYXyY/WZl5tvhX6Dgrx8+7mjh8RGPxUw4GZQ/EhUM1
-X-Gm-Gg: AYBFou0fRm7Rp8fRTTNmVJJhSPjvmuKERM6p2VVZKxkWNRIVMvKQ3v3eBJW7BCQ89OY
-	RIhoVfMruruiZ5+9Bv4b3aDZ4vvc6mUNypPJjETuBBGlw5kCftL+YsAQlZiVk0nxnU6WJA+NL9v
-	jn4oBmk5C/Kpn9mF9Jc2KnnGMfRwmCe+jd5FTZVKHX5Prc40wTSGLj6YxP4L6+eNHO0Hn79dx4Z
-	8tbebqq6hipoOqFeKbEJQdZvSzYFXnix3iAnmd4nEbtk44XC4jD3B8b9IXQeyOT538I65P8tti9
-	evjfLxbJe/P6Br4o9VU96vLFerE1vb4mYYWt+OC2yP4Tre08ke1DT4fJAmbrp5uCPvBgSBSFgwp
-	1PZWm376fbc4oVojzplfmioHQHFVNhdnSTrliu/YmHhc5AlNQClGm1fjAkxtHYeLs4PcYrvofLt
-	nU2qN3WlDgWr5ngIJroUs7D7taxBk9VJW6yWgZvz1rovcVkUa3Qa0Lq56k3nNiSJugd54gf5XL1
-	6Dwx4brqwnboYHeSkmXYSMvSrcXG0ZvM7bKG76lNu1uuiyWp2PA8qJht/AdZj8m7zKvimJdvhEa
-	3aj9hmI3a5jQg9s7xaBhD0FQ6RaLy+TtJ8wysnW6s0EUGW/u8Teyr6cuZwXpu062BniuVWk8TMP
-	yovPzCY/W5jlC5kF29GaUErUDYYc5s5yi1zGD2se2OKeG
-X-Received: by 2002:a05:600c:4715:b0:4a1:9661:14b5 with SMTP id 5b1f17b1804b1-4a211eff69dmr54002725e9.29.1792778371771;
-        Fri, 23 Oct 2026 10:59:31 -0700 (PDT)
+        bh=HsASSsYkcsYXD5c9vRssQgLjjk2C9ftFBDoea0YZIyk=;
+        b=azPHBGkAIMwHcRXXfFJbGEDKwRmVc/0LYBDdin+f86c2QLItmfwX/8EAJ26nzWiM7q
+         gFs+fDpjFWGsg72fPambrY+QjcQLgLlTlfmzkfnV6fIdjqWdXcGqNevYODN/v1my9LF8
+         fIL/SEUOvpaKiaPhNSrYflPMyDgm12bF1pu9NX68wnaUWC4Rzzssb9VWG1vmKtA6izmW
+         7/CkclHBTrvliJ7IvwufNOYzszigwOSR6RfYJje3ORnkVlVScEqP8/wFCCfXRKwXgrO1
+         jA5fuPOGKZ5fuv0FoHs4l7KWZs12BFX76uXXX2q6fER8S0ZCeTqgcjbPezVkf7zqZSqb
+         FuIQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx+Ls+llliklj8BrUDHZB51eAf7vcVKYkz42lYhJnS/kbTlDH42fQPJuOgjmNSzEaNBbArWtDKAfaQjUdR5lB2w5w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYK07qGhtOfi54Tln6tJB/JWz/VACw0CH88FcHWYHl6A0m1hk4B/
+	mjD39yKUQ3rTxC0kw0Jbh+y/avvnUsjU4X/3WyLyRKewdavKcRvnOYsw
+X-Gm-Gg: AYBFou1dWMX6mP4rolgykLjvTQ6lA2UDy6WaiSSS3hHQXw2cA72Sz8/PFwc958o8bQN
+	62JqAjW2rgUs0xHQtialJP2qk7VRpntkY7toya/duSETtsagjM3KaOXoqko0tFQncWOtTP3Cz8r
+	qsAb/jK8KToeCK7NZQqAPNNNMX9t0t+I5V7KKOuFQYt27/iCn7vW6wbI0nsrlNXAG+GyiVV92IT
+	nMKigA/RO876Qxn3ZrKR+Vbq2GkhQPac6i2CDroRxHXfhYjnpj4W7Pj528/bzpXWnES2myJIg61
+	1rQFciwE8Cj45vcayyXtsCk5wsQhM6ubbg/LjyBluQbHa2UDopecP0xxdxN9cOYLonuOLo/GQvn
+	sjGj6ZKxRrz4sHGMTaMZZ36ucoBIIuPlm4KpVkv9uYegCneDhVLp4/fdkXWt8WoCGz/vKp2Cl2H
+	Lws+3ANm7O/M5QO5ZAfmKwZ2+9PLbspp9grauEMb/lpNCdHOo7rCmvIcCwVvMJmzCZBy9R3qGxR
+	9vbEYsWlP7cPr6SHrkpPaGgQEnQF2lzmN4MYrMTxcq+aEa7vMrIfxsWbxAZgVoSVwLPNIalRs++
+	nKvsPObeSo1oIfqw6hX0YcuWK44MgRAGEm/GH6IViUHLjcZ8hYrvZfvCp715lQAC8gNyK0jNanS
+	ORaogxQYBiix9CePS9mDpVFF1VtexLdD2E/bk/gLaBwGkNBnG4+qwlxrj01NSIB8Hjw==
+X-Received: by 2002:a05:6000:2008:b0:48a:fb3e:d93c with SMTP id ffacd0b85a97d-48e3854e23bmr4739914f8f.5.1792778372641;
+        Fri, 23 Oct 2026 10:59:32 -0700 (PDT)
 Received: from iku.example.org (host86-133-9-17.range86-133.btcentralplus.com. [86.133.9.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3d37ca2asm1342800f8f.8.2026.10.23.10.59.30
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3d37ca2asm1342800f8f.8.2026.10.23.10.59.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2026 10:59:31 -0700 (PDT)
+        Fri, 23 Oct 2026 10:59:32 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
@@ -100,9 +100,9 @@ Cc: linux-iio@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 7/8] iio: adc: rzt2h: Use scan type for ADC scale
-Date: Fri, 23 Oct 2026 18:59:18 +0100
-Message-ID: <20261023175919.160103-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
+Date: Fri, 23 Oct 2026 18:59:19 +0100
+Message-ID: <20261023175919.160103-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261023175919.160103-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261023175919.160103-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -119,58 +119,449 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Prepare the driver for RZ/V2H(P) support, where the ADC supports both
-12-bit and 8-bit conversion resolutions.
+Add support for the ADC found on the Renesas RZ/V2H(P) SoC, which shares
+the RZ/T2H ADC IP but differs in channel count, sampling, calibration and
+resolution support.
 
-Use the current IIO scan type to determine the ADC resolution when
-reporting the scale instead of assuming a fixed 12-bit resolution.
+The RZ/V2H(P) ADC provides 8 channels, has a fixed conversion time of
+20 ADCLK cycles, does not support calibration, and supports selectable
+12-bit and 8-bit conversion resolution.
+
+Expose the fixed sampling frequency as a read-only attribute and allow
+the conversion resolution to be changed through the scale attribute.
+Use extended scan types so the reported scan type follows the selected
+resolution, and prevent resolution changes while buffered capture is
+active.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v2->v3:
-- No change
+- In rzt2h_adc_write_scale() used multiplication() operation
+  for comparison by dropping the div_u64_rem.
 
 v1->v2:
-- Renamed RZT2H_ADC_VREF_MV to RZT2H_ADC_VREF_mV
+- Updated Kconfig description
+- Included array_size.h
+- Dropped unnecessary extra line in rzt2h_adc_write_scale
 ---
- drivers/iio/adc/rzt2h_adc.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/iio/adc/Kconfig     |  10 +-
+ drivers/iio/adc/rzt2h_adc.c | 199 +++++++++++++++++++++++++++++++++++-
+ 2 files changed, 203 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a802d8ee4dd9..9a58f8b5868b 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -1587,14 +1587,18 @@ config RZN1_ADC
+ 	  module will be called rzn1-adc.
+ 
+ config RZT2H_ADC
+-	tristate "Renesas RZ/T2H / RZ/N2H ADC driver"
++	tristate "Renesas RZ/T2H / RZ/N2H (and similar SoCs) ADC driver"
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select IIO_ADC_HELPER
+ 	select IIO_BUFFER
+ 	select IIO_KFIFO_BUF
++	select POWER_SEQUENCING
+ 	help
+-	  Say yes here to build support for the ADC found in Renesas
+-	  RZ/T2H / RZ/N2H SoCs.
++	  Say yes here to build support for the ADC found in Renesas SoCs:
++	  - RZ/N2H
++	  - RZ/T2H
++	  - RZ/V2H(P)
++	  - RZ/V2N
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rzt2h_adc.
 diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
-index dbe82939acc2..debd5873ed2a 100644
+index debd5873ed2a..c2b30a533a15 100644
 --- a/drivers/iio/adc/rzt2h_adc.c
 +++ b/drivers/iio/adc/rzt2h_adc.c
-@@ -60,6 +60,8 @@
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++#include <linux/array_size.h>
+ #include <linux/bitfield.h>
+ #include <linux/cleanup.h>
+ #include <linux/clk.h>
+@@ -16,11 +17,14 @@
+ #include <linux/iopoll.h>
+ #include <linux/kthread.h>
+ #include <linux/math.h>
++#include <linux/math64.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/property.h>
++#include <linux/pwrseq/consumer.h>
+ #include <linux/reset.h>
++#include <linux/units.h>
+ #include <linux/time64.h>
+ 
+ #define RZT2H_ADCSR_REG			0x00
+@@ -33,6 +37,11 @@
+ #define RZT2H_ADANSA0_REG		0x04
+ #define RZT2H_ADANSA0_CH_MASK(x)	BIT(x)
+ 
++#define RZT2H_ADCER_REG			0x0e
++#define RZT2H_ADCER_ADPRC_MASK		GENMASK(2, 1)
++#define RZT2H_ADCER_ADPRC_12BIT		0b00
++#define RZT2H_ADCER_ADPRC_8BIT		0b10
++
+ #define RZT2H_ADDR_REG(x)		(0x20 + 0x2 * (x))
+ 
+ #define RZT2H_ADSSTRn(n)		(0xe0 + 0x1 * (n))
+@@ -60,13 +69,29 @@
  					 RZT2H_ADC_DMA_PERIOD_SAMPLES)
  #define RZT2H_ADC_STOP_CYCLES		2
  
-+#define RZT2H_ADC_VREF_mV		1800
++/*
++ * RZ/V2H has no sample state register, each A/D channel conversion takes a
++ * fixed 20 ADCLK cycles (sampling + comparison), giving a conversion rate of
++ * ADCLK / 20.
++ */
++#define RZV2H_ADC_CONV_CYCLES		20
 +
+ #define RZT2H_ADC_VREF_mV		1800
+ 
  #define RZT2H_ADC_FEATURE_CALIBRATION	BIT(0)
  #define RZT2H_ADC_FEATURE_SAMPLE_STATE	BIT(1)
++/* Selectable 12-bit / 8-bit conversion (ADCER.ADPRC) */
++#define RZT2H_ADC_FEATURE_RES_SELECT	BIT(2)
++/* Power-down mode controlled by the SYS power sequencer (SY_MSTP_ADA) */
++#define RZT2H_ADC_FEATURE_POWER_DOWN	BIT(3)
  
-@@ -532,10 +534,18 @@ static int rzt2h_adc_read_raw(struct iio_dev *indio_dev,
+ struct rzt2h_adc;
  
- 		return rzt2h_adc_read_single(adc, chan->channel, val);
- 	}
--	case IIO_CHAN_INFO_SCALE:
--		*val = 1800;
--		*val2 = 12;
-+	case IIO_CHAN_INFO_SCALE: {
-+		const struct iio_scan_type *scan_type;
++enum rzt2h_adc_resolution {
++	RZT2H_ADC_RES_12BIT,
++	RZT2H_ADC_RES_8BIT,
++};
 +
-+		scan_type = iio_get_current_scan_type(indio_dev, chan);
-+		if (IS_ERR(scan_type))
-+			return PTR_ERR(scan_type);
+ struct rzt2h_adc_chip_info {
+ 	const struct iio_chan_spec *chan_template;
+ 	int (*sst_to_freq)(struct rzt2h_adc *adc, u8 sst);
+@@ -100,6 +125,7 @@ struct rzt2h_adc {
+ 	struct device *dev;
+ 	const struct rzt2h_adc_chip_info *chip_info;
+ 	struct reset_control *rstc;
++	struct pwrseq_desc *pwrseq;
+ 
+ 	phys_addr_t phys_base;
+ 	struct rzt2h_adc_dma dma;
+@@ -108,6 +134,7 @@ struct rzt2h_adc {
+ 	struct mutex lock;
+ 
+ 	const struct iio_chan_spec *channels;
++	enum rzt2h_adc_resolution resolution;
+ 	unsigned int num_channels;
+ 	u16 buf[RZT2H_ADC_MAX_CHANNELS];
+ 
+@@ -118,6 +145,11 @@ struct rzt2h_adc {
+ 	int irq;
+ };
+ 
++static const int rzv2h_adc_scale_avail[] = {
++	RZT2H_ADC_VREF_mV, 12,
++	RZT2H_ADC_VREF_mV, 8,
++};
 +
-+		*val = RZT2H_ADC_VREF_mV;
-+		*val2 = scan_type->realbits;
+ static void rzt2h_adc_start(struct rzt2h_adc *adc, unsigned int conversion_type)
+ {
+ 	u16 reg;
+@@ -162,6 +194,23 @@ static void rzt2h_adc_set_sst(struct rzt2h_adc *adc, unsigned int ch, u8 sst)
+ 	writeb(sst, adc->base + RZT2H_ADSSTRn(ch));
+ }
+ 
++static void rzt2h_adc_set_resolution(struct rzt2h_adc *adc)
++{
++	u16 reg;
 +
- 		return IIO_VAL_FRACTIONAL_LOG2;
++	if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
++		return;
++
++	reg = readw(adc->base + RZT2H_ADCER_REG);
++
++	if (adc->resolution == RZT2H_ADC_RES_8BIT)
++		FIELD_MODIFY(RZT2H_ADCER_ADPRC_MASK, &reg, RZT2H_ADCER_ADPRC_8BIT);
++	else
++		FIELD_MODIFY(RZT2H_ADCER_ADPRC_MASK, &reg, RZT2H_ADCER_ADPRC_12BIT);
++
++	writew(reg, adc->base + RZT2H_ADCER_REG);
++}
++
+ static int rzt2h_adc_read_single(struct rzt2h_adc *adc, unsigned int ch, int *val)
+ {
+ 	int ret;
+@@ -178,12 +227,14 @@ static int rzt2h_adc_read_single(struct rzt2h_adc *adc, unsigned int ch, int *va
+ 	writew(RZT2H_ADANSA0_CH_MASK(ch), adc->base + RZT2H_ADANSA0_REG);
+ 
+ 	rzt2h_adc_set_sst(adc, ch, adc->sst[ch]);
++	rzt2h_adc_set_resolution(adc);
+ 
+ 	rzt2h_adc_start(adc, RZT2H_ADCSR_ADCS_SINGLE);
+ 
+ 	/*
+ 	 * Conversion can take up to ~4.3us at the maximum configurable ADSSTRn
+-	 * (ADSSTRn + 13 cycles at 62.5 MHz), which rounds up to 1 jiffy. A bare
++	 * (ADSSTRn + 13 cycles at 62.5 MHz) on RZ/T2H, and up to 4.0us (20
++	 * cycles at 5 MHz) on RZ/V2H, which rounds up to 1 jiffy. A bare
+ 	 * 1-jiffy timeout can expire almost immediately if it's armed right
+ 	 * before a tick, so add one more jiffy to guarantee the conversion time
+ 	 * actually elapses.
+@@ -471,6 +522,8 @@ static int rzt2h_adc_buffer_postenable(struct iio_dev *indio_dev)
+ 
+ 	writew(val, adc->base + RZT2H_ADANSA0_REG);
+ 
++	rzt2h_adc_set_resolution(adc);
++
+ 	adc->dma.period_index = 0;
+ 	atomic_set(&adc->dma.pending_periods, 0);
+ 
+@@ -508,6 +561,11 @@ static int rzt2h_adc_sst_to_freq(struct rzt2h_adc *adc, u8 sst)
+ 	return adc->adclk_rate / (RZT2H_ADC_CONV_CYCLES_BASE + sst);
+ }
+ 
++static int rzv2h_adc_sst_to_freq(struct rzt2h_adc *adc, u8 sst)
++{
++	return DIV_ROUND_CLOSEST(adc->adclk_rate, RZV2H_ADC_CONV_CYCLES);
++}
++
+ static u8 rzt2h_adc_freq_to_sst(struct rzt2h_adc *adc, int freq)
+ {
+ 	unsigned int cycles;
+@@ -520,6 +578,45 @@ static u8 rzt2h_adc_freq_to_sst(struct rzt2h_adc *adc, int freq)
+ 	return cycles - RZT2H_ADC_CONV_CYCLES_BASE;
+ }
+ 
++static int rzt2h_adc_get_current_scan_type(const struct iio_dev *indio_dev,
++					   const struct iio_chan_spec *chan)
++{
++	struct rzt2h_adc *adc = iio_priv(indio_dev);
++
++	return adc->resolution;
++}
++
++static int rzt2h_adc_write_scale(struct iio_dev *indio_dev,
++				 struct iio_chan_spec const *chan,
++				 int val, int val2)
++{
++	struct rzt2h_adc *adc = iio_priv(indio_dev);
++	u64 req_scale, scale;
++	unsigned int i;
++
++	if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
++		return -EINVAL;
++
++	req_scale = mul_u32_u32(val, NANO) + val2;
++	for (i = 0; i < chan->num_ext_scan_type; i++) {
++		scale = mul_u32_u32(RZT2H_ADC_VREF_mV, NANO) >>
++			chan->ext_scan_type[i].realbits;
++		if (scale == req_scale)
++			break;
 +	}
- 	case IIO_CHAN_INFO_SAMP_FREQ:
- 		*val = adc->chip_info->sst_to_freq(adc, adc->sst[chan->channel]);
- 		return IIO_VAL_INT;
++	if (i == chan->num_ext_scan_type)
++		return -EINVAL;
++
++	/* The scan type changes with the resolution. */
++	IIO_DEV_ACQUIRE_DIRECT_MODE(indio_dev, claim);
++	if (IIO_DEV_ACQUIRE_FAILED(claim))
++		return -EBUSY;
++
++	adc->resolution = i;
++
++	return 0;
++}
++
+ static int rzt2h_adc_read_raw(struct iio_dev *indio_dev,
+ 			      struct iio_chan_spec const *chan,
+ 			      int *val, int *val2, long mask)
+@@ -575,11 +672,25 @@ static int rzt2h_adc_write_raw(struct iio_dev *indio_dev,
+ 
+ 		return 0;
+ 	}
++	case IIO_CHAN_INFO_SCALE:
++		return rzt2h_adc_write_scale(indio_dev, chan, val, val2);
+ 	default:
+ 		return -EINVAL;
+ 	}
+ }
+ 
++static int rzt2h_adc_write_raw_get_fmt(struct iio_dev *indio_dev,
++				       struct iio_chan_spec const *chan,
++				       long mask)
++{
++	switch (mask) {
++	case IIO_CHAN_INFO_SCALE:
++		return IIO_VAL_INT_PLUS_NANO;
++	default:
++		return IIO_VAL_INT_PLUS_MICRO;
++	}
++}
++
+ static int rzt2h_adc_read_avail(struct iio_dev *indio_dev,
+ 				struct iio_chan_spec const *chan,
+ 				const int **vals, int *type, int *length,
+@@ -593,6 +704,11 @@ static int rzt2h_adc_read_avail(struct iio_dev *indio_dev,
+ 		*type = IIO_VAL_INT;
+ 		*length = ARRAY_SIZE(adc->samp_freq_avail);
+ 		return IIO_AVAIL_RANGE;
++	case IIO_CHAN_INFO_SCALE:
++		*vals = rzv2h_adc_scale_avail;
++		*type = IIO_VAL_FRACTIONAL_LOG2;
++		*length = ARRAY_SIZE(rzv2h_adc_scale_avail);
++		return IIO_AVAIL_LIST;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -609,6 +725,14 @@ static const struct iio_info rzt2h_adc_iio_info = {
+ 	.read_avail = rzt2h_adc_read_avail,
+ };
+ 
++static const struct iio_info rzv2h_adc_iio_info = {
++	.read_raw = rzt2h_adc_read_raw,
++	.write_raw = rzt2h_adc_write_raw,
++	.write_raw_get_fmt = rzt2h_adc_write_raw_get_fmt,
++	.read_avail = rzt2h_adc_read_avail,
++	.get_current_scan_type = rzt2h_adc_get_current_scan_type,
++};
++
+ static irqreturn_t rzt2h_adc_isr(int irq, void *private)
+ {
+ 	struct rzt2h_adc *adc = private;
+@@ -633,6 +757,33 @@ static const struct iio_chan_spec rzt2h_adc_chan_template = {
+ 	},
+ };
+ 
++static const struct iio_scan_type rzv2h_adc_scan_types[] = {
++	[RZT2H_ADC_RES_12BIT] = {
++		.sign = 'u',
++		.realbits = 12,
++		.storagebits = 16,
++		.endianness = IIO_CPU,
++	},
++	[RZT2H_ADC_RES_8BIT] = {
++		.sign = 'u',
++		.realbits = 8,
++		.storagebits = 16,
++		.endianness = IIO_CPU,
++	},
++};
++
++static const struct iio_chan_spec rzv2h_adc_chan_template = {
++	.indexed = 1,
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
++	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
++	.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_SCALE),
++	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
++	.type = IIO_VOLTAGE,
++	.has_ext_scan_type = 1,
++	.ext_scan_type = rzv2h_adc_scan_types,
++	.num_ext_scan_type = ARRAY_SIZE(rzv2h_adc_scan_types),
++};
++
+ static int rzt2h_adc_parse_properties(struct rzt2h_adc *adc)
+ {
+ 	struct iio_chan_spec *chan_array;
+@@ -701,6 +852,21 @@ static int rzt2h_adc_setup_dma(struct iio_dev *indio_dev)
+ 					       &rzt2h_adc_buffer_setup_ops, NULL);
+ }
+ 
++static int rzt2h_adc_get_pwrseq(struct rzt2h_adc *adc)
++{
++	struct device *dev = adc->dev;
++
++	if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_POWER_DOWN))
++		return 0;
++
++	adc->pwrseq = devm_pwrseq_get(dev, "adc-power");
++	if (IS_ERR(adc->pwrseq))
++		return dev_err_probe(dev, PTR_ERR(adc->pwrseq),
++				     "failed to get power sequencer\n");
++
++	return 0;
++}
++
+ static int rzt2h_adc_probe(struct platform_device *pdev)
+ {
+ 	const struct rzt2h_adc_chip_info *chip_info;
+@@ -735,6 +901,10 @@ static int rzt2h_adc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(adc->rstc))
+ 		return PTR_ERR(adc->rstc);
+ 
++	ret = rzt2h_adc_get_pwrseq(adc);
++	if (ret)
++		return ret;
++
+ 	ret = rzt2h_adc_parse_properties(adc);
+ 	if (ret)
+ 		return ret;
+@@ -786,6 +956,14 @@ static int rzt2h_adc_probe(struct platform_device *pdev)
+ 	return devm_iio_device_register(dev, indio_dev);
+ }
+ 
++static const struct rzt2h_adc_chip_info rzv2h_adc_info = {
++	.chan_template = &rzv2h_adc_chan_template,
++	.sst_to_freq = rzv2h_adc_sst_to_freq,
++	.info = &rzv2h_adc_iio_info,
++	.num_channels = 8,
++	.features = RZT2H_ADC_FEATURE_RES_SELECT | RZT2H_ADC_FEATURE_POWER_DOWN,
++};
++
+ static const struct rzt2h_adc_chip_info rzt2h_adc_info = {
+ 	.chan_template = &rzt2h_adc_chan_template,
+ 	.sst_to_freq = rzt2h_adc_sst_to_freq,
+@@ -795,6 +973,7 @@ static const struct rzt2h_adc_chip_info rzt2h_adc_info = {
+ };
+ 
+ static const struct of_device_id rzt2h_adc_match[] = {
++	{ .compatible = "renesas,r9a09g057-adc", .data = &rzv2h_adc_info },
+ 	{ .compatible = "renesas,r9a09g077-adc", .data = &rzt2h_adc_info },
+ 	{ }
+ };
+@@ -805,9 +984,15 @@ static int rzt2h_adc_pm_runtime_suspend(struct device *dev)
+ 	struct rzt2h_adc *adc = dev_get_drvdata(dev);
+ 	int ret;
+ 
++	ret = pwrseq_disable(adc->pwrseq);
++	if (ret)
++		return ret;
++
+ 	ret = reset_control_assert(adc->rstc);
+-	if (ret)
++	if (ret) {
++		pwrseq_enable(adc->pwrseq);
+ 		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -822,6 +1007,12 @@ static int rzt2h_adc_pm_runtime_resume(struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = pwrseq_enable(adc->pwrseq);
++	if (ret) {
++		reset_control_assert(adc->rstc);
++		return ret;
++	}
++
+ 	if (!(chip_info->features & RZT2H_ADC_FEATURE_CALIBRATION))
+ 		return 0;
+ 
+@@ -833,8 +1024,10 @@ static int rzt2h_adc_pm_runtime_resume(struct device *dev)
+ 	fsleep(1);
+ 
+ 	ret = rzt2h_adc_calibrate(adc);
+-	if (ret)
++	if (ret) {
++		pwrseq_disable(adc->pwrseq);
+ 		reset_control_assert(adc->rstc);
++	}
+ 
+ 	return ret;
+ }
 -- 
 2.55.0
 
