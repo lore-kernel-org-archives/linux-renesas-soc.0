@@ -1,63 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.161
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792696590;
-	b=zbc5R3nmzooiNXvnyd038OheJ4sGRlDXoUBjwGS/XijwA/S3elcU6XF9Cam3fRvb31E2
-	 sumTaPqYKgrR6vABw8GFX/6AGYbQ+qbf4vZ0ucIbV78n/JpyvvoRqiPXH9gWLIF1K9xXc
-	 Q/a3wcR2tS/2SfaJfBy903yW26hRAeyh5a5nLYfaceXIkDqr24EEkzk6Sgqup3jztzsWD
-	 GpjyquA4P9l4ElM7k4A1dFLLxkA/vZjDzVT+vISISiI7RVWDQlEzQquMI5crc8RKu5jJV
-	 Gyd8CSREe5ybeHsRr4YHIMQfFpJRD5DC8BrTIjhadV5BsDJWy5S7Vhbty2nak9At+1A==
+	t=1792717129;
+	b=hYDpTxDRDXQDvuUO7oYb/Gfgkerr+nu0MqBNOYhWq5fYGENxBYJXA9H846o0PAdNC92P
+	 hFP10rx7rec29AOXiwmcD0oEg7mHKQN2qFj2R4jj9lN5QB5h+mNbAxUVs9OAKIYugkEv8
+	 8QHSCLgfZSjYQLeppqEO+T0Voc7tqFHLzOInkolbZM6F20xGQi/9DrE0qYwPRwiXV3tv/
+	 T33l1ymtTNutQYi0qEo4MbdQQPats5pl8fkDJmdvwT+PLi+D7WONz4HsSKKk0VZlLf+vz
+	 Ld1eYmaauHEUzQXhi62AsUssFfWr6nJfOkPMtW1uxN2MJgU6TAP4u2q6/ZptfviQ7Zg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792696590;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=worign4rstbwAXV4Bgti+MrdTiT6gtNxhhZE7rH+EtI=;
-	b=aruQTFsesgp9/5Iy6qBsk5NnWQbEFIxaO3tSdMC1st6tG/oWOcfK70V6GFqObY7lyDF6
-	 8EwjEmkJtSUuY1WfE2Wqqjfhg8+tpYo41/QZegSgcsQhgZmB2I3pnASZ/elgx9xYqe/G9
-	 130pASrEbyTEuX4rVXvoswZLwIeXklKEtgvTkwnR2HUbvJGdGP2YK5KITkdAPPQWmXKpQ
-	 MMeE4clzY3mLQvFu98c2UFijEMo3KTCY41Fqb2XXN87GrPBt19Cp8+UoH4WocBkRYg4jM
-	 oFMYXI/gbJvtFazvZw21H0hMhV5xyt8bgI56Ik348XR4xuH/lnHV4vNtzzBM9dTsjnA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792717129;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-ID:X-MBO-RS-META;
+	bh=IeqmoAQ51EHcxIMFfP3UNQnr/92BWPSa9cRe2REwg4M=;
+	b=Q2kA8s2dIIO1fbRLybHnKZFEybtXm2x/V5Wtj0+lq/yb26yAGN9R6CTN2yX68f9Ww8mq
+	 JziA4OLIJL1p8vKuzLPp1Ekt7jbZseDMwMuRJImtLtXJwZKcXkyG/VU1Xs5CaucregJaM
+	 Ia6l98QgNbY0PAB2CEUubKd/UVaTpNnbJFpkklkbe7wMg5gijdyTJma3BT3Iu0vkG1uu7
+	 o97B1zsIcqUSYghVM5046Xraqt0MtEeizwpGIK3ktQs0b363MbvEos0d2dX3dO6IQh6gY
+	 XdAGNievS2OBn3ymcblov2Gal5j+L0E/qFXm/6VNH975TbnSzesT5HWfI0aLT/bUrpg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=bCnt7TT9;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=f0y4Npcz;
+	arc=none smtp.remote-ip=80.241.56.161
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2DB606A31F
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Oct 2026 19:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DF2DB606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D0F606A319;
+	Fri, 23 Oct 2026 00:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B3D0F606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=bCnt7TT9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=wori
-	gn4rstbwAXV4Bgti+MrdTiT6gtNxhhZE7rH+EtI=; b=bCnt7TT9ert32tXRWd8p
-	vWHPz7UYsPjM0Hv2sizm5s0Gg3J8gT3tS/0xLufQdjp8XgA3yjQJXnaw0gI4/3S7
-	7h/TwBT+22sAyEpp84mbXtRGt19gICHiQi1oWreGn3p44m7uT16UL1LpT7jGxlaa
-	afYJW8Ckeu33yIshzsWDoP4IR/gDlfNbSOU4akCF1BkcRiVzMz0ifNge4vZUIIWO
-	ReAesxGCTmy/5zrjJwLjcMkvdCgzInj7jLvFeLqSvbaxRTsI65Y5fNA3bjwqndjd
-	afDhwTqDRTh0bNKiCNCQhK1A+LOEDLzkvEG9C1LwVS8JglgQIY16XL6ot2RKCxAc
-	Zg==
-Received: (qmail 1249909 invoked from network); 22 Oct 2026 21:16:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Oct 2026 21:16:23 +0200
-X-UD-Smtp-Session: l3s3148p1@cd4Ks3JeDpAujns/
-Date: Thu, 22 Oct 2026 21:16:23 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, p.zabel@pengutronix.de,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	claudiu.beznea@tuxon.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v7 00/14] PCI: rzg3s-host: Add PCIe hotplug support
-Message-ID: <atphAmy8ZIjY_JNC@ninjato>
-References: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=f0y4Npcz
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4j9l5C6fkSzKnf7;
+	Fri, 23 Oct 2026 02:58:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1792717119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IeqmoAQ51EHcxIMFfP3UNQnr/92BWPSa9cRe2REwg4M=;
+	b=f0y4NpczSK1DUPiWDvYYzW1lnKHRUWfr8VzjC/CTA6fyq3M/OQ0ocuZNmw8qL6C5JVpREA
+	5yZxB3Rh3Ubefmt393LqiWT9m43QXpVNfshy/MZZHYx/v8EfuZHCwDxmOzJyV2qT9pdrfB
+	XWKHWvva4SJm7NUtbOs11b9WJ3M0mZWYTI+nNiWnF7QHPyKoOJM7Sz9m9fc9l0rRqciCAF
+	HP0PfjYW38ZMl7xdWoxMqT4Zy5DoM1/CD313gu4kcKW36UBTj3JpoyUH+F3zdhQLC4MCBG
+	zhKIEPbK1Rw0JZ+/JwvyRE/ZqnbO4vlkxPPCKXfkNT+6WNFrX70KPqUWhGgT+A==
+Message-ID: <4c0b2b15-7e5f-4dc1-bf49-c762de48853e@mailbox.org>
+Date: Fri, 23 Oct 2026 02:58:38 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -67,52 +62,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ow/o1bagopSaNDX2"
-Content-Disposition: inline
-In-Reply-To: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: renesas: spider: Add overlay for PCIe ch0
+ endpoint mode
+To: Koichiro Den <den@valinux.co.jp>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20261022082113.3163666-1-den@valinux.co.jp>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20261022082113.3163666-1-den@valinux.co.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 6822d88a6474b0c5ef2
+X-MBO-RS-META: by4beyymrwqczrs1npa5h9r99dh6xaid
 
---Ow/o1bagopSaNDX2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10/22/26 10:21 AM, Koichiro Den wrote:
 
-Hi Claudiu,
+Hello Den-san,
 
->         i2cset -y 1 0x18 0xf4 0x8 # Link down
->         i2cset -y 1 0x18 0xf4 0xc # Link up: PCIE_SLOT (NVMe Micron)
+[...]
 
-So, I applied your patches on current -next and did the above.
+> +++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-pcie0-ep.dtso
+> @@ -0,0 +1,15 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2026 Renesas Electronics Corp.
 
-During LinkUp the card (Renesas USB3 host controller) got correctly
-re-initialized. Same for physical unplug/plug.
+Is this header correct ?
 
-I don't know nothing about PCI, but I wondered about one thing: after
-removal (both physically and via I2C), the card was still present in
-/sys/bus/pci/devices. Is that expected?
+Would it be possible to include a brief "example usage" comment in the 
+header ? An example of such a comment is available in e.g. 
+arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-fan-argon40.dtso 
+"Example usage:" . If this would be too complicated, then please ignore 
+this request.
 
-Thanks and happy hacking,
+Thank you for your help !
 
-   Wolfram
-
-
---Ow/o1bagopSaNDX2
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmraYQMACgkQFA3kzBSg
-KbZTrBAAjnY8NNyL5HwH91DskA4hX6y4V7+LCoo7rU++Z6JH9I0vvyhwOwrtdd1Z
-DZwhZGMLooSQCG6nuEm+JsWwPUtlWBWULdL8LQkgLHiArPYzyfUGqy7kc9sNgcKQ
-vXNToCw0Q5nQXAd6Vkg274EbgtPF9L6MVh+ZkUraMCrA0fkO4CpdKCozsmGdEaqp
-u79HtHV3Pc8sfL2dCzFc49NY90NShQykan88ZXZaOhASOS+lEuwRU+rZ8cjV+Atc
-M6CZtVE2qjdxVGTSmcN5MyezhfR0y2NOSc6dog1Mr4oWsuHye762gVgxzKrGR+c4
-0aGqmmoQ1iAsp5pUumG2zt9SufI8b9/Ig1B789Nlnp/iPA/kBt3rEEAKYo3nxxjB
-APayRljviwFErFkgZbAK99OC1F6c60jLdaLD+G0z9fkGbkYdFKngJf8vdtYW26Mc
-XKmr3l+d8cHhMcyjD1E2T4c8WxcUj+kNwar5BO8LI0+I3JnAUx2Tihak/s8QrBFY
-iikG8/GtgmeYxp2Cr2aK1fVN9nLNyQOTLQm8zP4r0hGTzzSpAb4ebd0y5mt/WNua
-2hHaeEWB6O2g6oGRCtn937F7upXhZfJhZjLnoLctPH4chXW60NiK0rJcGJ/loepB
-HV4itQoIYpCb8KQ9VsriQLUDFr/db0S9smuYOFZLDshcweCjHzg=
-=7/Ow
------END PGP SIGNATURE-----
-
---Ow/o1bagopSaNDX2--
+-- 
+Best regards,
+Marek Vasut
