@@ -1,76 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.152
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792815593;
-	b=PvnJcWf0uXHwk9ddqN3hZgjTp1ibVlHms539/4eoDCQcJjy8dma6zWe49tJPndq510CB
-	 J+NANmdFFLnDew7J3S87ghVbZCXt1u4Hvv/xxPTnUKWTunF3LTFmNb0oy+TavPJkxA1NT
-	 m58CCMvqLAIFkrxK7erQggFkHQjsgw0Zip+zLPc1lPcahLYrEUH1yFcpOu2Alx8WYb3dz
-	 +kTHxWLiuI2B/4lDf7Khxe3NpVJbc6fQdVmCsuC47V/YXvmQPU9Ulyu3BrOAJrOgMsxBs
-	 Gw8/FBSIgn+NzMJdyIUnA90g23MDanldVC5nQicZm07J2+PVYxVquyQRHbD0faAZrVw==
+	t=1792820113;
+	b=SZ3MCsw87wzQmBc8wgsW6+nGog5oRoVYlOD8EfGyfQXDFz+DdyV5gncNLHMBgxlb6XU2
+	 lctCqL5XdhSayapDRZaWXlZwAwqdxcqW+q6ZTOhoAiLpDW5h27rKg48/yBeOCFU9Ni2wq
+	 a43H8ZnyuhAgJ9VrpqrojooJmnM/L9Uvxk+Rn8oncPXT7s5eFUReJ8bD5gIf75DC9n7+Y
+	 dWx4QtrXVXbwVhq349c9FjNp+g8gTmQ5OSpvfIIeJjxk08K8LJ0W/wjwOQK6sCrdPbqKL
+	 /ylrCp9+/kuhRYME5sbMVXzk7eijCmqIzoVIC0L6hp4H0cRA2DzvOPFh3WWarnD21jw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792815593;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:User-Agent;
-	bh=x0oly4lOOcktSlhnHmNr4UBhBflw4gfbCcOwbW5ADrs=;
-	b=RVIjWgqYGxhxCYGEpEGzOweoqOnAXUFp0sCArprw1zQP3g82y63QRsP7+x0lCPwlPHYC
-	 PuVJKR/+c2xQBJ3H4bwNYpBeR6KZn9PhSp4WiDMGvI5MLFt8pc1lm+b6s8RT+2YvThGsh
-	 L2lSWQjB9RXKzqGafzWbKUllPWf1dWG5XUJfpcarmJ45x3RQoGWfI7MuU8YPBkjzu3Csd
-	 lpbkBySYZwZtVA+L5wflEeItE7+ZGmVdmmVMftARv8hNYiTAw2UnZs7APpEcNSWJE/lFk
-	 UU2jK0JXJz3+kVGAP2vA0JF9MVq12ISm5Q6jdpt4ARXY+7MfG9z9o0moqolg6gY6F1g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792820113;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
+	bh=MiVht9ym0EURv1bddnJJbI5enBTslXQ1JEWYlf28Cto=;
+	b=31/NJVYA03+/puCmtY1s+jTtffLJOILV5YBvZM5/o+HxncaA+JtwEhV5bkkydRg53vpz
+	 53yu4LCRwq//rdimkrfNPglsxszoRajDbvU0Cup5YahXbXsXPbrwStGV06nTZFOSdWIoK
+	 bDzH8Hg1Ls9zZ//BEFYyNgFGvVummO/OnmhGS6+GDnKFKS/8ak+24BFEOiDkfzOdzKwBT
+	 gr4hek5fS7dv2K0wYpMggil+K0pEReGcRk35eqYSCOA08iwXLg3HpopbSYza11S0Z7GQN
+	 LrqxJyT3UQQAuO4gPSaHEv2pw/2v5TOzDSqDP/xRm3AVwjuKzjaFqwFg7b+TlzKaMiA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eyAwFCnF;
-	arc=none smtp.remote-ip=192.198.163.10
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=prTvNw0e;
+	arc=none smtp.remote-ip=80.241.56.152
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A92606A31A
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Oct 2026 04:19:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A6A92606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCE9606A33B;
+	Sat, 24 Oct 2026 05:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2FCE9606A33B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eyAwFCnF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792815591; x=1824351591;
-  h=date:from:to:cc:subject:message-id;
-  bh=ASZwPO/DfTt9gRqGfIoY4b7Q4fpUzpcjC9g2Uv5VapE=;
-  b=eyAwFCnFeu9mO7BhFEz956zACAibP1vLFnjRzOzjifpgyvgpfOFTzLQa
-   MO5Mgj5xcLrGAcgu48cJkXbdo0h1p7CUX4KuaYERRtjnLl4u+jbZjAR4o
-   CGuYStF+mt2udqXEYEba8W+R0Sop6Ttj91FEnnWgqJsYQN4jolBZvRhFY
-   uyqdK+3xC79n0h6jo0wjw4VIoUJGtgD2Iy/T6HgnMaoOZg8eW62fa+fr2
-   Yl1329kFe+1SGVba5U2vYOFG2m9nPnrQ4y29BlGrXXiQ/fhPotRvgEnvG
-   NCx/6FDDfjOGDpl188veuFUowfLMxu7piKSp++LlosmUtI13J8pOnSDGr
-   w==;
-X-CSE-ConnectionGUID: WEqk0+G4Ta2n6DIlUgaiKQ==
-X-CSE-MsgGUID: GWYBymnRSuyiqh4f6bEfNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1468035"
-X-IronPort-AV: E=Sophos;i="6.27,175,1787036400"; 
-   d="scan'208";a="1468035"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2026 21:19:51 -0700
-X-CSE-ConnectionGUID: wKkT30+rS6a1kW8wE7XPjQ==
-X-CSE-MsgGUID: ahLhANnyTFG7o8xVomlrAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,175,1787036400"; 
-   d="scan'208";a="4191466"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 23 Oct 2026 21:19:50 -0700
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xKTER-00000000TZq-3VfF;
-	Sat, 24 Oct 2026 04:19:47 +0000
-Date: Sat, 24 Oct 2026 12:18:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:master] BUILD SUCCESS
- 0a583e44d9931ad18ab8f6371b763155830c95d4
-Message-ID: <202610241249.CBWDgIMn-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=prTvNw0e
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4jBT9m5Z5pzKnCD;
+	Sat, 24 Oct 2026 07:35:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1792820108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MiVht9ym0EURv1bddnJJbI5enBTslXQ1JEWYlf28Cto=;
+	b=prTvNw0enYprIWmGhaUdr7P6UZhA+faYgPuaALUaN5kRnUv5IOQZXOpqRtooY2lDAjCSP1
+	7Vpi3t81dZta8GKCcNAj+qBQ0oEuqO/ft8xClKZvXGUHAhg0CJ00xyLWulOlIDLn5TWZ9z
+	rDxV8v0zN3isDvgThk8CJ3jZflJPxvmniS2D8z3mmiGWcYm+LRy+x7exPXgqV7lH0nlcXG
+	DHPRW36n+VLby7NhHJo76mMt838CfUfpE9XO91XL35NNk7dKNcS12AUoi0d03MzkXcG9V3
+	hNgIUS+wSCdgRbsqH/iprgRu10tHbIQMu11ZPjV5QlYEix+YxjnTh2vqceqfmg==
+Message-ID: <d870c163-8d90-48c0-bae0-5f6e0e38c5bc@mailbox.org>
+Date: Fri, 23 Oct 2026 22:51:33 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -79,78 +61,51 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] arm64: dts: renesas: r8a78000: Add GPIO controller
+ nodes
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm
+ <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+References: <cover.1792776697.git.geert+renesas@glider.be>
+ <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 67d5bdyjkzczox9iyuyt8upuxs5tyx3t
+X-MBO-RS-ID: a841861d307c1214dd9
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
-branch HEAD: 0a583e44d9931ad18ab8f6371b763155830c95d4  [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+On 10/23/26 7:50 PM, Geert Uytterhoeven wrote:
+> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> 
+> Add device nodes for the General-Purpose Input/Output Ports (GPIO) on
+> the Renesas R-Car X5H (R8A78000) SoC.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> Co-developed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Changes compared to Marek's original:
+>    - Use hardware clocks/power-domains/resets instead of direct SCMI
+>      references,
+>    - Drop gpio-ranges properties for now, as upstream lacks Pin Function
+>      Controller (PFC) support.
 
-elapsed time: 3980m
+Is that ^ OK ? If so, good, TIL.
 
-configs tested: 58
-configs skipped: 10
+The rest is
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-tested configs:
-alpha                    allnoconfig    gcc-16.2.0
-alpha                   allyesconfig    gcc-16.2.0
-arc                     allmodconfig    gcc-16.2.0
-arc                      allnoconfig    gcc-16.2.0
-arc                     allyesconfig    gcc-16.2.0
-arm                      allnoconfig    clang-17
-arm                     allyesconfig    gcc-16.2.0
-arm64                   allmodconfig    clang-24
-arm64                    allnoconfig    gcc-16.2.0
-csky                    allmodconfig    gcc-16.2.0
-csky                     allnoconfig    gcc-16.2.0
-hexagon                 allmodconfig    clang-24
-hexagon                  allnoconfig    clang-24
-i386                     allnoconfig    gcc-14
-i386        randconfig-2200-20261020    gcc-12     smatch
-loongarch               allmodconfig    clang-19
-loongarch                allnoconfig    clang-20
-m68k                    allmodconfig    gcc-16.2.0
-m68k                     allnoconfig    gcc-16.2.0
-m68k                    allyesconfig    gcc-16.2.0
-microblaze               allnoconfig    gcc-16.2.0
-microblaze              allyesconfig    gcc-16.2.0
-mips                    allmodconfig    gcc-16.2.0
-mips                     allnoconfig    gcc-16.2.0
-mips                    allyesconfig    gcc-16.2.0
-nios2                   allmodconfig    gcc-11.5.0
-nios2                    allnoconfig    gcc-11.5.0
-openrisc                allmodconfig    gcc-16.2.0
-openrisc                 allnoconfig    gcc-16.2.0
-parisc                  allmodconfig    gcc-16.2.0
-parisc                   allnoconfig    gcc-16.2.0
-parisc                  allyesconfig    gcc-16.2.0
-powerpc                 allmodconfig    gcc-16.2.0
-powerpc                  allnoconfig    gcc-16.2.0
-riscv                   allmodconfig    clang-24
-riscv                    allnoconfig    gcc-16.2.0
-riscv                   allyesconfig    clang-24
-s390                    allmodconfig    clang-24
-s390                     allnoconfig    clang-24
-s390                    allyesconfig    gcc-16.2.0
-sh                      allmodconfig    gcc-16.2.0
-sh                       allnoconfig    gcc-16.2.0
-sh                      allyesconfig    gcc-16.2.0
-sparc                    allnoconfig    gcc-16.2.0
-sparc64                 allmodconfig    clang-20
-um                      allmodconfig    clang-17
-um                       allnoconfig    clang-17
-um                      allyesconfig    gcc-14
-x86_64                   allnoconfig    clang-22
-x86_64      randconfig-2100-20261020    gcc-14     cocci
-x86_64      randconfig-2101-20261020    gcc-14     cocci
-x86_64      randconfig-2102-20261020    clang-22   cocci
-x86_64      randconfig-2103-20261020    gcc-14     cocci
-x86_64      randconfig-2104-20261020    clang-22   cocci
-x86_64      randconfig-2105-20261020    clang-22   cocci
-x86_64      randconfig-2200-20261020    gcc-14     smatch
-xtensa                   allnoconfig    gcc-16.2.0
-xtensa                  allyesconfig    gcc-16.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thank you !
