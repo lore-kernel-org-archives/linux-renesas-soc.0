@@ -1,60 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792744099;
-	b=gx0L0RaVmNQkh+9fGQ2T4CO4Iq1K4jwmjV3ZKGa2ZRMrzilqlSfuxj2GmSFiB8EQzi6k
-	 HfzpoaGUzmVvxqEK9FwiiAZdSawVP/t08r7vuozebLlET8hDCa3MBKunVsKKb1cdv/I0B
-	 07/7s2xPOGGrxsDkxIctyogKYmm6O3yLg8QFl5hIRl6HGjrCm1GHVD5BmPJSg+UzUHGkt
-	 Kbtsu0U/rvgLUhFDxQsXxWH+m0ml8uXYTWtYg6zkqg9QdjvkRq30UWwjecsghcrp74j0v
-	 gQO6bDlRaxlKjnAcP0P/ynujtDJ9kZ/NH0uLlXKnr+X7qSOurz3RBBUnIdUYxVgTT5g==
+	t=1792750941;
+	b=o30naS6H95vi9JMfVs7M2s+RWb216dU26/Mm4dyZnjwr+QOlnS0bwg9resdt/liGVbES
+	 VrexMoiuCeV2YGtxKe45TuIgRe3w9KKA/z5fr7xvhTAiX1HeIGI3nzfpacUkr6o80UFOn
+	 7og+9zmzm+y6tCAXXWHB5A/UUaqayiMVExhuZjiVl6PjLzIUHXwjcNfxfXkxcXaXaKYRY
+	 WuBr8pF1NRNOWTYPBVXXB2z/uIUaCX6PnSPvMgLNeFCIuS/kCCWZrYep2i/nBtjmAH8pJ
+	 MfWZHrecVV+9lqqWt6jfKs3Q4hnNQBmIOfHGkQr2gye1zUbM45+Xi/xc2Jk2Xzc9ZUg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792744099;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=tbu6KQCYR0HIbEcZ3PFIb172SAM08206TRIlFmm9r2c=;
-	b=TDSpfemGqAkehjYAmf9D9/AKsnQv9zCb69B7/hyAYNu5KNx0APizP+njwOCrvmLQk1jN
-	 OnobY0C/gvE57glvPV6aNBhnkygxbCSwGqf7QSFgSCcIran9NEFY31f97AEm+FH1jeS5b
-	 +6soTODZ4rRlwGc5evL+gPMXF+K6RyNCx99KNR4YUhrPI85wyCjGN8cia+/+a9u7f2jeN
-	 XReCjvRDQj9AgECI2NB372zzN806KbSatzi7B5P4taYw28gmdTSffAqEZhbv4JwvaqCzW
-	 kPRbDP8Gr2CQfm0c14BtU1Ai9jaV5cwPOHWhVXg6cxf9eXezw2tx3nIltWley3WnB+g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792750941;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=WWj8cJaFKWW/3VUfB0olF9gXuECfuO0KdXvS2+pAZ6g=;
+	b=2HU2z3osuNIB1DlTcN7NSeyu9m48oZ6SiAAwxG3N7iU0fIFnPeBuFXudcHGlwowQLa3X
+	 FQxbZQlvvHhO7E84VFcKb37ZjSmJ4lfkOz5nZAWQsoLYBNXO8yruPqtxByIdpv6eRHU/7
+	 cXFM3Xob3hSmfFTvY7bEwbS2HiDVa91WkxUfaieWuAFhOwPz/QEjfzyxmpZEUWgju3aP9
+	 +BXTJVhNsHCprxKq/9kTt5VWOBtiQcThnyRVtWHBCpaXWqm8UkrgNe9Z/OdK6HV1+b2av
+	 xrOOdm5E5WK/nEIfT5a6iVY73KKRUTt+Q6Y0G0KJkkgWStlfMTnezxki2tw637u7jsw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ma26LA6K;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D091606A31A;
-	Fri, 23 Oct 2026 08:28:19 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=tyl2Ylo8;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2D0606A326
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 10:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B2D0606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ma26LA6K
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA7B1F01828;
-	Fri, 23 Oct 2026 08:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792744099;
-	bh=tbu6KQCYR0HIbEcZ3PFIb172SAM08206TRIlFmm9r2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ma26LA6KRJ2xmPXLEtu4nqIk5Fexa/c+6M2S5CrxTBtPYsMJo6Hjv2LrTNyrvCd2o
-	 FwnZb0wiJtzOgDffW72jwfj6sr0H6KX/wEDXDXvTSEy48/bw8gHXu+zbvjH6BihmUy
-	 RCN/MUxb6SdmRS9Zb11QejLUoesen2m++WPx0cQBWp1hNZsp9gYnw6413FpLox/pDL
-	 3blYZ+P13T7QnFz+LXlG98gVQVg7DEpE3M/h/lFnNCSZRXW8kJ8EvyQL4ew64TtURw
-	 FiRLOxxSRDGuCY/bR0YywD5eb8Q095tKRlunL1YmihY4kEgn5QJzMdMp+LP6zgNEDz
-	 gtgdcJ0gVDcyw==
-Date: Fri, 23 Oct 2026 10:28:16 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Diogo Ivo <diogo.ivo.sx@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, linux-i3c@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/8] i3c: renesas: Add RZ/G3L support
-Message-ID: <20261023-thundering-axolotl-of-examination-aaa6ba@quoll>
-References: <20261020-divo-ssgrlpcsrc-2966-i3c-v1-0-30a47f25e515@renesas.com>
- <20261020-divo-ssgrlpcsrc-2966-i3c-v1-4-30a47f25e515@renesas.com>
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=tyl2Ylo8
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF7031650
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 03:22:16 -0700 (PDT)
+Received: from [192.168.0.1] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D25BD3F7B4
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Oct 2026 03:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792750940; bh=VnaOaoCbZWtRveOiSDtrRS+aRrEZTeoetU0oSSXUGhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tyl2Ylo8AyJpLtHtrxv1etZGIYrR4qS2sCvLNm/ggRtEWd/ah0EI6ad4Yi0kFzccT
+	 EX1bnuB3gwgRHAKM4bJizR1uktA0I+fg+MyL2ui1JUvBRn5Sel8i1r5l5ThEilyITc
+	 tqZWNK3JhDuR3yh037ZjObjfklqJePbsPWP6BLmY=
+Date: Fri, 23 Oct 2026 11:21:48 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	John Harrison <John.Harrison@igalia.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Mihail Atanassov <mihail.atanassov@arm.com>,
+	Eric Anholt <eric@anholt.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Brian Starkey <brian.starkey@arm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	Suraj Kandpal <suraj.kandpal@intel.com>
+Subject: Re: [PATCH v7 0/9] drm: writeback: clean up writeback connector
+ initialization
+Message-ID: <ats1PJqVhNR-RXAX@e142607>
+References: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,44 +85,148 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261020-divo-ssgrlpcsrc-2966-i3c-v1-4-30a47f25e515@renesas.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261019-wb-drop-encoder-v7-0-d4288a26eb54@oss.qualcomm.com>
 
-On Tue, Oct 20, 2026 at 10:14:58AM +0100, Diogo Ivo wrote:
-> Add support for the I3C Bus Interface on the Renesas RZ/G3L (R9A08G046)
-> SoC by adding the renesas,r9a08g046-i3c compatible to the OF match
-> table.
+On Mon, Oct 19, 2026 at 04:12:26PM +0300, Dmitry Baryshkov wrote:
+> Drivers using drm_writeback_connector_init() / _with_encoder() don't
+> perform cleanup in a manner similar to drmm_writeback_connector_init()
+> (see drm_writeback_connector_cleanup()). Enough of the drivers don't use
+> the encoder embedded into the drm_writeback connector.  In preparation
+> to further rework of the WB connectors (as planned to enable WB for i915
+> / xe drivers, which would move drm_writeback_connector to be a field
+> inside drm_connector instead of subclassing it) remove the drm_encoder
+> wrapped in struct drm_writeback_connector. Rename the
+> drm_writeback_connector_init_with_encoder() to
+> drm_writeback_connector_init()
+> and copy drmm_writeback_connector_init() interface. Then, with the
+> encoder being gone, handle proper cleanup of writeback data in
+> drm_connector_cleanup().
 > 
-> The controller is very similar to the IP on the RZ/G3S. However, for
-> instance the RZ/G3L variant has no HDR Exit Pattern detection interrupt:
-> RZ/G3S exposes 17 interrupts, while RZ/G3L exposes 16. A RZ/G3L node
-> therefore cannot be described with the RZ/G3S compatible, as its bindings
-> require at least 17 interrupts. The same point applies to RZ/G3E, that
-> requires 3 clocks while the RZ/G3L requires 2.
-> 
-> >From the driver point of view there is no difference between the two
-> SoCs: the driver only consumes the tclk clock, the presetn and tresetn
-> resets and seven named interrupts (resp, rx, tx, st, sp, tend, nack),
-> all of which are among the 16 shared ones. No driver changes are needed
-> besides the new compatible.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
 > ---
->  drivers/i3c/master/renesas-i3c.c | 1 +
->  1 file changed, 1 insertion(+)
+> Changes in v7:
+> - Significantly reworked series, no longer insisting on using drmm.
+> - Link to v6: https://patch.msgid.link/20260612-wb-drop-encoder-v6-0-9f3a54f81310@oss.qualcomm.com
 > 
-> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/renesas-i3c.c
-> index 4fddc1b4fdbb..80a6df1151bf 100644
-> --- a/drivers/i3c/master/renesas-i3c.c
-> +++ b/drivers/i3c/master/renesas-i3c.c
-> @@ -1625,6 +1625,7 @@ static const struct dev_pm_ops renesas_i3c_pm_ops = {
->  
->  static const struct of_device_id renesas_i3c_of_ids[] = {
->  	{ .compatible = "renesas,r9a08g045-i3c" },
-> +	{ .compatible = "renesas,r9a08g046-i3c" },
+> Changes in v6:
+> - Dropped applied patch
+> - Implemented suggestion by Alex to use drmm allocation for the
+>   writeback connector.
+> - Link to v5: https://patch.msgid.link/20260505-wb-drop-encoder-v5-0-42567b7c7af2@oss.qualcomm.com
+> 
+> Changes in v5:
+> - Rebased on top of drm-misc-next
+> - Expanded commit message for msm patch, describing devm vs drmm issues (Laurent)
+> - Expanded commit messages, describing why the drivers are converted to
+>   drmm_writeback_connector_init() (Laurent)
+> - Link to v4: https://lore.kernel.org/r/20251228-wb-drop-encoder-v4-0-58d28e668901@oss.qualcomm.com
+> 
+> Changes in v4:
+> - Rebase on top of drm-misc-next, dropping applied patch.
+> - Added a note regarding memory leak in the AMDGPU driver.
+> - Fixed a devm vs drmm issue in the msm/dpu driver.
+> - Link to v3: https://lore.kernel.org/r/20250819-wb-drop-encoder-v3-0-b48a6af7903b@oss.qualcomm.com
+> 
+> Changes in v3:
+> - Fixed subject prefix for the rcar-du patch (Jessica Zhang)
+> - Link to v2: https://lore.kernel.org/r/20250816-wb-drop-encoder-v2-0-f951de04f4f9@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Switched to drm_crtc_mask() where applicable (Louis Chauvet)
+> - Link to v1: https://lore.kernel.org/r/20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com
+> 
+> To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> To: Maxime Ripard <mripard@kernel.org>
+> To: Thomas Zimmermann <tzimmermann@suse.de>
+> To: David Airlie <airlied@gmail.com>
+> To: Simona Vetter <simona@ffwll.ch>
+> To: John Harrison <John.Harrison@igalia.com>
+> To: Harry Wentland <harry.wentland@amd.com>
+> To: Leo Li <sunpeng.li@amd.com>
+> To: Rodrigo Siqueira <siqueira@igalia.com>
+> To: Alex Deucher <alexander.deucher@amd.com>
+> To: Christian König <christian.koenig@amd.com>
+> To: Liviu Dudau <liviu.dudau@arm.com>
+> To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> To: Geert Uytterhoeven <geert+renesas@glider.be>
+> To: Magnus Damm <magnus.damm@gmail.com>
+> To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> To: Maíra Canal <mcanal@igalia.com>
+> To: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+> To: Louis Chauvet <louis.chauvet@bootlin.com>
+> To: Mihail Atanassov <mihail.atanassov@arm.com>
+> To: Eric Anholt <eric@anholt.net>
+> To: Rob Clark <robin.clark@oss.qualcomm.com>
+> To: Brian Starkey <brian.starkey@arm.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: amd-gfx@lists.freedesktop.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> 
+> ---
+> Dmitry Baryshkov (9):
+>       drm/amd/display: embed the writeback encoder in amdgpu_dm_wb_connector
+>       drm/komeda: embed the writeback encoder in komeda_wb_connector
+>       drm/mali: embed the writeback encoder in malidp_drm
+>       drm: renesas: rcar-du: embed the writeback encoder in rcar_du_crtc
+>       drm: writeback: drop excess connector initialization functions
+>       drm: writeback: rename drm_writeback_connector_init_with_encoder()
+>       drm: writeback: don't destroy the shared writeback properties
+>       drm: writeback: clean up writeback connectors in drm_connector_cleanup()
+>       drm: writeback: drop the drmm writeback cleanup action
+> 
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   2 +-
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |   1 +
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   |  27 +++-
+>  .../amd/display/amdgpu_dm/tests/amdgpu_dm_test.c   |   4 +-
+>  .../display/amdgpu_dm/tests/amdgpu_dm_wb_test.c    |   4 +-
+>  drivers/gpu/drm/arm/display/komeda/komeda_kms.h    |   3 +
+>  .../drm/arm/display/komeda/komeda_wb_connector.c   |  24 +++-
+>  drivers/gpu/drm/arm/malidp_drv.h                   |   1 +
+>  drivers/gpu/drm/arm/malidp_mw.c                    |  25 +++-
+>  drivers/gpu/drm/drm_connector.c                    |   3 +
+>  drivers/gpu/drm/drm_crtc_internal.h                |   3 +
+>  drivers/gpu/drm/drm_writeback.c                    | 147 +++++----------------
+>  drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h     |   2 +
+>  .../gpu/drm/renesas/rcar-du/rcar_du_writeback.c    |  29 +++-
+>  drivers/gpu/drm/vc4/vc4_txp.c                      |   8 +-
+>  include/drm/drm_writeback.h                        |  22 +--
+>  16 files changed, 140 insertions(+), 165 deletions(-)
 
-So fully compatible? If so, drop this and express compatibility in the
-bindings.
+I still personally dislike the whole idea of removing a framework feature that was beneficial
+to a lot of drivers in order to help one driver, but that is just my stance. The stats kind of
+show that and if it wasn't for the massive delete in drm_writeback.c (partly of comments) you
+would add more code with this change. The cleanup and fixes patches in this series also points
+out that there are still issues with the concept and John and sashiko are also raising issues.
+
+Anyway, as far as komeda and malidp drivers changes are concerned, I'm OK with them being applied
+as long as the framework or the patch series solves any cleanup issues. So for those two patches
+you can have my
+
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
 Best regards,
-Krzysztof
+Liviu
 
+
+> ---
+> base-commit: 725953d4da85cfb97a4c309fad6346b72f8529e7
+> change-id: 20250801-wb-drop-encoder-97a0c75bd5d7
+> 
+> Best regards,
+> --  
+> With best wishes
+> Dmitry
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
