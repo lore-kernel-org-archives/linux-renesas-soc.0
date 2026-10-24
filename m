@@ -1,58 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792820113;
-	b=SZ3MCsw87wzQmBc8wgsW6+nGog5oRoVYlOD8EfGyfQXDFz+DdyV5gncNLHMBgxlb6XU2
-	 lctCqL5XdhSayapDRZaWXlZwAwqdxcqW+q6ZTOhoAiLpDW5h27rKg48/yBeOCFU9Ni2wq
-	 a43H8ZnyuhAgJ9VrpqrojooJmnM/L9Uvxk+Rn8oncPXT7s5eFUReJ8bD5gIf75DC9n7+Y
-	 dWx4QtrXVXbwVhq349c9FjNp+g8gTmQ5OSpvfIIeJjxk08K8LJ0W/wjwOQK6sCrdPbqKL
-	 /ylrCp9+/kuhRYME5sbMVXzk7eijCmqIzoVIC0L6hp4H0cRA2DzvOPFh3WWarnD21jw==
+	t=1792838317;
+	b=EOplBcaglWPi+YB7tKe7bTdn72ainNg1f59K+nWCl0syfijddI7QqiDtcc3KGmDimXPK
+	 22GvU+Z967yFC0QzY+/0d62gFTXdfnLMoxWixr40hogD3lTSRsPqnES80gZkH1BtAdrJ8
+	 Ypl5ngX5bI4gA/vSIQYiLKcAf11iWCXiBJQMepzgLNQqfFQvN4KQ0Pm1tBR1vjubLa28F
+	 eB11enu0Vvz5wXnP4YC5Jr3TxLJKu9dmWlQ7dbrGkVWduLottyxGC2tcqYFdbP+vTZ/0l
+	 mp4kvu0s5eOkbV7Jes/mrxw/OpdMNblfXtJ1O3ybzCt3CpNjw+PaO5hsi9V2wU/KGlg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792820113;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
-	bh=MiVht9ym0EURv1bddnJJbI5enBTslXQ1JEWYlf28Cto=;
-	b=31/NJVYA03+/puCmtY1s+jTtffLJOILV5YBvZM5/o+HxncaA+JtwEhV5bkkydRg53vpz
-	 53yu4LCRwq//rdimkrfNPglsxszoRajDbvU0Cup5YahXbXsXPbrwStGV06nTZFOSdWIoK
-	 bDzH8Hg1Ls9zZ//BEFYyNgFGvVummO/OnmhGS6+GDnKFKS/8ak+24BFEOiDkfzOdzKwBT
-	 gr4hek5fS7dv2K0wYpMggil+K0pEReGcRk35eqYSCOA08iwXLg3HpopbSYza11S0Z7GQN
-	 LrqxJyT3UQQAuO4gPSaHEv2pw/2v5TOzDSqDP/xRm3AVwjuKzjaFqwFg7b+TlzKaMiA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792838317;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=qAQjYYDYYKT+pQI95I063wXWoy76Y7CUBOwu7TGf1IY=;
+	b=pnGlllCIFCps6S3b5oI1qu2527BSu9aoKMGHxYKFFhJUIW/r8NMB0f6JwqV0h1jmAoW5
+	 u9niXzwT8PcKfhc/YB/diR47C54TQ8GalahmEfVq61UHdsEvKKNGoQEA/r1gGgXV+97Cl
+	 RkTEpBGO5ChuC39CPjs2vYxcQDd/oCslcgNDg4G4jwtJKWjS+9WVzmRLEPydO5ABFC+l7
+	 KpPCdN0IjXbUGZrnJZLoFzRshxjPJVuZ4HrZCM3C00CtX5fmfeVgzNnCbnUuBZNpb8lBp
+	 BZj2Qp/us4wJBoJIUdglWRdSUoDRjfrepyGOPZcDHrP4vvgOEHlrkUAXmN8zylTEC3Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mailbox.org;
-	spf=pass smtp.mailfrom=mailbox.org;
-	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=prTvNw0e;
-	arc=none smtp.remote-ip=80.241.56.152
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=aU0E1De+;
+	arc=none smtp.remote-ip=198.175.65.17
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCE9606A33B;
-	Sat, 24 Oct 2026 05:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2FCE9606A33B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EBE606A31A;
+	Sat, 24 Oct 2026 10:38:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25EBE606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=prTvNw0e
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4jBT9m5Z5pzKnCD;
-	Sat, 24 Oct 2026 07:35:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1792820108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MiVht9ym0EURv1bddnJJbI5enBTslXQ1JEWYlf28Cto=;
-	b=prTvNw0enYprIWmGhaUdr7P6UZhA+faYgPuaALUaN5kRnUv5IOQZXOpqRtooY2lDAjCSP1
-	7Vpi3t81dZta8GKCcNAj+qBQ0oEuqO/ft8xClKZvXGUHAhg0CJ00xyLWulOlIDLn5TWZ9z
-	rDxV8v0zN3isDvgThk8CJ3jZflJPxvmniS2D8z3mmiGWcYm+LRy+x7exPXgqV7lH0nlcXG
-	DHPRW36n+VLby7NhHJo76mMt838CfUfpE9XO91XL35NNk7dKNcS12AUoi0d03MzkXcG9V3
-	hNgIUS+wSCdgRbsqH/iprgRu10tHbIQMu11ZPjV5QlYEix+YxjnTh2vqceqfmg==
-Message-ID: <d870c163-8d90-48c0-bae0-5f6e0e38c5bc@mailbox.org>
-Date: Fri, 23 Oct 2026 22:51:33 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=aU0E1De+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792838315; x=1824374315;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZxGAs6w37sgIAZ5tR3Pk9MNEYp0l0AYRzOBPoS71Bmc=;
+  b=aU0E1De+gd7THqGkSNHOleBl4PyDu+oqdw9qRbqJgl9b0PiC/gLnr6WQ
+   0qTmr+CD0JME/vyi9uXgMcSe7i6YIpY54vdRREYfXwNy6z9j6axnTJVVH
+   2SkVXj5rzynmZqPJFEyem3Wuy1OQmClBK9nrbFE4rtoE66zBrbrum6u0y
+   F9njXrytprQj97klB8KF8LlVEP1CFSWRjWIszQMO/m/XQEoaTnqjhWWWU
+   IKXDhhnijkT7SBRXuc+TnH9Po6W4kQyJsars3qD2loSdUbuHksrK1QND5
+   x6KzaglV/d6zOmhgwWn4nbQ2cVJ4uXtBgny09ivQFug/880fUvDwte9X/
+   A==;
+X-CSE-ConnectionGUID: +tyEyAoSQI+dJrM6L+s6Lw==
+X-CSE-MsgGUID: amuvo9khRweyFKhZrthVug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1592048"
+X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
+   d="scan'208";a="1592048"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2026 03:38:34 -0700
+X-CSE-ConnectionGUID: w9T+kWYHQNGD7VXGJP/KAA==
+X-CSE-MsgGUID: AvxYF/CPSgGNMkzOFLK6fQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
+   d="scan'208";a="3854300"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.221])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2026 03:38:30 -0700
+Date: Sat, 24 Oct 2026 13:38:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
+Message-ID: <atyKo0pTYZyt5XJc@ashevche-desk.local>
+References: <20261023175919.160103-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261023175919.160103-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -62,50 +94,69 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] arm64: dts: renesas: r8a78000: Add GPIO controller
- nodes
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm
- <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-References: <cover.1792776697.git.geert+renesas@glider.be>
- <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <f9de8214043ad4c8748fadce7fd2cc2fa95b1291.1792776697.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 67d5bdyjkzczox9iyuyt8upuxs5tyx3t
-X-MBO-RS-ID: a841861d307c1214dd9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261023175919.160103-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 10/23/26 7:50 PM, Geert Uytterhoeven wrote:
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+On Fri, Oct 23, 2026 at 06:59:19PM +0100, Prabhakar wrote:
+
+> Add support for the ADC found on the Renesas RZ/V2H(P) SoC, which shares
+> the RZ/T2H ADC IP but differs in channel count, sampling, calibration and
+> resolution support.
 > 
-> Add device nodes for the General-Purpose Input/Output Ports (GPIO) on
-> the Renesas R-Car X5H (R8A78000) SoC.
+> The RZ/V2H(P) ADC provides 8 channels, has a fixed conversion time of
+> 20 ADCLK cycles, does not support calibration, and supports selectable
+> 12-bit and 8-bit conversion resolution.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> Co-developed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Changes compared to Marek's original:
->    - Use hardware clocks/power-domains/resets instead of direct SCMI
->      references,
->    - Drop gpio-ranges properties for now, as upstream lacks Pin Function
->      Controller (PFC) support.
+> Expose the fixed sampling frequency as a read-only attribute and allow
+> the conversion resolution to be changed through the scale attribute.
+> Use extended scan types so the reported scan type follows the selected
+> resolution, and prevent resolution changes while buffered capture is
+> active.
 
-Is that ^ OK ? If so, good, TIL.
+...
 
-The rest is
+> +static int rzt2h_adc_write_scale(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *chan,
+> +				 int val, int val2)
+> +{
+> +	struct rzt2h_adc *adc = iio_priv(indio_dev);
+> +	u64 req_scale, scale;
+> +	unsigned int i;
+> +
+> +	if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
+> +		return -EINVAL;
+> +
+> +	req_scale = mul_u32_u32(val, NANO) + val2;
 
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+But what's wrong with the simple 1ULL * val * NANO?
 
-Thank you !
+> +	for (i = 0; i < chan->num_ext_scan_type; i++) {
+> +		scale = mul_u32_u32(RZT2H_ADC_VREF_mV, NANO) >>
+
+Similar Q.
+
+> +			chan->ext_scan_type[i].realbits;
+> +		if (scale == req_scale)
+> +			break;
+> +	}
+> +	if (i == chan->num_ext_scan_type)
+> +		return -EINVAL;
+> +
+> +	/* The scan type changes with the resolution. */
+> +	IIO_DEV_ACQUIRE_DIRECT_MODE(indio_dev, claim);
+> +	if (IIO_DEV_ACQUIRE_FAILED(claim))
+> +		return -EBUSY;
+> +
+> +	adc->resolution = i;
+> +
+> +	return 0;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
