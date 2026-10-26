@@ -1,13 +1,13 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793013054;
-	b=2XsfvAmyJyIp4glrbVLzcZ9Gk5+egxw0onkXcAPXfMsctalry09OWePt0AJyocXafEmW
-	 iOuU0j3atJ/oafQZ6tLAc81/MMVXyk7CHwdI3Cv3p697Hm9MuiuTGn+UGB7xdjeMc1vNl
-	 sHMs1f2UNOYfn3R7QlC1tLn19aaYq3Zm2jfgNBe2FnnZgh3PZ5F1Sqfm5epzm6GmT1yTa
-	 fWon96S08Js0ceMpmvBAulaMYv+X3nnBPzU86VbQ8I31Z+F8hUrPLuMRa7lwdxmGxtAkK
-	 1qtdWUw1PII7UOMoePlV9cxkjbpI3vwv3c1kFiWoE3lO+w6gvWPLDHCgc8W26C+0vYg==
+	t=1793013056;
+	b=PyLhum8tpRDcx2sdc6+l46ri0HcgW1mH8n19u12AfOe176duLMjNZxrMVwg3IfirPY5+
+	 4a1HBTo8vMIvIOm0ZU3Gy+tv9fGsi4MQEKojz2KptZ5gY0ah955nCmPm8ZkpjHdW/fwvf
+	 6JTHXJDOmIkFzbXxxlED/Ykb2iSjCp66jZ8sSZk1MbOp1ftxs49EE3tp++z7Fl7PTNm+y
+	 WaRaboD2Jt1NEMDf0+wox6DSmkJVlkMc8p/AHainESWPeNImgw6vyS3uCeu3T030vfhF1
+	 Csk/Ujn4PBy0ZwMb8BnaIeQoGTMS9bEUgdiQYhIorkl8begRWj9M9Rb3GjOBHGZh15A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793013054;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793013056;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
@@ -17,98 +17,97 @@ ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
 	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=CcjOekiXLWxe/7/1hEWEOJKSkOmsFR1V+/VqYLTRRqM=;
-	b=h0h8mvxy6EeCHefexcxa+HxaT3b0Kw/68/Tndl+YuZqVrqdXfrGSmYng9pMTXSBRm0Ec
-	 YYdaGnr8tRzUT6f1sf9R11iDTlvzaOujJ0+CvxkubYQ93cnn0APleGUNNHrBpXPyi4Si8
-	 NxQsKDMB4AoD+9ZVoZekLyYF46FwnA24j/H74PskwyAVYDa8sWJbBiIu2XarmjbMclBq6
-	 PjLngBNCbmq7aHKfinTs7gfwJ+Ch6X29kmOCD9WJFRjCOSxdVFICVLfKwiGc8IwqzfFvV
-	 ETTlT5Kp/my4oPVORihVjsxxIXzWcvMzbdecuQv0wxTzucJez/6s12Zu4ABnqsbpIxg==
+	bh=1Yae7u4iPTCkVtrsNrlio3XtykQ1rkcSFoZWaTvI0TM=;
+	b=ol3jiuFOU1pdS0mojz2vs7L/XqIM9L8WghhsDCJOi0H3c+8ksB88mvwEy7PYWftL2eEc
+	 uprDErC0+VTpnXa0YQgmpIBOzaFSlFVuOXyKWBU83hYxwcOXHhsOJe1J+5MnF6FGSU0AT
+	 EGuu0DjBc4ZIiBmQo5kARwBauKFofRMoHb+kERlWQUY/5IdrOeGoOmOveMIrc0YXC+TFt
+	 LtbK0tsgS/dcNHuTqtmRtxIvbbZVgdEZdyWANYmOypnSt3/ECm0H4RQYAXSIsk+fPAypb
+	 8yt3kINNEEgH3LbeB1R1Pnc69q6eOBnvqvYh5bR3YFYeqDPfv+Yx3FRZU3qdvCMRKZQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=XgxWJLiP;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=bfRUIrQo;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Te8CKCwt;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=dAam8isy;
 	arc=none smtp.remote-ip=205.220.180.131
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DD9606C9F2
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 81DD9606C9F2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E90606D888
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34E90606D888
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=XgxWJLiP;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=bfRUIrQo
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=Te8CKCwt;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=dAam8isy
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAt23d2733226
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:52 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAt0ub2732751
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CcjOekiXLWxe/7/1hEWEOJKSkOmsFR1V+/VqYLTRRqM=; b=XgxWJLiP9e2y8eBq
-	+EMObEajhPjWxClKTTAqY0xfGvXsCvqBiLNsbkaPmujcpiI08Hr80htWgQ255ueL
-	O0B+mwpc9QGF3hF1I67Zrs58Kacq/5VekmaebhrKkpKpYih/g3Udlj+vHPLK182Z
-	dVsSkUL8nGbmwciqKYfCvd0ZWuWaHohDH7NGw0Dqk/E5Gbz0Nj505viuims5wSeV
-	VrS1BqyE/MwJ3oDceomdfHmkGZq1wcfaSK7JpjsNuv04ya53FZas9Lmn0ltQPSVU
-	lHiClo60O9P4qlJijeTv2sq1DmujfzPOAtolKYr+kwR3MbY6QIIUGMnuhwjmFM68
-	KLLz3A==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj4cp8bd6-1
+	1Yae7u4iPTCkVtrsNrlio3XtykQ1rkcSFoZWaTvI0TM=; b=Te8CKCwtC2Bm7wAV
+	075aGMUOaqQaJUofzvgg4bXSfsGt7kbwDZ+zX1wNVMjvYGBGBxhGTMNvboDKhaeK
+	0Q71MC+PkRCjKS0/nSVt78bvOr06d9VforfYXaLdet/RXEHiArN2sciG0qCBEQA0
+	UkpXlF3c/LwDNtDmfGlhXurTMcgy5fEg8cjso1DDkqMI0OAbT5BC/a3o7A12QHuP
+	fnZJOmHlJ6V5ygi2Apxn+O2mUyZ77hO0HNCsFaczuxFquCKqR/VfNy2HsqqSvMZq
+	JLj6kTn8Igk/rAHhMvjPcGv0pNUdxLS+RfeomuBBUfkw0Wr0hS8s52MkmPb/5Ka0
+	Y2wIbg==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj4cp8bdn-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:52 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93cb7f9bb86so564991885a.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:10:52 -0700 (PDT)
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:54 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-917a7c17166so65534606d6.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:10:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793013052; x=1793617852; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1793013053; x=1793617853; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CcjOekiXLWxe/7/1hEWEOJKSkOmsFR1V+/VqYLTRRqM=;
-        b=bfRUIrQorD3s6q3wAB/FlhHcu8pYIdUYgn532lHLU7apROq6yHBkkkjMq5mEYlM61U
-         oGl9m9pODaBSljuCQY5tRN+fJiH/AUctRfosJmvVzVLvLvIi8+WB7g1cyYFgh8hd/hwP
-         gJ+Cd3PeHXJxoK1AdSxEpjlMRy5pmWMytcZVNFnpChHFQF0f+vYcTw7kWPGE3Lp6z1M0
-         3/ATlqoJqKo1X+ydG/P569ebCiZgqudOLl44Xh3Rdp5G97xZzQNuV1B6LHjqGObL+f2a
-         bOHD1C8RKSFIrS/4cpKLIxFUYYqijLpaFNcp8v6PL7bls7TvjSO1c2aLtLJcMVGKzocr
-         3LgA==
+        bh=1Yae7u4iPTCkVtrsNrlio3XtykQ1rkcSFoZWaTvI0TM=;
+        b=dAam8isyCiLhthUFKjSoTR5w1eQesJQYDWTe7nsNCDULGUomAJq9CabLT/c+LOiLpO
+         7oNXmaw452AgeoLkRR5ZieYPACBdKp+ZmoYxn9f42QUFUY1gZ6U0LGGjbLP/nhzpN/J4
+         bJLzBnrsglVjKkQ5mRJT0H3+owFcsQox6xbqxaptSQb5L8VQz+GzxMGjHgJb/Rmw2JQD
+         SCUowu7uPG6umLFeHdtt1zHY+7I8CLvQw1g0z3GZtDsJZ75EbsgAgUJZXkxe+HNRoRCg
+         DyfIJyEfvdH11pYjiZW6jPS2AnlJOs3m3zIX01C1BSNYtAnzL5y8Z0foQaKTqR3tWE+g
+         ziEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793013052; x=1793617852;
+        d=1e100.net; s=20260707; t=1793013053; x=1793617853;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=CcjOekiXLWxe/7/1hEWEOJKSkOmsFR1V+/VqYLTRRqM=;
-        b=GS8vm3HUvUN2D8jXqsw9O+od4o6NMZiVO4oh68toola7IGhc7X+iQP0GUvZ+bPwNdo
-         Z0inICxJHfinRctQcLYnX5cZK7433+T2/O+c9pDDuFSkpFEmMwRX0oM2FGl8RKKidWAP
-         1KAn4amqrTZO05KBxcwC7IHgbR2Unzz1QDvrWYJlWODufORvp081wvXOVR7pOlm2retz
-         WS/H1QN7cJzIF3xQzDHNQjteWaSNyQLPYjKnR57HnhmqP/yDbCNhlmNeyd1zJA2UIv1R
-         kIvvPSwlpynWlMGE1liQjSYsu8EJtCso2c5isDzRPxAhQuHebtcdmMezsckKgKZU5kPU
-         XjOg==
-X-Forwarded-Encrypted: i=1; AKwUvByk8EZXP9yw+S6lK3gxeO7aK8If4RDEd6okx4+zUxzHP9xLH3FkCtw2w/nnBAaUUwewwxtJPQRf/ouonsJdtX1BwA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJVf6q8SK1gpzaxUeo9U48pzrpoRgGvaYayKrILdIE4K/0+4Vqb
-	MQ7EX/eQQDHImOL8X9t060PEv/avlQoxo2i68UWeQMi6lThqKBMFthLH00wn1P6cT6Iv171Q7JP
-	QPdNeSJP7im7CXjW3fwSL+O4URaE2lFEez+/m2TmqrRo3pCrUCHjLAkzslf8OBnlWdap+KmmN5Q
+        bh=1Yae7u4iPTCkVtrsNrlio3XtykQ1rkcSFoZWaTvI0TM=;
+        b=dwI0SHjwVxpGEdcXxT5q/gDMNYpJU1bt1+vfbaSrryftDVADlMFrjHkFpQR+JPIF93
+         W6bxzEdAzNXLNHojtshcV37vKoQcgFP7WazI4UTOTggPyenfYQQc8EE7m/Pp69hlGGdb
+         uoaIvP/0mmcQvOadXl9BBByy2Xqit/rpF/0J39uY7L+5XdB6iSct5TrT2tdwiA80VBIb
+         AMlf56vyV7yna4T/fWEuM152F2uaVB+R0x5X+E2D9S5n5vJIiL3n//VHxXoahooXDWKt
+         CpZ5SYK/8aeZlfAowURqHlz8takmmMbEJCfHUsrMBbjy4Fk2eWnTWWfKoHWbiuPqnNvp
+         vLXA==
+X-Forwarded-Encrypted: i=1; AKwUvBzZVKJguL8QXjYrCD/ykz0I7Im4rhedZmfccGchf1eJaJCSpiyH/pAaop7eHlP05vmUK7i+KhEGptZuFimbJjp/Uw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKZeioOpt9Cd+JJMy7orCu+pVQJKXeG9w6G+Rofu/vL13djbXoc
+	+ypF9PgwJvbuB01lj52a5B5ZtXLb5Wr30murG+7R1vdJmJLzbwAlMrXhiUD25LsOYIgfPVR/N/9
+	BtfUE6Bnl0Xmdvx8lrUu5bf2fWgo/BzB0q3/+S9TrXXF+RUl4kAKBV6j9DMu129mYYKw+6xQpYQ
 	==
-X-Gm-Gg: AYBFou3LNNNfS3dwT1lEV28KTBhPJA9lwX+Q0MYG2NOgZ1HRNPZjfgYaaGRAmZbnDl3
-	AjiI/JnrBbpxgf4zuFScWMbYcFrF6LSfWZJAsa64rEXwPK0htmthkfu8Ol6SYbAN/yRlRRF58iH
-	oWj/CRiiYrDkTSD4TdnDjzOYOuReDu59v9hHKyGOL2wVywTFHPfzhUAh9HS+0G9A+jfTbRCurXK
-	ZT0zGVBvaG7z+PtaXh30O+7AFWvMnMCp61HWg/rcOZMAsk510INmIQ3l6zKpgayARl72ZBi7LqH
-	OUagvXYP5Q7Kmmkw++07s9HigbyWnf2aGVNK1IxD68GjsBm2tI9VW/d/aVFBn0SKVtVYttzTC4O
-	nNQ9/z03bZHDI0YNluodMTpcnqW16tkAYPzm2KPY7sqETrtOg+1YKetjGEkPAdcEb83UlUZtRUO
-	5UiUV0UEsiMxsj
-X-Received: by 2002:a05:620a:2985:b0:93e:f499:43b0 with SMTP id af79cd13be357-940ef8fcd8fmr993254185a.22.1793013051388;
-        Mon, 26 Oct 2026 04:10:51 -0700 (PDT)
-X-Received: by 2002:a05:620a:2985:b0:93e:f499:43b0 with SMTP id af79cd13be357-940ef8fcd8fmr993247785a.22.1793013050795;
-        Mon, 26 Oct 2026 04:10:50 -0700 (PDT)
+X-Gm-Gg: AYBFou0rvGmvRW6wxs3UUiSEB4+SRDHapeKi12jwfc1xBKcHx9eJncjtsJUwstZ+Dq1
+	VUEAEhqtAboG/Ua7wMtQz/KKY7HmQarEOo74KHbHR81ahlSKckh8mZPC3cKG7i688fviFr+JEys
+	EVAamwI/Nqe0439WWqDQrZhfEqito/Dev8u3EHlUuvLwcRYVe4MpOXmDTn0/sa39rCj18kU0DF3
+	wnaPy6HZXGofQd6d1VJwKB6X0dTnMBhpEblXOZqkG66H5NJHLXYnQ+jbQ8xUs2Prhz8JJbXPlHt
+	odypiqHdrFR9Uq/gPLJzHS+jVQquzjjuOkML6ptl6T8QUzUqiWrCZ8kp0rRVbaYp8DcLUM7M0Hs
+	HmxjBvZmVUGFdM7u+0KCsB5fSb1bs4HFeuRXJWKKaougGAQNLQVAFlGZVZkAZhBmOzjl3M28ELk
+	rPsjpkiQrwF7kZ
+X-Received: by 2002:a05:620a:31a1:b0:93f:1e3c:4a3d with SMTP id af79cd13be357-940ef956c10mr863559285a.46.1793013053274;
+        Mon, 26 Oct 2026 04:10:53 -0700 (PDT)
+X-Received: by 2002:a05:620a:31a1:b0:93f:1e3c:4a3d with SMTP id af79cd13be357-940ef956c10mr863550085a.46.1793013052703;
+        Mon, 26 Oct 2026 04:10:52 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.10.47
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.10.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 04:10:48 -0700 (PDT)
+        Mon, 26 Oct 2026 04:10:51 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Mon, 26 Oct 2026 13:10:02 +0200
-Subject: [PATCH 13/35] drm/panel: remove the _typed() panel bridge
- functions
+Date: Mon, 26 Oct 2026 13:10:03 +0200
+Subject: [PATCH 14/35] drm/panel: remove drm_panel.connector_type
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -120,7 +119,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261026-drm-panel-funcs-v1-13-5e3070a3478f@oss.qualcomm.com>
+Message-Id: <20261026-drm-panel-funcs-v1-14-5e3070a3478f@oss.qualcomm.com>
 References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
 In-Reply-To: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
 To: Douglas Anderson <dianders@chromium.org>,
@@ -205,36 +204,36 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5701;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2843;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=PsyqjoGaSgNE7nK0s4wZMtJ1rwL2WBpxNDlkW4hwgwI=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq3zUMPeK3u+Ehpvg+nMYckz20XnOB2X6DrWiGp
- ivt9hZIDiaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCat81DAAKCRCLPIo+Aiko
- 1WCTB/49xjv8bT+E14FUhCWg1zJPgoKza1B4TkNDaSoxvqp2OzTbFSqDJVoOzZPRr2MZ5GSnxer
- PafN5kN4s9ZxGzoCeVnc0VHsyHqFCcxnF7/hpJTvvFhU03b8zIAqv7yYymvLZECWUjw7pQFz8pj
- VPdwH4SZwjWC3IlxeHsEPyxrDkKW/cxusJcsm4QO/WPwH8Gh9qKc3q49M9tq3B0Tk1WHuyIOz4+
- +ATu84VfzohwMW4fT8dc7CCYV3NoPjk5ZGu0SKiX3XtNkbVmUn1mbQyjoaEZykmJM1426/jx6s8
- eVvXGxGPRQs+/82naDh7UwjuDT5PG7dnoGZoD79A48SIHg/O
+ bh=H8brYvr026sFwdBTY9RxWvYdlcCYPOlDmMVuJvSD6JE=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq3zUMaqizdITs0fda3O8tKBo3xGuCEiu/0xJEI
+ ascQoHtgWKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCat81DAAKCRCLPIo+Aiko
+ 1Wo+B/0WDUqJzv2IDDyhx8xOzsIKbrawnNRv7+uNpMh8u5003kuuc17PuW0A21ddRPPc90JQBQu
+ 30YOoTNAl71shHXaRzstcHpab5AMmb1Vfl7kVdCyRzYmP/o5/OSuCwVRYyoWfmBZE7kR+bEVeNJ
+ IvrNKFA+Hrrv0BIaMDEBIi0K7Rf+tioSmDTSX1oHCQ31fXHzctnmK+U/WK+nUmXK0GX82KykNnj
+ gmqIrXn8z7M4wyfK/THNuJgQCeB6SlwdIyWTOPo0+m5T/E6DkqSJ69EBR7pFqvw4RXhAmkYBTs9
+ iTwXcvZ/5NUsHwK1FDqsXQFKICNjNGOp7zHGJQxdaLXiWkIb
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX/lU05nhpjqz2
- TY5T4Dq1ZXWSaYxY/oEA7x/u/ad6My62q/WBF2zw/G7GtvXlbGlXMxdMM3Sgax/FBYrg9SpxvUH
- 2jJ6SyoI5kwR1Kmuh8th07/r4ViVuWNncJ0yH3hyyHi91ONH2mW9fJtne5c7xVqJ5d721Tp5R/+
- v/rBoFcZc8YWkGaH9zvAHg6qXM737TvuHheoMRgavIN514uzYYAXubYAqdmIk/PCXJkEO8iHHga
- +rXU0Hhw8EGPLRHMAFGKqBgPMz0dKvqoelnQK5uAohC/S0mfn+oG1Au5xCOGBoM6hPMNClqajSn
- kioBcmB/BuQ2qRCWLpNeUk2j3XfpxrrQbpEDHtYqZaN4+EbvSn27kx9bLY8lLeqlga02D5D87Gb
- bjJHIsCA4YFILi6TtoTlezFc/PDUMwn/LOZ+G3OX/IQcrF+j+fHQDaNX1dqZLYGFJgc8WqHqFFc
- P/u3p6cOgsQOi/F/BEw==
-X-Proofpoint-GUID: CMTv2kHS2C1K_cAsNYOmbyl2RSyVu0PR
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX2M27QrXO/fnX
- wCIrreV6fec0b3TojxpHU/XPL38fpDlKF4I6N2sAZUBz+qIBHL4QOkjlLhBBspD+SvdT0C9RlLH
- UAe4GVPFFt47y7QAHSrfD6ECdaShQYs=
-X-Proofpoint-ORIG-GUID: CMTv2kHS2C1K_cAsNYOmbyl2RSyVu0PR
-X-Authority-Analysis: v=2.4 cv=TboDJhQh c=1 sm=1 tr=0 ts=6adf353c cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfXydtwlTek5HVA
+ uM6pSztbajR2gUOD0SdM9JCi7rIy5DSKyKrbzx9bgf8hojkNrqoduVhwVonRora3A5QlTxda8ho
+ E5EUFJEDDv9TvSeY5Q0Ozv8ayJL2pO872sxVZY0esPH8Zob3gg86HNJcu7po9ms6FodYPOf0/1J
+ LLdCsfRhlUenJ8dlUt9PBe3oRHfsSS340pldYdb633S12qeJDKuKW1diPGRAjwYZBG5dlwnnujc
+ FVaBceOAeU/zXPNd3UrAcjdjf8m6UvPIYiDmdaP0N68FeAflCzQS2rl/xyrKLZVpThROaZuBeRy
+ +tW7F15YCQcUZDExfYct/hDporOol7m2VU/LgcU9iZIi5tVm/YhkQInDV3LTWinetOsnOUkTNfG
+ t3ir27ZGcFbqpZDe9tR2cFhbja+jf9z93zjEvGFO/yuXD30uDNVWz1RFCRnfOf6Nct8Xq1KeqiQ
+ zcz+hgmc+BKiK7srB1w==
+X-Proofpoint-GUID: pVK5ICaMgYiOMKjUaCwddGgt-KurLDM_
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX4k89W3bj2rCy
+ fIADNtlAt329yKRBQvhhLzKniOqVJ6Jyha2Brt+M7I+rHNZ8DNrK06GZTgVDLF5uKGrTmdOhl3l
+ zOdXU2Z0UVA7SxeW0Zwv5zmlS2eoCkE=
+X-Proofpoint-ORIG-GUID: pVK5ICaMgYiOMKjUaCwddGgt-KurLDM_
+X-Authority-Analysis: v=2.4 cv=TboDJhQh c=1 sm=1 tr=0 ts=6adf353e cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
- a=5Yw8aHIVc0SrouX_YTsA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=T6n4-d-I4O9jgBeP1XcA:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-10-26_02,2026-10-21_02,2025-10-01_01
@@ -245,148 +244,85 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
  definitions=main-2610260044
 
-The connector type argument of drm_panel_bridge_add_typed() and
-devm_drm_panel_bridge_add_typed() has been ignored since commit
-b7797081ccfe ("drm/panel: embed a drm_bridge into every drm_panel"),
-and they have no users left.
+The connector type is stored twice, in the panel and in the bridge
+embedded into it. Keep only the bridge one, which is what the rest of
+the DRM core looks at.
 
 Assisted-by: LLM
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- Documentation/gpu/todo.rst  |  1 -
- drivers/gpu/drm/drm_panel.c | 55 ++++-----------------------------------------
- include/drm/drm_panel.h     |  5 -----
- 3 files changed, 4 insertions(+), 57 deletions(-)
+ drivers/gpu/drm/drm_panel.c | 9 ++++-----
+ include/drm/drm_panel.h     | 9 ---------
+ 2 files changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index e6d36f8da086..f78455e4c97b 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -475,7 +475,6 @@ not needed anymore. Its APIs are just accessing the embedded drm_bridge
- transparently, and the are deprecated.
- 
- The funcions to remove are:
-- - drm_panel_bridge_add_typed()
-  - devm_drm_of_get_bridge()
-  - drmm_of_get_bridge()
-  - drm_panel_bridge_remove()
 diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index 268e655140ac..ab701a526ef9 100644
+index ab701a526ef9..5bc97166bcb8 100644
 --- a/drivers/gpu/drm/drm_panel.c
 +++ b/drivers/gpu/drm/drm_panel.c
-@@ -270,31 +270,9 @@ struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel)
- 	if (WARN_ON(panel->connector_type == DRM_MODE_CONNECTOR_Unknown))
+@@ -86,7 +86,7 @@ static int panel_bridge_attach(struct drm_bridge *bridge,
+ 
+ 	ret = drm_connector_init(bridge->dev, connector,
+ 				 &panel_bridge_connector_funcs,
+-				 panel->connector_type);
++				 panel->bridge.type);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to initialize connector\n");
+ 		return ret;
+@@ -258,7 +258,7 @@ EXPORT_SYMBOL(drm_bridge_is_panel);
+  * drm_mode_config_cleanup() if the bridge has already been attached), then
+  * drm_panel_bridge_remove() to free it.
+  *
+- * The connector type is set to @panel->connector_type, which must be set to a
++ * The connector type is set to @panel->bridge.type, which must be set to a
+  * known type. Calling this function with a panel whose connector type is
+  * DRM_MODE_CONNECTOR_Unknown will return ERR_PTR(-EINVAL).
+  *
+@@ -267,7 +267,7 @@ EXPORT_SYMBOL(drm_bridge_is_panel);
+  */
+ struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel)
+ {
+-	if (WARN_ON(panel->connector_type == DRM_MODE_CONNECTOR_Unknown))
++	if (WARN_ON(panel->bridge.type == DRM_MODE_CONNECTOR_Unknown))
  		return ERR_PTR(-EINVAL);
  
--	return drm_panel_bridge_add_typed(panel, panel->connector_type);
--}
--EXPORT_SYMBOL(drm_panel_bridge_add);
--
--/**
-- * drm_panel_bridge_add_typed - Pretend to create a &drm_bridge and &drm_connector with
-- * an explicit connector type.
-- * @panel: The drm_panel being wrapped.  Must be non-NULL.
-- * @connector_type: The connector type (DRM_MODE_CONNECTOR_*)
-- *
-- * This is just like drm_panel_bridge_add(), but forces the connector type to
-- * @connector_type instead of infering it from the panel.
-- *
-- * This function is deprecated. A drm_bridge is embedded into every panel.
-- * Don't use it in new drivers and update your driver to stop using it.
-- */
--struct drm_bridge *drm_panel_bridge_add_typed(struct drm_panel *panel,
--					      u32 connector_type)
--{
--	if (!panel)
--		return ERR_PTR(-EINVAL);
--
  	return drm_bridge_get(&panel->bridge);
+@@ -527,7 +527,7 @@ static void drm_panel_init(struct drm_panel *panel, struct device *dev,
+ 	mutex_init(&panel->follower_lock);
+ 	panel->dev = dev;
+ 	panel->funcs = funcs;
+-	panel->connector_type = connector_type;
++	panel->bridge.type = connector_type;
  }
--EXPORT_SYMBOL(drm_panel_bridge_add_typed);
-+EXPORT_SYMBOL(drm_panel_bridge_add);
  
  /**
-  * drm_panel_bridge_remove - Unregisters and frees a drm_bridge
-@@ -362,31 +340,6 @@ static void devm_drm_panel_bridge_release(struct device *dev, void *res)
-  */
- struct drm_bridge *devm_drm_panel_bridge_add(struct device *dev,
- 					     struct drm_panel *panel)
--{
--	if (WARN_ON(panel->connector_type == DRM_MODE_CONNECTOR_Unknown))
--		return ERR_PTR(-EINVAL);
--
--	return devm_drm_panel_bridge_add_typed(dev, panel,
--					       panel->connector_type);
--}
--EXPORT_SYMBOL(devm_drm_panel_bridge_add);
--
--/**
-- * devm_drm_panel_bridge_add_typed - Creates a managed &drm_bridge and
-- * &drm_connector with an explicit connector type.
-- * @dev: device to tie the bridge lifetime to
-- * @panel: The drm_panel being wrapped.  Must be non-NULL.
-- * @connector_type: The connector type (DRM_MODE_CONNECTOR_*)
-- *
-- * This is just like devm_drm_panel_bridge_add(), but forces the connector type
-- * to @connector_type instead of infering it from the panel.
-- *
-- * This function is deprecated. A drm_bridge is embedded into every panel.
-- * Don't use it in new drivers and update your driver to stop using it.
-- */
--struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
--						   struct drm_panel *panel,
--						   u32 connector_type)
- {
- 	struct drm_bridge **ptr, *bridge;
+@@ -547,7 +547,6 @@ void drm_panel_add(struct drm_panel *panel)
  
-@@ -395,7 +348,7 @@ struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
+ 	panel->bridge.of_node = panel->dev->of_node;
+ 	panel->bridge.ops = DRM_BRIDGE_OP_MODES;
+-	panel->bridge.type = panel->connector_type;
+ 	panel->bridge.pre_enable_prev_first = panel->prepare_prev_first;
  
--	bridge = drm_panel_bridge_add_typed(panel, connector_type);
-+	bridge = drm_panel_bridge_add(panel);
- 	if (IS_ERR(bridge)) {
- 		devres_free(ptr);
- 		return bridge;
-@@ -406,7 +359,7 @@ struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
- 
- 	return &panel->bridge;
- }
--EXPORT_SYMBOL(devm_drm_panel_bridge_add_typed);
-+EXPORT_SYMBOL(devm_drm_panel_bridge_add);
- 
- static void drmm_drm_panel_bridge_release(struct drm_device *drm, void *ptr)
- {
-@@ -436,7 +389,7 @@ struct drm_bridge *drmm_panel_bridge_add(struct drm_device *drm,
- 	struct drm_bridge *bridge;
- 	int ret;
- 
--	bridge = drm_panel_bridge_add_typed(panel, panel->connector_type);
-+	bridge = drm_panel_bridge_add(panel);
- 	if (IS_ERR(bridge))
- 		return bridge;
- 
+ 	drm_bridge_add(&panel->bridge);
 diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index deae4753a594..07612e9791cd 100644
+index 07612e9791cd..579b6be855c7 100644
 --- a/include/drm/drm_panel.h
 +++ b/include/drm/drm_panel.h
-@@ -393,16 +393,11 @@ static inline int drm_panel_of_backlight(struct drm_panel *panel)
- #ifdef CONFIG_DRM_PANEL_BRIDGE
- bool drm_bridge_is_panel(const struct drm_bridge *bridge);
- struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel);
--struct drm_bridge *drm_panel_bridge_add_typed(struct drm_panel *panel,
--					      u32 connector_type);
- void drm_panel_bridge_remove(struct drm_bridge *bridge);
- int drm_panel_bridge_set_orientation(struct drm_connector *connector,
- 				     struct drm_bridge *bridge);
- struct drm_bridge *devm_drm_panel_bridge_add(struct device *dev,
- 					     struct drm_panel *panel);
--struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
--						   struct drm_panel *panel,
--						   u32 connector_type);
- struct drm_bridge *drmm_panel_bridge_add(struct drm_device *drm,
- 					 struct drm_panel *panel);
- struct drm_connector *drm_panel_bridge_connector(struct drm_bridge *bridge);
+@@ -236,15 +236,6 @@ struct drm_panel {
+ 	 */
+ 	struct drm_connector connector;
+ 
+-	/**
+-	 * @connector_type:
+-	 *
+-	 * Type of the panel as a DRM_MODE_CONNECTOR_* value. This is used to
+-	 * initialise the drm_connector corresponding to the panel with the
+-	 * correct connector type.
+-	 */
+-	int connector_type;
+-
+ 	/**
+ 	 * @list:
+ 	 *
 
 -- 
 2.47.3
