@@ -1,93 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793011229;
-	b=BvDCqCdeKN8N6URYJ+As0F6P6P0QVK8qm6kWE+dC/StCQsG06TuRnpZvaWdbUR8e94KW
-	 8jzyWrghUztTZCGdkNqecrVPL88hMukDgSYtC/E6QNcmp9toR3V/z+TH3VqUTIMQx+wrQ
-	 R1kEXkw5HPBfi1LoH+xfF8CfPmCnD2Hg/3u7Goh4c5pSkoCXjigUR+VqJ9/dHdTKf9eNm
-	 uM7x2lEqUXTllOuqJOVQcJyE2Db9tYbNS4oyJVaSELghXZjHt/p1q7XXDQ6arbnPzYZms
-	 Ae4o94gfM0V9p2aj9vkaogqyv/ieNvcJs7bf+x4yryQh/08qIOeDyVp3vMxb30gFNtQ==
+	t=1793013023;
+	b=B3J7d1oufWHAVstVi4cUJmoDC4hEoNgwW0DTkA51/hIBWAFAbTjVtJ2H5ZyR5YjquSI4
+	 2NpXgEkPz73kZBE6IV7Ce/NejL1L0GISuIaXuOk0qGkZHayQ5xj0pSGojPWGMGD8WknXu
+	 I7ed9T6SoaBfYp9Wz7nddGqkGl5A1fYdg6yCDlGIgyYgKyY9MczV777sg6LKIWAkfQ9HU
+	 upt4WW0w1Z9QybGe2jYChHV71DfXwg1t+dkN4Wx2KvLDajfbyYSyim8EeT9ZhH1kjPOvi
+	 GUGTUo4ttcF5R4fLUBRymxRIEjrv0XalrdTQ2Ep64NqhMST1wZXyk/DT2Vt+T8cKllw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793011229;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=cV0613HkIy6oDcHR5pHciUveYweuUKAGb8FXSxW3Ddk=;
-	b=UCfXo7TPsovEsjSBdTI5rH8FdWi/WFFYkH6of3r7u8JpgxzJQ1bRKqYY+ZMQNEJNmpkL
-	 7cBCx0NIQEng3iSPIjnJWVhMQ0lbYSkW81INvrfrQIkzlOkFIgZwQAjFr04TjmJrIseb+
-	 AH97x4Wrh4KMveFaGxWVNUnS965QcaIE+3ysZcDiGJw7xLkqBfy7hCF4pE2gN1EM7AMh4
-	 yHtRPZKqMYQfHTndULR16t9CdUx7jNMyL4A181NsYRCKQq+Mcrm9OBgrStty8tA3ld1Z4
-	 kamk5GW2o1hABEHwGaN4eKEKNik3utKtRRtB7Q2SH4ZEaglyqvgeNZcBQPPUfZJ7H2A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793013023;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=GN8AjaZA2KV/dRc58kbCFKDPB1a4uoE8ENNZKwDJCck=;
+	b=VRPhevsHZxxmi7cspTWEZ/YZasyGyuu71lmTxcX7IGzPxMTRBy0YpzE6rwej6fgPZsQc
+	 NFRzVIgR3hS5vpdmBKHeUgsdgRZN7yiKj+d8PbsgmRQiWEKibigtlVmQ6w+uPrnP1hftt
+	 F2QFRODNd2/PJ6B2SLndir0rGNeshQrvEoFXQqp/52ibgdW1lcG3uF1ViIFXM4lPzc0BP
+	 uf1j0o+4AW0bWRQ8EI/sFv/6Ze8arCeYm0AvZE7i5VRoaylFIk9IEkLgjgVMBunskhJHy
+	 CTX0FzmgAb+nAW103U0pq9qld5kk4tg+9oWhTGKapSO610wFwKaHzQzprFyKmlT1ILA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OlxKvaFx;
-	arc=none smtp.remote-ip=198.175.65.10
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ECUUVF06;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=N+dG3hc9;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033DE606A31A;
-	Mon, 26 Oct 2026 10:40:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 033DE606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B64606A327
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A9B64606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OlxKvaFx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793011228; x=1824547228;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0/Q8KSTo0adxm5V8+rvOuCbruYkK+f5oqI4EGetOZUs=;
-  b=OlxKvaFxaseF7IbyPAACeHlZln3IUETOIKKYPxuF5CfSh3Pw+WQV+eU5
-   1FjgRiGQ8tUfJwmEl4JETDjNg2Uxx8NLwVhtfx2Xz3kx3PeZ+0bOY6Jhp
-   82smqGvJvLQOflV/643Pqecr69/lsVSzpMMF18A7wBBCEsbl7ZHGFIK6O
-   a933mFZCszCF2JdmKg9h7jodrDsszN7BkKAUREFRnWJGKFNs+SPORWh5I
-   /zhzu4bgPuEu0kYAYrP/gLwhXxD03W0Vpl2R+yxhiaOInRSMBQYfC8i3S
-   GUTgTAa2y+FY9qCa/KTdPVHOiBFsFKqeUKXfzkmyiIR6mVKadkXWRKOVP
-   g==;
-X-CSE-ConnectionGUID: yOm/syLARwOOhgEkmkfsxA==
-X-CSE-MsgGUID: PCwhZI6tSaWNuXh3PMwg4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11946"; a="1564747"
-X-IronPort-AV: E=Sophos;i="6.27,179,1787036400"; 
-   d="scan'208";a="1564747"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2026 03:40:27 -0700
-X-CSE-ConnectionGUID: uynkbYzyQsm+WZ1I78OQRA==
-X-CSE-MsgGUID: 2U+XNF39ROSidvrT8TCMtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,179,1787036400"; 
-   d="scan'208";a="6089682"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.93])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2026 03:40:23 -0700
-Date: Mon, 26 Oct 2026 12:40:20 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
-Message-ID: <at8uFFHk7DHH9e1l@ashevche-desk.local>
-References: <20261023175919.160103-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20261023175919.160103-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <atyKo0pTYZyt5XJc@ashevche-desk.local>
- <CAMuHMdV8Q9UKrpoZuZfDUutrG=bOwcNWLnht1bufv0YVXJPNDw@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ECUUVF06;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=N+dG3hc9
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAsvDa3561850
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GN8AjaZA2KV/dRc58kbCFK
+	DPB1a4uoE8ENNZKwDJCck=; b=ECUUVF066jvbqQJG9QaidJNgZqka7pJ7uTZDAf
+	l4jWr9mREvagPO1rBdPa/0vh1A6Oi6BYXcJ76lze5gh2H4snVK5z4taBubEEL6fw
+	efgMw/ggF8ufOEbjSPXjquIiojjAjQFe3mEc17+CwJCwc1wQTcmTW9sCwr7Yg78V
+	1mg2HfIFi01K3N/MYd9ER1Q/2f/mNYffrHO1osVJ95FwL6KMjK+X2vFoflwIfmvB
+	DZn0n2JKmfz6+sJGnknhumjjRFsT1KMiRigMZfId5NFp4uEZZTrGRxzT19hDaVLw
+	J5++pAlxiGOyLWqSxnLxPDIaLIrEWNKPukkz4Fc0rU8DN+8Q==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj4s908vn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:20 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-943e8ff02d0so71771785a.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793013020; x=1793617820; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=GN8AjaZA2KV/dRc58kbCFKDPB1a4uoE8ENNZKwDJCck=;
+        b=N+dG3hc9I/VMdIS7abDa43eb3PforAkBmjJVxcWPaSLhLp4ZZ4UT4n61OqsMaW7SMd
+         b8vgH3SIiIcVLkWhTdrDFmJNMEvmAuGEzKdKFQfP9s5WTWAM4T/LxHBxYeuqb3QQh6Nd
+         +EClhftX7AITjSsaPtmL9z9XqBQp44cJYbfZOkQ9BVFpT2SxcVNtzwnKXPECWCj/e2wE
+         cN1RLxss9FOYi0t0MeOU8JSQLZJEAdwuPlP/GPRe9r6i0NwZCUL/gstnrLZhWJVT5rtX
+         9q30MSxTSD3q4Nfo1O81ThAVbZWaenFlHolyq8LdJcAz3uRoEFcsenriFlobc1G17mfk
+         4YDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793013020; x=1793617820;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=GN8AjaZA2KV/dRc58kbCFKDPB1a4uoE8ENNZKwDJCck=;
+        b=17+FTSe9U1PCby5X1HmkD6GWmctuSPnQETudbMSrBu9BFNuaiCePk69zcZ7Uq5hLV3
+         EYX3ut9feEvYsYyYv9kodeiLnuLmk6FCJ7XRyukzuRcS2FOCIkVn/vMGUeH1J3OYlg/Q
+         Zv7hSOu3eW2ZURaMRn77kQ1Q6oEqsBhJ447v98U0Bji0pZvcKUjeG9ctjMI43ATe7MAO
+         NMSOmHxgC04ZABBxNZ0A4eBg7d/VT035uPocQNK96v6Wu3gkXaEvpHGcqMpUzImMbwxB
+         1+pFkiYE+M7cB2W234MJG/H1EKVHy4yct81HSH6WM7esSAvZj9EgmlbNIuJQc+ckRrtE
+         lqKQ==
+X-Forwarded-Encrypted: i=1; AKwUvByuTnojs/56C/U8FqguBZH5kmanT57sh1AipUbTTEpvnXC5Rnuk5nKhMvIfxSSuR9WdatnHwceiWWi3xPVCf8NsBQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJrocUOK0Fr7R+RvLuUWkik0GUhQPJJ9Z/LbNEPF2f60a56RaEF
+	o284D1P7H4x1ANABv78YHNpVkyQTfWuROTZ2/aTJCFyHzc4Hr9GHyyH+TMP4UTV0Wufbal+8O4Z
+	3QeSogt/VK7/ppebpM8E2JYZMEJBo6lQ8Vc7LGBePHOd1jFGCkTqlapz0IgJcGzYLFMHr4q19Nw
+	==
+X-Gm-Gg: AYBFou2DKZkt3XMXD8GVvkRS7TzdS9qSfKwemEX5qhP4sf8fWDSe/LW78uw3XZXp/Yi
+	cuBMvggkfPuVSA1m0Jsu8Jf8X+R70Wq46Hfm/5A2gkcpFUgZcuAc/eL+KL0Ogm9xPivcCIzEr29
+	wCLvkcE/ME9fCtMw5GrfjdfP/sLJ2eqVsS7qXtWFtdCjYMYiJDSfEZMZkTrGna1vIwY6TwpBcU2
+	ZOriaEsvVgy4wgwka+E3/YMA6nVRqN1d6nZCYvp4KuUipkVvynphQ1QKo90FluEVpey8E0D8b8w
+	ILO8pd2ppcETjv1/TT1koE2IS6cEnF4R8CGdXDOy9Sq8CK3VrvyKYNZkrgmrMjOyLM3QtJDgJ/u
+	ergoE45DMqPh6Xme1gcvBqSCxl7oxRZWX4Yl5tFlsI4gQ+W6xvkPlTtinZrNYAJ/Yl2nTImVDQk
+	yxKfUkzoQ2HXbZ
+X-Received: by 2002:a05:620a:4592:b0:93d:f7ac:4706 with SMTP id af79cd13be357-940ef7d3955mr1003488885a.9.1793013019272;
+        Mon, 26 Oct 2026 04:10:19 -0700 (PDT)
+X-Received: by 2002:a05:620a:4592:b0:93d:f7ac:4706 with SMTP id af79cd13be357-940ef7d3955mr1003477485a.9.1793013018435;
+        Mon, 26 Oct 2026 04:10:18 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 04:10:17 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH 00/35] drm/panel: let the panels use the atomic state
+Date: Mon, 26 Oct 2026 13:09:49 +0200
+Message-Id: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -97,49 +116,404 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV8Q9UKrpoZuZfDUutrG=bOwcNWLnht1bufv0YVXJPNDw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP4032oC/yXMTQqDMBBA4avIrDuQWPy9SunCJBMd0SiZWgTx7
+ o11+S3eO0AoMgm02QGRviy8hAT9yMAOXegJ2SVDrvJSK/1EF2dcu0AT+i1YQeWNLRrj6qpRkKo
+ 1kuf9f3y9b8tmRrKfawPn+QPncvtCcwAAAA==
+X-Change-ID: 20261013-drm-panel-funcs-0fbc59bd8790
+To: Douglas Anderson <dianders@chromium.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jesszhan0024@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>,
+        Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+        =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alison Wang <alison.wang@nxp.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Igor Reznichenko <igor@reznichenko.net>,
+        Michael Walle <mwalle@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>,
+        =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
+        Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Casey Connolly <casey.connolly@linaro.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Cristian Cozzolino <cristian_ci@protonmail.com>,
+        Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>,
+        Nickolay Goppen <setotau@mainlining.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Alexander Koskovich <akoskovich@pm.me>,
+        Markuss Broks <markuss.broks@gmail.com>,
+        Artur Weber <aweber.kernel@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Dzmitry Sankouski <dsankouski@gmail.com>,
+        Yedaya Katsman <yedaya.ka@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15762;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=WbLlzAO9RXIQix7Q1voClvMQtNLZHdIsKY6Rg/IyJX0=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq3zUBXY1ouoWCjChMbl7mPq8TiXrQG0qEmSuBj
+ cIC8Sn+ZbGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCat81AQAKCRCLPIo+Aiko
+ 1dQUB/9qeMU54/7a41w3LggyOuuJS2TWEjfaEkAz3vTHLeEOZdJEKcwwj/v6PiwY5h0mF7Z9qLi
+ 7i36b+iEFTnQ1p9fUulKSuzDYoHDSty8Pd6ZqJApSQuPeavAAwDjtidScu8A4alj2wvst2+zriN
+ cYEAVtja0KZSwkywSpgTy+RQDnRMy/bjOew6XlEnJ8EX0SP+w8uFxpa4ppk44/vv44+XmtSshzu
+ 6rzUjzgvFid2h1yBQLRvbtFrWG0UylcqILraFA8LqBVM6+HexmsPyQA6SCZRfOHRIHrhbnkGVec
+ vUw0rE6XdvS+rDC6BFfvPggvoUsrg6fblExDHIlL8p9NY2Hx
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfXyU6YIk4mUpi0
+ 8u1IzdLxTO3vGr343AiL483L/sUXBqZbe3ws+XU/WvjD1f2qIFOV9iplTW3SkXWknS2pph22tF5
+ klVLvVRHkGZqyk/ab92APM03Y9PQrflZwYb0C/TKIKrOEqh1bITaGxrhLxWpWNtUCR2kfAQLIzM
+ 3F47Xm0gxI8f35CR+MRq2pgOW2RLUT7Fa7PWMxpETyxZmckC2Uu1HGOK0KaQkMICVXswtzAtTUA
+ NziOqzYkYO6nuPKXvKE3UNhpvUe+eGtcB08CJ6CwrfMib0ZnJp/4+5fMvoAEVVT4wHhzPw6wsso
+ QcnP3RWPHq8brXmcYKQMUPp4tRHLIsbzjiILNfuhXM6QO4yk73vjnOFle0vTC4PuYc64kNWCrmq
+ eU+hXfhPejuOj98OtdOADkkPsR5EOYt7Lhh51c2J3nLZSm3R2+4/KU4iOmV2O+g9p6WilaS28U2
+ jWgKlVJdjlMOcZV3/kw==
+X-Proofpoint-ORIG-GUID: 8WTTBaUax7itwxXtm-H8wR0qSnTuR3es
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX5p0NG06t/gN6
+ cIUxbdSYknSMav1fpy6cD699by+xh44ie+3Ui1XVTugSyt3gaEjTdPYN+wkasSQIj6e0Eks4s24
+ fdKlMk4XsAN+8HWzdxMTuOmPZbj+Dww=
+X-Proofpoint-GUID: 8WTTBaUax7itwxXtm-H8wR0qSnTuR3es
+X-Authority-Analysis: v=2.4 cv=HKhWhYtv c=1 sm=1 tr=0 ts=6adf351c cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
+ a=scXMUnCTZPnnbQHXwmsA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-26_02,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260044
 
-On Mon, Oct 26, 2026 at 11:14:53AM +0100, Geert Uytterhoeven wrote:
-> On Sat, 24 Oct 2026 at 12:38, Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Fri, Oct 23, 2026 at 06:59:19PM +0100, Prabhakar wrote:
+The panel is the only element of the display pipeline which never sees
+the atomic commit. Its prepare() and enable() callbacks get nothing but
+the panel, so a panel which has to be programmed differently depending
+on the mode can only guess it. The NT35950 driver, for example, saves
+the connector in get_modes() and reads connector->state->crtc->state
+while being prepared: without the locks, from the current state rather
+than from the one being committed, and with no way to reject a mode it
+doesn't know.
 
-...
+Every panel has a struct drm_bridge embedded into it, and the bridge
+already has all the missing parts: atomic_check(), a state object which
+can be subclassed and the commit passed to the callbacks. Rather than
+growing struct drm_panel_funcs into a copy of that, let the panel driver
+provide struct drm_bridge_funcs for the embedded bridge. This is opt-in:
+the panels which have no use for the atomic state keep using struct
+drm_panel_funcs and are not touched by it.
 
-> > > +static int rzt2h_adc_write_scale(struct iio_dev *indio_dev,
-> > > +                              struct iio_chan_spec const *chan,
-> > > +                              int val, int val2)
-> > > +{
-> > > +     struct rzt2h_adc *adc = iio_priv(indio_dev);
-> > > +     u64 req_scale, scale;
-> > > +     unsigned int i;
-> > > +
-> > > +     if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
-> > > +             return -EINVAL;
-> > > +
-> > > +     req_scale = mul_u32_u32(val, NANO) + val2;
-> >
-> > But what's wrong with the simple 1ULL * val * NANO?
-> 
-> IMO that looks like a useless multiplication, which will be removed
-> again in some future "cleanup"...
-> 
-> There is a reason the mul_u32_u32() helper exists...
+To get there the bridge callbacks become the entry point to the panel,
+with drm_panel_prepare() and friends calling them rather than the other
+way around. The panel core still has to track the panel state, notify
+the panel followers and handle the backlight, so the driver doesn't fill
+in the power callbacks directly, it wraps its functions with the macros
+doing that part. NT35950 is converted as the first user.
 
-I don't see that. The 9e3d6223d209 ("math64, timers: Fix 32bit
-mul_u64_u32_shr() and friends") tells a different story.
+The bulk of the series is the cleanup of what the panel core and the
+bridge need from the panel driver, so that a panel providing the bridge
+callbacks doesn't need struct drm_panel_funcs for anything:
 
-> > > +     for (i = 0; i < chan->num_ext_scan_type; i++) {
-> > > +             scale = mul_u32_u32(RZT2H_ADC_VREF_mV, NANO) >>
-> >
-> > Similar Q.
+- get_timings() had no callers.
 
--- 
-With Best Regards,
-Andy Shevchenko
+- The connector type was stored both in the panel and in its bridge, and
+  the display drivers could override it while creating the panel bridge.
 
+- The orientation was read from the DT, stored and returned by nearly
+  identical code in more than twenty panel drivers, and some of them
+  also had to set it on the connector from get_modes(), with a TODO
+  asking for a better place. The core reads it now. It is applied to the
+  connector from the new connector_init() bridge callback, which is not
+  specific to the panels: other bridges have properties to set up on the
+  connector being created too (HDCP, DP link properties), and currently
+  have nowhere to do it.
+
+- disable() and unprepare() returned an error which nobody could act on.
+  Worse, a failed unprepare() left the panel marked as prepared, so it
+  was never initialised again.
+
+Behaviour changes worth knowing about:
+
+- Panels with the rotation property whose driver ignored it now get the
+  orientation property. In the tree this is the Motorola Mapphone panel
+  (panel-dsi-cm).
+
+- sun6i_mipi_dsi, sti_dvo and the Tegra DSI get their panel after the
+  DRM device has been registered, which is too late to create the
+  property, so they lose the orientation which the panel drivers used to
+  set from get_modes(). None of the rotated panels in the tree are used
+  with them.
+
+- A panel implementing atomic_check() can only be driven through the
+  bridge chain. The display drivers calling drm_panel_prepare() directly
+  have no commit to pass.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+Dmitry Baryshkov (35):
+      drm/panel: remove the get_timings() callback
+      drm/panel: remove the unused struct panel_bridge
+      drm/tidss: get the panel type from the embedded bridge
+      drm/bridge: lvds-codec: use devm_drm_panel_bridge_add()
+      drm/ingenic: use devm_drm_panel_bridge_add()
+      drm: mxsfb: use devm_drm_panel_bridge_add()
+      drm: rcar-du: use devm_drm_panel_bridge_add()
+      drm: rz-du: use devm_drm_panel_bridge_add()
+      drm/mcde: use drm_panel_bridge_add()
+      drm/pl111: use drm_panel_bridge_add()
+      drm/rockchip: lvds: use drm_panel_bridge_add()
+      drm/rockchip: rgb: use drm_panel_bridge_add()
+      drm/panel: remove the _typed() panel bridge functions
+      drm/panel: remove drm_panel.connector_type
+      drm/bridge: anx6345: set the panel orientation on the connector
+      drm/exynos: dpi: set the panel orientation on the connector
+      drm/fsl-dcu: set the panel orientation on the connector
+      drm/logicvc: set the panel orientation on the connector
+      drm/stm: lvds: set the panel orientation on the connector
+      drm/sun4i: set the panel orientation on the connector
+      drm/tegra: sor: set the panel orientation on the connector
+      drm/panel: drop the orientation workaround from get_modes()
+      drm/panel: read the panel orientation in the core
+      drm/panel: use the orientation from the panel core
+      drm/panel: remove the get_orientation() callback
+      drm/bridge: add the connector_init callback
+      drm/bridge-connector: let the bridges set up the connector
+      drm/panel: let the bridges set up the panel connector
+      drm/panel: set the orientation from the connector_init callback
+      drm/panel: make the disable and unprepare callbacks return void
+      drm/panel: don't hold the follower lock over the panel callbacks
+      drm/panel: route the panel calls through the bridge callbacks
+      drm/panel: let the panel drivers provide struct drm_bridge_funcs
+      drm/panel: novatek-nt35950: provide struct drm_bridge_funcs
+      drm/panel: novatek-nt35950: use the atomic state to select the mode
+
+ Documentation/gpu/todo.rst                         |   1 -
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   5 +
+ drivers/gpu/drm/bridge/lvds-codec.c                |   3 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c     |  12 +-
+ drivers/gpu/drm/drm_bridge.c                       |  31 +
+ drivers/gpu/drm/drm_connector.c                    |   8 +-
+ drivers/gpu/drm/drm_panel.c                        | 653 +++++++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   1 +
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |   5 +
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |   3 +-
+ drivers/gpu/drm/logicvc/logicvc_interface.c        |   7 +
+ drivers/gpu/drm/mcde/mcde_drv.c                    |   3 +-
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |   3 +-
+ drivers/gpu/drm/panel/panel-abt-y030xx067a.c       |   8 +-
+ drivers/gpu/drm/panel/panel-anbernic-td4310.c      |  18 +-
+ drivers/gpu/drm/panel/panel-arm-versatile.c        |   4 +-
+ .../gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c   |   4 +-
+ drivers/gpu/drm/panel/panel-auo-a030jtn01.c        |   8 +-
+ drivers/gpu/drm/panel/panel-boe-bf060y8m-aj0.c     |   4 +-
+ drivers/gpu/drm/panel/panel-boe-himax8279d.c       |  12 +-
+ drivers/gpu/drm/panel/panel-boe-td4320.c           |   4 +-
+ .../gpu/drm/panel/panel-boe-th101mb31ig002-28a.c   |  33 +-
+ drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c     |   4 +-
+ drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c     |  30 +-
+ drivers/gpu/drm/panel/panel-chipone-icna35xx.c     |  24 +-
+ drivers/gpu/drm/panel/panel-chipwealth-ch13726a.c  |  24 +-
+ drivers/gpu/drm/panel/panel-dsi-cm.c               |  11 +-
+ drivers/gpu/drm/panel/panel-ebbg-ft8719.c          |   8 +-
+ drivers/gpu/drm/panel/panel-edp.c                  |  53 +-
+ drivers/gpu/drm/panel/panel-elida-kd35t133.c       |  22 +-
+ drivers/gpu/drm/panel/panel-feixin-k101-im2ba02.c  |   8 +-
+ .../gpu/drm/panel/panel-feiyang-fy07024di26a30d.c  |   8 +-
+ drivers/gpu/drm/panel/panel-focaltech-ota7290b.c   |  21 +-
+ drivers/gpu/drm/panel/panel-himax-hx8279.c         |   8 +-
+ drivers/gpu/drm/panel/panel-himax-hx83102.c        |  22 +-
+ drivers/gpu/drm/panel/panel-himax-hx83112a.c       |   8 +-
+ drivers/gpu/drm/panel/panel-himax-hx83112b.c       |   4 +-
+ drivers/gpu/drm/panel/panel-himax-hx83121a.c       |   4 +-
+ drivers/gpu/drm/panel/panel-himax-hx8394.c         |  24 +-
+ drivers/gpu/drm/panel/panel-hydis-hv101hd1.c       |   8 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili7807s.c      |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili7836a.c      |  24 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c       |  12 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c       |   7 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9488.c       |  18 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9805.c       |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9806e-dsi.c  |  18 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9806e-spi.c  |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c      |  31 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c      |  24 +-
+ drivers/gpu/drm/panel/panel-innolux-ej030na.c      |   8 +-
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c      |  10 +-
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c   |  21 +-
+ drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c       |   4 +-
+ drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c      |  12 +-
+ drivers/gpu/drm/panel/panel-jdi-lt070me05000.c     |   8 +-
+ drivers/gpu/drm/panel/panel-khadas-ts050.c         |  12 +-
+ drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c |  14 +-
+ drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c |   6 +-
+ drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c |   4 +-
+ drivers/gpu/drm/panel/panel-lg-lb035q02.c          |   4 +-
+ drivers/gpu/drm/panel/panel-lg-ld070wx3.c          |   4 +-
+ drivers/gpu/drm/panel/panel-lg-lg4573.c            |   4 +-
+ drivers/gpu/drm/panel/panel-lg-sw43408.c           |   7 +-
+ drivers/gpu/drm/panel/panel-lincolntech-lcd197.c   |   8 +-
+ drivers/gpu/drm/panel/panel-lvds.c                 |  25 +-
+ drivers/gpu/drm/panel/panel-lxd-m9189a.c           |   8 +-
+ .../gpu/drm/panel/panel-magnachip-d53e6ea8966.c    |   8 +-
+ drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c   |   8 +-
+ drivers/gpu/drm/panel/panel-motorola-mot.c         |   8 +-
+ drivers/gpu/drm/panel/panel-nec-nl8048hl11.c       |   4 +-
+ drivers/gpu/drm/panel/panel-newvision-nv3051d.c    |   6 +-
+ drivers/gpu/drm/panel/panel-newvision-nv3052c.c    |  12 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35510.c      |  12 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35532.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35560.c      |   6 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35950.c      | 168 ++++--
+ drivers/gpu/drm/panel/panel-novatek-nt36523.c      |  24 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36532.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36536.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36672a.c     |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36672e.c     |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt37700f.c     |   8 +-
+ drivers/gpu/drm/panel/panel-novatek-nt37801.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt39016.c      |  12 +-
+ drivers/gpu/drm/panel/panel-novatek-nt51021.c      |   4 +-
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c |   4 +-
+ drivers/gpu/drm/panel/panel-orisetech-ota5601a.c   |  12 +-
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c   |   8 +-
+ drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c |   8 +-
+ .../gpu/drm/panel/panel-panasonic-vvx10f034n00.c   |   7 +-
+ .../gpu/drm/panel/panel-raspberrypi-touchscreen.c  |   7 +-
+ drivers/gpu/drm/panel/panel-raydium-rm67191.c      |  16 +-
+ drivers/gpu/drm/panel/panel-raydium-rm67200.c      |   8 +-
+ drivers/gpu/drm/panel/panel-raydium-rm68200.c      |   4 +-
+ drivers/gpu/drm/panel/panel-raydium-rm69220.c      |   4 +-
+ drivers/gpu/drm/panel/panel-raydium-rm692e5.c      |   8 +-
+ drivers/gpu/drm/panel/panel-raydium-rm69380.c      |   4 +-
+ drivers/gpu/drm/panel/panel-renesas-r61307.c       |   8 +-
+ drivers/gpu/drm/panel/panel-renesas-r63419.c       |  25 +-
+ drivers/gpu/drm/panel/panel-renesas-r69328.c       |   8 +-
+ drivers/gpu/drm/panel/panel-ronbo-rb070d30.c       |   7 +-
+ drivers/gpu/drm/panel/panel-samsung-ams581vf01.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-ams639rq08.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-atna33xc20.c   |  14 +-
+ drivers/gpu/drm/panel/panel-samsung-db7430.c       |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-ld9040.c       |   7 +-
+ drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d16d0.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d27a1.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c   |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      |  16 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c   |  14 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e63m0.c      |  13 +-
+ .../drm/panel/panel-samsung-s6e88a0-ams427ap24.c   |   4 +-
+ .../drm/panel/panel-samsung-s6e88a0-ams452ef01.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c      |   7 +-
+ .../panel/panel-samsung-s6e8aa5x01-ams561ra01.c    |   8 +-
+ .../gpu/drm/panel/panel-samsung-s6e8fc0-m1906f9.c  |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-sofef00.c      |   8 +-
+ drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        |  22 +-
+ drivers/gpu/drm/panel/panel-sharp-lq079l1sx01.c    |   4 +-
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c    |   4 +-
+ drivers/gpu/drm/panel/panel-sharp-ls037v7dw01.c    |   7 +-
+ drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c    |   6 +-
+ drivers/gpu/drm/panel/panel-sharp-ls060t1sx01.c    |   4 +-
+ drivers/gpu/drm/panel/panel-simple.c               |  53 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7701.c      |  28 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7703.c      |  22 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c     |  35 +-
+ drivers/gpu/drm/panel/panel-sony-acx565akm.c       |   4 +-
+ drivers/gpu/drm/panel/panel-sony-td4353-jdi.c      |   4 +-
+ .../gpu/drm/panel/panel-sony-tulip-truly-nt35521.c |   8 +-
+ .../gpu/drm/panel/panel-startek-kd070fhfid015.c    |   4 +-
+ drivers/gpu/drm/panel/panel-synaptics-r63353.c     |   4 +-
+ drivers/gpu/drm/panel/panel-synaptics-tddi.c       |   8 +-
+ drivers/gpu/drm/panel/panel-tdo-tl070wsh30.c       |   4 +-
+ drivers/gpu/drm/panel/panel-tpo-td028ttec1.c       |   8 +-
+ drivers/gpu/drm/panel/panel-tpo-td043mtea1.c       |   4 +-
+ drivers/gpu/drm/panel/panel-tpo-tpg110.c           |   4 +-
+ drivers/gpu/drm/panel/panel-truly-nt35597.c        |   8 +-
+ drivers/gpu/drm/panel/panel-visionox-g2647fb105.c  |   4 +-
+ drivers/gpu/drm/panel/panel-visionox-r66451.c      |   8 +-
+ drivers/gpu/drm/panel/panel-visionox-rm69299.c     |   4 +-
+ drivers/gpu/drm/panel/panel-visionox-rm692e5.c     |   8 +-
+ drivers/gpu/drm/panel/panel-visionox-vtdr6130.c    |  20 +-
+ drivers/gpu/drm/panel/panel-widechips-ws2401.c     |   8 +-
+ drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c   |   6 +-
+ drivers/gpu/drm/pl111/pl111_drv.c                  |   3 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c  |   5 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c   |   5 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_rgb.c            |   3 +-
+ drivers/gpu/drm/stm/lvds.c                         |   4 +
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |   2 +
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |   2 +
+ drivers/gpu/drm/tegra/sor.c                        |   2 +
+ drivers/gpu/drm/tidss/tidss_kms.c                  |   4 +-
+ include/drm/drm_bridge.h                           |  23 +
+ include/drm/drm_panel.h                            | 219 +++++--
+ 163 files changed, 1080 insertions(+), 1532 deletions(-)
+---
+base-commit: 4305aa866f20288739b680c75fd44d9f029b0c0b
+change-id: 20261013-drm-panel-funcs-0fbc59bd8790
+
+Best regards,
+--  
+With best wishes
+Dmitry
 
