@@ -1,114 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793013095;
-	b=fzJiqTSfRFl5YqhMjGgdNBBz8zRrUmah6YQrKUkOL+whNObg5DEFKJZqlTF6r1dHeDjQ
-	 P9O2NL6ONev9kGR1b7Jozwo6cqhhms2Cy2jYgvwRkLrqqkcu7AFQpLHtFo+QETVAow+QN
-	 6KdlKgWILybX+dfqc+z40QY3j5ow9oAkr3nH6ZaXXwoCLmNuXQhpDbxHbcmlZIZXyoQAW
-	 A53y6tP9dGHUeNjdIUw5tJNYMUwdSvVDL6rjKLpAdOt3NYBg59LKZLvzhZA+yiPm8hvrv
-	 gYbFX8WcCGQAVMH+cVH7o8/iodPUOoBuEYozANp5WcLXbWuQ40Bku8CFbfbfqMnQ25w==
+	t=1793013819;
+	b=yQGszro5xzz0MMyZVrGFP6WNlOH2yATK+y4O8wK+c9Rz1Yp8Q+m3fe6FRaOuFHdTCqf6
+	 gxCAB5lQQsXCWlNXUxy9MN/7ESh0VaKxLHt5drTOMoCLBguKkqcRR/GcBvI1G0Nk5fwji
+	 SDmZYX6zHge1jUk4hYXiLNglxzdtIh9Nf44osO2gY/aMTZQVEyLQH1tdlPWlxWutxeDeO
+	 cK7wlyybIQqDI69VcvKLKUjEyUhJQxziCtFsa4SzsEKEBJucrfFN8EJj9Q8MEIJkHlB58
+	 eD2sQnDhh4dSpLFaO2k8rl6jLHRCCYgnYpzPqbX2uEQaNqEAPf/08TgChFpD3nHegcQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793013095;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
-	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Info:
-	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=Z5YZFYelaCp0S0t2iFd1/TBQhefjKNohLtgK9G9gaag=;
-	b=QBo2/FZgbPMd92zINUeEhGu07S52Zkzr91Io7zs9Rqzx0Koe3UGMs/iXY4Ix2B6fl8yh
-	 M11mUtvm4Fl6AcB6mOAewVyeUMadq2mHQnwFwdO2caQGqEddRGrJ3jw4PuwTnUkk4Xe+J
-	 OubZj4pHq/MPsm0agrXykYbk3bOsGRYZAyaEK6RnFaGOxH3CZaIs9vXi/zAF1/D49RDk0
-	 ewQg6YVjw9ZotMv+GPAsKi35PbygitrgofGh8bhVEagtT22N+yZXZK3R3e84XaeRM04m+
-	 lpnmeVDjVs3uR2ZyFxbIUhd5Hk7hlkKJEAdHjH0hX3L0yVsCyvjzYC7qtk9lDFqHObA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793013819;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=ABdqyAeHZvZveh3ZqFvCBY4Fgn7+If+125igGtBDhBw=;
+	b=jwA/FO68fKLUQzL5vYkMvrdyFO20How8VXJbfV8/bgIN5WQsf9rw5dILkeezoQEnR+WC
+	 xSOqADf662lwIW2D1DRamDGWuo5HsJxrO6DqFT0aQCREUio1QQxWky1yO+CR+62KXjsJI
+	 KOEVToHtTXIVjrBoMe7TUyg4JkhSKSepXlsO5s9IGXMZ2vCVcesslGpOs58zYufyT6QzF
+	 EbS+bHCJDnQaKP3lDy0oeZq1hzrzEvjnevGO9NyWX41CTKStQ8v6jURL89sldy8dLhrIQ
+	 ukhRli6MznhiK9Y4NEJvqMEs0fDmNq1ySrQpSfPdJKCRDirEx9gS30Yxqs4GZbyal0A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=MAwCLMxO;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=X9vqtu15;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=KR8VGpzR;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFAD6072BD1
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CCFAD6072BD1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B2F606A31D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:23:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 33B2F606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=MAwCLMxO;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=X9vqtu15
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAt0GB3033852
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Z5YZFYelaCp0S0t2iFd1/TBQhefjKNohLtgK9G9gaag=; b=MAwCLMxOo+pF+xVw
-	ujcXLzcdpL1N/34yRX8go9512wsTLh5exv3+HDiMhSWiGRLg7FS+ohFrsdVdiYHk
-	9VQc8WSRgmLrUistp94jlhakjPKS1zVcLbFlj1xGqB2999yrFY7M3v3iLrZstDRw
-	iPCEo6/JaIYF+v4dbhwRp+O7fLa/cC0W991VPBNn5RkufTxzvZxtxlEh4sHMKb5L
-	MF1wh9pI2VdtTiL1uZcQwp4bigUW5Da2YqIHVD9gB5NbWWC5otd7RyatDKUT/IY1
-	Z9uiBawrsqcXyJ0NqNFs/efwPyyotF3keQ2gkrC3PQh2oTh1f0o6lYF6DOGbXw3d
-	+xoIUQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj56y04ca-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:33 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93e49a1d3b1so364980385a.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:11:33 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=KR8VGpzR
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so17437615e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793013093; x=1793617893; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Z5YZFYelaCp0S0t2iFd1/TBQhefjKNohLtgK9G9gaag=;
-        b=X9vqtu15rUU1dSDpK8+AOrmhEr0GP2hrx5eQHX+KPvHITKevRirqWGFd8geiqra/eO
-         aOaAZMdVMqXuanzSZ9dExTZc3dV1HCaRk8q7ech1ZXiE9Qtct4stAz6/hQsgyJaH1/7f
-         EutXQmE3xe7B+dOyhvrK2uy8Ad4rM3UmvS8zGUpOq4w/8PdoplZu+4kw2hkJQ0MXmaGQ
-         Fd5vyRTC0ub2TubCWJpiqTTRy6sXSM9kwySxMI3aVfoR7PJ5LhBJYbhMJ26FZpDHz22v
-         rEen12FJzkdWVLgfBtkH8w04R4Mqu1yL5tjHFaVp4uiqpzhE0XzrabSWkH18DehnS0np
-         ASYw==
+        d=gmail.com; s=20251104; t=1793013817; x=1793618617; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=ABdqyAeHZvZveh3ZqFvCBY4Fgn7+If+125igGtBDhBw=;
+        b=KR8VGpzRcoJbMGE3hDYlf/800hJfTHsSb5HsFaYRtZmeMHHGtwJEBa1TTmsttW1ZIl
+         4wYlNiHNSOcDxGnvOkqLtny6Rh1CFyl+0xOCPUwpT1X1vqB0wB2XiJ+26UlenQ39Kppm
+         G+khUwxvCnESmNAJlOW8yIS40RmzMc3Q7Q6gjfLVHyHtrcPbLQD76pgOEXB1SNLb/54/
+         M7jkuV/JzdTeaPJaxz6eIf9HHBk1cpsIN7eDqEFB8GFBmqgnmGcESKD7Aoj32/rx6GAW
+         sibEeyLnx9s5k2mqw2IZXB63x1qsCe4I85qdshdNFcx6bNfNIG84az/ZDEOqhvJqUg5/
+         evEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793013093; x=1793617893;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Z5YZFYelaCp0S0t2iFd1/TBQhefjKNohLtgK9G9gaag=;
-        b=oOVfKZXgMqqSiecz8sNLHVaCN0ZnPTRuJKZoKy4a46mkQgQ44hdLvIo74Fg60SM8mb
-         hqlRVHsRa6D67gw7pfDv94CTmpgsM2bBo6kcGTWRdHcUuZBTQiFuubIusRCkxLMQ3fmG
-         9/cI2RDS5mTVZFalXlrfy0DLdjzMW36xQHRK+/GhXtZDDbA8bn/oyKjCaDfm05KLzWXn
-         n8f0I9AYXdgoQqcKsorSar2/G9i/7BCc5yVJgoM49OuydEMNEFWmpDGvz/qTVrmkkJDK
-         9fPRKQOAjefwpmQFoVom67ZQaSFhR83UztlKgK6Gd6Vjnxu7u9e0Nb127djmESkIcEPO
-         8OCw==
-X-Forwarded-Encrypted: i=1; AKwUvBwS/7LIeexLmm34PQFN9dKQ8XA+c46Ogc2Bkq0obxLkpEDoFak3OF7w03csPr5LwzRIlulOymCKZ9ZsVUPwoXu5rA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIVRnDYZKQVzLKIxDlA9wXZN/pvnTDAcxFRJvYN+aixXq2i8mkb
-	EIw96BenLeadZ+7AaY5cB5B4Y7IEyLDMy5FC8FMGNRi+GVqCSBj774yXuANtJ/Jzjlo6hYni6ck
-	5Uwz3X6oYMKYpyySpLdmF/O44h8ltMDeYg3KRc95EfXmYhf/pPQpN4soc67MGunyj8HHV92WWvg
-	==
-X-Gm-Gg: AYBFou39idl91oNfD9CZbabdL7vxU3wshivdFhciRGzqDbDr+qKuSrGvVBJKUqGeMgQ
-	/YSTHJHfAShrrybT1KfBDcgvtMQsIWaXN+l/6HRdWhW6m7G4wglkN5JPJTKbtEb5No93AMjZIne
-	K0wo9x5on7CEakvDJc2OfAiUvYnQn2KJnaRiFPG6GORDPhqZkY0A1W9hR/eSARR4Ake5IHTqKZY
-	cVjoVbaYB8E299c9TzMUZcDsMnpxmeHIVC8TrjtZ7NSyntuUP1FwfgxflIVh2rs4Am/6vD5CDhc
-	rZV0zkvxnasODatjb/JLM2Pseg02plgIkXxCTO+STCh0qmojiI2GzxDCBh7j+jVe0cqev2S60iN
-	uJj7cpSvL9902gw9mDTjJ2hr7s4SE1C3EDpbnf+fhQZwPTNV8jzFtYGvhoOR58FWhKfTPe7N6iW
-	jpPxGJMhusC4fr
-X-Received: by 2002:a05:620a:628f:b0:93f:34c9:9248 with SMTP id af79cd13be357-940ef8adbfamr970681185a.22.1793013093054;
-        Mon, 26 Oct 2026 04:11:33 -0700 (PDT)
-X-Received: by 2002:a05:620a:628f:b0:93f:34c9:9248 with SMTP id af79cd13be357-940ef8adbfamr970667785a.22.1793013092405;
-        Mon, 26 Oct 2026 04:11:32 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.11.30
+        d=1e100.net; s=20260707; t=1793013817; x=1793618617;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ABdqyAeHZvZveh3ZqFvCBY4Fgn7+If+125igGtBDhBw=;
+        b=WT/H6JYqCj/NkpxyMz+DtQWZvOSPzkHnW44wFxy2Ii2o26VM6hlDXF8tOVUbrkKnDM
+         R7XnOz1VB5IuxJgk6c9SMiX2gPc1rrOrBX/syp9NZ4pB3Mh7gYnFlzfXOpAmY7bgw4Dl
+         cm1PBwr1o73yIWqHRmuXM1uR/QBESicK2GkMuN2MpgqnLb7AYSF2MvmeotHYj9bNZxUw
+         iyANesofT5wfdWESVxRIi0yCNkxraOFEERc2Nu4h3jZpLhK/msRUtsuDIICIVqJ+WBZC
+         6SeCmIfqoTnOhTBfbMbCctebtyEPqc9ziZ2R90TZL06+lubZj3UTc+J+yjPLD0gT0SUl
+         5YtQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzrPsxaOFyy/Tbu1AaLYxilqk/PCCh3jVPD81v2QqGM/VGiE2VpGR028lqWiWrUkxkdGx5MZZ7t5t41QvlSZ7hnlQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIiyHWeHulgXeRSuXHTF86E0Ut40aitTNRjgPZku/feLNv5Uiaj
+	HgTp6ELG8pqPuEJQDgRzXO+rtb5J7figU5CdJgUmc9xqPFZEvX6LXFSn
+X-Gm-Gg: AYBFou3yWKJqlRkblLPmuBGW+GXZg6Qkevt4xm3KO/y1NfRnPNH7a2FXDiKdBv49/HF
+	T50MTcYZtH2WX9egZjbENwD9dMGYYn2dgPce7u+FIBPsKkQrtWhN8oXyBsNWv++ECC0TzaROG/p
+	IxD3aYyirsRdU+1MyDXSmKVhjmf9TsMdwm7xeHV9FTeEfGWxSWu9C3SDR+sWaTRiRVC3bYD+IVK
+	CDvWborqRdh7JlHtJwCOGw+EMn/SuoaKfx2sWuzZD1WH/Bbu8XP+NH/83uMKRdxPHj32J90mi9H
+	rD2KRU52oUGzvMxL2I5hxHyXcMqlY8M/vVQUnMISrIv/5xpxfbEY2u/ULy6KPAaIZ8Ji7g1sAFj
+	k1ftA7F8kOJQqkFEEwdRgYxXGd6PQ38A3p8kjY2TjUFDssU6YzNvBiZxYJ2iPVuX5F56D5CdvZS
+	YByE/V/f6+xwQ86gEBxu27D21Gk7xxNq3B6Z8JSmFqeMwCeTSrcRh8ugBjtRj/Oi4rbR6I8eAaB
+	chbgzRFtss1VtrAEaxChwkbnTOhIdUvYS3ANIjDWE6icHGQ8iZYqwDadpT30VM1c/kpQ2jSUunv
+	Na15Z4tMwIKwlByP+g==
+X-Received: by 2002:a05:600c:6098:b0:49f:ce78:356d with SMTP id 5b1f17b1804b1-4a35acc431dmr111151135e9.30.1793013816492;
+        Mon, 26 Oct 2026 04:23:36 -0700 (PDT)
+Received: from [127.0.1.1] ([2a00:23c4:a702:d301:482f:657c:9770:475e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecdfb8esm15959263f8f.54.2026.10.26.04.23.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 04:11:30 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Mon, 26 Oct 2026 13:10:16 +0200
-Subject: [PATCH 27/35] drm/bridge-connector: let the bridges set up the
- connector
+        Mon, 26 Oct 2026 04:23:36 -0700 (PDT)
+From: Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v3 0/4] Fix transmit handling on SCI/RSCI ports
+Date: Mon, 26 Oct 2026 11:23:32 +0000
+Message-Id: <20261026-g2ul_sci-v3-0-b3097163edd5@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -120,156 +94,89 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261026-drm-panel-funcs-v1-27-5e3070a3478f@oss.qualcomm.com>
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
-To: Douglas Anderson <dianders@chromium.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>,
-        Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
-        =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alison Wang <alison.wang@nxp.com>,
-        Paul Kocialkowski <paulk@sys-base.io>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Igor Reznichenko <igor@reznichenko.net>,
-        Michael Walle <mwalle@kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>,
-        =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
-        Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Cristian Cozzolino <cristian_ci@protonmail.com>,
-        Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>,
-        Nickolay Goppen <setotau@mainlining.org>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Alexander Koskovich <akoskovich@pm.me>,
-        Markuss Broks <markuss.broks@gmail.com>,
-        Artur Weber <aweber.kernel@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Dzmitry Sankouski <dsankouski@gmail.com>,
-        Yedaya Katsman <yedaya.ka@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1012;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=AQGdPHb5gyBnobGv+f6DreCCZFLrKneWqxoZPFxxWcs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq3zUTUbk1R23nCOd8O6zZ/MtcgNxowkU4eN1Mc
- 5Cnj43j4lKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCat81EwAKCRCLPIo+Aiko
- 1W85B/46cJ4Sdk7p4J0zoiGZrHCbRYA2cPPlDcsPtE5Z04M4uiP546ooWW0HhZMFzzagUL2YSHD
- RJaZdzs7jv87tvD8PlGPUFUZXtHIIJB+DtBUeGwP8PmcUaM2Txi2MWRYPuDE6GViHH7HbBV9byE
- RdfjHPweL9TYvTw1yEwGvAKLF9DSA4B/PL/efch8Z4drVb3CZ7b6Vj4aPNQ67CzvqOPBvqNcp6q
- pdszfnU1ADzM6XzxOqHfkZUgJzJ+kVLBf7HpqKrHqwjS/kfhJrhWwmsxYVPAxFAEFziZIE1nXA4
- R4tXF+UF0FKjfU8MLRD/MxLcnN3D5cT4ZF3PdKwRy0G1eG6E
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX9e8Zq0rHeYBE
- jGvzXw76bx8qCR38JTVinUVQotoZZZNCVkx8VbSFUX90yXiLYVn2R6rqP+fAxZqpwQ5p9S4ITdj
- qWAeST+3EmZi5bwbz59xKGBCKHqqvhE=
-X-Authority-Analysis: v=2.4 cv=eMeGH3p1 c=1 sm=1 tr=0 ts=6adf3565 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22 a=EUspDBNiAAAA:8
- a=7DjRQ5CzWl9msXBk5SwA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX/DxlKScF0l+Q
- 8Uyff0sp1pUu5b29xQbVBOL0TcslO5SCNG4LaN4ZU4oKNKSQHlN1cYW2lcu9bZPLHpySjhBzp6g
- vM15hIjfplqD+dPsImgV4c7XrGblF4hps2h3gSv651DyomabKav8NyFx3uXF83+4+ZGS7ejlXaq
- 72lJfJ98DLD3zihCQEPBv+Z7Lnf9KKmlZ/oDFB6bmpPe7wdY3n3HdVfBZ+ps5KFpLcV1DLaPUI3
- mg7MYiTVUUVvXURLR8cBa69l1U8U3nwmOvl3ARDQ89BQcR46X2cKU9qnNmc11+a3n4IbThw197U
- 8QxpQCDgYBRV1e6NQwy/pjGyjtifzrkJoumhSyOGFEp09OsB3gqo8d0Hf/qAQasK8obm4hbfPkb
- Vh4ZQFY4QYLM02CCAaL5YKqudyn3b6teiISmgUn+xRczyqRxOCWEJdtolWUJj0bK2EFFnIT2bxV
- ll03AfxX0rnLtNfmOjQ==
-X-Proofpoint-GUID: _5A5lGMoKMfeStpjOiGKmDlLBWSstStg
-X-Proofpoint-ORIG-GUID: _5A5lGMoKMfeStpjOiGKmDlLBWSstStg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-26_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0
- spamscore=0 phishscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260044
+X-B4-Tracking: v=1; b=H4sIADQ432oC/2WO2wrCMBBEf6Xk2YTNplef/A8Radq1TdG2JDaop
+ f9uWgQFH88wc5iZObKGHNtHM7PkjTNDH0DtIla1Zd8QN3VghoCpBATe4HQ9u8pwHTiFlMpEJyz
+ UR0sX89hUx1Pg1rj7YJ+b2cs1/UhkITOQqhBxpnLIueTadJOoSye610GPwlJPLlA13Nhq8vizR
+ vm94JED1zGByhEBZP63XpblDbRAkubjAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Kiryl Shutsemau <kas@kernel.org>, 
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, x86@kernel.org, 
+ linux-coco@lists.linux.dev, kvm@vger.kernel.org, 
+ Biju Das <biju.das.jz@bp.renesas.com>, Au Dang <au.dang.jx@renesas.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793013815; l=3074;
+ i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
+ bh=zW64mN/4d2OmJaD7t1D7UB4oZpTj3P+t9X3dcAB7rtU=;
+ b=gOp99iXwRCnJN0msXpKCv/GRpEYHrf7Os4oduYopAncMX/9qUjdeKcRQHas85XQ62sv8Yls1h
+ dADbeEyGwleAPP1Llu7XjfmkxHVqzQXltxEDw0YYs68pre99kVhVnLC
+X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
+ pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
-Call drm_bridge_chain_connector_init() once the connector is initialized,
-so that the bridges implementing the connector_init callback get to set
-up their part of it.
+Hi All,
 
-Assisted-by: LLM
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This series fixes several transmit problems on the SCI (PORT_SCI) and
+RSCI ports of the sh-sci driver, seen on Renesas RZ SoCs:
+
+ - Patch 1 removes the code that disables TE at the end of a
+   transmission on SCI, which the hardware manual does not describe.
+ - Patch 2 stops the TEI handler from turning the transmitter off
+   while the xmit kfifo still holds data, which could stall or lose
+   output. It also covers the TE handling that patch 1 no longer does
+   in sci_transmit_chars().
+ - Patch 3 skips the software clear of the TDxE flag on SCI, since
+   hardware clears it on a TDR write and the extra clear caused a
+   spurious TXI and a duplicated last character.
+ - Patch 4 forces a TE toggle when restoring SCSCR in the console
+   write path on SCI, so the TXI that restarts an interrupted drain is
+   generated. Without it the RZ/G2UL console can hang during boot.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/display/drm_bridge_connector.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changes in v3:
+ * Updated commit description for patch#2
+ * When the port is stopped with data still queued, the transmit_chars()
+   paths (sci_transmit_chars() and rsci_transmit_chars()) now also swap
+   TIE for TEIE, as they already did for an empty kfifo. Without this, TIE
+   would keep firing with nothing the driver is allowed to send, and TEI
+   would never be raised to complete the transmission.
+ * Replaced sci_tx_interrupt() with port's transmit_chars() to avoid
+   lock drop race in sci_tx_end_interrupt() before TX handoff.
+ * Added missing has_tdxe_auto_clear init in scix_early_console_setup().
+ * Replaced to_sci_port(port)->type with sci_port->type in
+   serial_console_write().
+- Link to v2: https://lore.kernel.org/r/20261021-g2ul_sci-v2-0-b4e038220018@bp.renesas.com
+Changes in v2:
+ * Updated commit header and description for patch#2 and #3.
+ * Take the port lock before reading the control register, so the
+   read-modify-write in sci_tx_end_interrupt() is protected.
+ * Extended the pending-data check in sci_tx_end_interrupt() to cover
+   x_char and a stopped port, not only a non-empty xmit kfifo.
+ * Replaced the PORT_SCI check with a has_tdxe_auto_clear flag in
+   struct sci_port, set from the new tdxe_auto_clear field in
+   struct sci_of_data.
+- Link to v1: https://lore.kernel.org/r/20261019170139.473808-1-biju.das.jz@bp.renesas.com
 
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index 81f3e26f6fdf..2d982c7109b5 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -1141,6 +1141,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		connector->polled = DRM_CONNECTOR_POLL_CONNECT
- 				  | DRM_CONNECTOR_POLL_DISCONNECT;
- 
-+	ret = drm_bridge_chain_connector_init(encoder, connector);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
- 	if (panel_bridge)
- 		drm_panel_bridge_set_orientation(connector, panel_bridge);
- 
+---
+Au Dang (2):
+      serial: sh-sci: Skip TDxE clear when hardware clears it automatically
+      serial: sh-sci: Toggle TE when restoring SCSCR in console write on SCI
 
+Biju Das (2):
+      serial: sh-sci: Drop TE disable at end of transmission on SCI
+      serial: sh-sci: Keep TX enabled on TEI while data is pending
+
+ drivers/tty/serial/rsci.c          |  4 ++-
+ drivers/tty/serial/sh-sci-common.h |  4 +++
+ drivers/tty/serial/sh-sci.c        | 71 ++++++++++++++++++++++++++------------
+ 3 files changed, 56 insertions(+), 23 deletions(-)
+---
+base-commit: 8f7df005a7564bd7ffa75da9c3085d5b996f1e16
+change-id: 20261020-g2ul_sci-b610606ea5b5
+
+Best regards,
 -- 
-2.47.3
+Biju Das <biju.das.jz@bp.renesas.com>
 
