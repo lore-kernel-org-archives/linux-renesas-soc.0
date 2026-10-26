@@ -1,69 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792972140;
-	b=04JsETalSd5blhZ82TpLG3Gu7CEjT7cw/rGHZLMPe8xrdvdWXyztFyszPgOEMtTRj6vG
-	 znWtmy9xjhH+4re8DBpHXN0Lz4QINystXVD5XdDljIMMlfp9I21VR3BnR8mH7+o+4HF9o
-	 NNUu4SC8F+0CvMtw05FmNH4Ow+aPmLTNvjmufBP5n9pdSiQXd5xS3Oz1Ie7zgokeWjfhY
-	 QqhaQ57q6xQ/pCUvWuWlHo3pYvvce7oRY1+FZssaYbqFxgqZd2M3WrGBXnI9X1N8/kfMQ
-	 u5ftt4BK7pTFdbx61tSgHdLxFSG0F3TBtZlEoX8HNVGEiyRvXSlME5niRp4/56NWu2w==
+	t=1792974112;
+	b=pkp3yqwACG20zPp17iSlK/tNtoOz6N9vUIRkM5KQreiTa7jNvEKF7W2bPLDkE9fcWlOf
+	 rVLND9vCkwcuQFVSI6/U9xWC5hiCwU9YQVkzDC6rnT/VsUoIwuKuveKJZVI1WaOh8GjCb
+	 2v8Ejv+7VK3oXM4674tvts/wxJDe2NjDZB5iLRfpA/k4VgnO8M/W75wYndJVB+o0KdSy/
+	 svDidn3rWBHi2mtpLtSgD1DL1nvs0zFMwevbvQ5eVKOhQ1/tNItmQR0EhUIVdw29Umj6M
+	 Zu0WqrYhb8tg3BUm3y08TOW6UDhTH52GCObgcWdkLMWUOZAHhg88N6gh6zVcg0GnQ0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792972140;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=mezoK2VZHuQsu7p6myHJ5EdzM1VQCFQnX3rSyq9jwJw=;
-	b=hLm8uLheWLNc/1P7HlVFtGsCZ2XZwI6E7oPP2utOq7+lg0y9BR7lp8RzCL19XZmPi5yU
-	 erpe/MNoVCmVHevKrlkKjRdV93FjKkY0i30Om9haWLfhTI+5vSYNS3kssIJ6NHEydXorp
-	 1OKXIwO8TNZ/chr0l8ZJBJX2zGgE5SSovbLOEGRlFcdqqDHRAr/+959sEErKEsXAuZPLN
-	 eqcO/h8Yrfhe/HpfEfgl+RbXWJp+zolXHJQkLtKYVoS4y1WpfIneDTxiXnjPwQF93wxxI
-	 FPP7TxWg3rTqZItlpkVSk+WWv+/XCVIxHnbiFd1EK+j5aTRA0ltkBojUGMg8qtW4mfg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792974112;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-ID:X-MBO-RS-META;
+	bh=Wr0kFOMxYl9pteGhZNqQSKrR/oMCTxgBwG40hen/ECY=;
+	b=xx1ZsBKgfsdHU8iLUXxzSkO+8l0C6OP6VgN+dyo2vRRrp94JTFxg0UVmeH7OflFKcYYB
+	 LFuw65mOP9vUiCOAqN1xEKTV738IsPh/FOjiUfIscvJ0ON1wTDnUXN2SkEptIiEdtfL0G
+	 hpknxMB3m+Dn60NZxs8efyjqp9ZES1hjeXil/P2WHP9LrPShGTKQX0h9D/KzZxwwu7f4Q
+	 vdlHwZA+mKPQsCJGd9RLuAQ8LEOjthKN9sV+p/iPDQDC4RJlIQoY1e1klX71NTbRYDCZV
+	 fz5hJag68vQ22MOOt1LUzXljgluDQ7yJ53iAafDieY3ZS89v4YzT+xB3rGw0Ndd0+dQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UcC6fvOA;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=W0pjgows;
+	arc=none smtp.remote-ip=80.241.56.171
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66059606A31B;
-	Sun, 25 Oct 2026 23:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8FE606A329;
+	Mon, 26 Oct 2026 00:21:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD8FE606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UcC6fvOA
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3934E1F01825;
-	Sun, 25 Oct 2026 23:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792972140;
-	bh=mezoK2VZHuQsu7p6myHJ5EdzM1VQCFQnX3rSyq9jwJw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=UcC6fvOAeuddlpGwwm5HvyA0ve7BfGvTmFrXzAT4C5WxFJpGVIz3B021hWyrby6tp
-	 L85l/hn0qFp1jD9XG3iguON0YmZO1g3uWocCLCzBpmT3cknt1vosg4T9LMKLJJpJQ/
-	 Dt7EXHSkkLn6BRz5yGMiDw9NMh2LujLU/XdppFQhdt62nBM6qO2xccg/XQq+7pWgud
-	 upvH847HUjEn/W9XbHZJU9gxaH11oJ1sq+jTUpk4rLrqqfuC1IkmH2FLvYpc2unCEi
-	 Vd/d7JxZRNNk4lJE7JvZmuUvIVkUE7siywxv6ammW6TR3zendxtCD93Bddj58VygfK
-	 GAwrtUJuLNE/w==
-Date: Sun, 25 Oct 2026 23:48:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>, Cosmin Tanislav
- <cosmin-gabriel.tanislav.xa@renesas.com>, Andy Shevchenko
- <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Prabhakar
- <prabhakar.csengg+renesas@gmail.com>, Biju Das
- <biju.das.jz@bp.renesas.com>, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 8/8] iio: adc: rzt2h: Add support for RZ/V2H(P) SoC
-Message-ID: <20261025234850.41bc8f15@jic23-hlaptop>
-In-Reply-To: <atyKo0pTYZyt5XJc@ashevche-desk.local>
-References: <20261023175919.160103-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<20261023175919.160103-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<atyKo0pTYZyt5XJc@ashevche-desk.local>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=W0pjgows
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4jCZ795nlXzMlLg;
+	Mon, 26 Oct 2026 01:21:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1792974101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wr0kFOMxYl9pteGhZNqQSKrR/oMCTxgBwG40hen/ECY=;
+	b=W0pjgowsa19X+yxHDoKEjSezGjQsIi0oMxWMJvMU87WOwYrlD0u0aT4ji32aW8aRqll2Gc
+	OUhUFBufvWO0Owy0fPlMd9lh2c42Ni63JZ7Ciy1nmpHQLGtR/rBM7hh7ANfvIIWmMYsYPh
+	NfVJyMDK7rPEcVYbAGE4zd38pgQYCY7wRxqJpcECREZ1tYUI0VWes9gWJuEA3TLxA52TlZ
+	/YWGYyJiO8++utmS8YrmvRwA6BPJhKxhFuMRajG6UAPdexfZLsqQPkuxucO/SgGRz//LdD
+	IrlrWF5n1+SpXSebcSMBr194ijNKNBYwtwsbooZu3AXr/I6BGaOQ7InAKvHenw==
+Message-ID: <be205518-ba8d-486f-b603-1d52321edc1a@mailbox.org>
+Date: Mon, 26 Oct 2026 01:21:39 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -73,72 +62,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/2] usb: dwc3: dwc3-generic-plat: Add Renesas R-Car
+ Gen5 DWC3 xHCI USB controller glue
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Thanh Quan <thanh.quan.xn@renesas.com>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+References: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
+ <20260903213031.314473-2-marek.vasut+renesas@mailbox.org>
+ <aptP39nVZPFLgekY@vbox>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <aptP39nVZPFLgekY@vbox>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 52bd3d68fc0077169a6
+X-MBO-RS-META: 38abrunqgixa6dfgajjwr5tpxqwfm8xk
 
-On Sat, 24 Oct 2026 13:38:27 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+On 9/5/26 1:10 AM, Thinh Nguyen wrote:
+> On Thu, Sep 03, 2026, Marek Vasut wrote:
+>> From: Thanh Quan <thanh.quan.xn@renesas.com>
+>>
+>> The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
+>> controller with glue logic wrapper around them. Extend the generic
+>> DWC3 platform driver with Renesas R-Car Gen5 glue logic specifics.
+>>
+>> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
+>> Co-developed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-> On Fri, Oct 23, 2026 at 06:59:19PM +0100, Prabhakar wrote:
-> 
-> > Add support for the ADC found on the Renesas RZ/V2H(P) SoC, which shares
-> > the RZ/T2H ADC IP but differs in channel count, sampling, calibration and
-> > resolution support.
-> > 
-> > The RZ/V2H(P) ADC provides 8 channels, has a fixed conversion time of
-> > 20 ADCLK cycles, does not support calibration, and supports selectable
-> > 12-bit and 8-bit conversion resolution.
-> > 
-> > Expose the fixed sampling frequency as a read-only attribute and allow
-> > the conversion resolution to be changed through the scale attribute.
-> > Use extended scan types so the reported scan type follows the selected
-> > resolution, and prevent resolution changes while buffered capture is
-> > active.  
-> 
-> ...
-> 
-> > +static int rzt2h_adc_write_scale(struct iio_dev *indio_dev,
-> > +				 struct iio_chan_spec const *chan,
-> > +				 int val, int val2)
-> > +{
-> > +	struct rzt2h_adc *adc = iio_priv(indio_dev);
-> > +	u64 req_scale, scale;
-> > +	unsigned int i;
-> > +
-> > +	if (!(adc->chip_info->features & RZT2H_ADC_FEATURE_RES_SELECT))
-> > +		return -EINVAL;
-> > +
-> > +	req_scale = mul_u32_u32(val, NANO) + val2;  
-> 
-> But what's wrong with the simple 1ULL * val * NANO?
-> 
-> > +	for (i = 0; i < chan->num_ext_scan_type; i++) {
-> > +		scale = mul_u32_u32(RZT2H_ADC_VREF_mV, NANO) >>  
-> 
-> Similar Q.
+[...]
 
-Patch on top please - I might squash it with original.
-
-Thanks,
-
-Jonathan
-
+>>   static const struct of_device_id dwc3_generic_of_match[] = {
+>>   	{ .compatible = "spacemit,k1-dwc3", &spacemit_k1_dwc3},
+>>   	{ .compatible = "spacemit,k3-dwc3", },
+>>   	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
+>>   	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
+>> +	{ .compatible = "renesas,rcar-gen5-dwc3", &renesas_rcar_gen5_dwc3},
+>>   	{ .compatible = "starfive,jhb100-dwc3", },
+>>   	{ /* sentinel */ }
+>>   };
+>> -- 
+>> 2.53.0
+>>
 > 
-> > +			chan->ext_scan_type[i].realbits;
-> > +		if (scale == req_scale)
-> > +			break;
-> > +	}
-> > +	if (i == chan->num_ext_scan_type)
-> > +		return -EINVAL;
-> > +
-> > +	/* The scan type changes with the resolution. */
-> > +	IIO_DEV_ACQUIRE_DIRECT_MODE(indio_dev, claim);
-> > +	if (IIO_DEV_ACQUIRE_FAILED(claim))
-> > +		return -EBUSY;
-> > +
-> > +	adc->resolution = i;
-> > +
-> > +	return 0;
-> > +}  
-> 
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Hello everyone,
 
+could these two patches possibly be picked up ? They should have all the 
+necessary RB tags for about a month now.
+
+Thank you !
+
+(yes, I know everyone is flooded by emails recently, I apologize for 
+making this worse for you)
