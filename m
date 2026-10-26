@@ -1,64 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.152
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792985318;
-	b=mTBYHpiO+FxeEjr6YiLqdBpR9qecdZeZPTw60nY/9eNJYK3OSoMg6ciLXM3X/3510Eo8
-	 aSwf9rLJIXDKu/xacEQszl4znodRsmUbn8rnLVkWNtw3Q8iDB1UTEycwYHCh5BjxZkdmn
-	 KdNgiFEWVy2Yqspv4IbZkWb9RoZY49brHFzLehGE6ri6RHXHNFycAFCw1meSH0E1xP5ih
-	 dzGR5s96qTCkTDzAVAQK5s0JoLQu2r54Kg1fdRbW5a4gqmZoO8lJIKmHMIVdHNQ7+8IsR
-	 MoElc15lyDZaHdZ5pS65gfnHHRIvdrDu+dZocjw3J9oKVRbkiQp07PifvUtNqTXimvg==
+	t=1792992936;
+	b=RYDTD63Htv5gjh5Oc2QfgdjyadSgBiq1OZbBoykqcDnpROt0MdaO5FQ16EMUmAFfH+Wp
+	 8eQdD3MkE0cpDaxoXO3M9SG68qpE7tZvIgIrUNrv62S0cl5QRdN03w+Wn/WBXG9uH7dZ6
+	 HRN2TSrm/PfDwcXw+rlQgp5sbReJUM7My9dQp8kBxO17SBdMkBA/HTh0akyNpXzZm9G/G
+	 ndSqzPgEIUPKOOsMusZ30YQqdlmHLWdz/R3PoO7SzkvRDb+u32YMUyWNcMHxfI7l1iQQ3
+	 ZQnV30D+dOKh+jQMbsmBj5odqsdeva5AS92zk/ucLRo3Taqtyjdkim6Etkh4AoukjJQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792985318;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=IBTIDqwOl1+d46ImoEeLOzyLK0EFe7V3OxFlPnB6uyI=;
-	b=oU4t2yjgB+n2sF00RcUp0+Yh4lyuQ4mlTqe1ofgBiwr2EvzHhGZnL01V3vYupVt9TWdj
-	 hGbmTumc5Q6gtI/UFH872Es4fu5IIPjE/s12Jsy+iP5571q0lLH3Jg1EeE2tSbZ9SeG5l
-	 WWVtDdCSSIH3H49p8M0JZWs8bc1xUpZHzSv14EmSiEitP4F6VXd27m77b/bTHQRN0lS33
-	 m3yPyY7uJT960GEWu+iCMSAsgtZGtal8+LIeIAvvCRZWGABSz84SMSQS1z4oS3CPcRuHd
-	 RRnf4MvpUsHmzG2Et/B5TpRXaMme17FMpHWXbJXi8wWq7caCfkfWqImocx38irGR6qw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792992936;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
+	bh=xK2Yoj5Thgad4mvdaQ+MAFsyfOOZz37JLZyMZhNEMzI=;
+	b=uhwVDjGRKG+1wdCSms+AJ/C1PCcHm7+4BNE6azez4MuQun+/WwUrby2EsJKo3y/HN+Tw
+	 685RwgLxXRyhnGZ9e5OQRfHZFAqecBICVHcmZo0dGhwi9oK9K5GedRX0Qp0j6Djraf4VU
+	 QLzNtgsl8/HDq+JFvYkBK3GceZPI43ntDa0k4Sdl1FJ1gkFAsul4bormdviCyXiqN6bY1
+	 9TfjtVVY1C7sU1DOh3vfkbiue651Fr1q15RH6E3B0vikw6eIcTEPABCQb4zwKeDzPZIvG
+	 EfrZYEhlWqJVNXfOAnfRPQsdifPt76yYis8yDr8mcIL1RPUjcw4M5IHw7FXWrks0Qew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nPpLnzG0;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=WURGT8vB;
+	arc=none smtp.remote-ip=80.241.56.152
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2942606A31A;
-	Mon, 26 Oct 2026 03:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AB3606A31D;
+	Mon, 26 Oct 2026 05:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09AB3606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nPpLnzG0
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812891F01825;
-	Mon, 26 Oct 2026 03:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792985317;
-	bh=IBTIDqwOl1+d46ImoEeLOzyLK0EFe7V3OxFlPnB6uyI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=nPpLnzG0MOXaR8f1nQhOyTOlgMuzh7aXsnVxXR0uhdNrsOBTte6gH3getgjIz0oyI
-	 WVF8aKXSvc9K5gLKNDTk4ky9/dOVv4K10LXUJaEThTDxW3aciLHoGHBGJXyuMRkl9r
-	 hZcL1+YZEV1/K6FaTDFzJuRkvoEkutu1FuOenRmErIFMgygnSjqe6Ms6Gk+vI9glJL
-	 anscKchc6T3flijFN02keZHU4K4NfSs23bz+gbOqmEF3TTIce3yxaSrLHSn1XH3Geu
-	 cNDH3/ejrSZ7wafGCn/RG2FcV24Ab3ggxG4pVx/7C1Z6vESj9jqRGrK7otvnMyq9VB
-	 URPpBxMapQxVA==
-Date: Mon, 26 Oct 2026 03:28:31 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Brian Norris <briannorris@chromium.org>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson
- <ulfh@kernel.org>, linux-pm@vger.kernel.org, Andy Shevchenko
- <andy@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Marek Vasut
- <marek.vasut+renesas@mailbox.org>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 06/17] iio: adc: rcar-gyroadc: Discard
- pm_runtime_put_autosuspend() return values
-Message-ID: <20261026032831.358af9a6@jic23-hlaptop>
-In-Reply-To: <CAMuHMdWNuVOnn9KwYuRm5TYsMEf362V_4fSwQGp3fOfR_i7jkg@mail.gmail.com>
-References: <20261021235818.3059519-1-briannorris@chromium.org>
-	<20261021165858.v2.6.Ia4649c7263a5733426a8778ac4b2dc459f3ffef6@changeid>
-	<CAMuHMdWNuVOnn9KwYuRm5TYsMEf362V_4fSwQGp3fOfR_i7jkg@mail.gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=WURGT8vB
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4jCj5B3LFhzKn8w;
+	Mon, 26 Oct 2026 06:35:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1792992926;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xK2Yoj5Thgad4mvdaQ+MAFsyfOOZz37JLZyMZhNEMzI=;
+	b=WURGT8vB+fqRYGWtm4M/rzXv0f/1gr3F1ko9okNFa0twOEjXi/WAhdb3AEKfHJJQ54RiEA
+	irQx8Qd+84rJ4oxWvS9Rfch3fYZeDQ2b7xvuBp4v0udh1ygfZ3WEQNjR4vrXa0BbwCeS+G
+	E9rtIWInb30xa5LmAJVUmOauW6JRFPpqp81ZtgLQPhYb38VpVPUvDDofxtmH6wQbFc+ned
+	kD/rW+2XmExHj3aV2bLBWyCBQY7zwmK8GywKRNZYuukCO0pX+utEEngeMICg5ImuqdUljW
+	d3ZrJ/JBP4cv52yNWcuQELz81UzbmO83QrLDKHtaiaDmn3BOr/YCA4OB+Zjmxw==
+Message-ID: <1d48649e-cf7d-421b-bcd9-3a896064375c@mailbox.org>
+Date: Mon, 26 Oct 2026 06:35:09 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -68,37 +62,86 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: renesas: spider: Add overlay for PCIe ch0
+ endpoint mode
+To: Koichiro Den <den@valinux.co.jp>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20261022082113.3163666-1-den@valinux.co.jp>
+ <4c0b2b15-7e5f-4dc1-bf49-c762de48853e@mailbox.org>
+ <yxguu4obyspgkq5f2coa6kjrnxjeij3yduhwd4qd4gpamw25fp@quii5c75uxhn>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <yxguu4obyspgkq5f2coa6kjrnxjeij3yduhwd4qd4gpamw25fp@quii5c75uxhn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: bf3h9ei6sdootpihgza9o6h6rbt6p6u3
+X-MBO-RS-ID: ca93ed98a89a64c447c
 
-On Thu, 22 Oct 2026 11:23:38 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On 10/26/26 4:08 AM, Koichiro Den wrote:
+> On Fri, Oct 23, 2026 at 02:58:38AM +0200, Marek Vasut wrote:
+>> On 10/22/26 10:21 AM, Koichiro Den wrote:
+>>
+>> Hello Den-san,
+>>
+>> [...]
+>>
+>>> +++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-pcie0-ep.dtso
+>>> @@ -0,0 +1,15 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>>> +/*
+>>> + * Copyright (C) 2026 Renesas Electronics Corp.
+>>
+>> Is this header correct ?
+> 
+> I checked with Renesas just in case, and confirmed it is fine.
 
-> On Thu, 22 Oct 2026 at 02:01, Brian Norris <briannorris@chromium.org> wrote:
-> > This driver propagates the return value of pm_runtime_put_autosuspend(),
-> > which is not particularly useful.
-> >
-> > Returning an error code from pm_runtime_put_autosuspend() merely means
-> > that it has not queued up a timer or work item to check whether or not
-> > the device can be suspended and there are many perfectly valid
-> > situations in which that can happen, like after writing "on" to the
-> > device's runtime PM "control" attribute in sysfs for one example.
-> >
-> > For this reason, modify this driver to simply discard the
-> > pm_runtime_put_autosuspend() return value.
-> >
-> > This will facilitate a planned change of the
-> > pm_runtime_put_autosuspend() return type to void in the future, similar
-> > to commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
-> > type to void").
-> >
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>  
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Applied.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Thank you for checking.
 
+>> Would it be possible to include a brief "example usage" comment in the
+>> header ? An example of such a comment is available in e.g.
+>> arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk-fan-argon40.dtso "Example
+>> usage:" . If this would be too complicated, then please ignore this request.
+> 
+> I would personally perfer to stay aligned with other in-tree PCIe endpoint
+> overlays (e.g. freescale/imx*, rockchip/*, ti/k3-*) rather than adding
+> fan/HAT-style examples here.
+> 
+> The typical (long-standing) usage would just be the standard configfs steps for
+> pci-epf-test (documented in Documentation/PCI/endpoint/pci-test-howto.rst)
+
+How about adding modified form of this ^ sentence into the header ?
+(please see below)
+
+> , so I
+> suspect duplicating those generic instructions in this file might not add much
+> value.
+> 
+> That said, keeping the header completely bare might look too terse.
+> How about something like this:
+> 
+>    // SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>    /*
+>     * DT Overlay for enabling PCIe channel 0 in Endpoint Configuration with the
+>     * R-Car S4-8 Spider board.
+>     *
+>     * Copyright (C) 2026 Renesas Electronics Corp.
+
+How about adding this here:
+
+*
+* Please follow the standard configfs steps for pci-epf-test documented in
+* Documentation/PCI/endpoint/pci-test-howto.rst to set the endpoint up.
+
+This would steer users toward the documentation. What do you think ?
+
+[...]
+
+-- 
+Best regards,
+Marek Vasut
