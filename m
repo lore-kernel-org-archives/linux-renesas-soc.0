@@ -1,97 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.143
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792996796;
-	b=tNzKzZPFRcIEXkoX+IDbT/8NCqdf+JxTO3fOxOwcubg2fHLIj+xIzZUb2jwTi8RG9iX0
-	 S5vhq3k+eWolOxxl1pI53hjxWOm8yw3aXKODMki+tOELzAqmucHdyi7JpGM5R+9cCilL7
-	 06uhRNBMjMZ++acw3/jgBemykMltyfNCeysuNZzEpuEKXpEjyNIJBYvNdB1BtQ2boi4L4
-	 B0yY89gMwaDttQjc3nl0pHj+jzLD4RzRxYyhe3Cm6krmrNeUEXsyx7UeB20Z4UhJLIxhl
-	 BQOI2F+T5WMkaKOzcIQPvnXWhKbeeoovl0ZIOWZAh8jYfvNY12pkaLNnjXI9H25Tb0Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792996796;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:Content-Transfer-Encoding:Content-Type:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=QuTAB/WvGRyPfcIPuN+3aV/aND7R5Ds7Z45qXwbKMgI=;
-	b=s2ed0zbnpT5pp9VKl6UfILsBbO7Q/uvwKa2XBfTYwI0RZZ1pVBe1T3Zlbv7w58p18JT6
-	 f2c5Iqllna4Lpdpt8cdDUIUzIu+J+4S1lvBBNPDHBI0EWB45/0itVdK8TukyD0oSkTjoh
-	 8lTKdkL9SEWkrc3TuIjPsX7qyK6BeCiChBN6cEgiDuBzkN+EgOJHFSO6c4Q4ao1EEH/WK
-	 3Id44IKJU9bxzKz38Wp8riHoCLCPKYxjx1DBuGn4yQ44aInQvJ3+eFzkMSEptkQRmt1y0
-	 6ZQwA7UvZkGr3DX5ifZcmfWHZwm4a/+2H4350KAKlxT42uurmWzdEUsBg5rUnR8wlTg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valinux.co.jp;
-	spf=pass smtp.mailfrom=valinux.co.jp;
-	dkim=pass header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=VvpldK2P;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.143
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020143.outbound.protection.outlook.com [52.101.229.143])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.54
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793004130;
+	b=SNIDhf5ltthcpfpvXSAmu8NbRy3YWsQwo8DZjBLdn9ry7PhdZkuTInngRydJ1Twgf3y3
+	 DvcmlwSr6dRFiqodEx4jZBG46gWASooXfl5DDGczYz1znL9GpjYka7S1gUqLvq8Aiuo7q
+	 bjXUJfGbelBo8vIVzsE3qbe6WR1vxfRsTmXUZYEY3XePwIdHiis+FIvU6s7rJnvNXzv5d
+	 aNvZHnu52WlAOnP7f5+RRAHkaXS37u0TuMAQANkwsGcP+ABLqDQGuwRl9lFuG2cpepspd
+	 zyzWcUdmlifGDrA0nJg1KtjnOK5Ao67tp/YxwVHRnTwdwNCaUTgwCU32++9p2Wci4Bw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793004130;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=qzSDOlgy7IPmTrnuWw7M56rTWdyjH9dWqupudfVxyvk=;
+	b=B67X1/t6ovJYHBOgg5EMPRXKQ5YZYa7rJfk4a1flBLMPI8XH3ym9qxkFhc25jHPWuSOn
+	 0bX8yod1pgjMC9ArP2/sPcB1Q2mf8P6Q/G/JFaPl6ZDnQ72YQ60k3btAc3/NWNUpBtImY
+	 ubgCzUSyF6V8rpyLDXqYiIAE/hR4puXvdrMZkE4l48mal9kwEBM9HG4CnDd8mi7eZ5N/h
+	 zofkBn0sHqx9yxHCfd5lZp4YqRv/XuGXj66650HcYGuNoh4ueKO8oOhunmRGB9p8oJgkR
+	 Yiq6PAo/PL6DbEozcY5Shs/jdX/OsdsE1OJ3hjvPwARYzt+PZaMRL0l6VHOCUssvTjw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.222.54
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DEA606A31A;
-	Mon, 26 Oct 2026 06:39:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23DEA606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=VvpldK2P
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Foe8TpA7Gt2LdX7rN1Kw+gtGQ6ZO+rdPQzYgdxsgm+aKqYLjXb07I5SNSUM3C5SY0CLhNsugYSjkdydEn3TDf8bmiMuZNrUCPN3gEIdkkkvzeP808erIhXK64P+10TllxLBjfjqSgdfSAAeyaXm2VsPtb//zizX30lP2S4808GTSxnjbfgWqxG5OOG8EInKjbUroMD1dTiseWZT1iQUbqzweK0rMHAypjDl5j35QAMm+/pVHRUx3E45dMuZHxWfIXK0n9kOqXTK1m1jeTZ/bMqDHWhdw1zrU/X5mhvjCJPg4+dAaCHUgFMK2701ajyfi8D/s3Zl0Rjob+X4bCqreLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QuTAB/WvGRyPfcIPuN+3aV/aND7R5Ds7Z45qXwbKMgI=;
- b=DyD0ZzAluC5Q8HO1R66xNyEC0h8V2njf89GBZ2TKDvsGM0k5JtcnBPtnI+zI31k4e3etEAu5zyFeh/Dmh8vrUhEdAjJs6g0Pzi+h25DTRSpwE7+eWcrDEZP9nt9UW/n9jx4u9yB2hGpuY5GkfnpYtKYV1MVmf5kQsZjT8FZCNAM5Uf9YyxssuNDhK05HESk6tduC/rP4O7iyhFWcWlQh+xYfBxHdcPaiId176yJyFxJ3wmKHZvK+kdnd7RiM/MZZ5gE3AZ+XcqTyJu18tPabpCl6SpMecU5zyh8Os9tgCCMayRIzIpKaA2RR6tdmrxyCp5M5wqo8rLyuvWTo3k8vkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QuTAB/WvGRyPfcIPuN+3aV/aND7R5Ds7Z45qXwbKMgI=;
- b=VvpldK2PVHhds9cYPHOZWSqAvl4NPhgzV2zg96fwwdFEpqe68GplpyUllgVrR4VCzfoVNLxFtFXzByF8DnZxc+uBQgrK0aBybqsjXUCPeG/Ua3gCZAPPicjDDm2ahShS5ch8M31Utft714aZLBlIiqA2f0vRh31G3A+tqGaJiFQ=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:325::11)
- by TY1P286MB3373.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2e2::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Mon, 26 Oct
- 2026 06:39:50 +0000
-Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- ([fe80::cce5:2aa8:53f9:dba9]) by TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- ([fe80::cce5:2aa8:53f9:dba9%5]) with mapi id 15.21.0546.021; Mon, 26 Oct 2026
- 06:39:50 +0000
-From: Koichiro Den <den@valinux.co.jp>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: renesas: spider: Add overlay for PCIe ch0 endpoint mode
-Date: Mon, 26 Oct 2026 15:39:41 +0900
-Message-ID: <20261026063942.3173469-1-den@valinux.co.jp>
-X-Mailer: git-send-email 2.54.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0228.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::7) To TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:325::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C1F606A31D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 08:42:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F3C1F606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-98ff53fb739so1721756241.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 01:42:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793004129; x=1793608929;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=qzSDOlgy7IPmTrnuWw7M56rTWdyjH9dWqupudfVxyvk=;
+        b=n68GcU0cdcX4o0RM0kjDsrUKQWq1L0h36yp+V/G9reEo8ygjUPrW4T6UrFCxILI4Of
+         EkV2NDzp82I74AGHK8YtCQW3NG8C7oC1oDBNQXpnplMpdpEk3MpOUR97L1/RkDqnI4vM
+         9/3b6kP3Zwa8beqPp7kqxjFbZsMGLa+81DCkPx3MOQypOy59gS1GDypz4Ci8tCnMwNi/
+         rjEPpCIf9VhSujYmCI5opt7EU7E1CKGzmI5iXyNEbFEVYzpPWbhbC3r1yylQthHohkwi
+         yP1q10oGlqP6Ar8thVaDMJ6Vd2RR2cK+rBtnd9Q26cLPu3BfYLnaxxiUVZdfN/jwObZx
+         N8wA==
+X-Forwarded-Encrypted: i=1; AKwUvBzbcaShKwgaA4bv3e71j6N9taVK346DJY4MIgAd6BvPctQof7faKrKvueYT1zB7AeTHnZq6scdklD/3HON6nhaLDg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLcex5loSwaQUWAbV7Mr89xqNvAyqfBK4pn4ZufVCZplEeSc7ad
+	adXnJYXTwm62f5MB62+hKUHZJKTPwVeMK6Qu1cnF+og4afahTT4kv0BfP9ZOzNI8
+X-Gm-Gg: AYBFou347qhwUobtOJKbw150Jm/OhC+96oeAWCn/dHMMd1Q7JqkMdfJ+qFydRbLyFgW
+	nzcx0m07gtM1L+/Yl7MOAtRvIfysRASQD4lwv3vUCEl/pmjMFtZdNZ1s7xp51J3KzZ+sLqMxyBB
+	Wz/zL+AccEAS9AeARgMYGDc9TXHMbw8i90a/lUtrze7k6jhu2se+Fkip0wl98aChMS6u3OW7LP0
+	c/hFKMCb/YiNmoI5p9SIO3em2DH321JCzEUbOrUxWzq2gN/zh7X4niAkYb1qYUfHWEJUfVvb8tn
+	Kk2zzBmQWBubsKN3Z1uOsoK+W5z25AGFXCIbg5OKFc0zmRhLmfZVkztBXQ1PrUced3yG+g6A3m7
+	p1dxEfpzBGttaIWbZ/+9HRHGf0Cu2l3YcFwVskNtispZVbigTxF9/9HBf/jwO4qVlpWS88VNZNq
+	tbFxX+KXqgkrrCqR0DwQaWTsrLhmHRsDQcgiWW55C5WZnOizwj/Gez301pBpdJNPm+y0QTL8P9t
+	Xl/qksrY8sVNpok/JjRCXmGZCk756aOsX1T1lHFWUUtrNBp6kZFABoXOtdDbWzGqtusxyLTyA/x
+	4+ROvz8jKlLH2SyO6Q==
+X-Received: by 2002:a05:6102:5708:b0:7cc:1274:aba3 with SMTP id ada2fe7eead31-7ce5cdcf3b9mr1705399137.22.1793004129004;
+        Mon, 26 Oct 2026 01:42:09 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9910e6cfb52sm7646643241.2.2026.10.26.01.42.08
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Oct 2026 01:42:08 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-98fea7e52b7so1724611241.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Oct 2026 01:42:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxzxSh+A9prHtpo+/EhuWAj6WPfcNkvEnj3Zyu2rQh0R7qGdDTfdOnE+P3P/iEA4ouSMD844gVQT48XfIrx84t7JQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:4b1b:b0:7c3:ac79:9b09 with SMTP id
+ ada2fe7eead31-7ce5ce62789mr1802171137.30.1793004127932; Mon, 26 Oct 2026
+ 01:42:07 -0700 (PDT)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -101,119 +80,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY7P286MB6866:EE_|TY1P286MB3373:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a0ce2d1-914c-48eb-6fcd-08df332bef67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|10070799003|23010399003|366016|1800799024|56012099006|261021121427099003|261021135927099003|261022075727099003|261009223027099003|260925021911599003|260925021311599003|260925022911599003|10067099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	EmLdNP+oKqj9gduDNkGe8+K4GkgF4IXc77VUP7jfQ2cBUzpFb7fqDIJ31rtMPSC3HH3mARkE0J7gIu9WyCp0hrQYNRnTBKIG16O6scHAuiYo/bzzVWlZrYuqxLf0q1DWV41sLuFMwTJB7suX6AXaFx820d5q0rtOOLAmU007B+XeI6kRGiTKcoWik7vUHM4Z7mh1EKDEq93nl1fl8RAKM6OCvWPgiOAFrVaiv6kH//DAg0NTEs/kwYciuGW3TN6p/9v8WAPKG+Uz5iGSj00sTW9KbB/JllJVHrp4vCTrS5MYMk4sl7BkoZw3nFNYjUbE+P+not9SYCEcUIz+injENTkntTNgvkdwPOKoZCV+NMjM4EGECBuGQt+snkUOG8IZBsyNRER3AWnk+QMbOxvEcVj/CD4rvsIid6e6BLIYQxfSvH5XdlY4ASMLTp0RokLOqMLLTXbHKmveHWkomxFOH1IImhXushR434of/QGX+ly0y4BcnuO27KsP4AgRqctOvkFQKfsIHxWqNnxX2PDU+eLNIFfGS0bAY/EQDlHK0nip0sAJjla0JUeuaUOkcHyxeNwxMVZPVFWAfIzidIjxdcS07kBAyN87fBQk3AsgBZ0p/MCoBxvZ0PGZTmc1+GwA
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(23010399003)(366016)(1800799024)(56012099006)(261021121427099003)(261021135927099003)(261022075727099003)(261009223027099003)(260925021911599003)(260925021311599003)(260925022911599003)(10067099003)(18002099003)(6133799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fqreoWvBHc7l61boAhABLcr8KBvoxmSJET0w6rA05TK6MXbBS+zl+D2fBb+o?=
- =?us-ascii?Q?l01DWqplFBXM0tVIzCPdHac6tp8/6M7RqPnwqUrM/93zgtZBndq7YivEBjlb?=
- =?us-ascii?Q?FtNAoxkWxdeWUMbnwAkJuUeYQ0oRL267EPRvcVBiRlUOcB+XPeCDPzo8F1r9?=
- =?us-ascii?Q?8xBPfMX1tYTkpZf+DuQNWRkzqU//zatDNb2nyhpYzdiJdKjrqGl6lNpaCp+l?=
- =?us-ascii?Q?lqX1DTei85D0I1XZvvIY50eQhJKyK/E7AzJjwO5oxD0w9haIQjZGQ67TfIN8?=
- =?us-ascii?Q?812ye8EmJbUY2DzpgYov0GXlzQ7+Lxobr7R3RxPokkXvv0GnEx4oAK0KR4GW?=
- =?us-ascii?Q?1VJjIivXSkaa3CRHpZyL0G0Eko6yL0Ddc1kObiUbwqXuiI56AiH+PnOtVoYI?=
- =?us-ascii?Q?Iakne8swpp1YYfgwY5hwMCDPl8q7FhMqJbXxvp9wa8Ujj3jFE93hFwxaxdda?=
- =?us-ascii?Q?XnDZcv5VawFK1vkg35RHz/KdeQSW6k6tcgvnbBzj5+kyrgL0tp4E4crRAiDI?=
- =?us-ascii?Q?fmIKkxGPyk9RWWIQP9ZN8TPsvQLjfzwyF7hUfsaWmjJsssyfvb7Y1vhAX99y?=
- =?us-ascii?Q?vpB4ErzkW/66EdtDf3oQduSJ65AN7Hzq95ajYZWOy5cl9KpynY8lMbnUmVwi?=
- =?us-ascii?Q?fv3NC58pP2/M3oqtnsrREloEHvsJ2k7ewir9kFi1ajDKc2I2eXBdviNQqh6R?=
- =?us-ascii?Q?McN3yytdWX5M72N609wVjcQuhyeZH4eA1DV240MeB+x+htWISj9I/BsMIoh/?=
- =?us-ascii?Q?6Zd/8zGw3XfzhPXyunjldg0qgnXhIANFjhR+CCT9e9MFHhPTF9tX+6Z4mvgR?=
- =?us-ascii?Q?ZxvgzR2zsNQyf3ShNjBrO0oP5B2ki62wLVG9T/zCOkEXHpTyvZFg5SjldEHb?=
- =?us-ascii?Q?CSOKqPyEtV9gTMBddRhg4X/pyJTsLeSs+QolMnnmSfnCMrW7era27nF4VFVi?=
- =?us-ascii?Q?GQR2Y3KlcYCDG7mM8/tVgJ6a1YxACL5pSl+3+2iuI0thPNaatIcPOq48PcaZ?=
- =?us-ascii?Q?ntQCC0ubDRXuZE8SJO8lJwxD7gSE3izmqwqoky0BB7n5ueOlI98khLmXgVPj?=
- =?us-ascii?Q?J1MRsESetP9QpvBXNFB9wKDL0WfRvpMsUQvPu7ArpQRZOuhlmsNutwBuNB2A?=
- =?us-ascii?Q?SKVXKd+NkdTBREqArgqqP8QerXBZ1WaJL8k9Amuf3rvVtuXmtCp8wFJJQgvE?=
- =?us-ascii?Q?Jctbp6zGDAzWAgVIlE2PiPta1iaGKa7otsHuhyPHAucIyFP9nWsnNVjnw8Uw?=
- =?us-ascii?Q?0o5IwKOnJ+qosf/G5SicheciRhHTYsQAWcUTuS9r3gu26xOWjcF6/6ISfWmu?=
- =?us-ascii?Q?4uLi3Qipbre7Ha0KK81zFxM9ZzOQVewZgKasnH3iuFRv/ZWo5J8mvq6i9iek?=
- =?us-ascii?Q?PS1+V2VwGYHvXaImddnXig8STJPK4+nmyoiio/UP7RsXq5RepBiNeu8pwnyJ?=
- =?us-ascii?Q?zw/s1AugqGsf2NNhghKPspVI+syJRShtFU+ClLXscVr6+oAP44dd0hxo/dl3?=
- =?us-ascii?Q?ggfghh2MdAVnvz4R64wn11U4wPLVkHk5j/iBtIjHLhZ6sHJRRMjUKz+7A4UA?=
- =?us-ascii?Q?rES/eRAbGnj4AMJ2imQka1oXEXPaqDeN9q/XeYCHtaALU6eSrUQoMxNrVyiZ?=
- =?us-ascii?Q?shDeYf5fiQsvqteuRBHyQ/xkJX0ArahCErBxZ8eNIjdZEX7WSHfCQsXX6tvE?=
- =?us-ascii?Q?IjlbZHwH+W8MIQEiwHicUETgrGcnCO3oztPsYT3klTrL97N3ObjTn/O2Yy1f?=
- =?us-ascii?Q?V+rm+jelwGiiEew2CNZqVZ/V1tkz2XO+TSoLtaqwmLDa16q3jiui?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a0ce2d1-914c-48eb-6fcd-08df332bef67
-X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2026 06:39:50.4389
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dlScNdHS10sEWG648sER5gnm2f4AnbQSEPhYkVYz4/NSy3nizs39B/dLvP6mkO4TL+RJsV+UMqaxb+y11KC9fA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1P286MB3373
+References: <20261017233416.47b09ffff48f.i2c-sh-mobile@gmail.com> <atvUWb-PzouZzL5D@zenone.zhora.eu>
+In-Reply-To: <atvUWb-PzouZzL5D@zenone.zhora.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Oct 2026 09:41:56 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXnJqADrLwGHdcdbAF7LTmcevhhXeuiDvThjjnnmdg-eg@mail.gmail.com>
+X-Gm-Features: AclHuK-70od6XOcmvqKR7Sl7Q5xoAjafCFmOmm0SnnlxPySBXQ6b06PhHFeSvys
+Message-ID: <CAMuHMdXnJqADrLwGHdcdbAF7LTmcevhhXeuiDvThjjnnmdg-eg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: sh_mobile: request IRQs after mapping registers
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Myeonghun Pak <mhun512@gmail.com>, wsa+renesas@sang-engineering.com, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ae878000@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-PCIe channel 0 on the R-Car S4-8 Spider board can work either as a Root
-Complex (the default) or as an Endpoint. Add an overlay that disables
-the RC node and enables the EP node, to let it work in EP mode.
+On Sat, 24 Oct 2026 at 00:09, Andi Shyti <andi.shyti@kernel.org> wrote:
+> On Sat, Oct 17, 2026 at 11:35:16PM -0400, Myeonghun Pak wrote:
+> > The managed IRQ handlers are acquired before the managed register
+> > mapping, so devres unmaps the registers before freeing the IRQs. A
+> > transfer wakes its waiter before the ISR's final register read, and
+> > unregistering the adapter does not synchronize these IRQs. An in-flight
+> > handler can therefore still access the mapping when it is released
+> > during driver detach.
+> >
+> > With forced-threaded IRQs, the handler can be preempted after waking the
+> > transfer waiter and before its final ICSR read.
+> >
+> > Map the registers before requesting the IRQs so that managed cleanup
+> > frees and synchronizes all handlers before unmapping their registers.
+> > Keep IRQs available while unregistering the adapter because client
+> > removal may perform transfers.
+> >
+> > This issue was identified as part of our ongoing research while
+> > reviewing kernel code.
+> >
+> > Fixes: 7fe8a9993337 ("i2c: sh_mobile: devm conversion, irq setup")
+>
+> Normally, I don't like taking fixes that don't address real
+> issues, especially speculative AI-generated fixes.
+>
+> However, this looks like a harmless reordering that seems
+> correct, although the issue it addresses is rather
+> hypothetical.
+>
+> I'll remove the Fixes: tag, since this is purely speculative,
+> and apply the patch to i2c/i2c.
 
-Signed-off-by: Koichiro Den <den@valinux.co.jp>
----
-Changes in v2:
-  - Polish the header (Marek)
-  - Link to v1: https://lore.kernel.org/r/20261022082113.3163666-1-den@valinux.co.jp/
+FWIW, no issues seen when boot-testing several platforms using
+this driver.
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- arch/arm64/boot/dts/renesas/Makefile          |  3 +++
- .../dts/renesas/r8a779f0-spider-pcie0-ep.dtso | 21 +++++++++++++++++++
- 2 files changed, 24 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779f0-spider-pcie0-ep.dtso
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index c6f3718cd19f..2b0012118287 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -86,6 +86,9 @@ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak-panel-aa104xd12.dtb
- dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
- 
- dtb-$(CONFIG_ARCH_R8A779F0) += r8a779f0-spider.dtb
-+dtb-$(CONFIG_ARCH_R8A779F0) += r8a779f0-spider-pcie0-ep.dtbo
-+r8a779f0-spider-pcie0-ep-dtbs := r8a779f0-spider.dtb r8a779f0-spider-pcie0-ep.dtbo
-+dtb-$(CONFIG_ARCH_R8A779F0) += r8a779f0-spider-pcie0-ep.dtb
- dtb-$(CONFIG_ARCH_R8A779F0) += r8a779f4-s4sk.dtb
- 
- dtb-$(CONFIG_ARCH_R8A779G0) += r8a779g0-white-hawk.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a779f0-spider-pcie0-ep.dtso b/arch/arm64/boot/dts/renesas/r8a779f0-spider-pcie0-ep.dtso
-new file mode 100644
-index 000000000000..cdfc898e44f6
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779f0-spider-pcie0-ep.dtso
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * DT Overlay for enabling PCIe channel 0 in Endpoint Configuration with the
-+ * R-Car S4-8 Spider board.
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ *
-+ * For example, follow the standard configfs steps for pci-epf-test documented
-+ * in Documentation/PCI/endpoint/pci-test-howto.rst to set the endpoint up.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&pciec0 {
-+	status = "disabled";
-+};
-+
-+&pciec0_ep {
-+	status = "okay";
-+};
+                        Geert
 
-base-commit: d99e991749f3b12a3a8b23224725dbc1ca15f6bf
 -- 
-2.54.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
