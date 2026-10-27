@@ -1,118 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.119.170.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793123477;
-	b=fuOLAtFTE594k7oVbmhMrhQ9LNe7BzVqNK3hbAjRroCsxRouSIfAYWCYkWH+r+1ZI43L
-	 zZioTSZGYjkBjGqEjf60qNN9S5YRX2splKO2Uj1LVNn1ItF9c9EPTAzpcX+rEpRPQ2ccT
-	 m5gr2Jqko7Lhahx9gd7hDQPiICJM7XUaZedhOvfT9lBOvDlj0MgFy+4Qxn3AHu2LZGAYE
-	 LuXNSijufHvBa0d2F3GOVClQglw/7K/hpY9YltRcSQODLoSrrkEHLrkILSQUX2DAHANVy
-	 hrSm8R1UsAPIEVUbY1yKPTfSp9w1HD66EEkFA/+xeaQ6k1l/RQcU3BmIAkLE59fj79g==
+	t=1793124090;
+	b=R99eyc064fTyEc1dUo/zOiKwqO1sbDM5sXrcZla+OSaLv64jjhGqqQvyHjaE5fqos5N6
+	 NHigoH5TKTTAMbLc1pctC568/oI+SZ/nJsJF+k0ehG74O+nZ1q89/qCQ91LGpPZfyrjoz
+	 9WMqSseegvSyoL3nH3OGM6O7wc1UFUzIPASVRCJUzw7cSql8TxD59CP9irD3oCNIr7s2H
+	 F/30uxt5JGJbmQGqGLDQ0Y7imelyaTcR2aht3Rmzn9EyeN53/LP6+BqXXdsQeKCQn7vq8
+	 2kUlV1z1Jf7rRRS4r7nX21l2K9uTm6egO5unT2tDU1pU3dKrxwJeHyaFwtGLfHtXWog==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793123477;
-	h=DMARC-Filter:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Autocrypt:Content-Type:Content-Transfer-Encoding:
-	 MIME-Version;
-	bh=M0+JEuJ8OIOjO1vhvMj0G5xuGrApLGUATURHEGMW734=;
-	b=xNTm1E9I6q9v3RoSmDignjMrgj7d4ZX8nsMDOtkQjfg5TEK1tK4QNTgiWS8qmFGrw/j1
-	 WHA2CMmTIsRnUG1nACujDHPpH+XkXxYT5wUgKOmGxRPIfw0aiStSauEd3vwAqQzdHOxis
-	 ybHX5Y46DAd/ENiVjr5mwC3OukI3S/TrqAbi+ffjUVfSgrgvqi3/awEQolz1TAOFtdK82
-	 jdqTDhxCN+0MWPzrXsWbB95Q0OXWyZTtW/v31eJmO4Oe5fIYfk4tAQyn+JJ207Ri6T59T
-	 vwVq7iaeywuhHhI12UIzIy0Gu+O19C2BuWnFgKmpd7Yuq3RLGqurfuhc/drJ52cYn6g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793124090;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=CmaFIcWmgtXdEMcSvFzwqtYSPrJWkBbMkvu/8+xigKU=;
+	b=3d74pvG/0vCThW53ZhMHSaz09DYmhCemeBnh7yJjtAHKdpKceWRGAsJUj9ILUTM0/9tt
+	 bWU65BcIs/PUvecJW/J25/FoAKCYwxIp9jEIy2eIHco+s36B2/BG3EanhmQb5Y/iinXUa
+	 YicMtmQSCgWXjiLSnZY0VntuK9ZYh8qpViLvgQKss0bnRJ6SscQVHsmSmngQm3HCVjCYl
+	 /RJcnVq/1AWUU3b4cplsSzLnadPXgxga6WoR3xUxHADPdifnGl49ASg7x1PJIEXsdvkuN
+	 t+/frrxv6N+teDrlPZKXMbOZFCEQs32FPWLXleIp86xb1AwxUOEFRjUOHfxdvZq3jow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=crapouillou.net;
-	spf=pass smtp.mailfrom=crapouillou.net;
-	arc=none smtp.remote-ip=185.119.170.32
-Received: from aposti.net (aposti.net [185.119.170.32])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="mn/12WVd";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27361606A31A;
-	Tue, 27 Oct 2026 17:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27361606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-Message-ID: <763093e9d22390a36a53fa3f392b49c7b84d09ab.camel@crapouillou.net>
-Subject: Re: [PATCH 05/35] drm/ingenic: use devm_drm_panel_bridge_add()
-From: Paul Cercueil <paul@crapouillou.net>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Douglas Anderson	
- <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jyri Sarha <jyri.sarha@iki.fi>, Tomi
- Valkeinen	 <tomi.valkeinen@ideasonboard.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>,  Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
-	 <luca.ceresoli@bootlin.com>, Marek Vasut <marex@denx.de>, Stefan Agner	
- <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, Sascha Hauer	
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Laurent Pinchart
- <laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen
- <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham	
- <kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven	
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Biju Das	
- <biju.das.jz@bp.renesas.com>, Linus Walleij <linusw@kernel.org>, Sandy
- Huang	 <hjc@rock-chips.com>, Heiko =?ISO-8859-1?Q?St=FCbner?=
- <heiko@sntech.de>,  Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet
- <corbet@lwn.net>, Shuah Khan	 <skhan@linuxfoundation.org>, Randy Dunlap
- <rdunlap@infradead.org>, Inki Dae	 <inki.dae@samsung.com>, Seung-Woo Kim
- <sw0312.kim@samsung.com>, Kyungmin Park	 <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Alison
- Wang	 <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, Yannick
- Fertre	 <yannick.fertre@foss.st.com>, Raphael Gallais-Pou	
- <raphael.gallais-pou@foss.st.com>, Philippe Cornu
- <philippe.cornu@foss.st.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai	
- <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, Thierry Reding	
- <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,  Javier Martinez
- Canillas	 <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>,
- Michael Walle	 <mwalle@kernel.org>, Dario Binacchi
- <dario.binacchi@amarulasolutions.com>,  Jagan Teki <jagan@edgeble.ai>,
- Jianhua Lu <lujianhua000@gmail.com>, Guido =?ISO-8859-1?Q?G=FCnther?=	
- <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, Jerry Han	
- <hanxu5@huaqin.corp-partner.google.com>, Joel Selvaraj <jo@jsfamily.in>, 
- Icenowy Zheng <icenowy@aosc.io>, Michael Trimarchi
- <michael@amarulasolutions.com>, Sumit Semwal	 <sumit.semwal@linaro.org>,
- Casey Connolly <casey.connolly@linaro.org>,  Michael Tretter
- <m.tretter@pengutronix.de>, Cristian Cozzolino
- <cristian_ci@protonmail.com>, Junjie Cao	 <junjie.cao@linux.dev>, Ryan Brue
- <ryanbrue.dev@gmail.com>, Nickolay Goppen	 <setotau@mainlining.org>, Stefan
- Mavrodiev <stefan@olimex.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list	
- <bcm-kernel-feedback-list@broadcom.com>, Robert Chiras
- <robert.chiras@nxp.com>,  Alexander Koskovich	 <akoskovich@pm.me>, Markuss
- Broks <markuss.broks@gmail.com>, Artur Weber	 <aweber.kernel@gmail.com>,
- David Heidelberg <david@ixit.cz>, Dzmitry Sankouski	
- <dsankouski@gmail.com>, Yedaya Katsman <yedaya.ka@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, 	linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, 	linux-rpi-kernel@lists.infradead.org
-Date: Tue, 27 Oct 2026 18:50:55 +0100
-In-Reply-To: <20261026-drm-panel-funcs-v1-5-5e3070a3478f@oss.qualcomm.com>
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
-	 <20261026-drm-panel-funcs-v1-5-5e3070a3478f@oss.qualcomm.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139F1606A31A
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 18:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mn/12WVd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB691F01829
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 18:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793124089;
+	bh=CmaFIcWmgtXdEMcSvFzwqtYSPrJWkBbMkvu/8+xigKU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=mn/12WVdLXfCzXnn1StrpfTD9e6P8OKfUnmtWzsJ6PKRUEo5uag1Ff41fWcldOiXv
+	 RBpkqH8U9OMYFEoyhMNrdvePPx+4LPnRJa9TeQoyuqXujTRpAbf10A9+XB1b6cN85h
+	 wr0tYNxwHdzU5urjAisZgf+hyt/pmYBAEu5An2YnJLGpSpPsgWju2LEn7l089mBEJE
+	 rA95g5SRzrLhQIcE1xSSKEMVUkuCyuHixeNwmJN4H7dtJhZ844ku05hPe0a40s0L2c
+	 m1FpkT/rhJeH0KVbFbuk9fGaC5clCVVWABA2MjaT9F5alEfblV0R1+o5GOMia+rIhj
+	 v2DLKsKj67HyQ==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5bccb867d6fso286360e87.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 11:01:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxITSr5KYddvlsBF1eg7fYSd7mGCLmrThQcTd0n4WjqhZJNgowIltDytxEwQ3XT1nvO6PbNS0a+gAo2osz4Jd3H3w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKdpZRsThVn44nT9lFHvZdpaGqfGPs2FuD9bLi51Trx4lfiImo/
+	KKDo/gnHUlVyd3sOgpTJNT/5veR1OHI7lYW4urssrNQ/1uI5Iz02yMkVzRZe5JHnV+7iPfkPUtn
+	3ImRGt6HLMf1rtSnqnq7yle8C0z6shwE=
+X-Received: by 2002:a05:6512:39c8:b0:5bf:c0ea:5a1c with SMTP id
+ 2adb3069b0e04-5bfcad1ee03mr72369e87.24.1793124088049; Tue, 27 Oct 2026
+ 11:01:28 -0700 (PDT)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -122,45 +59,70 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
+ <20261012-mali-c55-renesas-dts-v4-4-c410e280bf2d@kernel.org>
+ <asz8oEtow_lrUU7K@zed> <CAD++jLnnSLXeYzxonkfnZA3OxLE9Hssma9fHsL=U=NmVn7ZVOg@mail.gmail.com>
+ <atXol9eFjLKxgTpg@zed>
+In-Reply-To: <atXol9eFjLKxgTpg@zed>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 27 Oct 2026 19:01:16 +0100
+X-Gmail-Original-Message-ID: <CAD++jLm5iRKbb6=ZY0r1q_bb-zO3DAe3a7MxdDbpBT3ZU6_z_w@mail.gmail.com>
+X-Gm-Features: AclHuK8HhU9uKCu44e9RLxqd9VqlIg9aSaojLATRz5xTKDcE3D8BqHGd4v82YT0
+Message-ID: <CAD++jLm5iRKbb6=ZY0r1q_bb-zO3DAe3a7MxdDbpBT3ZU6_z_w@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Daniel Scally <dan.scally@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi Jacopo, and Prabhakar,
 
-Le lundi 26 octobre 2026 =C3=A0 13:09 +0200, Dmitry Baryshkov a =C3=A9crit=
-=C2=A0:
-> The connector type passed to devm_drm_panel_bridge_add_typed() has
-> been
-> ignored since commit b7797081ccfe ("drm/panel: embed a drm_bridge
-> into
-> every drm_panel"), the bridge always has the type of the panel.
->=20
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+thanks a lot for your help testing this!
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
+On Mon, Oct 19, 2026 at 12:23=E2=80=AFPM Jacopo Mondi
+<jacopo.mondi@ideasonboard.com> wrote:
 
-Cheers,
--Paul
+> > +       /*
+> > +        * Allow the ISP's 2500-vclk reset recovery time.
+> > +        * 200 us cover the RZ/V2H's documented minimum of 20 MHz.
+> > +        */
+> > +       usleep_range(200, 300);
+> > +
+> >         /* Use "software only" context management. */
+> >         mali_c55_update_bits(mali_c55, MALI_C55_REG_MCU_CONFIG,
+> >                              MALI_C55_REG_MCU_CONFIG_OVERRIDE_MASK, 0x0=
+1);
+> >
+> > When we now retrieve the reset and assert it, it matters that
+> > we give the hardware time to recover. (If this works I will make
+> > a separate patch.)
+>
+> Unfortunately this doesn't help
 
-> ---
-> =C2=A0drivers/gpu/drm/ingenic/ingenic-drm-drv.c | 3 +--
-> =C2=A01 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> index 625ec76cf04d..cafadcd2b765 100644
-> --- a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> +++ b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> @@ -1298,8 +1298,7 @@ static int ingenic_drm_bind(struct device *dev,
-> bool has_components)
-> =C2=A0		}
-> =C2=A0
-> =C2=A0		if (panel) {
-> -			bridge =3D
-> devm_drm_panel_bridge_add_typed(dev, panel,
-> -							=09
-> DRM_MODE_CONNECTOR_DPI);
-> +			bridge =3D devm_drm_panel_bridge_add(dev,
-> panel);
-> =C2=A0			drm_panel_put(panel);
-> =C2=A0		}
-> =C2=A0
+Since it is clear that:
+
+1, The clock and/or reset ordering matters.
+
+2. The device tree order does not in any way impiy any sequencing
+  or such sematics. (I.e. we can't really change these DTS patches)
+
+3. The bulk APIs for clocks and resets have unpredictable ordering
+  (clocks will process from left to right and resets in the reverse order..=
+.)
+
+I have concluded we need to request each clock and reset explicitly
+in the driver and sequence them in code.
+
+I sent a new patch series with two additional patches to explicitly
+order clock and reset enblement.
+
+See if this helps and how it looks... Try dropping the reset patch
+because I suspect that ordering to not be as important as the
+clock ordering but I could be wrong.
+
+Yours,
+Linus Walleij
