@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793110454;
-	b=JnVzHziefhe5wVmkNC9E9X0oBNNEz5sSirdReZciyodX1mxS+Yq+ykSpzW8jCHlTW9ZG
-	 gJ2hUkcbpEWpLQCvkHnKdGaT72xnZNjuFmQgpBng/x0VS7n83xILK2c9XUlaCYmWzm/UD
-	 HS6Bfhd4VEfrafDV7bNeiTWHtw5B+kc8GUpuArRyeQ+W+7k8gXwKINpX09TyQNRe/4Hng
-	 F1weoA2F/fplyJvp0B8qiv8XcNtbI/9K48lh8FVTzAz+YnglGyv8RUj/LDcGpxAR7J4uC
-	 Ip8fFmikXmLFDYgXPYpbR+C6KOxRMkSXWfU+QS9oZKGCRiSDWCjm2gT07LkItMOdzdQ==
+	t=1793110493;
+	b=140eY9u5zbKslqVOTNGJjUxXCTjoT8gbE9NwqZwsjQi0R8au5CLO/Y2QqW51hlH/CWNs
+	 amlcfsh+UMVlYbEt6iBReoQ5/sR8wKCLiIZ8YdcN5zLRZhdYveRiklSWe1EZVh1k8Ze8y
+	 yncTo3sFtFHjF2G5O3fZ9QjWaEi07TgsIwqg4fiZCc9xEAlEXjC5XoSm+ki8KcDWrviK1
+	 4rLxQiJFGamkq92aOs2pHiyf/eesEkACXMZrjXsqUkXriaqsL2o3V7ksJLU/h52kAqim/
+	 HoxNABUjr9rM6UOsIFE4G3nqsQuXLxUO0S/QGSwJdbGmSF8Kcddlp/3r9LK/seBjgTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793110454;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793110493;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
-	b=ko+NsYcvqAjQsZyuoOU1LU/+N+FK5yJyzBjeyBjgbeDz/8cwx+vhirQOlDdYCEZAJjRW
-	 XP5d29syDH4Z6sGyMvxMd5Fk+YJp6IfFQCR9Bb7PjPSUaGZi9MdwZ455QCmFmqu6vMfwr
-	 cju1JDdYywzDjhhS4b56Q0feruXj5zPttkEwVMIrkjSL6JVn5qKx8j1tvMWEyWcNiYOkB
-	 oi+nT3K6vFrxSplKHCNIS6wNuzFUL03HJ4LU0Mm579wSr91XnvhGW6tGk8p8uf/0DBrUw
-	 9U2UH78jSdC9g62jDfzy7hLbdTE/QPGw2q+p4WQgHezWLKeaOmjsuIh0S43UloTr16g==
+	bh=GaS9DIAzMYp6Tb26jgRNliWQoK7YtOPDgti3i8/xKo0=;
+	b=TXOtjCubRoqZnrrRZ1bMUIBUqmjl8RWEqSXTYfsp6zFe6VesLizCUHa61MaZhfIyrO0B
+	 5HHh1StATZyFxbFurSBmoiHZJK7dUH6BKvsUQkkgc89WvC8wzw5NoObE48q2NVnDpNJRC
+	 r6sTgtPbV/HuTlMQcHeSsxppcej8oHCP/XtxndbLOuuZf9P2PnLwI68sPKpbS6Zkeo64z
+	 qLOMlqE+Wkq+gD9Da/yo/k1uk2fZ1ej1nmBvMs4qaXO1JYx8+nnVAAbXZYUcD4vhVfCIJ
+	 hreS5cendFM3bntumORJtZExIVRXAtbk0e+Y19+5OLlWQ+46DSUC6fefRKxDkVYnlDA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOHXFD9i;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VexdIKwR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C61606A31D
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD19606A322
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOHXFD9i
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F231F01829
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:14 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VexdIKwR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6531F01387
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793110454;
-	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	s=k20260515; t=1793110492;
+	bh=GaS9DIAzMYp6Tb26jgRNliWQoK7YtOPDgti3i8/xKo0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=nOHXFD9io0Ru2PaYz+V6smtGs0WntNANVygH/FG21ay5l6eXVd/Fv0/Tv/05f5lHN
-	 ro4iu7gr3151Nom7znD+w9DtyJZyWfUd1ugqFnU4sroYLuBrr059kaYzOqg3LHyBNE
-	 Nq5slenfftrhf+jQMKg2z4tHzFnbsIy48BStIJ4xgz9ShxnCKOCF83cSRLUB1U0tDm
-	 g3peUTLWKcVDShNXN+mUP1xR1HMK/LuErofPe2xUAZAdWO0fFLSPuWwNBeF/MoBv5J
-	 AbW/DgyYr644yxz8kE3Ve5Rjs1Wa91W5XlLBIEfFPMWntO1C6QOqcmg7216oQhQAET
-	 L21vjkzNFgP8A==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-48e94879f02so1305207fac.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 07:14:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzVzQD+6fIc6yVM0a47M1xee1ZhvpDA7ymc32P4nEnH5UZtmpOSiQqVj6sVPs63op9B9WDwQKWIrC0M/x+IVyd9XA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYL5z8ylg1ST7WZfTQLD5gnZICgFltVRVU34vL2wddFlD8pk90I6
-	UpizwnLuwqRtkzwipVW8WqXgyA4tmaHwjtBn2gj7ZiTgISQY+o0TPWmDgizIKzDO3IaYKZFSa0L
-	85RzmhKayCyerDlwvwrEN04LHWm0DZOA=
-X-Received: by 2002:a05:6870:c69e:b0:49d:c8ab:967b with SMTP id
- 586e51a60fabf-4a83f542697mr5910295fac.47.1793110453054; Tue, 27 Oct 2026
- 07:14:13 -0700 (PDT)
+	b=VexdIKwRzOvQEEgvmO8caE4nbf6xorObDq11NXYDvDa2mjeHckRll+Nx4EKxJD8ht
+	 W4KblFOO6y2af+SJ9nHUVFfDbKNeYcztIFgJWMAPsIy9N1QOvtFFKP0BwXuQ+Pz1Oq
+	 PU638njjn8Fyn5tTjko7v2pOLaNRMNrq1KUOtcwLu54gCfmwSIJkMaA3Tt4mtBszUY
+	 jK4rZKNgVSfkDM6vYqEpQDMMbEruHEMg4wX16UMopLSeUCvdYbUshewmZdxFr4vMsQ
+	 k2dDIfevo2EjeDJmoMRMUFEBreWAsQ6h7m2er3IkNb2RpM4W6NQJkmSB+FLbqt353i
+	 k7gwr/P6ceULQ==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-48eee44b908so2512510fac.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 07:14:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx4Jx/ScsnS/S83O4En0KDRQlaV1U7OSiBoh7YR9IiEz4USK9v2z4FEdI5picAhILuzDVtIXn3caQo7d1s+hZPEIQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKfl3vb3qhwv0rVdAS6ZQgnNXPbkkLRCZRjhagO3GkZytA/v+YF
+	OGhW45Wi6Dk4CtEvAJO9iNSFOcNyL5y4iy0Qvo5CpnmHgqDXfGpEQcUxyZXTfYVBBMuBomh3IOy
+	RQhtqSqhWg/vn1La1x++4Fvk2FlqxqTc=
+X-Received: by 2002:a05:6870:2189:b0:4a7:5508:c526 with SMTP id
+ 586e51a60fabf-4a83f42f572mr6040267fac.21.1793110491448; Tue, 27 Oct 2026
+ 07:14:51 -0700 (PDT)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-10-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-10-5e3070a3478f@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 27 Oct 2026 15:13:57 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
-X-Gm-Features: AclHuK8ruqZCGkf4O-7fY-Pys0rgaueWTZBuD-NGSUOyqWUpd7La4hdhioD434w
-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
-Subject: Re: [PATCH 09/35] drm/mcde: use drm_panel_bridge_add()
+Date: Tue, 27 Oct 2026 15:14:29 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnmuXaoKDLyCsPzUBYohOxqjVGVndz0047vmhZFgvvo6A@mail.gmail.com>
+X-Gm-Features: AclHuK9bjg1W8yVOv6xb18mY_G1euLOiDqjDsy95KUm0kaVExInNMT0MB46F2ok
+Message-ID: <CAD++jLnmuXaoKDLyCsPzUBYohOxqjVGVndz0047vmhZFgvvo6A@mail.gmail.com>
+Subject: Re: [PATCH 10/35] drm/pl111: use drm_panel_bridge_add()
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
 	Jessica Zhang <jesszhan0024@gmail.com>, 
@@ -134,8 +134,6 @@ On Mon, Oct 26, 2026 at 12:10=E2=80=AFPM Dmitry Baryshkov
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Thanks for driving this patch series Dmitry!
 
 Yours,
 Linus Walleij
