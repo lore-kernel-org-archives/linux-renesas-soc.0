@@ -1,106 +1,144 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.56
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793097307;
-	b=4GuVSZE/mX0Lja7f9q/MREWoLP7+gvQaiftZ4eOEYsXfxXYUXZtT7tAy/cQV/RQoqQD7
-	 AMkyKgXO5fu2H8SBSVp9lrEQNyx78w+6L9VP/dH/HmFv21W99Lo9xHVsDpxajtS6XsYVI
-	 oeXa8pMba0/wb3By5sef0Iy1c/1Hgk5eg+/JGn3REyVR5XesRh8Wn55EWewduGnZK2bXz
-	 fpbk+mApDcD6bJgyFfUvQF2HfMc1MqC3l4ungpHkFwwivdOGjJglvBRCuJKrPMdloGKhG
-	 CeqUG7B919TxO3fU/qZdJjygKtsZvH84pLiwLuEg/pr8opEAW8uo4BHzPKBpC6nNVtQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793097307;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=TnyJAKpbrzT6//5IDpQP6SqjuQWCpBYIFYB3Wu1DxuE=;
-	b=OkAbFN9fGcqqPSvoZ8tyR6inkCN4j0mu2HMbowdT7WNS5Oi7af4hGfxrggXanxUDC6eJ
-	 WZPFYyZtp55ApXhAg84wiCxvtOxd6fXOOFmLzpfpuozA8jZNn+i3VVVVgRIB4wIe1Y3NY
-	 dxVvi0xc40DLjiH9ROR6hChW7L58p437nLtarNX2j3YDKaffSfmbwlCXdJFxJZJ/zm8Cq
-	 ZImUyQPVhVcwG1sPmpxt1uK6ewy9FX0tw33NKcGrd6gN28M/kXtmsbsZoJHtIjDgTA9Q0
-	 QwXxeRygVuOqcxErBjatoESF7q+6mHJB87916Y+dp7UvCFsL7TLPnVgcXsc0/YubgPw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=renesas.com;
-	spf=pass smtp.mailfrom=renesas.com;
-	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b="GoEY8E/k";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.56
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011056.outbound.protection.outlook.com [52.101.125.56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793098219;
+	b=Qc6n7PlsG7MP84TuxYWinJYZf5EdWfjKMbXp7KddaIrCbJeTC9KfoKFW3VhEeiQmK044
+	 c8pCPRqb7KeyGtAe1L9rFW9eo1GHtVlbaOUNEjEFLr3iY1yXNhJHcQ4XpeFcCe46biMEG
+	 YiXnEHJeKmorTJ1omxHa8tt5vdE2aXfKK2StEEL6So6a3pYWGXe82zKCkYSJf6LRk9Kgk
+	 E5h3dzXATLw6dt4YDIE1FzixCT1XvPIUxZU5fpHTq7idXqKgFvV5tW2r7z3bBg8AA7qsI
+	 BKp/4X8b+06RqpUxwZnPSLjMqHG0qNsKliCoUjUHpecUQwYUS/ZLWKGUBzYFNsmKK2Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793098219;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
+	bh=XFZzZHqRNst1BMPTvXE87RueOS4Ft9OJQfvt5VLbbcE=;
+	b=wBtAJTwZmEjoKUjZhfi0KcohpqMlEe7avF5xMhnVY3Oer4wI4SntMOyNTYPiSLcELcg9
+	 PYor8RZMvCWJNGPrP/+CQpYuPGv4XABFIaM0Pbt0NwR/rTHnURIn+w1sNOkN/Q4MYeQUa
+	 LoxHOqI7q9EIAVXYMGveMLpYcwYuXCNhrc8hmdJdwg7HllsJLeXBGYKKOp4SRG1THWgSR
+	 0XKbohRMW/XoWP+zb2XojZQjLurgQpXrb03/XYRGQHl2BKpdyqHO+TlvWMrHZHZiilCjj
+	 BrORzdeGjfotIHC+As4mAFayd8E1v8V80FzymEiXRxOAGr28VPdUMq/Sf1Hc2+1XStg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=dvDz+tkw;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82904606A335;
-	Tue, 27 Oct 2026 10:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82904606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3A460A2621
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 10:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C3A460A2621
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=GoEY8E/k
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=czkMOyDQmBweWAbpK58uvT6cArWZpS2aZqYUlfILojHlMZW3sJu6XYblrs5apdWDnYvYWloFHtJ+YVvSaxJyeje9aVN+Yv8r6TtshG46qsQFk5KlPfpZJljPjN18fbDueqRP9ofp5aYiBSQ3VDF1AA4nKWum9c8CpAULEtk0S9YpUqQsCpCS63nfBlmGxQ5xbFkf3ZWN+eE9ZZ+DpDuSPhYqcZ1xX0jRGddi06xLtt/dGvapmvbxvL6cgz+qsTsJW1nMYGCCbVd5c4ttfJsC+fMPk2QbMNYiVCrRxhdv9VTjDS2MMs+NXeewmHAtgtYTqavaeRSHz6GB2juH7313lQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TnyJAKpbrzT6//5IDpQP6SqjuQWCpBYIFYB3Wu1DxuE=;
- b=lGA/4vtNMBbC8nclirALuWqCe4f7cMMxiCc8MfHm1friIr1KGWjQfXYikMq4M0fRxbDH+12UDKbTCGA4SmNbLpfbM0JaKtIcRhFp5F4tVyySP15l4rFOiRETxfNc0q9WOFbdeMQ5i4RQSDsO5nn1zErH40fT6ntBb4aWzH4TzdBGBmdH+Gl828JqhmUzatMICbkfYHD1BLhsXtcf5vVWJEEbOCA81dUoq5IRCgW6bQABP8GF2oc6OBsr8vhm55WSJJ4F2+nN9knWTSyB/W8HbarC3h0yaYgAXmEIbkxp3F1CKkoCT5sEdhb8y63mlJP/RekdskgMBugJq1CQEsOx+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TnyJAKpbrzT6//5IDpQP6SqjuQWCpBYIFYB3Wu1DxuE=;
- b=GoEY8E/kKC0ksQyNaJr/YWRZEgs41UUozt0r4Hq2R6NSeRZZ6tIlk0Joe9/IRo6DFRHfGljnugcafDAHJZVZMzk1cbH9tYF1pzgaeSBQJ5jzPayahXJuCEZbqbBOBuYlAN8fIMojeWlXVZEV0cjGbb0KryCLuhw8e1qhuNfpocM=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
- (2603:1096:405:1a1::11) by TY7PR01MB14856.jpnprd01.prod.outlook.com
- (2603:1096:405:24f::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Tue, 27 Oct
- 2026 10:35:03 +0000
-Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
- ([fe80::1116:d56:8164:63b4]) by TYYPR01MB15118.jpnprd01.prod.outlook.com
- ([fe80::1116:d56:8164:63b4%6]) with mapi id 15.21.0546.021; Tue, 27 Oct 2026
- 10:35:03 +0000
-Message-ID: <f4b8a714-dab8-45d4-b98f-717d010806de@renesas.com>
-Date: Tue, 27 Oct 2026 10:34:54 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: i3c: renesas,i3c: Document analog noise
- filter control
-To: Frank Li <Frank.li@oss.nxp.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, linux-i3c@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>
-References: <20261020-divo-ssgrlpcsrc-2966-i3c-anf-v1-0-b7ad60cde650@renesas.com>
- <20261020-divo-ssgrlpcsrc-2966-i3c-anf-v1-1-b7ad60cde650@renesas.com>
- <ate-aNmqsyXCAIX8@lizhi-Precision-Tower-5810>
- <64f604a7-7e70-4a0d-8164-28c5d7b1e509@renesas.com>
- <at-5E3b_wKcnuJ9Z@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo.sx@renesas.com>
-In-Reply-To: <at-5E3b_wKcnuJ9Z@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MR1P264CA0214.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:56::12) To TYYPR01MB15118.jpnprd01.prod.outlook.com
- (2603:1096:405:1a1::11)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=dvDz+tkw
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48e1d0e5dafso546938f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Oct 2026 03:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793098216; x=1793703016; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XFZzZHqRNst1BMPTvXE87RueOS4Ft9OJQfvt5VLbbcE=;
+        b=dvDz+tkwazGMCamxvSaEkAPNpDuRiv9BJ7CN3nyJQXubmP0JbaqRwC8SLGGTCUeADO
+         /Pro+kbJFtSm92a/VL7B+fALEk42y1o3Qe3sLe2tqjSo4lWGT1kLfBJnIJImpjPuEiK+
+         8zdPn4Q8wS/lRWI5sWj255kuWR6sQ2uqoNJeeMymQg0Uv48xDVnUmtVMWPf1MtJyIhpL
+         ACvUskKnars7NWhHhhcT0QAwiBahkXXEbH8KDRDaEAwffVHbf4cRp5kDmgGAlHSJ6m7C
+         1CXwMURcy5WcbhjeNUomKXmOleDWMRul6Eda0euAYoSIZyQJuiJCpp/GhtbjPsKQ44BB
+         nmbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793098216; x=1793703016;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=XFZzZHqRNst1BMPTvXE87RueOS4Ft9OJQfvt5VLbbcE=;
+        b=0A10iZid4XPOabA00HKG1uSLA6QhdE1k3eBjJ6uU9A/cREhueQVBFuGQP3YcgfKbFq
+         FH5Zb3VtxwCmiUgMKyeTOFNs5s6dqvkisRqyGNOIe8F8W8TTGbgge0wAZmXxVfJao+YZ
+         OB0e2BKTqIWSpK1smD6mIuUb1qrzqx5RakTlM9Qsc93o5zTcMGpBkjNZ91yWwRyCq6M8
+         TLNaK/+rzyyqnchocikWBbWituw851AOjCwTJ2tmowYBawxjUmNCtN4q4IA1Z7n7jcUl
+         IEeW14Ff1jqzAURuGEOru4AY3gVZavabPRlnxv/45WRtGShCrkapnhNU3eX+m0AJGFfK
+         rd5w==
+X-Forwarded-Encrypted: i=1; AKwUvBzNKmj4st7nYPjtMJAp89YkReHVsLvEjNIUop9Kag9rSfWrIN3LgxxRenyxSLbRwZJNiwKehw3CSZtF0Q0pZBdjWQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLbsHYTkKTHaWC/2B4dhHQl4G0fEgStC9UbKmfJWBUAEduRc+hx
+	NkNWgb0xkL1X62f1p2Xny6nc4MNw1UAo6Y4yKbrbOgyldiym/1ynAJykVU3QspAkino=
+X-Gm-Gg: AYBFou0bLa3RBXcTzuPoTkhSiAsMhphUHU+b81Q8YVkOTXLPZMmBkODQ234EaVKi7Nt
+	x8GdYni0SMNh/IC5k+KaxiYjKkooZ4OqDjrtNlLFmfrqCIg26FqH6j61rLCeC1rprPEpGqLDO63
+	kf1OpvThOUUamh4lPkYNJsO8/10AmumtA85Ks9P+SeW6imZ8+GdlGvL187Bkec//7vWAl4hHVKh
+	p7eesNPb5IPA1e1sw6YHXwan/j/8bV++dbgZ0RvuYionw/zpRnIYczGmGLL8qcIueOUfErFETTw
+	oX6GmE6VD80uCyt5j+Dinnd5WmM8RJQyRuFKJ8fdSpDg5zkJTtkFxEuzndE2ae5a7F4mVofb2W2
+	3Ks/+hmZdawVPeMoWvTqINzUtRoYHlyeTMFQ5G5MZfCWzWzWb302Ox319CMeTvL06A/zXABGGNn
+	V0Ppn06k651s0OOr/qzKWbYg+OfaSWQYIfhiHPVpVZZFvHwfRH1jkYHPiYBoTZlFPMqRbCzVPDp
+	4dAu3QuDUJQaZGwyetzkAwLLnUjyQeB+qKPscxJiKKTOe+uKWzR0ygtKWNpRtGNJA6Ss3TPL32o
+	h2o9jlexVXhFlEqpVl+DrliAF+JmoDiV3lH3LzjNQ8A=
+X-Received: by 2002:a05:6000:438a:b0:48e:884:affb with SMTP id ffacd0b85a97d-48e55a51758mr5422454f8f.24.1793098215724;
+        Tue, 27 Oct 2026 03:50:15 -0700 (PDT)
+Received: from localhost (p200300f65f19a904240e81f1f32a429c.dip0.t-ipconnect.de. [2003:f6:5f19:a904:240e:81f1:f32a:429c])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48e3ebd48e0sm22735578f8f.38.2026.10.27.03.50.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2026 03:50:15 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lixu Zhang <lixu.zhang@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Imre Kaloz <kaloz@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	linux-hwmon@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>,
+	virtualization@lists.linux.dev,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-aspeed@lists.ozlabs.org,
+	asahi@lists.linux.dev,
+	linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-unisoc@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Michael Buesch <m@bues.ch>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH v4 00/23] gpio: Improvements around device-id arrays
+Date: Tue, 27 Oct 2026 11:48:37 +0100
+Message-ID: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.56.0.rc1
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -110,180 +148,180 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYYPR01MB15118:EE_|TY7PR01MB14856:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06ea123b-a45d-49a8-84cb-08df3415f5bb
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|23010399003|261026140227099003|11063799006|4143699003|56012099006|261009223027099003|261021121427099003|261022105027099003|261022075727099003|261021123027099003|10067099003|22082099003|20046099003|261026121527099003|18002099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	S2JQ+zmX7DLwqKfGanmwRlexMbrgZhSP0vJ9OGA6ozrAfn6l3Zd6/I6Tx2BqLKVSNzOcmS9GwyAEX9+pk6K5imZ4dvO6MoUKxPh05I/4Yaa4G/y6mgMs/OuxtdkxCcyhGxP+JtIdphSoS6hlhQHBZQHD3HPC3A/501CMqsYAcTUuPz9rgT9WTpICT2Hd5Hmznd6X2sFnxqo0jESj3EmMkAppXHFA6f3Yqv5nA1hfRlyIFlm8U/mNsqmx3L/5t7HgTTo2pD0nVMt6WbO9RLTc7XdWmgI3g3gyligo8ZM6fKFhujaapfBW1m4hDwFelftoHElq6Au2vbs8gj4VmvPodX5dDbIvwVwk2l50b51EOzGsJ/2QdNtYg1jCcR3toOJBKnJ9ig/zp6CZ6T29oIvF6AZUtKb0JZ/tAf6tD8pdVytdhx4V3kiKpQ2rBRIjNUKRrmbmJBTAnQLjUnxy4gd83DFViGNXy9QXwOXr3kwJ+OsCWkaF075QEGpA216vjfZLi4VBMWmMmQ/KRPbpv/yJFGT2q5eFL3gu1KIodKclsR408BVfsAscXPGRswP7qGj9x0KHS/5336oFu/1opAiXyO/f7aPU3G5csuZPKhuHwo2S01bNZ6Fit753ATeYljhjQSD7pc9XXdKqqVCzqm2xNmcHeLrR0NCIn0EwUe0PEyA=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB15118.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(23010399003)(261026140227099003)(11063799006)(4143699003)(56012099006)(261009223027099003)(261021121427099003)(261022105027099003)(261022075727099003)(261021123027099003)(10067099003)(22082099003)(20046099003)(261026121527099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aEk3NzJqN21FeHRZcUZQZ0VQdEtEQjllQ0dsYlhxMXlPODNPWWJ0SFNKQTl1?=
- =?utf-8?B?RkhDZDgxWTlOcWxRVnp4KzRCQVpWdE5Zdk56NG81bks4REkrNTNHUGI3b2k2?=
- =?utf-8?B?QjI2MnBEczIvcnkzZVJQWGQ1TEtoQy9CQ2hVWFI2dXI2dUlubFNCdlVvVStp?=
- =?utf-8?B?ZlFWRkxzT3BIRVQvWTBzRDJYZWhFaHpnUGU1bUE4ajFzcUZYQTNUVVRtakRq?=
- =?utf-8?B?bU82ZE0yM3ZEZ1NJb1N5dnc1YytyeHloRmJHS1lGbmQzNUx1dTAveXY0Szg0?=
- =?utf-8?B?NHdaOHd4RkJCNUdaKy9NdlZoT3JUaThkVzdHT1Z3MWdsMjJpT0FSOERlQlZT?=
- =?utf-8?B?Y2xhZXllSXVTMUdycmxCKzN4YmdpSGhKeTdFa0xqVDZVRzR3V1FJV1lNemR0?=
- =?utf-8?B?T3h6eHdQYmxQdjBwRWE1Wkc5b1JybGdNV3hvd1RsT3d3aThOakZ0Rkg0UGZG?=
- =?utf-8?B?YXJKRkdsdnV2VUlpT1JPbHMzYjJBN2JxN25ZL3RiUVpmRUhNbmhjMWRrci9T?=
- =?utf-8?B?NjFBcFNOTFhVUmk1WDBNWEtuTm5URlVxeE4xNGsxTmRjMWFxbHJ6dXdJaWI5?=
- =?utf-8?B?TEh3WVJORnVrSmt5WFhuYm1QNUZMYVRzdGhJbnhwa2hYZmZkejFpZWRvQnF3?=
- =?utf-8?B?ZkIzdytRSmM2VFRFY1NGSk94Uzh4ZXU5WmxpK3R0WFZyREYzNkQrZTl5TVUr?=
- =?utf-8?B?RndQaGpaU2xCbHZYVVYwVEJRb3FYa0Y3SUJQaGFSMXdtaWpEdWNFVGxESkRS?=
- =?utf-8?B?dzZGUDJ2MVd6U1k5UmVPSCtMTUF3NkNNVWxaMFd1bUF2RUtkZ2RFSk5rKzdj?=
- =?utf-8?B?UDJGeUVnL0owRDFrcFZlZHdJU3BiRHFCWVUvNHpUSEZ0OUlJaGpCcW11TE12?=
- =?utf-8?B?c1RNbzlVRzBsUElMVUNZc2FTdzBUOHB2MENHQ29oZ1diSk5tOTlnOFY4S3dt?=
- =?utf-8?B?djlxTkdrc0ZYdnhIclByWVFrSXk3TmlnNDBNM2hvb2ptUVVLTEg1U2pxQWJP?=
- =?utf-8?B?Q1dDbm90WjQrZkVibGV0L1hhc3JEU0JBZllnQ3VWSFVqQ2ZCWFREMGwvYzFz?=
- =?utf-8?B?TWpneFhHVVJ0MjRsbnNNd3ZJZkRSY3p5U002QWljKzluMlYzYWNQeFl5SHI4?=
- =?utf-8?B?Y2JSRHM5QllLQVl4dW9ENmVFaVZSUS9QTm5zdGtrRjNGSk9uM3hrR1ZJWUEv?=
- =?utf-8?B?RnJQZEUxL2ZEaC9JcWZMWENoY2FrT3FzRVNiRlY4UGtBWStvVGt3Q1I1bzJ6?=
- =?utf-8?B?eDdPclVKcm9TQVJ6ZkFIVUE4V3ROVFRYWk4wckxlTStsNVlzTjRlRFQ2dWx6?=
- =?utf-8?B?bmFJWDJabElCNithQW1KK1owUUZqSENDQWZUS3FkWVRqN0tXZjROSjBZOG9l?=
- =?utf-8?B?TWZ2cWZsZ3NHTWNFVXFyRndheEJ4ZEVIU2QxNHZqVmxESHBFL0ltY1pJcExk?=
- =?utf-8?B?NDJNb1diZEFzbi9qVWpLVWt6QllEMkhGOURQOFFmYXViQU4xQTY4QjRKdW4y?=
- =?utf-8?B?UHovcFkrQTNsVnA5NytQYWpxdHRkS2ZUKzRhQnEwYU1RaEUrZ1p2SDVmRGRD?=
- =?utf-8?B?Nm9TUDJiSmMyVVFoVGl5dmIxelpNS0VhWnpwWEFSM2dmVS95bTN1eGptL1Ir?=
- =?utf-8?B?RWxwTHZYSWFTTHptVEVpZ3lLY1crdGtPSDl4elhiOFpTekNqalBiTlcxZXUr?=
- =?utf-8?B?YXp0SnZ4dmQwK1VQRlhIa25qYWIwVzUxNTBFWE4yVFZSb2dTZnBmRWxZNjNC?=
- =?utf-8?B?S295bzlXSENHTnp0UzZYS2kzVUJ2UFlJZkpXalcrSG1uL1V3ZUxTVlRzeXo2?=
- =?utf-8?B?SDJyTUxYZUtURlpnU29qQTJaUHhhSGhXd3N4dWRqZDFxYzFCMkY5VVJxVVpC?=
- =?utf-8?B?cGJDRENKOC82VTc4STdCR2h0amZTNC9PV0l6ZlhTOEZtZ2dsenhDYUtObjJR?=
- =?utf-8?B?SHM5bTBZdFNsd2g4M0ExWFJBTUhsWVl0TWJTeW5TR0VneG9RZVMzMmtlS3Ey?=
- =?utf-8?B?RDNlQXpET1lSam5Yc3lxZ3Z5UTNkd0w0Rzl6b1lzTzFWSlRVOUZLY253UTBt?=
- =?utf-8?B?bkdTdllqcjRlcVBuN2h4M3BNYWI1RWRVcmhyR3doVkw5Z2dTMlpFQjFyZlVP?=
- =?utf-8?B?TWtRM3V5TndHYzFZaUtUS2RmWDBBMHFMNE9IdTlZb1E1SkdvUU5iaHVibGxa?=
- =?utf-8?B?cnpnWTFtZ2V6YlRtbEpQSi9OTDFrZHRnVkxILzZKeDNjL0hoOEd0aUZxVUFq?=
- =?utf-8?B?ckI5ekt4cmVQcUlJL1JaZDZIZnVxZ2NWTUluQ2ZFTHZDZVFRdGg1U0VGQzFQ?=
- =?utf-8?B?dFdaS2wrQUQwYmNtdXVYVlQrS20xSmduM3VWTUZ2R08vQ3FtUDQ4UT09?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06ea123b-a45d-49a8-84cb-08df3415f5bb
-X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB15118.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2026 10:35:03.5039
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SzCByvPNy4f714ZXrU1PBDrqqq7YkqppkOMwz1pNiLJNLDhFSRVerk5WkFh9ldx+J87qHKsELQQn560tpMDYg9PJ1c7PJsgDHfTBSQieVUo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14856
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8137; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=k1gONcl2UIxBepDw11jo8AHu6ai+O1G0nVgkSy8JdIE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq4IGGNXr36bKoBw2PaxVdVtkUGC9jXmJpRnHf2 Csas+gKAK2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCauCBhgAKCRCPgPtYfRL+ TniYCACv6CLczaP+IEWqqjNz0H2IDCNFuAhnXKDLb4106wpApOzW0y6gufg8fEnzsamxLLEBdjV dqq25XfWZfdmZg3FMHHPJqnBr5fh7Zg46EwNe1jZvPkIkqY78ho7ESao5AKRIVqqTbQRpIaZEgz NNeJQhmaiL16rAeAP+okNpbCcIyWa33O12ZEutJCFYTQrA6235nE9ZSMLfl07igU0+tu+iunwWQ mCsDqRmK3fija+zCgkc0dIt3ssbXfQa1/DrtcjbcwgL9Jsq5zWCdDhzr7Rb8pliP+Uu/VBJJxty 27ri9KePaXD/wGvqViL+tL8IZZtej2Vgp0hRAsZI/QNPpgp7
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On 10/26/2026 8:33 PM, Frank Li wrote:
-> On Mon, Oct 26, 2026 at 04:21:06PM +0000, Diogo Ivo wrote:
->> Hi Frank,
->>
->> On 10/20/2026 8:18 PM, Frank Li wrote:
->>> On Tue, Oct 20, 2026 at 10:36:26AM +0100, Diogo Ivo wrote:
->>>> The analog noise filter for the input terminals (I3C_SDA, I3C_SCL) of
->>>> the Renesas I3C controller is controlled through the SYS_I3C_CFG
->>>> register of the system controller. Document the
->>>> renesas,analog-noise-filter property, which references the system
->>>> controller together with the offset of the SYS_I3C_CFG register and
->>>> the state of the filter: 1 enables the filter and 0 bypasses it.
->>>>
->>>> The property is optional: device trees not providing it keep the
->>>> filter at its reset value.
->>>>
->>>> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
->>>> ---
->>>>    .../devicetree/bindings/i3c/renesas,i3c.yaml          | 19 +++++++++++++++++++
->>>>    1 file changed, 19 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
->>>> index 08fcea89a015..381807844351 100644
->>>> --- a/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
->>>> +++ b/Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
->>>> @@ -96,6 +96,25 @@ properties:
->>>>          - const: presetn
->>>>          - const: tresetn
->>>>
->>>> +  renesas,analog-noise-filter:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>>
->>> I don't like this syscon property, look like it is one kind pad propterty.
->>> Is it possible model as pinctrl?
->>
->> On the RZ/G3L and RZ/G3S this filter is not controlled on the pin
->> controller's address space but in the SYSC address space (hence the
->> need for the sysc phandle).
->>
->> There are a few factors weighing against modeling this as pinctrl.
->>
->> The first is that the physical pads used by I3C are multiplexed between it
->> and for example RIIC3, so we are not filtering the pad but the internal path
->> of the I3C IP. The pinctrl does indeed have some controls for the pad's
->> digital filters, that apply to whatever block is multiplexed to the pad.
->>
->> Besides this, even if it were moved to pinctrl we would still need the sysc
->> reference, as the pfc driver would need a way to reference the sysc address
->> space.
-> 
-> System allows multi pinctrl devices. your syscon can work as pinctrl provider
-> 
-> pinctrl-0 = <&your nomral pinctrl>, <&syscon i3c ... > ;
-> 
-> The key problem is if model is resonable. Syscon is simple, but have not
-> good abstract.
+Hello,
 
-Doing this in pinctrl is feasible, especially since the pinctrl driver 
-on G3L already has a reference to syscon for clone channels. The 
-question really is if this is what makes the most sense, as again we are 
-not really controlling an external pin but something inside the IP
-block, so I'm still not fully convinced. Are there more opinions on this?
+the original motivation for this series are the patches that convert the
+arrays to use named initializers, see
+https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
+for the idea behind it. Looking left and right a bit while implementing
+that, the series grew a bit.
 
-Thanks,
-Diogo
-> Frank
-> 
->>
->> With this, I think that having a DT property is the best approach. However,
->> the form of the property can be changed if you are against this particular
->> one. For example, the register offset can be moved to platform_data in the
->> I3C driver:
->>
->>   - renesas,analog-noise-filter = <&sysc 0/1> at the SoC level
->>
->> or I can also split it into two properties.
->>
->> What approach would work better here? Me I'm leaning towards having
->> renesas,analog-digital-filter.
->>
->> Best regards,
->> Diogo
->>
->>>
->>> Frank
->>>
->>>> +    description:
->>>> +      Analog noise filter for the I3C input signals (I3C_SDA, I3C_SCL),
->>>> +      controlled through the SYS_I3C_CFG register of the system
->>>> +      controller (SYSC). Three entries specifying the system controller,
->>>> +      the offset of the SYS_I3C_CFG register and the state of the filter.
->>>> +      If not present, the filter keeps its reset state.
->>>> +    items:
->>>> +      - items:
->>>> +          - description: phandle to the system controller node
->>>> +          - description: offset of the SYS_I3C_CFG register within the SYSC
->>>> +          - enum: [0, 1]
->>>> +            description: |
->>>> +              state of the analog noise filter:
->>>> +               - 1: enable the filter, performing noise reduction on the
->>>> +                 I3C_SDA and I3C_SCL input signals
->>>> +               - 0: bypass the filter
->>>> +
->>>>    required:
->>>>      - compatible
->>>>      - reg
->>>>
->>>> --
->>>> 2.56.0
->>>>
->>
+Changes since v3 (available at
+https://lore.kernel.org/all/cover.1793030820.git.u.kleine-koenig@baylibre.com):
+
+ - Picked up review tags (b4 even found some from v2)
+ - Add a 2nd MODULE_DEVICE_TABLE(of, ...) in drivers/gpio/gpio-mpc5200.c
+   (My grep didn't handle >1 driver per file well), noticed by Sashiko
+ - New patch to use named initializers for auxiliary_device_id arrays
+ - Fix code style of of_device_id array in drivers/gpio/gpio-grgpio.c
+   (My script doesn't handle of_device_id::name) and
+   drivers/gpio/gpio-ppc44x.c (didn't exist yet when I sent v2 and
+   failed to notice that for v3)
+ - Fix code style of auxiliary_device_id array in
+   drivers/gpio/gpio-shared-proxy.c, missed as I didn't have a script
+   for auxiliary_device_id before.
+ - Dropped a few broken email addresses from Cc:
+
+Best regards
+Uwe
+
+Uwe Kleine-König (The Capable Hub) (23):
+  gpio: Remove __maybe_unused annotations from acpi_device_id arrays
+  gpio: fxl6408: Remove __maybe_unused annotations from of_device_id
+    array
+  gpio: Drop unused assignment of acpi_device_id driver data
+  gpio: max7301: Drop unused assignment of spi_device_id driver data
+  gpio: mmio: Drop unused assignment of platform_device_id driver data
+  gpio: ljca: Drop unused assignment of auxiliary_device_id driver data
+  gpio: xgene: Add missing ACPI module annotation
+  gpio: sodaville: Add missing PCI module annotations
+  gpio: Add missing OF module annotations
+  gpio: pxa: Add missing platform module annotations
+  gpio: pl061: Use empty initializer for amba_id terminator
+  gpio: Use named initializers for acpi_device_id array
+  gpio: Use named initializers for auxiliary_device_id arrays
+  gpio: pcf857x: Use named initializers for of_device_id array
+  gpio: bd73800: Use named initializers for platform_device_id array
+  gpio: Use named initializers for spi_device_id array
+  gpio: virtio: Use a named initializer for virtio_device_id array
+  gpio: Unify style of acpi_device_id arrays
+  gpio: Unify style of of_device_id arrays
+  gpio: max77620: Unify style of platform_device_id array
+  gpio: Unify style of spi_device_id arrays
+  gpio: Unify style of pci_device_id arrays
+  gpio: Unify style of various *_device_id arrays
+
+ drivers/gpio/gpio-74x164.c          |  4 ++--
+ drivers/gpio/gpio-adnp.c            |  4 ++--
+ drivers/gpio/gpio-aggregator.c      |  2 +-
+ drivers/gpio/gpio-altera-a10sr.c    |  2 +-
+ drivers/gpio/gpio-altera.c          |  4 ++--
+ drivers/gpio/gpio-amd8111.c         |  2 +-
+ drivers/gpio/gpio-amdpt.c           |  8 ++++----
+ drivers/gpio/gpio-aspeed-sgpio.c    | 10 ++++-----
+ drivers/gpio/gpio-aspeed.c          | 10 ++++-----
+ drivers/gpio/gpio-ath79.c           |  2 +-
+ drivers/gpio/gpio-bcm-kona.c        |  1 +
+ drivers/gpio/gpio-bd73800.c         |  4 ++--
+ drivers/gpio/gpio-blzp1600.c        |  4 ++--
+ drivers/gpio/gpio-brcmstb.c         |  2 +-
+ drivers/gpio/gpio-bt8xx.c           |  2 +-
+ drivers/gpio/gpio-cadence.c         |  6 +++---
+ drivers/gpio/gpio-creg-snps.c       |  5 +++--
+ drivers/gpio/gpio-davinci.c         |  8 ++++----
+ drivers/gpio/gpio-dwapb.c           | 14 ++++++-------
+ drivers/gpio/gpio-elkhartlake.c     |  2 +-
+ drivers/gpio/gpio-em.c              |  4 ++--
+ drivers/gpio/gpio-ep93xx.c          |  1 +
+ drivers/gpio/gpio-ftgpio010.c       |  3 ++-
+ drivers/gpio/gpio-fxl6408.c         |  2 +-
+ drivers/gpio/gpio-graniterapids.c   |  4 ++--
+ drivers/gpio/gpio-grgpio.c          |  6 +++---
+ drivers/gpio/gpio-gw-pld.c          |  4 ++--
+ drivers/gpio/gpio-hisi.c            |  6 +++---
+ drivers/gpio/gpio-hlwd.c            |  4 ++--
+ drivers/gpio/gpio-imx-scu.c         |  1 +
+ drivers/gpio/gpio-ixp4xx.c          |  4 ++--
+ drivers/gpio/gpio-ljca.c            |  4 ++--
+ drivers/gpio/gpio-loongson-64bit.c  |  4 ++--
+ drivers/gpio/gpio-lp3943.c          |  2 +-
+ drivers/gpio/gpio-lpc32xx.c         |  4 ++--
+ drivers/gpio/gpio-ltc4283.c         |  2 +-
+ drivers/gpio/gpio-macsmc.c          |  4 ++--
+ drivers/gpio/gpio-max3191x.c        | 12 +++++------
+ drivers/gpio/gpio-max7301.c         |  2 +-
+ drivers/gpio/gpio-max7360.c         |  8 ++++----
+ drivers/gpio/gpio-max77620.c        |  4 ++--
+ drivers/gpio/gpio-max77759.c        |  2 +-
+ drivers/gpio/gpio-mb86s7x.c         |  2 +-
+ drivers/gpio/gpio-ml-ioh.c          |  2 +-
+ drivers/gpio/gpio-mlxbf.c           |  6 +++---
+ drivers/gpio/gpio-mlxbf2.c          |  6 +++---
+ drivers/gpio/gpio-mlxbf3.c          |  4 ++--
+ drivers/gpio/gpio-mm-lantiq.c       |  2 +-
+ drivers/gpio/gpio-mmio.c            |  3 +--
+ drivers/gpio/gpio-mockup.c          |  4 ++--
+ drivers/gpio/gpio-moxtet.c          |  4 ++--
+ drivers/gpio/gpio-mpc5200.c         | 10 +++++----
+ drivers/gpio/gpio-mpc8xxx.c         | 25 +++++++++++-----------
+ drivers/gpio/gpio-mpfs.c            |  1 +
+ drivers/gpio/gpio-mpsse.c           |  3 +--
+ drivers/gpio/gpio-msc313.c          |  1 +
+ drivers/gpio/gpio-mt7621.c          |  2 +-
+ drivers/gpio/gpio-mvebu.c           | 13 ++++++------
+ drivers/gpio/gpio-mxc.c             |  2 +-
+ drivers/gpio/gpio-mxs.c             |  4 ++--
+ drivers/gpio/gpio-nomadik.c         |  7 ++++---
+ drivers/gpio/gpio-novalake-events.c |  4 ++--
+ drivers/gpio/gpio-npcm-sgpio.c      |  6 +++---
+ drivers/gpio/gpio-octeon.c          |  2 +-
+ drivers/gpio/gpio-omap.c            |  2 +-
+ drivers/gpio/gpio-palmas.c          | 10 ++++-----
+ drivers/gpio/gpio-pca953x.c         |  4 ++--
+ drivers/gpio/gpio-pca9570.c         |  2 +-
+ drivers/gpio/gpio-pcf857x.c         | 26 +++++++++++------------
+ drivers/gpio/gpio-pci-idio-16.c     |  3 ++-
+ drivers/gpio/gpio-pcie-idio-24.c    |  8 +++++---
+ drivers/gpio/gpio-pisosr.c          |  4 ++--
+ drivers/gpio/gpio-pl061.c           |  2 +-
+ drivers/gpio/gpio-pmic-eic-sprd.c   |  2 +-
+ drivers/gpio/gpio-ppc44x.c          |  2 +-
+ drivers/gpio/gpio-pxa.c             | 20 ++++++++++--------
+ drivers/gpio/gpio-qixis-fpga.c      |  3 +--
+ drivers/gpio/gpio-rcar.c            |  2 +-
+ drivers/gpio/gpio-rda.c             |  2 +-
+ drivers/gpio/gpio-realtek-otto.c    |  2 +-
+ drivers/gpio/gpio-rockchip.c        |  4 ++--
+ drivers/gpio/gpio-sama5d2-piobu.c   |  2 +-
+ drivers/gpio/gpio-shared-proxy.c    |  2 +-
+ drivers/gpio/gpio-sifive.c          |  2 +-
+ drivers/gpio/gpio-sl28cpld.c        |  2 +-
+ drivers/gpio/gpio-sodaville.c       |  3 ++-
+ drivers/gpio/gpio-spear-spics.c     |  3 ++-
+ drivers/gpio/gpio-sprd.c            |  2 +-
+ drivers/gpio/gpio-stmpe.c           |  2 +-
+ drivers/gpio/gpio-stp-xway.c        |  2 +-
+ drivers/gpio/gpio-tc9563.c          |  2 +-
+ drivers/gpio/gpio-tegra.c           |  6 +++---
+ drivers/gpio/gpio-tegra186.c        | 32 ++++++++++++++---------------
+ drivers/gpio/gpio-thunderx.c        |  3 +--
+ drivers/gpio/gpio-tps65218.c        |  2 +-
+ drivers/gpio/gpio-ts4800.c          |  4 ++--
+ drivers/gpio/gpio-ts4900.c          |  2 +-
+ drivers/gpio/gpio-twl4030.c         |  4 ++--
+ drivers/gpio/gpio-usbio.c           | 14 ++++++-------
+ drivers/gpio/gpio-vf610.c           |  4 ++--
+ drivers/gpio/gpio-virtio.c          |  4 ++--
+ drivers/gpio/gpio-visconti.c        |  2 +-
+ drivers/gpio/gpio-waveshare-dsi.c   |  2 +-
+ drivers/gpio/gpio-xgene-sb.c        |  6 +++---
+ drivers/gpio/gpio-xgene.c           | 10 +++++----
+ drivers/gpio/gpio-xgs-iproc.c       |  2 +-
+ drivers/gpio/gpio-xilinx.c          |  4 ++--
+ drivers/gpio/gpio-xlp.c             |  6 +++---
+ drivers/gpio/gpio-xra1403.c         |  6 +++---
+ drivers/gpio/gpio-zevio.c           |  5 +++--
+ drivers/gpio/gpio-zynqmp-modepin.c  |  2 +-
+ drivers/gpio/gpiolib-acpi-quirks.c  |  2 +-
+ 112 files changed, 278 insertions(+), 260 deletions(-)
+
+
+base-commit: 20a33c6b6cbe7e4805dfb6cd68816937443aa148
+-- 
+2.56.0.rc1
 
