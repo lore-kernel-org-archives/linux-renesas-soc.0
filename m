@@ -1,95 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793202489;
-	b=JJM5Wk1XdIBx5s0iaKWxTDGQyM3SnPqAOyG6Z31OB0Y7HkK1xnDWGi5NapPC9/1ICdqZ
-	 7baGyAUYn3WT8tGId+u7XTwTvWWdDQZrBbiAP4IFqDs4MAtsXqqCMvG5XTSZ+PAPu4pyP
-	 FP8OQizbK53BoR/10y5D7oQYOIcWgtsbqm59h3eN6ML1HiukgTNVnOg7foFdMRoCBDG7m
-	 nKkBgY2wwAXYK3kwmoXXCe9FZIgOFZKJnr+bTyMwrgHKbeDrqu/1GCypnP+wSDfLCOlLa
-	 PxF1gUyFg/Wwm/+tb+E6p9q4hrzKN1GN5Ij/8CPJKrO4uPnCSme4rXqRqLjEpn3FLQA==
+	t=1793205584;
+	b=FWa0d9wLOcsbHkJ1h6IOVo0TVrhI8SxpS41OVRCMZEOvfCmcIFlib2J/dh3b04f9a4x6
+	 3DjmWFcF3/DLgWGh3cu78RfxKUXDXl/lJ600ZWIV+YG3mV4tZFbE61Iy+BZv6vnSnbhhC
+	 6tYomj/vR4MLCWnUzz2Ztf4RM+TsBtuUhH4m7gbsRzwtswXks0QOGKUU2Nh2WC8LkJb7x
+	 Vu78fwUlCICcMpsBHkm8hue/zKzQvzf2d9vGAaGuUy2fJshKH2qqZtzKx5PI4Ip+IVBWE
+	 azMI2ZKRyFKRGCESCPg8+B9e4TzrI8BiMjq3tnQkCUpOkBb5DlYg2Blxy2JmVk9u4lQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793202489;
-	h=DMARC-Filter:Received:X-Virus-Scanned:Received:DKIM-Signature:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=aaltjzKFEfEbF1rtU/0c4Nk1nD9Pu78rG2FlShgdIU0=;
-	b=1Kp685kRjtjOuJOUtdlw3di9podVNVktpmxUKK6bdqYRpv3IRDUS9ENhPY9i0ZjaLRcq
-	 TQvd+jwg2IGboS3QoE/Ztd2laI+K4Srq+ngvz3I9DXWFOoGOKKeqFRFThHf5MAxIGKw5f
-	 Z/vwmiXIhLeVcJjYWVJVeD04BTIIk1trwiuMe+Y5Dcx1HdY9GW3D8I9fJoHsTPB0jiixk
-	 Vd3leHJPOLN7Hw0uKiFDhkxBjN1r66F9J5kG3+qe5MI7T/AiUcokd6Qh9eCZKEVD4apRk
-	 MyO+wW52cq7T2kHdg2vKZbfqIBjJcs+Q0zKiyLUwjgX+Z7hLnmc6jISWWE3DStjnyYA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793205584;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=TJlktW/QHwQzWX8KmM3KGgch3rcXax0gFxtt66ySgB4=;
+	b=JwTuA5jiAYChuuz7E+qQETw9nwrUw6/6Myo6fm/mXnzcgzzdN1vZy4EPLn1NykW7Znnc
+	 IB6f2C+gxCA6XSO9+mEbeLlPCVistl+7wS9AFTy4waKJCBs83br6B53MdItL5ZTCd+AJw
+	 9GaPKS5oDvLrjZcVQxzddGgXIst9HjWbyJ7nsrUkDqwesaUg6L/U0PJoMPi9s/qdt13Dd
+	 uhaD8IM/nal7pbSK/gJFIWiNWQAeD2sqX6TvmEYoA9b7BjIlEVJKbxYcOKjTKt8kH6Zwu
+	 BO7zOnQchLdWmZt1QX3IJ2wVicTMV1qqB1kC19sRQbzJ+Wfb4fpETEYJan2myLLVFqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=alien8.de;
-	spf=pass smtp.mailfrom=alien8.de;
-	dkim=pass header.d=alien8.de header.i=@alien8.de header.a=rsa-sha256 header.s=alien8 header.b=CuHPcbbn;
-	arc=none smtp.remote-ip=65.109.113.108
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=aoMmoJYo;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E618B606A321;
-	Wed, 28 Oct 2026 15:48:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E618B606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133AF606A335;
+	Wed, 28 Oct 2026 16:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 133AF606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=alien8.de header.i=@alien8.de header.a=rsa-sha256 header.s=alien8 header.b=CuHPcbbn
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6210940E04D4;
-	Wed, 28 Oct 2026 15:48:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ZfiF1Mnx24IK; Wed, 28 Oct 2026 15:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1793202483; bh=aaltjzKFEfEbF1rtU/0c4Nk1nD9Pu78rG2FlShgdIU0=;
+	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=aoMmoJYo
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E9BADB07;
+	Wed, 28 Oct 2026 17:37:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1793205449;
+	bh=5oFtXnzBQ98MFaco5zMv+o9V6iN5E4nNphi2zpmABz4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CuHPcbbnpjiItXwHuESNRo8VmbkEMiUNvEVKMBtMPyZL8v7e91hHWRRrh/sin0IGo
-	 K9JnMwvttRqYhH470uv2H7pTbjMJ3bhjlejvuBRGBjzs69yd5WoTSErQQMpB0GrHJW
-	 ZclMJykhAn7m9OXDHs8Nosh9SfoSN31FgQdr5WNa7zmGjWfevbYFwIAQny0cZ1zUGx
-	 a+b4kdnlHpQdWsuby+0xM/+3VNpHzKj6TKztClSXU6ijqGP66hRtWPKqx7hfEjCfHA
-	 hD48Kd87I5qrXbQo99MYplZKd9FWBGyLd4JTpO2Ebi0BaziVvie5ERpZxZUff6IBCP
-	 KIlWUiS3fOWAMVjK4yoTbwdZJMXgHPbnw4QMtlCOvNd05kygHiaODyyBTR+8iDvM98
-	 9fCudyf1abm4rmxRxkrblVn7ssy9uk2VQmn8j3a9+7DsG1GYNnt10yRoKvIruiChSf
-	 2AqD2GECfPxk7WE39GpRUdUv7g1Gal3OyrRchEb4bIC+Xh3m+Pc7EqtCzVlAGUYYDX
-	 hDzIwFWF77ujV8ZNMautfh7Ki14TztpQEtwjsFekVn0UtpgcMcRtwrNzwfkrt24mCW
-	 maoBr4kPiWKyg43rxRHNdMSlTIp1WP/N0nSZAgrqzFp8TQhDq8S4uWG/T8O94cMwRY
-	 A133YqKy3LXueBQBpBaEzhc4=
-Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::48])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 984EF40E016C;
-	Wed, 28 Oct 2026 15:47:46 +0000 (UTC)
-Date: Wed, 28 Oct 2026 08:47:43 -0700
-From: Borislav Petkov <bp@alien8.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kiryl Shutsemau <kas@kernel.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"biju.das.au" <biju.das.au@gmail.com>,
+	b=aoMmoJYo7EOox5Wv63orgylHjdTEx5VSBwQdf4G54k4lg1X1J25tmZPH/0b21GbOQ
+	 KV5hzzcJ6M1/2PbiGQDQVL3xCY5yuEUnAlaD92gnsz1am0ww70WreQbrmGB62HeJ0Y
+	 UJdm3Fm4e/02xIBObfm44Grlb8/rDMMSRTHEDMiM=
+Date: Wed, 28 Oct 2026 18:39:40 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	Au Dang <au.dang.jx@renesas.com>
-Subject: Re: [PATCH v3 0/4] Fix transmit handling on SCI/RSCI ports
-Message-ID: <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
-References: <20261026-g2ul_sci-v3-0-b3097163edd5@bp.renesas.com>
- <20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local>
- <TY3PR01MB113468FBD8E5EFA65C4B4E5EB86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <072dd88c-4ca1-4c8a-98b1-7783bc43c1c5@kernel.org>
- <TY3PR01MB11346BAE55FF22F66E86A6F8B86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <afdf1864-4721-4177-bc18-2a5821d97559@kernel.org>
- <20261027205411.GAauEPc4AtLwvrDfFr@fat_crate.local>
- <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM
+ clocks
+Message-ID: <20261028163940.GA2673734@killaraus.ideasonboard.com>
+References: <cover.1793026273.git.geert+renesas@glider.be>
+ <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+ <20261028132937.GL15441@killaraus.ideasonboard.com>
+ <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -101,20 +76,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
+In-Reply-To: <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
 
-On Wed, Oct 28, 2026 at 12:02:22PM +0100, Krzysztof Kozlowski wrote:
-> Someone from x86/tdx folks added such pattern, so it is not a
-> contributors fault, that pattern hit.
+On Wed, Oct 28, 2026 at 03:43:42PM +0100, Geert Uytterhoeven wrote:
+> On Wed, 28 Oct 2026 at 14:29, Laurent Pinchart wrote:
+> > On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
+> > > Add definitions for the clocks used by the PWM modules on R-Car X5H:
+> > >  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
+> > >  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
+> > > Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > > --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > > +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > > @@ -28,5 +28,8 @@
+> > >  #define R8A78000_CPG_SGD8_PERW_BUS           18
+> > >  #define R8A78000_CPG_SGD32_PERW_BUS          19
+> > >  #define R8A78000_CPG_S0D24_HSCN_OTHER                20
+> > > +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN     21
+> > > +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN    22
+> >
+> > Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
+> > R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
+> > dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
+> > R8A78000_CPG_SGD16_PERW_BUS, as well as
+> > R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
+> 
+> I could add them, but do you have any need to refer to them from DT?
+> So far I only added clocks that are listed as clock supplies of on-SoC
+> modules, e.g. R8A78000_CPG_SGASYNCD8_PERW_MAIN is supplied to the
+> Timer Unit (TMU)).
 
-No one's disputing that - I was trying to explain why I'm complaining. And
-that is, the avalance of mails I am buried under and that I don't want to get
-more, especially if they are unrelated.
+So we have two conflicting goals here. One of them is to only add clocks
+that we have validated to exist (and ideally work as documented). The
+other is to keep renesas,r8a78000-cpg.h readable. We won't be able to
+satisfy them both fully.
 
-So relax, please, we're fixing this.
+I think we previously discussed adding whole groups of dividers in one
+go, as some sort of middle-ground approach. Those are clocks that are
+not directly controllable. There's a risk of adding clocks that don't
+exist, or clocks that we won't need to reference from DT (because
+they're only used as parents of the MDLC-controlled module clock). Do
+you think that's an issue, could it cause ABI problems in the future ?
 
 -- 
-Regards/Gruss,
-    Boris.
+Regards,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Laurent Pinchart
