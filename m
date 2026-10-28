@@ -1,68 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793179690;
-	b=icv54ZLwyvLjn24SNlFP6RSuE6ON3ie89qa3Dt0TtjKvyM1lsR6zMzJRgUaVuLYxBjA3
-	 sRaQ0qw7FR/MyDIg7QXGs7aCqyfVbC7VPJsd1em2gDW4nCAvwUyVQKUfpszi/zV0jf3NE
-	 5PuY/qqApgn5XN6PaxAwhtcRLuf9mfRa6ADJweybiNtUtZJJI/R0nrCsXebC64jrvGIbG
-	 xA4jgbdO0I3i/c3OvV748+zN4+hREYbAIq1ADIP+q+RPcIVgX0eWHCFKpEi2Hhy6gM/mB
-	 PcTpadEk0JAiuILq7lF/2Dqdisp0xubGdxjICg2H84jLrwI6crOnebS8TNFe195HNpg==
+	t=1793180838;
+	b=L3dECRjjR3M6YO+0f2j+oUfFsTkTtDXS3QEwFDx28ZnZjyQTXHKyIuGRcqjYdaZqnKUD
+	 Zwe+0FFJ1imhBlS5ZoTUu3IuQYYw3NbMwD7CbQgYxrfmg5OV03o8u91cKo2I7lNXgvFBP
+	 7uF30+X14z3FHwF6Mk+VIFfQY1c1lySXDJNJXJpvtr+uh7mn1fRJQMVKNrwxEgnAq1D6h
+	 XyrFWLcn4pbUss/Bhwj4SbHfDeALOh0SeukXAFCMAzUYhfav7SIFq+l/Ya2byuvNib1xo
+	 R/sgf1rLZy8/rtAwxjQpgbHpFJ4LQc7Z72TwDth2qNAzEdKqwC+K4rfZIoZLbnsBgeQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793179690;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=heJQBjdNMVHY8jFC21zH/dY31roNirLhq7s7e8zFv2c=;
-	b=SZZd+dhGgYRLq7Fyiww8aTXsK6Ab0b5ftBDtM2ApSxYiRzEn991RiS40vra4dglN5gJ+
-	 SP9s2exI7uBuYeO0NTCJcGNSPDi5Ixe3blgcru00U2K0OWE+E8iNd2VVp3i5QjHxF+JDo
-	 ZlizwJg/5AlYl2CFXliq3olLW7sCskdkJdYylxdBsvrw34I3JkKrmlnOFVq5Nxpo1NHcy
-	 6yIJp/Z0OM18sJTSS0aDRL/UH5w8V0k9cm0Nz8BL+ioqGTwqCoiapzJGJibWhfYVH0hjk
-	 N3beHKbC5Y9bH7RDY4A5PPghxTucb13F5nmc4TmJTnsLqclzAaz8gCxYzO90XhairQA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793180838;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
+	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=WusbLHVsIxfQC7Yt912VgHXMTR66ioRkw44xspu0Cqw=;
+	b=vC/QDh74iQGA30g5J5MKPQwqEzqw1D9UW/+044zNrV/wBNBKfYSRiN3i2wXEFj9RXRlI
+	 2s6HaLrBxYv/aRby1bQZjcxHMiev3iBjaKs3q9KoxALdTxclSB1W2DSJppUtyBwhfmPQx
+	 D3WB64UWVoi/L9d1P9vz8CplX38Km5hoMhYsbHGKvOa3fqvJonRLXY3QxnJGr+11UzVIZ
+	 qZlUPN8kL52Cwu8aJsFjL4A9PKFMEqgrQwWgfQYPVyV7wRAW6ilWTcfFCfYMbl6VYZpXk
+	 7MOQgq/POlazI02Qx8YGg4aw3i4jBdE2Qsj9ZAAW3GqyNvYfXFDFIvqO7m6WBqx7l9w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ArPOUS4k;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="EaQ/uJCb";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29AB606A31A;
-	Wed, 28 Oct 2026 09:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C29AB606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B62606A31F
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 09:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ArPOUS4k
-Received: from ideasonboard.com (unknown [93.65.100.155])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD6704F1;
-	Wed, 28 Oct 2026 10:25:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793179554;
-	bh=OFRwpIQtIHI4KvTV61PRrFHEkZMPuSbgjsNLrjj6a34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ArPOUS4kjM8uqCg5nhm4R3iUJoSn22aW2vfrzmYwZq+zNC1Uoz+xOul9hATF+Q425
-	 HbnMSt7vb4Vo8sc8tn+nz4ddRB87STWGrObomqDm2zUsssS7g/aYzDfk30qKCpqQle
-	 snV/4G8Kezgrywl/IYeYtaWkhzysJ/C6WWlWUpVA=
-Date: Wed, 28 Oct 2026 10:28:04 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Daniel Scally <dan.scally@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] arm64: dts: renesas: r9a09g057: Add IVC and ISP
- nodes
-Message-ID: <auG_dr3VFeWaBxKw@zed>
-References: <20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org>
- <20261012-mali-c55-renesas-dts-v4-4-c410e280bf2d@kernel.org>
- <asz8oEtow_lrUU7K@zed>
- <CAD++jLnnSLXeYzxonkfnZA3OxLE9Hssma9fHsL=U=NmVn7ZVOg@mail.gmail.com>
- <atXol9eFjLKxgTpg@zed>
- <CAD++jLm5iRKbb6=ZY0r1q_bb-zO3DAe3a7MxdDbpBT3ZU6_z_w@mail.gmail.com>
- <CAMuHMdWKH2pPR1-j-AxV2LVy5xeuoymYv4MnXw1KSvAu4F-brw@mail.gmail.com>
- <CAD++jL=0ak_CzxvLf14XntE-cZGFVN6ZpGtkZfTJ8ae0G+RR1A@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EaQ/uJCb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E433E1F031EB
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 09:47:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793180836;
+	bh=WusbLHVsIxfQC7Yt912VgHXMTR66ioRkw44xspu0Cqw=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=EaQ/uJCbnWPXlHtr5OchiT406Hq3ckTH12cvHcaO0eg76LUu6zZYqp2I+ZblwuK4G
+	 2y9GB87LiAGcjLyDz+TAXxojKPvNn5cDnX7AX2KtBg/52nk5plIi3MZbZSNZaqzdgl
+	 hwDgZtycuoKdchx4iyzhEccJvEpOXakE/BG6yAH/P160raDXwi35gICZofQ12jklux
+	 DvT3GhUW2o4PI8rImduLewy47S8RuBZJRK2O9JWLVli3KMV1c+64q9bhsc0pP0NxSs
+	 S2SL6kIjUXCPkKwg6yLinabNr0PR4vgOsQ/eyT/5tVkecqDyEe559M1V/3/3l2W8PD
+	 IOZ3Lk20BwfNQ==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3ab53a99771so5596941fa.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 02:47:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz6oS5rIdyi6m5LlDYgGrvz4mvK6lNCZ5yyDvoZ11rb0z450giPLx212/O2O7GEfN/3A3oGD90p2PdFgRcDSIpclA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJlTFEKlNWd8ccdrCN2ME86LmwO71Z3oJROFIjocd3QwdoVZEsa
+	jV7KOQgYICz8TLhTv0nbplhL77Vl6RRIPZNNQKeqC6Fe8n+G1vqGA/03NGwIlfC8P5zQhp1tQml
+	cpuYoqSyJr9yAG2F+rOoK3C/egfVlizjITGjOoQ2F+A==
+X-Received: by 2002:a05:651c:210e:b0:3a7:69bd:80ad with SMTP id
+ 38308e7fff4ca-3ac9cf74f2bmr4236611fa.6.1793180835578; Wed, 28 Oct 2026
+ 02:47:15 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Oct 2026 02:47:13 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 28 Oct 2026 02:47:13 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <528b079a19bd4043754bfb56db8e5950bdda62f6.1792776697.git.geert+renesas@glider.be>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -72,63 +65,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jL=0ak_CzxvLf14XntE-cZGFVN6ZpGtkZfTJ8ae0G+RR1A@mail.gmail.com>
+References: <cover.1792776697.git.geert+renesas@glider.be> <528b079a19bd4043754bfb56db8e5950bdda62f6.1792776697.git.geert+renesas@glider.be>
+Date: Wed, 28 Oct 2026 02:47:13 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MdH37DhKMtagN3Ua1doY7ZgD3f+ok3V+h86kb4J8-dtQQ@mail.gmail.com>
+X-Gm-Features: AclHuK_iGosVAQO6GwGuzhCeB4_YYSDAdlMHAhkY-OLVFYNCMrxDS4lJ3KzFIGQ
+Message-ID: <CAMRc=MdH37DhKMtagN3Ua1doY7ZgD3f+ok3V+h86kb4J8-dtQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] gpio: rcar: Convert to gpiochip_generic_{request,free}()
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Ulf Hansson <ulfh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 28, 2026 at 09:38:05AM +0100, Linus Walleij wrote:
-> On Tue, Oct 27, 2026 at 7:39 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Fri, 23 Oct 2026 19:50:39 +0200, Geert Uytterhoeven
+<geert+renesas@glider.be> said:
+> When a gpio device node has no gpio-ranges property,
+> pinctrl_gpio_request() returns -EPROBE_DEFER and its GPIOs are unusable.
 >
-> > The driver uses Runtime PM, but I see no calls to
-> > pm_runtime_resume_and_get()?
+> Restore the ability to use GPIOs before pin control support is added by
+> using the gpiolib helpers instead, which cater for this use case.
 >
-> It gets grabbed in *params.c and *stats.c:
->
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-pm_runtime_resume_and_get() is called in the .start_streaming handler
-for all video nodes (capture, params and stats)
+This sound like a fix? Can you add the Fixes tag? Is this patch independent
+from the rest?
 
-> linux/drivers/media/platform/arm/mali-c55$ git grep pm_runtime*
-> mali-c55-capture.c:#include <linux/pm_runtime.h>
-> mali-c55-capture.c:     ret = pm_runtime_resume_and_get(mali_c55->dev);
-> mali-c55-capture.c:     pm_runtime_put_autosuspend(mali_c55->dev);
-> mali-c55-capture.c:     pm_runtime_put_autosuspend(mali_c55->dev);
-> mali-c55-core.c:#include <linux/pm_runtime.h>
-> mali-c55-core.c:        SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> mali-c55-core.c:                                pm_runtime_force_resume)
-> mali-c55-core.c:        pm_runtime_set_autosuspend_delay(&pdev->dev, 2000);
-> mali-c55-core.c:        pm_runtime_use_autosuspend(&pdev->dev);
-> mali-c55-core.c:        pm_runtime_set_active(&pdev->dev);
-> mali-c55-core.c:        pm_runtime_enable(&pdev->dev);
-> mali-c55-core.c:                goto err_pm_runtime_disable;
-> mali-c55-core.c:        pm_runtime_idle(&pdev->dev);
-> mali-c55-core.c:err_pm_runtime_disable:
-> mali-c55-core.c:        pm_runtime_set_suspended(&pdev->dev);
-> mali-c55-core.c:        pm_runtime_disable(&pdev->dev);
-> mali-c55-core.c:        if (!pm_runtime_suspended(&pdev->dev)) {
-> mali-c55-core.c:                pm_runtime_set_suspended(&pdev->dev);
-> mali-c55-core.c:        pm_runtime_disable(&pdev->dev);
-> mali-c55-params.c:#include <linux/pm_runtime.h>
-> mali-c55-params.c:      ret = pm_runtime_resume_and_get(mali_c55->dev);
-> mali-c55-params.c:      pm_runtime_put_autosuspend(mali_c55->dev);
-> mali-c55-params.c:      pm_runtime_put_autosuspend(params->mali_c55->dev);
-> mali-c55-stats.c:#include <linux/pm_runtime.h>
-> mali-c55-stats.c:       ret = pm_runtime_resume_and_get(mali_c55->dev);
-> mali-c55-stats.c:       pm_runtime_put_autosuspend(mali_c55->dev);
-> mali-c55-stats.c:       pm_runtime_put_autosuspend(stats->mali_c55->dev);
-> mali-c55-tpg.c:#include <linux/pm_runtime.h>
-> mali-c55-tpg.c: if (!pm_runtime_get_if_in_use(mali_c55->dev))
-> mali-c55-tpg.c: pm_runtime_put_autosuspend(mali_c55->dev);
->
-> So are you saying these runpaths are not necessarily getting exercised,
-
-They are when you start streaming on those video devices, if I got
-what you mean here.
-
-
-> so the reference doesn't go up on normal use cases?
->
-> Yours,
-> Linus Walleij
->
+Bart
