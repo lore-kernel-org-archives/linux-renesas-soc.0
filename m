@@ -1,68 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793194187;
-	b=5BJdCX0Bnijo3idozoC/u8GpEh3MdSh4DL2vfpLUpy0kTqjicZ1o2uKxoUwYdYSIHyxN
-	 VKOYdDlsLsTQpNIQSdyKT1OCm2d88BWkqI2QZLZa0MQiSHLnTBLf9e5pkUvp+0I2cPTWK
-	 iU7X70ueZr0hxveEdTeLXKCclscrJKcbHaJVVkWZP2HLcHYfnqy9Qvx3d1GUfvFzPlcxo
-	 U8pyGrMrYg5/S92FMem3u6ng3kfsiMEAuKjludfCJmvnlY50dsWYiS3bsLOtArIK8aud3
-	 IMLQrifFCPNkumtRvED9B16rneMG36rv/9ZxhJBc04aPZ4kG79KpRTqLy2Urz9AKvhg==
+	t=1793195587;
+	b=fyipsKlzKF25ZXh089AFtwxpKcz3uXD0OxU8jKNFxYPe+AzdJtcF2K/BeBfWBzsf0jBi
+	 c3Ig3xYjr+DsjtYopND85pnUMGVchoG1HsmC+4NvKkjczAFrnAq9daWs2Nxv+NI6OWYVi
+	 RR7am3Zy825EIET1RqF1ulVbf5MIuG1SZk5J6x9pgD4h6t1kzYoSYtWXvfdkKMrqYhN1+
+	 LZj/QQ9kmlepfBIsL+KUesKzjVU5I5mst5w+5PUaks2jA59cnoGdMnMxZ51vWx3xG4Xsz
+	 TfBbjrYg//EKOeKS6yj3ENaFJ9Hqghh/7wFiwGlfJN0tAlTRAvgCTTJSlnhOd0PL8hg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793194187;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=+ZDZrqj/BPoTA6v4mR/qLoQhcDV/UIjpuvoi1Z0zPGQ=;
-	b=dXG0ufqVBhnxEcYmYZ4Xlyih+LOo69Arr9JN3tgz5OcvcmTpj4xIvzliNX400GVJVZmY
-	 EkGUt2kBboW0wVJm7o05fCSbgVIIUVLZkPvWGtIR92UDzKuCtAfGE15A0zbp7xojrPrGZ
-	 aNiEQ7qoB0iNNnOma7/RVhfiN72O++I9+UMTzVOfilawcbeZ8RBPm8ltwAjpkcWeEDw27
-	 w2ThUkQ6LS53hDJpNR2pKcZiOUQFP4IBT/MXGEwn2cbnvIa9ojAe3JSZsz4VvFOZYySaU
-	 XOqci5zVM2VW2UGL7VAXD0hVw0bcaeS5TOBaK2TGE+gviJ5pXLiQzytypxfU4vqVfTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793195587;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=SxymvfAlNS0X8/xbI9/XRQHmV9LZfSmga4dSHsFV4Hk=;
+	b=ZpPkASvwxPkkIeacxEZaSRCbDTpwHXSV51HjTTSSnFzNuOyMKJNOPdyzLjWDezren5Ji
+	 2T88+LuzFWgNnPHWLJyGP6Iy9o21jKjMy8+YWa49HkqsNsAU12eIlku0sl2/Qxc5VjlQR
+	 bOar2TlZMfqNEdyz+nQ5R5AKbNMHVsBeN2uzk3SEcpFk1TotNxhMZAqbFI4nIVtQbCV0I
+	 7V2TiWYH7a/pzpDUpjAYSht1ozTBjWieb15CoWXZPkznplCyPjS0N/iBNQqL39jBb/xGD
+	 XSuOwYU2CzZwgx9pM9j8s/gkXFEJJ6Zg446g0lRhuM79HR87zR39uVRnlBfWH6YeX9A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=DC6WunDL;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=AjWDTT3c;
+	arc=none smtp.remote-ip=198.175.65.16
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA1B606A31E;
-	Wed, 28 Oct 2026 13:29:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8BA1B606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4875C606A320;
+	Wed, 28 Oct 2026 13:53:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4875C606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=DC6WunDL
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DE3C034;
-	Wed, 28 Oct 2026 14:27:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793194046;
-	bh=8cQ5CvO/2sA2dQUmqeKVIlmOQmp+Y7f2f6c5x7Y+SrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DC6WunDLJngl6a5oLdyhXtOxCbeD47TRHBYXKqGadYb+KVLYJL2wFP2W9sAuwBbuT
-	 0ZrOdBnemjOFetphtsckixYkVX7RFSmvWk02kL7PZ8kp0LZj+sCKS0v9q3bHzCknIv
-	 9SbqSAWUkTebMzav3ZRtsAa7t8pR/VLI8J3bBbRI=
-Date: Wed, 28 Oct 2026 15:29:37 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=AjWDTT3c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793195586; x=1824731586;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+0hcYzDXE2GYoXsQ0MP6klFZxsUOFBht4tZhtoGv83o=;
+  b=AjWDTT3cAd77LTPUBK9Lgxpr1UsgmakAvb78kRlJDC+QFofEsRm6Vglw
+   YIsO3n2legf6TUD5/gcZv2EZGJ14Y8+HOCq8llRtfR38XyT1AHe5LDCqI
+   sti7ZHrzkA+wH2pUi/J4rmglx+DWN/tXyK6CpRZ+xCBR94Qqj5LTC2CVk
+   24tfsoOhBl+vcaEHm0LymA937cp3XsY25KLp9MovgJF1gvVLTDSsDYzZS
+   elCy78OpKmLkolwL/Ons3+0wnJUrPygvQweDPVri1s81pgy+N9PTsog9W
+   MpLVPwtBgB9yyTI9wHLlhavJk3o6gKcu2CyEuz1lpG+cuy5V0u6GzefVA
+   Q==;
+X-CSE-ConnectionGUID: 3/DC+L49QfGjI6HeEqK0fg==
+X-CSE-MsgGUID: V6ExW2teTam+90kURm11pQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1904406"
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="1904406"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2026 06:53:06 -0700
+X-CSE-ConnectionGUID: emGC5Cc7RHmxfp5uMqR2QA==
+X-CSE-MsgGUID: l+3uM1XCTVevg1M65njuRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="6618376"
+Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.117])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2026 06:53:03 -0700
+Date: Wed, 28 Oct 2026 15:52:59 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	wim@linux-watchdog.org, linux@roeck-us.net, ulf.hansson@linaro.org,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM
- clocks
-Message-ID: <20261028132937.GL15441@killaraus.ideasonboard.com>
-References: <cover.1793026273.git.geert+renesas@glider.be>
- <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 4/4] watchdog: rzg2l_wdt: Power on the watchdog domain
+ in the restart handler
+Message-ID: <auH-O0LwqdmgzrQf@ashevche-desk.local>
+References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241015164732.4085249-5-claudiu.beznea.uj@bp.renesas.com>
+ <auC7FueGYTiLOpcX@black.igk.intel.com>
+ <0602847f-4fef-49b6-a1eb-3240d7c1ecbc@tuxon.dev>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -72,51 +86,57 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+In-Reply-To: <0602847f-4fef-49b6-a1eb-3240d7c1ecbc@tuxon.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Geert,
+On Wed, Oct 28, 2026 at 02:45:15PM +0200, claudiu beznea wrote:
+> On 10/27/26 16:54, Andy Shevchenko wrote:
+> > On Tue, Oct 15, 2024 at 07:47:32PM +0300, Claudiu wrote:
 
-Thank you for the patch.
+...
 
-On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
-> Add definitions for the clocks used by the PWM modules on R-Car X5H:
->  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
->  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
-> Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+> > > Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> > > context'") dropped the pm_runtime_get_sync() and replaced it with
+> > > clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
+> > > in genpd_runtime_resume() being called from atomic context. But
+> > > clk_prepare_enable() doesn't fit for this either (as reported by
+> > > Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
+> > > wait context warning as it is not written for this).
+> > 
+> > > Because the watchdog device is marked now as IRQ safe (though this patch)
+> > 
+> > ...which is complete hack and has to be avoided.
+> > 
+> > Can it be solved differently?
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on "[PATCH 2/7] dt-bindings: clock: renesas,r8a78000-cpg:
-> Add GPIO clocks"
-> https://lore.kernel.org/624a9fb09e4ec74b1995797e5121b86e7206f5f2.1792776697.git.geert+renesas@glider.be
-> ---
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h | 3 +++
->  1 file changed, 3 insertions(+)
+> Can't tell ATM. This solution was suggested by Ulf.
+
+With all respect to Ulf, this is a bad idea. We need to get rid of
+pm_runtime_irq_safe() sooner and avoid adding new users of this hack.
+
+> > (Note, OMAP, for example, got patches in the past
+> > and become pm_runtime_irq_safe()-free.)
 > 
-> diff --git a/include/dt-bindings/clock/renesas,r8a78000-cpg.h b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> index cd7192ccecd4e22c..8c30476d41448cf5 100644
-> --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
-> @@ -28,5 +28,8 @@
->  #define R8A78000_CPG_SGD8_PERW_BUS		18
->  #define R8A78000_CPG_SGD32_PERW_BUS		19
->  #define R8A78000_CPG_S0D24_HSCN_OTHER		20
-> +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN	21
-> +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN	22
+> I'll look through it.
 
-Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
-R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
-dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
-R8A78000_CPG_SGD16_PERW_BUS, as well as
-R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
+Thank you!
 
-> +#define R8A78000_CPG_S0ASYNCD8_PERW_MAIN	23
->  
->  #endif /* __DT_BINDINGS_CLOCK_RENESAS_R8A78000_CPG_H__ */
+> > > the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+> > > 1 for devices not registering an IRQ safe PM domain for watchdog (as the
+> > > watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
+> > > always-on), this being the case for RZ/G3S with old device trees and
+> > > the rest of the SoCs that use this driver, we can now drop also the
+> > > clk_prepare_enable() calls in restart handler and rely on
+> > > pm_runtime_resume_and_get().
+> > 
+> > > Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
+> > > watchdog restart handler.
 
 -- 
-Regards,
+With Best Regards,
+Andy Shevchenko
 
-Laurent Pinchart
+
