@@ -1,85 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793191522;
-	b=ewBWeHFyYkN+LI8nCKyFi0EinH6EqKjcMn2xfYzCVDlYHC5X/etNsr7gJAS3i5AMMAaO
-	 QMBBa7uknhrCS0+Zsjk34gqGrgeXrCdWyTDlyaltsKOGSDxJPAymOleWQjU+fWsPn89TH
-	 1JurM98NjybEsHd3hE2nKLiTTChZrhxEqiDK3oMOt5zchpKbMlHEAa/v1lJcgUUWcaWl/
-	 INIiVGNKLv3vO/lpSaYhk3f55NY5OCQzQsXXzEGJyABpL0jnIplfbGfIXYZfWMECRKxul
-	 hWpmF5KxsqG+KhdBSmuKziult97rlsThpBw1LX2qUCwZf56acS0O67AMseBRK0stR6w==
+	t=1793191883;
+	b=A6KG1ZAgFe3OdGm17mwF61gGCedozMASJrbJcUG2fQfH/XqIkmKtvDjxylr9SNjD5bxJ
+	 1aaXuSy/C2gmRLY8CjpxBoOTEagahHiqACTmpHy0suT4l4wWEPCyCrjzRmhNYSvPd9Del
+	 i8CzAbcKLHHde1ZwQ++y7Bjp10ZRZ/3nxstJLSFIV8TOhAD4dWZed9v8pz75uBONezgZ2
+	 y0S3AGslIXYCccwRtFksA5ZvaLGIalZ8xzy5L+ZwNqp+8dZmLw4518fKtP58i5AslaA4G
+	 Lu0ZBHcKgvOkLK7zsWNB/DJato+LT4hP2LOvfoD8dR70v3ZaBgIYSBN+RHIz7GorxOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793191522;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793191883;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=QqTI4OK/fhuaR1GlqOO94iKxdKzeyM0Y5bQN/d17mzE=;
-	b=DiZHLPRQlREr8F7ZcVPQkGt+VobjfA/F3RW628bpPzWB/JKEGZ3PuRvBqqEpy9ClkFYy
-	 1c1CcJdpwgukerbNHNtTFHjQi5hk7F/BdV34rZYH5xPz0dxRefMWLy+TllzyH2ZHeY8DN
-	 fwCFZ3svbhBfwnm8WYG1BjzTNz2B5mhrG6eZ7hkJfbiX1UqiX/UIcuXhVoRHlwwnss8q4
-	 AwTrump2fs6D/GjY2pdyal3fDZT6iqC2cDEzch9jprhYT8zvgYc9Tb4J/aPVyEo6UCPAw
-	 79kWJfw6XUi5qcwCxNLR0Tb0ABPhTbTiNyiZbhDi4JJukZSf//IyJ+sKZ0xElOUR3PQ==
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=cOD+3y2y4oFTCu8bqJziXlWBFU9+6RCuk7yT9mk627c=;
+	b=a2lai06gxdqzJJ7Ss4YwTr5I6J79xH4fICxZf8UqoUa3k+qg2J+RPayDT075ONHv2xaS
+	 Cy5Hk1iG9KBvTvC0AeFM53de0bpIuh/rqe7xKLu1n9xUXbPGl/BqCjNu9o931bkD0Aqp2
+	 E5tn7iQYqwzd27QRnQ3Sk/VDu+ayPJcBoFdviu1HoYN+Mj+6odlvLyJaSyYK6WpHC5xhv
+	 LrX6WlEZTE8XZNsM/MY5u6LY0HSiLtkLjVCt0uoHtyTDoJ7+KvT5nkD15lFaqQkEF5KUO
+	 jnZtDFwdPhYFCNQSqLNKGLq/EVQQTIz2Tkr4z/9aEo9afAGgqCVBBKgxSP0+pHgygaQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tuxon.dev;
-	spf=pass smtp.mailfrom=tuxon.dev;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fm+UAk2d;
+	arc=none smtp.remote-ip=209.85.221.45
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466D606A325
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 12:45:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9466D606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a35d5d4a20so9996375e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 05:45:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDD3606A321
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 12:51:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4EDD3606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fm+UAk2d
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48441a2ba1bso566904f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2026 05:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1793191520; x=1793796320; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=QqTI4OK/fhuaR1GlqOO94iKxdKzeyM0Y5bQN/d17mzE=;
-        b=kSmYo2IApQsaZVeoI/lHS65DndOvyRY8lt50GRCZmz/jWWH8qe4s7wo/zr2/zMpq25
-         +sjQr/YIemSHfu6uSz39sV8QOjFvoudUeuFCrPfNICLHczUoyPJM2MMP2ZzljZ7g4y9C
-         e2zu+Bti1OHmJlatzf5eQK5sXxZ3i0qUYaH+sDqEm4IIQ4Nk+kHHbcDLgsKMAjNiyB+/
-         XHCS25+GfCpZiPYLwRPoWKFHsIs3BMbU1i6dviNOqXSCye9VVbinYsSDEBX24Qp54NKy
-         2ZE+Gf+jUmLFXKEj1XKHO4ETJGGRqh51DtS3Fk31LWhkvIQvA1aIATIPsXPkaoqVeUIU
-         2+rA==
+        d=gmail.com; s=20260707; t=1793191880; x=1793796680; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=cOD+3y2y4oFTCu8bqJziXlWBFU9+6RCuk7yT9mk627c=;
+        b=fm+UAk2dgbVPygolzAhzQcaLO5Zx108eylqHHHo2+Hy+Mvtziw+srJv83UFQ9ksxob
+         zwld4n2kF/n8ihO50+oUz+uRZMTUfNDbBB80UQnAbkqr9uYrsczpO61SYgNhY3Q3iSq2
+         obpM6RQje7RVqg7ZOy0yCHnjcev+jDTgqgoSU8XuqQ26bYrKr5dZd038FRRVeyoOud0H
+         6Kezse99zMa6zg6EaD9qU1g//2AC6WCshghmFMU7+LfWMR73ISXiFjb2tt/Rnk0DGO4e
+         hXcNZsz+SzfwXUe7wLnxqomOc4350uz4dG0MlAv2gAQBXBWdJKJurh/Fr9VLk61TM1fp
+         Y/qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793191520; x=1793796320;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=QqTI4OK/fhuaR1GlqOO94iKxdKzeyM0Y5bQN/d17mzE=;
-        b=xQyWMpsXibMXeACxylUngQ90i3su85kuaylCIjkNy8SQROPAOpg3RgORDn4f1YDsER
-         JReQ4ovbP5EjY4MBrbl9CvnUAMvSlfe84SfL4A2KlmL0cTijptmZ5elUji29zBQxRdiH
-         y5pRtJHcburEl/bZ3jReu4PcjmzV9i2+k6nqSuTHk4WwuTZm3Hl8sFhwLsorVppV24Yf
-         8PPzsXv65BqmvwlnPu7sFiJyoakBQADn5FgTenJDDPea1nbSn0pFZcMxiSt1sSVc1CDw
-         xKWSaBzDM4mZtk9s0SIceMH7rgzVOTGBYOwB6MbdP3LYQCidj63i62WFVT++7jTBtcD+
-         8L8w==
-X-Forwarded-Encrypted: i=1; AKwUvBwz8td6QVUXi7lLhfeOjqtVu0PUDdV+quoRVVNc3rMPHBh3ueHscUQ3DWFtKkXZ7DOgkoCWrm5BT/DFG+Kq8/Rfsg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYINO5tHZsjBYllEBNmeElTQK4P/SGt769gChxh9DPiwHu8FXhe0
-	w6f0wRtH71vuTXMGK09Qt8s4B5XLin12DIRvkq5mi0lAHf/lFV0S2GgIv2ahpn+6nVs=
-X-Gm-Gg: AYBFou2mvoXy5ZWMfp66GJeCiSZQB1idMNzLgTRrywtzKinPxijteakd38lNJsbnGPr
-	vUVjnIZSHi/r6DVc8zXOiSsNDNa2gke7iXRol+o9nZ9BHnpy2xcFX10Cp1SyTKXdcCsxxojGpQu
-	3DUWkf4GvueSZg2YoH7W+kCJwMH4SWIi/uLs1fsEhg9Ks4NYALdU3xgrTkLGp9ZJ0lE5HkDb+RK
-	gHxRhC74L0HnokDynC0aix7/GuczGfqUgehpC2lF0oMQ0o4rsUlp/1JmE8krgHI+TSUR/kUt4te
-	EO7x7NUc78BWgTk7/JfmytNDtNOij+Ngb9USeHcsuA2Ty9BAgdHHACkB2CY3iA0EohpTYDvKVUC
-	ED0pdk/IrwZVlMGapuZC1Jlfseep9+V7ywKPm69Zt5l+VwfpEgXwh6vFSPIBol0Wj4srf3bZfcJ
-	ptTPi39YsTarsUTIxKjYB4u4arLDmX+Jtwe+7rpbPcMZwR0ugfXRSy8pTqyk5OVYMlTxwiGAd5y
-	Syj8Cxqgz9V44dZLmYVrlR1jAdV50AfJ0/J0bL71Aw1g+yMyCGZud/9sFFe+y6KPBvpPdacIJ+k
-	xokCnWw0SnPuv9vuHaHqyxXeRIXBfmOgzaApfg==
-X-Received: by 2002:a05:600c:3510:b0:4a4:7a8d:c436 with SMTP id 5b1f17b1804b1-4a96667dd75mr44218195e9.11.1793191519063;
-        Wed, 28 Oct 2026 05:45:19 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.196])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebcb8d5sm29772912f8f.28.2026.10.28.05.45.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2026 05:45:17 -0700 (PDT)
-Message-ID: <0602847f-4fef-49b6-a1eb-3240d7c1ecbc@tuxon.dev>
-Date: Wed, 28 Oct 2026 14:45:15 +0200
+        d=1e100.net; s=20260707; t=1793191880; x=1793796680;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cOD+3y2y4oFTCu8bqJziXlWBFU9+6RCuk7yT9mk627c=;
+        b=SEWhSm+lEOuAeh7NxLMtAIp8PpK4Sf3vtXslcgAjiqwAC181KJ/XWwjiZCKahTZg3u
+         KacKMfAlG8bbkeMdgXtBr0qtyBhzTAlgngW4fbcvJwtL1GtNt3WaEB3nsTIb3FH1XVN4
+         GYhPGDMe60Q7yMPa4mvNj3NQEUALnpo/3fPX9omg8puPOCv2Zys13glX9P7bB/TieIat
+         8J9iWy079bFjGtfz6HCffCNGdgrkNgUX5J18Sl/8y+5T5lykmFJeAz8+h4Jk5o6o7K41
+         gA8OWbJlB1k1TjL/hj3QSIotpWh86afbfhvtnOLHLrbFEZTy/7pJoiMR6X2TJe8A6Q2w
+         lcxQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz4UP2UedJLH3IDPfRECGKj9m1yJtlcJL4XR9rDchbCydpmIuRBleNTFUX25DqbAsPDXdPV4Oux/Nm9i+iEi42G6w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYI7j606H8i/mpTTLmx1ggPFJvOr0PVi6dnEfOyfAFyaytlriWO3
+	e14q0cO4eiFiSvaJ0Mdp5dt8Fwwvc2Uq1sfGCKPPkKogv3got18CUfxQ
+X-Gm-Gg: AYBFou1yvHE5cIzmvCOHi2Fa2R99Lrx3Hinx1nw/QvBG2/Dq9lnMKCO6XOWD5rTYg6a
+	KnoE72IEL9dQQtIGqpux2UxW6ZvyCsLLKz5rYvYqlKBzjfAoWqCQM9UeYsefRzuJSuhDi6wbebB
+	hRoR/29+T+WlP32T9NfOK9SVh1jArtpAoR9Jjzd+mAaTU74xcUxrMlGRjGqInA3+oS+WDU82Ylf
+	2ABP7s5P6iQhiAclWXOwawGSJhDOyUYBWzuIcCjjwyeWfPO3UNMx4VJYq2jzOuVOPtFLbprPwdG
+	r+XiYmtpVRciyD0Rg/BFIwdB27iQN4+IKC97qTcTI0rmyNdCpmmQAr1qUU9We4eXFVM3PoTNUhg
+	jHcoyQ9U4Jo3F1C1DptxdouDEX4qChcmcKdf1r8h2NN1vswe7if7s32zanrnhH1ADpWAfWi2lgz
+	bW8ObWc3o7HxZNF1xEuTVyvHMdHn+cM81yp7Q/R67/RCSidhVMy/vK17+hD7CaIL9Wj1fikuWMn
+	fpeN40fCZvLqmqIIQV7ToIIiqWfdZ8SD3TIBjEzuL+wnfQZHfs9ILrJnhdI8kX4BqWWSENZkupg
+	saPyxNmaDiPENcJau/wZvpDXcabhN0u/+br10+vhA0+u49mFLbYMaa9/+0uQjqKlN0E=
+X-Received: by 2002:a05:6000:2312:b0:487:767:b301 with SMTP id ffacd0b85a97d-48e5d5d2b33mr5543760f8f.57.1793191880031;
+        Wed, 28 Oct 2026 05:51:20 -0700 (PDT)
+Received: from [127.0.1.1] ([2a00:23c4:a702:d301:6bf5:6c0a:cf99:c9f2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc39b3sm29275016f8f.10.2026.10.28.05.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2026 05:51:19 -0700 (PDT)
+From: Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v25 00/11] Add Renesas RZ/G3L SD/eMMC support
+Date: Wed, 28 Oct 2026 12:51:17 +0000
+Message-Id: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -89,76 +92,216 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] watchdog: rzg2l_wdt: Power on the watchdog domain
- in the restart handler
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- wim@linux-watchdog.org, linux@roeck-us.net, ulf.hansson@linaro.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
- <20241015164732.4085249-5-claudiu.beznea.uj@bp.renesas.com>
- <auC7FueGYTiLOpcX@black.igk.intel.com>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <auC7FueGYTiLOpcX@black.igk.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMXv4WoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjEx1FJSSM
+ xLz0lN1M1OAAkpGBkZmhgZGRrpFVenGOfHFKRmZukkGSSnGRqbmiUYpFkpADQVFqWmZFWDTomN
+ rawHRiO2VXQAAAA==
+To: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793191879; l=9059;
+ i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
+ bh=oiiYOXksZ20xr3S/ETyP+voiPCikCYeM6QV3va9MfDY=;
+ b=Yc5Z3II1HVTPOe+0b+VuZ8e/MilCee5vwXTZg6ke/f9QvLU0C9lHUwLbVE7uOk+WLf3kg66Ab
+ EAeAzOApoFgCUBj5ZfJCVRnF0B75lxa64fygflAbW0wX2dhVJrR6ZpE
+X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
+ pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
+Hi All,
 
+The Renesas RZ/G3L SoC has:
 
-On 10/27/26 16:54, Andy Shevchenko wrote:
-> On Tue, Oct 15, 2024 at 07:47:32PM +0300, Claudiu wrote:
->>
->> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
->> this case, the watchdog device need to be powered on in
->> struct watchdog_ops::restart API. This can be done though
->> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
->> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
->> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
->> watchdog device though pm_runtime_irq_safe().
->>
->> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
->> context'") pm_runtime_get_sync() was used in watchdog restart handler
->> (which is similar to pm_runtime_resume_and_get() except the later one
->> handles the runtime resume errors).
->>
->> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
->> context'") dropped the pm_runtime_get_sync() and replaced it with
->> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
->> in genpd_runtime_resume() being called from atomic context. But
->> clk_prepare_enable() doesn't fit for this either (as reported by
->> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
->> wait context warning as it is not written for this).
-> 
->> Because the watchdog device is marked now as IRQ safe (though this patch)
-> 
-> ...which is complete hack and has to be avoided.
-> 
-> Can it be solved differently?
+Channel 0 supports SD and eMMC (including HS400/HS400ES).
+Channel 1 supports SD and eMMC (except for HS400).
+Channel 2 supports SD.
 
-Can't tell ATM. This solution was suggested by Ulf.
+The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
+not support IOVS and PWEN in the SDHI register (no internal regulator),
+unlike SD1 and SD2. It has an internal divider for all modes except HS400.
+It also has a 2048-bit divider compared to 512 on others. Moreover
+RZ/G3L supports HS400 enhanced strobe mode.
 
-> (Note, OMAP, for example, got patches in the past
-> and become pm_runtime_irq_safe()-free.)
+This patch series support all modes except HS400. HS400 support will be
+added later.
 
-I'll look through it.
+This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
+rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
 
-Thank you,
-Claudiu
+v24->v25:
+ * Added max-frequency is a required property for SoCs with internal
+   divider.
+ * Retained the tags as the change is trivial.
+ * Restored struct of_default_cfg.
+ * Updated commit description for patch#3,#4,#6,#10 and #11
+ * Dropped initializing clk_mask as it uses the default value.
+ * Added suffix ULL to macro SDHI_CLK_MASK_DEFAULT.
+ * Fixed a very low or zero clock rate from the clock provider that causes
+   an infinite loop in `renesas_sdhi_set_clock` by max operator.
+ * Restored the data type of max_divider from signed int to unsigned int.
+ * Dropped initializing max_divider as it use default value.
+ * Updated mmc->f_min calculation with clk_round_rate().
+ * Updated the comment using "ilog2(max_divider)" instead of "{9,11}".
+ * Dropped initializing clk_div_mask as it use default value.
+ * Updated renesas_sdhi_set_hw_adjustment_delay() with force_clear
+   parameter
+ * Added a comment in renesas_sdhi_execute_tuning() for tuning delay.
+ * In probe, if the SCC registers are not available, it clear the tuning
+   delay flag.
+ * Dropped default masks from struct of_data_rz_g2l.
+ * Dropped renesas_sdhi_is_internal_divider_enabled().
+ * Added a comment about the internal divider in
+   renesas_sdhi_clk_update() and replaced 'clkh_shift = 1' with
+   'clkh_shift--'
+ * Moved mmc->f_max to probe() and made it fail if max-frequency is
+   not defined in DT for SoCs with an internal divider.
+ * Updated tmio_mmc_host_probe() to set write32_hook() to NULL if
+   TMIO_MMC_HAS_IDLE_WAIT is not defined.
+ * Added macros RZG3L_SDHI_SCC_HWADJ2_{1_8V,3_3V}
+ * Replaced the quirks sdhi_quirks_rzg3l with sdhi_quirks_fixed_addr.
+ * Added helper renesas_sdhi_sclken() to handle 16-bit and 32-bit access.
+ * Updated renesas_sdhi_set_clock() with max_divider check for
+   TMIO_MMC_INTERNAL_DIVIDER instead of SDHI_MAX_DIVIDER_DEFAULT for
+   consistency with tmio_mmc_reset().
 
-> 
->> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
->> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
->> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
->> always-on), this being the case for RZ/G3S with old device trees and
->> the rest of the SoCs that use this driver, we can now drop also the
->> clk_prepare_enable() calls in restart handler and rely on
->> pm_runtime_resume_and_get().
-> 
->> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
->> watchdog restart handler.
-> 
+- Link to v24: https://lore.kernel.org/all/20260820171657.62815-1-biju.das.jz@bp.renesas.com/
+v23->v24:
+ * Added Add SDHI_SD_CLK_CTL_DIV1 macro for handling 1/1 option.
+ * Updated commit description for patch#6.
+ * Replaced GENMASK(7, 0) with CLK_CTL_DIV_MASK.
+ * Replaced magic bits GENMASK(9, 8) and GENMASK(17, 16) with
+   RZG3L_CLK_CTL_DIV9_DIV8 and RZG3L_CLK_CTL_DIV9_DIV8_SRC.
+ * Simplified renesas_sdhi_set_tmpport().
+ * Replaced GENMASK(15, 0) with RZG3L_SDHI_SCC_HS400MODE1_TMPOUT.
+v22->v23:
+ * Added write32hook function for hardware idle synchronization for
+   CTL_SD_CARD_CLK_CTL writes.
+ * Changed the data type of max_divider from unsigned int to signed int.
+ * Assigned of_data->clk_div_mask in renesas_sdhi_probe().
+ * Updated commit description for patch#7.
+ * Updated tmio_mmc_reset() to handle 32 bit divider register in RZ/G3L.
+v21->v22:
+ * Added HS400 ES mode after fixing inode corruption when eMMC is
+   mounted as rootfs.
+ * Updated commit descriptions for patches #4, #5, #6, #7, #9, #12,
+   and #13.
+ * Added clk_div_mask to of_default_cfg and of_rcar_gen2_compatible.
+ * Added a renesas_sdhi_set_hw_adjustment_delay() call to
+   renesas_sdhi_init_tuning().
+ * Added renesas_sdhi_is_internal_divider_enabled() and
+   renesas_sdhi_clk_get_rate() to simplify the clock rate logic.
+ * Added `clock &= ~GENMASK(9, 8)` to clear the divider mask bits in
+   the register value.
+ * Added a renesas_sdhi_set_tmpport() helper to set delay values.
+ * Added a check in renesas_sdhi_is_internal_divider_enabled() to
+   return disabled status when in HS400 mode.
+ * renesas_sdhi_reset() now restores data strobe register values
+   after reset.
+v20->v21:
+ * Dropped HS400 ES support due to file system corruption, will add this
+   mode later after investigation.
+ * Added support for make clock divider mask configurable
+ * Added clk_div_mask to RZ/G2L of_data.
+ * Added clk_div_mask to RZ/G3L of_data.
+ * Restored actual_clk calculation in renesas_sdhi_set_clock().
+ * Updated renesas_sdhi_set_clock() for RZ/G3L HS400 clock handling as
+   it supports only single clk divider value and other values are
+   prohibited.
+ * Updated commit description for patch#12.
+v19->v20:
+ * Replaced the check mmd->clk_mask with mmc_data->clk_mask and moved
+   the code after assignment of variable mmd, this ensures assigning
+   the default values for non-DT platforms and DT platforms with no
+   device data.
+ * Replaced the check mmd->max_divider with mmc_data->max_divider and
+   moved the code after assignment of variable mmd, this ensures
+   assigning the default values for non-DT platforms and DT platforms with
+   no device data.
+ * Fixed the ordering of resets in suspend/resume paths.
+ * Added bitfield.h header file.
+ * Reworked on renesas_sdhi_set_clock() to handle the 11-bit divider
+   case and the 32-bit register write.
+ * Updated resume() with scoped PM runtime call.
+ * SD_CLK_CTRL clk enable turned off before updating SCC_CKSEL_DTSEL
+   register.
+v18->v19:
+ * Updated commit description for patch#1,#2,#6,#8,#11 and #12
+ * Updated clock and reset description with AXI master and AXI slave
+ * Added else condition for reset and reset-names.
+ * Renamed aclk->aclkm and reordered the axi clocks similar to resets.
+ * Retained the tag got binding patch as the changes are trivial.
+ * Fixed the clk_mask for non-DT platforms.
+ * Fixed max-divider setting for non-DT platforms.
+ * Replaced the magic number '9' with ilog2 function in
+   renesas_sdhi_clk_enable().
+ * Dropped divider variable from struct renesas_sdhi.
+ * Updated renesas_sdhi_clk_update() to return rate for HS400 mode
+   and non HS400 mode(uses 1/2 internal divider).
+ * Updated handling for clk divider.
+ * Renamed TMIO_MMC_HWADJ2->TMIO_MMC_HWADJ to make it generic for
+   hardware tuning delays
+ * Dropped duplicate SH_MOBILE_SDHI_SCC_TMPPORT2 macro
+ * Updated suspend/resume with scoped runtime calls in suspend.
+ * Fixed extra space in HS400MODE2 comment block.
+ * Updated the comment HS400mode2->HS400MODE2.
+ * Dropped the updation of clk handling as it is taken care in
+   previous patches.
+ * HS400ES support is enabled based on of_data.
+ * Fixed the space in HS400ES comment block.
+
+v17->v18:
+ * Collected tag
+ * Merged patch #4 and #5 and updated commit description
+ * Annotated the empty sentinel entries in the OF match tables with a
+   "Sentinel." comment for clarity.
+ * Retained the tag as it is a trivial cleanup.
+ * New patches drop struct renesas_sdhi_hw_info, instead using
+   renesas_sdhi_of_data and tmio_mmc_data.
+ * Dropped clk, pinctrl, SoC, and board dtsi from this patch series;
+   will send later.
+v1->v17:
+ * Collected tag for binding patch.
+ * Resending the series as there is an issue with patch threading from
+   patch #14.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+Biju Das (11):
+      dt-bindings: mmc: renesas,sdhi: Document RZ/G3L (r9a08g046) SoC
+      mmc: renesas_sdhi: Clean up whitespace and add OF table sentinels
+      mmc: renesas_sdhi: Add clk_mask to support wider clock dividers
+      mmc: renesas_sdhi: Add max_divider field to support SoC-specific clock ranges
+      mmc: renesas_sdhi: Add SDHI_SD_CLK_CTL_DIV1 macro for 1/1 option
+      mmc: renesas_sdhi: Make clock divider mask configurable
+      mmc: renesas_sdhi: Add tuning delay support for RZ/G2L
+      mmc: renesas_sdhi: Add TMIO_MMC_INTERNAL_DIVIDER flag
+      mmc: renesas_sdhi: Add optional axis/axim reset controls
+      mmc: renesas_sdhi: Add write32_hook for CTL_SD_CARD_CLK_CTL register writes
+      mmc: renesas_sdhi: Add RZ/G3L SDHI support
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml      | 109 ++++++--
+ drivers/mmc/host/renesas_sdhi.h                    |  10 +-
+ drivers/mmc/host/renesas_sdhi_core.c               | 305 +++++++++++++++------
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  59 +++-
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c           |   2 +-
+ drivers/mmc/host/tmio_mmc.h                        |   7 +
+ drivers/mmc/host/tmio_mmc_core.c                   |  20 +-
+ include/linux/platform_data/tmio.h                 |  12 +
+ 8 files changed, 405 insertions(+), 119 deletions(-)
+---
+base-commit: 20a33c6b6cbe7e4805dfb6cd68816937443aa148
+change-id: 20261022-rzg3l_sdhi-b0bd3257a2d8
+
+Best regards,
+-- 
+Biju Das <biju.das.jz@bp.renesas.com>
 
