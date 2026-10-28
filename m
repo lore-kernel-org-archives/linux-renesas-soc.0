@@ -1,60 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793187034;
-	b=R2kCZzxDaR1aWFiEcnz3b8Vq9wdWdhmErHGf5sflPvJeyYUC5lYvM8XnDvHXUBqUuIph
-	 ADTpO5eT8DQi0MYWVDpdHCTEfg0mqkWy5lQghdp4QRq0ObesXgpEamwIQJXHDVOYnVcJ5
-	 hsqy0qv0E7Ub0/+3bkNv1zPq9jS+XPrfPjK5SCzVkj5VoTvkdx/RJjxUSR8+sC2puonl9
-	 T6Ifp+LH2CEbpcYivT3AV0NmpZfXuazcM1U4uihj4PCQvQo5+ns4mIm+fv5yvO8SQoDbl
-	 vUMKTJ/LS4Qto4qMGOrLjRT+TnM1f1uh6vFCECZBXoiF5XKIhk4cSfGNnkLPwsM61Uw==
+	t=1793187690;
+	b=3BIOTfCoy7efCL2/dKeR8Ps++V9ZsBz7gQfVpmKgYnpT1YiSs18JBW2KbnozCAuuFyjQ
+	 1nomLhpD0oZ9aBhRVlrKzorSYUcnIPGYkOgVGHXow0JEunmnd+6QwbZs0vIS3PW04YhGS
+	 OXInTZDaoMZzVczPxPflvfgavinLVYi4/vC5gXqukwM+BZmnXx3J+/C0gaBl12j82dyv3
+	 SSYMwdHaVFOgVUdKv+CuoUAvngtuZxxzNT/xHUnQ7LWvfziSAaYui85Sg2buKiQVGC64e
+	 ysixqidZrg0Z9DxBd0B9A6JsL47gNNk4kmCNOjHEQHnEMvqdt01f+2dRzC2Pk+3nsxw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793187034;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793187690;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nK4wxJlF1X3a08zXOdP0lWerEzc2FL4X4MzbdiQi0B0=;
-	b=oRERH7BE5B0H2C3UOPDwKu7JtNk6xjN7P2ksCVcbC8jIfQ4s2HhnFW78vindHXCOttIK
-	 l6ZwDF0m3+Sa5bHRb+uko3mY3EmoZRRSSX3YfRKwrBk+kfIcfh9O4ZunjMbfoenvEF0cX
-	 ATe2MTNQGPSbKKkt1QDwj5VVETDg5JYjBoS7ITDfImU7YHjryLsaaBJjEXuFJxcrjDrzA
-	 0A7vwNen0CJJ/rO+jd7Fu/6ix39AJcUyKopZojcmi0ZjPulzob2CPd+vUxsWDgDQAvOhP
-	 WFklLmmavVvhtWOJvMAEC8gRBUy9Rd/EZmIbBPpw1CvELlQdQ1UnidFEmFk1ag9wfQQ==
+	bh=qaNp73WDDT38C4QvIcC33K4u1Sk0ULpBkqftENWUDss=;
+	b=sjPkBqBgZremlpqnqvd/9ecz6mhKIiMVQkgQdoZ77SlPaj/SRuXVCsGaew5ijvmYfcI9
+	 7r0lZ4XyquVYMq3e/IdE7hLVMpyvRZ+s+lUG7xHp2h7ZC32s49bR0KwZsFYnEq9lsvuBv
+	 iAxh0c3ijCS2/7bHUbEfzOPWruTogYpDC9yqcwq7vFmlf3kTHoemKxLBH0IZzzp+d8mzP
+	 4fBs2vmcq0hNmxhUS8PbGeAq1yVmLsqVdIsNmmshgEwaS1oRDUx38iCZ3igASxtxpigcq
+	 MFjDYdGNvJInSkbmcWxrgmg2t7CqbsU4VPrF1M8m8/579oyi3KidPuIY5kDJDFf2SSg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DQAtIssq;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hUWdC9ii;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B325F606A31C;
-	Wed, 28 Oct 2026 11:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E21E606A31A;
+	Wed, 28 Oct 2026 11:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DQAtIssq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814231F01828;
-	Wed, 28 Oct 2026 11:30:32 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hUWdC9ii
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADB41F01825;
+	Wed, 28 Oct 2026 11:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793187033;
-	bh=nK4wxJlF1X3a08zXOdP0lWerEzc2FL4X4MzbdiQi0B0=;
+	s=k20260515; t=1793187689;
+	bh=qaNp73WDDT38C4QvIcC33K4u1Sk0ULpBkqftENWUDss=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DQAtIssqPLSYUwXo8Ja4LvMO2QBS6lM0CVubOc2fgVe0DYA6540L8UjP+/LUMOYxC
-	 d9f0s95LUqMcD8UJrMoh08bgrL3biChIoMrCb/9AvOJOoqgwNMaFXH0K0JWB8J9nN/
-	 9DNYr2n1eyq5ID1zEFK2+gh3ryw23/7RNNArffdKb8Og/0+RJXdC3NawUd90Bq/rus
-	 GvZKRtclUuDHvSIBNr2T/8yIqhXwccXt8gG8w0i9DmFUOg5QaaJqvxuuCzDPIrU+cp
-	 1D6LRjYJwrFrLsFOj7EPCBqTp0BW0vREj9HtWOBZNQ67ccb1hHuKOcVJQLWdLDsMJx
-	 iAI9O3rbZIALg==
-Date: Wed, 28 Oct 2026 12:30:30 +0100
+	b=hUWdC9ii38YmtM4niQrcVuKM0MmLcS6Ymm/DpSbDM+uxAsUb9gym7iZ+LqjHT36YM
+	 uRRpINPqxTjQD1OYZX7hZdDA2FmQ01u1OGxpwXwGh62crNj8RdX31Y+QvcF+Qe3Bqm
+	 i3tx2Ar4D7q5eSfau6OEXjHP6DRwiRXMbcVo01NpfLhpqTM+HY4h4KST1dKFQrNQPo
+	 bLKfNqNrf+ETVHb0gT6RzsCE+qbBEZN9TLSn/4Mdo+daIGLKGYRlWVLgVVHsLZYpYW
+	 Wy9BAURW+S1OHFfq8kVrQchPE/H0KgLjNsKe9WV+MeBBjzXWWL47H58kNqZzsnWPdK
+	 I0stxpRbXUVEg==
+Date: Wed, 28 Oct 2026 12:41:25 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Diogo Ivo <diogo.ivo.sx@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, linux-i3c@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: i3c: renesas,i3c: Add RZ/G3L support
-Message-ID: <20261028-ecstatic-fluffy-lizard-9a5da6@quoll>
-References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
- <20261026-divo-ssgrlpcsrc-2966-i3c-v2-3-2e76b87209bb@renesas.com>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Koichiro Den <den@valinux.co.jp>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: PCI: rcar-gen4-pci-host: Replace sft_ce
+ IRQ with AER IRQ on R-Car Gen5
+Message-ID: <20261028-valiant-boar-of-competence-febbdb@quoll>
+References: <20261026224447.606715-1-marek.vasut+renesas@mailbox.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,40 +64,20 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-3-2e76b87209bb@renesas.com>
+In-Reply-To: <20261026224447.606715-1-marek.vasut+renesas@mailbox.org>
 
-On Mon, Oct 26, 2026 at 11:35:46AM +0000, Diogo Ivo wrote:
-> Add device tree binding support for I3C on the Renesas RZ/G3L
-> (R9A08G046) SoC.
+On Mon, Oct 26, 2026 at 11:44:18PM +0100, Marek Vasut wrote:
+> The R-Car Gen5 SoC PCIe4 controller does not have dedicated sft_ce IRQ.
+> Make that interrupt conditionally available only on R-Car Gen4 SoC PCIe
+> controller.
 > 
-> The I3C IP on the RZ/G3L is a subset of the one on the RZ/G3S, as the
-> RZ/G3L has no HDR Exit Pattern detection interrupt. The resources are
-> consumed by name (the tclk clock, the presetn and tresetn resets and
-> seven of the named interrupts), all of which the RZ/G3L provides, so
-> software can match and bind a RZ/G3L node through the RZ/G3S
-> compatible. Add the RZ/G3L-specific "renesas,r9a08g046-i3c" compatible
-> with a fallback to the RZ/G3S "renesas,r9a08g045-i3c" compatible.
+> The R-Car Gen5 SoC PCIe4 controller does have dedicated AER interrupt,
+> include it from the beginning. R-Car Gen4 SoC PCIe controller also has
+> an AER interrupt, but to retain binding backward compatibility, this
+> interrupt is kept optional and added in a separate patchset.
 > 
-> The RZ/G3L is not compatible with the RZ/G3E, which has no input analog
-> filters and supports high-speed mode (up to 3.4 Mbps).
-> 
-> Split the clock and interrupt constraints into separate if/else blocks
-> so that RZ/G3L nodes inherit the 2-clock limit from the RZ/G3S fallback
-> while being constrained to 16 interrupts alongside the RZ/G3E.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
-> ---
-> Changes in v2:
-> - Describe the RZ/G3L by a SoC-specific compatible with a fallback to
->   the renesas,r9a08g045-i3c compatible of the RZ/G3S, instead of a
->   plain compatible, and drop the corresponding driver patch.
-> - Split the clock and interrupt constraints into separate if/else
->   blocks to handle the RZ/G3S fallback on RZ/G3L nodes.
-> - Explain in the commit message why the RZ/G3L is not made compatible
->   with the RZ/G3E.
-> ---
->  .../devicetree/bindings/i3c/renesas,i3c.yaml       | 27 ++++++++++++++--------
->  1 file changed, 18 insertions(+), 9 deletions(-)
+> Fixes: 5b555a496160 ("dt-bindings: PCI: rcar-gen4-pci-host: Add R-Car X5H PCIe4 compatible")
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
