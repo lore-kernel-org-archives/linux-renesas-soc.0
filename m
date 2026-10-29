@@ -1,96 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793297484;
-	b=npcO+cZeN6kJFLAxv33fj16U/53M4coX33SmJionH4MVZ1mbLweuyb50jDG+3IDYiMum
-	 AggsCGyMLH5GvWwFcYQi9SFR5482JNrQ+KFP4H+MR1m6Es4VR8ndqhm66z8yLQp/X6iHp
-	 1i/EQtnkOlV6MgSRkazqThodu5Y8yS0kS0Qxp1/Njq67SewUdpy0+6hRvJpC72zVqcLKs
-	 P/jCWrS4GnC8apGAk8X24NqPs+0XKt4xBEGMQFuPu9bZNsHz5W0pyC8pbz+tEwRM8zQ0e
-	 B8GUE0sOm+Z0N6qSXiUoznQxBKL2ks4wX4gQQ4d6S70rvUu7VGwTrq9x6B2tTyQR9Mg==
+	t=1793300307;
+	b=dPFA7hGtolPoGGP0L68LMto40AQDHcoFv4HYErUlJiHamXkg9Z/CFIq6pzmyI1dz7U3V
+	 pX7bvrhpFAWor/W8861j4JWaOb9S98mmyJCE+xsLyx200NiK7BXlOR1sEvwrlatMtsqyX
+	 G5GmAtvBkCGTloOX3ZfaFB4cKrjapa9dOeZso0dhyEUE/iiY18nkbcYAmLXH5NYGkS45c
+	 C6U4YqTYqVifr93MPCp6HKSFHapoc8MQDqCaIEEvmnsZUuyMxyJ6KfAi9kktEvCfcA7dA
+	 lS6AGUQOicTwwXlbJS8531HmT2JhUEvSEkwiNM5KmI3uJg8TAmM9J5ogBFEhv47maVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793297484;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793300307;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=+z2btZkpJ+TluBaKBtaVuSDSAiYPrkTDeeGPI5tssnY=;
-	b=KpXxMs/RUyeJAOqWH8dGPliqaFL1bTYJ85IIeZP7mg5s+4c6bZgX20W7fQZnWO+mdYSs
-	 9bm3lN+vuFkl0q02IF1Y/y1GNb91JuHj1z/J/FV4q8p4oq+DqMeGhkmkUxkvFOt8O8hQE
-	 Eq3S6/+HYUGQUZW1VgWb99+X0LfO/MhRyGxShohoAHvu/GIECjSnYXrfQHFcdyS83taQ4
-	 xXyWISOaHMn1ibxnegZbxbBS7hlc9dqmlOt2xsMlHHMM4xac7J6hiTNPKX8xxj74PXJDA
-	 oP//MtUxPVoylCVuKtx1ciJKWImyFQpPM5Pg9puB2sG/wnGkoPg5Bs078AjJCahlJIg==
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=AC5QClsrz1XRA48HDyLQf18t6aBzWu8gJH35sp8Hs1s=;
+	b=rAaD3Pq4Rqs2bhl7WdTNrpbXurYxb7VzDq5PC18UDIuFZ64ZIouBuZA3VADwyrX1X9cs
+	 TgmzFXZrh5j17SThbv1i82UquhKjh4ShMgYB5bFj9t6CNgyQUnHggjDKC9SuH/AcaOdIk
+	 6lOrNnNtz9iq4eCRTRYljQJJ870Lx7MD9pIzqg30nxGeIkvH4XI7bjkZB0BWVIYvzmiZY
+	 ZXRnLIN2szsY7X8peDHpKtNd7On974jtDBWKZs6Rdrjm+Pw1/rIkXQ5xbBItaf/cJ2jQ4
+	 QgbuWCDAKN36ZTbsQ3da2tTpaxlfSyZC9jFmZg4aWrpJVY87czcFe+5O5IznwghbE6A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kA8DGoIW;
-	arc=none smtp.remote-ip=209.85.210.170
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=i2g4LzHv;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364DB606A31A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Oct 2026 18:11:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 364DB606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F8D606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Oct 2026 18:58:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0F8D606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kA8DGoIW
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8a06454116eso1349114b3a.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Oct 2026 11:11:23 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=i2g4LzHv
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a60f9474c4so30138325e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Oct 2026 11:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793297482; x=1793902282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+z2btZkpJ+TluBaKBtaVuSDSAiYPrkTDeeGPI5tssnY=;
-        b=kA8DGoIWJVfUg2+8TEAlcr02qRAas1WamLEw9se1oDuyAL6mB0+SBqZ2Nhf1/Oi7P5
-         jFugVvRpoyquphZi3pDahK3ndHBy/oE5v06JdRDwkay2AeKYOORoFPjvce4cv7PaMp1X
-         gUrvj1xqKfMRUsf18jwuv9+Vue98Z73xAIF9CN8thmdFPVOdmtWcGh1MsXhOhZMUqjz3
-         6leC0g094Fei3bu+gg08o+MdYiksIjlO1V5ixDt4V88mcg52fpP7nk7f72jq6tXFylV0
-         r3blh61v2dWDbXvIUUlR8qEBGQYnA0rwpXClq0YGbejOjFGkRjzzaMOaL1qHt8DYmcw2
-         Kc9w==
+        d=gmail.com; s=20260707; t=1793300305; x=1793905105; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=AC5QClsrz1XRA48HDyLQf18t6aBzWu8gJH35sp8Hs1s=;
+        b=i2g4LzHvhEhfgP+kSGpxME33yyHT6bNO4CAOLS1de+ubq5u0E3qJZLxTJCu97A6fbW
+         dp6/GWDsuu3RWqSrQGIMvwI/b58TWpQ7oJYQjdSVNCmtcOsKPQs7rZZRw39n4km8wAqI
+         +FyA3/aeuLs9Zf+lAuYLq5z2v1vFS5/i2VDK2B+IOHjKElET37icbLOc4Binsk0DGdw+
+         BEbx9xwiHF2gRuslQKF8vD7/wMPymnypmxmdADCSet5eTJIeRy/kLePxgs9LRhg/nov1
+         l4sKa9dDTVWQWDrR/KMkHC+imSj3+RqreT9+3X9NGtEPjTsE8cX7avF9ldTT2r50cS+4
+         00UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793297482; x=1793902282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+z2btZkpJ+TluBaKBtaVuSDSAiYPrkTDeeGPI5tssnY=;
-        b=WYKDN8hnaRjtGEVdm6MvPkhjbpPJntha0a1yWSvD6dnUw9t/NC0yNE72lG9hp664iv
-         UaxcdTAyHCauMlb5FrEDVEOr+xpogk3fm1wrBzfZiFuz7pE7Go7xcr4IU0xDKFMSmIOD
-         Vp1++uISpsF02PoX5aOkmFOqCAkGQy3Gz1EaYO93lgoakoMMUpqqqWO1bzY6iL1fAjEl
-         Fz5ApdfzONwHRLl7tOPOCo31iKBzur0Vv3O9hcmZIrQr7x4aMxuNOnnZ4XElzwDMNhfq
-         /5vGTR7y3dXTci9/f5k4QluiozY2j4eqB7uFPeTfK6WUTKwcx/+O+0VqHrwgyQm5mCqI
-         Nd9A==
-X-Forwarded-Encrypted: i=1; AKwUvBxE+Mw8LomqnSd2Jdn8xhPE+oQjEiPCLB4ZxGDUl7vz5CIgJi6tyUV694vvd7xQmYxg2lF4OjR6N4X0O5EWqcOudw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKiThKt5Z9lSchWG6x00OoTymokGBzc3Kj7bxnvYPMJo4wooS6c
-	bnuXhihpldK+q+v8kwLaZjHLm8wmW4xn0MZXlNCMnuhvpsDsOUzaGM4=
-X-Gm-Gg: AYBFou2s6v3vNgx36vWxYoob1H/lbR/g6ZE3hvWXxMYH6eBPAE4AZn9oPhGiyNY484N
-	fR9Yi52mGxTEpmxJKo+0yV+5VQW8tAL9rrS0SveyoXcjYPn1hr+RlSNGg0NgXSTReHoxTMMkayq
-	U0aYr6W3a3Jt5rmCC8wpuNuIXwHUqOBJdCmiQxYeiKDiV6FrBY5RMoI6iv0q0q034t1HIEtMnwN
-	LxTNQvK7lJEecqvI9mBJ+Oi3WTTiJ294YAWmwco7YnSzq5JtrEotF4TjESwpdg3LLe7fH7+bN/l
-	85D0cZYQiN2z6XQMIL+aK5TcKq0uLnjZMLiyUvni3tWPFEbsZRqz0oMbDLWoZ0XGjvuwmXWAoqZ
-	MqjCgOHUROudEXPfybQm8Iw56N0svmJ9KwHduuWw5y0AgLC3Sk8wfGm7v8RqY7OTjb0kbkn16k2
-	1cVEOhYpbee8mprCFTJepKWfP0bGXj5/1KtmW+6HIIdgi/p0DxrM7XtCSGX8wFR6utluoBrSfpa
-	qDfGb9odKCy1urO8IfekeHtyvnZ+N9UfIWBIznf2IXp3juVkj0z7YHFBy0mlTuvv3JdARTKv18m
-	56wgw0877SsD9NES2hNQ4Vmp+O/hE8Ujwv8afyQXyquXYT3mzY4XHeuIRGOkcOs9F1ku
-X-Received: by 2002:a05:6a00:22d3:b0:8a0:7573:4f20 with SMTP id d2e1a72fcca58-8a6e471283cmr5172733b3a.4.1793297482533;
-        Thu, 29 Oct 2026 11:11:22 -0700 (PDT)
-Received: from localhost.localdomain ([2406:3003:2002:639c:61c8:985e:fbe6:4d1e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a98643466esm200114b3a.2.2026.10.29.11.11.19
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 29 Oct 2026 11:11:21 -0700 (PDT)
-From: Yige Jiang <yigejiang86@gmail.com>
-To: linux-mtd@lists.infradead.org
-Cc: Yige Jiang <yigejiang86@gmail.com>,
-	vigneshr@ti.com,
-	tudor.ambarus@linaro.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	linux-kernel@vger.kernel.org,
-	geert+renesas@glider.be,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] mtd: hyperbus: rpc-if: fix an OF node reference leak
-Date: Fri, 30 Oct 2026 02:11:13 +0800
-Message-ID: <20261029181114.78137-1-yigejiang86@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20260707; t=1793300305; x=1793905105;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=AC5QClsrz1XRA48HDyLQf18t6aBzWu8gJH35sp8Hs1s=;
+        b=r8o0ZN/bzuvM0OIssW3LbyoJyzc/V3XXEU22g0lPrkvb9XpKC3IYyxk7/2BN1l73Iu
+         NvIhgsCuRblksZnHwQWb7Cb0FDMhyN8iNkn9+3PyLUNdNQgciZ5ZfgHCN64A467jrC8K
+         7t2ZIdQcl9J2XLZigo5wHgcKzkGTD+DP2D6GnhkdYQGvGgd+BfOhocq+kUeQz7gjYKhA
+         jx3N+hCizMnZFe7IBI20ft2oXUgqhypVnMk6S0XMBSySvds8EUfaeKs85Q5e+g/5SO3B
+         8Rd0Dco+hKQyar3SKQx2eGvBhiWkmX3o3R+BuDFRFYLWX5EtQfU5XrLGXq7B7AeRu+Vw
+         8CTg==
+X-Forwarded-Encrypted: i=1; AKwUvBwGAqaG+8PK4QjiOluZT1OqKZWEnueQpgZORmv3nY0beri+bBcpt5nSebRMK7WMI/TNyK01ojx0YP5RD9UZZs2vbg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIVWRabK5lMoCDtxf2HFfG3ySI1xZtsuU0m2lrsd8S9hxDFiOT5
+	EuJVnJFZvIwA6SgaZ4N+bEDyQNrOgwDrZ8L4/jEkStoRCSFE3AecKcVq
+X-Gm-Gg: AYBFou1Cw49PGoiQAKc5NSYhhdRaLijYq2SBmOErdyvhEnF9bgMryWc6CQhQnp6j5AI
+	XRF+tOpaM65O5kyZkrpPEIWPt3jTbFG1Q+fjNrEEhlQQ546dhPU4RjjvF/a1VV1/z65mZM5Ez72
+	JxDQzN8g8Djv2FTUoaqodGL0Un0lH8adUsUwerza+YDVUeQz5iITm8OwrdzIwD+UoLG4d53Y5YK
+	hv4YhqV14rs8qauzq3gQqwItm2aaIH7X1apGop31TYyatRsbMXx70fMf8gqalyKNk3QsCO/qTAi
+	RtDidycIsGFGwk7EhrF5ehyArfup8tJCxsMI3pkXWj3qaDfOJGQvXII86XQI4Jcrz0YvA1F8i4k
+	l7fG/GOmv3cwxFLLIdwYpci81p+u1CqeH5AKhbWT7RVIyDqO/Qr51N+QfaxIJlb9sBuxq3EfGJq
+	B1KCvmKUjUpgE1Ie/eFAgupJt0+VwLig9LIJwSP1W+07DToD6l371u316gVG4qoyTHWsPo71S/Y
+	vhAvsmOMS14t5ujDmHqfcA24OP035eUz+YFGdT/XYJ1TyfYwTv8o6r0o5mcVYFEeci3v880riPQ
+	o9lfopv98a1krhjoYA0Yt+3eHNrDlBaNqopsyi6fGLcm6lXf2StNe1tumQz+FBIAeQ==
+X-Received: by 2002:a05:600c:37c3:b0:4a2:1867:10e8 with SMTP id 5b1f17b1804b1-4a96701830cmr143370895e9.25.1793300305012;
+        Thu, 29 Oct 2026 11:58:25 -0700 (PDT)
+Received: from [127.0.1.1] ([2a00:23c4:a702:d301:eafc:6fb2:6c68:5ae0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4aa81a896fesm94291535e9.10.2026.10.29.11.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 11:58:23 -0700 (PDT)
+From: Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v9 0/7] Add Renesas RZ/G3E GPT support
+Date: Thu, 29 Oct 2026 18:58:21 +0000
+Message-Id: <20261029-gpt_rzg3e-v9-0-f3a5520388d3@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -100,63 +92,158 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE2X42oC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyLHUUlJIzE
+ vPSU3UzU4B8JSMDIzNDAyNL3fSCkviiqnTjVF2zRAtLs1TDlOQk8zQloPqCotS0zAqwWdGxtbU
+ AsTDA3FsAAAA=
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793300303; l=6413;
+ i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
+ bh=c8wDrcdQOd2pMDrdrwfnWxCUIIg51PMtaa0aLHC9stw=;
+ b=BbmXptapsN/+aukxD1j5qQ7naQl2PPP5WZElv/bLbBIZctqW/biXkTurrb5DDAWa+ygwy6bs7
+ mOyuSSLTxY6C/e0C20JC7e8dWaGgiUvDW+2ep17BTa6tmzBE1A80FwI
+X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
+ pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
-rpcif_hb_probe() gets a child-node reference with of_get_next_child().
-The HyperBus core does not consume it, so the driver leaks the
-reference on registration failure and remove.
+This series extends the RZ/G2L GPT PWM driver with RZ/G3E SoC support.
 
-Put the node on registration failure and after unregistering the
-HyperBus device on remove. Leave hardware initialization failures on
-out_disable_rpm, since no node reference has been acquired there.
+The RZ/G3E GPT has a number of hardware differences compared to RZ/G2L:
+it exposes 16 channels (across two GPT instances of 8 channels each),
+uses a 4-bit GTCR prescaler field (versus 3-bit on RZ/G2L), and has a
+discontinuous prescale sequence with powers-of-2 scaling rather than the
+continuous powers-of-4 sequence on RZ/G2L. It also has additional clocks
+and resets (bus clock and rst_s).
 
-Fixes: 5de15b610f78 ("mtd: hyperbus: add Renesas RPC-IF driver")
-Assisted-by: LLM
-Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
+POEG support is dropped from this series and will be added later.
+
+v8->v9:
+ * Updated commit header for patch#1
+ * Dropped fixes tag from patch#1 as there is no functional change.
+ * The prescale always initialised (reuse cache only if the sibling is
+   running)
+ * The round_waveform_tohw() no longer writes the prescale cache.
+ * Disabling an idle channel no longer touches the shared registers/
+   counter in rzg2l_gpt_write_waveform()
+ * The shared registers are only written (and the counter only stopped/
+   restarted) when no sibling is running -> no glitch on a running
+   sibling in rzg2l_gpt_write_waveform().
+ * The rzg2l_gpt_write_waveform() re-validates, under the lock, that the
+   sibling still uses the same prescale/period (returns -EBUSY otherwise)
+ * Redundant "enable &&" removed in rzg2l_gpt_write_waveform().
+ * The rzg2l_gpt_is_ch_enabled() fills *gtcr before the early return.
+ * Updated commit description in bindings channel->channels and
+   '8channels' to '8 channels'
+ * Retain the tag as the change is trivial.
+ * Updated a comment in limitation section '8 Channels'->'8 channels'.
+- Link v8: https://lore.kernel.org/all/20260825154847.197947-1-biju.das.jz@bp.renesas.com/
+v7->v8:
+ * Cached prescale value.
+ * Updated rzg2l_gpt_write_waveform() for caching the period, If the
+   channel is already enabled and the user changes its period.
+ * Updated rzg3e_gpt_calculate_prescale() with >= 64.
+v6->v7:
+ * Reordered the patched moving POEG support to last.
+ * Replaced USEC_PER_SEC->NSEC_PER_MSEC for period/duty cycle
+   conversion.
+ * Avoided recalculation of prescale, if is_small_second_period == true.
+ * Moved `wfhw->gtccr = 0` into the if block in rzg2l_gpt_config().
+ * Added rzg2l_gpt_poeg_link_channels() and used __free for deallocating
+   device node pointer.
+ * Replaced dev_err()->dev_err_probe() in rzg2l_gpt_poeg_link_channels().
+ * Replaced local variable cells with num_poeg_pairs in
+   rzg2l_gpt_poeg_init().
+v5->v6:
+ * Added patch for fixing period_ticks overflow.
+ * Added patch to add missing newlines to dev_err_probe() messages.
+ * Dropped extra space in poegs variable assignment in
+   rzg2l_gpt_poeg_init().
+ * Updated the comment sections of rzg2l_gpt_poeg_init() with POEG and GPT
+   in upper-case and replaced configure->configures.
+ * Format specifiers in dev_err() changed from %d to %u in
+   rzg2l_gpt_poeg_init().
+ * Dropped local variables pv and dc from rzg2l_gpt_round_waveform_tohw().
+ * Dropped blank line in rzg2l_gpt_round_waveform_tohw().
+ * Moved assignment of rzg2l_gpt->period_ticks[ch] to *_write_waveform().
+ * Restored clamping of duty_ticks with period_ticks in
+   rzg2l_gpt_round_waveform_tohw().
+ * Simplified rzg2l_gpt_write_waveform() using else if statement.
+ * Dropped local variable gptr in rzg2l_gpt_write_waveform().
+ * Moved mutex after early return in rzg2l_gpt_round_waveform_tohw().
+ * Dropped extra parameter rzg2l_gpt from rzg2l_gpt_calculate_prescale()
+   in rzg2l_gpt_round_waveform_tohw().
+ * Updated comment in rzg2l_gpt_calculate_period_or_duty().
+ * Updated rzg3e_gpt_calculate_prescale().
+v4->v5:
+ * Merged GPT linking POEG patch series here.
+ * Dropped suspend/resume patch; will be added later.
+ * Updated commit description for patches #2, #4, #5, and #6.
+ * Replaced return type of rzg2l_gpt_poeg_init() from void to int and
+   probe() check this return value.
+ * Added more error checks in rzg2l_gpt_poeg_init().
+ * Added a patch to drop the unused rzg2l_gpt_chip parameter from
+   rzg2l_gpt_calculate_prescale().
+ * Updated rzg2l_gpt_round_waveform_tohw() to initialize gtccr when the
+   period of the second channel is smaller.
+ * Replaced period_ticks with RZG2L_MAX_TICKS for the duty_ticks maximum
+   value check in rzg2l_gpt_round_waveform_tohw().
+v3->v4:
+ * Added wave form callback conversion back to this patch series.
+ * Updated rzg2l_gpt_is_ch_enabled() fit into 80-character limit for
+   consistency with other functions.
+ * Dropped field_{get,prep} as mainline now support it.
+ * Updated commit description for patch#3
+ * Retained RZG2L_GTCR_TPCS bit definitons
+ * Replaced gtcr_tpcs_mask->gtcr_tpcs
+ * Updated commit header and description for patch#4
+ * Renamed prescale_pow_of_two_mult_factor->prescale_mult
+ * Added RZG3E_GTCR_TPCS bit definition for RZ/G3E and added to
+   rzg3e_data.
+ * Added error checks on suspend() and device set to operational state
+   on failure().
+ * Added Rb tag from Geert for SoC dtsi.
+ * Added SW_GPIO9_CAN1_STB check to gpt0 node.
+v2->v3:
+ * Added Rb tag from Rob for bindings patch
+ * Dropped wave form callback conversion from this patch series as
+   it is covered in another series[1]
+ * Added suspend/resume support.
+v1->v2:
+ * Created separate document for RZ/G3E GPT.
+ * Updated commit header and description for binding patch.
+ * Added waveform callback conversion to this series.
+ * Collected tag.
+ * Added link to hardware manual
+ * Updated limitation section in driver patch.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-Changes in v2:
-- Move of_node_put() before pm_runtime_disable() in the remove path
-  to match the probe error path, as suggested by Miquel Raynal.
+Biju Das (7):
+      pwm: rzg2l-gpt: Update macro used for period/duty cycle conversion
+      pwm: rzg2l-gpt: Convert to waveform callbacks
+      pwm: rzg2l-gpt: Add info variable to struct rzg2l_gpt_chip
+      pwm: rzg2l-gpt: Add prescale_mult variable to struct rzg2l_gpt_info
+      pwm: rzg2l-gpt: Add calculate_prescale() callback to struct rzg2l_gpt_info
+      dt-bindings: pwm: Document RZ/G3E GPT support
+      pwm: rzg2l-gpt: Add RZ/G3E support
 
-v1: https://patchwork.ozlabs.org/project/linux-mtd/patch/rc-review-20261023-ai33-33-fd231771d138@gmail.com/
+ .../devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml | 323 +++++++++++++++++++
+ drivers/pwm/pwm-rzg2l-gpt.c                        | 354 ++++++++++++++-------
+ 2 files changed, 565 insertions(+), 112 deletions(-)
+---
+base-commit: 4e7443d29aa19bc779a2a485622cf92f1c7145e5
+change-id: 20261029-gpt_rzg3e-6a896e1dcb7f
 
-Based on linux-next next-20261016 (2efb7a11f1aa).
-Compile-tested: arm64, GCC 14.2.0, W=1, CONFIG_OF_DYNAMIC=y.
-CONFIG_COMPILE_TEST=y.
-The object was rebuilt from this exact base with v2 applied.
-No full kernel or module-link, hardware or runtime test was performed.
-
- drivers/mtd/hyperbus/rpc-if.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/hyperbus/rpc-if.c b/drivers/mtd/hyperbus/rpc-if.c
-index f448e23f9260f10abe17842849b312365dcd8294..ffa6578b5d399d19d3cac27d7769cccfceb0be92 100644
---- a/drivers/mtd/hyperbus/rpc-if.c
-+++ b/drivers/mtd/hyperbus/rpc-if.c
-@@ -145,10 +145,12 @@ static int rpcif_hb_probe(struct platform_device *pdev)
- 	hyperbus->hbdev.np = of_get_next_child(pdev->dev.parent->of_node, NULL);
- 	error = hyperbus_register_device(&hyperbus->hbdev);
- 	if (error)
--		goto out_disable_rpm;
-+		goto out_put_node;
- 
- 	return 0;
- 
-+out_put_node:
-+	of_node_put(hyperbus->hbdev.np);
- out_disable_rpm:
- 	pm_runtime_disable(hyperbus->rpc.dev);
- 	return error;
-@@ -159,6 +161,7 @@ static void rpcif_hb_remove(struct platform_device *pdev)
- 	struct rpcif_hyperbus *hyperbus = platform_get_drvdata(pdev);
- 
- 	hyperbus_unregister_device(&hyperbus->hbdev);
-+	of_node_put(hyperbus->hbdev.np);
- 
- 	pm_runtime_disable(hyperbus->rpc.dev);
- }
-
-base-commit: 2efb7a11f1aa4d2dc285fe2680cca22cb9f72f64
+Best regards,
 -- 
-2.50.1 (Apple Git-155)
+Biju Das <biju.das.jz@bp.renesas.com>
 
