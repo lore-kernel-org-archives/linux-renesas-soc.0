@@ -1,31 +1,31 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793279492;
-	b=IiM8DVdinm2OT/FPFwVRvR29PzDSDwtlVXhvMNH3oHeJszN8hjFjB4p79PsQGRYjwrUT
-	 IP191fzMtR8NtDY8Rab7kDM4XOYq9xmzQJdf11RE7Qevx/q0w6zuWyyWtJnC7Ma8NXo4f
-	 1+ADHinz4nWmAjqL88qrdRftSx54z/kv+uKSwFGAuGBK39C6R/jwt11VsJR43V7CiZXr4
-	 pFq3vTN3UYgFPz2JXhHGOQPxo6x1jnz69esdsYEIj9LnZ3SzyPRBtvIO6Iu1HiHCZBHVH
-	 xQ0GRtgbmNZsGqIFFmx+CbbPbA1h5OKBG9ihppiYWTPZlwBwWB/oFxMKdLfrvfssCHA==
+	t=1793279500;
+	b=cIZIjzSkxRownu6jg+kwDyYa+WpV2PG44h6kNLKFRjdUrlZY38QKwiDWJ01FHskSgslR
+	 6NS759J2JSO/SwhirswevJfUhyT/SyrU87AvNW2zqPJHDu7m1KEk8h8m3gLTaCfSC0EFG
+	 IWeKZRdVWLmnG1yQmtbpzzeQfglUqkn9wpBO/qlq1odHNM+a5dnJtPhjqDGY4HEMf3gqO
+	 FokXqpbwShXHvjBC/bJ8R1TSs5hNPbG+KMPebO5FjBzoiMKAL+91J46qeRkKvpsDMECDd
+	 JWVM+KIMNa2huAdqL/FgG+vj6I2gBP7544p9QgMcw1IdTMBTU0g5Y69Ts2tqFCOH3dQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793279492;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793279500;
 	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding;
-	bh=TacSadf5vVdafv1GWEGVsOyle84bCFtG5lLBQAWeJf0=;
-	b=x0dw+2JgOYy1O76WjhYQ22Fy5E40O6w13GNsCBsUWl9CRLPHBII3h4fV/tlLzYTQH+x3
-	 KKf3cpPeFqKRunj39+Kz9kajg7AgWsie89IdqMB5WdTR/MbE10BGSBcj4ttS3y/WzS9bx
-	 ZJwmBimeY1mS9GeiHJ7DdO7dY/2bDvsgNrJSF1wjSZJDDTz/YoP85CJ7EoybSmjWHQZlA
-	 hTnhYQ/QEuMH11rbgfwpMZr5W83r5ApYrA6DD74l0Oc+N84d/cUJhGFcxGFNPqGirEdJv
-	 v0n0EoTCtRY4VbpZDiS57lIj2OUek5YeUIUZl+vcxsCdOJISGVVbmUpe6uxIHgVPwfg==
+	bh=G+5BF49ou0ARRWxKFvfp1ZFgtF67xapc/rlFrqYl8VA=;
+	b=bmpHM/TQ4hzgIfc06hV11NbDgdbiOZaDO/kjvH0As8fHjq2u+vkh8xUMD3TTNDF3vbJY
+	 EbIm8XP4jQtrLpflNLueoEBh6P3wBNN8GIyIhqz9AND5eWerCARN+3gkBhlKRbxiCTnhI
+	 e7eAP0wzi2DG44u/rFmFhqrR022HwswnZ8ZcBnKNVgcmiHXr3UfRY/wrrY/MhL3rfmAlf
+	 VKtN4S6g/lpXOdRbFR1OwpwbVkLbdp6pw79naFB+it4+XuVC3IYMmWy6RrcRbtHdzx0om
+	 KHslx48ny9BhpcXn4W8SO+f6vOBT/7w68z90dMbQz5VPYEl/GAhR668NzLtAoZZGbzA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF33606A321;
-	Thu, 29 Oct 2026 13:11:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EAD51F031E2;
-	Thu, 29 Oct 2026 13:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB1A606A323;
+	Thu, 29 Oct 2026 13:11:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C631F031E0;
+	Thu, 29 Oct 2026 13:11:36 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
@@ -47,9 +47,9 @@ Cc: linux-can@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/9] can: rcar_canfd: Make clkp local
-Date: Thu, 29 Oct 2026 14:11:04 +0100
-Message-ID: <415c8b26718e2e5d53f74e65daedf9986c76dcfe.1793278754.git.geert+renesas@glider.be>
+Subject: [PATCH 5/9] dt-bindings: clock: renesas,r8a78000-cpg: Add CAN-FD clock
+Date: Thu, 29 Oct 2026 14:11:06 +0100
+Message-ID: <843d6df21b3ed139ec71a702e57fd5b516c139a1.1793278754.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1793278754.git.geert+renesas@glider.be>
 References: <cover.1793278754.git.geert+renesas@glider.be>
@@ -64,47 +64,29 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The peripheral clock is only used in rcar_canfd_probe(), so convert clkp
-to a local variable.
+Add a definition for the CANFD_SCP_MAIN clock, as used by the Controller
+Area Network Flexible Data Rate (CAN-FD) modules on R-Car X5H.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This depends on "[PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg:
+Add PWM clocks"
+https://lore.kernel.org/e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be
+---
+ include/dt-bindings/clock/renesas,r8a78000-cpg.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 74d9ffd2790587b9..9dbe44710dcced80 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -467,7 +467,6 @@ struct rcar_canfd_global {
- 	void __iomem *base;		/* Register base address */
- 	struct rcar_canfd_f_c __iomem *fcbase;
- 	struct platform_device *pdev;	/* Respective platform device */
--	struct clk *clkp;		/* Peripheral clock */
- 	struct clk *can_clk;		/* fCAN clock */
- 	struct clk *clk_ram;		/* Clock RAM */
- 	unsigned long channels_mask;	/* Enabled channels mask */
-@@ -2111,6 +2110,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 	bool fdmode = true;			/* CAN FD only mode - default */
- 	char name[9] = "channelX";
- 	u32 ch, fcan_freq;
-+	struct clk *clkp;
- 	int i;
+diff --git a/include/dt-bindings/clock/renesas,r8a78000-cpg.h b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+index 8c30476d41448cf5..9d7f3afcb2c52ec4 100644
+--- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
++++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+@@ -31,5 +31,6 @@
+ #define R8A78000_CPG_SGASYNCD8_PERW_MAIN	21
+ #define R8A78000_CPG_SGASYNCD16_PERW_MAIN	22
+ #define R8A78000_CPG_S0ASYNCD8_PERW_MAIN	23
++#define R8A78000_CPG_CANFD_SCP_MAIN		24
  
- 	info = of_device_get_match_data(dev);
-@@ -2181,9 +2181,9 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 				     "failed to get rstc_n\n");
- 
- 	/* Peripheral clock */
--	gpriv->clkp = devm_clk_get(dev, "fck");
--	if (IS_ERR(gpriv->clkp))
--		return dev_err_probe(dev, PTR_ERR(gpriv->clkp),
-+	clkp = devm_clk_get(dev, "fck");
-+	if (IS_ERR(clkp))
-+		return dev_err_probe(dev, PTR_ERR(clkp),
- 				     "cannot get peripheral clock\n");
- 
- 	/* fCAN clock: Pick External clock. If not available fallback to
+ #endif /* __DT_BINDINGS_CLOCK_RENESAS_R8A78000_CPG_H__ */
 -- 
 2.43.0
 
