@@ -1,133 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.177
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793364962;
-	b=k8ZWmN1kYQzGOE0i4yfaFEVQDmr4I3y8TzfTcrMPfelCVKAuSEYFNwBru83svC1xnR5Z
-	 aE1hFNCNiC/w7IWkAfHclfull1xqLNTCnoV7UhT8b1sf387IBzbTNg5i6zuS0MA5AmANQ
-	 l3KVSLoOvr6UQcefZdB/zuLQoojVz+GK2xD9WeiP4UIhnkFei86/jQMAMxeYpIWozySgi
-	 7TU+40teNMZlTvO9Mhq/yedhqfYTZz0MepNis4LNoBh1pItQEY+pDRB8hFQzXAnK2AvJ5
-	 mNXI14OEIMYYhCCNx0RCoxnt48oQo5kgOS9VghPnhyZSpqCJ9tFiBXPknrOkOiJa1Vw==
+	t=1793368747;
+	b=Rc6vyNJVmxIw50hcfiNYvlauh/5aG/8rib4I/vMJ0P+D+Ltz/5V1a3vDoCj454QtO/mx
+	 5Ki8Dq4VMnfXzwsbdAdudHKSPe4hcqw6sxz0SP4u7uaglxEFofV18vKaH+ca24y7mNzhG
+	 S0ZGikYkDOpfYQ2H4GGOmkvO0Bt9eECEyxSzCcdsiJvV9tOWJ1Pit8lKrRDY6BxgK9FZQ
+	 fSwgvXa0XNMVgtKRzh1RFUb8kpfTYg/pe8ALsp6IInI5qEqDZanJEibadqVZ558B7ppdx
+	 Syi2Uw7kxRf1qKW8KNRUp8sN/ZNkJzCTGoKRf4dSCsQTFLxu+ID0QsN2gD044tR+P1Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793364962;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=QEN1UqSia/bSOQapCp3EkqxCvOcE8KsRJXMohGlQcDQ=;
-	b=N6xX8ZQOrj/2W3XiLEo7nuhB5+1+sbwB3eC+lfCUXq+gyiyj39EJ2wPHhsmymie/+Ts4
-	 umHGOcWpIjNLc6yQSWaNZP3Q8lu6J/yqc//EUHDm6vNf+dzZ29Ew+m89cDGEA6yx62TZw
-	 XXc2L/nz8O7PRNPlcNdBz7/IVVywCklU/1oJFXe9Ax2i+g9Fp9CzDBbP/NLfcxZkOVB9f
-	 s+fn/3eLDGI1ibUSv2ePoLsZWp6oQwcGWUq8uNE5eY4DrsFyXoeTZMwJlRYt9rOB3PWoM
-	 NflW/2CbP7pebkg2s70Uwy4xQXplxdLmV9nJYR1ABfV9WafbcAewYwux521TTz2z6sg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793368747;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=rreqjXCuaDWJ3vSeRfN8yw7LxuY/EzKtao82LH4eM9g=;
+	b=qPBPqU/ny7m5z7EE4ObH9vTPWy/gGsPqWXubPX9KCUvQAIt+aZ1SxouvoJHqhCDl6qg4
+	 owMij54CD/pEQ9TUm3a8UktcwVoUrtF62lVzaZg2g1dk6nELC7ysKyHTzTbvDShiCWTR7
+	 rQr9EOMxtzpX1vXDaDt6UiWsGGCNjPqYnNTSgcIdp7M81MC546MMc7/CAY41ALkeRHwIo
+	 OlOMCF4POhFIHdo0PxZSu2+2uuyq8sTfFoj7GU+DZY0W+klsMSbO2iDOc/+5hQ41vZtvx
+	 MYJyOb8BIzQgiZ7XaDIHddXS2VhIabHGbJF1H3YnnXs5ZB1Vjc0r9Btl1h2iBZXgAqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DbvVbneF;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.221.177
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC497606A31C;
-	Fri, 30 Oct 2026 12:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DbvVbneF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840761F000C1;
-	Fri, 30 Oct 2026 12:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793364961;
-	bh=QEN1UqSia/bSOQapCp3EkqxCvOcE8KsRJXMohGlQcDQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DbvVbneFlRcReg135ryJEYVhhtWakAOVNath1hcKIIXE0a0XxAPDDvNN6T7Uf6+oe
-	 8w5jtD2yqrswAxXmfPTHEdkD7AvDqLamYaTsnJnneKspcbfXmYHU3OGl89jWEz8/U/
-	 /ww4ODFnAJ7tLbMPad8NuI/UAu0PK8s28Ey4jTtat4X8zzsm4uIT7x105xj2SQfJbe
-	 wzxdFTqJOrrKiP1LRPFbbaswMYtV6X09XW80Okkv+fqOYtPGsvIPYCiSGFVMsrui5k
-	 MrMYZoVyeIy+hz3rgx3Z3HJJdqyKirPMRBric5eDJy0W8pHIi0gyTDHmZJorASfuP1
-	 +FvfPpgyOt/TA==
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Ruben Wauters <rubenru09@aol.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sunxi@lists.linux.dev,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>,
-	Dave Airlie <airlied@redhat.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Alison Wang <alison.wang@nxp.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Tian Tao <tiantao6@hisilicon.com>,
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	Yongbang Shi <shiyongbang@huawei.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Jianmin Lv <lvjianmin@loongson.cn>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Qianhai Wu <wuqianhai@loongson.cn>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	spice-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Iker Pedrosa <ikerpedrosam@gmail.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Hans de Goede <hansg@kernel.org>,
-	LiangCheng Wang <zaq14760@gmail.com>,
-	Alex Lanzano <lanzano.alex@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lyude Paul <lyude@redhat.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: (subset) [PATCH v2 00/59] drm/connector: Convert all drivers to atomic_create_state and remove reset
-Date: Fri, 30 Oct 2026 13:55:55 +0100
-Message-ID: <179336494956.280337.14142889938692228617.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
-References: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676F606A31E
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 13:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C676F606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5e9528732b4so631455e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 06:59:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793368745; x=1793973545;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=rreqjXCuaDWJ3vSeRfN8yw7LxuY/EzKtao82LH4eM9g=;
+        b=nGW8AeIb1htDdI+sdVfs0qX+kKUfcDi+OP+aiKLfCDRiHSVvP79FixE1nS2+JcllbX
+         MLgRTLdOUP8oT+daOMqETPHJh653i12I8DWmZ4u1cUQAR5JBLVR2BkEOsL1Oak2AcbAl
+         mq1olp8aEw9/xxWXNUScT31CIxVOL9AVd1fhG5lb051tmAxAD6S+Cs0aYRMw5ZPN51DO
+         g/KRmTho16yRtgm1z8qMO8rFMxwHc3IInLYZ9ENpE+bCxzgjo3mSKZ73K9epP1jcL1mq
+         L4HBNnKtlydFGMoWePUBRcWhLwFXNrIS746slQQjCqQqsBw2nz/cFmmxt0B7yH+5EVPA
+         eP4Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzKCaXDALdsG9ImYjM+3n3bQ6GFjDl77MXg4zhe6v7zvO5nR4j1wijwrMliIIzOiMcJJGcIf6fWosoAKePLiWJQpg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLuIpwdpuZEZwyK97EhWMHSfV5XXR3EzuFmdJWrvr+7adyem5JK
+	OXlnHqxdFAPWk7cCf4ZWJ+GakzaEDDqDM9WD443UfjzkE1gEVb//5zCWiQ1Mf0T+
+X-Gm-Gg: AYBFou2Ta4lh8KD1gXabI7VEVb/wdjhOKs8m6hV6sFo9jfGzKFSuw5+dreBnpXHKen4
+	ctTQO2t0o9pFAyEpeW9eKGGfHqdbpXZal8WTMEH8PvJQ/+eB7dq6RT/NA8hEQOaavp/PQ3CRQQT
+	klnxJDb3HU2Q3ckAIfWkxQSZGMQqdA8+mEo/8Vk0sJGeOsnkluqAqhaWCRKp06+dpag+/lzo7VR
+	w4qaOFgo9Rgw7aEo9VTUBtHYWtd9/XhflMlmrLnycd/SrGh/6SAnhemhnxziyyxOyGbhjFzG7sM
+	S2aHGVJx+Uwrq4H/FU3o+ZmGiCmA/S8z3ZmRedjN53kffqxQ9TupedHnYmtPV5z16f8hc9oWKFh
+	zldx0vLlWoGH2XeEi4J0qq8lSGRNvLSHmywewVZ7qtLhny5t3Sc5G3WGb9Db7sMK5TnuhG78D4y
+	3Jp07VWd0bau+esLXHRBXuHMEUymc/wuZQI76/neBoRylAj6ced2wjHAA60adnOgKJD9cbdZ55G
+	8Bi9sf6PH1SrfeMBEXrN318FtmzflG0kQcLn9pouyqapJ8PVLcYlqaIZRWl2d5Jc6LKs0/cN0VA
+	s3dgH37tJv3EUCo3RePKmig0l3++whDaLdxu1DLCyk7hHijW2EyN5u+o1X4fE3suEYQ=
+X-Received: by 2002:a05:6122:398b:b0:5ea:e052:2ef0 with SMTP id 71dfb90a1353d-5ec68976f9emr1152625e0c.9.1793368745487;
+        Fri, 30 Oct 2026 06:59:05 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ec69bbf5easm2411819e0c.3.2026.10.30.06.59.05
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Oct 2026 06:59:05 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-7ccb2ffe333so485791137.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 06:59:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxKllz53irR6MxcTO4hIdrxG1WAGA5KXdIKNgVqoGiFCg2I/1i8ib54G3UnuUQ6bA5K4jEinYavnnqQyIGAMLyrqw==@vger.kernel.org
+X-Received: by 2002:a05:6102:160b:b0:7c2:7a0:ae28 with SMTP id
+ ada2fe7eead31-7d072d2e3cemr1195876137.30.1793368325370; Fri, 30 Oct 2026
+ 06:52:05 -0700 (PDT)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -137,67 +80,231 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <cover.1793026273.git.geert+renesas@glider.be> <e723696e02cfb34fb808e2ae3ccb6faf68528c00.1793026273.git.geert+renesas@glider.be>
+ <20261028132937.GL15441@killaraus.ideasonboard.com> <CAMuHMdXycpJ6COtiAA-2oRRfHSfLK40n2cacStW15QJRN3EfLQ@mail.gmail.com>
+ <20261028163940.GA2673734@killaraus.ideasonboard.com> <CAMuHMdVOT+DTZum525kmYfP+jzzPrxMnEeRAkapxOMGz4XMHBA@mail.gmail.com>
+ <20261030112314.GD2587681@killaraus.ideasonboard.com>
+In-Reply-To: <20261030112314.GD2587681@killaraus.ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Oct 2026 14:51:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXR=dcooQoKwrycDpTaZjFk2CCueL08dYYFJLE9bP90cg@mail.gmail.com>
+X-Gm-Features: AclHuK8hW4HdhOJ1AXkGa9vmPAzXpiaHAsOh7vH3ng5jr5l_XLCKj0-fmKWKS9c
+Message-ID: <CAMuHMdXR=dcooQoKwrycDpTaZjFk2CCueL08dYYFJLE9bP90cg@mail.gmail.com>
+Subject: Re: [PATCH 07/11] dt-bindings: clock: renesas,r8a78000-cpg: Add PWM clocks
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 22 Oct 2026 14:30:59 +0200, Maxime Ripard wrote:
-> This is a follow-up to the plane and CRTC reset removal series, and
-> part of a larger effort to remove the reset hook from all KMS objects.
-> 
-> The connector reset hook is overloaded: it is called both at probe
-> time to create the initial software state and during suspend/resume to
-> reset hardware and software state. These two roles have different
-> requirements, and the reset hook is not fallible, making error
-> handling difficult for the initial state allocation path.
-> 
-> [...]
+Hi Laurent,
 
-Applied to misc/kernel.git (drm-misc-next)
+On Fri, 30 Oct 2026 at 12:23, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thu, Oct 29, 2026 at 10:08:28AM +0100, Geert Uytterhoeven wrote:
+> > On Wed, 28 Oct 2026 at 17:39, Laurent Pinchart wrote:
+> > > On Wed, Oct 28, 2026 at 03:43:42PM +0100, Geert Uytterhoeven wrote:
+> > > > On Wed, 28 Oct 2026 at 14:29, Laurent Pinchart wrote:
+> > > > > On Mon, Oct 26, 2026 at 03:55:23PM +0100, Geert Uytterhoeven wrote:
+> > > > > > Add definitions for the clocks used by the PWM modules on R-Car X5H:
+> > > > > >  - R8A78000_CPG_SGASYNCD16_PERW_MAIN,
+> > > > > >  - R8A78000_CPG_S0ASYNCD8_PERW_MAIN.
+> > > > > > Include R8A78000_CPG_SGASYNCD8_PERW_MAIN for ordering consistency.
+> > > > > >
+> > > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > >
+> > > > > > --- a/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > > > > > +++ b/include/dt-bindings/clock/renesas,r8a78000-cpg.h
+> > > > > > @@ -28,5 +28,8 @@
+> > > > > >  #define R8A78000_CPG_SGD8_PERW_BUS           18
+> > > > > >  #define R8A78000_CPG_SGD32_PERW_BUS          19
+> > > > > >  #define R8A78000_CPG_S0D24_HSCN_OTHER                20
+> > > > > > +#define R8A78000_CPG_SGASYNCD8_PERW_MAIN     21
+> > > > > > +#define R8A78000_CPG_SGASYNCD16_PERW_MAIN    22
+> > > > >
+> > > > > Could you also add R8A78000_CPG_SGASYNCD4_PERW_MAIN and
+> > > > > R8A78000_CPG_SGASYNCD32_PERW_MAIN for ordering consistency ? The
+> > > > > dependency patch should then also include R8A78000_CPG_SGD4_PERW_BUS and
+> > > > > R8A78000_CPG_SGD16_PERW_BUS, as well as
+> > > > > R8A78000_CPG_S0D{1,2,4,8,12,16}_HSCN_OTHER.
+> > > >
+> > > > I could add them, but do you have any need to refer to them from DT?
+> > > > So far I only added clocks that are listed as clock supplies of on-SoC
+> > > > modules, e.g. R8A78000_CPG_SGASYNCD8_PERW_MAIN is supplied to the
+> > > > Timer Unit (TMU)).
+> > >
+> > > So we have two conflicting goals here. One of them is to only add clocks
+> > > that we have validated to exist (and ideally work as documented). The
+> > > other is to keep renesas,r8a78000-cpg.h readable. We won't be able to
+> > > satisfy them both fully.
+> > >
+> > > I think we previously discussed adding whole groups of dividers in one
+> > > go, as some sort of middle-ground approach. Those are clocks that are
+> >
+> > That is what did in this and the previous patch: we need
+> >   - R8A78000_CPG_SGASYNCDn_PERW_MAIN for n=16, and added the one for
+> >     n=8, too.
+>
+> That's missing n=4 and n=32. While SGASYNCD32 isn't referenced in the
+> datasheet, SGASYNCD4 is (in SCIF and HSCIF). Maybe that's just an
+> oversight ?
 
-[01/59] drm/hdmi: Change __drm_atomic_helper_connector_hdmi_state_init parameter order
-        commit: e8698caa41f659739861f3c5b19070ea973f58ab
-[02/59] drm/atomic-state-helper: Rename connector_tv_margins_reset to state_init
-        commit: 39e8c69f41882b12ffd1cbea39b07923dc430de6
-[03/59] drm/atomic-state-helper: Rename connector_tv_reset to state_init
-        commit: 27411554b73b2de2e230df3fefc6821485b3d509
-[04/59] drm/panel: Add atomic_create_state support
-        commit: a8684a05336c1115172bd5fce9a942d830e11d13
-[06/59] drm/aspeed: Switch to drm_atomic_helper_connector_create_state
-        commit: f88d567860da9e5a5ba0f05424ea4c8321af0467
-[07/59] drm/ast: Switch to drm_atomic_helper_connector_create_state
-        commit: 42572c272e61af9c53162f307c81bb48a0977e5d
-[19/59] drm/hisilicon: hibmc: Switch to drm_atomic_helper_connector_create_state
-        commit: 800edc28eb000fbcb2229d6799ffa5c3831def15
-[20/59] drm/logicvc: Switch to drm_atomic_helper_connector_create_state
-        commit: ec2e19c6518ca8959ca009491e62913ea53be450
-[22/59] drm/mgag200: Switch to drm_atomic_helper_connector_create_state
-        commit: f15c3a86f606c7dd8e057dc7a3d762d634b8fa20
-[24/59] drm/qxl: Switch to drm_atomic_helper_connector_create_state
-        commit: e439361203a610cebd725e068dc1694d585d6ecf
-[27/59] drm/sitronix: st7920: Switch to drm_atomic_helper_connector_create_state
-        commit: 382b5915baae6d289cf550b70e325cd162d140c5
-[33/59] drm/tiny: bochs: Switch to drm_atomic_helper_connector_create_state
-        commit: 6b1c795028b1552f25bc4b707673e0d848786dcb
-[34/59] drm/tiny: cirrus: Switch to drm_atomic_helper_connector_create_state
-        commit: 777642458977878a2e81399adf16b1e23ab57b17
-[35/59] drm/tiny: gm12u320: Switch to drm_atomic_helper_connector_create_state
-        commit: 379d9ab55e5d0453ab744892981f122f8e5614fc
-[36/59] drm/tiny: pixpaper: Switch to drm_atomic_helper_connector_create_state
-        commit: 417ff0dc9d68de04248361c3db10c902e33b87c6
-[37/59] drm/tiny: repaper: Switch to drm_atomic_helper_connector_create_state
-        commit: 7fdf84a3913597bb662a1d1aa37f798576dbd2ed
-[39/59] drm/udl: Switch to drm_atomic_helper_connector_create_state
-        commit: 9b9731aea4920327ec8fb757bcc9fa88c7c8fa45
-[40/59] drm/vboxvideo: Switch to drm_atomic_helper_connector_create_state
-        commit: 8c0c25d8724aa3a0850efac1f117444485ce899c
-[46/59] drm/gud: Convert to atomic_create_state
-        commit: 79363b9b53e285a5f98b95d75e32f889ef3431f3
-[50/59] drm/vc4: hdmi: Convert to atomic_create_state
-        commit: 946c74390c2fe7cc9acedf2d333ca1f924b7eba3
-[51/59] drm/vc4: vec: Convert to atomic_create_state
-        commit: 76000c76a4784e8bc4ea957dcebc93449f762bd7
-[54/59] drm/ast: Convert to atomic_create_state
-        commit: a1e63ab695ad76850ab9787b9eb6aab695dc2965
+We already have the clocks for (H)SCIF (_BUS, not _MAIN!):
 
-Thanks!
-Maxime
+    #define R8A78000_CPG_SGASYNCD4_PERW_BUS         0
+    #define R8A78000_CPG_SGASYNCD8_PERW_BUS         1
+
+> >   - R8A78000_CPG_SCPBUSDn_SCP_MAIN for n=16, and added the ones for
+> >     n=1,2,4,6,8,32, too.
+> >   - R8A78000_CPG_S0Dn_PERE_MAIN for n=24, and added the ones for
+> >     n=1,2,3,4,8, too.
+> >   - R8A78000_CPG_SGDn_PERW_BUS for n=32, and added the ones for n=8,
+> >     too.
+> >
+> > I did not includes clocks with values for n that exist according to
+> > the documentation, but are not used as suppliers for modules.
+> > Of course the documentation may be incorrect or incomplete, and we may
+> > need to add them later. As IDs are ABI and the list is append-only,
+> > they must be added at the end, which could indeed lead to not all
+> > clocks of the same group being located together.  From an ABI point
+> > of view that is OK, but from a human-readability point of view it is
+> > indeed suboptimal.
+> >
+> > Before, we tended to add all clocks from the clock tables listed the
+> > documentation upfront, ignoring clocks that are clearly internal-only.
+> > Some of them turned out not to exist later.
+> > Some new clocks had to be added when the documentation was updated.
+> > Nothing new here, except that the list of clocks on R-Car X5H is an
+> > order of magnitude longer.
+> >
+> > Note that we don't use a linear array of clocks indexed by clock ID
+> > in the R-Car X5H CPG driver (yet), so large holes of unused clocks do
+> > not hurt (they do hurt in the SCMI driver ;-)
+> >
+> > > not directly controllable. There's a risk of adding clocks that don't
+> >
+> > FTR, the xDn clocks are not directly controllable; clocks like
+> > R8A78000_CPG_MSO_SCP_MAIN are.  We know the latter exist, as they
+> > are used.
+>
+> Yes, I was talking about the clocks documented in the various
+> non-PLL "hierarchy" sections.
+>
+> > > exist, or clocks that we won't need to reference from DT (because
+> > > they're only used as parents of the MDLC-controlled module clock). Do
+> >
+> > The direct parent of an MDLC-controlled module clock should be in DT.
+>
+> An additional difficulty is that we don't actually know what clocks the
+> MDLC gates :-/
+
+This hasn't changed much: on other R-Car generations we also didn't
+know which clock(s) are gated by a single MSTP (Module SToP) bit.
+Historically (old SH parts), there was only a single clock supplying
+each module. Modules on later SoCs gained more clock supplies.
+Hence we always assumed (at least) the functional clock is gated by
+the MSTP bit, and modelled the gateable SMTP clocks as a child of the
+functional clock parent.  But it's quite possible other clock inputs
+to the module are gated, too, depending on the actual module (some
+modules e.g. need a PHY clock running to be able to process wake-up
+events).
+
+Comparing older R-Car with R-Car Gen5, I actually like how the new
+MDLC block combines the power domain functionality of the old SYSC
+block and the clock domain functionality of the old MSSR (Module Standby
+and Software Reset) block. It improves upon the now imprecise modelling
+of MSTP clocks, and maps nicely on the Linux PM Domain abstraction:
+  - power domain: generic_pm_domain.power_{on,off}(domain),
+  - clock domain: generic_pm_domain.dev_ops.{start,stop}(device).
+
+> > Higher-up parents should not be needed iff the SCMI firmware exposed
+> > and/or implements the proper clock hierarchy (which it does not at
+> > the moment).
+>
+> A big *iff* :-)
+>
+> Even in that case, we'll have (at least) two issues:
+>
+> - Some modules may need to know the rate of the functional clock gated
+>   by the MDLC. As those clocks are controlled through power domains,
+>   they are only specified as the last cell of the power-domains
+>   property, and are not listed in the clocks property. How do you
+>   envision this to work ?
+
+The functional clock (or its parent) is still listed in the clocks
+property.  Compare e.g. the hscif0 nodes on R-Car V4H:
+
+    clocks = <&cpg CPG_MOD 514>,
+             <&cpg CPG_CORE R8A779G0_CLK_SASYNCPERD1>,
+             <&scif_clk>;
+    clock-names = "fck", "brg_int", "scif_clk";
+    power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
+    resets = <&cpg 514>;
+
+and R-Car X5H:
+
+    clocks = <&cpg R8A78000_CPG_SGASYNCD4_PERW_BUS>,
+             <&cpg R8A78000_CPG_SGASYNCD4_PERW_BUS>,
+             <&scif_clk>;
+    clock-names = "fck", "brg_int", "scif_clk";
+    power-domains = <&mdlc_perw R8A78000_MDLC_PD_APL 0x54>;
+    resets = <&mdlc_perw 0x54>;
+
+On R-Car V4H, MSTP514 aka "hscif0" is modelled as a gateable MSTP
+clock with parent R8A779G0_CLK_SASYNCPERD1, and used as "fck".
+On R-Car X5H, R8A78000_CPG_SGASYNCD4_PERW_BUS is used as "fck" directly.
+Calling clk_get_rate() on MSTP514 and R8A78000_CPG_SGASYNCD4_PERW_BUS
+gives similar results.
+
+> - When multiple clocks derive from the same PLL, it's common for the PLL
+>   rate to be specified through assigned-clock-rates. If we want to
+>   continue doing that, we need to to make the whole clock hierarchy
+>   available to DT.
+
+Yes, you need a public ID to refer to a clock from DT.
+Do you have an example where we would assigned-clock-rates it for a PLL?
+So far all users of assigned-clock-rates on Renesas SoCs use it
+on clocks that are already public as they are also needed as clock
+supplies in clocks properties (e.g. CAN-FD and SPI reference clocks).
+
+> > Still, they can be internal enum, starting after the last
+> > DT clock, like we did in other R-Car clock drivers.
+> >
+> > > you think that's an issue, could it cause ABI problems in the future ?
+> >
+> > An ABI problem appears only when you refer in DT to a clock that does
+> > not exist in hardware.  This should be caught by testing before the
+> > DT user is added.
+>
+> So we could add e.g. SGASYNCD32 already, as long as we don't reference
+> it in DT without testing.
+
+We could, but which one: "_PERW_BUS" or "_PERW_MAIN"? Or both?
+And what's the point if there are no users?
+
+BTW, there are 87 SGD4_* clocks listed in the documentation.  They are
+all sourced from the same PLL, and have all the same clock rate.
+I don't think any of these can be gated.  Hence if I would write a
+bare metal clock driver, I would just expose and instantiate a single
+SGD4 clock.  But the current SCMI implementation exposes 87 different
+clocks (and didn't make them usable by Linux until recently)...
+
+Perhaps we should drop the domain suffixes from the definitions? Even
+e.g. MSOCK_PERW_BUS and MSOCK_PERW_MAIN seem to be the same clock...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
