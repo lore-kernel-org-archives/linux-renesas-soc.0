@@ -1,55 +1,32 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793329632;
-	b=OKoXyRCH4S2+Yxymu/nC2K1OjHW4Azi9/3LrTodQeoZn2ET+W2/D2XK7BIaS3XMfbkkq
-	 /QpiMusG0yngaW5fhrfsGQCOPwcddFtIrcoPMA3C9UFbRd1rMCbvwajA/qN48ACjM6UU/
-	 U2F3jbhLxSimcq31Z+PNRhYIp3MekRAafrm0Cp01+BuWAV18H5++oQ1lucokRcj2XjI5K
-	 2fgFBojhL6Llx8r6weLBUv+vbsTifr558y4BNtsk7565vbDpIvPNLPXk/XCE925YkXCFm
-	 GdQ9Zif1VDgC2FOa8neMmX/E5hhkOn1jq3NivFWeQY2ODNh1x3xWWjh0RYIvdPAp+oA==
+	t=1793340432;
+	b=v9Kvxx8D96E7xRy/h5N4FmxWJ9n8yd3X51/cfsn8uqcud6IqpNaNrCmYpjwMCqj5Nb+O
+	 aZQUXMFHpijKPTYdnJ2R1XaKM8nBAhnR2iBD6byzJ9sBYRLwCyO29ktEgAiYybBKq9ptn
+	 4fdxelEE1iCSvOTr1By/68VZL/UMTIgvXas6PSyW6krmlS20EWhdLwIXLZTFPwx3cwfYk
+	 nRZYEhMkDxxLkPdoCxW4FZm66ID70bK51jiOT5nzRb4LMHP7wnAJqgLUmIyzr846xyYfX
+	 MXjlZuMIGM3M3BIX3oNoEhuUeOnyMvUCRSrWuwj9iKSU74XtiVxAdre3JS6NFIOQMnA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793329632;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=/uSzGTnG/yOJTh9JMU3hh2HWfIlei95qLPy/XlUKvmg=;
-	b=XjUBOb+NIlncG47sU4W7JPmDqVEy+db3K9JwmCXSPdBGm9+H4zoubWPvTULsC1QzExk8
-	 RQmJnBqnfrqG7m8t0QL48NICmbpIb+ZrCQamlU5oCy2XM8Je0pIlIbRAZMzkNQi92U4eb
-	 YzPFded8P61wjaKDOhaxpbzjobi3peE4UzB5I9aHby56dydlDKDkg271cPR4PjnW1ydj5
-	 LIDKl41zGTZuOh3l+KYEeAtk5cfne1rLEpIlaVYzwvVPIJE7pe5M+7WG8ivh8paeh0gXI
-	 1oNPXq8TzUvH+nEEdvjwee0FhvcqAMPhJviTOV4TsKDr95uHaIHB+P2a2pLEOIOs/7g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793340432;
+	h=Received:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:
+	 From:To:Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=MjJjLX/qV1+lyxi0iixx5duL/lrS5HdRSjax3k0IDWQ=;
+	b=gI7kMNtEHsKIlgeNG0qmPwhaaddRmslOQFjc/DgwwqOAMeFDHRlJHgI1b2CbuEWlPUKL
+	 wipmPzZjP/tqyyNV0EFIMV9U+98kdTtXetjuaKradyT2rWBDFiWu36C5GT92NAzMEh0GN
+	 fbzzWVePkYBquoGRrTiCKNX8i86AZiZ2yD+psTKuLneCx4cbqr23tHn9RWGZObCP07NNC
+	 yLnZceHemNcDc3Qxxf6KrHCdsAvVm5EO9V0eq+BuBdpxv1+FwZy9KJnApxnFLfQ6ponIn
+	 3B5wC/fKRoXfzgRWvCKFxF3sFPXS6Bc+skMfOO8oK5GgbKEW/yAD/e0tS+LjOS3jATQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cBckOE2b;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ECB606A321
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 03:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cBckOE2b
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5CF1F00A15
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 03:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793329632;
-	bh=/uSzGTnG/yOJTh9JMU3hh2HWfIlei95qLPy/XlUKvmg=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=cBckOE2bzavNJb3OzybplOn3pG+5iDGHJaiUxI/i9aP9W3tywQtMo3uhdvorxzAfn
-	 Z6C99P2+noPuVauSJ7HGbjTPiZ/iOu1qZUEekhZ31VLbV7svgE/E4tj/AZ4sgUVd7S
-	 7qhi2kBdHp/Wa1CVvjO4UMwzh1q5zifIUkGi1VBnuyweIRh95Vtm0Gx2zArlDHRFNW
-	 MYIVWdndq6IjJlKJaWNaM0kAz2XRMjLq4FCmzCOkCdb0zraPU9EVB6DUwxWVEUdRbd
-	 ewf8UqC9zdUbIfEBjw4Qrej1m1gxB3A6Y2cJc3/od0qi+Sa8Gr/su2L735gyltgR2Y
-	 80jf8Zs2DshxQ==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3ab4c608a6dso2776741fa.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Oct 2026 20:07:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzFI3qxb0qjJiAHQpVVwUgwrY1KbVNowXr4Qr9fXvjU1PL34HnEAHIJPMpiUnFin4ZEZ682X/beOv53zDwbkghqCg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYI9RfBA456gaxhOjBqlnS6utggtI1Eo8aKItFEDasCI8Uoy5Jh3
-	LZBLot1tKLYYMGpT/Y+yXYLoZ0dKJX6Oq09VRDIKwM1g79Uqo0p/wOeEPppUW4OUXHaFTgkdatK
-	aM/i00qr796kfz+kbKypHOCu5eKWgO4g=
-X-Received: by 2002:a05:651c:2120:b0:3aa:f617:5c85 with SMTP id
- 38308e7fff4ca-3acb7aa5561mr1702801fa.12.1793329629127; Thu, 29 Oct 2026
- 20:07:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A2606A31A;
+	Fri, 30 Oct 2026 06:07:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC29F1F000C1;
+	Fri, 30 Oct 2026 06:07:03 +0000 (UTC)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -59,119 +36,85 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-20-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-20-5e3070a3478f@oss.qualcomm.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 30 Oct 2026 11:06:54 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66GV0mu+iKHs2+mZPxJmbdgm60j8srtKLuux7BdAC9BZQ@mail.gmail.com>
-X-Gm-Features: AclHuK9xiSETdonY9_QkznCRV7eL1jeHCdIOBKyx8OeAMXLApY8qfRj6-NRV9No
-Message-ID: <CAGb2v66GV0mu+iKHs2+mZPxJmbdgm60j8srtKLuux7BdAC9BZQ@mail.gmail.com>
-Subject: Re: [PATCH 20/35] drm/sun4i: set the panel orientation on the connector
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Linus Walleij <linusw@kernel.org>, 
-	Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Samuel Holland <samuel@sholland.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>, Jagan Teki <jagan@edgeble.ai>, 
-	Jianhua Lu <lujianhua000@gmail.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
-	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
-	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
-	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
-	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
-	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
-	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
-	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
-	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] PCI: rcar-gen4: Isolate 256B MRRS limit only to R-Car
+ Gen4 SoC PCIe controller
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20261028172208.20948-1-marek.vasut+renesas@mailbox.org>
+References: <20261028172208.20948-1-marek.vasut+renesas@mailbox.org>
+Date: Fri, 30 Oct 2026 11:36:42 +0530
+Message-Id: <179334040211.5551.2573230628622674128.b4-reply@b4>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2036;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=4edNlj4hhxIn12ce5F/wVnHs7h2/NapSUJQfe8DP0lo=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBq5DQBPrEWzsVqr9VNbSLmlTUCdQKwXi+BG4lKw
+ MN5aHrzsfeJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCauQ0AQAKCRBVnxHm/pHO
+ 9ZIwCACiov7Ld7Mb4yli0vS5531D50cP0nq2vYpavxqmIm7S9AkB0tXBACbuDl5QiweQ+29fkGh
+ 4Q/LskrsSQfg8Uwn91FIjMDeq61kQaR3AAZAffLB9/p3cYv/+Qa0b2Zsegjy6ah0bvosAqYgpab
+ 7F57Vsweo8IshJbVCVHvUU1ZrfjvTmbN9biN8SNQrnHAJACTjH9mXIInVmlfR6Yhlq9GCOExsYt
+ KSinPu+I/Is+bPUKBz4aR34mwBrtgY4f1KyrtBJmXRpgPOTDCT4woF8R2aZUMDA19VXqDXrpa3S
+ /VTXzq7sztb4djdXE5EsYLLvskXoXiN0ogJEZpVgBtYmk8Dr
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On Mon, Oct 26, 2026 at 7:11=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
->
-> The panel is used directly, without the panel bridge, so nothing sets
-> its orientation on the connector apart from the workaround in the
-> get_modes() of some panel drivers, which runs too late.
->
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-Acked-by: Chen-Yu Tsai <wens@kernel.org>
-
+On 2026-10-28 18:21 +0100, Marek Vasut wrote:
+> The R-Car Gen5 SoC PCIe4 controller is not affected by the 256B MRRS
+> limitation that was present on R-Car Gen4 SoC PCIe controller. Apply
+> the 256B MRRS limitation workaround to R-Car Gen4 SoC PCIe controller
+> only. For details of the 256B MRRS limitation, please refer to commit
+> f0a5c6bd797c ("PCI: rcar-gen4: Limit Max_Read_Request_Size to 256 Bytes") .
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > ---
->  drivers/gpu/drm/sun4i/sun4i_lvds.c | 2 ++
->  drivers/gpu/drm/sun4i/sun4i_rgb.c  | 2 ++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/s=
-un4i_lvds.c
-> index 6b98d20a8890..448e8a70b1aa 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_lvds.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
-> @@ -153,6 +153,8 @@ int sun4i_lvds_init(struct drm_device *drm, struct su=
-n4i_tcon *tcon)
->                         goto err_cleanup_connector;
->                 }
->
-> +               drm_connector_set_orientation_from_panel(&lvds->connector=
-,
-> +                                                        lvds->panel);
->                 drm_connector_attach_encoder(&lvds->connector,
->                                                   &lvds->encoder);
->         }
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/su=
-n4i_rgb.c
-> index 3da9a9283c6e..5414afcb10b5 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> @@ -245,6 +245,8 @@ int sun4i_rgb_init(struct drm_device *drm, struct sun=
-4i_tcon *tcon)
->                         goto err_cleanup_connector;
->                 }
->
-> +               drm_connector_set_orientation_from_panel(&rgb->connector,
-> +                                                        rgb->panel);
->                 drm_connector_attach_encoder(&rgb->connector,
->                                                   &rgb->encoder);
->         }
->
-> --
-> 2.47.3
->
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/pci/controller/dwc/pcie-rcar-gen4.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> index 9a64a9f4ab0d1..1e4405181eef3 100644
+> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> @@ -99,6 +99,7 @@ struct rcar_gen4_pcie_drvdata {
+>  	int (*ltssm_control)(struct rcar_gen4_pcie *rcar, bool enable);
+>  	int (*speed_control)(struct rcar_gen4_pcie *rcar);
+>  	enum dw_pcie_device_mode mode;
+> +	bool mrrs_256b_limit;
+>  };
+>  
+>  struct rcar_gen4_pcie {
+> @@ -663,7 +664,7 @@ static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (pp->bridge)
+> +	if (rcar->drvdata->mrrs_256b_limit && pp->bridge)
+>  		pp->bridge->enable_device = rcar_gen4_pcie_enable_device;
+
+I'd suggest moving this check inside enable_device() callback to make it clear
+where exactly the skipping happens.
+
+- Mani
+
