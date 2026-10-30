@@ -1,69 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793369858;
-	b=4DkMJdTj5BahmsZZK8MNsbV+mAnS8pDAby5SyJa4U959gQNBBpqVj3wiPFbQIkP+8zqN
-	 mJXYFnflNpnvK7skJ5dIF0UTl92LoJw+elJuLpdZFUkuglvn0ies8Jlvak/c26rF31I+i
-	 l0zo8ok9+uXzyVEuidCth5x4TgNnTYzilqrUoH5/a+/YCPJdh1c+25yefQvnTuizWz2+H
-	 8Uw2RuIrGxJEpndVeHTqkHPvWkRh0IJgkxfeLvKqZ/NZEjMAI2bdFvZfNdpn238J5lLOq
-	 qa79gs1OMp17X6SW7Ei46wM+ritptMBJhtAYw4G8SRonDsWPz2bGynUzaxaL1XJ/m9Q==
+	t=1793370722;
+	b=Fmzyd1LvrEH2G48B2YuuLF7Lo6O9kZIvgF4n0GeXVnX3f8FWEun7XN9dW4daCzo658hD
+	 6Zji3K5GPe1UQgGQaTG+DixTTJYUE0oUeBq9nKL9c+9Pd5uDg0zvtaE/yER7XIXxyrbfY
+	 Ipp0v8JYSrLrOQ4G+200a9ADEvE5pnEtDPJEenu637RL/F/v7u0Z8p0rqSgWEeSofPbAU
+	 GXng/vI9iMzOJV7ufwKPez3rSCB0KHazM5LiDiQz6I0duyKudD1AP61FOxbh2kBXS/Dtw
+	 4+rGYmoWp9kkaEvNcIRERxtHtI+hG124kiNBCckE0RXiKAeNoGSz6DOvqWAiCr1rm5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793369858;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=pp89CosNGJWyUxsrCd5hI9uKSpZ0bqhKqDJjb+BkBrk=;
-	b=sTF3hSMMSaNtWB6j5KbePYh/MngxjRKtK/I3Nuh+whyzCjIhLcxV/7UiqzyU+c9Yabo5
-	 sYujmPOAO7Ma1tVG2FCephHh//SdChJkL6ut1yerf0S/mHJ43JWFiEe/9jWZ+OWyuYHnp
-	 XBGq5ardCXNZeHulguX0xWTl4V0zVX//TAt0cI1OyB/9Y+XSuMl6FA+VqiWseKxJ/KLLE
-	 IajHtpD+G1C3k7J8k8VP8B7vvCRsLk09kZe/j+ZsDDftt+UpyTiScwjkLOq7npAYG4NTg
-	 MYPFG74i/K7POGQsPHyvCL4u5muxCuCow/NTL05QVdULxKil13WRjpNOtEkY6Nb28Yw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793370722;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=49Bl1zt6UwoVqWzxPK8W1b7lN0nB1VkYxdH3jRP5reI=;
+	b=AvsrMsn7zDUE1aBkL8obK9+EPsQVbvC+nFL8V7Z3dL77up8yffDuYqvmi3oA4EkzN3Dd
+	 oGIb1qQhyktt4apybOwfORPnjhGpezF0/+yEY/tf1GyvkXuu3AVpSQUcJMMYI6Y0so/mc
+	 3O/+M6KXLxX10EuI7dwYUuH8SER8eYen5qnJ0A3QqZWIdzD/VuqrCMtoeCpVms+mgoAjO
+	 2ludKQQE78xcAWSjUkc1ZziN2gfERsOp52Vn1vUkuRPyxMsQ1slN5VRrp1npGkdYrLnM9
+	 39yRmNd9UubxCCyXpBPkk82/EEvlH1QTNKmqSmXVDB3Tjeh1gRa+CoYXVbQedQuwf7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="FtSdV5/e";
-	arc=none smtp.remote-ip=192.198.163.9
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GZRoYqVO;
+	arc=none smtp.remote-ip=74.125.82.173
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51728606A31D;
-	Fri, 30 Oct 2026 14:17:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 51728606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CD5606A31D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 14:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92CD5606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=FtSdV5/e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793369857; x=1824905857;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pp89CosNGJWyUxsrCd5hI9uKSpZ0bqhKqDJjb+BkBrk=;
-  b=FtSdV5/e/IW2twZO+F0VCWy07Nr0T+91x+lheNaBPeF5t/tb9EwmRaSy
-   50ky3yhNhidOeSH8z+1DWOq1Rhx+yf4WcdYWVjOBLfccBrmny9YKqCKat
-   pM3NlrSJMrNxH83/JQPRzGFQ8cR3W2sQJ0dYSNlco363eBruGN3Jd5dBk
-   Fd0zKCv0t0RKSWkpp6iu6/NJLu8qBn8m/1VWQ87hX/GHcF1zkaNSpQyVM
-   PqwC0MqNd7r0EilLYPjO+MTUemrH18A6+/DTw/ODk0y1b6Q604C1F5K0t
-   i3bVYQ6ZwUmz1bt4XjA3/R5EvZWARE6pg7A8hRg5hkb4pJDGK8XhjNOsl
-   Q==;
-X-CSE-ConnectionGUID: SvSQQCecRLmuixHcbiijRw==
-X-CSE-MsgGUID: z7U9vXroS0a1qZcM3FXubg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11951"; a="2016213"
-X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="2016213"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2026 07:17:36 -0700
-X-CSE-ConnectionGUID: Gojz+ErxRPikYftHvQ4zjA==
-X-CSE-MsgGUID: VC54mBoTSsqpYZvmyXhiqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="5580479"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.109.71]) ([10.125.109.71])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2026 07:17:36 -0700
-Message-ID: <cfc2bdf7-7f91-44f3-8f3b-e2bad55e9b60@intel.com>
-Date: Fri, 30 Oct 2026 07:17:35 -0700
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GZRoYqVO
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso1450277eec.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793370721; x=1793975521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=49Bl1zt6UwoVqWzxPK8W1b7lN0nB1VkYxdH3jRP5reI=;
+        b=GZRoYqVOzFQ9NKugWeeCfemabJywoYT1e4+ri71JacGwHc3z1S7aCKftP9etDPCRQ8
+         +wHucdQGaXt8YvGFWcyUy4GPb1wia6wOtfPZkF2Yosk8Wco37sEfNQspU27j8c+m9Rv0
+         hURd6+hSjjjwjKpUN4IPSBbtYuzwrIhbDfCj9PNO2R37a5f16NvC/+n5Gw9zaRLR5vyB
+         729CnX5XFkEbJ2WlaRxWNhGhXA1O9JEvu9/tRGbsUIauhqROT+5BsXNBbz4d+7Sl1FY7
+         lQGAbSPIXspb/EeYgu4rVco+KjZLQx5yIzQgCj+uo8ZFgdNuav6tktWtj4LhxtFJ/ijB
+         ju8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793370721; x=1793975521;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=49Bl1zt6UwoVqWzxPK8W1b7lN0nB1VkYxdH3jRP5reI=;
+        b=jYCNh5qoasq7DvQakfsL9xefk5pIJ0rCvegwPzkWNSPlM557bckSjdOAg+oF6R9tVp
+         S2PGO/ZW+ltgGJObuNUyfhN1frYOdD8jdn48s0dLRl+mSzAZgOv70YsT6KSwnZW6Qg7i
+         Zr2wfJo9AlpeFHF0hqTO4/Eh17ypotCP0yedZXeAPpYx+llfGi2Mshmdh8bVAwaWZkKm
+         xUlaL9z9n+opWFIQFa3EMcd8W679LSbUJAdnDkIP94UgdvBv9aKNQtq3Rw8725mcLX0T
+         BiiF2x+XThE6GgGD2j7mgPrFmYSN2IMpD6BfESWfymYiAshGUgtO2WNnbpCe/ifuOVhH
+         dKUw==
+X-Forwarded-Encrypted: i=1; AKwUvBxOUc9bR8PsIy8kLoQ1ptVXjPsUpufHIcu4g2CzW9PVzt3kGjYp1LOwFXNSFlUHcMpqSQxZoAHvF+NJ0z92sKlQCQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJdNa9DEfJ04q9PrQhvDFQE1VVZDU6P5Pa30BTsn/eLoH0ydEcy
+	1P06En3P9xRt2m7VQ/FwivI25VpCIG+kdG+9EuMIVilY5ffsjwkuAHd0hfd4DuoYoKQ=
+X-Gm-Gg: AYBFou361lz5LDFf1QfeUarXFeP6olFIUYvueFX7dMGhnqpXlRmw4kR3dG2Aw4h2ki6
+	JXuzTFDyzQQxsiuEDEH4elofeFpVjc8b7zkJboekR3NPa6+7qi1JGXZlDu6//COmvAbWIPUC83j
+	MOILrpyLQUu91L+bpjxAo9xFoWlrA/8wxlOXa5CbreIZvL6b65HiakxDBUhtRoZ50x9ioXcW3A+
+	BmFAtwwv+uWvbc36qXgnGkJZarf7/ywX3NKCDXCGRe+qkHOTQqjS7t/HBt1uuBgrT+W9LTwjzKF
+	7F3A7xzMVSSBdOUmsQvabeVbtp96UtuihdmigCbiEQeb6crTkwNU4VpjY+jhOXb96SYXL/M2FQj
+	wKZQU0UVMsQCnRanLzaJuuM/7xgMW9Zx3kJ3sLJVn7GNBlruaEvDDLYn6asVhH+WdbrYwQmtGFD
+	Ibt1cX2wswV8jXrGUVEPzwMePNxLcMBoD7mcvHjtq1d93ijtuhwVZQ09VfwhAOl9RfnjQ0iLA/B
+	6wSlRodOGWnNI0VKNK55W2+IUqP92pyqler3oIOODEaxsf6agaGLHTgPwonfeAZjv8T8aSCzbqW
+	nXufaDiyE0fAuan4fNLwgSouA79Q46J993tw23Bg3yQLaqnLhRUc8qW7jyRHuFGKjREToCzGo1+
+	VQuOIQimnKuG+QUy21/zoZXkXggXSUMEO+14MI8ENiDJ17VEk+9NqTVY5rO90jmZ40FjfBkgwKq
+	pkxdsupg==
+X-Received: by 2002:a05:7300:7b81:b0:351:7ec1:a92c with SMTP id 5a478bee46e88-36a42431768mr5397671eec.28.1793370720407;
+        Fri, 30 Oct 2026 07:32:00 -0700 (PDT)
+Received: from brev-9gdpyq8lp.ap-south-1.compute.internal (ec2-3-110-210-194.ap-south-1.compute.amazonaws.com. [3.110.210.194])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a42a77c0dsm9438146eec.26.2026.10.30.07.31.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 07:31:58 -0700 (PDT)
+From: Codex <samarth.colleges@gmail.com>
+X-Google-Original-From: Codex <codex@local.invalid>
+To: Ulf Hansson <ulfh@kernel.org>
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Samarth Narang <samarth.colleges@gmail.com>
+Subject: [PATCH] mmc: sh_mmcif: unmap DMA buffers only after the transfer has stopped
+Date: Fri, 30 Oct 2026 14:31:51 +0000
+Message-Id: <20261030143151.2916788-1-codex@local.invalid>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -73,85 +99,87 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Fix Intel TDX kernel file patterns
-To: Borislav Petkov <bp@alien8.de>, Kiryl Shutsemau <kas@kernel.org>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, "biju.das.au"
- <biju.das.au@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Au Dang <au.dang.jx@renesas.com>
-References: <20261026-g2ul_sci-v3-0-b3097163edd5@bp.renesas.com>
- <20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local>
- <TY3PR01MB113468FBD8E5EFA65C4B4E5EB86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <072dd88c-4ca1-4c8a-98b1-7783bc43c1c5@kernel.org>
- <TY3PR01MB11346BAE55FF22F66E86A6F8B86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <afdf1864-4721-4177-bc18-2a5821d97559@kernel.org>
- <20261027205411.GAauEPc4AtLwvrDfFr@fat_crate.local>
- <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
- <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
- <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/29/26 19:33, Borislav Petkov wrote:
-> So switch the x86 TDX patterns to files and directories (N:) type
-> patterns and group them by path, for less false positives.
+From: Samarth Narang <samarth.colleges@gmail.com>
 
-Thanks, Boris. This can probably just go in the urgent pile ASAP, right?
+When sh_mmcif_end_cmd() is woken by a data error interrupt or a DMA
+timeout, the DMA descriptor may still be active. However, the function
+unmaps data->sg before clearing BUF_ACC_DMAREN/DMAWEN and calling
+dmaengine_terminate_sync(), potentially releasing the mapping while the
+controller is still accessing it.
 
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Since data errors can be triggered by the card, a faulty or malicious
+card may cause DMA accesses to continue after unmapping, potentially
+affecting reused IOVA or SWIOTLB mappings or causing premature cache
+maintenance on non-coherent systems.
+
+Move the unmap after DMA termination so that the mapping remains valid
+until the transfer has either completed normally or been terminated
+synchronously.
+
+Fixes: eae309836509 ("mmc: sh_mmcif: Terminate DMA transactions when detecting timeout or error")
+Assisted-by: LLM
+Signed-off-by: Samarth Narang <samarth.colleges@gmail.com>
+---
+This issue was identified through static analysis of DMA lifecycle
+ordering and has not been validated on hardware.
+
+Since the request pages are not released until mmc_request_done() is
+called after DMA termination, direct-mapped pages remain owned by the
+request. The potential exposure is therefore limited to the DMA mapping
+layer, including IOVA or SWIOTLB slot reuse and premature cache
+maintenance on non-coherent systems.
+
+The fix also relies on dmaengine_terminate_sync() stopping the channel
+correctly on both MMCIF DMA providers. However, shdma clears CHCR.DE
+without confirming that the channel has stopped, while rcar-dmac polls
+the bit for approximately 1 ms but only logs a timeout if it remains
+set.
+
+ drivers/mmc/host/sh_mmcif.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+index 8bd9cdeda..7b33f832b 100644
+--- a/drivers/mmc/host/sh_mmcif.c
++++ b/drivers/mmc/host/sh_mmcif.c
+@@ -1173,15 +1173,6 @@ static bool sh_mmcif_end_cmd(struct sh_mmcif_host *host)
+ 	time = wait_for_completion_interruptible_timeout(&host->dma_complete,
+ 							 host->timeout);
+ 
+-	if (data->flags & MMC_DATA_READ)
+-		dma_unmap_sg(host->chan_rx->device->dev,
+-			     data->sg, data->sg_len,
+-			     DMA_FROM_DEVICE);
+-	else
+-		dma_unmap_sg(host->chan_tx->device->dev,
+-			     data->sg, data->sg_len,
+-			     DMA_TO_DEVICE);
+-
+ 	if (host->sd_error) {
+ 		dev_err(host->mmc->parent,
+ 			"Error IRQ while waiting for DMA completion!\n");
+@@ -1208,6 +1199,20 @@ static bool sh_mmcif_end_cmd(struct sh_mmcif_host *host)
+ 			dmaengine_terminate_sync(host->chan_tx);
+ 	}
+ 
++	/*
++	 * An error IRQ or a timeout wakes us up while the DMA transfer may
++	 * still be running: only unmap once it has completed or been
++	 * terminated above.
++	 */
++	if (data->flags & MMC_DATA_READ)
++		dma_unmap_sg(host->chan_rx->device->dev,
++			     data->sg, data->sg_len,
++			     DMA_FROM_DEVICE);
++	else
++		dma_unmap_sg(host->chan_tx->device->dev,
++			     data->sg, data->sg_len,
++			     DMA_TO_DEVICE);
++
+ 	return false;
+ }
+ 
+
+base-commit: 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907
