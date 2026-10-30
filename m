@@ -1,70 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.169
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793397953;
-	b=x9uWp8SI9botKTSDW4m4v/9+w5C9JI5/rF6aNapqVUT7GuZdk77lqsIteAVa6xm7If8x
-	 KebK/Ok5reubKbtsrVr5VcFv/jL7Xf/ZCYmvTlHJauJCXrWsPTYE+PYJ1rNxwa5VJhQVX
-	 LNxGRLti4OgAyt3fLLVD5mZUEvZrOJZkBkEstlBE/KZ8Qd41ztZEdxaLu8tLaOfdmRson
-	 0Wjr+gYm1zXr7MJVBXULYMJUaXO7YigEyKoUq6g9NGNJmwfKwuQ612oJzRwy3SvVeTu0I
-	 NhWh+yJs4VgytUZyUDn+OUewUN9Lipo+LqtoY4vDoEMDD4+UNaO+wnTVSKeirSA/PYg==
+	t=1793401619;
+	b=Zh+t2DrUAblqbOw7T7pw8u8kq2VdO0H0t5x6+1K4KrFyB3B9c58Ho5peLzmTsWNq8u5g
+	 UaAV12bKj6EcWCiQtZgg9HaDg0sVIcSD9gYi2h2cZLDbG97vSsk2Mpo7pVf5zxOYXEHMP
+	 mbGoU5CmBsU2D9vHxGv3bNK+3EEkO4RFUVaZxeJpGlHA7LBHtIExz4vTRRncK+3EgZZjB
+	 IxxT6OfC3cTzghCg0xygGt4FsgxnIsPTQLOzDZSGUuT3pPlYAtu6zkNNKI4nsY/n0kzqa
+	 5/ihruH/FXo4Jh2NedG+GURk6TlM1IP/3aGyM8i/X0Eqf4zCD8/IMVQstgkf8aGDatw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793397953;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=vBJMC4GJvj0qjaTPwYTt5q30xb5b2ZksOkUaeaR7BVM=;
-	b=pzwk2wau/gKX3Fj97chHI3lIy54lIa8ocD3rfOjQJE4Tl4TkWmV/oUogSA/J29Pfdhq3
-	 cOf4m8DIoHt+EYiD7RjcfSeWZQWjenphwXseNk9vWwxwqi90odkB7IyoJIlLtrlU2g7cZ
-	 /i5toORuTsPkCDMJmEKneTD+QacUqoMjFX6mqxXdDtUBUgb1/rf1cPPuU7udR6YtLPkYG
-	 QheTmo1P2xS60dSCADtDKblcm2+WuoTW0vvptrabwMaX6bR7V6tCVXYmnuoqdT6jZPX4T
-	 yzMxagWl9f7LM/0tAZIDBaSyN25pyn/p4uP4uippGrSTPstQvO4/JiRh3qIi4aks6tA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793401619;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=jkr/MExl/h9Ffvm2Dl+YvUyWJ/qkIg+g22Ak07CjG0w=;
+	b=ro5twoD1U6d8qFGST1NScoUJlYg+R/6JOEIP2kob3xPEQanvrGblIMniAWkqttBmjY7p
+	 6NSHqkACcdClDZedThTGmACaePsu5sIXOHL0XopaYgxPi6n2z6aUyzGOigr1eEqGdsYmH
+	 EXJhdwrMPaDLhXgPdYtT+ykUhdW0Ta+fufYuI1ZMjJ69eCxdoZt2qGjj6luE5XPi9FQbm
+	 4HGVmY6xXPg8yFCo7orSKVnidEg/tbX4WMJIgKYUp0Sjc3wkpCsNI1anVbrZDl9yk9BgN
+	 xUW3b7bIvkswPBxaZP/+GSlcH2UruIApgZj1DvVP55GxQm4vF9o/KNjyirIv0RHUiDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=YgPQIJJc;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ocjQ8Qvc;
+	arc=none smtp.remote-ip=209.85.215.169
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ECB606A31A;
-	Fri, 30 Oct 2026 22:05:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9ECB606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E4B606A31D
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 23:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8E4B606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=YgPQIJJc
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6323F447;
-	Fri, 30 Oct 2026 23:03:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793397816;
-	bh=X4vKdAe6tCIGUMBGk95lp3ykmxTWgC6GkF33THOI3As=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgPQIJJcZCU7Qs0ZADaMzgFJVe0SzS1pAKe4q3A2qBJVEN//BmnybrCyMLOv3Iwjj
-	 i/FnFPBj2jPdj47R+swC22zYL4x5wp62KWb1+WVe0DxcUm94c3JkwG/xfICyMLlXcc
-	 MOdfVC6KaKYekw/iw+GuuC3e1lmSrBKqkNHfa0NY=
-Date: Sat, 31 Oct 2026 00:05:49 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH DNI v3 03/15] pmdomain: renesas: r8a78000: Add maps for
- VIO for SCP FW SDKv4.36
-Message-ID: <20261030220549.GH3178046@killaraus.ideasonboard.com>
-References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
- <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-3-e052903a3832@ideasonboard.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ocjQ8Qvc
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-cdab9e9761cso737828a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 16:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793401618; x=1794006418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=jkr/MExl/h9Ffvm2Dl+YvUyWJ/qkIg+g22Ak07CjG0w=;
+        b=ocjQ8QvcY4R3WIfeNPMNfGN0d5jvGeV/U5kWwLjZs4mzmjQuyREQ0bbe5Aw8eBduWQ
+         BkmO2bEvGTQI7Wmk0L8uEfOFv2WOgj2kJ9l4xqqQE+XAl13jNPBgADnh41lpWJxZbN+B
+         GWWFvl2VfIZaGwgnTKSYLcH3SFAvwMZ3jn4ZYUYa2cyVV5AMfd366C3bNWLH/RVlVaqy
+         7igXKWWmmcNl7CxqvdAoq+ZF3jBVTjYO+EJ2RPpDL9NXCvlG/4hj1JtETmwqAsHqoxTb
+         dVtYjvF3nYzCTO5B5wNs6jLX2fExKflCdx1pU/o4TgNwJjbUyP0t2qRhyVGp+8aG15ax
+         8Ang==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793401618; x=1794006418;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=jkr/MExl/h9Ffvm2Dl+YvUyWJ/qkIg+g22Ak07CjG0w=;
+        b=WpQsx1Lmehn1jfgD0zHGU9Tbgk0YqM4oDimItmMW4JJSeT+69SJIPKBj+9Hqnf0HrV
+         3pmKtc9cWbXVaUonzoK43D9nMWVf47y41NGzWUhcxdCrW0UwAaCnCE9KTa/nYGB/LfB+
+         Of/x+2Yi61iwj7jPqfttOm3TghAh8op3yJIPC+pHlXNuIAa5CoOqYmgZUZlCxgmiTnsg
+         k6XvdrJm3c3Azqkii4aqw89sXsM0tGlRIsi0si/zBLlFF20EK/kdav9lUea9Vecg3ERk
+         YrOv09+C0GrHMeXY+4c0iVa3mcwr+C5/Bcxwwoh75A3F0WJjlONLypLu1dfo0AS2JXl5
+         rqVQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxxD+1axv/GiGHN61tS5v0OP6LVkPu/pxFCQlv1STI5dpDtqc2RuWQcXAT/ui0cI+2NUNo/REYWfDkFs2MXC133Kw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIYf5dVfAJqPc75e7Hgk3iNYXkW077ep9sxbnflsxmONSvzJxvv
+	SPoX9kq/UPbTFbNZ/W+jDg74rZ42H2CxqGxegLKjH+Ua4yCxhQ+vPFXx
+X-Gm-Gg: AYBFou3DWOmhWieblaFUs74JERB0NjnzP8DYhH/WOB0h5yagXWfWVabFix9YyU2sSSZ
+	WLiIu/a65DVI5rh2cQJjZ2hd5LGUMSNtx7gEjVhPAJ3qI1T/UltMEPBUMFEcujXHfc66VUqVqz6
+	F3igo+IONTzb1wqhk4smZztlZiTtMSg3fUoGJD9zqP3adx7BRpxldKnb2JEvfl3Qf57AJDTFUMn
+	eMQgxKFYC38HLXUNRGjc/6TIzBHXEoJIr31oXu+EhC3wDPofFvFx5UTd6UcKNfpJLHeULlbsGRs
+	RlotEW3wTypfF8im1758bd13jACN6onpZRgSOl18VTRfW83RVip9IlFflSCNsw556sjwy1L6Llu
+	PexNTOPLqRNuW5E0avr6Se8uwH3ONxRswJQGix/4l6zsJ6D2MENo9v+ZOokwdIhl1HZFYhmRHx5
+	CReN6Z+0OZZHR9UtPAv5Ub/Fpen0hkePUawNX7zDqNlyIyPr5lUgLPNoHKgoXFtOh0O/0ScqUXm
+	5pnVh2vQiwd0f7akWVQzEFZKrWYSiSnE39FrwJgiZs+dnOTtMAviOYAJpgP3Teek0S+v+pu/zvZ
+	d32J9TndHiM31jcPAc4b8Ya2iTfPj3KdtdaqLjx54bxQNIYTD87m3k3lNt0l7S+YauUy9YnWW1z
+	zT6CjeRfs
+X-Received: by 2002:a17:90b:268d:b0:3a5:147a:3b63 with SMTP id 98e67ed59e1d1-3ae895a5bdemr2863341a91.8.1793401617933;
+        Fri, 30 Oct 2026 16:06:57 -0700 (PDT)
+Received: from archlinux (d173-183-236-7.abhsia.telus.net. [173.183.236.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae845aa27esm5322736a91.11.2026.10.30.16.06.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 16:06:57 -0700 (PDT)
+From: Artem Novak <artem122novak@gmail.com>
+To: glaubitz@physik.fu-berlin.de,
+	dalias@libc.org
+Cc: geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Artem Novak <artem122novak@gmail.com>
+Subject: [PATCH v2] sh: sh7305: add TMU0 clock support
+Date: Fri, 30 Oct 2026 17:06:46 -0600
+Message-ID: <20261030230646.709687-1-artem122novak@gmail.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -74,105 +104,163 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-3-e052903a3832@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 15, 2026 at 04:51:43PM +0900, Paul Elder wrote:
-> Add maps for VIO for the VSP and FCP power domains and reset domains.
+Register the SH7305 master, peripheral, bus and CPU clocks using
+the SuperH clock framework. Add the TMU0 module clock gate using
+MSTPCR0 bit 15.
 
-s/reset domains/module control/ as its not just reset (and there's no
-"reset domain") but also module control clock ?
+Keeping SH7305 clock initialization independent of the legacy CPG
+initialization framework, which relies on arch_init_clk_ops().
+Disable SH_CLK_CPG_LEGACY for SH7305.
 
-> 
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> 
-> ---
-> Changes in v2:
-> - add VSPD and FCPVD
-> ---
->  drivers/pmdomain/renesas/r8a78000-mdlc.c | 54 ++++++++++++++++++++++++++++++--
->  1 file changed, 52 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> index a0d83f27735e7deacb060e4102e510726b34e62e..cabe6435ecd791e358fd6987ce9394898d8c87f8 100644
-> --- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> @@ -861,6 +861,56 @@ static const struct mdlc_info r8a78000_mdlc_fw_4_28_0[] = {
->  	{ /* sentinel */ }
->  };
->  
-> +static const struct power_map_in r8a78000_mdlc_vio_power_fw_4_31_0[] = {
-> +	{ 0, 4 },	/* PD_VIO0 */
-> +	{ 1, 5 },	/* PD_VIO1 */
-> +	{ 2, 6 },	/* PD_VIO2 */
-> +	{ 3, 7 },	/* PD_VIO3 */
-> +	{ 7, 11 },	/* PD_VIO4 */
-> +	{ -1 }
-> +};
-> +static const struct mod_map_in r8a78000_mdlc_vio_mod_fw_4_31_0[] = {
-> +	{ 0x70, 26 },	/* VSPD0 */
-> +	{ 0x71, 27 },	/* VSPD1 */
-> +	{ 0x72, 28 },	/* VSPD2 */
-> +	{ 0x73, 29 },	/* VSPD3 */
-> +	{ 0x74, 30 },	/* VSPD4 */
-> +	{ 0x75, 31 },	/* VSPDB0 */
-> +	{ 0x76, 32 },	/* VSPDB1 */
-> +	{ 0x77, 33 },	/* VSPDB2 */
-> +	{ 0x78, 34 },	/* VSPDB3 */
-> +	{ 0x79, 35 },	/* VSPDB4 */
-> +	{ 0x7e, 40 },	/* FCPVD0 */
-> +	{ 0x7f, 41 },	/* FCPVD1 */
-> +	{ 0x80, 42 },	/* FCPVD2 */
-> +	{ 0x81, 43 },	/* FCPVD3 */
-> +	{ 0x82, 44 },	/* FCPVD4 */
-> +	{ 0x83, 45 },	/* FCPVD5 */
-> +	{ 0x84, 46 },	/* FCPVD6 */
-> +	{ 0x85, 47 },	/* FCPVD7 */
-> +	{ 0x86, 48 },	/* FCPVD8 */
-> +	{ 0x87, 49 },	/* FCPVD9 */
-> +	{ 0xf9, 163 },	/* VSPB0 */
-> +	{ 0xfa, 164 },	/* VSPB1 */
-> +	{ 0xfb, 165 },	/* VSPB2 */
-> +	{ 0xfc, 166 },	/* VSPB3 */
-> +	{ 0xfd, 167 },	/* VSPB4 */
-> +	{ 0xfe, 168 },	/* VSPI0 */
-> +	{ 0xff, 169 },	/* VSPI1 */
-> +	{ 0x100, 170 },	/* VSPI2 */
-> +	{ 0x101, 171 },	/* VSPI3 */
-> +	{ 0x102, 172 },	/* FCPVB0 */
-> +	{ 0x103, 173 },	/* FCPVB1 */
-> +	{ 0x104, 174 },	/* FCPVB2 */
-> +	{ 0x105, 175 },	/* FCPVB3 */
-> +	{ 0x106, 176 },	/* FCPVB4 */
-> +	{ 0x107, 177 },	/* FCPVI0 */
-> +	{ 0x108, 178 },	/* FCPVI1 */
-> +	{ 0x109, 179 },	/* FCPVI2 */
-> +	{ 0x10a, 180 },	/* FCPVI3 */
+update: SH7305 TMU device tree node will use the
+renesas,tmu-sh7305 compatible.
 
-The values look fine. After rebasing the MDLC v4 from Geert,
+Signed-off-by: Artem Novak <artem122novak@gmail.com>
+---
+ arch/sh/Kconfig                        |  2 +-
+ arch/sh/boot/dts/sh7305.dtsi           |  2 +-
+ arch/sh/kernel/cpu/sh4a/clock-sh7305.c | 78 +++++++++++++++++++-------
+ 3 files changed, 60 insertions(+), 22 deletions(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> +	{ -1 }
-> +};
-> +
->  static const struct mod_map_in r8a78000_mdlc_pere_mod_fw_4_31_0[] = {
->  	{ 0x30, 193 },	/* PERE_GPIODM0 */
->  	// No CLOCK_ATTRIBUTES { 0x31, 194 },	/* PERE_GPIODM1 */
-> @@ -997,8 +1047,8 @@ static const struct mdlc_info r8a78000_mdlc_fw_4_31_0[] = {
->  		/* FIXME .mod_map = r8a78000_mdlc_vips_mod_fw_4_31_0, */
->  	}, {
->  		.base = 0xc5000000 /* mdlc_vio */,
-> -		/* FIXME .power_map = r8a78000_mdlc_vio_power_fw_4_28_0, */
-> -		/* FIXME .mod_map = r8a78000_mdlc_vio_mod_fw_4_31_0, */
-> +		.power_map = r8a78000_mdlc_vio_power_fw_4_31_0,
-> +		.mod_map = r8a78000_mdlc_vio_mod_fw_4_31_0,
->  	}, {
->  		.base = 0xc08f0000 /* mdlc_pere */,
->  		.power_map = r8a78000_mdlc_pere_power_fw_4_28_0,
-
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 5ce7df11c3ec..315a1d6ee452 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -532,7 +532,7 @@ config SH_CLK_CPG
+ 	def_bool y
+ 
+ config SH_CLK_CPG_LEGACY
+-	depends on SH_CLK_CPG
++	depends on SH_CLK_CPG && !CPU_SUBTYPE_SH7305
+ 	def_bool y if !CPU_SUBTYPE_SH7785 && !ARCH_SHMOBILE && \
+ 		      !CPU_SHX3 && !CPU_SUBTYPE_SH7757 && \
+ 		      !CPU_SUBTYPE_SH7734 && !CPU_SUBTYPE_SH7264 && \
+diff --git a/arch/sh/boot/dts/sh7305.dtsi b/arch/sh/boot/dts/sh7305.dtsi
+index e7dd8b15445d..501b166554b0 100644
+--- a/arch/sh/boot/dts/sh7305.dtsi
++++ b/arch/sh/boot/dts/sh7305.dtsi
+@@ -30,7 +30,7 @@ intc: interrupt-controller {
+ 	 * hardware. Clock provider integration is still required.
+ 	 */
+ 	tmu0: timer@a4490000 {
+-		compatible = "renesas,sh7305-tmu", "renesas,tmu";
++		compatible = "renesas,tmu-sh7305", "renesas,tmu";
+ 		reg = <0xa4490000 0x2c>;
+ 		interrupts = <0x400>, <0x420>, <0x440>;
+ 		interrupt-names = "tuni0", "tuni1", "tuni2";
+diff --git a/arch/sh/kernel/cpu/sh4a/clock-sh7305.c b/arch/sh/kernel/cpu/sh4a/clock-sh7305.c
+index 0e683dd6de11..03d4b5f987dd 100644
+--- a/arch/sh/kernel/cpu/sh4a/clock-sh7305.c
++++ b/arch/sh/kernel/cpu/sh4a/clock-sh7305.c
+@@ -7,6 +7,8 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
+ #include <linux/sh_clk.h>
+ 
+ #include <asm/clock.h>
+@@ -84,13 +86,13 @@ static unsigned int sh7305_divisor(unsigned int shift)
+ /*
+  * master_clk is the clock before the B/I/P divider stages.
+  */
+-static void master_clk_init(struct clk *clk)
++static unsigned long master_clk_recalc(struct clk *clk)
+ {
+-	clk->rate = sh7305_base_rate();
++	return sh7305_base_rate();
+ }
+ 
+ static struct sh_clk_ops sh7305_master_clk_ops = {
+-	.init = master_clk_init,
++	.recalc = master_clk_recalc,
+ };
+ 
+ 
+@@ -140,27 +142,63 @@ static struct sh_clk_ops sh7305_cpu_clk_ops = {
+ 
+ 
+ /*
+- * Ordering must match arch/sh/kernel/cpu/clock-cpg.c:
+- *
+- *   0 master
+- *   1 peripheral
+- *   2 bus
+- *   3 cpu
++ * SH7305 main clocks.
+  */
+-static struct sh_clk_ops *sh7305_clk_ops[] = {
+-	&sh7305_master_clk_ops,
+-	&sh7305_peripheral_clk_ops,
+-	&sh7305_bus_clk_ops,
+-	&sh7305_cpu_clk_ops,
++static struct clk master_clk = {
++	.ops		= &sh7305_master_clk_ops,
++	.flags		= CLK_ENABLE_ON_INIT,
+ };
+ 
+-void __init arch_init_clk_ops(struct sh_clk_ops **ops, int idx)
+-{
+-	if (idx < ARRAY_SIZE(sh7305_clk_ops))
+-		*ops = sh7305_clk_ops[idx];
+-}
++static struct clk peripheral_clk = {
++	.ops		= &sh7305_peripheral_clk_ops,
++	.parent		= &master_clk,
++	.flags		= CLK_ENABLE_ON_INIT,
++};
++
++static struct clk bus_clk = {
++	.ops		= &sh7305_bus_clk_ops,
++	.parent		= &master_clk,
++	.flags		= CLK_ENABLE_ON_INIT,
++};
++
++static struct clk cpu_clk = {
++	.ops		= &sh7305_cpu_clk_ops,
++	.parent		= &master_clk,
++	.flags		= CLK_ENABLE_ON_INIT,
++};
++
++static struct clk *main_clks[] = {
++	&master_clk,
++	&peripheral_clk,
++	&bus_clk,
++	&cpu_clk,
++};
++
++#define MSTPCR0		0xa4150030
++
++static struct clk mstp_clks[] = {
++	SH_CLK_MSTP32(&peripheral_clk, MSTPCR0, 15, 0),
++};
++
++static struct clk_lookup lookups[] = {
++	CLKDEV_CON_ID("master_clk", &master_clk),
++	CLKDEV_CON_ID("peripheral_clk", &peripheral_clk),
++	CLKDEV_CON_ID("bus_clk", &bus_clk),
++	CLKDEV_CON_ID("cpu_clk", &cpu_clk),
++	CLKDEV_ICK_ID("fck", "sh-tmu.0", &mstp_clks[0]),
++};
+ 
+ int __init arch_clk_init(void)
+ {
+-	return cpg_clk_init();
++	int i, ret = 0;
++
++	for (i = 0; !ret && i < ARRAY_SIZE(main_clks); i++)
++		ret = clk_register(main_clks[i]);
++
++	if (ret)
++		return ret;
++
++	clkdev_add_table(lookups, ARRAY_SIZE(lookups));
++
++	return sh_clk_mstp_register(mstp_clks, ARRAY_SIZE(mstp_clks));
+ }
 -- 
-Regards,
+2.56.0
 
-Laurent Pinchart
