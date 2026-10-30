@@ -1,73 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793380620;
-	b=uB6gh6lFNgcUhQ35CMCYTAPv4fOAnyE4yAm6YL4khV/L6Ca0W/mVTnIx6QzQgQq9Xzm6
-	 P3pjdkMGW3Y8Xw1cLUutsrpGOGkxNzEcwAdqDvjlYydrmjhF13nR7qM+oa1rHzWShl53V
-	 etRIACtqKCMetUjE683jfNqOEgZkxOgTpbC8TnQsxJWN4dKHpHEOBp4oAEHftl2Z6qkoK
-	 otqRJmJ3d+w6AS1OU9n+bTqvFI83LAC4f8Z7VOkYBtvyyE0pFWhKrgs80iehkUxTPBhs0
-	 MFJQ+uxjF4Sw++5MWa5k64+UfdgNrwhhT1RmbUUmbIv8tU/pKdNNSu66PuNVe/P9JzQ==
+	t=1793381349;
+	b=grbsdA/PL3bUpSjKnotT0FI2JVuCJfR7U0sWK27Vylbmf4QeQEwo3aK7FJE1qi0OXWJB
+	 ld/cpMNKiMMvThvkvuH4EW412E/o+u6HvhYO/5UnjZM/yQKF6Vv9LR8etq0206IzRonoj
+	 om9GXYRCgC1d6OISoXemrW1Jq1EbPaZS8p1/nefYKuZFsRQjZNoHSCQmr8FFzVkdkCnGY
+	 1TLzQW48tmJiztjKCZr5eDr1nVKnFVt+foX1XB52/hiZhbv8jbvi5lYHIG4IBVrkPK1Zq
+	 jDeb66QunpTr/bXF5B3TXQ61Bz82b6iKZ3Jqr0fCUgjlGQa31RDl95GZlY3SgKStiIQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793380620;
-	h=DMARC-Filter:Received:Received:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-Rspamd-Server:X-Rspamd-Queue-Id:
-	 X-Stat-Signature:X-Spam-Status:X-Session-Marker:X-Session-ID:X-HE-Tag:
-	 X-HE-Meta;
-	bh=hkrbI/7Icqi4A+n7xQWulE5DKqlNgCOaz5tB/xPXPRk=;
-	b=lq2+1Dnbr1EmX4jtT5rPex4Fox/QRT6F19Y2EsWpLNtJrjutwvKUNs6kEhHLv9MBXF9D
-	 jmUiRyz9DLO9GE8Cfs3QKnwj/xhylw7fznmWdTRpX3tbNheUmOKyqoHo9sbGfM1zBM3w1
-	 T6SweeuYhn2+UuipNKG2VKEGlIB9ZsMzwv1vCnv1J2v7QpeZzIha9mbpoI3yuMzrU5Og0
-	 ITgmxCsWSk41X0eQO+U4JuIt2KltFl8mJjlXH2iJfJ2zgVbHtyI8y9KnTxmgHzxJkXChc
-	 ZrJAhVrscX2z0bIixAlqUPAQpIGvGI1FdKqTuUmjjVGewA6ZmFIiedvBx81X1m8fDRQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793381349;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
+	bh=EP5Qg4kA7YkpBNe+5FytJYCH0Xni6F9c0BjnYp2EtOk=;
+	b=2W3QFU8BiS3/R4RF8yg+AgaI6bNuhK3XICzBDMxSSSZmMhQVFs6AkYIXvcFhEJ6BtpIE
+	 NBbNHs1yrd5LBqNJR12p26i6WB06teGiMH/c47dN88m3CfW5mZ3z0On2P8wMDU1h3BmDe
+	 j8lST0tYRLoPu5ghwXr0O87N5voY7RiBcRzWYOdEhwfizCIsWnSPuK14bQKSMjapmvOOy
+	 N5NA6tBDMYzhkjUDEQiRmZ5EyvcOBfg4lnyI0cJASOaQnCStNUPjSonIaRget7z863PLu
+	 WKx2wWBz+4qESCHx+FqLndPqAaVY0mzO0FdAvdHFWUVxWqTQRewiLoHoXhRIi/cE6bA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=perches.com;
-	spf=pass smtp.mailfrom=perches.com;
-	arc=none smtp.remote-ip=216.40.44.11
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=man1ZzCg;
+	arc=none smtp.remote-ip=185.171.202.116
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1811C606A31E;
-	Fri, 30 Oct 2026 17:16:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1811C606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf04.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id CF6521607CA;
-	Fri, 30 Oct 2026 17:16:51 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id 0EB4720031;
-	Fri, 30 Oct 2026 17:16:46 +0000 (UTC)
-Message-ID: <7d35e2db2da34735760a08a6f103abee075413c8.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: Fix Intel TDX kernel file patterns
-From: Joe Perches <joe@perches.com>
-To: Borislav Petkov <bp@alien8.de>, Kiryl Shutsemau <kas@kernel.org>, Rick
- Edgecombe <rick.p.edgecombe@intel.com>, Dave Hansen
- <dave.hansen@linux.intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>,  "biju.das.au" <biju.das.au@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
- "linux-serial@vger.kernel.org"	 <linux-serial@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org"	 <linux-renesas-soc@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,  "linux-coco@lists.linux.dev"	
- <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
- Au Dang <au.dang.jx@renesas.com>
-Date: Fri, 30 Oct 2026 10:16:46 -0700
-In-Reply-To: <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
-References: <20261026-g2ul_sci-v3-0-b3097163edd5@bp.renesas.com>
-	 <20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local>
-	 <TY3PR01MB113468FBD8E5EFA65C4B4E5EB86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-	 <072dd88c-4ca1-4c8a-98b1-7783bc43c1c5@kernel.org>
-	 <TY3PR01MB11346BAE55FF22F66E86A6F8B86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-	 <afdf1864-4721-4177-bc18-2a5821d97559@kernel.org>
-	 <20261027205411.GAauEPc4AtLwvrDfFr@fat_crate.local>
-	 <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
-	 <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
-	 <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A599606A323
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 17:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A599606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=man1ZzCg
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id E25ADC49F66;
+	Fri, 30 Oct 2026 17:30:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C48FE6076B;
+	Fri, 30 Oct 2026 17:29:05 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7157410328D09;
+	Fri, 30 Oct 2026 18:28:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793381338; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=EP5Qg4kA7YkpBNe+5FytJYCH0Xni6F9c0BjnYp2EtOk=;
+	b=man1ZzCgBezoTOgt0FHPVjh/CIVwcOSzEDfVqdfhmcK4lyIuelFADmw1OdPt5Qmi+L9xn0
+	CbkZ8EYJMp5JLvq/AZykdWTBgBeTt7DiIc1LhG2yPIm/xxPpNCPeErkzEYlmkfGT30bmNf
+	GDzXSWk/J6wiChEPIM6stPXccXq4t7C0yOvoLZrDuhGFLrNe8nUitRtHmv9x4einGaHDZz
+	4Lz3wuBOrycCH2vU23aZw+RDywbSEpy37zW3YNdOLz/fkVYP8D8kxmxBw9b/tPS/S09ij+
+	lIJDHXXRttC/Ko+7Yi7R3vEw3GWdoexeJWWH7ugbfvNNAyNxelvyrNXY+nXjpQ==
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -77,71 +59,102 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 0EB4720031
-X-Stat-Signature: 355uszp4b874xt5k4jfwnd61nizhx8nt
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/1VFI5iFtQ5fVPchIaoUiOydJ7/W7U9SE=
-X-HE-Tag: 1793380606-166191
-X-HE-Meta: U2FsdGVkX1/JLOzcWlRRVGy+z/l1v0NVMgP3b3/4JjdcmnYQvrXmVBkyQsTaYUIU4iJup8x648Bx6ixqrd4t/TDEknzmTorLp03QpWu+nbHj3w3gtQvQZFmBq9uv8CknfXfhQAGoHThTBZzFaRds6rkhrvkGoTD2tDAD+JAxRYne2DY143kjKH/T1Apq6is7B14LSB+Q4z8zcSuV5ie3yxQ3rBSsXuTOn4O/i/sCMEHrTupdOBEkz1vdAg6AFS5vLMJ10OuRPSEHBxMkrkQMmBK22fM4TwTljTju92aeq+2yN1Lcmv9MgnVl8u5Xd47HGcl/DxdQ9Mgr0DjpxOQfZnwRz5diN5/p93XmEzEkcZDAoEJB0bAPUq0xV+QeSn26arUY3qnp/G5Sjzqj+E9O6g==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 01/35] drm/panel: remove the get_timings() callback
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, 
+ Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+ Purism Kernel Team <kernel@puri.sm>, 
+ Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+ Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+ Michael Trimarchi <michael@amarulasolutions.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Casey Connolly <casey.connolly@linaro.org>, 
+ Michael Tretter <m.tretter@pengutronix.de>, 
+ Cristian Cozzolino <cristian_ci@protonmail.com>, 
+ Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>, 
+ Nickolay Goppen <setotau@mainlining.org>, 
+ Stefan Mavrodiev <stefan@olimex.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Robert Chiras <robert.chiras@nxp.com>, 
+ Alexander Koskovich <akoskovich@pm.me>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Artur Weber <aweber.kernel@gmail.com>, David Heidelberg <david@ixit.cz>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>, 
+ Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+In-Reply-To: <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
+ <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
+Date: Fri, 30 Oct 2026 18:28:25 +0100
+Message-Id: <179338130509.3009485.3123201175903177487.b4-review@b4>
+X-Mailer: b4 0.16.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 2026-10-29 at 19:33 -0700, Borislav Petkov wrote:
-> ```
-> From: "Borislav Petkov (AMD)" <[bp@alien8.de](mailto:bp@alien8.de)>
-> Date: Thu, 29 Oct 2026 19:25:27 -0700
->=20
-> A K: is a content regex file pattern which matches any text in a patch
-> so if a commit message contains "TDx" as in
->=20
->   the TDxE (Transmit Data Empty) flag
->=20
-> for example, see
->=20
->   [https://lore.kernel.org/r/20261026-g2ul_sci-v3-3-b3097163edd5@bp.renes=
-as.com](https://lore.kernel.org/r/20261026-g2ul_sci-v3-3-b3097163edd5@bp.re=
-nesas.com)
->=20
-> get_maintainer.pl erroneously adds the x86 gang to the Cc list for what
-> obviously is a completely unrelated patch.
->=20
-> The same happens when someone uses it to check
->=20
->   drivers/power/reset/tdx-ec-poweroff.c
->=20
-> patches.
->=20
-> So switch the x86 TDX patterns to files and directories (N:) type
-> patterns and group them by path, for less false positives.
+> Nothing has ever called get_timings() since it was introduced in commit
+> 2938931f3732 ("drm/panel: Add display timing support"). Remove it
+> together with its three implementations.
 
-It's probably better to use F: and not N:
+Ah, interesting!
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7a162e9bcab1..6aaeb7df83c8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -30347,8 +30347,11 @@ L:	[linux-coco@lists.linux.dev](mailto:linux-coc=
-o@lists.linux.dev)
->  L:	[kvm@vger.kernel.org](mailto:kvm@vger.kernel.org)
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/tdx
-> -N:	tdx
-> -K:	\b(tdx)
-> +N:	arch/x86/.*tdx
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-F:	arch/x86/**/*tdx*
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> +N:	Documentation/.*tdx
-
-F:	Documentation/**/*tdx*
-
-> +N:	drivers/virt/coco/.*tdx
-
-F:	drivers/virt/coco/tdx*/
-
-> +N:	include/uapi/linux/.*tdx
-
-F:	include/uapi/linux/tdx-guest.h
-
-> +N:	tools/testing/selftests/tdx
-
-F:	tools/testing/selftests/tdx/
