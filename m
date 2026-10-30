@@ -1,49 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=216.40.44.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793373288;
-	b=aIfsmBc8AuCWAvE7yv/AiJSEpHzLxra0anyq2DyCm2t0IT5jCqH43gRuyCkfnuGL7qTD
-	 /OZu+Yyw8t2LCPg7L3x1xx4DPxM56j57J2+InlFWCemGfjif6am1NHX1NEteUBGeeku8o
-	 fheYx/JlHtGUCZCrzjYQJN1qi/AobASvt3AiXSrwcqNOItHhxg/4xZG1VRnymeoXxbIz4
-	 CP+poPCYELeSATExXX8IGY/ELQo1dj+MfUmcAgb7cRJPDqRFS5MNV7DVBki6NtZ/X0mRS
-	 tzAOAMGAEOJzJTgfNOHG6lngXookmAdsyUfVw3zabzipIHTWqEFtu7kViSZRJhiF3iw==
+	t=1793380620;
+	b=uB6gh6lFNgcUhQ35CMCYTAPv4fOAnyE4yAm6YL4khV/L6Ca0W/mVTnIx6QzQgQq9Xzm6
+	 P3pjdkMGW3Y8Xw1cLUutsrpGOGkxNzEcwAdqDvjlYydrmjhF13nR7qM+oa1rHzWShl53V
+	 etRIACtqKCMetUjE683jfNqOEgZkxOgTpbC8TnQsxJWN4dKHpHEOBp4oAEHftl2Z6qkoK
+	 otqRJmJ3d+w6AS1OU9n+bTqvFI83LAC4f8Z7VOkYBtvyyE0pFWhKrgs80iehkUxTPBhs0
+	 MFJQ+uxjF4Sw++5MWa5k64+UfdgNrwhhT1RmbUUmbIv8tU/pKdNNSu66PuNVe/P9JzQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793373288;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=pqRaDNkqe8f9DtVE2NaN+rUHO44z9/zJgN4TZ+ld/iM=;
-	b=NF/U16nK0OqCyey73+bOkarqwJ81P+MmWgAGOvr1Z5kPCv7yHgMLhRFXPtbvqy9oQcbc
-	 nWHPPn2M3mkhQXwxVfYWGmTyiuBwKg8MozXiQCfvotnGllFklHP/fOOKQ44nJo4unSwjW
-	 CLCOzcwohpfijeLnF8DIAdSqOTS2tdJFuxxx3MfoCIrBw/NkXUfY9TpqUQCbFweIVg2jA
-	 kT1GbDixY8pmnWg//7QidtMDgDJj5ACZKiZpQEgkC3xgP4hWrOTkoLP1l/Qk1lGLZOz2f
-	 AkB+7uJFFG8Tm8hp8dAuKYdpuDeDWGCvDfXuEAoX88gQKXJWddewCCbvDjWgM/sJkYg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793380620;
+	h=DMARC-Filter:Received:Received:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version:X-Rspamd-Server:X-Rspamd-Queue-Id:
+	 X-Stat-Signature:X-Spam-Status:X-Session-Marker:X-Session-ID:X-HE-Tag:
+	 X-HE-Meta;
+	bh=hkrbI/7Icqi4A+n7xQWulE5DKqlNgCOaz5tB/xPXPRk=;
+	b=lq2+1Dnbr1EmX4jtT5rPex4Fox/QRT6F19Y2EsWpLNtJrjutwvKUNs6kEhHLv9MBXF9D
+	 jmUiRyz9DLO9GE8Cfs3QKnwj/xhylw7fznmWdTRpX3tbNheUmOKyqoHo9sbGfM1zBM3w1
+	 T6SweeuYhn2+UuipNKG2VKEGlIB9ZsMzwv1vCnv1J2v7QpeZzIha9mbpoI3yuMzrU5Og0
+	 ITgmxCsWSk41X0eQO+U4JuIt2KltFl8mJjlXH2iJfJ2zgVbHtyI8y9KnTxmgHzxJkXChc
+	 ZrJAhVrscX2z0bIixAlqUPAQpIGvGI1FdKqTuUmjjVGewA6ZmFIiedvBx81X1m8fDRQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZiE6HERk;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=perches.com;
+	spf=pass smtp.mailfrom=perches.com;
+	arc=none smtp.remote-ip=216.40.44.11
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AD5606A320
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 15:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZiE6HERk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4781F000C1;
-	Fri, 30 Oct 2026 15:14:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793373288;
-	bh=pqRaDNkqe8f9DtVE2NaN+rUHO44z9/zJgN4TZ+ld/iM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ZiE6HERkI7CuXnskRxQ5wmVEbUYyLFl7NfpoiD/Eli5Nf6KTXYYBk2QxptgitpoxU
-	 Ru2tCzb3wA30OyN7DBQXDtqTrDxYYxGdp4Oa3E3wNx4+9C2X+i0RT9JuNm80gU111S
-	 QDgtS50t0xxsExDlglCtQroEiSbEC3RDNztSxBO692wB+DcvPooEgrQS+l+VJQvSU3
-	 Sngx5OqMEpYB9wsidTOo6d9MO5HCZe2TXY/B1PCw4A7FTPuljPXS76njAOcm8Hqrhe
-	 cHk6DkoSnXsP9XY3nvzNt/MNsn3UzWnvh1ZhofFb7rKAqq/iOLw4/G/yW8w8F8UOQ1
-	 QosIaVbBcvpIA==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Fri, 30 Oct 2026 16:13:45 +0100
-Subject: [PATCH v3 15/37] drm/renesas: shmobile: Switch to
- drm_atomic_helper_connector_create_state
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1811C606A31E;
+	Fri, 30 Oct 2026 17:16:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1811C606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf04.hostedemail.com (lb01a-stub [10.200.18.249])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id CF6521607CA;
+	Fri, 30 Oct 2026 17:16:51 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id 0EB4720031;
+	Fri, 30 Oct 2026 17:16:46 +0000 (UTC)
+Message-ID: <7d35e2db2da34735760a08a6f103abee075413c8.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: Fix Intel TDX kernel file patterns
+From: Joe Perches <joe@perches.com>
+To: Borislav Petkov <bp@alien8.de>, Kiryl Shutsemau <kas@kernel.org>, Rick
+ Edgecombe <rick.p.edgecombe@intel.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>,  "biju.das.au" <biju.das.au@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Greg Kroah-Hartman	
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+ "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
+ "linux-serial@vger.kernel.org"	 <linux-serial@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org"	 <linux-renesas-soc@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,  "linux-coco@lists.linux.dev"	
+ <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+ Au Dang <au.dang.jx@renesas.com>
+Date: Fri, 30 Oct 2026 10:16:46 -0700
+In-Reply-To: <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
+References: <20261026-g2ul_sci-v3-0-b3097163edd5@bp.renesas.com>
+	 <20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local>
+	 <TY3PR01MB113468FBD8E5EFA65C4B4E5EB86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	 <072dd88c-4ca1-4c8a-98b1-7783bc43c1c5@kernel.org>
+	 <TY3PR01MB11346BAE55FF22F66E86A6F8B86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	 <afdf1864-4721-4177-bc18-2a5821d97559@kernel.org>
+	 <20261027205411.GAauEPc4AtLwvrDfFr@fat_crate.local>
+	 <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
+	 <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
+	 <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -53,54 +77,71 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261030-drm-no-more-connector-reset-v3-15-30e71d92c327@kernel.org>
-References: <20261030-drm-no-more-connector-reset-v3-0-30e71d92c327@kernel.org>
-In-Reply-To: <20261030-drm-no-more-connector-reset-v3-0-30e71d92c327@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1255; i=mripard@kernel.org;
- h=from:subject:message-id; bh=NR1FxXJ00EdI29wZavF73nbKd5XofyB0ipeWrDAqHjQ=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlPtigfc0zy53j0/MGk63kTl1hYWO7i4UtX0Zj+KDLlm
- /LOTa13OqayMAhzMsiKKbI8kQk7vbx9cZWD/cofMHNYmUCGMHBxCsBEmr0YG660qNp+191krjFr
- At+Bhz/jbUrYqgJlWiumBETdPlr+V02dwc14fd0MmQkdU86a6jA1M9bKdstdv257Z291u2OQzjW
- N/+wcS91nN2S2C3+4tiFItfqk9dT3/035gl9Xza1K6TsZ4Q8A
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 0EB4720031
+X-Stat-Signature: 355uszp4b874xt5k4jfwnd61nizhx8nt
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/1VFI5iFtQ5fVPchIaoUiOydJ7/W7U9SE=
+X-HE-Tag: 1793380606-166191
+X-HE-Meta: U2FsdGVkX1/JLOzcWlRRVGy+z/l1v0NVMgP3b3/4JjdcmnYQvrXmVBkyQsTaYUIU4iJup8x648Bx6ixqrd4t/TDEknzmTorLp03QpWu+nbHj3w3gtQvQZFmBq9uv8CknfXfhQAGoHThTBZzFaRds6rkhrvkGoTD2tDAD+JAxRYne2DY143kjKH/T1Apq6is7B14LSB+Q4z8zcSuV5ie3yxQ3rBSsXuTOn4O/i/sCMEHrTupdOBEkz1vdAg6AFS5vLMJ10OuRPSEHBxMkrkQMmBK22fM4TwTljTju92aeq+2yN1Lcmv9MgnVl8u5Xd47HGcl/DxdQ9Mgr0DjpxOQfZnwRz5diN5/p93XmEzEkcZDAoEJB0bAPUq0xV+QeSn26arUY3qnp/G5Sjzqj+E9O6g==
 
-The renesas: shmobile connector implementation uses the deprecated
-drm_atomic_helper_connector_reset() as its reset hook.
+On Thu, 2026-10-29 at 19:33 -0700, Borislav Petkov wrote:
+> ```
+> From: "Borislav Petkov (AMD)" <[bp@alien8.de](mailto:bp@alien8.de)>
+> Date: Thu, 29 Oct 2026 19:25:27 -0700
+>=20
+> A K: is a content regex file pattern which matches any text in a patch
+> so if a commit message contains "TDx" as in
+>=20
+>   the TDxE (Transmit Data Empty) flag
+>=20
+> for example, see
+>=20
+>   [https://lore.kernel.org/r/20261026-g2ul_sci-v3-3-b3097163edd5@bp.renes=
+as.com](https://lore.kernel.org/r/20261026-g2ul_sci-v3-3-b3097163edd5@bp.re=
+nesas.com)
+>=20
+> get_maintainer.pl erroneously adds the x86 gang to the Cc list for what
+> obviously is a completely unrelated patch.
+>=20
+> The same happens when someone uses it to check
+>=20
+>   drivers/power/reset/tdx-ec-poweroff.c
+>=20
+> patches.
+>=20
+> So switch the x86 TDX patterns to files and directories (N:) type
+> patterns and group them by path, for less false positives.
 
-Switch to drm_atomic_helper_connector_create_state() instead.
+It's probably better to use F: and not N:
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7a162e9bcab1..6aaeb7df83c8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -30347,8 +30347,11 @@ L:	[linux-coco@lists.linux.dev](mailto:linux-coc=
+o@lists.linux.dev)
+>  L:	[kvm@vger.kernel.org](mailto:kvm@vger.kernel.org)
+>  S:	Supported
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/tdx
+> -N:	tdx
+> -K:	\b(tdx)
+> +N:	arch/x86/.*tdx
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 51bae2008cc6..d1a3e17f5bb1 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -528,7 +528,7 @@ static void shmob_drm_connector_destroy(struct drm_connector *connector)
- 
- static const struct drm_connector_funcs connector_funcs = {
--	.reset = drm_atomic_helper_connector_reset,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.destroy = shmob_drm_connector_destroy,
-+	.atomic_create_state = drm_atomic_helper_connector_create_state,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+F:	arch/x86/**/*tdx*
 
--- 
-2.55.0
+> +N:	Documentation/.*tdx
 
+F:	Documentation/**/*tdx*
+
+> +N:	drivers/virt/coco/.*tdx
+
+F:	drivers/virt/coco/tdx*/
+
+> +N:	include/uapi/linux/.*tdx
+
+F:	include/uapi/linux/tdx-guest.h
+
+> +N:	tools/testing/selftests/tdx
+
+F:	tools/testing/selftests/tdx/
