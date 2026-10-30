@@ -1,96 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793327645;
-	b=TTxbJwAoq6ONiahMZ1KpN8B9a9PclcoNzIIvruVQtflCcRhuGbm6sujaqwZNMhADP2qm
-	 SbVNVs1Hcu2ercvG3D2H7fROFh4PjJDh9o9L7t21PVDuML1B67rdH9SlQXrTv52s/O9Ns
-	 24nVqPNBKuP5z74CQsnenYjoP3Gyji7evjaVtAPSQwvW1i0t6TNUsaeqm9o9rCZ9oXpRa
-	 PPk1HCOwOOXPVZBVx5myLrZrbAOx0GTqnCPtc5FuSQywJbzhI6bG+RoZyrVlnOfyG88N3
-	 Lk0lhMv9bHzHyt8U5sQslFTEYB5LQvCge3c1L84nLhB5ndlQWMKQzetjZ9k5qgg+M1Q==
+	t=1793329632;
+	b=OKoXyRCH4S2+Yxymu/nC2K1OjHW4Azi9/3LrTodQeoZn2ET+W2/D2XK7BIaS3XMfbkkq
+	 /QpiMusG0yngaW5fhrfsGQCOPwcddFtIrcoPMA3C9UFbRd1rMCbvwajA/qN48ACjM6UU/
+	 U2F3jbhLxSimcq31Z+PNRhYIp3MekRAafrm0Cp01+BuWAV18H5++oQ1lucokRcj2XjI5K
+	 2fgFBojhL6Llx8r6weLBUv+vbsTifr558y4BNtsk7565vbDpIvPNLPXk/XCE925YkXCFm
+	 GdQ9Zif1VDgC2FOa8neMmX/E5hhkOn1jq3NivFWeQY2ODNh1x3xWWjh0RYIvdPAp+oA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793327645;
-	h=DMARC-Filter:Received:X-Virus-Scanned:Received:DKIM-Signature:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=+ygKCXCE551eA/tJUkyJ0eX5BoqYd4HLW3FgIhHoRJY=;
-	b=ui39IR8tXiadnoEdWx2egzdbBDxXsgMR6nze+CrHM2TOxsqxYwmZk5ioQMWBA5kaZEtw
-	 pcNWulH5nAzBvWwoS336qxiL9uq7Q+xSMNUcwyRKIYnxeNV7XWILiQJ/kFxhmenOBpqo9
-	 HgcfgSC4afgkQI9Rig5/Arqefze5R8oO/pcIZ2WNjtHuq9i46QEWoDYsyz3bYMIG3wKhI
-	 yzhNPeLbrX65GrH8fLliVOqN64JMjRrSUCro2wnukTxVWtJ/8ydp11X1VBc4RAmNJvPEQ
-	 S97P8sRZTTJbno0k+qk+H98X7zol1x9sP0NgqSsRqBuHSbquz15/KbDlQv8+Zs66uEg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793329632;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=/uSzGTnG/yOJTh9JMU3hh2HWfIlei95qLPy/XlUKvmg=;
+	b=XjUBOb+NIlncG47sU4W7JPmDqVEy+db3K9JwmCXSPdBGm9+H4zoubWPvTULsC1QzExk8
+	 RQmJnBqnfrqG7m8t0QL48NICmbpIb+ZrCQamlU5oCy2XM8Je0pIlIbRAZMzkNQi92U4eb
+	 YzPFded8P61wjaKDOhaxpbzjobi3peE4UzB5I9aHby56dydlDKDkg271cPR4PjnW1ydj5
+	 LIDKl41zGTZuOh3l+KYEeAtk5cfne1rLEpIlaVYzwvVPIJE7pe5M+7WG8ivh8paeh0gXI
+	 1oNPXq8TzUvH+nEEdvjwee0FhvcqAMPhJviTOV4TsKDr95uHaIHB+P2a2pLEOIOs/7g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=alien8.de;
-	spf=pass smtp.mailfrom=alien8.de;
-	dkim=pass header.d=alien8.de header.i=@alien8.de header.a=rsa-sha256 header.s=alien8 header.b=kV4uLYKl;
-	arc=none smtp.remote-ip=65.109.113.108
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cBckOE2b;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A1E606A31D;
-	Fri, 30 Oct 2026 02:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C3A1E606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ECB606A321
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 03:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=alien8.de header.i=@alien8.de header.a=rsa-sha256 header.s=alien8 header.b=kV4uLYKl
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A37DA40E04CF;
-	Fri, 30 Oct 2026 02:34:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id MZ4pvWbUOmGC; Fri, 30 Oct 2026 02:33:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1793327639; bh=+ygKCXCE551eA/tJUkyJ0eX5BoqYd4HLW3FgIhHoRJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kV4uLYKlNxL7QEgZ4wnIDNIuaY+72edTTyZHHk2KLcvU8L8VdXi5qoeH56T8XFVpN
-	 VBdj3hQxGz0+YFcbeHci8YBew4pBo+xyuuCq6OlSmtyG5R2liEkgRbk5Vd4LzMxRqF
-	 1/dWmMfrjvkojmmYOLfCi5d4q1z0uTNn+4UW/K9CxrcKT8esKSllW0DW4OnuYcGYPD
-	 HylcrecQd1awMhxB+XKAWfp2O08dfXwr3G6ELCq7bSaDwoDNWFN5ANqn9aEkEf/+xK
-	 JMcvI0SWOX90lKelqf29+oqX6+386QLnsaOLemBUlnyCUQcGgTgcJ311GLQ+TzAEGR
-	 sAdfzhlW4rOwdI1iWLH7ZJ/kdVc5b3aOUTjRGFD1JnKfqSn7slfZTmPF4WKSa0CEVR
-	 sNNb2HwkJG1C3mHafjqAjdrlegLjbE4x1OFXtICdM8x6RgVjuj5nq1DQAB0fJroAuD
-	 GBdelCWUQioKfF/g3wMFhvgVaQBmxHBUKL6aqfJi4hXAbZp2TuT8j0mKxjKuw1wHsM
-	 ogGP5hRcHn1OwDx7+C8chSH22l29xW7jAD3IU3uSGCXA7rvgay/WutPv0nDUgE6Z3H
-	 nF4BEng8SZdQZ/MIdbbElHfXrTJCkPacoJXay/QqydJkstjKS4kIep028PivEQ+pi9
-	 k1fnP3AiudNeeK8Pr1ehzMvk=
-Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::48])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5852740E02B7;
-	Fri, 30 Oct 2026 02:33:42 +0000 (UTC)
-Date: Thu, 29 Oct 2026 19:33:38 -0700
-From: Borislav Petkov <bp@alien8.de>
-To: Kiryl Shutsemau <kas@kernel.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"biju.das.au" <biju.das.au@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	Au Dang <au.dang.jx@renesas.com>
-Subject: [PATCH] MAINTAINERS: Fix Intel TDX kernel file patterns
-Message-ID: <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
-References: <20261026-g2ul_sci-v3-0-b3097163edd5@bp.renesas.com>
- <20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local>
- <TY3PR01MB113468FBD8E5EFA65C4B4E5EB86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <072dd88c-4ca1-4c8a-98b1-7783bc43c1c5@kernel.org>
- <TY3PR01MB11346BAE55FF22F66E86A6F8B86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <afdf1864-4721-4177-bc18-2a5821d97559@kernel.org>
- <20261027205411.GAauEPc4AtLwvrDfFr@fat_crate.local>
- <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
- <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cBckOE2b
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5CF1F00A15
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 03:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793329632;
+	bh=/uSzGTnG/yOJTh9JMU3hh2HWfIlei95qLPy/XlUKvmg=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=cBckOE2bzavNJb3OzybplOn3pG+5iDGHJaiUxI/i9aP9W3tywQtMo3uhdvorxzAfn
+	 Z6C99P2+noPuVauSJ7HGbjTPiZ/iOu1qZUEekhZ31VLbV7svgE/E4tj/AZ4sgUVd7S
+	 7qhi2kBdHp/Wa1CVvjO4UMwzh1q5zifIUkGi1VBnuyweIRh95Vtm0Gx2zArlDHRFNW
+	 MYIVWdndq6IjJlKJaWNaM0kAz2XRMjLq4FCmzCOkCdb0zraPU9EVB6DUwxWVEUdRbd
+	 ewf8UqC9zdUbIfEBjw4Qrej1m1gxB3A6Y2cJc3/od0qi+Sa8Gr/su2L735gyltgR2Y
+	 80jf8Zs2DshxQ==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3ab4c608a6dso2776741fa.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Oct 2026 20:07:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzFI3qxb0qjJiAHQpVVwUgwrY1KbVNowXr4Qr9fXvjU1PL34HnEAHIJPMpiUnFin4ZEZ682X/beOv53zDwbkghqCg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYI9RfBA456gaxhOjBqlnS6utggtI1Eo8aKItFEDasCI8Uoy5Jh3
+	LZBLot1tKLYYMGpT/Y+yXYLoZ0dKJX6Oq09VRDIKwM1g79Uqo0p/wOeEPppUW4OUXHaFTgkdatK
+	aM/i00qr796kfz+kbKypHOCu5eKWgO4g=
+X-Received: by 2002:a05:651c:2120:b0:3aa:f617:5c85 with SMTP id
+ 38308e7fff4ca-3acb7aa5561mr1702801fa.12.1793329629127; Thu, 29 Oct 2026
+ 20:07:09 -0700 (PDT)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -100,64 +59,119 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-20-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-20-5e3070a3478f@oss.qualcomm.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 30 Oct 2026 11:06:54 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66GV0mu+iKHs2+mZPxJmbdgm60j8srtKLuux7BdAC9BZQ@mail.gmail.com>
+X-Gm-Features: AclHuK9xiSETdonY9_QkznCRV7eL1jeHCdIOBKyx8OeAMXLApY8qfRj6-NRV9No
+Message-ID: <CAGb2v66GV0mu+iKHs2+mZPxJmbdgm60j8srtKLuux7BdAC9BZQ@mail.gmail.com>
+Subject: Re: [PATCH 20/35] drm/sun4i: set the panel orientation on the connector
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Linus Walleij <linusw@kernel.org>, 
+	Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Samuel Holland <samuel@sholland.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>, Jagan Teki <jagan@edgeble.ai>, 
+	Jianhua Lu <lujianhua000@gmail.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
+	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
+	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Thu, 29 Oct 2026 19:25:27 -0700
+On Mon, Oct 26, 2026 at 7:11=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+>
+> The panel is used directly, without the panel bridge, so nothing sets
+> its orientation on the connector apart from the workaround in the
+> get_modes() of some panel drivers, which runs too late.
+>
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-A K: is a content regex file pattern which matches any text in a patch
-so if a commit message contains "TDx" as in
+Acked-by: Chen-Yu Tsai <wens@kernel.org>
 
-  the TDxE (Transmit Data Empty) flag
-
-for example, see
-
-  https://lore.kernel.org/r/20261026-g2ul_sci-v3-3-b3097163edd5@bp.renesas.com
-
-get_maintainer.pl erroneously adds the x86 gang to the Cc list for what
-obviously is a completely unrelated patch.
-
-The same happens when someone uses it to check
-
-  drivers/power/reset/tdx-ec-poweroff.c
-
-patches.
-
-So switch the x86 TDX patterns to files and directories (N:) type
-patterns and group them by path, for less false positives.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local
----
- MAINTAINERS | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7a162e9bcab1..6aaeb7df83c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -30347,8 +30347,11 @@ L:	linux-coco@lists.linux.dev
- L:	kvm@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/tdx
--N:	tdx
--K:	\b(tdx)
-+N:	arch/x86/.*tdx
-+N:	Documentation/.*tdx
-+N:	drivers/virt/coco/.*tdx
-+N:	include/uapi/linux/.*tdx
-+N:	tools/testing/selftests/tdx
- 
- X86 VDSO
- M:	Andy Lutomirski <luto@kernel.org>
--- 
-2.53.0
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_lvds.c | 2 ++
+>  drivers/gpu/drm/sun4i/sun4i_rgb.c  | 2 ++
+>  2 files changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/s=
+un4i_lvds.c
+> index 6b98d20a8890..448e8a70b1aa 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_lvds.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
+> @@ -153,6 +153,8 @@ int sun4i_lvds_init(struct drm_device *drm, struct su=
+n4i_tcon *tcon)
+>                         goto err_cleanup_connector;
+>                 }
+>
+> +               drm_connector_set_orientation_from_panel(&lvds->connector=
+,
+> +                                                        lvds->panel);
+>                 drm_connector_attach_encoder(&lvds->connector,
+>                                                   &lvds->encoder);
+>         }
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/su=
+n4i_rgb.c
+> index 3da9a9283c6e..5414afcb10b5 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> @@ -245,6 +245,8 @@ int sun4i_rgb_init(struct drm_device *drm, struct sun=
+4i_tcon *tcon)
+>                         goto err_cleanup_connector;
+>                 }
+>
+> +               drm_connector_set_orientation_from_panel(&rgb->connector,
+> +                                                        rgb->panel);
+>                 drm_connector_attach_encoder(&rgb->connector,
+>                                                   &rgb->encoder);
+>         }
+>
+> --
+> 2.47.3
+>
