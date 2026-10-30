@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793381349;
-	b=grbsdA/PL3bUpSjKnotT0FI2JVuCJfR7U0sWK27Vylbmf4QeQEwo3aK7FJE1qi0OXWJB
-	 ld/cpMNKiMMvThvkvuH4EW412E/o+u6HvhYO/5UnjZM/yQKF6Vv9LR8etq0206IzRonoj
-	 om9GXYRCgC1d6OISoXemrW1Jq1EbPaZS8p1/nefYKuZFsRQjZNoHSCQmr8FFzVkdkCnGY
-	 1TLzQW48tmJiztjKCZr5eDr1nVKnFVt+foX1XB52/hiZhbv8jbvi5lYHIG4IBVrkPK1Zq
-	 jDeb66QunpTr/bXF5B3TXQ61Bz82b6iKZ3Jqr0fCUgjlGQa31RDl95GZlY3SgKStiIQ==
+	t=1793381373;
+	b=CR6sw7EN/S1B1NBqKOnNiOOhD8BsleZv6PB/xMEFpSa96ZmcNieU+xXZPBQDqQ7nA1Ol
+	 Cr4SVbNrXPnt5cZWfj5ZAPfwZ3SaCJaI+SKNXoYdto5iUKjiqOfHzeffsPBByS3y90m65
+	 wOnly76cHQ44JSbq65XGglfcTvBAt3DokIk1zooQSpd26iLnGx5LY9pRCHLgBAs5rZJeM
+	 Hq6ejPUhNI1ZCbIbWFfA8r7OQ569OtzaJswEfdbla+CFJjPWiCWh3bL+2DpNpGT1GPzLZ
+	 Y39L17au4dvzngWusCy1QY5mmUVtwqcWpzyfqAZMsGZX0cKTq87xg0sRklpv+yTm8BA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793381349;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793381373;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
 	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
-	bh=EP5Qg4kA7YkpBNe+5FytJYCH0Xni6F9c0BjnYp2EtOk=;
-	b=2W3QFU8BiS3/R4RF8yg+AgaI6bNuhK3XICzBDMxSSSZmMhQVFs6AkYIXvcFhEJ6BtpIE
-	 NBbNHs1yrd5LBqNJR12p26i6WB06teGiMH/c47dN88m3CfW5mZ3z0On2P8wMDU1h3BmDe
-	 j8lST0tYRLoPu5ghwXr0O87N5voY7RiBcRzWYOdEhwfizCIsWnSPuK14bQKSMjapmvOOy
-	 N5NA6tBDMYzhkjUDEQiRmZ5EyvcOBfg4lnyI0cJASOaQnCStNUPjSonIaRget7z863PLu
-	 WKx2wWBz+4qESCHx+FqLndPqAaVY0mzO0FdAvdHFWUVxWqTQRewiLoHoXhRIi/cE6bA==
+	bh=MLEnsJCixSur473yTQ89zIlw5zXlkqgvAK+ldv/K1RU=;
+	b=tcuemB5DZ4LQx4Wrd3LbeT8dxEr7bAQ+ErxKYoOtMp9hGt2DS/cs0r8yg9uR0keVbYFF
+	 wC0sgdvH7afcOTwGxKUzvOVJtN47u/F2EfchK3jnQUcwz+TS/Vl0hnd7vEwGaki8zeIpx
+	 wNRKyRSIJ93J3hBPK8ofDYsLup7QiLQQcVU8icZ/YVbXUe0G0fHkL2u2RXeTEUE/L0O36
+	 HWZfMyaNzXkDpFOURERlKcH4t7m4b/9QE0qPOUwjzQ8WzVHu1bDPR8bFcsuHbid71uZE2
+	 lDEdPOAIYboUqch8F1xoC+mYtOOpu/eqrhMa5mnIf4q3cd1vt4av2IkVjmLD0NfhAgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=man1ZzCg;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=QqsyYIhg;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A599606A323
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2026 17:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A599606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC39606A320;
+	Fri, 30 Oct 2026 17:29:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EDC39606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=man1ZzCg
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=QqsyYIhg
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E25ADC49F66;
-	Fri, 30 Oct 2026 17:30:08 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 48F1D4E413A5;
+	Fri, 30 Oct 2026 17:29:31 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C48FE6076B;
-	Fri, 30 Oct 2026 17:29:05 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7157410328D09;
-	Fri, 30 Oct 2026 18:28:28 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 072EB603C2;
+	Fri, 30 Oct 2026 17:29:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F17681032909B;
+	Fri, 30 Oct 2026 18:28:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793381338; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1793381364; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=EP5Qg4kA7YkpBNe+5FytJYCH0Xni6F9c0BjnYp2EtOk=;
-	b=man1ZzCgBezoTOgt0FHPVjh/CIVwcOSzEDfVqdfhmcK4lyIuelFADmw1OdPt5Qmi+L9xn0
-	CbkZ8EYJMp5JLvq/AZykdWTBgBeTt7DiIc1LhG2yPIm/xxPpNCPeErkzEYlmkfGT30bmNf
-	GDzXSWk/J6wiChEPIM6stPXccXq4t7C0yOvoLZrDuhGFLrNe8nUitRtHmv9x4einGaHDZz
-	4Lz3wuBOrycCH2vU23aZw+RDywbSEpy37zW3YNdOLz/fkVYP8D8kxmxBw9b/tPS/S09ij+
-	lIJDHXXRttC/Ko+7Yi7R3vEw3GWdoexeJWWH7ugbfvNNAyNxelvyrNXY+nXjpQ==
+	bh=MLEnsJCixSur473yTQ89zIlw5zXlkqgvAK+ldv/K1RU=;
+	b=QqsyYIhgOKr38L9gc/v+SGpY4mzm0J3RtOW/n/ToFjDqhrWHtz/DwOQrvKlKUMGWJsSAwb
+	0YH9wzlKmNOFSgHIYvdIYhmnkMxPsJRbZ1cmQgu56Uv7TUEpoIWbKCw4GTlDRrYveS9IA3
+	k0ctG/E2PPozPFuz7qFTBfO6g5cG7ADpNp2PAsMmotm4TAVGkbNs4DmHoWQxtPQ6eTUCio
+	joeiqnlnBfwbfU3bJOnzmPJLfJ7vUmIjT0VyNSs6f+yUbjA+1tDPL4kzv4BJ8zZYPDe2Tr
+	PDC94hR0CZzpmHXgJyKafYXyH3nQ4RLqj3YErHDJGFjht7eNp6iaP5diTNeJfA==
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -61,7 +61,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 01/35] drm/panel: remove the get_timings() callback
+Subject: Re: [PATCH 02/35] drm/panel: remove the unused struct panel_bridge
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Douglas Anderson <dianders@chromium.org>, 
@@ -137,19 +137,17 @@ Cc: Douglas Anderson <dianders@chromium.org>,
  linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
  linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-In-Reply-To: <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-2-5e3070a3478f@oss.qualcomm.com>
 References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
- <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
+ <20261026-drm-panel-funcs-v1-2-5e3070a3478f@oss.qualcomm.com>
 Date: Fri, 30 Oct 2026 18:28:25 +0100
-Message-Id: <179338130509.3009485.3123201175903177487.b4-review@b4>
+Message-Id: <179338130510.3009485.7743956655769667889.b4-review@b4>
 X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-> Nothing has ever called get_timings() since it was introduced in commit
-> 2938931f3732 ("drm/panel: Add display timing support"). Remove it
-> together with its three implementations.
-
-Ah, interesting!
+On Mon, 26 Oct 2026 13:09:51 +0200, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> The bridge is embedded into struct drm_panel now, nothing uses the
+> separate wrapper struct any more.
 
 Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
