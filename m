@@ -1,60 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=65.109.113.108
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793538506;
-	b=PcfZQCNRK+33o4AqfBKM1Cs0ZTz/VhPu0QVRuvzelt3ArGw/e9NIC+eSZC7hdgW3VnkE
-	 2UCNLqODGytN4NCudf1vrov3Icm5UV9xBHg41Z9Pq8cvFbKjXsVhoU+9VsPwuHZlvQ0HN
-	 RirPQFDwH9ab1znAK4nolKWRu4eewVR80L5Se7FpQAWaiDa8zTFrxnEgLsmgt4UQ+t+f+
-	 7Fl31CPJRaaRE33yjA3hOXV4RWdRK78NYNaOKIe927f/n+RZR6XKmq96Ha6h/aWLRcMfL
-	 lKi57XkW5dqslseeqsoM7IJQjwEIYRd0sszzVJMabPSdfub8B4oOJXYu81EVOwY5SsQ==
+	t=1793559320;
+	b=Eb1O2tEGX92vYThCtn2LPE/AsptTubf/yyLpb6jVqipvIOJrWUnkgO/Ca0GFIsbouY6G
+	 MQ24owyBqlEOx0lNrHbX+lURcBfkuALs6Gz8KIxIhVRlkZfuEkt3s3E8eXzl7sHsncJVJ
+	 +THUn3RCfS+5A8aEbwMipfU/Ttfer56TdkSm627iHMX4hRh/wDf2g5EnAM3zkzrUJLifI
+	 +Bnoz12MTu9AEwfz15fgiZLAMruqlAoipLWo9J1eJ/5j0GPYYioFOrG6gk+nKTAV0SooP
+	 qVH+1Rt6B/nyU1gs7ClxBRVK+65fjCM0Gg0aCXNz9Lr7wLBYcsvFirB1PScWIKd0pQQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793538506;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=psa55x/910KFK/n533kR2hCP+mlHqk7uCQV8do1En30=;
-	b=yIjcPK2zpfcluHc6OggGBRel3UtDcl49M7Ep0hZ1XPpyETaCwKnRDk0pC02iYkUFINNV
-	 X9L1mnIEL8mrgI+ssK8YnMx4WKdIOI/UA2r4jPc2Fi7/mcd+pxm6TvR/COamq7dVJO1ZJ
-	 9SU2+FvTIkzxpXW6HeDjsFDe1fAafJ+UkcSzbmEf62o4h9ezH2scicv9KsHShkUC9DaVX
-	 VoDiLNNu8iXZrte3msrMrrz4TxvfRSMRPnv2Bk9Y9CAXZOyF8XcUjv1bHzCHnzEviLhb3
-	 x+lfS+UnKUu7SlefEQRtjHfHllntm8ngE7zEhZziG/CRiiWXYfjbd+3AbgZfVsfjftA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793559320;
+	h=DMARC-Filter:Received:X-Virus-Scanned:Received:DKIM-Signature:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=ScgBFQ2sEKk0TgN1KH7zHW+IlMrnPfyRl1r/gf8Y950=;
+	b=y5WkavqLu0n+EWiBCOJToa8usdc4pM6hEaqp9WxZMauD0lkcO8msPWXNlrQR6R+iDXkX
+	 yFa5zoY16OrfW1lHwhmWMtNDBZQUqpsQpD1ckWC7zTpSK18xNWknMXxRJ3Yb4rzcluZYU
+	 qrmLon+Xqdy1bSkqQPFZVKrF2E8n3Pq+N2JpEcjRJ1sdd0cqtyAj86I/Zm9M13LFW5DBl
+	 mW/AhWV0x2lOtXj0vYvzMxrbbdzkXeJ/PxLQaElnIEOvmEzcEETQLa3r3zR9pVI4vOFzx
+	 LYk/w9YD8/DtNSYIGX1eXBilpZCfv9xPAmTOW4Ptz0gzoATOOFylrypRXFJHlr8i5Xw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=RGCn6t6g;
-	arc=none smtp.remote-ip=220.197.31.4
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dmarc=pass header.from=alien8.de;
+	spf=pass smtp.mailfrom=alien8.de;
+	dkim=pass header.d=alien8.de header.i=@alien8.de header.a=rsa-sha256 header.s=alien8 header.b=Fd0sAu6A;
+	arc=none smtp.remote-ip=65.109.113.108
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8A9606A324;
-	Sun,  1 Nov 2026 13:08:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E8A9606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD11606A325;
+	Sun,  1 Nov 2026 18:55:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFD11606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=RGCn6t6g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ps
-	a55x/910KFK/n533kR2hCP+mlHqk7uCQV8do1En30=; b=RGCn6t6gROJvfz/IyJ
-	jRZHFoJmMhcmeVAmRbqtObatTOdmOREgk7VFPvzOqiJ9cXfTmQUXrM4DYRmw+C/w
-	NGl68C2Jr9EFgOzDTL/Rp7UHKJ4TtZMNKgY2VDxJNWcncKfr73Ln3YklIBmJjya8
-	tTYdF22bfVdjs19UrO9VbKkOs=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3n3ejOedqcRQPEQ--.25545S2;
-	Sun, 01 Nov 2026 21:07:49 +0800 (CST)
-From: "Li Youhong" <dayou5941@163.com>
-To: biju.das.jz@bp.renesas.com,
-	wbg@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cosmin-gabriel.tanislav.xa@renesas.com,
-	Li Youhong <liyouhong@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] counter: rz-mtu3-cnt: put runtime PM ref if counter init fails
-Date: Sun,  1 Nov 2026 21:07:46 +0800
-Message-Id: <20261101130746.1724364-1-dayou5941@163.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (4096-bit key, unprotected) header.d=alien8.de header.i=@alien8.de header.a=rsa-sha256 header.s=alien8 header.b=Fd0sAu6A
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0AFD240E02B7;
+	Sun,  1 Nov 2026 18:55:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id GiwTy8Y-tnlr; Sun,  1 Nov 2026 18:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1793559313; bh=ScgBFQ2sEKk0TgN1KH7zHW+IlMrnPfyRl1r/gf8Y950=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fd0sAu6Ag4L25Z3n/tp+oZ0Oac5dsyFgG6/NxLjkeA6Hzya3ScsIvwtPeIgOkyvAe
+	 dAZqcKKMvvewmJwsUX9PmE8HDgp1v290YCz5YzIMwPKOya/2OezBUlX/vL08wMTAhZ
+	 smETM8r1nrReNHkKK1+ODUsC3kQpvQnmaTqgRWmj995ROUril0Qzv7wiuY/qhdJIGn
+	 CDp+niWzh/rNEZUpzvu5XZe2rN0UfgOLoLU9xrzDOF57Zh3s3WrT7sleTwN/9ej3io
+	 WjeH8gzPwzAQp65KGWXh8eEgstVlwRBjZQ3TvqB0OVv337WVcokar1aWvKLULj7MM0
+	 5DAPQaI7v/rTyZ4zY74brkZ5sJQ15/UoCS+6rFg8k8+uCrTDeruN8SpXgaXC6aH4y6
+	 apg9cq7Na4RBP6jBszvo5GoIoH8zGkFO5xKPccEFVlne7i909/jMsnPtT9mDoEJPiX
+	 gGwPHcf2RBLShleWSk9R7qoURpZScNWjx/uqNDL4dDEtx9J5kcwcPfZqTORV9eqMgt
+	 tuANnMrgGsdSM8uwZlCjH6YNiqBUVrzenplMPpNfxpfvUiIsE7hpJ4ZUJwl+sG3YID
+	 YX/tDo/AV63BxCAIVV9as/lGxxH1mCa0q64r5dRfcOCDcPL1bnvE2I/oq2l5sNBM85
+	 tRBEFODZx1DB4hWnVwGyArZw=
+Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 55AA740E0298;
+	Sun,  1 Nov 2026 18:54:55 +0000 (UTC)
+Date: Sun, 1 Nov 2026 10:54:52 -0800
+From: Borislav Petkov <bp@alien8.de>
+To: Joe Perches <joe@perches.com>
+Cc: Kiryl Shutsemau <kas@kernel.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	"biju.das.au" <biju.das.au@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	Au Dang <au.dang.jx@renesas.com>
+Subject: Re: [PATCH -v2] MAINTAINERS: Fix Intel TDX kernel file patterns
+Message-ID: <20261101185452.GAaueK_PzlK68DsmRz@fat_crate.local>
+References: <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
+ <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
+ <20261031030112.GHauVZ-OI2KjdkjrcY@fat_crate.local>
+ <35ba539820e1782bde038df98d3b49295eb7cd3a.camel@perches.com>
+ <20261031202741.GAauZPPfNDpQLSmIZD@fat_crate.local>
+ <94f0ab99b5c9072ce7c026672f704b2987db427f.camel@perches.com>
+ <20261031235958.GDauaA_pScrsk2xYUF@fat_crate.local>
+ <5ad69a1167fddc7caf1eb73e439765116db1ce17.camel@perches.com>
+ <20261101014710.GEauaaHoYk5TzRpGBQ@fat_crate.local>
+ <b700f0fb96b9454287850f7aa54d876b709cadb0.camel@perches.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -64,57 +102,19 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n3ejOedqcRQPEQ--.25545S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw1xXr45Jw17Zr13WF43Awb_yoW8XFW3pF
-	4IqrZYkrW0qrWkCF4xG34DXFyYgw40yrW5WFy8G3W8Za18AFn8Z3WkWr4YqF1vyr95KFya
-	qwn7W3WUCFyUtr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5R6wUUUUU=
-X-CM-SenderInfo: 5gd103ivzuiqqrwthudrp/xtbC3gUMumrnOaWrOwAA3s
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b700f0fb96b9454287850f7aa54d876b709cadb0.camel@perches.com>
 
-From: Li Youhong <liyouhong@kylinos.cn>
+On Sat, Oct 31, 2026 at 10:35:57PM -0700, Joe Perches wrote:
+> No.  The intent is to match typical file matching patterns.
 
-Counter enable takes a runtime PM reference before initialization but
-only puts it on disable. Drop the reference if initialization fails.
+Are you trying to have the same matching behavior as <pathspec> of git?
 
-Fixes: 0be8907359df ("counter: Add Renesas RZ/G2L MTU3a counter driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Li Youhong <liyouhong@kylinos.cn>
----
-v3:
-- Set count_is_enabled from enable after either branch succeeds.
-- v2: https://lore.kernel.org/all/20261031142813.2522444-1-dayou5941@163.com/
+See section "pathspec" in gitglossary(7).
 
-v2:
-- Add Cc: stable@vger.kernel.org.
-- v1: https://lore.kernel.org/all/20261008020506.211566-1-dayou5941@163.com/
+-- 
+Regards/Gruss,
+    Boris.
 
- drivers/counter/rz-mtu3-cnt.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
-index 7bfb6979193c..e7fe8bf45164 100644
---- a/drivers/counter/rz-mtu3-cnt.c
-+++ b/drivers/counter/rz-mtu3-cnt.c
-@@ -506,14 +506,17 @@ static int rz_mtu3_count_enable_write(struct counter_device *counter,
- 	if (enable) {
- 		pm_runtime_get_sync(counter->parent);
- 		ret = rz_mtu3_initialize_counter(counter, count->id);
--		if (ret == 0)
--			priv->count_is_enabled[count->id] = true;
-+		if (ret < 0) {
-+			pm_runtime_put(counter->parent);
-+			goto exit;
-+		}
- 	} else {
- 		rz_mtu3_terminate_counter(counter, count->id);
--		priv->count_is_enabled[count->id] = false;
- 		pm_runtime_put(counter->parent);
- 	}
- 
-+	priv->count_is_enabled[count->id] = enable;
-+
- exit:
- 	mutex_unlock(&priv->lock);
- 
-
+https://people.kernel.org/tglx/notes-about-netiquette
