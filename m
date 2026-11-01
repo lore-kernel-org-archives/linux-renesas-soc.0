@@ -1,96 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793515067;
-	b=e8sLw5dDxCVj81v5pAysdI6z7x9hatkAxdXDn//m/tXG38JG4zktddkWsud31IzyCKwr
-	 R6ZbG+eUMaljIPTNz1mYbimzjAqlzNU/SWYrojdRpo7ZrNiF3rF2RzwYB6FKhiCzB4HNP
-	 PqCAN7Zrn5rsdvaQugzFs1YKgXXtjpILb+E/7gSQzRSGHEDImhPv9HocZ5R7Vli/LBgl9
-	 j/zt16Sr+nTa/UoY6/4gg6W6yf3sKultQH2w8mHQi88LavLOTssUk4WuBwb0WxDudoblS
-	 vb8Vjq8GVgmUYEcN4ZbRWN/sr7V7tquveRx1S3SM0SteHCaLmK1pUpjluuKRnMFYMPA==
+	t=1793538506;
+	b=PcfZQCNRK+33o4AqfBKM1Cs0ZTz/VhPu0QVRuvzelt3ArGw/e9NIC+eSZC7hdgW3VnkE
+	 2UCNLqODGytN4NCudf1vrov3Icm5UV9xBHg41Z9Pq8cvFbKjXsVhoU+9VsPwuHZlvQ0HN
+	 RirPQFDwH9ab1znAK4nolKWRu4eewVR80L5Se7FpQAWaiDa8zTFrxnEgLsmgt4UQ+t+f+
+	 7Fl31CPJRaaRE33yjA3hOXV4RWdRK78NYNaOKIe927f/n+RZR6XKmq96Ha6h/aWLRcMfL
+	 lKi57XkW5dqslseeqsoM7IJQjwEIYRd0sszzVJMabPSdfub8B4oOJXYu81EVOwY5SsQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793515067;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=jk+Iv7E50Op3JEPwALwZ9u6FV2ftF6XFRcZ7NgdVWFo=;
-	b=nTWPYsPhNfxgZQ1kT0xMk7WXOSazt7JHWMCjcCBdWAaKeiqaPzCvYgQLiuoEfpRL8buB
-	 TyRYcd0H46Fg5LnfNPsq4LYtUf0NQTYcIDIaS1Nrw3mzlubPIXjx5p9xpay/bNQluL8d8
-	 bzZsmPsJpLDz6Og7qXlJ0SFtttqNJWKOOmvTWmEbnjjiq+aI9d7sqxYavcIg1Va7Ujuoq
-	 9BbrWi8yXZAlv32FPoSP60Y38xaoVBBrpxJyVrUGaSYMN30S546zsiZtz/i0NYygakdU1
-	 5c4L1WlePZZMpL8XQUe+lSnHCEV41TpUK/jScOV9fgw9Y4eypNqOUvgUOp/OZm2cnWg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793538506;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=psa55x/910KFK/n533kR2hCP+mlHqk7uCQV8do1En30=;
+	b=yIjcPK2zpfcluHc6OggGBRel3UtDcl49M7Ep0hZ1XPpyETaCwKnRDk0pC02iYkUFINNV
+	 X9L1mnIEL8mrgI+ssK8YnMx4WKdIOI/UA2r4jPc2Fi7/mcd+pxm6TvR/COamq7dVJO1ZJ
+	 9SU2+FvTIkzxpXW6HeDjsFDe1fAafJ+UkcSzbmEf62o4h9ezH2scicv9KsHShkUC9DaVX
+	 VoDiLNNu8iXZrte3msrMrrz4TxvfRSMRPnv2Bk9Y9CAXZOyF8XcUjv1bHzCHnzEviLhb3
+	 x+lfS+UnKUu7SlefEQRtjHfHllntm8ngE7zEhZziG/CRiiWXYfjbd+3AbgZfVsfjftA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zhQPQbUU;
-	arc=none smtp.remote-ip=209.85.216.47
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=163.com;
+	spf=pass smtp.mailfrom=163.com;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=RGCn6t6g;
+	arc=none smtp.remote-ip=220.197.31.4
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524C1606A324
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  1 Nov 2026 06:37:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 524C1606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8A9606A324;
+	Sun,  1 Nov 2026 13:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E8A9606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zhQPQbUU
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3ac451e128cso1236682a91.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 31 Oct 2026 23:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793515067; x=1794119867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jk+Iv7E50Op3JEPwALwZ9u6FV2ftF6XFRcZ7NgdVWFo=;
-        b=zhQPQbUUhCYQFoTxvL8ZHBMO96oNrXROIr4p5ptS2/BMhHSy7+unGTDNoxZL7y+CpH
-         aCUMkZFs7uwjg0LU+wIt3SSdjhm8qYaGqv0zLKFbrJGofDnBPFWyhuMUxc0FQUF3kuml
-         xj8Sj1Fh6y/iEh2p+nPAHb3FwgaGz2tn28dSbOa6vpG5PO87zXCa49pBhgmZlCtPpA4f
-         yrSliOz1yG+L5b7v1F4hCkn9eb266rcddg6ryjPhDkvjodoODsQXtNEVyHG9aOsVAXP7
-         5a5VVJXFl5HRFanN5VzsV2jvfh1v7uJ4zF5DXFuGhUhpr9LjSxdNx5ALv+7TNOazvy4V
-         ZX4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793515067; x=1794119867;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jk+Iv7E50Op3JEPwALwZ9u6FV2ftF6XFRcZ7NgdVWFo=;
-        b=1q9s3vmTesB/efoA7jVZQwPDMZTffSsbuPgKjEjiLZsdfUXUMn6GV1IOsR9rWqqFaW
-         Z7pM0PgCWqUPWHwPsxmY+PhmtiulOsJLQG7VFvj8i96BvR8Grjs0W9170ptlc1KiqnRK
-         g3h/l8i+55/jW3FL2ZRwJghLFL+jKX7tM11OF3JHck6eqsxhxl5kTPCa/0a8xonf00Zu
-         c9z3MRIcf2yhTCnlkc4GTs8qN96fmkYP77FExfeFxqldwXKFDeNvcZYVk8gwKLkwjrpq
-         Ks3mkzYnXU2H4e3MtNYjg4mjPZnF2mvnJ+Zr7EFjbBLkw04oj3PDnDhdCwyuNnXH3mPX
-         gRCQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwo5Yx8PA7B+6o4ViF7EZhAoax5wdoYd9xiMHLCNfyoJgr5eJpd/j4Yf9na6F0TfdI17ZbqgTU4dKSQ9sTaXIjJtw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8oZTVj3IzB5fuaOQLGG4DoR4g5LXVw47ukto8iuAayiyNTWn9u
-	8rXoO5Yynje9cJvTy6NnRULi2P4P3mXGaFOKx86SUJnkPjEk+Xk+OSB77NMJL8hN
-X-Gm-Gg: AYBFou1H0MIv0dTOYZFA28FsRyxT4kH34aXKXFvFedQ9fDkGGC9g/uAul24McqaB37T
-	qA7BkijT1ercM9ppujxGlA7JKso4IoNHEC17UBNlY0+oboegVgFigiGsW60KWoEiGbB6wT6WH1e
-	huuigAQMce0R9KmpLWcNnwYanwvJiQF4EAXEz5y3hlUbn7SmGRli0jZtaKuvGCoUWFRrxVUUAjp
-	0WD0RLuiGE22eN5KDjTwQSwNL3MveDvbcBq3aPdxmAHAArThNev3a8gjqE36EumAMlmMi+HUhhq
-	hf9KqDSDjK7Rmg0K92rAg991JWohNQeBIVOUcWqzzhIgAk8QzEghZIIeNzUm3PlSLx7VxC3HlJd
-	6+d7HCWOpeigGGgUdEofYbbiE/LnFoPiOGdmYqgff8kj+GjPWFuQPHF09B14L9Bqb574D2QlNUF
-	GGsmnK/voqEn5WTguPYkWN8RG60A2QIVbM8gf8iBWeGURwOQdVXwNBvyi/NXdLZnkR0tFdUjl2/
-	C5uOTA7CJnjWC1JZxg0K+nDTS8njuWusQ0BcO0jn8U05c3erYPPsnNedU6c8052lg14PIBaxU1b
-	W6vmkSkVxNoaCOoMV3jiRg30yk6vj8EB5fvamvZmQxaAyHg94bmq5w6vMCUzHB43kns6
-X-Received: by 2002:a17:90b:5807:b0:3ab:be66:ddbf with SMTP id 98e67ed59e1d1-3ae8981dd4dmr5417304a91.54.1793515066743;
-        Sat, 31 Oct 2026 23:37:46 -0700 (PDT)
-Received: from ubuntu24.vpn.host.chaitin.net ([124.77.157.93])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae6e2a703esm14120742a91.0.2026.10.31.23.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Oct 2026 23:37:46 -0700 (PDT)
-From: BeaCox <0xbeac@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-mmc@vger.kernel.org,
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=RGCn6t6g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ps
+	a55x/910KFK/n533kR2hCP+mlHqk7uCQV8do1En30=; b=RGCn6t6gROJvfz/IyJ
+	jRZHFoJmMhcmeVAmRbqtObatTOdmOREgk7VFPvzOqiJ9cXfTmQUXrM4DYRmw+C/w
+	NGl68C2Jr9EFgOzDTL/Rp7UHKJ4TtZMNKgY2VDxJNWcncKfr73Ln3YklIBmJjya8
+	tTYdF22bfVdjs19UrO9VbKkOs=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3n3ejOedqcRQPEQ--.25545S2;
+	Sun, 01 Nov 2026 21:07:49 +0800 (CST)
+From: "Li Youhong" <dayou5941@163.com>
+To: biju.das.jz@bp.renesas.com,
+	wbg@kernel.org
+Cc: linux-iio@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
+	cosmin-gabriel.tanislav.xa@renesas.com,
+	Li Youhong <liyouhong@kylinos.cn>,
 	stable@vger.kernel.org
-Subject: [RFC PATCH] mmc: tmio: disable dma_issue work before releasing DMA
-Date: Sun,  1 Nov 2026 14:37:39 +0800
-Message-ID: <20261101063739.89331-1-0xbeac@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH v3] counter: rz-mtu3-cnt: put runtime PM ref if counter init fails
+Date: Sun,  1 Nov 2026 21:07:46 +0800
+Message-Id: <20261101130746.1724364-1-dayou5941@163.com>
+X-Mailer: git-send-email 2.25.1
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -101,102 +65,56 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3n3ejOedqcRQPEQ--.25545S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw1xXr45Jw17Zr13WF43Awb_yoW8XFW3pF
+	4IqrZYkrW0qrWkCF4xG34DXFyYgw40yrW5WFy8G3W8Za18AFn8Z3WkWr4YqF1vyr95KFya
+	qwn7W3WUCFyUtr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5R6wUUUUU=
+X-CM-SenderInfo: 5gd103ivzuiqqrwthudrp/xtbC3gUMumrnOaWrOwAA3s
 
-tmio_mmc_host_remove() drains done and delayed_reset_work, but leaves
-dma_issue pending or running when it releases the DMA resources. Its
-backend callback accesses the host, controller registers and DMA state.
+From: Li Youhong <liyouhong@kylinos.cn>
 
-Disable dma_issue synchronously before releasing DMA. This also rejects
-late queue attempts from an interrupt handler that is still running;
-cancel_work_sync() alone does not provide that guarantee.
+Counter enable takes a runtime PM reference before initialization but
+only puts it on disable. Drop the reference if initialization fails.
 
-Some DMA backends fall back to PIO before initializing dma_issue. Move
-their work initialization ahead of the fallible setup so the work is
-always initialized when a DMA backend is present. Skip the disable call
-when no DMA backend is configured.
-
-The analysis, patch and validation were assisted by OpenAI Codex.
-
-Fixes: 85683fb39d9b ("mmc: sdhi: Convert from tasklet to BH workqueue")
+Fixes: 0be8907359df ("counter: Add Renesas RZ/G2L MTU3a counter driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: BeaCox <0xbeac@gmail.com>
+Signed-off-by: Li Youhong <liyouhong@kylinos.cn>
 ---
-Testing: x86_64 COMPILE_TEST object builds with gcc 13.3 and W=1 for
-tmio_mmc_core, renesas_sdhi_core, both Renesas DMA backends and
-uniphier-sd. A userspace model of the extracted remove function checks
-the no-DMA case and modeled late queue attempts before DMA release.
-It does not simulate real IRQ/DMA concurrency or backend hardware.
+v3:
+- Set count_is_enabled from enable after either branch succeeds.
+- v2: https://lore.kernel.org/all/20261031142813.2522444-1-dayou5941@163.com/
 
-No matching hardware, kernel crash trace or demonstrated unprivileged
-trigger is available. Please review DMA-to-PIO fallback, probe failure
-and teardown on Renesas and UniPhier. The initialization changes cover
-backends that can return before setting up DMA. Other work items and
-the wider IRQ teardown remain outside this patch.
+v2:
+- Add Cc: stable@vger.kernel.org.
+- v1: https://lore.kernel.org/all/20261008020506.211566-1-dayou5941@163.com/
 
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 4 ++--
- drivers/mmc/host/tmio_mmc_core.c         | 2 ++
- drivers/mmc/host/uniphier-sd.c           | 4 ++--
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/counter/rz-mtu3-cnt.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 426308b73b..45e34d57ab 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -340,6 +340,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 
-+	INIT_WORK(&host->dma_issue, renesas_sdhi_sys_dmac_issue_work_fn);
-+
- 	/* We can only either use DMA for both Tx and Rx or not use it at all */
- 	if (!host->pdev->dev.of_node &&
- 	    (!pdata->chan_priv_tx || !pdata->chan_priv_rx))
-@@ -402,8 +404,6 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 			goto ebouncebuf;
- 
- 		init_completion(&priv->dma_priv.dma_dataend);
--		INIT_WORK(&host->dma_issue,
--			  renesas_sdhi_sys_dmac_issue_work_fn);
+diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
+index 7bfb6979193c..e7fe8bf45164 100644
+--- a/drivers/counter/rz-mtu3-cnt.c
++++ b/drivers/counter/rz-mtu3-cnt.c
+@@ -506,14 +506,17 @@ static int rz_mtu3_count_enable_write(struct counter_device *counter,
+ 	if (enable) {
+ 		pm_runtime_get_sync(counter->parent);
+ 		ret = rz_mtu3_initialize_counter(counter, count->id);
+-		if (ret == 0)
+-			priv->count_is_enabled[count->id] = true;
++		if (ret < 0) {
++			pm_runtime_put(counter->parent);
++			goto exit;
++		}
+ 	} else {
+ 		rz_mtu3_terminate_counter(counter, count->id);
+-		priv->count_is_enabled[count->id] = false;
+ 		pm_runtime_put(counter->parent);
  	}
  
- 	renesas_sdhi_sys_dmac_enable_dma(host, true);
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 775e0d9353..d0d3dd05a0 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1272,6 +1272,8 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
- 	dev_pm_qos_hide_latency_limit(&pdev->dev);
- 
- 	mmc_remove_host(mmc);
-+	if (host->dma_ops)
-+		disable_work_sync(&host->dma_issue);
- 	cancel_work_sync(&host->done);
- 	cancel_delayed_work_sync(&host->delayed_reset_work);
- 	tmio_mmc_release_dma(host);
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 1eae2f4b6c..cd0fdffa30 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -187,6 +187,8 @@ static void uniphier_sd_external_dma_request(struct tmio_mmc_host *host,
- 	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
- 	struct dma_chan *chan;
- 
-+	INIT_WORK(&host->dma_issue, uniphier_sd_external_dma_issue);
++	priv->count_is_enabled[count->id] = enable;
 +
- 	chan = dma_request_chan(mmc_dev(host->mmc), "rx-tx");
- 	if (IS_ERR(chan)) {
- 		dev_warn(mmc_dev(host->mmc),
-@@ -198,8 +200,6 @@ static void uniphier_sd_external_dma_request(struct tmio_mmc_host *host,
- 	priv->chan = chan;
- 	host->chan_rx = chan;
- 	host->chan_tx = chan;
--
--	INIT_WORK(&host->dma_issue, uniphier_sd_external_dma_issue);
- }
+ exit:
+ 	mutex_unlock(&priv->lock);
  
- static void uniphier_sd_external_dma_release(struct tmio_mmc_host *host)
-
-base-commit: cbbddb6b08cc9900a87cccaa9b22bbe06aa4f50a
--- 
-2.43.0
 
