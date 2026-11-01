@@ -1,72 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793565251;
-	b=SEiJi24kr3U7xkJXe9X43UGHioJVXaV1bySXtsD/sEJlcbsa6fIURA/shZ1VYDz3rw6l
-	 ecoLT0CaHqJoGyPZxLBh9h9TSY9Ro5afpLXZxjygVmB+WPv7gg46bDprY9JsQufzZ/dxz
-	 DqRdDoQGG8oIF9esGomrNj4H3E162OANps5F/wUsGpX638y9tHwEu85LhejmwvXLU+5uR
-	 xoqi2nCtvCUMioYp9ID9UKkwIUEOkrf0uuVIcJLKevAGPiFlxo7JxzlIoTCXheM48/LYs
-	 KxCOLJL6GJysI7zKjRgzgD/xq4kk43ZdWX6+2E5D0FS0PeuTTJ593V+gZydqWPel3fg==
+	t=1793571352;
+	b=mgS3fce2/f6qWulx3uKcKerAB3F4883Mj6nz9moYVh7zx4I2LYQkdXSH6ztfglD2h1fc
+	 HqTuBqq9BgQoDKDckrkN5vcM7+qXBOyrjp5IgKmp9T8ZDRN+EwdRadkgBnkLpYbfgafv6
+	 1gRcS8SxoumuQQn7C4VakI+z3LVGhBlEMuMW6ED1CXjKUAFlD7LNpqtjWKBdZCNyXkc8y
+	 sbDfseWZksfVsjF4OgpTuNYNvfR72jIXIzOQLF1Rt50apO5HjRsgnpePNyxAOoELkcTLe
+	 w3F2K2bc5VlliNiatW1ZHciG3UqX6NZZws6l7P6qoa10xbkSeh5R8OFtwr1og1W0dNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793565251;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=WEcinyzXvpzdrQbdmzGRVBkMmzuM3NlP9qlzk0r7u+M=;
-	b=jM6lWRz0d9yG3zfxQe3wX/4FzJzK1J9pDL8JJiMiKwULL+4JV2qsXvO0CoxHV++wWR9o
-	 JncHz2j6kmOUbdqBD7nCRg+kupJVEd9t3SFkc1G3fygXWNHkUubRZerd7hr+vhEEXWILG
-	 igTWuy5v4UboN2QjlJoF+y4llXwzobksWA7lgMvvQwQqRU8e+crjQ1CamjO6KVq5hka8H
-	 6v3Ssi1xWvGqOnvXDwk4Y4WAB2HxUyYqS/KhEd6D6nUCShiArauvLqq69CxurykJ1tM77
-	 a0d159c1PM66DXy2QOOLeg01VMXmCK0yYDvrOgaSL9DP4TBonm0z+kTkupxFkaJ/qWQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793571352;
+	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc;
+	bh=FccY8w4XVKmL62rTrNsIiuAmg2iirAJ9NTvcPUeI7l0=;
+	b=gHJVEuPoGDYDvvuDVPeXogMMrPklQpFKMaQvovgqStOx48wWGo4SB0tzswvXFpOT8lKq
+	 BT6LRXioRGKGN6uhtgHJWCA7MtzKgvHoYmnqyl2a2U3rVRn3SGjnTcm+Ea3y0fDM2SP30
+	 yxEu5VF9SDpTJZ1n0nJx4jO6W9aAGeXcCb+gL7f16guPQ4ITsFI72L2fkezi7vJc+r5X1
+	 rALoOSYtG63mOc7awlQrMtoQixiu7uELNbsJ85dvfZC3wbWanecw6LpKksRp7nsEN47s2
+	 GpDTL12zu1aWBTkGqOG1ds9oQP42jztvxgqP3TmojtmKST/pWxj3Syc2aPmQUofQnhg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=BtuJ+9TG;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K+V9Dv3q;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041C8606A329
-	for <linux-renesas-soc@vger.kernel.org>; Sun,  1 Nov 2026 20:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 041C8606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8EE60A260D;
+	Sun,  1 Nov 2026 22:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=BtuJ+9TG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=WEci
-	nyzXvpzdrQbdmzGRVBkMmzuM3NlP9qlzk0r7u+M=; b=BtuJ+9TGthEvfHggV1K7
-	8HCM7lmDmDVKnstgAkSutQeepbxM9f+LBjaFk5F7H0FOumehplkJKLqoJ4+ceSBh
-	YK2ss/QChr71ijKyvjcVkjJLIy4l+mwVhX+S0+XWv8HGGxsgbS3TL9RxhUbSVG/E
-	axv8+Pk12kFE5H2dIY84wmQcx62TwwtQW8iTi8kMfH2anW9M1GuJzYn0um/iNzoS
-	MqQKrx44llXCiyQQ7aiR0H9+sB8qB7UaGm2wtCRRck41rxjhBhdU4H/PyL28+gfh
-	1iQa6igkkswZenPR28OwGiM6B5IRigeuzt7kfw2me4EMvNskJM0zliJLQI9IogCF
-	wA==
-Received: (qmail 853660 invoked from network); 1 Nov 2026 21:34:07 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Nov 2026 21:34:07 +0100
-X-UD-Smtp-Session: l3s3148p1@YnRo8zxfVKTB0HFD
-Date: Sun, 1 Nov 2026 22:34:06 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Diogo Ivo <diogo.ivo.sx@renesas.com>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] arm64: dts: renesas: r9a08g046: Add I3C support
-Message-ID: <aueiPnMvmHQhFtM4@shikoro>
-References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
- <20261026-divo-ssgrlpcsrc-2966-i3c-v2-7-2e76b87209bb@renesas.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K+V9Dv3q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9D71F00A21;
+	Sun,  1 Nov 2026 22:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793571351;
+	bh=FccY8w4XVKmL62rTrNsIiuAmg2iirAJ9NTvcPUeI7l0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=K+V9Dv3qcTj5160hj+SlEd6bb36GPd0hfxFxqjLqYo66VpB8oCIm4PuHm9pjlid/h
+	 xICIzZcud0NUgf8UqhSDgZUnCOe+E4H24SE9jF1p7O4fFeppaF6xJ19c2x3GponAYK
+	 zBB0xnPMXK3KXJyJgXpeecppENU8uStUTuAYpN58z1zi5XdcZnpfMOTU/Sjz04mpNh
+	 EBDswN/2U3tv2zVNouRalxGVIPr45mrQWsWqgkUoAJAzcLHlFn+u4O5aPuxyp1V9hh
+	 nqI9MBjEMOeTC+Cpzk8pdEQbjpMVozvCH8kCeYtfZV/f7RAOqeoEUa4gaQ0O3fobrF
+	 9dSJrBw8PPsVQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7D3DF38003B8;
+	Sun,  1 Nov 2026 22:15:51 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -76,30 +53,73 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-7-2e76b87209bb@renesas.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v16 0/7] net: stmmac: qcom-ethqos: add support
+ for
+ SCMI power domains
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <179357135004.2624073.6498267080189807632.git-patchwork-notify@kernel.org>
+Date: Sun, 01 Nov 2026 22:15:50 +0000
+References: <20261014-qcom-sa8255p-emac-v16-0-0266c2ead980@oss.qualcomm.com>
+In-Reply-To: <20261014-qcom-sa8255p-emac-v16-0-0266c2ead980@oss.qualcomm.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-riscv@lists.infradead.org, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, vkoul@kernel.org, peppe.cavallaro@st.com,
+ wens@kernel.org, jernej.skrabec@gmail.com, neil.armstrong@linaro.org,
+ khilman@baylibre.com, jbrunet@baylibre.com, shawnguo@kernel.org,
+ festevam@gmail.com, jan.petrous@oss.nxp.com, s32@nxp.com,
+ mohd.anwar@oss.qualcomm.com, romain.gantois@bootlin.com,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mripard@kernel.org,
+ christophe.roullier@foss.st.com, brgl@kernel.org, edumazet@kernel.org,
+ radu@rendec.net, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, dfustini@tenstorrent.com,
+ linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org,
+ linux-mips@vger.kernel.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ sophgo@lists.linux.dev, bartosz.golaszewski@linaro.org,
+ sashiko-bot@kernel.org, martin.blumenstingl@googlemail.com,
+ krzysztof.kozlowski@oss.qualcomm.com, prabhakar.mahadev-lad.rj@bp.renesas.com
 
-On Mon, Oct 26, 2026 at 11:35:50AM +0000, Diogo Ivo wrote:
-> Add the I3C Bus Interface node to the RZ/G3L (R9A08G046) SoC DTSI and
-> enable it on the RZ/G3L SMARC EVK, together with the required pin
-> control.
-> 
-> The driver only consumes resources that are common to the RZ/G3L and
-> the RZ/G3S (R9A08G045), so the node uses the SoC-specific
-> renesas,r9a08g046-i3c compatible with a fallback to the
-> renesas,r9a08g045-i3c compatible of the RZ/G3S, following the bindings.
-> 
-> The I3C pins are shared with RIIC3, so the controller is only enabled
-> when the SW_I3C_EN switch is on.
-> 
-> The I3C I/O voltage can be set to 1.2V or 1.8V on the board through
-> the SYS.3 (I3C_IOVS) switch, so configure the pin controller for the
-> selected voltage through the power-source property.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
+Hello:
 
-Didn't double check the pinmux values, but rest looks good to me:
+This series was applied to riscv/linux.git (fixes)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, 14 Oct 2026 14:36:39 +0200 you wrote:
+> Add support for the firmware-managed variant of the DesignWare MAC on
+> the sa8255p platform. This series contains new DT bindings and driver
+> changes required to support the MAC in the STMMAC driver.
+> 
+> It also reorganizes the ethqos code quite a bit to make the introduction
+> of power domains into the driver a bit easier on the eye.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v16,1/7] net: stmmac: dwmac4: don't program the 1us tick counter without a CSR clock
+    https://git.kernel.org/riscv/c/d09d7b8e86e5
+  - [net-next,v16,2/7] dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
+    https://git.kernel.org/riscv/c/534198a05d92
+  - [net-next,v16,3/7] net: stmmac: qcom-ethqos: set serdes mode before powerup
+    https://git.kernel.org/riscv/c/7af44cb9e447
+  - [net-next,v16,4/7] net: stmmac: qcom-ethqos: update phy_mode to the resolved interface in mac_finish()
+    https://git.kernel.org/riscv/c/05b3ea7346e3
+  - [net-next,v16,5/7] net: stmmac: qcom-ethqos: reuse the address of ethqos_emac_driver_data
+    https://git.kernel.org/riscv/c/92719abd6378
+  - [net-next,v16,6/7] net: stmmac: qcom-ethqos: factor out linux-level setup into a separate function
+    https://git.kernel.org/riscv/c/acf1e3db9151
+  - [net-next,v16,7/7] net: stmmac: qcom-ethqos: add support for sa8255p
+    https://git.kernel.org/riscv/c/bb3183e1c938
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
