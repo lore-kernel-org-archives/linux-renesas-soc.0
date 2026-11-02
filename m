@@ -1,49 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793571352;
-	b=mgS3fce2/f6qWulx3uKcKerAB3F4883Mj6nz9moYVh7zx4I2LYQkdXSH6ztfglD2h1fc
-	 HqTuBqq9BgQoDKDckrkN5vcM7+qXBOyrjp5IgKmp9T8ZDRN+EwdRadkgBnkLpYbfgafv6
-	 1gRcS8SxoumuQQn7C4VakI+z3LVGhBlEMuMW6ED1CXjKUAFlD7LNpqtjWKBdZCNyXkc8y
-	 sbDfseWZksfVsjF4OgpTuNYNvfR72jIXIzOQLF1Rt50apO5HjRsgnpePNyxAOoELkcTLe
-	 w3F2K2bc5VlliNiatW1ZHciG3UqX6NZZws6l7P6qoa10xbkSeh5R8OFtwr1og1W0dNQ==
+	t=1793604976;
+	b=k+gHaOTb2BeTghiJsFyQV+ibk/Xl7p+iVGDS7RTWmFuYke2qlfGxsOkP/Cla0tIFiMWE
+	 7ve7OQL8baHEKuUccU9kC/7ZJLdDUrYQNFdF2ytNeOn/E1DMNpBBnkM4+YX/XdM3kAbDB
+	 xPVoRJeqKy8IOo8SvdMcngyNj3/o6W7k+H5ZM6H5j9aQMahtEQZoVFaU8lPtHqbJ+BpvZ
+	 z9ypFC/RRetlUIIFnBEpu3kliQywQTJ24bqucdXrHAaYAkHHAUY7L3SH+jPaznbMTcnEV
+	 n1eJ+akO3owFqK0zGvkSO83OQk89GcVz2+8WFEuFr5CBwpMXwWwr4ITMeEWocY+N7cg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793571352;
-	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
-	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc;
-	bh=FccY8w4XVKmL62rTrNsIiuAmg2iirAJ9NTvcPUeI7l0=;
-	b=gHJVEuPoGDYDvvuDVPeXogMMrPklQpFKMaQvovgqStOx48wWGo4SB0tzswvXFpOT8lKq
-	 BT6LRXioRGKGN6uhtgHJWCA7MtzKgvHoYmnqyl2a2U3rVRn3SGjnTcm+Ea3y0fDM2SP30
-	 yxEu5VF9SDpTJZ1n0nJx4jO6W9aAGeXcCb+gL7f16guPQ4ITsFI72L2fkezi7vJc+r5X1
-	 rALoOSYtG63mOc7awlQrMtoQixiu7uELNbsJ85dvfZC3wbWanecw6LpKksRp7nsEN47s2
-	 GpDTL12zu1aWBTkGqOG1ds9oQP42jztvxgqP3TmojtmKST/pWxj3Syc2aPmQUofQnhg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793604976;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=LCBfxEU40M79m4igWPgRSpQSIOpMpx1vCbLTCBisKlg=;
+	b=d0AQeMfwH8bl17XvQcLW/x32uFh785bH6P2A3zG6t+OSCO6tt4FEwxBm2gjqv+6m/rdz
+	 2Sccv7KLTTa/TwDPS3DJ+5VXefXLTAqfupFZEwmH7cA+p7uaq7P1mlZToeivNO32L5dsm
+	 h5ov4o2pejXJBSfCgL0rCe8iWn6aS3Os7nbce/K+itCIJA7XYPIVtwVrJNExchgZEszCg
+	 D+W4oTpkEimEYuMCGorAQxV+GcYeB5ygK9+S+GTzZeopqDvYlLmXk7s5eBJlL6FVQ86Q/
+	 cF9whLX8xEcaA3COIuZu+/Kp/2tYv853cJDcr5aeJsUY8DFlaZ5YFzkOrOy0oH1uG6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K+V9Dv3q;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E4wPKJMF;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8EE60A260D;
-	Sun,  1 Nov 2026 22:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7867A606A326;
+	Mon,  2 Nov 2026 07:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K+V9Dv3q
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9D71F00A21;
-	Sun,  1 Nov 2026 22:15:51 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E4wPKJMF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074AB1F0093A;
+	Mon,  2 Nov 2026 07:36:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793571351;
-	bh=FccY8w4XVKmL62rTrNsIiuAmg2iirAJ9NTvcPUeI7l0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=K+V9Dv3qcTj5160hj+SlEd6bb36GPd0hfxFxqjLqYo66VpB8oCIm4PuHm9pjlid/h
-	 xICIzZcud0NUgf8UqhSDgZUnCOe+E4H24SE9jF1p7O4fFeppaF6xJ19c2x3GponAYK
-	 zBB0xnPMXK3KXJyJgXpeecppENU8uStUTuAYpN58z1zi5XdcZnpfMOTU/Sjz04mpNh
-	 EBDswN/2U3tv2zVNouRalxGVIPr45mrQWsWqgkUoAJAzcLHlFn+u4O5aPuxyp1V9hh
-	 nqI9MBjEMOeTC+Cpzk8pdEQbjpMVozvCH8kCeYtfZV/f7RAOqeoEUa4gaQ0O3fobrF
-	 9dSJrBw8PPsVQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7D3DF38003B8;
-	Sun,  1 Nov 2026 22:15:51 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20260515; t=1793604976;
+	bh=LCBfxEU40M79m4igWPgRSpQSIOpMpx1vCbLTCBisKlg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=E4wPKJMFLe3PrzOUZSJYiHb6tquc+2PfKSMBRCvfDFVw1R7EVcbcsKTPceYcpSzDq
+	 0cYWY3PSmLW8F3GrIgkwjt3kgwps6hY5ca8WBZrEiLTvfkQ4fqdeHRZTkrLPRuTQSy
+	 fvBR6UnTWVTUoZvMmxlQtTyVS+pnDeuo2YI/hRc1DhGTzh0GnjwGaHk9z93pK0hY5G
+	 Lgro8N6pzpbtRuQcsGePo0tYzDYLUzVmXDWLWmtQsSqr9rkty9gBvSt6+yYNfs5XVW
+	 /NY4/q+oeIqe4FuqWu7eyFCHM7FYCCO3CXEErO4O01diw64e0d74aqobvsh33mTCSP
+	 FSWZ6KYq+MweA==
+Message-ID: <f1df2818-be5c-4019-a86f-4e782a70d3fb@kernel.org>
+Date: Mon, 2 Nov 2026 09:36:10 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -53,73 +51,49 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v16 0/7] net: stmmac: qcom-ethqos: add support
- for
- SCMI power domains
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <179357135004.2624073.6498267080189807632.git-patchwork-notify@kernel.org>
-Date: Sun, 01 Nov 2026 22:15:50 +0000
-References: <20261014-qcom-sa8255p-emac-v16-0-0266c2ead980@oss.qualcomm.com>
-In-Reply-To: <20261014-qcom-sa8255p-emac-v16-0-0266c2ead980@oss.qualcomm.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-riscv@lists.infradead.org, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, vkoul@kernel.org, peppe.cavallaro@st.com,
- wens@kernel.org, jernej.skrabec@gmail.com, neil.armstrong@linaro.org,
- khilman@baylibre.com, jbrunet@baylibre.com, shawnguo@kernel.org,
- festevam@gmail.com, jan.petrous@oss.nxp.com, s32@nxp.com,
- mohd.anwar@oss.qualcomm.com, romain.gantois@bootlin.com,
- geert+renesas@glider.be, magnus.damm@gmail.com, mripard@kernel.org,
- christophe.roullier@foss.st.com, brgl@kernel.org, edumazet@kernel.org,
- radu@rendec.net, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, dfustini@tenstorrent.com,
- linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-mips@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- sophgo@lists.linux.dev, bartosz.golaszewski@linaro.org,
- sashiko-bot@kernel.org, martin.blumenstingl@googlemail.com,
- krzysztof.kozlowski@oss.qualcomm.com, prabhakar.mahadev-lad.rj@bp.renesas.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/14] PCI: rzg3s-host: Add PCIe hotplug support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, p.zabel@pengutronix.de,
+ geert+renesas@glider.be, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
+ <atphAmy8ZIjY_JNC@ninjato>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@kernel.org>
+In-Reply-To: <atphAmy8ZIjY_JNC@ninjato>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
+Hi, Wolfram,
 
-This series was applied to riscv/linux.git (fixes)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 14 Oct 2026 14:36:39 +0200 you wrote:
-> Add support for the firmware-managed variant of the DesignWare MAC on
-> the sa8255p platform. This series contains new DT bindings and driver
-> changes required to support the MAC in the STMMAC driver.
+On 10/22/26 22:16, Wolfram Sang wrote:
+> Hi Claudiu,
 > 
-> It also reorganizes the ethqos code quite a bit to make the introduction
-> of power domains into the driver a bit easier on the eye.
+>>          i2cset -y 1 0x18 0xf4 0x8 # Link down
+>>          i2cset -y 1 0x18 0xf4 0xc # Link up: PCIE_SLOT (NVMe Micron)
 > 
-> [...]
+> So, I applied your patches on current -next and did the above.
+> 
+> During LinkUp the card (Renesas USB3 host controller) got correctly
+> re-initialized. Same for physical unplug/plug.
 
-Here is the summary with links:
-  - [net-next,v16,1/7] net: stmmac: dwmac4: don't program the 1us tick counter without a CSR clock
-    https://git.kernel.org/riscv/c/d09d7b8e86e5
-  - [net-next,v16,2/7] dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
-    https://git.kernel.org/riscv/c/534198a05d92
-  - [net-next,v16,3/7] net: stmmac: qcom-ethqos: set serdes mode before powerup
-    https://git.kernel.org/riscv/c/7af44cb9e447
-  - [net-next,v16,4/7] net: stmmac: qcom-ethqos: update phy_mode to the resolved interface in mac_finish()
-    https://git.kernel.org/riscv/c/05b3ea7346e3
-  - [net-next,v16,5/7] net: stmmac: qcom-ethqos: reuse the address of ethqos_emac_driver_data
-    https://git.kernel.org/riscv/c/92719abd6378
-  - [net-next,v16,6/7] net: stmmac: qcom-ethqos: factor out linux-level setup into a separate function
-    https://git.kernel.org/riscv/c/acf1e3db9151
-  - [net-next,v16,7/7] net: stmmac: qcom-ethqos: add support for sa8255p
-    https://git.kernel.org/riscv/c/bb3183e1c938
+Thank you for testing this series!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
+> I don't know nothing about PCI, but I wondered about one thing: after
+> removal (both physically and via I2C), the card was still present in
+> /sys/bus/pci/devices. Is that expected?
 
+I currently can't reproduce this on my side. Do you remember if you executed the 
+below command before your test:
 
+echo performance > /sys/module/pcie_aspm/parameters/policy
+
+?
+
+Thank you,
+Claudiu
