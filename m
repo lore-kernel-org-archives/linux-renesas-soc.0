@@ -1,76 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793610802;
-	b=L/1r9x+z/K0ylpV0CJeRnJdWd8+/4JvDlXAs7H4KjInTu80kXOl4t18MwqwZ9m4Tae7n
-	 avMhZ79KfUJ/3dn5AK5xnHXdsqtZ70pVCe5ijksKZVJFtpxgm8MbCVE4JSAtZQvGl1J94
-	 fdpmIFwpqV5Bw9rbyH8HDl2AKxricMch3Q7IUvPTPN1CEDoOYH/n3X5nnEA/3ZTPIxtTi
-	 dAHoYaxHjin/MwOhe30wcIboCeNswXjqHPh0jHh2Im/sYeMlPpedKSEHIWhKpLJvWp2X8
-	 TBm+6Fh31NUqOjSh+hiiVuW8Al17ddUl1MbhVKj9DuGbdk7WOVT4CYcshheqfNSAWeg==
+	t=1793614205;
+	b=FBDmFyI/fPX90I8q/eb1Req7W0FK7wtr84Mpt7UdQ3Cfyr7oFGAPCzwfjO/4FG+kzx3d
+	 q5W8MWBeFh/eaWyOBPwtrOpKnVTS8Pe1zek9rj9rvK2HZEuomQ+Zzm5sJP8uBVM4GZ4sl
+	 aJ8FFhSCp6rFD0zWvjcfbxr9fB36AxNk6ZP9CrDzPkxvhigu8Rv9EqxoIdKD52nR3EbEf
+	 E6vkh+kUk7NaEFW/Q5H19ut8dDaKz9K0jAKKXsbRdzW5qhtCl0tKDI49tRW6WInH4ql6t
+	 cAqjbYM2n5x2RASU7+mdOZVd4NJrmbiogUPSUM2A7MB30pIu750d9Dr2h4SVrcjArsA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793610802;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793614205;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=ac+xpJrvd6zfAE97WIurl+pYtHzF00Lzr1WG7VTrgAw=;
-	b=SVxmfCNIq9SmM07gpBS8STADyLQBgN6QHTeJC5HU18xj8pFYWNc8nVtr4YVJA/9XDW/F
-	 6GoS57j8eGM5PzHkLLdIbWhG3Zek9T3PYFB1tCKvJX6SjWsd8wGsc1IPyZe8MC1taz638
-	 eZuCusHorkhl94pGWwwe2zeSG/5s/VUHiIC2YTspkbI9S+GcCCwzD1nLiEum6neR1P4PF
-	 QGID+64Rmi0MgmsuKAiyJYwwNjL8sp2myTVFhUWNn6x0SdAv274zsLeU2aKhC6PB1C2Cx
-	 Pqy9gmA8vD3fzmMl//tO466W4qmecl3dAbFniA5AWW/HPk2GwrbzMqCNLcGp0C3QcHA==
+	bh=kku90+qM041/ZsQ9tSwaVmVz4Dm8H3ilNwTawTrWwWg=;
+	b=0FI1Mc5KkzI2UVMymRyOxkVU2y7T76xLP2QrYnknZFz1saqdcT+gJEq2i2ZPW0TBU66L
+	 OQMLnaveyuh+kCTI/XSYagQmNNrh9Wy3AFN2BRa+9VztlbqYKLAIbC3Sdkp1lhfucoPc2
+	 leeWwD4atIboZNHQe09r+sY5JjxRgRosksEwiijAfcBnevXVIum7JfkDNdIEFzL2f62Us
+	 vAH8R5vRHbfS2punjY8HNzc641nlwA1hTlkIwA+itB0B62qOL3ajtG3axOYIJxUXg1LgM
+	 MSLj7PxKQREcGVPFR03y1wWrhV2uf2t8MsAD1ZKPqDcKRoVjR2Lb5/6KIes9Iw8BEyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.160.174
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	arc=none smtp.remote-ip=209.85.222.47
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAF7606A326
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Nov 2026 09:13:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2DAF7606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AD0606A326
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Nov 2026 10:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6AD0606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-533778ab0bdso41452381cf.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Nov 2026 01:13:21 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-9906034086cso594695241.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Nov 2026 02:10:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793610801; x=1794215601;
+        d=1e100.net; s=20260707; t=1793614204; x=1794219004;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ac+xpJrvd6zfAE97WIurl+pYtHzF00Lzr1WG7VTrgAw=;
-        b=GjygO4oAnlQu4UzOfbU/CE5KG60U1aZ2ygeekxJvWXhra73ADmiASv9eQMsjGjGd9B
-         pfA7qAJMQhUD7pfyYUdUzcElvTJAF/x7L6pAfHIWkmCcW/3nlLyogu/yEFhWwUcvoWh7
-         94QYtPAENFGLitchbx3u8SPU4ABLjft+nRykijVGD/EcQCkaXTds9NDP1g3upIZLn8d4
-         NU3+nhhw+GyJfSaoDGjr9hKhpcBJo8pEDw5MmAGW1Ytu5BTll/scne/Cg7mt+Fuhb2D6
-         vUy5uotFATrAc9clQah/IiVfIsEMVdN98ZA6Bluk8/rKq2bZXCxEmq3fhwgHMEZ5Aas4
-         3xqQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzNvqWq1u6qpnDrV2mjcs7CXbZ7b8RU7r++njOTUA0bM4IV2P7X6jtv8HcC7qko2j85DSS6O9FcTPsy3rqpJ3Vrnw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLzzrgKct9hvGV0wKGo8+lC2bvcBWYD+oeb2sVnT8JaVN30au/3
-	9H5Gg7wj81RwvFUXxvdrZ15BbPx7NgdENvCPXy0UQYRTJ7tZ9DnCKVzp0su/RgZf
-X-Gm-Gg: AYBFou3Lm6yTQ6eVNK+tDeS1E4uwxTIXrQyC24LlNHeYNoouBBu5hE2VfrBKgMXWaEy
-	BE2ObLdX/jPT57AwHE4qhCH5ZDX30otdcRVrURrtUNvOoSroofKItw9KafQqWyGb6fVGdE5SP/+
-	2pmOijLRB8PCgNQ0XUqhRbnOzCb2ZMB+sMRAgU81FOAMvC0jWINjfmJ1AEikb2EPwDpTHxGg9nM
-	5InA3w67zJG9dP6aGoRetHpbZb3VMGpnwmRc9PWD9ZDd11o+a3agWIDF09MgXL7QDSMIfWigr7D
-	zqZXZvvYeDezp8/11g/uKB2LpRWRB/C+FOZvt72gmAD6JG+2rUQdhizi3rk9qX2ipfT5hhXaQ6z
-	sinT5MBuu01ZdS9UYWYrrJkAF/+8WEdU8KpJOjyuOmv0TSlzlRoLAV+7bk4vM3bkjkKblu+F7aE
-	YHziJH6MDIGR2An9zG5p4F1bdn6pq2BZvWozgjuX44rjpVG+Z9B5N0zgzKO1tKugkTR7LC7GGw5
-	k0NS8lJxj/WQNdBsQVEcHX9LIFi5fV5VqmbrlBcCKsbKIib7O9V9ybQfe/gYtcI6BCilfNnbZjc
-	tWijUrV7uAGDh/8FLAb6eTOULmVbaBY/anCO69dM50WW3aXLaQaO+JVNVEzkbqZmHibPrA==
-X-Received: by 2002:a05:620a:2801:b0:93e:fa30:f1da with SMTP id af79cd13be357-94421698c69mr1636673785a.45.1793610801094;
-        Mon, 02 Nov 2026 01:13:21 -0800 (PST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-94425858552sm784700085a.18.2026.11.02.01.13.20
+        bh=kku90+qM041/ZsQ9tSwaVmVz4Dm8H3ilNwTawTrWwWg=;
+        b=Pm5/hwhYhjByYcpd+VVbM5JD1G+e0/x4LiHXvYsxNabK/kTmWAg4inUF6iCTQg+DAk
+         D1mz/jwds8muqbqltS0CEh1rmmrWQobZGTu4rfuONSMqkg9hb1FAvJqWaM9ez5tHH+ct
+         Z6RKtrf4NZ+4nr2qhUeaUWlVHIZtgx1jBvxLVvmUaMu8TmnWZYa/ovaHuQbYzzBsM/X3
+         9KUE0iNyMjxuV7Si+vKJNXH+FkmaJ7qW3UCtjiQjQmoVrUBYTjZN2rULBU2MCWjPu7CH
+         XsQeNYB/b1hXz0BmRSDNYA9LKFaRuq+iBCLqqpUjzoCScIkgOCyKLqTQGxvQ7LXRdPiP
+         zJgg==
+X-Forwarded-Encrypted: i=1; AKwUvByeOVYjR0ulxc51vi5OtOd/nYIK/31mv4yQDS1SuO4g2v3iUSxRN/hJqkfKtKedy1TTNLh2x+Vg2sH5DsXIoE664w==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9CSST0CdgF58jhBmFoAqlr8zsuWsP5pBN6f6y5b9oGuOh/Zdu+
+	oS3IOPp35mAh5J0qi433wG/gioJ4un1lIOpSRqg6+fzVxLj/DXZGIDKEbDjJXSoS
+X-Gm-Gg: AYBFou2qq7YpSfuJtVtp1UyufYJvZdV0VMdoCrLihSGcMBHWEgIxR96mHj8xtJagEZI
+	teUtyAQzHXga1xApbjHyaIt5wftIbHgkeleZolTnlaPEtPfs5RkQ6Klo8Erd8PYrW0M/G0IrddU
+	6ofrcXsaPyizOlIigdvbfkxWDoM+hxJ59cjr6mXwq85Om+pNhRZWxF6HiKUjWHKsSrm3DwRY5eX
+	TEXClQdf10zZqTnoXMrEehElc9rE0uzqdjouX3xRoQZv48uaWnUAtufefqdQ9pTKkSMOqPKgSdE
+	jMlYwM29Gu0Mdyvc/DvS/GnPn4w9MyTm//w2Xhnk5YVr7GMen7kUhEKDTP6iFkLripsZlgPZtzl
+	l7BPCzHg8dt0SAvVnmlePQ1Cvh1J/vLGA8BMOttNdAI+MLot8UarGQPLD8sjoQq1yK6PK65BnkV
+	iJ++sZ6/A+ffy7v4kUHEy2TzRWR+/TXmg4dMD75tN342gy4+hmovADthTmeZz5IBTRdDP83OPa6
+	rVNW8WxuS2snABNQBRQ8jLdn9kL+ZtZfwFSEcNuGVWjlQG/JRvzsDTlBS03s0oKsS5p1F89eDij
+	DgYX+De/rgScurRj+essBtpEVo/ip74vU/0MammmtHzg4jkdP8BCPKGPJ4wanqyW2w==
+X-Received: by 2002:a05:6102:fa0:b0:7cc:118e:7bfe with SMTP id ada2fe7eead31-7d072626940mr3407927137.19.1793614203806;
+        Mon, 02 Nov 2026 02:10:03 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-992ee509f58sm11374209241.12.2026.11.02.02.10.03
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2026 01:13:20 -0800 (PST)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-93cc1ab5f6cso345088585a.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Nov 2026 01:13:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzezyyrt3Q9fYcPpyfZkc7UN2S4cKdnFkyYifh8Hzp4CrQmIW6HAu7oUE+hcSkAKBSRp0SaNtHhklZ6DYR4QeU86w==@vger.kernel.org
-X-Received: by 2002:a67:f403:0:b0:7d0:9587:1b90 with SMTP id
- ada2fe7eead31-7d0958732b2mr1205111137.13.1793610463593; Mon, 02 Nov 2026
- 01:07:43 -0800 (PST)
+        Mon, 02 Nov 2026 02:10:03 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9908e3cd939so585419241.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Nov 2026 02:10:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBx95cawECqE5nRHo4hdgcCcZbfTitFUtyUvAfoEqFV4rFaH0szqHze6aUoNdDbqO0F56Imwqs+2mDp666IGC0YedQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:3706:b0:7c3:9b0c:a75 with SMTP id
+ ada2fe7eead31-7d0725ceb28mr3125663137.12.1793614203445; Mon, 02 Nov 2026
+ 02:10:03 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,45 +80,72 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-0-e052903a3832@ideasonboard.com>
- <20261015-epaul-v7-3-rc1-x5h-vsp-fcp-v3-3-e052903a3832@ideasonboard.com> <20261030220549.GH3178046@killaraus.ideasonboard.com>
-In-Reply-To: <20261030220549.GH3178046@killaraus.ideasonboard.com>
+References: <fe117dd44728fe7c96f3e4b3ec88c6ca83c5da9b.1791880574.git.geert+renesas@glider.be>
+In-Reply-To: <fe117dd44728fe7c96f3e4b3ec88c6ca83c5da9b.1791880574.git.geert+renesas@glider.be>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Nov 2026 10:07:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX1czCW_KTW8Z+_jb3egLxqBu7bOUmqyXy3PqYhmUfLNg@mail.gmail.com>
-X-Gm-Features: AclHuK-1v1dRSgyK1HeeK29l-3g4aKIGNPop6k2nHA1eLryORdmauRDpRhHjRsM
-Message-ID: <CAMuHMdX1czCW_KTW8Z+_jb3egLxqBu7bOUmqyXy3PqYhmUfLNg@mail.gmail.com>
-Subject: Re: [PATCH DNI v3 03/15] pmdomain: renesas: r8a78000: Add maps for
- VIO for SCP FW SDKv4.36
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org
+Date: Mon, 2 Nov 2026 11:09:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhOu+1YU7z0WR=2M5OuGjdXmH6m5__F7TmhRGQx52jMg@mail.gmail.com>
+X-Gm-Features: AclHuK8J4Hpof_2n20HSIIi8CLwkgCm2egqJasTQSM_ACF5dfMV0X89nwIyfFeA
+Message-ID: <CAMuHMdWhOu+1YU7z0WR=2M5OuGjdXmH6m5__F7TmhRGQx52jMg@mail.gmail.com>
+Subject: Re: [PATCH] perf/renesas: Remove remaining RISCV_ALTERNATIVE references
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor.dooley@microchip.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 30 Oct 2026 at 23:05, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thu, Oct 15, 2026 at 04:51:43PM +0900, Paul Elder wrote:
-> > Add maps for VIO for the VSP and FCP power domains and reset domains.
+On Tue, 13 Oct 2026 at 10:39, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> As riscv always selects RISCV_ALTERNATIVE, the option was removed.
+> However, a few references were left, making it impossible to enable
+> RZ/Five support (ARCH_R9A07G043).
 >
-> s/reset domains/module control/ as its not just reset (and there's no
-> "reset domain") but also module control clock ?
+> Fix this by removing all remaining references.
+>
+> Fixes: b924210f542e13c7 ("riscv: remove RISCV_ALTERNATIVE Kconfig option")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be applied to riscv/for-next, or folded into the original commit.
 
-FTR, SCMI calls it "reset domain", but I agree "module controle" fits
-better here.
+As the broken commit is now in v7.4-rc1, this can no longer be fixed
+in the original commit...
+
+> --- a/drivers/perf/Kconfig
+> +++ b/drivers/perf/Kconfig
+> @@ -117,7 +117,7 @@ config STARFIVE_STARLINK_PMU
+>
+>  config ANDES_CUSTOM_PMU
+>         bool "Andes custom PMU support"
+> -       depends on ARCH_RENESAS && RISCV_ALTERNATIVE && RISCV_PMU_SBI
+> +       depends on ARCH_RENESAS && RISCV_PMU_SBI
+>         default y
+>         help
+>           The Andes cores implement the PMU overflow extension very
+> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> index a63df28df3b5e7c7..0b6876ef6dca228b 100644
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -461,7 +461,6 @@ config ARCH_R9A07G043
+>         bool "RISC-V Platform support for R9A07G043F (RZ/Five)"
+>         depends on NONPORTABLE
+>         depends on !DMA_DIRECT_REMAP
+> -       depends on RISCV_ALTERNATIVE
+>         depends on !RISCV_ISA_ZICBOM
+>         depends on RISCV_SBI
+>         select ARCH_RZG2L
+
+... so I am queuing it in renesas-fixes for v7.4, unless someone
+screams.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
