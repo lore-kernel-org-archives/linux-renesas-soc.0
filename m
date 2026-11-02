@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.69
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.29
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793640099;
-	b=VEORZpxaOE7IG6SCZy5tLKxDxtdtI3/hZHXf0A97gTJ7gv416oyAj/g4FUGQFOoUXVfF
-	 sejths7n4mqkDmCBQM7RvWQK9KiPa7+XSbePFAgWCw3R3uPBx6JV2dbiD7hrlTVjaugP1
-	 qAjLoTO6ghk1UNMcJ0mUs7o/U+05f3AJn/zDWXrgxy1MvDHKRPZZht9PnaYkzJeZncdM7
-	 fj16/+0st36ztCgdrajrF/iXf562zDrPAOb2UwR1ig5mEyzlr+wuAOgruDGwviY8kxfy5
-	 q0yoTXgsIg8HakEZ6Osjs0NZ1HuODdz1js9yqlGPPfOv7uqfGNztLq9/2GkNoKjKu4Q==
+	t=1793641217;
+	b=KISE3wJqMZE7wXZwV6Q+AgOmeKUvR4koQPHjvV5PkXonHUGcYuO9+BVkB2YWQulAR9H5
+	 503Vt1srompwCTLCl1gH8JIbBjdPNSk/srsQADuMkHzt0pZZ1sttaHAujPmo4UG18Pskp
+	 VhZ5pFLxWXT9F1SlonWQEAHqWKJJm765Nl92T4zkKRnR/VF6f93RC9F+gcg5tut+m2mna
+	 giEWmL7TrK/wEVLvH4v3rvtCh60WKffFQtoeHwGCe/I9tGc34brmIaa+P2U9VrGeWTnNj
+	 2GUIZgQrIupBOT6zIUgHqIAvQPzveNdWuB93YKj5FfCJnl61AwA9xq5YJ0gtevEPVSg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793640099;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793641217;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:Content-Transfer-Encoding:Content-Type:
 	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
@@ -24,111 +24,123 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=bPO5rapN4v6Y8cI5tKdEKxZsiCrSBEDoAFlejyIoEbw=;
-	b=UtICoI2ttHObQGZnVhl1XnAMLy7cUywN43GOKFnIo6NfscVcSBV2HE5igzlq6iMmVo6/
-	 VGdMU/EfaNdNyQuNLztd84uXmkiVX1EZS2QUdWvfRxLbEZOJ/JOz5Jnq6/lCOp0CHqsz9
-	 5CLHfyWYa3ZlRfOHq3q9qXhWCG8x4ED86V1cGZxjrIKwm+6uIG/ii+6VNunhiatG1oFEm
-	 bPf6H2zJwvG/n4ajtaj73EhLuQXx738ZO7Raz7KDDfjv8CpnInplfH+6o6TnPRowFy9wN
-	 WxW5DEc/VUIHJ4z5T1CoZTQ7dqF/l0U80tl5UNJSnqiUSv3tpkfBhne+Z5Rhea+Azmg==
+	bh=CG0lzyh+DOjzXrhte5N4cMzh1eHqHRl8IfKbrISXh8U=;
+	b=IhUWFDjyOhvzzrafKkshvjr3J+lBTWvb6eNck4pynXroaC/Vu6pjHulkqgRjEXCBbAyx
+	 iu+6eNk+FJD22qbduakhU20chlRpt6Rfu74kqO5l/k+tWTSXb8qo7tM/7SB+nzHFXvNxT
+	 tP+ViyHjoko4AArOsZUfA7jr1Vm6KH0MV8jngf8+kgWh1+R60nvbfoR9fdBRVljcVCpZW
+	 uoXDVLqa392ZwWjP0zn+bT+FzrffJakaBMjwKxGcPY0aqkpXaJ2FL+pddz9V8HDdxEWcD
+	 k79BuTyIgTRkX9jY6m8wTNSXKkN/slEJcxqwGo0Gy/KGCViVwkXfAznsywihymkvlYw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.nxp.com;
 	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=FOj+RuJv;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.69
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011069.outbound.protection.outlook.com [52.101.70.69])
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=rG0WfAHe;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.29
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010029.outbound.protection.outlook.com [52.101.84.29])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0E8606B1D0;
-	Mon,  2 Nov 2026 17:21:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D0E8606B1D0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DBF606A926;
+	Mon,  2 Nov 2026 17:40:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93DBF606A926
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=FOj+RuJv
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=rG0WfAHe
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=koMkJXBvJvTPCgOtUAxFt8ak6UhB8T6MnWx1LYnzdWqon6jXdUNBxvJ/O/ezgplBjONWVS1nfu+z/qzczewV0wbebGjs4ybhzwFYX23WTV9xJXmgwAT8qzfT1oHqKPWji4ghHep3pKrm9cWTDpSINs71XbfbCvBljDblmOqI8Zpx3E17h4VpauHOpdI8CGuBhT+LQoutxCbDMsJ7Lm9zgBTt+erraVw8YZc5j5+YOl+KV4R59vuJwhO1rin7isO4QFZvVsiLO1a196+PElVuET/3pnyBQxeU7mihwC660bSx+ySaCaN370Jc8ieRp6EQeJ8R8Upta7Ixw50aL5aJ4Q==
+ b=Sj5x1QkrV2X/krDtrabTh2BoMH0oe0gkEJ0tVdmDm72Goi9nBXysuJk8P31BG9jO6+/s2F6/pEUBbr4iHcQIOIkHgz0Rdd54W7389z8sfxeoSpaKDbSHz0DTlcbWG/BvUCFP8Zd6RYjA6e3stQ4g8sumVdHZHI7cbPDv76tfT6bfetKazAB+YtV/ROOODJGhFQD4b/VMW+HotDtQjNlyHg3G/dOrTzcP6JizOD7bYGnZudj4R90Rc9IWCpsFaIAhaHGbi2FftNtXL/JSHKwt6HVammqlTcNjf5FoBJp0bqTtqDIQm3TN/V4Bi9EnlqT7PBzSEraOD5KM2+Mmy4unLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bPO5rapN4v6Y8cI5tKdEKxZsiCrSBEDoAFlejyIoEbw=;
- b=WwipYQhzTOaQ2ZEncO5eCgreW2D68PhRQnfu5vlarhn0VLKbUmtnUnf5A4GiRqS03N0/P9mp/m61zB+n4t8faGLOUndhuv3fdTE0SqFZuvJFelcfmLi9ha5B7XqvGq/E6S4/Hy9PkcAz4ocTYl2yHX314E+1YEcTAYczld2VzARlVu8OJqCMMkpWxXJ3knTmkpblUdj2JkjyNORQFw6Ae+/fKT2ETlpFKy4kkvJpzjMUfQJtDTDRhorNg1b/dr4P6M/W1rt6hA6xgCN1/FXmJpH17IWdt3vXkfYeXmf/Be9svaeKYtxuXyJFrlkNArOBFNnxa0BWuoPHyFpgTUQqcQ==
+ bh=CG0lzyh+DOjzXrhte5N4cMzh1eHqHRl8IfKbrISXh8U=;
+ b=lsOTkOVL8lVr1NZrep0V65LP2qjNOI12fxn6t+o0rqDMOquFUaBfwlPdGh2bMQs9QEq+573NJ9B4Xsdm0svZfzMz3uqCzyk84nbDAs1zZajU5GHDrWOEJVUoueo+lYx38XusKZOQSoGdHAqsuv0zSkIQCoVcyuR9ncs8rYK4fu5M10pwuF/bZ1N0lh10FJDiIpfUEMMn8R8OQN1cU+qlXWMI5CATDqbZMaSaueVp9HKTQr1JkfZvtDRnDBk85uvmK4p45QY03QZO4CjDj5A2fa93luinbH0MQou+z0+q2LqyOoYW8ujpjKJrJJITMhTVMEHDmKX89+WWZV7rPWg8Cw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bPO5rapN4v6Y8cI5tKdEKxZsiCrSBEDoAFlejyIoEbw=;
- b=FOj+RuJvWiuxQZyz+oz6KUlLGD5yDvDNIMvkF5hfH0degvo/1ZT/8GZfjg0KspzdkOxKm5f3pE3hwtfZb2B9mfDLi+EttXVjW8p+OF6u75Y+OMfQ9CaLcAhWXM1ShZUCAYyfPvmHIyuxhm+/NK2kJ8YYCADEgZCSeElnDB5ye1t6B1648xDx1NYRLuKB4QgBxCNV8A+XqC/UThbeO6zYtqGOg0XEZ2RSQ3PVDxsDA+xdBowg1Wl+Bmvsj0He60X18JoJ2vXDfJhIT3yy050gGXuptXIzw3+eKkDHk9AOY9mnJtMKFyZ7dpCHsJU/JkihbUVyYoYz5PNRjAORvGZHkQ==
+ bh=CG0lzyh+DOjzXrhte5N4cMzh1eHqHRl8IfKbrISXh8U=;
+ b=rG0WfAHe4dyfV3qgz9EKMBjL26+nHJgE7rCownCrYeM3TSNOdAEeurLyK1lcSMcYUsQWEFFOR0bzvPue5tcIazuri9F4ghGXJIKBbYFFMgGGzXwpCZOj72H6h6y0OjvqdzZtBGijkjFHyDzGQ7rIq1MTwwrEIyOtOedUL5ye5vAfcx//2h6roY3S9oicKpptx8LEIx4v6ztx1v53VgQNYHerPYD3D1kCHWxzDpINkRi3nkMMXj44izBBQ30A+PxJxFIXyy4lJlMYOP4nTetjkt/MD0OP+nR9AGPHpoz4ktkFB1vmycjL6u8wAxihswBouhCFG4Nsk6udc0PST6Zssg==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by PA3PR04MB11204.eurprd04.prod.outlook.com (2603:10a6:102:4aa::22) with
+ by AS5PR04MB9873.eurprd04.prod.outlook.com (2603:10a6:20b:672::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
- 2026 17:21:33 +0000
+ 2026 17:40:12 +0000
 Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
  ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
  ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0569.011; Mon, 2 Nov 2026
- 17:21:33 +0000
+ 17:40:12 +0000
 From: Frank.Li@oss.nxp.com
-To: Aubin Constans <aubin.constans@microchip.com>,
-	Ulf Hansson <ulfh@kernel.org>,
+To: Mark Brown <broonie@kernel.org>,
 	Nicolas Ferre <nicolas.ferre@microchip.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Radu Pirea <radu_nicolae.pirea@upb.ro>,
+	CL Wang <cl634@andestech.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
 	Ray Jui <rjui@broadcom.com>,
 	Scott Branden <sbranden@broadcom.com>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
 	Frank Li <Frank.Li@nxp.com>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
+	Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Yixun Lan <dlan@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
 	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Lars Persson <lars.persson@axis.com>,
-	John Garry <john.garry@linux.dev>,
-	Hemanth Selam <hemanth.selam@gmail.com>,
-	Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Rosen Penev <rosenp@gmail.com>,
-	Fan Wu <fanwu01@zju.edu.cn>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Pan Chuang <panchuang@vivo.com>,
-	Zhan Xusheng <zhanxusheng1024@gmail.com>,
-	Rakuram Eswaran <rakuram.e96@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Ethan Nelson-Moore <enelsonmoore@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND...),
+	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip (AT91) SoC support),
 	linux-kernel@vger.kernel.org (open list),
 	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT...),
-	linux-omap@vger.kernel.org (open list:OMAP MMC SUPPORT),
-	linux-actions@lists.infradead.org (moderated list:ARM/ACTIONS SEMI ARCHITECTURE),
-	linux-renesas-soc@vger.kernel.org (open list:TMIO/SDHI MMC DRIVER),
-	linux-arm-kernel@axis.com (open list:ARM/ARTPEC MACHINE SUPPORT)
+	imx@lists.linux.dev (open list:FREESCALE DSPI DRIVER),
+	linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM MAILING LIST),
+	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+	linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/V2H(P) RSPI DRIVER),
+	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SPI DRIVERS),
+	linux-riscv@lists.infradead.org (open list:RISC-V SPACEMIT SoC Support),
+	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support),
+	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE),
+	linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi SoC support),
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
 Cc: imx@lists.linux.dev,
 	vkoul@kernel.org
-Subject: [PATCH 1/1] mmc: use dmaengine_desc_set_callback()
-Date: Mon,  2 Nov 2026 12:21:03 -0500
-Message-ID: <20261102172126.3890568-1-Frank.Li@oss.nxp.com>
+Subject: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
+Date: Mon,  2 Nov 2026 12:39:58 -0500
+Message-ID: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
 X-Mailer: git-send-email 2.43.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: PH1PEPF00013306.namprd07.prod.outlook.com
- (2603:10b6:518:1::13) To MI3PR04MB12438.eurprd04.prod.outlook.com
+X-ClientProxiedBy: PH0PR07CA0104.namprd07.prod.outlook.com
+ (2603:10b6:510:4::19) To MI3PR04MB12438.eurprd04.prod.outlook.com
  (2603:10a6:290:76::14)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -140,318 +152,804 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|PA3PR04MB11204:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4648b49e-7710-429c-4b6e-08df3905be21
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|AS5PR04MB9873:EE_
+X-MS-Office365-Filtering-Correlation-Id: b185a470-42d3-4cf8-10a0-08df390858ee
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|23010399003|19092799006|18002099003|56012099006|261102123227099003|10067099003|261009223027099003|921020|261022105027099003|261021123027099003|261021121427099003|11063799006|261028144727099003|261026140227099003|261026121527099003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|1800799024|366016|19092799006|921020|261102123227099003|261021123027099003|261021135927099003|56012099006|11063799006|261009223327099003|261009220027099003|261009223027099003|261009221727099003|261009221227099003|261028144727099003|261022075727099003|261021121427099003|261026121527099003|261026140227099003|261022105027099003|10067099003|18002099003|6133799003|41080700001;
 X-Microsoft-Antispam-Message-Info:
-	ilb/HuJu4myw2uUYDDEhG24ksGmWXHV8RewKTjtgR/RHyg38tkl20udGIvc97o0YkNydYNpoMYf4UVifa3tdfqtEcUlsrdaqT1sYd0mm52CSFamB344FN1J0lFjBo/yTMWwlh9QtNgILyokrEhBvbbus9Om/ibqnxbmtB5suXErQHnKU4wI3H2LnSAUD3x1f5C2Qh5HY3FEv9TM1btURqGD8928y+YTonUoAqzY7e/4pPQzp9NL2gjW6/3KSKR6esDgqeXNGRBu3YfaPp79as+8v+KHj5H7xQy4RZrjvApz4f245UbuX/YFsqWhrMciP7KcXOnCAEi6PYic1aSS5UESXuoH48YQaI6sOM4KRLP2RaDEZL8qWY2udg53ETPqv/qXFCK0JReHWX7HmlfEzKNdgCD0V8MXCpwCMfXXebB3OpL5ntLWNSzOeu950RaxMGuHH0fNTSZwDu5/3iOEwv+LJK/V2iZjTFHeKAn7KkNebtVraDFaZLEbjOm9fNwG4CtaANpVpgQH93hl0HBjub03uvzQ6QSlk8c/DMTBmQRdA9v78pIKzSBYOAswEUgdfomE8oTEgk3Am+wUpbdoRgs9/KjiUvnXeyaScJJs0+ZyzyLbRInywMpjglRoI05aCOlUCwFeXreXfevmRtsUVWGb7+BkvOapKOPrVoOeRLFpViB/zxa2Sg8n16mE+fXKtNANv1y6r2fwyOfXpXReHIw==
+	doo9axYr5qlkU4911KKvnuRh3I+cKMLtewZW/toHUucRMyljTpoJ2xz6wbg9i9nb200bgHIWwK9iIPltjTjCle3vO76AQDvOQqstYzfdE668BvBNspU3t8zvhY6oefRc/zeVe4+e8wSRMadUQmZD5536gKh4PszjpVPSf+wxfhdosJRVmpb3+gX629pBgGIPs1V6sK8mM4iJXtLfY08ODtCbx/Z3YnZXf/WQn1O06TkRXWUb5KsjhXdTDUXdY+ap1EAuGnsPmWpxbcC1nwOv3Gmr+TqCpNm4s7AcVRSLJs1Z2535m8v96S/J29X5cU1iF00hPjVNwaRGcBO7yHdcvksSjlavreQVLyYbxT9s5RJ/BDQcD2jaPY3MvLPNs7eDJ45ajxX3WoVDhUygxxIYmOYSgrhxtuUr6Y3GQw9IHf3YM2xN8kDVOQBR7qK22Yh2S/zJ3gTDE2QEvXB0jz+cIReGztLMyqvV74wLJBzS9uWk6CYqX4zmREzFMHtnWRNxIOiGiDzNAoQFMaeaNBa8hN8eGjPgPr1c2lprGSphlE7aDo0qSP4F29Pds+xOdhQKdzpvaMkPEwA9glq7CRFP2T1FRwlKWVxoWhP319yILhMhyu4YPK0rj9pUhntBQY2XLuhBSb20+GpUwP7AlHOV5zGlRPEZMoTdLLISCSlCCR+pnWqJJt8X0o9w0y7RaM/lQ+v8brc4R6IskHRnsWclCwlXXVLym02d3odE5CNPcCul9P8ScKo5NIDSUqguDSnf
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(23010399003)(19092799006)(18002099003)(56012099006)(261102123227099003)(10067099003)(261009223027099003)(921020)(261022105027099003)(261021123027099003)(261021121427099003)(11063799006)(261028144727099003)(261026140227099003)(261026121527099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(1800799024)(366016)(19092799006)(921020)(261102123227099003)(261021123027099003)(261021135927099003)(56012099006)(11063799006)(261009223327099003)(261009220027099003)(261009223027099003)(261009221727099003)(261009221227099003)(261028144727099003)(261022075727099003)(261021121427099003)(261026121527099003)(261026140227099003)(261022105027099003)(10067099003)(18002099003)(6133799003)(41080700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?a3vIbI9ddhZAuIbhf+OxiUTLDr3CHEpE7kqCzYQBiRFEGm2tYVJj78mBwyZC?=
- =?us-ascii?Q?NAL/AZyXvuWVa7PX46Xxk9W7FT/y9IcRGdom6euiortyqQiiP8VKx7itbIxr?=
- =?us-ascii?Q?ijab6qwIDA/gxiUxxlcIelJLWHfrLnn4Ggan9ycXYCBK2Su2er7Bgrkza7mX?=
- =?us-ascii?Q?qmJaSoZGSC/Yvs97+IavPmwz8C/gJfJ0T4hfFDUVQUbhf+DxVQCW8cdJayVW?=
- =?us-ascii?Q?rN0RzYs1nPgpAoUxMU7xi3XQgAlldlcE/aEzlywGCuYsSoKV38WZ8HCBPXSo?=
- =?us-ascii?Q?+28YLpdnDj6d/k9TwcIvJCFKvBeqS03wipzU29+B6FbQ/pC2k8xbj1YQUj0f?=
- =?us-ascii?Q?L8A2d3q5ZkFNrEAECBTymYNBHgIzn45rVQdhbcgaqgMu708GqO1Q6vXWpGPJ?=
- =?us-ascii?Q?acRRSBs7xY6KyHFYFGaaIBrEVBfW6lXxjO7/xBELFkb7mcGi/pCakuNBEH2y?=
- =?us-ascii?Q?mraFGLEhUSErnV9MGC3e5Ucxtvsq/KP7JzeiDOsccrnbBd9Jk62Mn7bjcfkb?=
- =?us-ascii?Q?RZhHAw/HHcz4o6krxdTCAEHYJlBPc3MNztLR9QoUfbLUEYUZ9C8h5NaBXnS3?=
- =?us-ascii?Q?nXqKIQ/jF4J0dbgCPlrQlC1jln1g/edHWQW061zKsgUmONgMK7BvFIuMjCBe?=
- =?us-ascii?Q?/TzZGrH8p+BOcpE6B0092NnsP+JZQZDD+NUU6Thg7acTqsuY4TwZMI3JNFLh?=
- =?us-ascii?Q?Oh1gKaNqLPydVUbrX5mpMy5K4wlhyi3b1rQOx4XhGNsygr06OV9mBnA2KJgN?=
- =?us-ascii?Q?4bbln9d1PBqTmojBdZfMLH/r93Mt3E7x7tY7QowAYB7xFwayZlcDCo4cGvmp?=
- =?us-ascii?Q?zTAJLFmES2XGMNxIPwv6WVHpaFo6dQN6eiBmI1H9tDZ6Rlbj7m5j+DzCwvjr?=
- =?us-ascii?Q?/lQFpBo5fKl05/8FGfHEbRNlS+XfVecKC5lJ8LKnMJLeh3FcG4fXQe7JfiM/?=
- =?us-ascii?Q?geQnC+Zy9HkdSJWz2HB2jtHBFy6s7nlTFYsJ6tukNe0u1rdlwaCj+Z+8bqvS?=
- =?us-ascii?Q?0XkP0za3Karfc6zgtBwotb2u+COxsB6x3BA9Q6bFOeHufNycUYMDo0bUJdti?=
- =?us-ascii?Q?xDTI5pG+5TYOKcbsadiOkamvUzyqII4hbPP0lNCYW/ncd92oazvhmDKMjUAV?=
- =?us-ascii?Q?gltKimmn0EB1TIYrZbcK/Q79NOiBsRuuO5o2NRvHjBWXpx6vaVAUqUW+QrH4?=
- =?us-ascii?Q?T18gEkpgi9FMjLi4laD9NPFmhfKyDXGmZ3hoo5yWBAibco0TehVU+cChR9Zl?=
- =?us-ascii?Q?dG6bfaz6ZsLOw/XP0KEnuiHzU82u4SRLKwjXjQ8ZbyQLDsFCPUN/pz3CEBl7?=
- =?us-ascii?Q?87RL5pvEJmB3od6lfkIUrXFgQpHyNSeCi0/GF34VQK6tlZpRAxuZ2v78Zt7v?=
- =?us-ascii?Q?FetMsblsRH6YsBeEsy/8hGZ0GeHQ614XVNSMqgmjTKltSEtcvMC7aHFeAUzS?=
- =?us-ascii?Q?PhZV+/T6a2QG7RkK26F315CyqgK0gfcnr5whBqkOH8byDavoOnxOlAr7FJ/P?=
- =?us-ascii?Q?iqcB/hNmyzxl+xoQADJp+S0IHiDWAaTtyzwYG9rRyfkZs/d8+kqmzVPPeMeb?=
- =?us-ascii?Q?1z2xWZKRVP/tifu5BjSXkefFcENmQAzB+VDMTI4lXTKVJH9gtdeags4HFQxy?=
- =?us-ascii?Q?vu2TSvn/AYol6bCvjhpvkn3I10dRLQ4bMxvsS59JOSvG8sZa3KrV5QUemeR+?=
- =?us-ascii?Q?0/slONkTa5LcG+w8X4tA+X0qedDW+ER/z5cEF2sbmJtXs3xHsgDelb396ry8?=
- =?us-ascii?Q?52PbyahGy2lHx2LVxXgNUb04uXoaIU8=3D?=
+	=?us-ascii?Q?CWEPMdu1H8zXZPc4NzE0LaJNl4tD8J7BoGKqFZXKP66CJeNxYX687rI2+/aX?=
+ =?us-ascii?Q?w4RTlv3XhjVxttM5CebTJR/RS2/uJWmkICkd6zL9MhUioOJQBK6bTMTODyHZ?=
+ =?us-ascii?Q?dn+CBLuLdItOd2NQXCOTdek+/mvKTuzfdJGLT0mXFuQRB8D4er/t98fNBnQy?=
+ =?us-ascii?Q?fd7tCYKpZeWqKVcUoHpCshioCLtaMkwXdd055qOtV/0YvVCVHUpugbVDpYkN?=
+ =?us-ascii?Q?nU05r6B+Sjfw8QeKkgOnZVCQDFuojJ1W6eLIPgWw+xJPlczSm1w5vpUhdJZT?=
+ =?us-ascii?Q?CjHtu1G7e5cjnlRl3QK/hwRjPE8H3VgCY760psit1PEBn/CAa9HnOwMtO+og?=
+ =?us-ascii?Q?Oi/+i+CLR+0rNXgG04YtPRmA36Fsf25CjghuAOwiX/xz3YssxexzIK9KIadp?=
+ =?us-ascii?Q?lYV7zc6Bnrmzaq8WDMKgTmoOqFSzR5K1cJMfOw3eLyriUvwDBTee0OmeOyAR?=
+ =?us-ascii?Q?utTIYueB36XFa0+gA2D8ZReHjiHNzFTHqRuupSBf6QWNa2ijrSRFdeVCKkfT?=
+ =?us-ascii?Q?APkIMBjFZFkjwdpyILLy36aGWJFK/tcq6DZv6VVyLX4yQpdGL2jfWIwKGM0T?=
+ =?us-ascii?Q?cEmQnS1H8YJB/TGXzlRuM3LeAaQtu2nJM7p2dSRDK1seK1/Phpx+EJ5IOysJ?=
+ =?us-ascii?Q?drRjFpMexbHOI40Knl9/LzRjUegXR4BReepBt5aPnAEy7KAr2MO9Llfkjn61?=
+ =?us-ascii?Q?YfH4PhIz8vcm+sa1ZgVR19s42XyIZPIJ0rmn9CSwcXD3D687n1mumGMCbBus?=
+ =?us-ascii?Q?XAkvYRMa0h1LHlv/+0ttSrBM/hpZD72pxU7Vnub3O7477oPCoaVf/VJ5o1nP?=
+ =?us-ascii?Q?gjH92bEPNkWsWcDcwKk0ICbrBX7WekzHdrxw1+25L7qFeU9fzdCVJZRYtN4S?=
+ =?us-ascii?Q?bbmFKXMHS5HHmUc5Uuvg2+fQOPxhPitGdhL44Ee2EVvO2Mfiyyv8EiK3WS72?=
+ =?us-ascii?Q?ANK0q+SPxxBqN7vnWdhhi1tVE+arvhN6JPnW7v/RDXITMKlRx1AzzmSOqFNq?=
+ =?us-ascii?Q?rd6Io7FLmSW9c9Pye2zOMHQBoWP9qImoiYvmBdRBO5/s0cqYF0Bfjfc6A3Ku?=
+ =?us-ascii?Q?o61X+MCXgOcIco7Wp/mt43kqj/AzH+XX90K7E3oEoDOR562P0ctM5dvPw95T?=
+ =?us-ascii?Q?TIO9p9uUhMNxr5JOvwhuz+P6juu4aBJMO6cPPcdByDExi+HVhjdmyzo9W835?=
+ =?us-ascii?Q?jko9uM5Tra2XFDj8E97c2yADMERAttd8SD9/DQ5BSMFOrSKaK1Gn9OWKFcQF?=
+ =?us-ascii?Q?69m+Mdx3cWdim0TDOpRpjrHVSr3gllDJqO0nsQ6G4V3oyy5sFnv6MMM5+nGa?=
+ =?us-ascii?Q?yCWYsRgsvuPtR+RSJqgRgFUhmcNlh1pXi+G3z5WXMiMaYBYLwU5X8zJu1AGT?=
+ =?us-ascii?Q?2lf3YfXEfgpbr+ti6pEmGtxU7Vb7qzYNWx9aABVd9pfoBAeWUMj9qfksNjel?=
+ =?us-ascii?Q?pih+kzlDh4km7oXfRgjzsNsiOSdM7Unv639YUJOZyNYe25QntNOBn5KvnyUI?=
+ =?us-ascii?Q?i/0+U40iK7w8IdAr3UkozrVmAk/vctHjg0Y5T61Z2L30xpz6KI7V2fqfZgM8?=
+ =?us-ascii?Q?s2/LnspXjflnW3xpms4dPWDy8woxj9BuHc3MvrSH0PTDwqRTlGPFb5YpIyuN?=
+ =?us-ascii?Q?dfRzRiIqXx+kFzK5TO/Q7o73LEIAyg7AMKQK8M5zRkAWQq9BXBK5oIK2HAg8?=
+ =?us-ascii?Q?qBXuN2pwfk7WEwnTBrWzD5ThQTNXQANTj+U029Wmq4pbn4S3CvUdlefRtrIj?=
+ =?us-ascii?Q?gBTleDpyTYI1X7vKrALfMGncdjCEB2iAwC2DUl3IwmGvPKyzpx4S?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4648b49e-7710-429c-4b6e-08df3905be21
+X-MS-Exchange-CrossTenant-Network-Message-Id: b185a470-42d3-4cf8-10a0-08df390858ee
 X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 17:21:33.8035
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 17:40:12.6777
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A+FwQH8bNAwLPY1+2DX25NUlNmPUEwU5c+mDfoIooGlPigTKzIT6TyiqTd7ocWUkUaT3GIkGMsm75+MIngoB/552ROUtLmkEstwMyl+b4lkZ5J3qKZr1EtYu4yYO9oss
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR04MB11204
+X-MS-Exchange-CrossTenant-UserPrincipalName: iAN/tolKT8w6SKIVElMNg65sfeXvwTmhM2veHoLFmPLPNvnp52tGSGMDUtQTBHJom7yDyayVVXGFL49vqkuJ3NWNCQ4b59/ugyTWgC5bDDE1nDLjI1qsapz1ampN1wL2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9873
 
 From: Frank Li <Frank.Li@nxp.com>
 
 Replace open-coded assignments to callback and callback_param fields
 of struct dma_async_tx_descriptor with calls to the
-dmaengine_desc_set_callback() helper across MMC host drivers.
+dmaengine_desc_set_callback() helper across SPI bus drivers.
 
 No functional change intended. Prepare make to struct
 dma_async_tx_descriptor private to the DMA engine.
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/mmc/host/atmel-mci.c             | 3 +--
- drivers/mmc/host/bcm2835.c               | 3 +--
- drivers/mmc/host/dw_mmc.c                | 3 +--
- drivers/mmc/host/moxart-mmc.c            | 3 +--
- drivers/mmc/host/mxcmmc.c                | 3 +--
- drivers/mmc/host/mxs-mmc.c               | 3 +--
- drivers/mmc/host/omap.c                  | 3 +--
- drivers/mmc/host/omap_hsmmc.c            | 3 +--
- drivers/mmc/host/owl-mmc.c               | 3 +--
- drivers/mmc/host/pxamci.c                | 3 +--
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 6 ++----
- drivers/mmc/host/sdhci.c                 | 3 +--
- drivers/mmc/host/sh_mmcif.c              | 6 ++----
- drivers/mmc/host/uniphier-sd.c           | 3 +--
- drivers/mmc/host/usdhi6rol0.c            | 3 +--
- 15 files changed, 17 insertions(+), 34 deletions(-)
+ drivers/spi/atmel-quadspi.c       | 3 +--
+ drivers/spi/spi-at91-usart.c      | 3 +--
+ drivers/spi/spi-atcspi200.c       | 3 +--
+ drivers/spi/spi-atmel.c           | 3 +--
+ drivers/spi/spi-bcm2835.c         | 6 ++----
+ drivers/spi/spi-cadence-quadspi.c | 3 +--
+ drivers/spi/spi-davinci.c         | 6 ++----
+ drivers/spi/spi-dw-dma.c          | 6 ++----
+ drivers/spi/spi-ep93xx.c          | 3 +--
+ drivers/spi/spi-fsl-dspi.c        | 6 ++----
+ drivers/spi/spi-fsl-lpspi.c       | 6 ++----
+ drivers/spi/spi-geni-qcom.c       | 3 +--
+ drivers/spi/spi-img-spfi.c        | 6 ++----
+ drivers/spi/spi-imx.c             | 6 ++----
+ drivers/spi/spi-ingenic.c         | 3 +--
+ drivers/spi/spi-mxs.c             | 3 +--
+ drivers/spi/spi-nxp-xspi.c        | 3 +--
+ drivers/spi/spi-omap2-mcspi.c     | 6 ++----
+ drivers/spi/spi-pic32.c           | 3 +--
+ drivers/spi/spi-pl022.c           | 3 +--
+ drivers/spi/spi-pxa2xx-dma.c      | 3 +--
+ drivers/spi/spi-qup.c             | 3 +--
+ drivers/spi/spi-rockchip.c        | 6 ++----
+ drivers/spi/spi-rspi.c            | 6 ++----
+ drivers/spi/spi-rzv2h-rspi.c      | 3 +--
+ drivers/spi/spi-s3c64xx.c         | 3 +--
+ drivers/spi/spi-sh-msiof.c        | 6 ++----
+ drivers/spi/spi-spacemit-k1.c     | 3 +--
+ drivers/spi/spi-stm32-ospi.c      | 3 +--
+ drivers/spi/spi-stm32-qspi.c      | 3 +--
+ drivers/spi/spi-stm32.c           | 9 +++------
+ drivers/spi/spi-sun6i.c           | 3 +--
+ drivers/spi/spi-tegra114.c        | 6 ++----
+ drivers/spi/spi-tegra20-slink.c   | 6 ++----
+ drivers/spi/spi-tegra210-quad.c   | 6 ++----
+ drivers/spi/spi-ti-qspi.c         | 3 +--
+ drivers/spi/spi-topcliff-pch.c    | 6 ++----
+ drivers/spi/spi-uniphier.c        | 6 ++----
+ 38 files changed, 56 insertions(+), 112 deletions(-)
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index 98933be5f1744..de4ef7a675892 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -1172,8 +1172,7 @@ atmci_prepare_data_dma(struct atmel_mci *host, struct mmc_data *data)
- 		goto unmap_exit;
- 
- 	host->dma.data_desc = desc;
--	desc->callback = atmci_dma_complete;
--	desc->callback_param = host;
-+	dmaengine_desc_set_callback(desc, atmci_dma_complete, NULL, host);
- 
- 	return iflags;
- unmap_exit:
-diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index efd1903c3ccd4..9a2c995577d46 100644
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -506,8 +506,7 @@ void bcm2835_prepare_dma(struct bcm2835_host *host, struct mmc_data *data)
- 		return;
+diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
+index 762a3fb0fca81..de205e04a8600 100644
+--- a/drivers/spi/atmel-quadspi.c
++++ b/drivers/spi/atmel-quadspi.c
+@@ -790,8 +790,7 @@ static int atmel_qspi_dma_xfer(struct atmel_qspi *aq, struct dma_chan *chan,
  	}
  
--	desc->callback = bcm2835_dma_complete;
--	desc->callback_param = host;
-+	dmaengine_desc_set_callback(desc, bcm2835_dma_complete, NULL, host);
- 	host->dma_desc = desc;
- 	host->dma_chan = dma_chan;
- 	host->dma_dir = dir_data;
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index ff0b25d287a94..15c65aeea8030 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -884,8 +884,7 @@ static int dw_mci_edmac_start_dma(struct dw_mci *host,
+ 	reinit_completion(&aq->dma_completion);
+-	tx->callback = atmel_qspi_dma_callback;
+-	tx->callback_param = aq;
++	dmaengine_desc_set_callback(tx, atmel_qspi_dma_callback, NULL, aq);
+ 	cookie = dmaengine_submit(tx);
+ 	ret = dma_submit_error(cookie);
+ 	if (ret) {
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+index aadcdf734fb03..8b56ac1dcad8e 100644
+--- a/drivers/spi/spi-at91-usart.c
++++ b/drivers/spi/spi-at91-usart.c
+@@ -228,8 +228,7 @@ static int at91_usart_spi_dma_transfer(struct spi_controller *ctlr,
+ 	if (!txdesc)
+ 		goto at91_usart_spi_err_dma;
+ 
+-	rxdesc->callback = dma_callback;
+-	rxdesc->callback_param = ctlr;
++	dmaengine_desc_set_callback(rxdesc, dma_callback, NULL, ctlr);
+ 
+ 	cookie = dmaengine_submit(rxdesc);
+ 	if (dma_submit_error(cookie))
+diff --git a/drivers/spi/spi-atcspi200.c b/drivers/spi/spi-atcspi200.c
+index b532c58c0ab91..c807e730ca94c 100644
+--- a/drivers/spi/spi-atcspi200.c
++++ b/drivers/spi/spi-atcspi200.c
+@@ -340,8 +340,7 @@ static int atcspi_dma_trans(struct atcspi_dev *spi,
  	}
  
- 	/* Set dw_mci_dmac_complete_dma as callback */
--	desc->callback = dw_mci_dmac_complete_dma;
--	desc->callback_param = (void *)host;
-+	dmaengine_desc_set_callback(desc, dw_mci_dmac_complete_dma, NULL, (void *)host);
- 	dmaengine_submit(desc);
+ 	reinit_completion(&spi->dma_completion);
+-	desc->callback = atcspi_dma_callback;
+-	desc->callback_param = &spi->dma_completion;
++	dmaengine_desc_set_callback(desc, atcspi_dma_callback, NULL, &spi->dma_completion);
+ 	cookie = dmaengine_submit(desc);
+ 	ret = dma_submit_error(cookie);
+ 	if (ret)
+diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+index ffc896e4621ac..ffc1292b08c10 100644
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -867,8 +867,7 @@ static int atmel_spi_next_xfer_dma_submit(struct spi_controller *host,
+ 	spi_writel(as, IER, SPI_BIT(OVRES));
  
- 	/* Flush cache before write */
-diff --git a/drivers/mmc/host/moxart-mmc.c b/drivers/mmc/host/moxart-mmc.c
-index 28aed13549a64..15689717c76bf 100644
---- a/drivers/mmc/host/moxart-mmc.c
-+++ b/drivers/mmc/host/moxart-mmc.c
-@@ -289,8 +289,7 @@ static void moxart_transfer_dma(struct mmc_data *data, struct moxart_host *host)
+ 	/* Put the callback on the RX transfer only, that should finish last */
+-	rxdesc->callback = dma_callback;
+-	rxdesc->callback_param = host;
++	dmaengine_desc_set_callback(rxdesc, dma_callback, NULL, host);
  
- 	if (desc) {
- 		host->tx_desc = desc;
--		desc->callback = moxart_dma_complete;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, moxart_dma_complete, NULL, host);
- 		dmaengine_submit(desc);
- 		dma_async_issue_pending(dma_chan);
- 	}
-diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-index 097498a3f8ff4..e6271d67b6f6c 100644
---- a/drivers/mmc/host/mxcmmc.c
-+++ b/drivers/mmc/host/mxcmmc.c
-@@ -394,8 +394,7 @@ static int mxcmci_start_cmd(struct mxcmci_host *host, struct mmc_command *cmd,
- 
- 	if (mxcmci_use_dma(host)) {
- 		if (host->dma_dir == DMA_FROM_DEVICE) {
--			host->desc->callback = mxcmci_dma_callback;
--			host->desc->callback_param = host;
-+			dmaengine_desc_set_callback(host->desc, mxcmci_dma_callback, NULL, host);
- 		} else {
- 			int_cntr |= INT_WRITE_OP_DONE_EN;
- 		}
-diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-index 7c7c52d9e8e72..6a2b3e6d9a207 100644
---- a/drivers/mmc/host/mxs-mmc.c
-+++ b/drivers/mmc/host/mxs-mmc.c
-@@ -234,8 +234,7 @@ static struct dma_async_tx_descriptor *mxs_mmc_prep_dma(
- 	desc = dmaengine_prep_slave_sg(ssp->dmach,
- 				sgl, sg_len, ssp->slave_dirn, flags);
- 	if (desc) {
--		desc->callback = mxs_mmc_dma_irq_callback;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, mxs_mmc_dma_irq_callback, NULL, host);
- 	} else {
- 		if (data)
- 			dma_unmap_sg(mmc_dev(host->mmc), data->sg,
-diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
-index 527b89a5ed707..4e72e57d11971 100644
---- a/drivers/mmc/host/omap.c
-+++ b/drivers/mmc/host/omap.c
-@@ -1050,8 +1050,7 @@ mmc_omap_prepare_data(struct mmc_omap_host *host, struct mmc_request *req)
- 
- 		OMAP_MMC_WRITE(host, BUF, buf);
- 
--		tx->callback = mmc_omap_dma_callback;
--		tx->callback_param = host;
-+		dmaengine_desc_set_callback(tx, mmc_omap_dma_callback, NULL, host);
- 		dmaengine_submit(tx);
- 		host->brs_received = 0;
- 		host->dma_done = 0;
-diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-index de5a3b70107d8..ba60b81560fbd 100644
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -1279,8 +1279,7 @@ static int omap_hsmmc_setup_dma_transfer(struct omap_hsmmc_host *host,
- 		return -1;
+ 	/* Submit and fire RX and TX with TX last so we're ready to read! */
+ 	cookie = dmaengine_submit(rxdesc);
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index cc57489732816..a71048a88c58a 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -706,11 +706,9 @@ static int bcm2835_spi_prepare_sg(struct spi_controller *ctlr,
+ 	 * RX-only transfers; else by the TX channel for TX-only transfers.
+ 	 */
+ 	if (!is_tx) {
+-		desc->callback = bcm2835_spi_dma_rx_done;
+-		desc->callback_param = ctlr;
++		dmaengine_desc_set_callback(desc, bcm2835_spi_dma_rx_done, NULL, ctlr);
+ 	} else if (!tfr->rx_buf) {
+-		desc->callback = bcm2835_spi_dma_tx_done;
+-		desc->callback_param = ctlr;
++		dmaengine_desc_set_callback(desc, bcm2835_spi_dma_tx_done, NULL, ctlr);
+ 		bs->target = target;
  	}
  
--	tx->callback = omap_hsmmc_dma_callback;
--	tx->callback_param = host;
-+	dmaengine_desc_set_callback(tx, omap_hsmmc_dma_callback, NULL, host);
- 
- 	/* Does not fail */
- 	dmaengine_submit(tx);
-diff --git a/drivers/mmc/host/owl-mmc.c b/drivers/mmc/host/owl-mmc.c
-index d5b8a110267b8..8e0520d338c47 100644
---- a/drivers/mmc/host/owl-mmc.c
-+++ b/drivers/mmc/host/owl-mmc.c
-@@ -329,8 +329,7 @@ static int owl_mmc_prepare_data(struct owl_mmc_host *owl_host,
- 
- 	owl_host->data = data;
- 
--	owl_host->desc->callback = owl_mmc_dma_complete;
--	owl_host->desc->callback_param = (void *)owl_host;
-+	dmaengine_desc_set_callback(owl_host->desc, owl_mmc_dma_complete, NULL, (void *)owl_host);
- 	data->error = 0;
- 
- 	return 0;
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index f8427f071c009..06483f7355206 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -212,8 +212,7 @@ static void pxamci_setup_data(struct pxamci_host *host, struct mmc_data *data)
+diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
+index 73ea51c41f955..6e7c8b54e0377 100644
+--- a/drivers/spi/spi-cadence-quadspi.c
++++ b/drivers/spi/spi-cadence-quadspi.c
+@@ -1395,8 +1395,7 @@ static int cqspi_direct_read_execute(struct cqspi_flash_pdata *f_pdata,
+ 		goto err_unmap;
  	}
  
- 	if (!(data->flags & MMC_DATA_READ)) {
--		tx->callback = pxamci_dma_irq;
--		tx->callback_param = host;
-+		dmaengine_desc_set_callback(tx, pxamci_dma_irq, NULL, host);
+-	tx->callback = cqspi_rx_dma_callback;
+-	tx->callback_param = cqspi;
++	dmaengine_desc_set_callback(tx, cqspi_rx_dma_callback, NULL, cqspi);
+ 	cookie = dmaengine_submit(tx);
+ 	reinit_completion(&cqspi->rx_dma_complete);
+ 
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index 087735ed9c80c..b115daf2c76f3 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -703,10 +703,8 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 		if (!txdesc)
+ 			goto err_desc;
+ 
+-		rxdesc->callback = davinci_spi_dma_rx_callback;
+-		rxdesc->callback_param = (void *)dspi;
+-		txdesc->callback = davinci_spi_dma_tx_callback;
+-		txdesc->callback_param = (void *)dspi;
++		dmaengine_desc_set_callback(rxdesc, davinci_spi_dma_rx_callback, NULL, (void *)dspi);
++		dmaengine_desc_set_callback(txdesc, davinci_spi_dma_tx_callback, NULL, (void *)dspi);
+ 
+ 		if (pdata->cshold_bug)
+ 			iowrite16(spidat1 >> 16, dspi->base + SPIDAT1 + 2);
+diff --git a/drivers/spi/spi-dw-dma.c b/drivers/spi/spi-dw-dma.c
+index b706770334a61..94810f9dd5c5d 100644
+--- a/drivers/spi/spi-dw-dma.c
++++ b/drivers/spi/spi-dw-dma.c
+@@ -397,8 +397,7 @@ static int dw_spi_dma_submit_tx(struct dw_spi *dws, struct scatterlist *sgl,
+ 	if (!txdesc)
+ 		return -ENOMEM;
+ 
+-	txdesc->callback = dw_spi_dma_tx_done;
+-	txdesc->callback_param = dws;
++	dmaengine_desc_set_callback(txdesc, dw_spi_dma_tx_done, NULL, dws);
+ 
+ 	cookie = dmaengine_submit(txdesc);
+ 	ret = dma_submit_error(cookie);
+@@ -498,8 +497,7 @@ static int dw_spi_dma_submit_rx(struct dw_spi *dws, struct scatterlist *sgl,
+ 	if (!rxdesc)
+ 		return -ENOMEM;
+ 
+-	rxdesc->callback = dw_spi_dma_rx_done;
+-	rxdesc->callback_param = dws;
++	dmaengine_desc_set_callback(rxdesc, dw_spi_dma_rx_done, NULL, dws);
+ 
+ 	cookie = dmaengine_submit(rxdesc);
+ 	ret = dma_submit_error(cookie);
+diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
+index d8f4aa38685f5..6832869bc73bf 100644
+--- a/drivers/spi/spi-ep93xx.c
++++ b/drivers/spi/spi-ep93xx.c
+@@ -418,8 +418,7 @@ static int ep93xx_spi_dma_transfer(struct spi_controller *host)
  	}
  
- 	host->dma_cookie = dmaengine_submit(tx);
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 426308b73b490..e5ef3bae88d59 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -196,8 +196,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
+ 	/* We are ready when RX is done */
+-	rxd->callback = ep93xx_spi_dma_callback;
+-	rxd->callback_param = host;
++	dmaengine_desc_set_callback(rxd, ep93xx_spi_dma_callback, NULL, host);
  
- 	if (desc) {
- 		reinit_completion(&priv->dma_priv.dma_dataend);
--		desc->callback = renesas_sdhi_sys_dmac_dma_callback;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, renesas_sdhi_sys_dmac_dma_callback, NULL, host);
+ 	/* Now submit both descriptors and start DMA */
+ 	dmaengine_submit(rxd);
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index f03488870d024..aee0393f9a832 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -581,8 +581,7 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
+ 		return -EIO;
+ 	}
  
- 		cookie = dmaengine_submit(desc);
- 		if (cookie < 0) {
-@@ -272,8 +271,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
+-	dma->tx_desc->callback = dspi_tx_dma_callback;
+-	dma->tx_desc->callback_param = dspi;
++	dmaengine_desc_set_callback(dma->tx_desc, dspi_tx_dma_callback, NULL, dspi);
+ 	if (dma_submit_error(dmaengine_submit(dma->tx_desc))) {
+ 		dev_err(dev, "DMA submit failed\n");
+ 		return -EINVAL;
+@@ -600,8 +599,7 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
+ 		return -EIO;
+ 	}
  
- 	if (desc) {
- 		reinit_completion(&priv->dma_priv.dma_dataend);
--		desc->callback = renesas_sdhi_sys_dmac_dma_callback;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, renesas_sdhi_sys_dmac_dma_callback, NULL, host);
- 
- 		cookie = dmaengine_submit(desc);
- 		if (cookie < 0) {
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index efb4c7742fe21..18aca84834fb6 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1298,8 +1298,7 @@ static int sdhci_external_dma_setup(struct sdhci_host *host,
- 	if (!desc)
+-	dma->rx_desc->callback = dspi_rx_dma_callback;
+-	dma->rx_desc->callback_param = dspi;
++	dmaengine_desc_set_callback(dma->rx_desc, dspi_rx_dma_callback, NULL, dspi);
+ 	if (dma_submit_error(dmaengine_submit(dma->rx_desc))) {
+ 		dev_err(dev, "DMA submit failed\n");
+ 		return -EINVAL;
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index b25f94b2ef738..7798197d5b350 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -634,8 +634,7 @@ static int fsl_lpspi_dma_transfer(struct spi_controller *controller,
+ 	if (!desc_rx)
  		return -EINVAL;
  
--	desc->callback = NULL;
--	desc->callback_param = NULL;
-+	dmaengine_desc_set_callback(desc, NULL, NULL, NULL);
+-	desc_rx->callback = fsl_lpspi_dma_rx_callback;
+-	desc_rx->callback_param = (void *)fsl_lpspi;
++	dmaengine_desc_set_callback(desc_rx, fsl_lpspi_dma_rx_callback, NULL, (void *)fsl_lpspi);
+ 	dmaengine_submit(desc_rx);
+ 	reinit_completion(&fsl_lpspi->dma_rx_completion);
+ 	dma_async_issue_pending(controller->dma_rx);
+@@ -648,8 +647,7 @@ static int fsl_lpspi_dma_transfer(struct spi_controller *controller,
+ 		return -EINVAL;
+ 	}
+ 
+-	desc_tx->callback = fsl_lpspi_dma_tx_callback;
+-	desc_tx->callback_param = (void *)fsl_lpspi;
++	dmaengine_desc_set_callback(desc_tx, fsl_lpspi_dma_tx_callback, NULL, (void *)fsl_lpspi);
+ 	dmaengine_submit(desc_tx);
+ 	reinit_completion(&fsl_lpspi->dma_tx_completion);
+ 	dma_async_issue_pending(controller->dma_tx);
+diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+index 91e75e213f929..e239c4333055b 100644
+--- a/drivers/spi/spi-geni-qcom.c
++++ b/drivers/spi/spi-geni-qcom.c
+@@ -506,8 +506,7 @@ static int setup_gsi_xfer(struct spi_transfer *xfer, struct spi_geni_master *mas
+ 		return -EIO;
+ 	}
+ 
+-	tx_desc->callback_result = spi_gsi_callback_result;
+-	tx_desc->callback_param = spi;
++	dmaengine_desc_set_callback(tx_desc, NULL, spi_gsi_callback_result, spi);
+ 
+ 	if (peripheral.cmd & SPI_RX)
+ 		dmaengine_submit(rx_desc);
+diff --git a/drivers/spi/spi-img-spfi.c b/drivers/spi/spi-img-spfi.c
+index 76dcb283d1225..53370cff7e2cd 100644
+--- a/drivers/spi/spi-img-spfi.c
++++ b/drivers/spi/spi-img-spfi.c
+@@ -334,8 +334,7 @@ static int img_spfi_start_dma(struct spi_controller *host,
+ 		if (!rxdesc)
+ 			goto stop_dma;
+ 
+-		rxdesc->callback = img_spfi_dma_rx_cb;
+-		rxdesc->callback_param = spfi;
++		dmaengine_desc_set_callback(rxdesc, img_spfi_dma_rx_cb, NULL, spfi);
+ 	}
+ 
+ 	if (xfer->tx_buf) {
+@@ -358,8 +357,7 @@ static int img_spfi_start_dma(struct spi_controller *host,
+ 		if (!txdesc)
+ 			goto stop_dma;
+ 
+-		txdesc->callback = img_spfi_dma_tx_cb;
+-		txdesc->callback_param = spfi;
++		dmaengine_desc_set_callback(txdesc, img_spfi_dma_tx_cb, NULL, spfi);
+ 	}
+ 
+ 	if (xfer->rx_buf) {
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index cadf0b93f4403..f8a3ac11f49d0 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -1738,8 +1738,7 @@ static int spi_imx_dma_submit(struct spi_imx_data *spi_imx,
+ 		return -EINVAL;
+ 	}
+ 
+-	desc_rx->callback = spi_imx_dma_rx_callback;
+-	desc_rx->callback_param = (void *)spi_imx;
++	dmaengine_desc_set_callback(desc_rx, spi_imx_dma_rx_callback, NULL, (void *)spi_imx);
+ 	cookie = dmaengine_submit(desc_rx);
+ 	if (dma_submit_error(cookie)) {
+ 		dev_err(spi_imx->dev, "submitting DMA RX failed\n");
+@@ -1756,8 +1755,7 @@ static int spi_imx_dma_submit(struct spi_imx_data *spi_imx,
+ 	if (!desc_tx)
+ 		goto dmaengine_terminate_rx;
+ 
+-	desc_tx->callback = spi_imx_dma_tx_callback;
+-	desc_tx->callback_param = (void *)spi_imx;
++	dmaengine_desc_set_callback(desc_tx, spi_imx_dma_tx_callback, NULL, (void *)spi_imx);
+ 	cookie = dmaengine_submit(desc_tx);
+ 	if (dma_submit_error(cookie)) {
+ 		dev_err(spi_imx->dev, "submitting DMA TX failed\n");
+diff --git a/drivers/spi/spi-ingenic.c b/drivers/spi/spi-ingenic.c
+index a0a047510611e..9567ddde06ef0 100644
+--- a/drivers/spi/spi-ingenic.c
++++ b/drivers/spi/spi-ingenic.c
+@@ -157,8 +157,7 @@ spi_ingenic_prepare_dma(struct spi_controller *ctlr, struct dma_chan *chan,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	if (dir == DMA_DEV_TO_MEM) {
+-		desc->callback = spi_ingenic_finalize_transfer;
+-		desc->callback_param = ctlr;
++		dmaengine_desc_set_callback(desc, spi_ingenic_finalize_transfer, NULL, ctlr);
+ 	}
  
  	cookie = dmaengine_submit(desc);
- 	if (dma_submit_error(cookie))
-diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
-index 8bd9cdedafa4d..9fe49fa8f372f 100644
---- a/drivers/mmc/host/sh_mmcif.c
-+++ b/drivers/mmc/host/sh_mmcif.c
-@@ -299,8 +299,7 @@ static void sh_mmcif_start_dma_rx(struct sh_mmcif_host *host)
+diff --git a/drivers/spi/spi-mxs.c b/drivers/spi/spi-mxs.c
+index fda1d260b2966..eabea73a19fc7 100644
+--- a/drivers/spi/spi-mxs.c
++++ b/drivers/spi/spi-mxs.c
+@@ -267,8 +267,7 @@ static int mxs_spi_txrx_dma(struct mxs_spi *spi,
+ 	 * The last descriptor must have this callback,
+ 	 * to finish the DMA transaction.
+ 	 */
+-	desc->callback = mxs_ssp_dma_irq_callback;
+-	desc->callback_param = spi;
++	dmaengine_desc_set_callback(desc, mxs_ssp_dma_irq_callback, NULL, spi);
+ 
+ 	/* Start the transfer. */
+ 	dmaengine_submit(desc);
+diff --git a/drivers/spi/spi-nxp-xspi.c b/drivers/spi/spi-nxp-xspi.c
+index 38c8d6269aadd..e532b2da54835 100644
+--- a/drivers/spi/spi-nxp-xspi.c
++++ b/drivers/spi/spi-nxp-xspi.c
+@@ -872,8 +872,7 @@ static int nxp_xspi_ahb_dma_read(struct nxp_xspi *xspi,
+ 		goto err_unmap_src;
  	}
  
- 	if (desc) {
--		desc->callback = sh_mmcif_dma_complete;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, sh_mmcif_dma_complete, NULL, host);
- 		cookie = dmaengine_submit(desc);
- 		sh_mmcif_bitset(host, MMCIF_CE_BUF_ACC, BUF_ACC_DMAREN);
- 		dma_async_issue_pending(chan);
-@@ -349,8 +348,7 @@ static void sh_mmcif_start_dma_tx(struct sh_mmcif_host *host)
+-	desc->callback = nxp_xspi_dma_rx_callback;
+-	desc->callback_param = xspi;
++	dmaengine_desc_set_callback(desc, nxp_xspi_dma_rx_callback, NULL, xspi);
+ 	reinit_completion(&xspi->dma_rx_c);
+ 	dmaengine_submit(desc);
+ 	dma_async_issue_pending(chan);
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index e46b1d9c8cd08..56fc8211a752f 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -436,8 +436,7 @@ static int omap2_mcspi_tx_dma(struct spi_device *spi,
+ 	if (!tx)
+ 		return -EIO;
+ 
+-	tx->callback = omap2_mcspi_tx_callback;
+-	tx->callback_param = spi;
++	dmaengine_desc_set_callback(tx, omap2_mcspi_tx_callback, NULL, spi);
+ 
+ 	return dma_submit_error(dmaengine_submit(tx));
+ }
+@@ -525,8 +524,7 @@ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
+ 		goto out_free_sg;
  	}
  
- 	if (desc) {
--		desc->callback = sh_mmcif_dma_complete;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, sh_mmcif_dma_complete, NULL, host);
- 		cookie = dmaengine_submit(desc);
- 		sh_mmcif_bitset(host, MMCIF_CE_BUF_ACC, BUF_ACC_DMAWEN);
- 		dma_async_issue_pending(chan);
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 1eae2f4b6c1f9..d75ac6abd853c 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -158,8 +158,7 @@ static void uniphier_sd_external_dma_start(struct tmio_mmc_host *host,
- 	if (!desc)
- 		goto unmap_sg;
+-	tx->callback = omap2_mcspi_rx_callback;
+-	tx->callback_param = spi;
++	dmaengine_desc_set_callback(tx, omap2_mcspi_rx_callback, NULL, spi);
+ 	ret = dma_submit_error(dmaengine_submit(tx));
+ 	if (ret)
+ 		goto out_free_sg;
+diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
+index 8363bc873b03a..b6a6929cbb0c2 100644
+--- a/drivers/spi/spi-pic32.c
++++ b/drivers/spi/spi-pic32.c
+@@ -330,8 +330,7 @@ static int pic32_spi_dma_transfer(struct pic32_spi *pic32s,
+ 	}
  
--	desc->callback_result = uniphier_sd_external_dma_callback;
--	desc->callback_param = host;
-+	dmaengine_desc_set_callback(desc, NULL, uniphier_sd_external_dma_callback, host);
+ 	/* Put callback on the RX transfer, that should finish last */
+-	desc_rx->callback = pic32_spi_dma_rx_notify;
+-	desc_rx->callback_param = pic32s;
++	dmaengine_desc_set_callback(desc_rx, pic32_spi_dma_rx_notify, NULL, pic32s);
+ 
+ 	cookie = dmaengine_submit(desc_rx);
+ 	ret = dma_submit_error(cookie);
+diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
+index 3ff30486b2892..9f98f95bb534c 100644
+--- a/drivers/spi/spi-pl022.c
++++ b/drivers/spi/spi-pl022.c
+@@ -956,8 +956,7 @@ static int configure_dma(struct pl022 *pl022)
+ 		goto err_txdesc;
+ 
+ 	/* Put the callback on the RX transfer only, that should finish last */
+-	rxdesc->callback = dma_callback;
+-	rxdesc->callback_param = pl022;
++	dmaengine_desc_set_callback(rxdesc, dma_callback, NULL, pl022);
+ 
+ 	/* Submit and fire RX and TX with TX last so we're ready to read! */
+ 	dmaengine_submit(rxdesc);
+diff --git a/drivers/spi/spi-pxa2xx-dma.c b/drivers/spi/spi-pxa2xx-dma.c
+index c94d1d192e743..0e7ad7fb48eb2 100644
+--- a/drivers/spi/spi-pxa2xx-dma.c
++++ b/drivers/spi/spi-pxa2xx-dma.c
+@@ -154,8 +154,7 @@ int pxa2xx_spi_dma_prepare(struct driver_data *drv_data,
+ 	}
+ 
+ 	/* We are ready when RX completes */
+-	rx_desc->callback = pxa2xx_spi_dma_callback;
+-	rx_desc->callback_param = drv_data;
++	dmaengine_desc_set_callback(rx_desc, pxa2xx_spi_dma_callback, NULL, drv_data);
+ 
+ 	dmaengine_submit(rx_desc);
+ 	dmaengine_submit(tx_desc);
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index e8b076b1622d3..6be0b942d7c4e 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -429,8 +429,7 @@ static int spi_qup_prep_sg(struct spi_controller *host, struct scatterlist *sgl,
+ 	if (IS_ERR_OR_NULL(desc))
+ 		return desc ? PTR_ERR(desc) : -EINVAL;
+ 
+-	desc->callback = callback;
+-	desc->callback_param = qup;
++	dmaengine_desc_set_callback(desc, callback, NULL, qup);
  
  	cookie = dmaengine_submit(desc);
- 	if (cookie < 0)
-diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-index 3bccf800339ba..8b2bb44e2f86a 100644
---- a/drivers/mmc/host/usdhi6rol0.c
-+++ b/drivers/mmc/host/usdhi6rol0.c
-@@ -592,8 +592,7 @@ static int usdhi6_dma_setup(struct usdhi6_host *host, struct dma_chan *chan,
+ 
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index 1a81fd94b4396..f8d6cea2f3dad 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -475,8 +475,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+ 		if (!rxdesc)
+ 			return -EINVAL;
+ 
+-		rxdesc->callback = rockchip_spi_dma_rxcb;
+-		rxdesc->callback_param = ctlr;
++		dmaengine_desc_set_callback(rxdesc, rockchip_spi_dma_rxcb, NULL, ctlr);
  	}
  
- 	if (desc) {
--		desc->callback = usdhi6_dma_complete;
--		desc->callback_param = host;
-+		dmaengine_desc_set_callback(desc, usdhi6_dma_complete, NULL, host);
- 		cookie = dmaengine_submit(desc);
+ 	txdesc = NULL;
+@@ -500,8 +499,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+ 			return -EINVAL;
+ 		}
+ 
+-		txdesc->callback = rockchip_spi_dma_txcb;
+-		txdesc->callback_param = ctlr;
++		dmaengine_desc_set_callback(txdesc, rockchip_spi_dma_txcb, NULL, ctlr);
  	}
  
+ 	/* rx must be started before tx due to spi instinct */
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index c61edd1c1353b..5e03a186e9e79 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -553,8 +553,7 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
+ 			goto no_dma_rx;
+ 		}
+ 
+-		desc_rx->callback = rspi_dma_complete;
+-		desc_rx->callback_param = rspi;
++		dmaengine_desc_set_callback(desc_rx, rspi_dma_complete, NULL, rspi);
+ 		cookie = dmaengine_submit(desc_rx);
+ 		if (dma_submit_error(cookie)) {
+ 			ret = cookie;
+@@ -577,8 +576,7 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
+ 			/* No callback */
+ 			desc_tx->callback = NULL;
+ 		} else {
+-			desc_tx->callback = rspi_dma_complete;
+-			desc_tx->callback_param = rspi;
++			dmaengine_desc_set_callback(desc_tx, rspi_dma_complete, NULL, rspi);
+ 		}
+ 		cookie = dmaengine_submit(desc_tx);
+ 		if (dma_submit_error(cookie)) {
+diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
+index daa4239b0fe04..f17b6d3da5de7 100644
+--- a/drivers/spi/spi-rzv2h-rspi.c
++++ b/drivers/spi/spi-rzv2h-rspi.c
+@@ -295,8 +295,7 @@ rzv2h_rspi_setup_dma_channel(struct rzv2h_rspi_priv *rspi,
+ 		return ERR_PTR(-EAGAIN);
+ 
+ 	if (direction == DMA_DEV_TO_MEM) {
+-		desc->callback = rzv2h_rspi_dma_complete;
+-		desc->callback_param = rspi;
++		dmaengine_desc_set_callback(desc, rzv2h_rspi_dma_complete, NULL, rspi);
+ 	}
+ 
+ 	return desc;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 58e306cc730fc..d24b95212ecd8 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -338,8 +338,7 @@ static int s3c64xx_prepare_dma(struct s3c64xx_spi_dma_data *dma,
+ 		return -ENOMEM;
+ 	}
+ 
+-	desc->callback = s3c64xx_spi_dmacb;
+-	desc->callback_param = dma;
++	dmaengine_desc_set_callback(desc, s3c64xx_spi_dmacb, NULL, dma);
+ 
+ 	dma->cookie = dmaengine_submit(desc);
+ 	ret = dma_submit_error(dma->cookie);
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 89fbdde46cfe9..557c645fcebc6 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -665,8 +665,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
+ 		if (!desc_rx)
+ 			return -EAGAIN;
+ 
+-		desc_rx->callback = sh_msiof_dma_complete;
+-		desc_rx->callback_param = &p->done;
++		dmaengine_desc_set_callback(desc_rx, sh_msiof_dma_complete, NULL, &p->done);
+ 		cookie = dmaengine_submit(desc_rx);
+ 		if (dma_submit_error(cookie))
+ 			return cookie;
+@@ -684,8 +683,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
+ 			goto no_dma_tx;
+ 		}
+ 
+-		desc_tx->callback = sh_msiof_dma_complete;
+-		desc_tx->callback_param = &p->done_txdma;
++		dmaengine_desc_set_callback(desc_tx, sh_msiof_dma_complete, NULL, &p->done_txdma);
+ 		cookie = dmaengine_submit(desc_tx);
+ 		if (dma_submit_error(cookie)) {
+ 			ret = cookie;
+diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
+index d03a93d149ecc..c9bf925ee3521 100644
+--- a/drivers/spi/spi-spacemit-k1.c
++++ b/drivers/spi/spi-spacemit-k1.c
+@@ -294,8 +294,7 @@ static int k1_spi_dma_one(struct spi_controller *host, struct spi_device *spi,
+ 	}
+ 
+ 	/* When RX is complete we also know TX has completed */
+-	rxdesc->callback = k1_spi_dma_callback;
+-	rxdesc->callback_param = drv_data;
++	dmaengine_desc_set_callback(rxdesc, k1_spi_dma_callback, NULL, drv_data);
+ 
+ 	dmaengine_submit(txdesc);
+ 	dmaengine_submit(rxdesc);
+diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+index fa0e8e83cb1be..4e202d74c9926 100644
+--- a/drivers/spi/spi-stm32-ospi.c
++++ b/drivers/spi/spi-stm32-ospi.c
+@@ -374,8 +374,7 @@ static int stm32_ospi_tx_dma(struct stm32_ospi *ospi,
+ 	cr = readl_relaxed(regs_base + OSPI_CR);
+ 
+ 	reinit_completion(&ospi->dma_completion);
+-	desc->callback = stm32_ospi_dma_callback;
+-	desc->callback_param = &ospi->dma_completion;
++	dmaengine_desc_set_callback(desc, stm32_ospi_dma_callback, NULL, &ospi->dma_completion);
+ 	cookie = dmaengine_submit(desc);
+ 	err = dma_submit_error(cookie);
+ 	if (err)
+diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
+index b77daba6db83a..f9865720c6dd3 100644
+--- a/drivers/spi/spi-stm32-qspi.c
++++ b/drivers/spi/spi-stm32-qspi.c
+@@ -265,8 +265,7 @@ static int stm32_qspi_tx_dma(struct stm32_qspi *qspi,
+ 	cr = readl_relaxed(qspi->io_base + QSPI_CR);
+ 
+ 	reinit_completion(&qspi->dma_completion);
+-	desc->callback = stm32_qspi_dma_callback;
+-	desc->callback_param = &qspi->dma_completion;
++	dmaengine_desc_set_callback(desc, stm32_qspi_dma_callback, NULL, &qspi->dma_completion);
+ 	cookie = dmaengine_submit(desc);
+ 	err = dma_submit_error(cookie);
+ 	if (err)
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index 4c3ae546afc05..66932400cf570 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -1690,11 +1690,9 @@ static int stm32_spi_transfer_one_dma(struct stm32_spi *spi,
+ 
+ 	if (rx_dma_desc) {
+ 		if (rx_mdma_desc) {
+-			rx_mdma_desc->callback = spi->cfg->dma_rx_cb;
+-			rx_mdma_desc->callback_param = spi;
++			dmaengine_desc_set_callback(rx_mdma_desc, spi->cfg->dma_rx_cb, NULL, spi);
+ 		} else {
+-			rx_dma_desc->callback = spi->cfg->dma_rx_cb;
+-			rx_dma_desc->callback_param = spi;
++			dmaengine_desc_set_callback(rx_dma_desc, spi->cfg->dma_rx_cb, NULL, spi);
+ 		}
+ 
+ 		/* Enable Rx DMA request */
+@@ -1719,8 +1717,7 @@ static int stm32_spi_transfer_one_dma(struct stm32_spi *spi,
+ 	if (tx_dma_desc) {
+ 		if (spi->cur_comm == SPI_SIMPLEX_TX ||
+ 		    spi->cur_comm == SPI_3WIRE_TX) {
+-			tx_dma_desc->callback = spi->cfg->dma_tx_cb;
+-			tx_dma_desc->callback_param = spi;
++			dmaengine_desc_set_callback(tx_dma_desc, spi->cfg->dma_tx_cb, NULL, spi);
+ 		}
+ 
+ 		if (dma_submit_error(dmaengine_submit(tx_dma_desc))) {
+diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
+index 6b7a05dd0de8a..e9fce8618299a 100644
+--- a/drivers/spi/spi-sun6i.c
++++ b/drivers/spi/spi-sun6i.c
+@@ -232,8 +232,7 @@ static int sun6i_spi_prepare_dma(struct sun6i_spi *sspi,
+ 						 DMA_PREP_INTERRUPT);
+ 		if (!rxdesc)
+ 			return -EINVAL;
+-		rxdesc->callback_param = sspi;
+-		rxdesc->callback = sun6i_spi_dma_rx_cb;
++		dmaengine_desc_set_callback(rxdesc, sun6i_spi_dma_rx_cb, NULL, sspi);
+ 	}
+ 
+ 	txdesc = NULL;
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index f43f2df478b45..ffe547d1e3af3 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -480,8 +480,7 @@ static int tegra_spi_start_tx_dma(struct tegra_spi_data *tspi, int len)
+ 		return -EIO;
+ 	}
+ 
+-	tspi->tx_dma_desc->callback = tegra_spi_dma_complete;
+-	tspi->tx_dma_desc->callback_param = &tspi->tx_dma_complete;
++	dmaengine_desc_set_callback(tspi->tx_dma_desc, tegra_spi_dma_complete, NULL, &tspi->tx_dma_complete);
+ 
+ 	dmaengine_submit(tspi->tx_dma_desc);
+ 	dma_async_issue_pending(tspi->tx_dma_chan);
+@@ -499,8 +498,7 @@ static int tegra_spi_start_rx_dma(struct tegra_spi_data *tspi, int len)
+ 		return -EIO;
+ 	}
+ 
+-	tspi->rx_dma_desc->callback = tegra_spi_dma_complete;
+-	tspi->rx_dma_desc->callback_param = &tspi->rx_dma_complete;
++	dmaengine_desc_set_callback(tspi->rx_dma_desc, tegra_spi_dma_complete, NULL, &tspi->rx_dma_complete);
+ 
+ 	dmaengine_submit(tspi->rx_dma_desc);
+ 	dma_async_issue_pending(tspi->rx_dma_chan);
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index ed1fcf57dd30d..5aca26549e730 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -440,8 +440,7 @@ static int tegra_slink_start_tx_dma(struct tegra_slink_data *tspi, int len)
+ 		return -EIO;
+ 	}
+ 
+-	tspi->tx_dma_desc->callback = tegra_slink_dma_complete;
+-	tspi->tx_dma_desc->callback_param = &tspi->tx_dma_complete;
++	dmaengine_desc_set_callback(tspi->tx_dma_desc, tegra_slink_dma_complete, NULL, &tspi->tx_dma_complete);
+ 
+ 	dmaengine_submit(tspi->tx_dma_desc);
+ 	dma_async_issue_pending(tspi->tx_dma_chan);
+@@ -459,8 +458,7 @@ static int tegra_slink_start_rx_dma(struct tegra_slink_data *tspi, int len)
+ 		return -EIO;
+ 	}
+ 
+-	tspi->rx_dma_desc->callback = tegra_slink_dma_complete;
+-	tspi->rx_dma_desc->callback_param = &tspi->rx_dma_complete;
++	dmaengine_desc_set_callback(tspi->rx_dma_desc, tegra_slink_dma_complete, NULL, &tspi->rx_dma_complete);
+ 
+ 	dmaengine_submit(tspi->rx_dma_desc);
+ 	dma_async_issue_pending(tspi->rx_dma_chan);
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index d8cca3aa276b2..95132d8be9dd6 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -522,8 +522,7 @@ static int tegra_qspi_start_tx_dma(struct tegra_qspi *tqspi, struct spi_transfer
+ 		return -EIO;
+ 	}
+ 
+-	tqspi->tx_dma_desc->callback = tegra_qspi_dma_complete;
+-	tqspi->tx_dma_desc->callback_param = &tqspi->tx_dma_complete;
++	dmaengine_desc_set_callback(tqspi->tx_dma_desc, tegra_qspi_dma_complete, NULL, &tqspi->tx_dma_complete);
+ 	dmaengine_submit(tqspi->tx_dma_desc);
+ 	dma_async_issue_pending(tqspi->tx_dma_chan);
+ 
+@@ -550,8 +549,7 @@ static int tegra_qspi_start_rx_dma(struct tegra_qspi *tqspi, struct spi_transfer
+ 		return -EIO;
+ 	}
+ 
+-	tqspi->rx_dma_desc->callback = tegra_qspi_dma_complete;
+-	tqspi->rx_dma_desc->callback_param = &tqspi->rx_dma_complete;
++	dmaengine_desc_set_callback(tqspi->rx_dma_desc, tegra_qspi_dma_complete, NULL, &tqspi->rx_dma_complete);
+ 	dmaengine_submit(tqspi->rx_dma_desc);
+ 	dma_async_issue_pending(tqspi->rx_dma_chan);
+ 
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index 091a8b8842f58..0083160c15fea 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -452,8 +452,7 @@ static int ti_qspi_dma_xfer(struct ti_qspi *qspi, dma_addr_t dma_dst,
+ 		return -EIO;
+ 	}
+ 
+-	tx->callback = ti_qspi_dma_callback;
+-	tx->callback_param = qspi;
++	dmaengine_desc_set_callback(tx, ti_qspi_dma_callback, NULL, qspi);
+ 	cookie = dmaengine_submit(tx);
+ 	reinit_completion(&qspi->transfer_complete);
+ 
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index eb3485149e75a..fdda26eb311fb 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1021,8 +1021,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+ 		return;
+ 	}
+ 	dma_sync_sg_for_device(&data->host->dev, sg, num, DMA_FROM_DEVICE);
+-	desc_rx->callback = pch_dma_rx_complete;
+-	desc_rx->callback_param = data;
++	dmaengine_desc_set_callback(desc_rx, pch_dma_rx_complete, NULL, data);
+ 	dma->nent = num;
+ 	dma->desc_rx = desc_rx;
+ 
+@@ -1083,8 +1082,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+ 		return;
+ 	}
+ 	dma_sync_sg_for_device(&data->host->dev, sg, num, DMA_TO_DEVICE);
+-	desc_tx->callback = NULL;
+-	desc_tx->callback_param = data;
++	dmaengine_desc_set_callback(desc_tx, NULL, NULL, data);
+ 	dma->nent = num;
+ 	dma->desc_tx = desc_tx;
+ 
+diff --git a/drivers/spi/spi-uniphier.c b/drivers/spi/spi-uniphier.c
+index 86fce9a571dab..e8344a66e4361 100644
+--- a/drivers/spi/spi-uniphier.c
++++ b/drivers/spi/spi-uniphier.c
+@@ -418,8 +418,7 @@ static int uniphier_spi_transfer_one_dma(struct spi_controller *host,
+ 		if (!rxdesc)
+ 			goto out_err_prep;
+ 
+-		rxdesc->callback = uniphier_spi_dma_rxcb;
+-		rxdesc->callback_param = host;
++		dmaengine_desc_set_callback(rxdesc, uniphier_spi_dma_rxcb, NULL, host);
+ 
+ 		uniphier_spi_irq_enable(priv, SSI_IE_RXRE);
+ 		atomic_or(SSI_DMA_RX_BUSY, &priv->dma_busy);
+@@ -445,8 +444,7 @@ static int uniphier_spi_transfer_one_dma(struct spi_controller *host,
+ 		if (!txdesc)
+ 			goto out_err_prep;
+ 
+-		txdesc->callback = uniphier_spi_dma_txcb;
+-		txdesc->callback_param = host;
++		dmaengine_desc_set_callback(txdesc, uniphier_spi_dma_txcb, NULL, host);
+ 
+ 		uniphier_spi_irq_enable(priv, SSI_IE_TXRE);
+ 		atomic_or(SSI_DMA_TX_BUSY, &priv->dma_busy);
 -- 
 2.43.0
 
