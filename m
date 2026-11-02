@@ -1,66 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793630630;
-	b=eeB26x19ZmEqCLN9VWAkI5E8R+2xdNzU6lk/dKI9FVki69++ixWc+Qjy+3d5hByQP6j3
-	 8KyNtBljWo0Bis7vptJLl+Z1rfnAsck/FWA/FBM07F6ig1STDgA1U0IVjnoTX+FWhUa7B
-	 wyeW9JzbRaCcM0wsaqTttXVEMV7Y2OPuwQNN/5/AcqP1F2oSUCkfRqOgvHBdDq2iQYl0Y
-	 dxCiHgn8GRYGm3R9yCGrTm+Oxnd8UJ0rljBAGPb0KfmXIFkeFcd1a+dWH2Qw1E/tn+RAo
-	 hmVQYuk/ErA3gTIgRZmW4ULqtoc42tjMczlOl5l2ySIoZSPwx0fsmBsmHxMWXmv3SKw==
+	t=1793631302;
+	b=UVMLvCYj1sG7NMQnVjiF35VcEJx6k8qISODvD+364FBADdhU5PIk5wx85dXLuD7Kmwz8
+	 gaKK19Ro/CSgTjaWva+I7hf2tKRt/X5LZizmbZEX8YnE1I8O/nLJA0RM1WZMD81pK9Yym
+	 1OozrZFve7pZzp4R6eBUOEIIKvbRPqnWqJHY5CL185OpWmquxFZC/uENj4J8r2NZrC8fJ
+	 AURmtxeAHyEvckX6PK4GiMIckP9RK73VuKi7RHvCobIW0dyaBuQ023pqEiOJ8umcRZpzm
+	 icaEM0/2/Ih/Dd3VI5OEDT1mOwfiQ/XOSA254IF0ijdZeg8ZDTGKaJjzGgfp8iQdG5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793630630;
-	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:X-Priority:
-	 X-Mailer:In-Reply-To:References:X-NTES-SC:Content-Transfer-Encoding:
-	 Content-Type:MIME-Version:Message-ID:X-Coremail-Locale:X-CM-TRANSID:
-	 X-CM-SenderInfo:X-Coremail-Antispam;
-	bh=n4oIJJgf6gvjIY7IilFPOFQOtLs+8UdZecco53appoA=;
-	b=rsLscz9oR+OgQDnr5Eb/XtLfWxXH/OAMzYoGbjfC3mKjWepBKVWQ6sYLX1WkE55EJydT
-	 fQyiluff6dIIKfMI4iZ4eOcIPg0mYnScs+V0Z8M8PNhGmCQHuAS2sl2sTI38ggqEbV8oD
-	 /z9aMSMz0/Vl14kTh7abYucVJSHFlFHitsK+eCLoSXhvVZbwVwttL+DJ1y1EevUBeN0Uj
-	 haSQPPS9y5ccjGcTe11vLnROvRR3Pio7BTDXVcQXlAyRrisMo8c5PTK4EiQ+N6IHcbVwE
-	 H9xuh7SPReg6iGchDXZeM0VVheGJOU77DjCUTah6X38yIaEnk0nKckSiprxzt8fMSGg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793631302;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=eoXHqv1rfEc+TJjF3CsngnCxXTqYRvHqAmrtTn1BgMo=;
+	b=v5hK6IrfSq6BI4RlEgriOhaSBd4+Im71XW4d1jWkog2u4k0Gb1N099XA/PFUmE0D0VnD
+	 zbHTVXUcSJXa4EfoRR3LHyKhMGLaEMrj4krUiBI4BeOhfMeLRr2c7B4/xckZKxMiUa9sb
+	 RQmFNCDWCZsO7QkBdtCXTbNTdQlzmdfqNYdbFHbONWhwcxt9ETLglG7lwH36izW64wAWG
+	 ClMVrC3BZ2F9q97GQdF4ajnmZvHA0ha98uJ58oNKxzWRmSh5kRXZ8gRlvCTPWxXLYUPFc
+	 G6WeDub5C139yiHghYwdsXdFom2CF3Fd3x6rJ/Y2NU3l/89ssBPlUGxP1n1IzVmbmlA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=PcKWUJL0;
-	arc=none smtp.remote-ip=220.197.31.5
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.217.44
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC30606A5A6;
-	Mon,  2 Nov 2026 14:43:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2AC30606A5A6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=PcKWUJL0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=n4oIJJgf6gvjIY7IilFPOFQOtLs+8UdZecco53appoA=; b=P
-	cKWUJL0Vr33xAQzDs6OcJ9h1w+f23IgYYBGGV/Ch5QqFjp8KlYTu6/Jt533wj0o8
-	BF61KothW78si6L699CxzTe12kwJo7T2B5VOkKwRMj+VIsVQyHhB1SbhY2riYt6T
-	EykKg6K+qKw6HC7pw9XQWxDIuegw2znrpW/V0lH5yo=
-Date: Mon, 2 Nov 2026 22:43:17 +0800 (CST)
-From: =?GBK?B?wO7T07roIA==?= <dayou5941@163.com>
-To: "Biju Das" <biju.das.jz@bp.renesas.com>
-Cc: "wbg@kernel.org" <wbg@kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Cosmin-Gabriel Tanislav" <cosmin-gabriel.tanislav.xa@renesas.com>,
-	"Li Youhong" <liyouhong@kylinos.cn>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re:RE: [PATCH v3] counter: rz-mtu3-cnt: put runtime PM ref if
- counter init fails
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <TY3PR01MB1134693BA02E518FE0A498205866A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20261101130746.1724364-1-dayou5941@163.com>
- <TY3PR01MB1134693BA02E518FE0A498205866A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-X-NTES-SC: AL_Qu2SAfqYv00i4SiQY+kckk4Wjug8Wcexufwj34NTc+MGlyLC1RIGTUF7EXf4/v2AMRyQjye6fBxU1MFHfIhlu2wF6Ow+Yid27nzZJuc1bg==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B08606A596
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  2 Nov 2026 14:55:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12B08606A596
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-7c3b6e8225dso2163409137.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Nov 2026 06:55:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793631301; x=1794236101;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=eoXHqv1rfEc+TJjF3CsngnCxXTqYRvHqAmrtTn1BgMo=;
+        b=OwQvSPNx37YCCvBEAqrNg9+AAOGOmPs3ib2wolJO4L2JExla62UCac4R/4P2hbXPOM
+         jeVv3UrHUIabMp9kEwqCCmI6DOQ10Sj2YCJI2bBQYGnEigsBF4vypjqWm75C2r47fJ1v
+         U85+2XkUKP/SpprkpHk8Jxfdzq6uEdfcdtUNa5rnWTjFzpdkIuz5B8+XNb7XVpbif2jn
+         ufewpe3kYj2kaGzbPSLAqIfcbSlRi2Xdw1NbIMqyTtvv+w5u2bNQKkOTIksRkUux8vuq
+         lL/KkZBclJLgw0r0LNHeKukPFgxuq+PiypTfDZofb48JdTRvA3F5Uw1dwSVgkHbvEcxq
+         0asA==
+X-Forwarded-Encrypted: i=1; AKwUvBzaYYggVFuxRgUXrmkPtbmMO7+QAh+Vj7jfYvrNuyY6HM1JQhu3hRcudFXQi2n5mUhkYue8vR1TjeJayMWN5mi9+A==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+U4SJP4jWfLoO8lPjbUIwfvVB0iNDtf0WrPyg+9bGYWHffzbEF
+	V9444q+6IeVnoHpVi4L8/bNPRBpkvgV127wK7MatIDacwywUDMEtLErAGgfA1/uZpl8=
+X-Gm-Gg: AYBFou2SljzmQkmPIU1JaKqfscIPGWfEgfAc09tuJNpEnuNF4H04hBMxqwIqnc45r2h
+	Ze7EpqEFGc5AhIFtW+IPuawcM9NaThoEfFLEMhubzP9pl4UkQu8T3V+RLYxhcefMCKw03/ELboC
+	kl1f8wIFYLTW1J0nAD3hAFrCVx80e78b4T8bqRZgX7BsY5d7rRjS5Fm4qCQjI8ltLqzXeBifdal
+	+iB3izCTM+jlM4vOLK7jOUyYmEHOuZpBasi5Rb59V9du9RUCz0tmbVwfOSrwDtxsEhWUzC6acmU
+	sdfhr11Utl6qajGAXeRiLT+7Mo0arkqW3TsPFSOwgnU2Xl4lsRO2mli0Akm2T9Jp1D3mTM0Cqlt
+	UdpGZalbhVbmU36UhGaV3B0Zd3e+bFfOSbNh2prx3OX8jC2ZalqHdBDQOg1nZREl0RZOnrN5hNr
+	EVKDY+2aBao/GkAk4vU75Sj7v/R8HOSP2efgnRKoKMmKjiu2LNLpDzwH6gIUiXAw252zkM0SF++
+	JUDdBvgZ/NvEV2OiwtZuaNBLfLaSbQfCUZ+hh3+Jznvs16Pd9bnOImScDXXd8KMIaFIpZgGEZiw
+	7P5ha8oQmg3h8rU/SxCzodcTvd/xvS/W3GUkfBct8dC05PGJ1gy5pjdoM4LDPGwoIA==
+X-Received: by 2002:a05:6102:5811:b0:7b4:879c:bb8d with SMTP id ada2fe7eead31-7d0727b10fdmr4067408137.37.1793631300981;
+        Mon, 02 Nov 2026 06:55:00 -0800 (PST)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d077393404sm10074537137.2.2026.11.02.06.54.57
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2026 06:54:58 -0800 (PST)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-9950a7530d9so708714241.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Nov 2026 06:54:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzRO2T2hZaTOrq7yONQJ0jTxAq9TOwYtgG8QRxmU9qCreoCGl0gsM1cRakvr4SIivFtnEL6eX92DWR/4g8Pc9p1dQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:3f44:b0:7cc:24e1:77b with SMTP id
+ ada2fe7eead31-7d072270da8mr4006528137.4.1793631297177; Mon, 02 Nov 2026
+ 06:54:57 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -70,56 +80,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-ID: <5fefeec.a792.1a19cb6f306.Coremail.dayou5941@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:lSgvCgD33zmHoehqEB5mAA--.1701W
-X-CM-SenderInfo: 5gd103ivzuiqqrwthudrp/xtbC+gZeDWrooYZ4AQAA3z
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20261031194225.118516-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20261031194225.118516-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 2 Nov 2026 15:54:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWp_Hozv0AV6utNDDPP1=gGZqBa+rRUhguDxJg=ZXssDg@mail.gmail.com>
+X-Gm-Features: AclHuK8owA5gBLpZ-YfZBpEjdWIL1T2us-ie8-rr38WVdKeR-uDunLB-LXslBB4
+Message-ID: <CAMuHMdWp_Hozv0AV6utNDDPP1=gGZqBa+rRUhguDxJg=ZXssDg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l: Use str_enable_disable() helper
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, 
+	Biju Das <biju.das@bp.renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-CgoKCkhpIEJpanUsCgoKCgoKQXQgMjAyNi0xMS0wMiAxNTo0MDozMSwgIkJpanUgRGFzIiA8Ymlq
-dS5kYXMuanpAYnAucmVuZXNhcy5jb20+IHdyb3RlOgo+SGkgTGkgWW91aG9uZywKPgo+PiAtLS0t
-LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+PiBGcm9tOiBMaSBZb3Vob25nIDxkYXlvdTU5NDFAMTYz
-LmNvbT4KPj4gU2VudDogMDEgTm92ZW1iZXIgMjAyNiAxMzowOAo+PiBTdWJqZWN0OiBbUEFUQ0gg
-djNdIGNvdW50ZXI6IHJ6LW10dTMtY250OiBwdXQgcnVudGltZSBQTSByZWYgaWYgY291bnRlciBp
-bml0IGZhaWxzCj4+IAo+PiBGcm9tOiBMaSBZb3Vob25nIDxsaXlvdWhvbmdAa3lsaW5vcy5jbj4K
-Pj4gCj4+IENvdW50ZXIgZW5hYmxlIHRha2VzIGEgcnVudGltZSBQTSByZWZlcmVuY2UgYmVmb3Jl
-IGluaXRpYWxpemF0aW9uIGJ1dCBvbmx5IHB1dHMgaXQgb24gZGlzYWJsZS4gRHJvcCB0aGUKPj4g
-cmVmZXJlbmNlIGlmIGluaXRpYWxpemF0aW9uIGZhaWxzLgo+PiAKPj4gRml4ZXM6IDBiZTg5MDcz
-NTlkZiAoImNvdW50ZXI6IEFkZCBSZW5lc2FzIFJaL0cyTCBNVFUzYSBjb3VudGVyIGRyaXZlciIp
-Cj4+IENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnCj4+IFNpZ25lZC1vZmYtYnk6IExpIFlvdWhv
-bmcgPGxpeW91aG9uZ0BreWxpbm9zLmNuPgo+PiAtLS0KPj4gdjM6Cj4+IC0gU2V0IGNvdW50X2lz
-X2VuYWJsZWQgZnJvbSBlbmFibGUgYWZ0ZXIgZWl0aGVyIGJyYW5jaCBzdWNjZWVkcy4KPj4gLSB2
-MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjYxMDMxMTQyODEzLjI1MjI0NDQtMS1k
-YXlvdTU5NDFAMTYzLmNvbS8KPj4gCj4+IHYyOgo+PiAtIEFkZCBDYzogc3RhYmxlQHZnZXIua2Vy
-bmVsLm9yZy4KPj4gLSB2MTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjYxMDA4MDIw
-NTA2LjIxMTU2Ni0xLWRheW91NTk0MUAxNjMuY29tLwo+PiAKPj4gIGRyaXZlcnMvY291bnRlci9y
-ei1tdHUzLWNudC5jIHwgOSArKysrKystLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlv
-bnMoKyksIDMgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jb3VudGVy
-L3J6LW10dTMtY250LmMgYi9kcml2ZXJzL2NvdW50ZXIvcnotbXR1My1jbnQuYyBpbmRleAo+PiA3
-YmZiNjk3OTE5M2MuLmU3ZmU4YmY0NTE2NCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9jb3VudGVy
-L3J6LW10dTMtY250LmMKPj4gKysrIGIvZHJpdmVycy9jb3VudGVyL3J6LW10dTMtY250LmMKPj4g
-QEAgLTUwNiwxNCArNTA2LDE3IEBAIHN0YXRpYyBpbnQgcnpfbXR1M19jb3VudF9lbmFibGVfd3Jp
-dGUoc3RydWN0IGNvdW50ZXJfZGV2aWNlICpjb3VudGVyLAo+PiAgCWlmIChlbmFibGUpIHsKPj4g
-IAkJcG1fcnVudGltZV9nZXRfc3luYyhjb3VudGVyLT5wYXJlbnQpOwo+PiAgCQlyZXQgPSByel9t
-dHUzX2luaXRpYWxpemVfY291bnRlcihjb3VudGVyLCBjb3VudC0+aWQpOwo+Cj5SZXZpZXdlZC1i
-eTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPgo+Cj5Ob3cgZGF5cyBib3Rz
-IHN0YXJ0ZWQgY29tcGxhaW5pbmcgaWYgcG1fcnVudGltZV9nZXRfc3luYygpIGZhaWxzCj5UaGVu
-IHJ6X210dTNfaW5pdGlhbGl6ZV9jb3VudGVyKCkgd2lsbCBsZWFkIHRvIGtlcm5lbCBjcmFzaChz
-eXNuY2hyb25vdXMgYWJvcnQpCj5hcyBpdCBpcyBhY2Nlc3NpbmcgcmVnaXN0ZXJzIHdpdGhvdXQg
-dGhlIGNsay4KPgo+U2luY2UgeW91IGhhdmUgYWRkZWQgZml4ZXMgdGFnLCBub3Qgc3VyZSB0aGlz
-IHRvIGJlIGZpeGVkIGluIHRoaXMgcGF0Y2g/PwoKPgoKVGhlIHJ1bnRpbWUgUE0gZ2V0IGNoZWNr
-cyBhcmUgcGF0Y2ggMiBvZiB0aGlzIHNlcmllczoKaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxs
-LzIwMjYwOTAzMDkwNzE5LjM0OTg5NTUtMS1kYXlvdTU5NDFAMTYzLmNvbS8KCldlIGFscmVhZHkg
-ZGlzY3Vzc2VkIHRoYXQgaGVyZToKaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzY2NTc1ZDhk
-LjIxNGQuMWExMTkzZmQyYmEuQ29yZW1haWwuZGF5b3U1OTQxQDE2My5jb20vCgpTbyBJIGRvbid0
-IHRoaW5rIHRoZSBwbV9ydW50aW1lX2dldF9zeW5jKCkgcmV0dXJuIHZhbHVlIG5lZWRzIHRvIGJl
-CmhhbmRsZWQgaW4gdGhpcyBwYXRjaC4gQ29zbWluJ3MgcGF0Y2ggc2VyaWVzIGNvdmVycyB0aGF0
-LgoKVGhhbmtzLApMaQoKPkNoZWVycywKPkJpanUKPgo+PiAtCQlpZiAocmV0ID09IDApCj4+IC0J
-CQlwcml2LT5jb3VudF9pc19lbmFibGVkW2NvdW50LT5pZF0gPSB0cnVlOwo+PiArCQlpZiAocmV0
-IDwgMCkgewo+PiArCQkJcG1fcnVudGltZV9wdXQoY291bnRlci0+cGFyZW50KTsKPj4gKwkJCWdv
-dG8gZXhpdDsKPj4gKwkJfQo+PiAgCX0gZWxzZSB7Cj4+ICAJCXJ6X210dTNfdGVybWluYXRlX2Nv
-dW50ZXIoY291bnRlciwgY291bnQtPmlkKTsKPj4gLQkJcHJpdi0+Y291bnRfaXNfZW5hYmxlZFtj
-b3VudC0+aWRdID0gZmFsc2U7Cj4+ICAJCXBtX3J1bnRpbWVfcHV0KGNvdW50ZXItPnBhcmVudCk7
-Cj4+ICAJfQo+PiAKPj4gKwlwcml2LT5jb3VudF9pc19lbmFibGVkW2NvdW50LT5pZF0gPSBlbmFi
-bGU7Cj4+ICsKPj4gIGV4aXQ6Cj4+ICAJbXV0ZXhfdW5sb2NrKCZwcml2LT5sb2NrKTsKPj4gCg==
+On Sat, 31 Oct 2026 at 20:42, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Replace the open-coded "enable" : "disable" ternary in
+> rzg3l_cpg_pll_clk_endisable() with the str_enable_disable() helper from
+> <linux/string_choices.h>. This keeps the strings consistent across the
+> kernel and avoids duplicating the literals.
+>
+> No functional change intended.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202610301526.XkacnSyK-lkp@intel.com/
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.5.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
