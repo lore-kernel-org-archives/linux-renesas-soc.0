@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793726471;
-	b=MnQUfhqF6qddfwVBNm3YLCRTxTuyAH6XETMC71//KidISIMe/8+eOTdEk5/FXCf81lSC
-	 OR3auHG6huQPyw8JkDkFZC8WjIsnzZTyWbx+RdOO4BC4MIHA86No4NPDAnOseHGJmoMkR
-	 cbE+6VZRIXBEc5XGp91x5OFJwmt0l6q2cKpy+viIQqDbQT8K76udBf3LxDFy/dx78yguP
-	 3kQTOB0Fhs7ZGKdkaVWueitdi/OAEUsxvpwiKqj2vMX6skZrXW2JtIK59WvIr9wVcNacs
-	 dr+eJ+GZ2yYUSr1CW9ulKvlKqDNBSd8zBU8KBg6LQbaowVZevE3KNmVCYT105ptfh1w==
+	b=rzMPH9gkmoduCEy66lK94zKGYHKwadEQUDhYBadQ9B2S30K1xk4zgrwJf2dASflfR4RI
+	 3uPM3Kwf3AIBMkPKyVpZfH0R1Aw61AkO2aJFyesLJ9d4JVcCspAAGiVfsMzCgFM6V80FP
+	 xWsrEGFpuZnHGx8+X9ji5xzOPOYyhSRMg6EYx7ukYL8LPpTtVmNLNwEo6o/CLq1NlIzHB
+	 1dPipb6Dnv2wEKE+ekl16gdl3+ukBLAzo8tyU/YR4qYomVc8VCfm3h4r8hN8a+DiDihlV
+	 arXv93hdIKomDfje5BulTA1ICYWT9XU0tw0Zd+P9cSTLbiGML5EL31N3F0cKT4cu5yg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793726471;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
 	 X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=roOiO3ldaNsjLxe0CYehd5v8rGn8f4LGIVU12eUR/M4=;
-	b=061wrFrhh5FCGEU0ktwRrsQB0/hy28AhcSpXxvBXeOkJjQZcWLtZvVayp2u67leSH9aa
-	 MTL0esZvOfvrN5hqE7v7/Fn1jG7GgrUpXvlfCB+h4y1hQLBpSvOR6SxD0rrYjD2LqM1f2
-	 EDfBaXsLrijuCzU5XI95UQ4bYKh1/WXir9Sb/0LyNV0UKjzzHDWgTsFBeIFqLFJUI75IU
-	 4bzU04JYZFlUMzykIECCz60OmI0yBwuYSPWxbFbXUo7hIoqfO9JyXoNj3u/2DAx97pPO0
-	 8wylLkUe1fFx+n8C/0N3bEUCbxmK6VY14zkcZgS3W/D3peYiySmLNvhQwhxHxS6YfVA==
+	bh=y82kaLlVdTMG/Dxoi+XgELgK4jbU4ivpOZ2fmcDfzkY=;
+	b=t7Ry8qAqwKB8liMt2XSO4b/dcEjokH9sWz1blc0UXfSxX4I3UpU+Ts3EZFlnJQQ4X4qH
+	 Hi8TOByfcn9jXXxqae0oRf7QAIb4+9oG2gobU4TF5Oew/rjKVyh6hq6aUXWFWhXfVALUO
+	 5+7LkMZmc3Fbg808oz7gvAOWVZovxAf4hJXsdASLbHb0AEEBzYOM1fpncZzhzqBLkaew0
+	 TcYoZvU6Cwws4wpo8OcsjkA7GT3ifw+vVhzoE0iVFX5LX3peWOFV3wrGJxwqC8vbx/Sz9
+	 DKfntZoheOAj6SbVaJslThfD+mAtv+ZeG8z9rREKHAN9Ecg8VJq+il7G6HAMOgVIEhQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TpUukxdp;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ldQsDtoh;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABEF606D80C
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 17:21:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1ABEF606D80C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7F9606D81A
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 17:21:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EF7F9606D81A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TpUukxdp
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a20a37703bso35523785e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Nov 2026 09:21:09 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ldQsDtoh
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a35d5d4a20so49275635e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Nov 2026 09:21:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793726468; x=1794331268; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793726469; x=1794331269; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=roOiO3ldaNsjLxe0CYehd5v8rGn8f4LGIVU12eUR/M4=;
-        b=TpUukxdpYG9assmBfrFi6axTBVe0+dFXxNmwZX1d7X+jav48mhN8CnCEJao7E1aP4W
-         USBKunWX0det+kHvEuGFSWSm85lB87LU4ju+qZvA6raej1Jymy8lJmihDqADTGiz8Jy2
-         fzLh4wEOHyPgx4RO+iJgQK63tG47iAZxN+KkjC1730rPonzcI+Tkx94wt4POeALJDiJr
-         WxKwvWwLkRvR66uD7qXOCd3kvAYRrUacUHnEp9xLue9W2JnL8EWKtFm80QO+btwwsfR8
-         IuzvDDX4YgeIvcBnqINQiCpYdABloPP97/aIVdl7SqsZX/w5i//jrrZIaJ2XLOYx5Z5J
-         DKuQ==
+        bh=y82kaLlVdTMG/Dxoi+XgELgK4jbU4ivpOZ2fmcDfzkY=;
+        b=ldQsDtohDharnYy2z11zHwwe7rswcAqPfTfDw7574RAaaw8KeHx16iImp5eiMDf2pE
+         upkLRmjleABpNwD91UV4XrPtrNf+nmTYgaPJkmAW2Q8vw3J++DQm+24OuVlGAAMWaaiP
+         QQdC2+3YIJ17Zqwn9drO/Z+xvHgbuXPw4dPhXdnO4ot5K155EKEie7ysO9gHSV+TtJEP
+         pX6g5lTX0j0O/P6V0IYGPIgjzdNbkiSmKuxyx+QUzo7HLM01KuSU2POBVFovBHu9qaM4
+         fa8OT1SxUKvsK+cnxlU2FEUBT25RbO0e/FbReyIyinzPYyBNZqBezvrwBL5kTwUuEEz+
+         LUyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793726468; x=1794331268;
+        d=1e100.net; s=20260707; t=1793726469; x=1794331269;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=roOiO3ldaNsjLxe0CYehd5v8rGn8f4LGIVU12eUR/M4=;
-        b=GZsV6CPD7UGHudwsWZ6q3RM6LoWnYmOCOhqTVO9Kny3h/FCIuY4n7JcZNTybyow76G
-         hvvoSNrN6LFvORVsLxmsJ6jjZ6hLWGezfLgtHC1E3jDsPgLipRvgxyRHUi7CVxdCE4QB
-         0iBTMzO0JnmJvS598yXUHnvbubeBxtKhn0lZLwlOZm9SyPrDz5zia9jOIRokl9SzhZs2
-         kgG8OPSRW8oELJAMBCpnu1GEeUA6FSej6X1NEGi9mGZYaKoUsJ3ToIUuDuHADZsjEu60
-         yS5LUXYxstjRq8FMEPzqdN6luitiinorQ+ABwqszw8cC2tTLbmkHHqDgZxbz4V2evz6N
-         YKpQ==
-X-Gm-Message-State: APuU4Z+xzF6LRm7BOYz3FqO9lKHh4ZEXJZg9TJMXoJgsBmxpOtNFE5mn
-	m+3yg8W4DeHSp/EMNJ6f0EDL65NlJpvHep6L8AnWNoeXFoCnHNLvpA5o
-X-Gm-Gg: AYBFou05dfOM3kPyTguZwtXb5fYSbTM+4ARrBFF4biXsXOs04qpJwVOZrbYAfUmT39h
-	5s5BgMdSu06MPvcBK4gHsYU2qdp9ekFkIEFV9WJufQAVF9qJX8glNdcGaf1jlVbDD5WKK+qa8Vq
-	j99Esswi9TQWDaM+Dn5hJMixKJN8+RzMT1OKRZendQWz10ur2h7iKitDzuExkZmBSxzVDUv/vQQ
-	1jwILc8T1UWXtjrJCJ7Vo0hwLft0lFwZdE1TNsCflVCcEInFZtVPDVYLIum3/EgQq8NxHVIxS5u
-	IIWeIfKmi6ngBZjVmjFi7qcyJpr5UI5+E7Ye30WO2NcARuYzZEtYUVz8fpAAyE1V1RsKVag9YzO
-	UEgzXz10RnAkqG+Xo8X0sRfx14tMNDiBVscxxTfdzT8wnS/W0U029ZW/d4kY5G03FbpDt/ou05D
-	E2ImKnJXAPlV7ZWJ47cIk7mmzhbSxa1bvXTE8U2Btsn92p6pWz5QxW56Zjv9wjVaKz+jttKh+Rw
-	Dhl8+fz5qRDNffcsAJ4Ne0kwRqBDCzzbrstz3jI3pdmPKX7UlDjHnpmF4lAZJWX3hqj5AR7FCcS
-	8WcxJbAQroX8nj5rZwTTVgOj3RAltLqo60GCx5uuxTKZRmEtoENWLvsQvz42NwwP4BiLiTePHNI
-	+hSd3UMoiqz6gCr+FpQz4uL5NlKz8MF9s60slFXM=
-X-Received: by 2002:a05:600c:811a:b0:4a6:b49f:9ae5 with SMTP id 5b1f17b1804b1-4ac18e5dac8mr287441665e9.34.1793726468458;
-        Tue, 03 Nov 2026 09:21:08 -0800 (PST)
+        bh=y82kaLlVdTMG/Dxoi+XgELgK4jbU4ivpOZ2fmcDfzkY=;
+        b=ziKMnTGLLV+KR3RD/OUHBbmKJ/IlxEzc+Zeit0p5HWV7PPmJvRV1QssULga4XboYTs
+         1A8KvOK46fuHLuDi3GsNUS8e/F4SLzCbvHQAKul3/uZffIPWREi1jjOyb0Ak9U4HsGCP
+         ZXC38mzS0sFkMO/OIckDG+Se0tzxI52Kjei+HgIOI4fV38TT+pnmUa/QAB7CHX5cm9Dq
+         z8m6R0vBM2yNV+qJ4sf+zHOEvtNr1mIZ7KV6+2BduWihXH5R7dSRsn3tve3p5BBQKBwg
+         ZPzCaK4xvBM5G/7XnzqtYuh4orf9xhgTdBSzmyhi8sJF8Mx9/0dhQY+noL2n4vgw7iBO
+         V6DA==
+X-Gm-Message-State: APuU4Z+CQmk6SLGNnpFKRBwuny4qOIkmKbOVEEzqlTi9LZbSa8/sPtrt
+	W1hg5oYta3hriPCeA5M5/S9YYAsAXBhrj5MWHupS+bqEZuPA4VWL22J5
+X-Gm-Gg: AYBFou0rzJ8i4IIthTMTgmp6kwLsSaCauOoqLxm4UeklFwRcziAfza68wWVbkyUb2/c
+	2Xp74smP+kNCeLEz69wzVm0lJH431BldJPI8u9nxwxjN5y3cXB0Y0urhTJKzrrY5uSCX1Gl+5lm
+	az5uCUMoPH6tNB4jbr9+rss2PukzDH/mlj4MB3d5kZXq02v+74glCENZZmDSLTsAGQ6JxaXz8mv
+	eebyPdK8x0rANq0zGbRBK0E5iMIHLOVxfGWSQugWMMPIolzznl3O8Ay5Noas/xnCt+2+v+j2SRP
+	iVtDZfK0UGjQXTSiquZOQP+Wm12woTmjRxAc56wZthELc4Ysrr3RPtT2s5++tWpBRrQ9QZYz5Bf
+	pXqRDikqlZ2glr1raZ7js3MLqLNyxB8/ehZxU7R4qp7v2vtHm08ADV5VF5kpIlyx0ZDArHDKAQR
+	5g1epIU2egYoJ2xIF/uD+kfz9xUclHMWrPvAXFqWK0nFCjrCbpzjT51j+ENb2n9Ko4QpqyqMU43
+	UbQScODwWPwXHfX6Q2K7qkOXmg92Sz4GZrdFBMljo4bEbkChfUjqZW4HOLNhLLtDhFP/aF64m3y
+	3LZ+96egLecFyLIAxiAXEMrJvSXAXV/h5Wd6aW2H0L1d7mxnspa4DdG5sJkhyR7Q22rWN3FI1rI
+	5KJWy2+kwfRq1pX6c+aPvYXz3E77MgxSDlCk6CpI=
+X-Received: by 2002:a05:600c:674f:b0:4a2:1655:87db with SMTP id 5b1f17b1804b1-4ac1228a434mr330482525e9.0.1793726469286;
+        Tue, 03 Nov 2026 09:21:09 -0800 (PST)
 Received: from iku.lan ([2a00:23c8:254f:fd01:8b77:19e1:26f7:89f2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ac08b72579sm8800675e9.2.2026.11.03.09.21.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ac08b72579sm8800675e9.2.2026.11.03.09.21.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 09:21:07 -0800 (PST)
+        Tue, 03 Nov 2026 09:21:08 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -98,9 +98,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Subject: [PATCH 3/4] drm: renesas: rz-du: mipi_dsi: Improve DSI PLL parameter selection and cache results
-Date: Tue,  3 Nov 2026 17:20:56 +0000
-Message-ID: <20261103172057.617203-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4/4] drm: renesas: rz-du: mipi_dsi: Add fallback CPG PLLDSI parameter search
+Date: Tue,  3 Nov 2026 17:20:57 +0000
+Message-ID: <20261103172057.617203-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261103172057.617203-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261103172057.617203-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -117,172 +117,142 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Mode validation searched the divider table once, kept the best CPG match
-and only then checked the DSI PLL. A divider losing on CPG error alone
-was never tried against it, so reachable modes were rejected.
+For each PLLDSI divider, rzv2h_dphy_check_instance() only considers the
+CPG PLLDSI parameters with the smallest frequency error. If they do not
+lead to a DSI PLL setting less than 0.5 Hz off the required HS clock,
+the divider is skipped, even though a CPG setting with a slightly larger
+error could work. Modes such as <mode, lanes, format> are therefore
+rejected on RZ/V2H(P), RZ/V2N and RZ/G3E.
 
-Evaluate each divider on its own and keep the one with the smallest DSI
-PLL error, handing it to the CPG via rzv2h_cpg_cache_pll_pars(). The
-search also takes the PLLDSI instance as an argument and records it,
-walking the instances described by the new num_limits field.
+If no divider gives a usable pair, search again with
+rzv2h_cpg_get_pll_pars_validate(), accepting CPG candidates up to 50 Hz
+off the target whose DSI PLL setting is less than 0.5 Hz off the HS clock.
+The first accepted pair is used, so the pixel clock may be slightly less
+accurate, but the mode can be driven.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 87 ++++++++++++++-----
- 1 file changed, 66 insertions(+), 21 deletions(-)
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 85 ++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 5b257f5adf06..682bbb339bef 100644
+index 682bbb339bef..c23c7f43a560 100644
 --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -12,6 +12,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/limits.h>
- #include <linux/math.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -55,6 +56,7 @@ struct rzg2l_mipi_dsi_hw_info {
- 		const struct rzv2h_pll_limits **limits;
- 		const u8 *table;
- 		const u8 table_size;
-+		const u8 num_limits;
- 	} cpg_plldsi;
- 	const struct rzg2l_mipi_dsi_timings *dsi_global_timings;
- 	unsigned int num_dsi_global_timings;
-@@ -69,7 +71,9 @@ struct rzg2l_mipi_dsi_hw_info {
+@@ -42,6 +42,9 @@ MODULE_IMPORT_NS("RZV2H_CPG");
+ #define RZ_MIPI_DSI_FEATURE_16BPP	BIT(0)
+ #define RZ_MIPI_DSI_FEATURE_PWRRDY	BIT(1)
  
- struct rzv2h_dsi_mode_calc {
- 	unsigned long mode_freq_khz;
-+	unsigned int pll_instance;
- 	struct rzv2h_pll_pars dsi_parameters;
-+	struct rzv2h_pll_div_pars cpg_dsi_div_parameters;
++#define RZV2H_DSI_PLL_MAX_ERR_MILLIHZ		500
++#define RZV2H_CPG_PLLDSI_MAX_ERR_MILLIHZ	(50 * MILLI)
++
+ struct rzg2l_mipi_dsi;
+ 
+ struct rzg2l_mipi_dsi_hw_info {
+@@ -76,6 +79,13 @@ struct rzv2h_dsi_mode_calc {
+ 	struct rzv2h_pll_div_pars cpg_dsi_div_parameters;
  };
  
++struct rzv2h_dsi_validator_context {
++	struct rzv2h_pll_pars *dsi_pars;
++	unsigned int lanes;
++	unsigned int bpp;
++	u8 base_divider;
++};
++
  struct rzg2l_mipi_dsi {
-@@ -671,43 +675,83 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
+ 	struct device *dev;
+ 	void __iomem *mmio;
+@@ -675,6 +685,67 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
  	return 0;
  }
  
--static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi *dsi,
--					      unsigned long mode_freq)
-+static unsigned int rzv2h_dphy_check_instance(struct rzg2l_mipi_dsi *dsi,
-+					      unsigned long mode_freq,
-+					      unsigned int pll_instance)
- {
- 	u64 hsfreq_millihz, mode_freq_hz, mode_freq_millihz;
-+	struct rzv2h_pll_div_pars best_cpg_dsi_parameters;
- 	struct rzv2h_pll_div_pars cpg_dsi_parameters;
-+	struct rzv2h_pll_pars best_dsi_parameters;
- 	struct rzv2h_pll_pars dsi_parameters;
-+	bool found_valid_parameters = false;
- 	bool parameters_found;
--	unsigned int bpp;
-+	unsigned int bpp, i;
- 
-+	best_dsi_parameters.error_millihz = S64_MAX;
- 	bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
- 	mode_freq_hz = mul_u32_u32(mode_freq, KILO);
- 	mode_freq_millihz = mode_freq_hz * MILLI;
--	parameters_found =
--		rzv2h_get_pll_divs_pars(dsi->info->cpg_plldsi.limits[0],
--					&cpg_dsi_parameters,
--					dsi->info->cpg_plldsi.table,
--					dsi->info->cpg_plldsi.table_size,
--					mode_freq_millihz);
--	if (!parameters_found)
--		return MODE_CLOCK_RANGE;
--
--	hsfreq_millihz = DIV_ROUND_CLOSEST_ULL(cpg_dsi_parameters.div.freq_millihz * bpp,
--					       dsi->lanes);
--	parameters_found = rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits,
--					      &dsi_parameters, hsfreq_millihz);
--	if (!parameters_found)
--		return MODE_CLOCK_RANGE;
-+	for (i = 0; i < dsi->info->cpg_plldsi.table_size; i++) {
-+		parameters_found =
-+			rzv2h_get_pll_divs_pars(dsi->info->cpg_plldsi.limits[pll_instance],
-+						&cpg_dsi_parameters,
-+						&dsi->info->cpg_plldsi.table[i], 1,
-+						mode_freq_millihz);
-+		if (!parameters_found)
-+			continue;
-+
-+		hsfreq_millihz = DIV_ROUND_CLOSEST_ULL(cpg_dsi_parameters.div.freq_millihz * bpp,
-+						       dsi->lanes);
-+		parameters_found = rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits,
-+						      &dsi_parameters, hsfreq_millihz);
-+		if (!parameters_found)
-+			continue;
-+
-+		if (abs(dsi_parameters.error_millihz) >= 500)
-+			continue;
-+
-+		if (abs(best_dsi_parameters.error_millihz) > abs(dsi_parameters.error_millihz)) {
-+			best_cpg_dsi_parameters = cpg_dsi_parameters;
-+			best_dsi_parameters = dsi_parameters;
-+			found_valid_parameters = true;
-+		}
-+	}
- 
--	if (abs(dsi_parameters.error_millihz) >= 500)
-+	if (!found_valid_parameters)
- 		return MODE_CLOCK_RANGE;
- 
--	memcpy(&dsi->mode_calc.dsi_parameters, &dsi_parameters, sizeof(dsi_parameters));
-+	memcpy(&dsi->mode_calc.dsi_parameters, &best_dsi_parameters,
-+	       sizeof(best_dsi_parameters));
-+	memcpy(&dsi->mode_calc.cpg_dsi_div_parameters, &best_cpg_dsi_parameters,
-+	       sizeof(best_cpg_dsi_parameters));
- 	dsi->mode_calc.mode_freq_khz = mode_freq;
-+	dsi->mode_calc.pll_instance = pll_instance;
-+
-+	rzv2h_cpg_cache_pll_pars(best_cpg_dsi_parameters, pll_instance);
- 
- 	return MODE_OK;
- }
- 
-+static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi *dsi,
-+					      unsigned long mode_freq)
++static bool rzv2h_dsi_validate_pll_pars(const struct rzv2h_pll_pars *pars, void *context)
 +{
-+	bool found = false;
-+	unsigned int i;
++	struct rzv2h_dsi_validator_context *ctx = context;
++	u64 hsfreq_millihz;
 +
-+	/*
-+	 * Check every instance instead of stopping at the first match, as
-+	 * rzv2h_dphy_check_instance() hands the parameters it computes over to
-+	 * the CPG, which needs them for whichever PLLDSI ends up feeding the
-+	 * encoder.
-+	 */
-+	for (i = 0; i < dsi->info->cpg_plldsi.num_limits; i++)
-+		if (rzv2h_dphy_check_instance(dsi, mode_freq, i) == MODE_OK)
-+			found = true;
++	/* Check error threshold for CPG PLL DSI */
++	if (abs(pars->error_millihz) > RZV2H_CPG_PLLDSI_MAX_ERR_MILLIHZ)
++		return false;
 +
-+	return found ? MODE_OK : MODE_CLOCK_RANGE;
++	/* Calculate the required DSI frequency */
++	hsfreq_millihz = DIV_U64_ROUND_CLOSEST(pars->freq_millihz, ctx->base_divider);
++	hsfreq_millihz = DIV_ROUND_CLOSEST_ULL(hsfreq_millihz * ctx->bpp, ctx->lanes);
++
++	/* Find DSI PLL parameters */
++	if (!rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits, ctx->dsi_pars, hsfreq_millihz))
++		return false;
++
++	/* Check DSI error threshold */
++	if (abs(ctx->dsi_pars->error_millihz) >= RZV2H_DSI_PLL_MAX_ERR_MILLIHZ)
++		return false;
++
++	return true;
 +}
 +
- static int rzv2h_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_freq,
- 				u64 *hsfreq_millihz)
- {
-@@ -715,7 +759,7 @@ static int rzv2h_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
- 	unsigned long status;
++static bool rzv2h_dsi_get_pll_divs_pars(const struct rzv2h_pll_limits *limits,
++					struct rzv2h_pll_div_pars *pars,
++					const u8 *table, u8 table_size, u64 freq_millihz,
++					unsigned int bpp, unsigned int lanes,
++					struct rzv2h_pll_pars *dsi_pars)
++{
++	struct rzv2h_pll_pars temp_dsi_pars;
++	struct rzv2h_dsi_validator_context ctx = {
++		.dsi_pars = &temp_dsi_pars,
++		.lanes = lanes,
++		.bpp = bpp,
++	};
++	struct rzv2h_pll_validator validator = {
++		.validate = rzv2h_dsi_validate_pll_pars,
++		.context = &ctx,
++	};
++	struct rzv2h_pll_div_pars p;
++
++	for (unsigned int i = 0; i < table_size; i++) {
++		ctx.base_divider = table[i];
++
++		if (!rzv2h_cpg_get_pll_pars_validate(limits, &p.pll,
++						     freq_millihz * table[i], &validator))
++			continue;
++
++		p.div.divider_value = table[i];
++		p.div.freq_millihz = DIV_U64_ROUND_CLOSEST(p.pll.freq_millihz, table[i]);
++		p.div.error_millihz = freq_millihz - p.div.freq_millihz;
++
++		*dsi_pars = temp_dsi_pars;
++		*pars = p;
++		return true;
++	}
++
++	return false;
++}
++
+ static unsigned int rzv2h_dphy_check_instance(struct rzg2l_mipi_dsi *dsi,
+ 					      unsigned long mode_freq,
+ 					      unsigned int pll_instance)
+@@ -718,8 +789,18 @@ static unsigned int rzv2h_dphy_check_instance(struct rzg2l_mipi_dsi *dsi,
+ 		}
+ 	}
  
- 	if (dsi->mode_calc.mode_freq_khz != mode_freq) {
--		status = rzv2h_dphy_mode_clk_check(dsi, mode_freq);
-+		status = rzv2h_dphy_check_instance(dsi, mode_freq, 0);
- 		if (status != MODE_OK) {
- 			dev_err(dsi->dev, "No PLL parameters found for mode clk %lu\n",
- 				mode_freq);
-@@ -1647,6 +1691,7 @@ static const struct rzg2l_mipi_dsi_hw_info rzv2h_mipi_dsi_info = {
- 	.dphy_mode_clk_check = rzv2h_dphy_mode_clk_check,
- 	.dphy_conf_clks = rzv2h_dphy_conf_clks,
- 	.cpg_plldsi.limits = rzv2h_plldsi_limits,
-+	.cpg_plldsi.num_limits = ARRAY_SIZE(rzv2h_plldsi_limits),
- 	.cpg_plldsi.table = rzv2h_cpg_div_table,
- 	.cpg_plldsi.table_size = ARRAY_SIZE(rzv2h_cpg_div_table),
- 	.phy_reg_offset = 0x10000,
+-	if (!found_valid_parameters)
+-		return MODE_CLOCK_RANGE;
++	if (!found_valid_parameters) {
++		parameters_found =
++			rzv2h_dsi_get_pll_divs_pars(dsi->info->cpg_plldsi.limits[pll_instance],
++						    &best_cpg_dsi_parameters,
++						    dsi->info->cpg_plldsi.table,
++						    dsi->info->cpg_plldsi.table_size,
++						    mode_freq_millihz,
++						    bpp, dsi->lanes,
++						    &best_dsi_parameters);
++		if (!parameters_found)
++			return MODE_CLOCK_RANGE;
++	}
+ 
+ 	memcpy(&dsi->mode_calc.dsi_parameters, &best_dsi_parameters,
+ 	       sizeof(best_dsi_parameters));
 -- 
 2.56.0
 
