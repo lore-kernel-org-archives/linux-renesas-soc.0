@@ -1,97 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.56
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793707627;
-	b=MRo9ZfZNQco42tzQBFhJn9pdD8wwEXszkBTc0k3zSTe1dRafHnBtCnlcv4BRUjCWMDdl
-	 29lGOHG1H2P/OknxxCgjJ5k5MWQUXXnUQ3qEKbTLzQDNFmEMxY0BOiG8zj0eM4vMY1qvG
-	 N/PWL/X+UbWSiGewYiuG8JXLFPNDqKfuRv6cayfQQ1qvBAl+D5q1JyOtFOXhF5FaFWHns
-	 +mNGjfCvGbv0dCyqXFcZl0IMbMiHe1ZFd83vOZq7Qgpq3jKbIKHbe1RmWQOdypuxzOjfc
-	 Bc+RVSgC3M0NbNtMXy2jR92cpui2H0zeosRMEs2TZPvKxI7ZlrLtp2EMu+mEHIPL8WA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793707627;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-LD-Processed:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=yD8Sdm4SnB38xPtQvp5DQ0MKlLVNm2+ZTcC/POtVpUQ=;
-	b=rW/jF8HHyti7WnBoW123wGTR41NInLI3nPvXKT0KQtmhBEX/klF18UpD5Yjf8iQSdljl
-	 b7SpMRmGPiCb5nCk+pdyuEEnu3MLh1OPY8U7SAzrkHHNZQmhChtMvsEDs9aCl/FgdLRIl
-	 WXvgZ2hPjmt2r50LUTHAxduRkHLhR23PLEv4EzwnLY7CdEJCzQKFah4l0Ljjt+bYthgUZ
-	 uGt0WEmILHGkrT7UJnHjd9g+mdU7xeEbhDtbg52YA67TeQOqeUurMvrg03aKZ2c5eEY7K
-	 A1gfhDjlPMxDdVHat+T6ON1BM4dMyzbXC5NDAncoK6lbQpNBatKwR6pljOYFLRDhWFg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=PFsbPyV3;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.56
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011056.outbound.protection.outlook.com [52.101.125.56])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793708685;
+	b=fXr+R30FwqZG8SPbvzPVO1his1UrpHwMTMwWmsprkDo20lk4nhmud2rQxaSJjpp6ujue
+	 QinzGqmG7ybon0E7bt33lymyKV+0KNnfLEZO9xxm20F8Tdv73kil/GQz7Il/hgkUSrDyT
+	 i3ClIbOCBVDqBr9sm8c6pnhVDz1nGJrAhuP9M1qPQ4TcWXpkep3GDu7spkzcbM0DZFR4K
+	 FwRLivBjgO80Zr6/LnnXlsVT5etd+1R7M2YGRdL2kyfwdo5v2bkxBPI5qnIr82Grdpy1B
+	 HfBKB+aCOhQyuMb8/yF+xqd/g51VzGDYqIjN4aVEmufMD3mt1kWWKBAo5o3ULbnKOWg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793708685;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=2DQ96R/0ulhMhCPuDty/w5YNIxZWO7PXWDO3bMU5BOI=;
+	b=Ip6E2j857ix97JXJu4uigVh4ksPNxv4W0fQllqJu6J6GMdOMsIbqzXrWkG1BIOk5emr9
+	 KIwEKwkgux6R2Fdt576scKlr8q+q5iruCa6J8DLtVZ454k6Z21cYcyFw43zVamwT1OCQt
+	 6qjPybwlsckujvLI6UNLzLa1Pr6szzIIIOBbXTMIqnOGTEn9heLtUm7cXxqtzdh09B35s
+	 5HwW/Df7c8OVRBvxztspJtA9dBATYv+6t0UmqT0biAMqIsVswMA2iB0jJw2cwJ36HWkmE
+	 GaHWe5UWRI9Xi2Y7XLDFG715H6Y2B9kGxUSZhucpeeiqXXrfM/2jMdOzDenUCNwCODQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y2DPOtoe;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DD4606A329;
-	Tue,  3 Nov 2026 12:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5DD4606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id AEBFE606A326;
+	Tue,  3 Nov 2026 12:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=PFsbPyV3
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ESRW7fnxfm2oV06m6AwuD6Xi86vGfrak91nburzscIadjp2xEDxJy7MdBfCmuUlslA/RBInEMieOg0XdKgMjnjEYOIDLUq5lqR5OchYKfqAhvSyIRPuV0VXQ/5Cqqhfa7SCS47T6wRWp5PvD+mh0CxoJHNpjYQ2iGf4kmw9kAG8mRINDoBaVppXixyml2U7b+RPeDR2UfzW8EaN2b2v8BQ/tt+m+vc4cCzR4EDf47n0fKf+vBjqeUtonvQsOoJTC6lubVH4/z3wHGVlGXSE6pug+042Wm0Tc5PayiCUxl32TQUCyLSdO1gN0PZLNPQNCz6qF0YG6ERvL/ouBCBLCCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yD8Sdm4SnB38xPtQvp5DQ0MKlLVNm2+ZTcC/POtVpUQ=;
- b=m0rvTI79o7Cw5eYT2PlJCM7DanEY9YgVSETv4uwa16Z47uz4HFlGID3abUw952PQOEcgD2WkVUUhWQDqHCxnaLhx3arxmZPb7VoJ8pE5Q/qWh8RIxBK81ub7k0Sw4exLGJuLwjAB0K6zG7eY8VRLAr46AF3wxNycCFUPxntQMTtF/pO5GHKAJG5M+EQrCaYY4hvQI/qa0YNdduflUGh+PfsVvwfeLx13cH6STmE5ff0a1Axm1hgq6IpIiNvbTZGCqKqSOuJPP0qn8jwZL/h46zxfC7mt8dA8sJiUwq1FOWXBaMDwMpYWUdqEuE6LfVeR+3WeY6fYfayiUyyJZh+2fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yD8Sdm4SnB38xPtQvp5DQ0MKlLVNm2+ZTcC/POtVpUQ=;
- b=PFsbPyV30JMEaLryzjTkyGhGznIT9slKVakHhEDDqfmxTDSRIqHTrpYKi9Q6vYmxdMA1Mh1JW5ILqxW1vYPkrrmK8e77W3cL3BIyuOW5/WyQ0YDerh6M59idoSxgefj0SK9Lwv/LGh1puhk0Vmne+SaHFNmpQJC/z1D2PYn8YFU=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TY7PR01MB045388.jpnprd01.prod.outlook.com
- (2603:1096:403:405::18) by OS7PR01MB17900.jpnprd01.prod.outlook.com
- (2603:1096:604:441::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Tue, 3 Nov 2026
- 12:07:02 +0000
-Received: from TY7PR01MB045388.jpnprd01.prod.outlook.com
- ([fe80::efc7:876a:53ee:a019]) by TY7PR01MB045388.jpnprd01.prod.outlook.com
- ([fe80::efc7:876a:53ee:a019%6]) with mapi id 15.21.0569.011; Tue, 3 Nov 2026
- 12:06:57 +0000
-Date: Tue, 3 Nov 2026 13:06:23 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: tomm.merciai@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	Peter Rosin <peda@lysator.liu.se>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin.sipraga@analog.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] reset: rzv2h-usb2phy: Add suspend/resume support
-Message-ID: <aunOPzKeoIlrLTxm@tom-desktop>
-References: <cover.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
- <da95bad94c99855b960b3566c07671f8c15d5dea.1791389435.git.tommaso.merciai.xr@bp.renesas.com>
- <9e0d2e4a1f551d2e016975b146b8303508a7a1fe.camel@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e0d2e4a1f551d2e016975b146b8303508a7a1fe.camel@pengutronix.de>
-X-ClientProxiedBy: FR4P281CA0265.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e8::8) To OS9PR01MB315839.jpnprd01.prod.outlook.com
- (2603:1096:604:511::20)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y2DPOtoe
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5D33F1F00919;
+	Tue,  3 Nov 2026 12:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793708684;
+	bh=2DQ96R/0ulhMhCPuDty/w5YNIxZWO7PXWDO3bMU5BOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Y2DPOtoeBhQC9H3iDa32ycCqijeUsQyOWUtRGHIYLH0dXLxZUgEjv6SLfXFJy1+yx
+	 REGyvcQMfuo3sZnBFrDxClG/MkMaDIKnK90l7RtK0PDTXjGL6CaKqpsTGr1H383bgl
+	 4TyhCnpi2mmiJ18g5WO9YEH6HMlaMgnH5EIfxQ78ETdDfCbW0Nq7FnvPdbMq/lkRzu
+	 YVxjlkUTO+w5EzhvM5yynGpZ7GDn2zzh6C78NzGOnNAyoUN8QGMgJIfas682UgvcoY
+	 za6RIYThdNdxsriG9j3+KBkt/9fGZF5z8OM8R3azJs/Dg4hZMYuSZR8c3Kxw2uTAo8
+	 Un2lK6ZcYoQzw==
+Date: Tue, 3 Nov 2026 13:24:40 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Imre Kaloz <kaloz@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Valentina Fernandez <valentina.fernandezalanis@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, 
+	Mika Westerberg <westeri@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, linux-hwmon@vger.kernel.org, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, "Enrico Weigelt, metux IT consult" <info@metux.net>, 
+	Viresh Kumar <vireshk@kernel.org>, virtualization@lists.linux.dev, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-tegra@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
+	Michal Simek <michal.simek@amd.com>, linux-aspeed@lists.ozlabs.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-unisoc@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	Michael Buesch <m@bues.ch>, William Breathitt Gray <wbg@kernel.org>, 
+	Robert Richter <rric@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 00/23] gpio: Improvements around device-id arrays
+Message-ID: <oiwdi2r7fbay3dsghfaqzejpv7d5dpuerh5jy2vsw3kjyhvhdm@hyrpff5ytihz>
+References: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -101,86 +81,37 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY7PR01MB045388:EE_|OS7PR01MB17900:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81aa437b-7aa5-4ab7-8030-08df39a2f4de
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|52116014|1800799024|366016|38350700014|4143699003|11063799006|56012099006|261028144727099003|261022105027099003|261102123227099003|261021121427099003|261026121527099003|261026140227099003|10067099003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	U05TGkZS6XH3dbyTHPsnLZb/fkl3cS9/JokiJLlzxmoSju3eudAxsXchZVOopBuVSdkgrrqEcpWvc1XmPG7ld3jD88DNQhVIBNd35gLye+S3piOixn2rR8t26gi5JBzYlgeUJz4w5s22svtZJYkZM/2SbgJo32plZJZKQLo5MQK0PcH16u3oSDoF7IVEzyWdFHRskG0EYQ/Wfh7b/7y2a0QAjdHwOf/MBpqIqIEtrPPa95cvJsdqSboQIqLz/Glo4Idhdsne7qYczBFpX2kb50iuoTpUDao3bTE/AR4JK+PeS0zEQbwIFjplxOMMEb+CZ7zkVpEQPgP/JN1ID1ZdRraN4evx3dYr/VEotXr7Bb8QksBpsDnImPppPd/egIjjdR3V7zYZEGBEPXm1uWppm946TrxEPID2EreE0QGh1T456VRBO48buguXQyaBd5ULlOuyCIGCDhLQQ4w2BTYsF7kr1881SflCyye9XpThu25SQgL9ovuTuvsgVJskiY4vuYKwEC3K3J6R0aiIPKrj9rlP/RvXstzyEzmpMMPyirrrZnNlvscCV8wXrzCIUnMt4/qQRJcghhX+dFu3QwmgHxsgDW17ldt2M/yTchYyMz5XC+qOix87OCWpdPJmLtlnacJ1jzKH1/iVHpvHALAWUXQ91wpTDSrWu2JSEgAf6s3fM5osm0KsyImBy06dxM/Toip1fK7v6AbvaiItnRFBB7Ug28JZNzhqBKBWhGCN0j0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB045388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(52116014)(1800799024)(366016)(38350700014)(4143699003)(11063799006)(56012099006)(261028144727099003)(261022105027099003)(261102123227099003)(261021121427099003)(261026121527099003)(261026140227099003)(10067099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kvFXVubrLCmJvkMAhuKsWmbI4wfYu6RHfyR1donr94VgqP2w2R2U10UKZlzI?=
- =?us-ascii?Q?begV+pkOdTSj5jUxM4TTxa7X+HCACW4iMlkfmNZO/xOs+9kx6L/cE8V2eG5B?=
- =?us-ascii?Q?RxiEEYgnx9o6L4OcUiua6ltVZJfLtWI6aSVZO74Qxs1IYpgKrDACQT7pcUWz?=
- =?us-ascii?Q?gx95yH2/WjL5wCD75wG4JZpvSrAt8a1yfx/99KL4BZK48/yxFWUqZV5N7kyX?=
- =?us-ascii?Q?Wsz3Tk+hF3rP76HtsgJtugXexXtK0IohEFtD0C9sUYIxCxFMHuSZCJxhKnjB?=
- =?us-ascii?Q?+ioOXed+/wXZEni+VOn4kwY3dT30A8Gc4VczunZR1WAORcB+L7o6wFs6Gzjy?=
- =?us-ascii?Q?Gd9HUcWVbrl/osG1BC+sBofoi01Ey9MIx4ESILoo7Vu833eQquKZwA0OlFTn?=
- =?us-ascii?Q?DSRQsIcG/imAGyv226nIB3t5GAW7NQv6Ep4QJU9rXq6AcpIrLjto3bx4i9PG?=
- =?us-ascii?Q?EyMmAsdIE2/E8ZA+jxRoSQHOzjrVm27x2Och0nzmcDTSPCrd/9B3IbLcI635?=
- =?us-ascii?Q?M4sTGz7y+JYxxXvNrP1mClWUVqNU2gV1M0AdkfguUZiMJ5oyctYuFxWt/Ngt?=
- =?us-ascii?Q?My1O5lq+wEktCRBzOiZ3w+AYqyz9ZTOLaZB1yqN9arMc9PKDNUsk5Y4x++7n?=
- =?us-ascii?Q?HL1mNH4eCmyls0RJsdOQGo1Xi7lqDlEHvmvMZW4XCkOUTb3NGSxOp2cWyjjW?=
- =?us-ascii?Q?lcpt8OsbQOZFPXa2xrvOm5D0x1Re+xCZK8OPa4HDC8queZ6y/fvEy1J5y45A?=
- =?us-ascii?Q?B59C93hh4s1fmcMmE34vDXnaAaAw16tIAu2CE9Lnmpkg9uKAhM3mwDL6mnz0?=
- =?us-ascii?Q?/anTmPIAfbu8pOhYsH9cXbdOL8ZcBpHo9YP9GfiY714KzcrVsU8bKBA/VGYG?=
- =?us-ascii?Q?3Y3JUz+AY1L9AXaOqU++QkM32VAMJQJClIZvk9BHij8ihAoMGYlJIcTC3nw0?=
- =?us-ascii?Q?nENdE2Xp38GZShS4MJWEgeXR4/Z78bn/ovydsW+7cbmb5BTRAWQamno4nwrr?=
- =?us-ascii?Q?ac8LL+SQchJY5kCNh2EtanUbv6x/FqTZVPFPf0I4ScW+/o5qDBjKOsYGe+uS?=
- =?us-ascii?Q?uVYWZPORuQmfwT0NsAe6enL0YYgpopLvXeUjL5TuOEqx7fX9mh1MAooq0iYF?=
- =?us-ascii?Q?J0QCJwdz5IdsGhY+ItqMGaLcEpRqYBLxtda81ioc3uluuupwObJPz0YpWGkF?=
- =?us-ascii?Q?1AajaXf9VlxK95/xYUuNmXiWFZ5aEidVWLu3kvXHDk6huTiDiiPiBPJP2CyH?=
- =?us-ascii?Q?Mm0R/OBU/3m3FfasnacP1z+aB1IFjDJhtGcZ7AbswdRYDiSH+ZLCZgrHX3K+?=
- =?us-ascii?Q?vWp05tA+OrcF9lLu+XlNulkY4hCY6FMfbCiQlsCgZ/AcVyi1vJFWDSnlmtrK?=
- =?us-ascii?Q?adf+dndRo0eq72mVOKYRNjgbn+1o2d18TJbKsdTPB+NN6jJr6E71ShDh1d8z?=
- =?us-ascii?Q?m8doXmXm6KlMlyn/XOhL60I8mAFBF7HiQlFU0Tl2U5grHbLUpgG5ZX2EL8Mb?=
- =?us-ascii?Q?qg4c/ZWWrfWUmUwCoS8FRiIB7bMu2gPa0WYUHKfLYpt+HGJ8Pf1qlPg0zNPv?=
- =?us-ascii?Q?PssWFhtNf9dcqnx/tE9ZYtYQCARlc7Vc+OXtLGT03PjYSZn5LJ9GtYTd3ZAK?=
- =?us-ascii?Q?6AH0AgdRPeTwlvNxFQXvLAvVTjzrL/+3o0DgtgUQyHedC3dg/S5AwD13YBXl?=
- =?us-ascii?Q?Pyk8xhWw7mx1yVl7rJZEZxZrivEMyok73E0BWPsZAoYkU0TDAAOwDAgjKo7H?=
- =?us-ascii?Q?9A5CB7zx2nNVGEarqep6RCvX1v3vTYt5iOx5voO/rZHMMjWHNhHe?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81aa437b-7aa5-4ab7-8030-08df39a2f4de
-X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB315839.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 12:06:56.9592
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zrOEJQIsmitayg4KGg4mwn9OKHfjxQPyZfzMqjFgnTFvmeqngMFlsG+NlVMMICFPfPsKebbn86QO1gneLKf//3sShe+uoO7rmSAZyPVrHfPjcC/SowGKsCwihVv2kWSM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB17900
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
 
-Hi Philipp,
-
-On Tue, Nov 03, 2026 at 12:05:57PM +0100, Philipp Zabel wrote:
-> On Do, 2026-10-08 at 09:44 +0200, Tommaso Merciai wrote:
-> > The RZ/V2H(P) USB2PHY reset driver is also used on the RZ/G3E SoC,
-> > where deep sleep turns off power to the USB2PHY block.
-> > Part of the initialization sequence written at probe time is cleared,
-> > leaving the PHY unprepared to receive assert and deassert requests.
-> > 
-> > Add suspend/resume support to assert the reset on suspend, and to
-> > deassert it and rewrite the initialization sequence on resume.
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+On Tue, Oct 27, 2026 at 11:48:37AM +0100, Uwe Kleine-König (The Capable Hub) wrote:
+> Hello,
 > 
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> the original motivation for this series are the patches that convert the
+> arrays to use named initializers, see
+> https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
+> for the idea behind it. Looking left and right a bit while implementing
+> that, the series grew a bit.
 > 
-> Can I apply this independently from patch 2?
-
-Yes please you can apply that.
-Thank you.
-
-Kind regards,
-Tommaso
-
+> Changes since v3 (available at
+> https://lore.kernel.org/all/cover.1793030820.git.u.kleine-koenig@baylibre.com):
 > 
-> regards
-> Philipp
+>  - Picked up review tags (b4 even found some from v2)
+>  - Add a 2nd MODULE_DEVICE_TABLE(of, ...) in drivers/gpio/gpio-mpc5200.c
+>    (My grep didn't handle >1 driver per file well), noticed by Sashiko
+>  - New patch to use named initializers for auxiliary_device_id arrays
+>  - Fix code style of of_device_id array in drivers/gpio/gpio-grgpio.c
+>    (My script doesn't handle of_device_id::name) and
+>    drivers/gpio/gpio-ppc44x.c (didn't exist yet when I sent v2 and
+>    failed to notice that for v3)
+>  - Fix code style of auxiliary_device_id array in
+>    drivers/gpio/gpio-shared-proxy.c, missed as I didn't have a script
+>    for auxiliary_device_id before.
+>  - Dropped a few broken email addresses from Cc:
+> 
+
+If there are no objections, I'll queue it by the end of this week.
+
+Bart
