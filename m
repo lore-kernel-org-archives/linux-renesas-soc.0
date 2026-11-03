@@ -1,146 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793731486;
-	b=eio+XSULM9iBp6ftp7toc8kSIb2sMlWDAUDay/q/ycElIqEY4PA2Fy/DGT84FCd59wFN
-	 XgRhT5+39vGEa7lYosyUZjE37nBMhxz3bNWTVSDP67iluJeB28oew/3gLXk5fyTESIy3H
-	 GW/RiLWWxzA2FmhT9czJmgQbFiAcC6t2WDtCoTP8exP/+3dBqcrtIAtegbLwYbTGkGcq2
-	 AGccJD4lKX/RbQif+BdDmWw+a6s/fsyXoB5KpWn0imuYaZcvpU9E5GXxGlexaw8uDGpyZ
-	 sa1rRQzoJ3wx8J/S+cMuqJ029UUtLT6uTS185khsc0deQorTmghhsfjBlo5n99efFxw==
+	t=1793736101;
+	b=JgHeYjcrA+/Fvwk1s+MgIR/RMqarpiUE1p7oBR/HSEBwZQxbYy2rpdHPqV76YA2dnh8K
+	 QmSnLFk6JkV1elE/u6LCFSEaOxXD1uuFJdS7d2WLAhKGbVzkC6uiTzkfQbQ31o3WQJ46e
+	 z0rn4+dQzMqaxRRzU0S8Cte9upX5tQSli7XMxKqVbuwuk7BoeHysUkNMCJa1KX1fK8Ori
+	 wOxJz3wRih748rpY/10NXTAAtULfDuqKaKW+w7SE9nmYtk1IdZonNcU0Zdb/LYYORpU2R
+	 LFnqFKcRtVNAfMV7mRo9RTbkzVrpECYIyLEnng8EEk0myVfRn6/Zvy5GYGznvflH55g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793731486;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=W6/JYFIS2gBbrryXL8wBsd9TWGVGmS+61AzczLDlVL8=;
-	b=SMPY7vaiiflkx1/V3JrYWp8nfnla72EU52L8VNZ0/tXF8D8qvNlQtbwtEorByvDIUU1a
-	 N9xJBNjqh7JGOurp49oWsl9qaQcyAteqbEyXpjXyp4Wax4EiT0fS9VSuLDj42joeQx2vc
-	 +thHRElNtoYSU7BbzGcCm606veNBAEnzl4kRlxKVQaBaB0FVTkQC0f6FJLDUMhyK99UlH
-	 7WGKdrgNyAG0lh40993M1pMBHbXe5ZcW0eQd2M4NbRkPbOM6eZv3vV9yzDpCX27pjuid1
-	 +I38sNQKdDf8Yt0cHauWoKjl9upNiXIIRMSwhIDUgJwE5pvz+H46QA+gimMt0YpZ7gQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793736101;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:Organization:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=7H1RDtJDysjjwJhjmvJC02gigYRM/VOFCjnNa1uDYbQ=;
+	b=He/rXkkx3u51RAEESQvkP9MJnrQWZ9rq5XCqI4m140HvtmsO7k2jbV5Y8+DRQ0JZZO7j
+	 ccfcC8yTxqktisu4Venll+Pq/fqHSoAdECG+U6J//K3lfll+2Hyq/sXi9nppT+FKjRjnE
+	 PCzMwZVkC/cmG+Gaf0oQ6k+F3RXCKXmr/oiEoaR/sm5UFF5KYhhGGVVXQ8dK3ZL9cu8tF
+	 Fb6dJAnSuOzJ3UNLiU7e4qKws4nENwmktNNnkAyB9VL9wf9uvEeUooXaK1vttETD6D4XG
+	 dIO71NNeW0pmy8A0PC3q2UP/Jx2zQLLLAwfbLwZfJwK2sXIECpeKtCFkZ0TLkYUp5Iw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b="Bx4jN+/C";
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZlvZnhnR;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FC9606A328
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 18:44:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66FC9606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD01B606A326;
+	Tue,  3 Nov 2026 20:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Bx4jN+/C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=W6/J
-	YFIS2gBbrryXL8wBsd9TWGVGmS+61AzczLDlVL8=; b=Bx4jN+/CUlNIFrFEfcZT
-	DWnp8D3KgQ3RUAi57jaWHne3umwEazqItZQTPk90jcrkdqvvhubVubpT5CCmNEfB
-	/g+w2DyTRdx1uo22fhbin0kux9Y9nu8VuHWZqX+a31npXbTs3OfVVmVnJi5o97lI
-	3cpudOMSylHj4AcWjU71IcIr+OL4GFnE1e72JJgFfMSTdKQ3jTL5Qwp9+KgvUy98
-	Vrughpyl3hyO1Y88CTAL/ng8Mz4lzYKHQi99Rat4dkK7EQx7ZMusfrnEfipTR9lZ
-	PIIjBVDl7Zwwkfvv018HuF4t98uVkT44kwuLhDn7IY0jseMG18KhPTggId27cesU
-	mA==
-Received: (qmail 389850 invoked from network); 3 Nov 2026 19:44:34 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2026 19:44:34 +0100
-X-UD-Smtp-Session: l3s3148p1@KfVXp2NfZqnAwtcC
-Date: Tue, 3 Nov 2026 20:44:34 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>,
-	Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Alison Wang <alison.wang@nxp.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Igor Reznichenko <igor@reznichenko.net>,
-	Michael Walle <mwalle@kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>,
-	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
-	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Casey Connolly <casey.connolly@linaro.org>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Cristian Cozzolino <cristian_ci@protonmail.com>,
-	Junjie Cao <junjie.cao@linux.dev>,
-	Ryan Brue <ryanbrue.dev@gmail.com>,
-	Nickolay Goppen <setotau@mainlining.org>,
-	Stefan Mavrodiev <stefan@olimex.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	Alexander Koskovich <akoskovich@pm.me>,
-	Markuss Broks <markuss.broks@gmail.com>,
-	Artur Weber <aweber.kernel@gmail.com>,
-	David Heidelberg <david@ixit.cz>,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	Yedaya Katsman <yedaya.ka@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH 08/35] drm: rz-du: use devm_drm_panel_bridge_add()
-Message-ID: <auorkq3_lHY-rc1D@shikoro>
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
- <20261026-drm-panel-funcs-v1-8-5e3070a3478f@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZlvZnhnR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C81CF1F000C1;
+	Tue,  3 Nov 2026 20:01:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793736100;
+	bh=7H1RDtJDysjjwJhjmvJC02gigYRM/VOFCjnNa1uDYbQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ZlvZnhnRmewFgvwIRJro08JNu0WSP6OzJkDcGl3OzqTNu5KNxytSxbN9oDpjfiZe5
+	 /NNxGXtgpOOX1tt2yLiI7Ixx2n1yVsiOHZY+Kgiplx97WvnrCBQiPrSoueOnqD8NiO
+	 pVYXFOiOD0s7RkRg64ebbKucvcXB1MThbX5vnwtSd+eAy1gPkz79BC9Hw2LTJ+avcH
+	 biDxQgSuLFMdxXFQ0iWWv2ZyloixiIZ0IEtF/6Xs0mV8TOK3F4Bjm6ensswYNztnYf
+	 FFbbv9jheckLXMD1xwof6CwCWkM38zlJKXO/8DT6oDJabdv0PIWKryqhIoRT10NSVN
+	 EAHeoLZ26BCKw==
+Message-ID: <1583a8a1-c039-4c8d-8607-7bff0b284048@kernel.org>
+Date: Wed, 4 Nov 2026 05:01:35 +0900
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -150,17 +51,34 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261026-drm-panel-funcs-v1-8-5e3070a3478f@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] reset: k210: Use regmap_test_bits in k210_rst_status
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20261103-reset-regmap-test-bits-v1-0-1b33607a76b0@pengutronix.de>
+ <20261103-reset-regmap-test-bits-v1-3-1b33607a76b0@pengutronix.de>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20261103-reset-regmap-test-bits-v1-3-1b33607a76b0@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 26, 2026 at 01:09:57PM +0200, Dmitry Baryshkov wrote:
-> The connector type passed to devm_drm_panel_bridge_add_typed() has been
-> ignored since commit b7797081ccfe ("drm/panel: embed a drm_bridge into
-> every drm_panel"), the bridge always has the type of the panel.
+On 11/3/26 23:51, Philipp Zabel wrote:
+> Simplify k210_rst_status() by using regmap_test_bits().
+> Now returns 1 if asserted for all bits.
 > 
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
+-- 
+Damien Le Moal
+Western Digital Research
