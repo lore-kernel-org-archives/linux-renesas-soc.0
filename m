@@ -1,37 +1,143 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793730636;
-	b=zlbAtEm8yZgOtSXb4lNGxymQW12Ey2kEiJBOjYw7OhEKizZUof9xTh2F/mXHf/BU+13l
-	 7nDNRD1SHYs8rCy1Pm0/UbA+y5wc4IyiL6xJwJ57H5ZhEbFhAZQ3fPGFxa/JtE6BtFPHc
-	 UDVX36oYNuOIqNpFpOQ1epkGu/iEN4A5I1ZeteLz9JfBgFvXn3v4PgSg0dcl9hhcCVrVB
-	 lUmhN4si0v5W6aBugCrXmXXT1ZxuoXeHK40yWokHu1o0TbrS3hfvwhxI0+3L8Bj4rT5m4
-	 1S4CWUGz3R7zcIwyOstMG2xjG+dj/FG3qe52GQFl9x9eKweGC57bA3xQKlw8k8UGVgw==
+	t=1793731472;
+	b=Wcr8eN+MeVvJdm25v6aRTknrKPiUrMwIIuqZfc2EdJsvK55+BE1+RRz+pZGZ2Lv4SZYQ
+	 VTOZninrqRy8PbN0u4BkDzElYCZgOwNUI+2GRDFwgsV+/lraoCbySLB/Rw6l3EEFl5txa
+	 TEamJe8GYObg2fcs+II6WsXff7s+arbFSxFfUKSOcDkl1Ha9wW5Kkcy2GfvHFSRcadFaM
+	 QYwaHhCkjB97KLL6OB+MoUjjk0Wezt/M3TllE0OmnWfja2/8JCWB3N1IuuBwgM/VjLpUA
+	 jny6SaJf141104JzmP0Bum23Ei4dfuKp/EzATFFpTF8rkEfZlSPjYnCHTABg6ZyGF2Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793730636;
-	h=Received:From:To:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=3gB2pJzhV0TeIzsYFtibCoaIxQakvsr54/JNYXuRSUc=;
-	b=My+s20TRsxw3l11UjukeW4bo9adoQWkdB/neZTDgLmLmqr1YEDMW/Ksgoe1ELnOGAD0a
-	 spQdl2zfwta6clulKD0IufQkbHFNiZKZEyfKQ3zMhPENNFxdKU4flz5yHh2nNVvmvB/R/
-	 hyI5Jn8pf9z0tHBlQ7pPCnO30OBdt/86rA2zhG3lcxCcqRlBbn3JI1qXPVXRZ2v+YSiuE
-	 7ht2VwblhbsAqdS9iurrYJbwOxCRqAt5XWp5FJEcZrsC6UeUSSLU+pxtaqdSLcK0YRSJa
-	 pz+zCvuWdYmBa1GnAVjkpzBTYM8AlCPzayERSlK/z4R1wSjLpFshG6lju4J/lEztjfA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793731472;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=WjL+BboDzTnCr05d4B3GVddTa6hoTsb2Q7/tMkgbEgE=;
+	b=yxHNd4is4tyWahvSOLiC/gy2Cozw9jGF6EKOdMDEjB81TOWCmc4Y6j0JFL43B3Zna9Dm
+	 vrDN92ZuCMBVBr01k8eZkl7k3PyJ4Q9Q7rTlysozB5oXYJtbmvWvap1mC5L+/XjQSazQ5
+	 LAfs3geeH+S8Nx/Ja9/i1F8aItB8kWePi9NEzrQPgBe57mQz5RRfDz2+/nOe5IifM0ZSS
+	 GTRDS1xSr93P7Q/ocWAE/SeXivL1NlZjIy07ijYZYJtaAUShpgY3CFH+LrYsvW0m/arG0
+	 3Gw90707kWmQ7/vadSBwmdxGuqitw5/imDOYkutZTMqQCuvCqrrvvwwKFdlvZylobbA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949F9606A328
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 18:30:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0201C1F0093A
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 18:30:34 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2026-11-03-v7.4-rc1
-Date: Tue,  3 Nov 2026 19:30:33 +0100
-Message-ID: <20261103183033.1937138-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D9A606A326
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 18:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48D9A606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=WjL+
+	BboDzTnCr05d4B3GVddTa6hoTsb2Q7/tMkgbEgE=; b=k4/TTGvn6KawElXEg9Bb
+	qOZDns6dw9rlO8RAcyEW+R5LtiRWK3EUb1xjy1qv5PY7vclfnx0g2zpyRZVQHBQk
+	hS2cYY6dvAjl+vRiET3GcojY3mYknjggYIDCmsAOOODL5DWB24RiBNfTVe+sFXwA
+	ovDhC3fDMR0XK9MmSAXBVkPFBg3Z543a0Vc/+0kETuPaPFpyl6SYJO91d3WVkD9r
+	pcnEavNArnqZDMUAJXlOdMLBl2JLVqQbbmzKs9lmkKUVXbte2zMVrK+98TXCdCn4
+	V6761POK1dz1bRaU6iLEQZpFTg9RwZwQW5Ad0pqtUf4KdwYhnZT7/Jhg+CIIFitj
+	Ug==
+Received: (qmail 389364 invoked from network); 3 Nov 2026 19:44:13 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2026 19:44:13 +0100
+X-UD-Smtp-Session: l3s3148p1@m+AWpmNfMLbAwtcC
+Date: Tue, 3 Nov 2026 20:44:13 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Alison Wang <alison.wang@nxp.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Ondrej Jirman <megi@xff.cz>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Igor Reznichenko <igor@reznichenko.net>,
+	Michael Walle <mwalle@kernel.org>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>,
+	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
+	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Casey Connolly <casey.connolly@linaro.org>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Cristian Cozzolino <cristian_ci@protonmail.com>,
+	Junjie Cao <junjie.cao@linux.dev>,
+	Ryan Brue <ryanbrue.dev@gmail.com>,
+	Nickolay Goppen <setotau@mainlining.org>,
+	Stefan Mavrodiev <stefan@olimex.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Robert Chiras <robert.chiras@nxp.com>,
+	Alexander Koskovich <akoskovich@pm.me>,
+	Markuss Broks <markuss.broks@gmail.com>,
+	Artur Weber <aweber.kernel@gmail.com>,
+	David Heidelberg <david@ixit.cz>,
+	Dzmitry Sankouski <dsankouski@gmail.com>,
+	Yedaya Katsman <yedaya.ka@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH 07/35] drm: rcar-du: use devm_drm_panel_bridge_add()
+Message-ID: <auorffiFkpqbhotm@shikoro>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
+ <20261026-drm-panel-funcs-v1-7-5e3070a3478f@oss.qualcomm.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -41,95 +147,17 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261026-drm-panel-funcs-v1-7-5e3070a3478f@oss.qualcomm.com>
 
-I have pushed renesas-drivers-2026-11-03-v7.4-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On Mon, Oct 26, 2026 at 01:09:56PM +0200, Dmitry Baryshkov wrote:
+> The connector type passed to devm_drm_panel_bridge_add_typed() has been
+> ignored since commit b7797081ccfe ("drm/panel: embed a drm_bridge into
+> every drm_panel"), the bridge always has the type of the panel.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
-for-next branches of various subsystem trees and (b) branches with
-driver code submitted or planned for submission to maintainers into the
-master branch of my renesas-devel.git tree.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Today's version is based on renesas-devel-2026-11-02-v7.4-rc1.
-
-Included branches with driver code:
-  - renesas-clk-for-v7.5
-  - renesas-pinctrl-for-v7.5
-  - topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v4-rebased
-
-Included fixes:
-  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
-  - ARM: shmobile: defconfig: Update for renesas-drivers
-  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
-  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git#i3c/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git#watchdog-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
-  - https://git.pengutronix.de/git/pza/linux#reset/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git#kbuild-for-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
