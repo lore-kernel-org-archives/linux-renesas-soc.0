@@ -1,75 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.197
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793740472;
-	b=iUup29U6p+JgZBFt5BetdvRd8+KysEsqsVEP2izzrptNDc9lYi8/7+dFsPrDToWMhnlM
-	 8kV5H+C3J3ojBiJ1mzHCuFCKBZWg1mIINIBH8zSg+jPuHKmX7JYGjIj6Mhw/5hoBOR5rd
-	 FwcLKLxSV+y3MWXgJghL+vKLUhiWU/b5T/yw694oqskL0QUpgy2dHL8Xwus8aePd+IDzp
-	 MdlUK/wcJo8qXasW07WxuytrzwNuqCDAMWTBACG6+5XbDo3lVZ7nokc/UIHANyewIdYxE
-	 Rot2BZ2JH/DNHAXL/GN/ejhLVmywEsQR+Hq7x2tWkdW5T44/RbzuZB3vqrtqCkUNbGQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793740472;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
-	 Mime-Version:References:X-Mailer:Message-ID:Subject:From:To:Cc:
-	 Content-Type;
-	bh=+2yCJaGEbyCpc4GPm4MdejLrIvWaF/SQGhmWy+Wu8aI=;
-	b=MQNJLysAMOa4h0AZ4vfzL+4sKQ1QOfyjKTHEl3eHurESnqdmuU3aj+5WOu6JIyFiH0GC
-	 RyBT2EEAnhOM0v7ky5zbky8kTVbNXnRYE1PRE2A6IKIdz0O8L1Kcdom3zsl8J4+uxjSgU
-	 meObWsCAiBb/eclvju8/qXDWohts1yDjr3ZM5VmNhc5iKNw3x3oj26WaMay1OCqfrARFU
-	 tdybcktLp1H11+CD4ETknEsg3iBSXRQ3d29CN40RXyoN3jm7AX16l9i161SNLGkCZnMQg
-	 fOvFL7tZ4V+cdKUufY5thAmKpeoHz9bNJKG77Yz0Pmu/88hFJ62iXoCnY2NTn6YFUVg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=J0GTklSJ;
-	arc=none smtp.remote-ip=74.125.82.197
-Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.65.63
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793741225;
+	b=Y4gIa0eWYbBELjGt9weNLXaQozrRrn2mHDjaabUqBPKyQiaJf59x0jZ9AaEVXKawkXxc
+	 DKEzaRcaAtdoab45wW9IqTNJQd7jr+90p8a5pqXnMxRjG3mU8QPvItmjIvPxLBEJki9Au
+	 /QGTcoepCOk1QFvwEvFD8kX0CjITYAblWAzIGasFJxmTNB9GOJgMbEqLZfVnTNN/CyBbp
+	 sZ1MG0OXAuqdKGxf3GfcOAznC5TvQ7r0XhUC02UzYiYUZ5GSpa5xFomEaMiECUx7EYHu3
+	 pufBdTq8kE/NXhLd/Zcs1Q1iYhiqtxZGb15So4gHaIy3A8EAVfZqgtEZ1ZMkbXvNbag==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793741225;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:Content-Transfer-Encoding:Content-Type:
+	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=htzvAMiU2FhngqwtGPbOr1GhKE6efX+L5FgMwLwRxfc=;
+	b=rXY6XbH2q/RZ91t0tSVGoBJf31HO8whDbrMolT7DaDtfPUUWpby9ChhBXDnxPQTNoN/J
+	 P86LQoVYaXVm17FZHVExeoxM0KhzGkamvqDUF8OL8R2Sfkh+4oyCpt8TZEKlMB138IAG2
+	 RJ2QSbxwydobYH72I5yYQJEE9He7+e5vwevj5ejK2IRTBEm7pa2v0JYZKZUpqJYriy8EE
+	 8xpGDPSUOGzRNnORTXUjAl0kWwEaRBuOgYQW8erm5Z3wcCJAQy0e9R1MqrlwM4S8ysgM0
+	 tCkWCdDPYHjIzwdc2+RNQAhV9T3l7POxFjzDsDIn4Jh6xOz1xpnFhJ4AhWzKoiEhd/w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=j8RFXFuc;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.65.63
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011063.outbound.protection.outlook.com [52.101.65.63])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7573606EE93
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Nov 2026 21:14:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A7573606EE93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBBB606A31B;
+	Tue,  3 Nov 2026 21:27:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CBBB606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=J0GTklSJ
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-33c35f5ca6cso9644498eec.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Nov 2026 13:14:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1793740471; x=1794345271; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+2yCJaGEbyCpc4GPm4MdejLrIvWaF/SQGhmWy+Wu8aI=;
-        b=J0GTklSJA0yPK2BwCTAjrh9eqi5L3NgNqWDz3qWwHvFAKjuw260KypyEmWMZHb8zpQ
-         4g53u+aqrx7AhHkDvpATs7i2/vmEWInSfCx9tDXP8qTyqK6I+V4keW/5NkamP7Vf+maW
-         y27HLk7d4vqhxNompL8ALUuNpOyDgHI8EGkgu6WK/R/fin39qMbZc6ODbIqS8utfqPoQ
-         cCBJMVtE0c/FYOuCjqhHjAyzFs1P51xbWZYILfE9CzZkglJU8u1JpAaov5qOJloEcGvi
-         Wc+RgAJeTXEot7KayINFeiN6WVP2QWc2ouNKaShXUpts1teJX3yrpS8WDvF8BkeVJz9N
-         gudg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793740471; x=1794345271;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+2yCJaGEbyCpc4GPm4MdejLrIvWaF/SQGhmWy+Wu8aI=;
-        b=nSSTB7rLaNS2DcPZOcvX/Jf5rhyr6OBuKyHMjBOdNlmMgKfpj8UZZux/gLPjof62k5
-         lsP5csUalHHDr6Z0U2RRc8ddpLQTmBoqy34c7zxWlDNKKAeD5VXww89GlFoex0eq1U3I
-         zubplAQSLSdosjbmKl3GjpdatpD9+Lg0PsmIZcK2kxx299gQyVzWcrqcunGmJGWvFOls
-         M5gZV/t2IMh0QG7TNWrq5LQsVntdumVL4ktqaIvP1xBczcz78daDDpLJ/LnVCn73VPBN
-         k8zyb76lmU2YcLI9Ifp2lKCI041wW3x/CPbe5o2oSdXXuOBfAD/HRZCpaXm5rL36vCX6
-         AuTA==
-X-Forwarded-Encrypted: i=1; AKwUvBwpPRrrwsYnGFQ0EA5vCmg9wm25iJzr46eBwqGyJLI8mJqpPCOciumgMBeNT6i1FGdz8VIu/wFtrTm8RWh9fZ3l1g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9UvU9S3wMenT7BmRLljqTfWIe44EqyWkSAr/Y4LKcuuNmnc38q
-	GkXBaJvsrldhb2ozmdY0P45D0oaLBd30R2wmyAMp4Q6ZYnJeYV4MmASEdXfAkNzCsn6hE2kHk99
-	xymv1MqnU/8WS1ueX1xoj+b05rw==
-X-Received: from dyvj18-n1.prod.google.com ([2002:a05:693c:87d2:10b0:368:2c6d:de10])
- (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:693c:8959:20b0:369:f5f6:36a7 with SMTP id 5a478bee46e88-36a423d1cc5mr22095354eec.16.1793740470274;
- Tue, 03 Nov 2026 13:14:30 -0800 (PST)
-Date: Tue,  3 Nov 2026 21:14:22 +0000
-In-Reply-To: <20261103211424.127627-1-almasrymina@google.com>
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=j8RFXFuc
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y9R9rfwEurkvcttF9s635SWDhUKeJj/GQhFkB7kxkv5mefaDC2uRHCfS8i5I5/J1/2i5Be3wKhXoBNh2dpe1/J+lS4KBZhWAQKXtZorD4VHU3rEzqqQGxltbrQl+CKpZkl+oauWF76oAko1BfA1J8NIDAkFvauqCYIRKHRIgUsCpIekuvjtq3H+RK3lJMamaFUU4VCnahk+nriT/IZwilBv7ky8z+Ue+52cOlw0Ez29UmfuttjCd0AzgfWVRxY09bZMygdw4ZiXTlpp7kNsW/BjK+RCLX7Ur0w14KzXU4AUijWy1XBRrATTZ3wGwwfAGHSMCzQO+k5mDZZfksj8/5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=htzvAMiU2FhngqwtGPbOr1GhKE6efX+L5FgMwLwRxfc=;
+ b=p3ysl1ktOZAb+ZVBvGICeeiMGXmOosF3Vqag2aar0x8pTJKyDSNKQsa9e4Hte6HauQDNLJdBqewLlJu1WPNxW+f1MwE8Ky07BpMdfthkb9av7C53Vpg0vP2RLxRmm4DB3N9AjRMtWh1RkGP41wbYPo438aW55viRqvM55S8Jr3ATiF3vAaOr+fcix75VooN/kWV+8lQgyvCY4AUsKD0uW3d1MqTCszznmP98E0JfOJhuNkHSsxTcz/qRM9i7EIm9LqIV2f7XLisCZGNSnVaTiTIDhjhXt422oMEwrOz4FmeOsXGo90vODO0x0QTUsbN2DDwlOYdZOr4tJxX9W+Xa4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=htzvAMiU2FhngqwtGPbOr1GhKE6efX+L5FgMwLwRxfc=;
+ b=j8RFXFuc9fuhhxe2uvJXAl/D5/PHzUthpCWGQAhXr6MfwaTDIy0Q0G7woazR6ZzJHgc0jplp96hbLIRR/Lx5yDI8130DUqwIRFcJC6uU9KqfTjGUGjY7WVC/uNwrCLkyKB8wGJ4dS4Ej0m/J5SHX8zGSmGxx6jmhe3ziM5/C6j7yt8o/IBVuKl8TMM2DkOH5wCBw7LEzkwsaAO/YSLoGwibI3c587m0ZmxlWvZ5JcHcnKTyrLN/LND9Gnl2IUSgz83rHDDdVQHwKHiEqFIJpTJbjU8SOtSl8zJe9ENzpn3jjsI8B7IIrfl+AwgGTA2CdYralBixCtOq2onlk+P4TUw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
+ by MI7PR04MB364121.eurprd04.prod.outlook.com (2603:10a6:290:100::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Tue, 3 Nov
+ 2026 21:27:01 +0000
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0592.007; Tue, 3 Nov 2026
+ 21:27:01 +0000
+From: Frank.Li@oss.nxp.com
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR I2C DRIVERS),
+	linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM HOST DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	dri-devel@lists.freedesktop.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Cc: imx@lists.linux.dev,
+	vkoul@kernel.org,
+	Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH 1/1] i2c: use dmaengine_get_dma_device() instead of chan->device->dev
+Date: Tue,  3 Nov 2026 16:26:54 -0500
+Message-ID: <20261103212655.1774644-1-Frank.Li@oss.nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH8P220CA0010.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:345::11) To MI3PR04MB12438.eurprd04.prod.outlook.com
+ (2603:10a6:290:76::14)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -78,299 +106,129 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-References: <20261103211424.127627-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.56.0.385.gac671c819a-goog
-Message-ID: <20261103211424.127627-4-almasrymina@google.com>
-Subject: [PATCH net-next v1 3/5] net: datagram: refcount page_pool frags in zerocopy_fill_skb_from_iter()
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-mm@kvack.org, bpf@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-doc@vger.kernel.org, 
-	bcm-kernel-feedback-list@broadcom.com, imx@lists.linux.dev, 
-	linux-rdma@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Willem de Bruijn <willemb@google.com>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Bobby Eshleman <bobbyeshleman@meta.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowangio@gmail.com>, 
-	"=?UTF-8?q?Eugenio=20P=C3=A9rez?=" <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sabrina Dubroca <sd@queasysnail.net>, 
-	Johannes Berg <johannes@sipsolutions.net>, Byungchul Park <byungchul@sk.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Wen Gu <guwen@linux.alibaba.com>, Philo Lu <lulie@linux.alibaba.com>, 
-	Justin Chen <justin.chen@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Vikas Gupta <vikas.gupta@broadcom.com>, Michael Chan <michael.chan@broadcom.com>, 
-	Pavan Chebbi <pavan.chebbi@broadcom.com>, Doug Berger <opendmb@gmail.com>, 
-	Nicolai Buchwitz <nb@tipi-net.de>, Satish Kharat <satishkh@cisco.com>, Wei Fang <wei.fang@nxp.com>, 
-	Frank Li <frank.li@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Joshua Washington <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Jijie Shao <shaojijie@huawei.com>, Jian Shen <shenjian15@huawei.com>, 
-	Fan Gong <gongfan1@huawei.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Sunil Goutham <sgoutham@marvell.com>, 
-	Geetha sowjanya <gakula@marvell.com>, Ratheesh Kannoth <rkannoth@marvell.com>, 
-	Subbaraya Sundeep <sbhatta@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>, 
-	Felix Fietkau <nbd@nbd.name>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Tariq Toukan <tariqt@nvidia.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
-	Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Daniel Machon <daniel.machon@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Yibo Dong <dong100@mucse.com>, 
-	Brett Creeley <brett.creeley@amd.com>, Justin Lai <justinlai0215@realtek.com>, 
-	Larry Chiu <larry.chiu@realtek.com>, 
-	"=?UTF-8?q?Niklas=20S=C3=B6derlund?=" <niklas.soderlund@ragnatech.se>, Paul Barker <paul@pbarker.dev>, 
-	Masahisa Kojima <kojima.masahisa@socionext.com>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Roger Quadros <rogerq@kernel.org>, 
-	MD Danish Anwar <danishanwar@ti.com>, Jiawen Wu <jiawenwu@trustnetic.com>, 
-	Mengyuan Lou <mengyuanlou@net-swift.com>, Ronak Doshi <ronak.doshi@broadcom.com>, 
-	Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Juergen Gross <jgross@suse.com>, 
-	Stefano Stabellini <sstabellini@kernel.org>, 
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Jordan Rhee <jordanrhee@google.com>, 
-	Ankit Garg <nktgrg@google.com>, Tim Hostetler <thostet@google.com>, 
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>, Eric Joyner <eric.joyner@amd.com>, 
-	Mohammad Heib <mheib@redhat.com>, Prabu Thayalan <prabu.ponrajthayalan@amd.com>, 
-	Chintan Vankar <c-vankar@ti.com>, Nora Schiffer <nora.schiffer@ew.tq-group.com>, 
-	Alexander Sverdlin <alex@sverdlin.org>, Kevin Hao <haokexin@gmail.com>, 
-	Karl Mehltretter <kmehltretter@gmail.com>, 
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>, Meghana Malladi <m-malladi@ti.com>, 
-	Jacob Keller <jacob.e.keller@intel.com>, StanleyYP Wang <StanleyYP.Wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|MI7PR04MB364121:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5306a812-083d-4c6f-70c3-08df39f13305
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|19092799006|23010399003|18002099003|261102123227099003|56012099006|10067099003|261009221227099003|261009223027099003|921020|261022105027099003|261021121427099003|261021123027099003|11063799006|261028144727099003|261026121527099003|261026140227099003;
+X-Microsoft-Antispam-Message-Info:
+	fw0mIinos2Ko2bamA9L3VcnaJSuoz4xNrODuQBF7owYsgjbvuV0PFRRuSCXmBy9WBaS+kA9fjqp18W4ZHcoY5YDQ9N3/FpBbHuE8GI6n9vhLsydSRQU66g5xC2MNbhcoEMs2auh8T0TQHgSjmDT1MlbME+cUQDFJQrhHoh+vDapZ4WR4EF70aKcj6oagh/EoHP1pzDMTGAL9TkuT50nY7DCj0mmSFMBKOsrpvuObeor5+x+PwbwWBQfq1k85onuOEFgdHt6eA+4MBmQZO81ohukVyR7ZGPdofgUEtMBiChsds3I+Zqu4qe4Wn/ejhcB9/5aZe2kjEtgayw3tfeBo/QuxdKVFAzS1TO4Veehb9garIgAFz5rL+l8+8Z8DqXLcS8ng6bnGBYptUtlwj+mOzyZq7DxuVI7dYZUPdhEzqXWPITjU8bAKbp2UxgaK6RVbH/AJjtmqQFtNWIL0t62u0LjadS7icIeQOvEOv3sE9N7g6VlzdAFUTqQCkUCUI8HyjyntWcozlMb1w9X3jzSQB1FBgvTjEF5nNYPRqBu1DtKZOPm77vAnho0t3Be5bNW5f2HaTFIR1g9mZTpc/UQc0V7SKAX6kFa3gXNWQbjMlEAR7gZyGmIj3B/1/pQFo2KcIwK7PHCBWppAWjRZxAX3/hoFg5Qps61eEzFkbUPb6qeLeY7agdUjNu2laP9RJnpyIMIoXcbVrs/H4ERMmCElxg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(19092799006)(23010399003)(18002099003)(261102123227099003)(56012099006)(10067099003)(261009221227099003)(261009223027099003)(921020)(261022105027099003)(261021121427099003)(261021123027099003)(11063799006)(261028144727099003)(261026121527099003)(261026140227099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zxdy4r5leuO7PQuRWrRkmmil6Jned7lgJ7SOT5sE1mEUAYrVZuhyNvd/LWC0?=
+ =?us-ascii?Q?2vhxcFxYjg7snl1W60HuIxLaY3CJhLs4gYdd1mHys1XElYPLPaPM1HBy0Dze?=
+ =?us-ascii?Q?74WwVoBfF3hMJqBI9UDT4al7VhfjAE9Deitk1NKuF0kFFu4asG/Etd0BvA1G?=
+ =?us-ascii?Q?wkw2HQLOh/NGgMt2oW+XF0VuR1X+xIOdgHJPVQQPj+iZNOwvL4vozYdo5uVB?=
+ =?us-ascii?Q?4ocbrpRwY+I9USdSh5DbVQbvpRxHVHEakCdMTUrZj7g0gPkgK2uf9d0HouIk?=
+ =?us-ascii?Q?jOE2578aIoO758f3m0qhXy97R1bpu1SR9KAHoVtXtJJYtVGWVyntlrZojKnn?=
+ =?us-ascii?Q?H6p3f7l/zb/zorsXkyfQg2p6tB3313r153zvHIwgj09cBhuf2bmgEc1qXoes?=
+ =?us-ascii?Q?9AgBZmCuqR6Eg8Q7zMgbcOAL6suynfbKi4Tw8RoctjDImf4Vz208TaUC6mDB?=
+ =?us-ascii?Q?DCfLONsEBddBbUafgCteoEjriJCFAoxbSJ97Vss2MJw8i1UYBsGZOybPy21H?=
+ =?us-ascii?Q?zV17S/x08N9xqdy0boejiXijVMjEWYJzqBzqrzuVttepWh8kqtZ4OTwcKXLG?=
+ =?us-ascii?Q?SFNaWrHVql1ewnaj/esV6qqN4yI0d7Jp2QSfblZ5m8jt0/JlDYXGZzVBmLYl?=
+ =?us-ascii?Q?KnH2je/WIZby0Q6yfGr1Asv6edW/tH6rDC3Rx7i3RdyPP13EeBqjIE10XtHx?=
+ =?us-ascii?Q?jo2Z7cfEOVv9Rm/axz3EZE6YB/3584UtZi+Jrnc5qAHYKN8IKZfHKGcI8N/b?=
+ =?us-ascii?Q?ctbeVfEsEgtGZh/5+83cRaU5kU9sLJqyPCHeY8xWYalT/bvtHwqbVcBJppsh?=
+ =?us-ascii?Q?DK1727P2NV9DC8MUQot+74ZuG/I3SaLT6v75xf+aQveSBtXONwd8B8F5p2ax?=
+ =?us-ascii?Q?UYOpqWxNsm7FIcY+DJobuB7Gl0W1MZiTqECvcayeu8JC3U5bo8yp8TGNk+Gu?=
+ =?us-ascii?Q?WuFIKfQ0zBaDqDfB6kFL7vKrND/EodB5XlU32D21GnZa4mIDO/CjopQO+A0r?=
+ =?us-ascii?Q?tN9SDHc8HsWfPQtCxLHn91MfZIwPQzp8hlSbQLmSRROccazq0BFjxhPnA/lj?=
+ =?us-ascii?Q?86CtfADF1b4XlEesFBw+GlvRgvQMvXQGc6dgoG4Vb0M7HjhzIMy18HKrP2Cg?=
+ =?us-ascii?Q?WrC23g9xjm6Z9Oed3AEEZUkhyvEX8pwqKXmpwPdXgUKV12cqw1+yoWTMwthT?=
+ =?us-ascii?Q?7OBwfmtRZFc950ARR7vP//8f4HgLehl8JY4FYXaA8jfBBQcndaryPH8iYNAz?=
+ =?us-ascii?Q?PQ04N0Uuc15U7EremWHOtFyA3Bus9/2dApxVpaQUWnvoj3hRLI24wXPaP6R0?=
+ =?us-ascii?Q?V/kruUYCOVGdqmf+P6wuVzB2iGznnRIxw1FKjjGUprqURtbGCOdFOI8Yymrd?=
+ =?us-ascii?Q?vLMQ792TaUlSrQcunYNFIl2rWqn6W0DAGKjNbAN3c1DDUjflaxaRhPxS9TN3?=
+ =?us-ascii?Q?CQE9onKR/xJz1POGZdzvINI4IrMh/bDrqB8TZFvtmgxFn2t6MBammO4wv2BZ?=
+ =?us-ascii?Q?0kdhg5/SfPCRKmqEC6bdVF8YXP1htwobBAxqQXyxjW9qCfAa6HwBdm7LVp/p?=
+ =?us-ascii?Q?nxprBM9Dg4FeC/QZ5BAuWACScQRDeTohu/Ysx5IHFEhbpmC+/BKpHjmdskdC?=
+ =?us-ascii?Q?it+XB0WY+q9LxNxAaJcxjAdYSWcjl2jdxQ2arh/htOkG3+qyafS1yTUPalU/?=
+ =?us-ascii?Q?S20vXYC8gubug17u3M7yn8lKN2QmcCsVzTdhqyAKu2C4ULlnPenaZWJbJkty?=
+ =?us-ascii?Q?hScB4ji+z5g00cZZwOdnzebqakUHU0OObRMQIaYEJYWZSGUf9/Dn?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5306a812-083d-4c6f-70c3-08df39f13305
+X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2026 21:27:01.6419
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g5Ecp2IQOAyl2M9NqwTWJmxVG4Bvjte+Tdy0uylXQ27/012QWNzY0YnT5m5rvfajGCAO3FpVXYUvZ+VaMIEixpTmRd2PvGVd3fu2c4WQrP7l7nkHPb4UHYUlq1HEtSnS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MI7PR04MB364121
 
-When an application maps order-0 page_pool RX fragments into user space
-via TCP_ZEROCOPY_RECEIVE and forwards that mapped address into TX
-sendmsg(MSG_ZEROCOPY), zerocopy_fill_skb_from_iter() pins the pages via
-iov_iter_get_pages2() (which increments page->_refcount) while
-skb_release_data() releases fragments via netmem_dec_ref().
+From: Frank Li <Frank.Li@nxp.com>
 
-Acquire each fragment reference via netmem_inc_ref() when attaching a
-fragment in zerocopy_fill_skb_from_iter() and release the corresponding
-GUP page->_refcount reference via the existing batched page_ref_sub()
-path so the TX SKB fragment reference pairs with netmem_dec_ref() in
-skb_release_data() once netmem_inc_ref() and netmem_dec_ref() handle
-page_pool netmems.
+Replace direct dma_chan::device::dev access with the proper
+dmaengine_get_dma_device() for consumer API.
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
+chan->device->dev is not always the device used for DMA mapping.  Some DMA
+engines support per-channel IOMMU mappings, so different channels may use
+different DMA devices.  dmaengine_get_dma_device() returns the correct
+device for each channel.
+
+This also prepares for making the DMA engine provider data structures
+private.  DMA consumers should not access DMA engine internals directly.
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- net/core/datagram.c |   5 ++
- net/core/net_test.c | 146 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 151 insertions(+)
+ drivers/i2c/busses/i2c-rcar.c      | 6 +++---
+ drivers/i2c/busses/i2c-sh_mobile.c | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index ecc30a6f83023..f2d6d1d7be2b6 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -34,6 +34,7 @@
-  *
-  */
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 755064804cb21..86b1df3a56c4d 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -455,7 +455,7 @@ static void rcar_i2c_cleanup_dma(struct rcar_i2c_priv *priv, bool terminate)
+ 	if (terminate)
+ 		dmaengine_terminate_sync(chan);
  
-+#include <kunit/visibility.h>
- #include <linux/module.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
-@@ -696,12 +697,16 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
- 				refs = 0;
- 			}
- 			skb_fill_page_desc_noacc(skb, frag++, head, start, size);
-+			netmem_inc_ref(page_to_netmem(head));
-+			last_head = head;
-+			refs++;
- 		}
- 		if (refs)
- 			page_ref_sub(last_head, refs);
+-	dma_unmap_single(chan->device->dev, sg_dma_address(&priv->sg),
++	dma_unmap_single(dmaengine_get_dma_device(chan), sg_dma_address(&priv->sg),
+ 			 sg_dma_len(&priv->sg), priv->dma_direction);
+ 
+ 	/* Gen3+ can only do one RXDMA per transfer and we just completed it */
+@@ -511,8 +511,8 @@ static bool rcar_i2c_dma(struct rcar_i2c_priv *priv)
+ 		len = priv->msg->len - 1;
  	}
- 	return 0;
- }
-+EXPORT_SYMBOL_IF_KUNIT(zerocopy_fill_skb_from_iter);
  
- static int
- zerocopy_fill_skb_from_devmem(struct sk_buff *skb, struct iov_iter *from,
-diff --git a/net/core/net_test.c b/net/core/net_test.c
-index e20059a00003c..73da75e6ca2c8 100644
---- a/net/core/net_test.c
-+++ b/net/core/net_test.c
-@@ -515,7 +515,9 @@ static void ip_tunnel_flags_test_run(struct kunit *test)
+-	dma_addr = dma_map_single(chan->device->dev, buf, len, dir);
+-	if (dma_mapping_error(chan->device->dev, dma_addr)) {
++	dma_addr = dma_map_single(dmaengine_get_dma_device(chan), buf, len, dir);
++	if (dma_mapping_error(dmaengine_get_dma_device(chan), dma_addr)) {
+ 		dev_dbg(dev, "dma map failed, using PIO\n");
+ 		return false;
+ 	}
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 3a55f803e4f15..023813c2f7809 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -452,7 +452,7 @@ static void sh_mobile_i2c_cleanup_dma(struct sh_mobile_i2c_data *pd, bool termin
+ 	if (terminate)
+ 		dmaengine_terminate_sync(chan);
  
- /* Netmem & SKB fragment refcounting */
+-	dma_unmap_single(chan->device->dev, sg_dma_address(&pd->sg),
++	dma_unmap_single(dmaengine_get_dma_device(chan), sg_dma_address(&pd->sg),
+ 			 pd->msg->len, pd->dma_direction);
  
-+#include <linux/folio_queue.h>
- #include <linux/skbuff_ref.h>
-+#include <linux/uio.h>
- #include <net/netmem.h>
- #include <net/netdev_rx_queue.h>
- #include <net/page_pool/helpers.h>
-@@ -841,6 +843,149 @@ static void netmem_ref_test_pp_page(struct kunit *test)
- 	page_pool_put_full_page(pool, page, false);
- 	page_pool_destroy(pool);
- }
-+
-+int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
-+				struct iov_iter *from, size_t length);
-+
-+static void netmem_ref_test_zerocopy_fill_skb_from_iter(struct kunit *test)
-+{
-+	struct page_pool_params pp_params = {
-+		.order = 0,
-+		.pool_size = 4,
-+		.nid = NUMA_NO_NODE,
-+	};
-+	struct page *pp_page, *comp_page, *reg_page;
-+	struct page_pool *pool, *comp_pool;
-+	int base_ref, base_comp_ref, base_reg_ref;
-+	long base_pp_ref, base_comp_pp_ref;
-+	struct folio_queue folioq;
-+	struct bio_vec bvec[3];
-+	struct iov_iter iter;
-+	struct sk_buff *skb;
-+
-+	pool = page_pool_create(&pp_params);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pool);
-+	pp_page = page_pool_dev_alloc_pages(pool);
-+	KUNIT_ASSERT_NOT_NULL(test, pp_page);
-+	base_ref = page_ref_count(pp_page);
-+	base_pp_ref = atomic_long_read(&pp_page->pp_ref_count);
-+
-+	/* 1. Single order-0 page_pool page (simulating TCP_ZEROCOPY_RECEIVE
-+	 * page forwarded into MSG_ZEROCOPY TX via zerocopy_fill_skb_from_iter).
-+	 */
-+	skb = alloc_skb(0, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, skb);
-+	bvec_set_page(&bvec[0], pp_page, 128, 0);
-+	iov_iter_bvec(&iter, ITER_SOURCE, bvec, 1, 128);
-+	KUNIT_ASSERT_EQ(test, zerocopy_fill_skb_from_iter(skb, &iter, 128), 0);
-+	KUNIT_EXPECT_EQ(test, skb_shinfo(skb)->nr_frags, 1);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&pp_page->pp_ref_count),
-+			base_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(pp_page), base_ref + 1);
-+	consume_skb(skb);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&pp_page->pp_ref_count),
-+			base_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(pp_page), base_ref);
-+
-+	/* 2. Contiguous segments on the same page_pool page coalesce into a
-+	 * single skb_frag_t while a non-contiguous segment creates a second
-+	 * skb_frag_t; all 3 GUP _refcounts are dropped.
-+	 */
-+	skb = alloc_skb(0, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, skb);
-+	bvec_set_page(&bvec[0], pp_page, 64, 0);
-+	bvec_set_page(&bvec[1], pp_page, 64, 64);
-+	bvec_set_page(&bvec[2], pp_page, 64, 256);
-+	iov_iter_bvec(&iter, ITER_SOURCE, bvec, 3, 192);
-+	KUNIT_ASSERT_EQ(test, zerocopy_fill_skb_from_iter(skb, &iter, 192), 0);
-+	KUNIT_EXPECT_EQ(test, skb_shinfo(skb)->nr_frags, 2);
-+	KUNIT_EXPECT_EQ(test, skb_frag_size(&skb_shinfo(skb)->frags[0]), 128U);
-+	KUNIT_EXPECT_EQ(test, skb_frag_size(&skb_shinfo(skb)->frags[1]), 64U);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&pp_page->pp_ref_count),
-+			base_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(pp_page), base_ref + 2);
-+	consume_skb(skb);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&pp_page->pp_ref_count),
-+			base_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(pp_page), base_ref);
-+
-+	/* 3. Order-1 compound page_pool page spanning 2 subpages in a single
-+	 * iov_iter_get_pages2() batch coalesces into 1 skb_frag_t and drops
-+	 * both GUP _refcounts via batched page_ref_sub, alongside a
-+	 * non-page_pool page in the same skb.
-+	 */
-+	pp_params.order = 1;
-+	comp_pool = page_pool_create(&pp_params);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, comp_pool);
-+	comp_page = page_pool_dev_alloc_pages(comp_pool);
-+	KUNIT_ASSERT_NOT_NULL(test, comp_page);
-+	base_comp_ref = page_ref_count(comp_page);
-+	base_comp_pp_ref = atomic_long_read(&comp_page->pp_ref_count);
-+
-+	reg_page = alloc_page(GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, reg_page);
-+	base_reg_ref = page_ref_count(reg_page);
-+
-+	skb = alloc_skb(0, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, skb);
-+	bvec_set_page(&bvec[0], comp_page, 2 * PAGE_SIZE, 0);
-+	bvec_set_page(&bvec[1], reg_page, 64, 0);
-+	iov_iter_bvec(&iter, ITER_SOURCE, bvec, 2, 2 * PAGE_SIZE + 64);
-+	KUNIT_ASSERT_EQ(test,
-+			zerocopy_fill_skb_from_iter(skb, &iter,
-+						    2 * PAGE_SIZE + 64), 0);
-+	KUNIT_EXPECT_EQ(test, skb_shinfo(skb)->nr_frags, 2);
-+	KUNIT_EXPECT_EQ(test, skb_frag_size(&skb_shinfo(skb)->frags[0]),
-+			(unsigned int)(2 * PAGE_SIZE));
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&comp_page->pp_ref_count),
-+			base_comp_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(comp_page), base_comp_ref + 1);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(reg_page), base_reg_ref + 1);
-+	consume_skb(skb);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&comp_page->pp_ref_count),
-+			base_comp_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(comp_page), base_comp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(reg_page), base_reg_ref);
-+
-+	/* 4. Single-batch mixed folios via ITER_FOLIOQ: order-1 compound
-+	 * page_pool folio (2 subpages) + non-page_pool folio + order-0
-+	 * page_pool folio returned in a single iov_iter_get_pages2() call.
-+	 */
-+	folioq_init(&folioq, 0);
-+	folioq_append(&folioq, page_folio(comp_page));
-+	folioq_append(&folioq, page_folio(reg_page));
-+	folioq_append(&folioq, page_folio(pp_page));
-+	iov_iter_folio_queue(&iter, ITER_SOURCE, &folioq, 0, 0,
-+			     3 * PAGE_SIZE + 64);
-+
-+	skb = alloc_skb(0, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, skb);
-+	KUNIT_ASSERT_EQ(test,
-+			zerocopy_fill_skb_from_iter(skb, &iter,
-+						    3 * PAGE_SIZE + 64), 0);
-+	KUNIT_EXPECT_EQ(test, skb_shinfo(skb)->nr_frags, 3);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&comp_page->pp_ref_count),
-+			base_comp_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(comp_page), base_comp_ref + 1);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(reg_page), base_reg_ref + 1);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&pp_page->pp_ref_count),
-+			base_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(pp_page), base_ref + 1);
-+	consume_skb(skb);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&comp_page->pp_ref_count),
-+			base_comp_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(comp_page), base_comp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(reg_page), base_reg_ref);
-+	KUNIT_EXPECT_EQ(test, atomic_long_read(&pp_page->pp_ref_count),
-+			base_pp_ref);
-+	KUNIT_EXPECT_EQ(test, page_ref_count(pp_page), base_ref);
-+
-+	__free_page(reg_page);
-+	page_pool_put_full_page(comp_pool, comp_page, false);
-+	page_pool_destroy(comp_pool);
-+	page_pool_put_full_page(pool, pp_page, false);
-+	page_pool_destroy(pool);
-+}
- #endif
+ 	pd->dma_direction = DMA_NONE;
+@@ -526,8 +526,8 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
+ 	if (IS_ERR(chan))
+ 		return;
  
- #if defined(CONFIG_PAGE_POOL) && defined(CONFIG_NET_DEVMEM)
-@@ -1738,6 +1883,7 @@ static struct kunit_case net_test_cases[] = {
- 	KUNIT_CASE(netmem_ref_test_page),
- #ifdef CONFIG_PAGE_POOL
- 	KUNIT_CASE(netmem_ref_test_pp_page),
-+	KUNIT_CASE(netmem_ref_test_zerocopy_fill_skb_from_iter),
- #endif
- #if defined(CONFIG_PAGE_POOL) && defined(CONFIG_NET_DEVMEM)
- 	KUNIT_CASE(netmem_ref_test_net_iov),
+-	dma_addr = dma_map_single(chan->device->dev, pd->dma_buf, pd->msg->len, dir);
+-	if (dma_mapping_error(chan->device->dev, dma_addr)) {
++	dma_addr = dma_map_single(dmaengine_get_dma_device(chan), pd->dma_buf, pd->msg->len, dir);
++	if (dma_mapping_error(dmaengine_get_dma_device(chan), dma_addr)) {
+ 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
+ 		return;
+ 	}
 -- 
-2.56.0.385.gac671c819a-goog
+2.43.0
 
