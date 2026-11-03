@@ -1,84 +1,84 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1793717492;
-	b=e+tEQXt1DNir/2KXWLJBIyXnEp27Dcf+FpEHAV2XfHD98jqh+YGxJeZHX3dlYOWobIuG
-	 UMXSHj4LmnKg/O0ubRP4w4yohnn2DmVi80CYSmoLJWNfNxKY1vd65VuZ4tqFHgVzBKPq1
-	 76EkaWO7H+eeftxMFsp8MFR2f/ZPZCX0Jpc0TE74La6M1fWq7GgiCech4WhYx9evSTbIJ
-	 LlSfkC4HZq5CGrrMWH6J7tr4izwCLdur35fswXGtnKkkefmNd4WATSs4ASpo/fJd/7wbV
-	 GUxsYPneBxLCe2GSO8GdMzyNbQq+TMyQppuJ5u56HT4BmUQXVTSfZ2MnpL44iFjPxXQ==
+	b=gSXHtMKIaWvDI8cH/Ss90LJyN8d+Jvt57cxvXee5J6SbTETS/4b+T1D4sm7pxFs//Qy9
+	 nOkuF6eD4B6cvnn53vmgy1FjILrL0rFLzHKtGOm6nEqiBdRgiWdzu1WpgDfbbz7FBE738
+	 EgUs6N0zSXlgsHf594q855cc9eX5c5YDoHjLKfn/YOqp61hOVwOc64W4oWJfgRcRxPK/P
+	 f2vbruM489f7uZAlBdAHqycHpAEr0nm1UZMdiliFZ8Hpc+nixR/SJ4ec09HuFIYLWmR+u
+	 yOVbvsj9Uk5XD7cyGtXIV0Ex8aBVzagOFKZ8hlpJOFrue6sTrg/t/FDK2u+n9yTbT9w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793717492;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=gSi9vg+Zm+TI4RLv53YhiJ1p0uh4O4FGeOvQj7BhF60=;
-	b=oAfyzhx+JNOQu99NH4EvQxp5MSKMM3T1dnOwvQDvsRNhExnMXBjquXOrJY2NYiR5AFDk
-	 Za2crVdIG1q5iQOCU+MfqXnSj2QyTk2gFno187S92xwN6/5zHe92gp20MkM0CvuY7AwIa
-	 5//L9XlHkiDVNngoBsj9hKwHOmUJPPf5j4DoFaSBSkGK/FekVabtd8URaU8injbPr/h6Y
-	 +bZ6owAs4nhOkPnkge1Ttn+OVTvbpiPoHVsBTmmvZ/A9Ptkv2Hful7AIf0ccdVui7U5zW
-	 CRx/bFall0a5dH1z89JHO0gcvDLCfB0dao/5YGflMn44xzQWqADoQ1KlK+owpMBM2rQ==
+	bh=VI0iedr3l6UnJVhvQ9nem8eALFnLeOipkazoUwv0yeA=;
+	b=kQpsZwp9zrq49ASmU3RSMJbwW7OxdckG+fvt6JuBsb2euxNSEZz4t2lzgf//0rdf6Hwx
+	 Grgg2Wc7E9my++C0TnVfV0m1IKMNO5opJ8m+XibzNmYtaAhWlezfYxqok64hQ4mridm98
+	 VmKrJoQ7NAalqD+/H/eRqtmIXLWJ0ZesmHPcd+ztUyF82gqjGPNB0SMnLScd6GmJmq5rS
+	 Y7vOpV78mnOQG7j4M/giXOUHbmJBdlbk4uls6j/BoR0m/6rSpm6zwsv8maXBSmX9itILQ
+	 PMb2PqgJRwXKCBikbH+LIJH02IfMu3LFcutI9+n619gDmxoz/0SEyMSsGSvlzapNnJw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=none header.from=pengutronix.de;
 	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=gXUw3ken;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=ICvj5WE+;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
 Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91671606A784;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9167F606EE88;
 	Tue,  3 Nov 2026 14:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91671606A784
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9167F606EE88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=gXUw3ken
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=ICvj5WE+
 Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
 	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 09B5E202BA7;
-	Tue, 03 Nov 2026 15:51:23 +0100 (CET)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id E4187202BA5;
+	Tue, 03 Nov 2026 15:51:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793717483;
+	s=20260414; t=1793717482;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gSi9vg+Zm+TI4RLv53YhiJ1p0uh4O4FGeOvQj7BhF60=;
-	b=gXUw3kenAOHy81kL+vv2K7IOPs6aw8p2bD1xmRe4QGQMJAncxohyX8lL2+/4NmLcxw5zF7
-	mFFzdX2RSThlC4DlHfeMt8KOQmlgd95GgKtQtliYHcrQ8t5p4TDpnXD9ruSHOdMz6H6Mds
-	CyRvPYvBI8RQz9JZQ9JGudWlywpHOh4eDhKnBrsyputLkjFOk9ldiUtalmIKWJTIuCKY4K
-	KaBWul4pJjP1tPAdUPwS5qEhpblNtuwIO9VJwzRVCuLrpo+fPp4ldwsRyOpENMsLL3bRfd
-	Y49EcXPmpJC2KfUb/o5XkbneZ7MxBEgzLDCOBtRcMziPnXjXMRGhxEOlC4fkcQ==
+	bh=VI0iedr3l6UnJVhvQ9nem8eALFnLeOipkazoUwv0yeA=;
+	b=ICvj5WE+/qMkpksveE1cuUdf8x62cyKCNRavmANEo6QpF26Q1n9U7prkdYvQ8p6aKlmxHT
+	WxXMnwIzGBp0vTVLPiQIlzDh5SnJEoSIwpdO3WVPstLXliT7MDeulahR+QRTRD9HlyeU+t
+	PrgBNL6/ww+oII5JXrzRoip3M6yEP5ETo/L4qtP6gDNtAvNrUoLSY4HP7HNdDR886PqtMJ
+	eloY2mmlyT9lgOk0+8q8RFZ/TU6AIKSh7MSCl6/G2Cg1sr311OjTsbkUar+yg+Xg4Nj86O
+	bMZRmQ2MDFR1ciRU+rqGr2ZXtYtNji5iUbRNK0HDCuuY9HTtB28UZbjmdTt6DQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1793717483;
+	s=20260414; t=1793717482;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gSi9vg+Zm+TI4RLv53YhiJ1p0uh4O4FGeOvQj7BhF60=;
-	b=XUIvd0+sx0cGLLTaqXUXMoEx3vqGA0RLnrU26DNwH9apY4p9PWGJQm7Ara2huWUUWcrd+z
-	v+ODrQnrMUtB3JHzk2XWJ7gusalIDxGWmwQPOFF9fQx4bR3umGEs8yemhKqcCVVIwC3gkd
-	LsTpdxB2qjrqBA6RSXTd8p5/R27C87ta8v7FjWnSGoTEzqyKKxCJePnClVg7rUlK7qVopy
-	Gg+bgrCtryDPsoxNXSGxCBx//el8L70t/T6c8pkCOdX5LbqG5NM5NwpD4UYIrWvryVUDBo
-	BBQLJC0pbU30PIMN312DCGPNYqT8FgrDhmgcXXaPhudhD0gSgFbW8HKij+G+CQ==
+	bh=VI0iedr3l6UnJVhvQ9nem8eALFnLeOipkazoUwv0yeA=;
+	b=J6Svhfg4f47IA3gpokoOvkGdpVlJiYbImQsmVWJWekBiliqoHSizbON+x6tBje77cpw+Vl
+	pO7T0rp6qI+Zjxrvdf4Qt7mw4uSCHSHEQ1eqpKQyo+tnuR4JM3erEWwbJXQGOsISfEzi8C
+	CGYqkA5CR9z1wnQSv8q2PzN4wK7U5svIXzeMTkSQ6b1cVJKpVqidMcUBtN2Mjlp9BSeYpF
+	si1+2dVVTQLiOplpYqDH6dM+aCdLFEKxQ0I2r91mn+8Ftb9Svh9eapEWyfGXBHSTPga35T
+	/vjgrsW4+jL6ozXkFXkJCleBnBAPGJ2/E1PFfTNYDuIcvTqmJVdN0aXGln+C1g==
 ARC-Authentication-Results: i=1;
 	ORIGINATING;
 	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793717483; a=rsa-sha256;
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793717482; a=rsa-sha256;
 	cv=none;
-	b=N7PFxaRjSKcGd+szhY3KkNR9tHNn1YxRFcAPe6LO9O62nKqFLoeQe7tvhZOYmnLm3HnguL
-	DzWIujL3PgrJeISJrDrr+00NjZ1U2h4/hjYfvBmuo0XxsAcyyNDi8rzHIxNu+tCeCwb9Bj
-	rgHhM1IQaLZudtIZ2rHw7teelMlQji3U6pqfer4RxhSDJZcNF1bERQgx2HO/p5h8w10MOg
-	Legj8m4LyQlJm3MQiZG/20E8REVAR5TQJq0lqOoF2TQGGb5X2Qv2LKLRsqkkHiSPmSwTpB
-	x6to1oIi2tkcXwfxH3jB4Av1IjXVxDrpris1/BHVEbOri5yjjrrJH1T+NCrpXQ==
+	b=CamiGPHrqXx6rLoBJojRsvaJVAtjQq/DmT/0WlQowAxv7wXui+Fn/VWWuYAsf55K4m7Xgm
+	lQo3eCZ8ROkyiZtR2/SkwK+aartL+iqv/Iivheyu/jDWOqGObhePx5vQO8rL920Rb/GzM+
+	ejk1BYyHcmgC2uXnCC+n4Wth14TQa/TsTI9r2lCy0nRnxNbm8l/qRTwksE+u62gwxV6KVE
+	lRKHw9T96l8iNj7p18A92rXEmB/vGtbpmTU1HhvycKCUL6pdu4kScHpWhtmeNNpvR1ptYz
+	reLOYFKYO3MkIZqkpcWbTeqDJq5O1OezGk2nze4IkVhXft6F7zJDOgJ24u4r6Q==
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1xOFr8-002SzQ-2z;
+	id 1xOFr8-002SzQ-2g;
 	Tue, 03 Nov 2026 15:51:22 +0100
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Tue, 03 Nov 2026 15:51:27 +0100
-Subject: [PATCH 7/8] reset: zynq: Use regmap_test_bits in zynq_reset_status
+Date: Tue, 03 Nov 2026 15:51:25 +0100
+Subject: [PATCH 5/8] reset: mpfs: Use regmap_test_bits in mpfs_status
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -90,7 +90,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261103-reset-regmap-test-bits-v1-7-1b33607a76b0@pengutronix.de>
+Message-Id: <20261103-reset-regmap-test-bits-v1-5-1b33607a76b0@pengutronix.de>
 References: <20261103-reset-regmap-test-bits-v1-0-1b33607a76b0@pengutronix.de>
 In-Reply-To: <20261103-reset-regmap-test-bits-v1-0-1b33607a76b0@pengutronix.de>
 To: Damien Le Moal <dlemoal@kernel.org>, 
@@ -105,37 +105,35 @@ Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  Philipp Zabel <p.zabel@pengutronix.de>
 X-Mailer: b4 0.15.2
 
-Simplify zynq_reset_status() by using regmap_test_bits().
-No functional change.
+Simplify mpfs_status() by using regmap_test_bits().
+Now returns 1 if asserted for all bits.
 
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/reset/reset-zynq.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/reset/reset-mpfs.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/reset/reset-zynq.c b/drivers/reset/reset-zynq.c
-index 688b512882ec..b7a0445aafcf 100644
---- a/drivers/reset/reset-zynq.c
-+++ b/drivers/reset/reset-zynq.c
-@@ -67,17 +67,11 @@ static int zynq_reset_status(struct reset_controller_dev *rcdev,
- 
- 	int bank = id / BITS_PER_LONG;
- 	int offset = id % BITS_PER_LONG;
--	int ret;
+diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+index 8ffcc54ee6f6..ec61b4a1d753 100644
+--- a/drivers/reset/reset-mpfs.c
++++ b/drivers/reset/reset-mpfs.c
+@@ -63,15 +63,8 @@ static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+ static int mpfs_status(struct reset_controller_dev *rcdev, unsigned long id)
+ {
+ 	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
 -	u32 reg;
  
- 	pr_debug("%s: %s reset bank %u offset %u\n", KBUILD_MODNAME, __func__,
- 		 bank, offset);
- 
--	ret = regmap_read(priv->slcr, priv->offset + (bank * 4), &reg);
--	if (ret)
--		return ret;
+-	regmap_read(rst->regmap, REG_SUBBLK_RESET_CR, &reg);
 -
--	return !!(reg & BIT(offset));
-+	return regmap_test_bits(priv->slcr, priv->offset + (bank * 4), BIT(offset));
+-	/*
+-	 * It is safe to return here as MPFS_NUM_RESETS makes sure the sign bit
+-	 * is never hit.
+-	 */
+-	return (reg & BIT(id));
++	return regmap_test_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id));
  }
  
- static const struct reset_control_ops zynq_reset_ops = {
+ static int mpfs_reset(struct reset_controller_dev *rcdev, unsigned long id)
 
 -- 
 2.47.3
