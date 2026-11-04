@@ -1,51 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793795321;
-	b=nVaeRdcNcsbXPctDiGNm4NQuMwz3vm1rjBTWZADT38YnSeNpQF4nFXpbGVRJIMnQ9Pab
-	 hX4qP6KaVoCm5D9Yh2SdAhuVu4vV6MhSmCqZ6/HC6o6UOcGZAcF8n/jr03f4Na/+0COP+
-	 WEKks8ObXiAY6FlZIK8o88rqk2H2LEx4RzzC5ol5T2oUs2FWEsYEHAGqV1X2NSRMt/XbQ
-	 QlZXuf8aUqS6mwuFFb7iTwqNlnsq7sqAYlyabYxkFZjxdoXRJ8nYqMBS/Yx8zCQW/8Q27
-	 8ys6NcC3NhbPc2yyNsN/gWftkuJDLVEFcMKBvmL3bVU55xv8+dPs7Pvs+y+IxHkF06A==
+	b=tKYfMx3JqJSe4HrBclpHtnRtpJ2KEJhqktPTqKfXhP0xvxx/ydQVKmQnRdUU7NSo1o+j
+	 W5Ofka18AmALYJQeVed82rHm+265zxh5hXbzT+MBHQgfiMS1o+XaElal35Bj5+AVcuWsn
+	 UoJc5bdNTEdxt8vEa0bcf4JWby41TTEXWdJB8aD8Uru49YEuXj2/mtJTgEiF+y9QIy9KJ
+	 KmnOaRvrwlcsx6U6F9f/7EPvwitKtZNSQSDADu18jC3EfYiVSqpZbExuprZnRoXDD9i43
+	 X1fT7KTvQ9PZ5xGhudOAfXNqo20ofTqbGFI5B4EWwMnwsZsjqSFwsz5RWec+Ya9UaCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793795321;
 	h=DMARC-Filter:Received:DKIM-Signature:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=tmcHG6iHSRfTtxGrjBta3XLELPPUpyHHe56W9gejRh8=;
-	b=SyLTSl33oIlAznpF+FumPk1dHbQY1v1F0TDgMKh3IfxralNDGUjDmes1i0JamG6TghfK
-	 WZadxn1wFzo58L4bRNQk2/9BbBgkbpuOlTtJ0DOGFA6IEqO5TT2pIxFgu0a47YeDZRgCW
-	 a1nLacAVtxwVBwMrmy306juM2FTYTf+9+hWKR9DgmoOnK5G1ctYFgiuq20XoejjK21FpR
-	 3m8MNaNynJYSQ7VN7h0Fj3wpSAITYac1FMFtzssEONNdw5sl7kIK3SO4pKLZ+H3yUt7z/
-	 m0gFn40RAsDrW2HK44Qnx4BFaMGSxdKA3lOWkjVwcR39YoQXjiTorubaHEKvFejYVQw==
+	bh=kM2SMyspeahVuUUX/fotL58v0RXNq/hWyadwMGqM/Vw=;
+	b=R9VL8KEPRWogx9Yw3xeeHCtqn0lLopXgZzV7f8KNPX7W4RHDJzQt3QPs4QvVe+SMs7qb
+	 ++DsMqoBV0+JzKdSmUvo1q0iMfOdGuWEACKOiNnThWC2UMRtH1Xvk1Zuiktp2Yrb/jlmq
+	 c4pWAUEmNBVX70Ak0RI19QQ/nTaiqQtPpo4U7vNq+2CQYJdC8Bp7s0VhbOlH4iY16+hTk
+	 A0oOKVL0ERe1MGHGgDs/lt+WC9kZFkwG5xCOWjLoMiR8Gh/p5Ynv9sO5/r2ey6GQ+2FaK
+	 WTxiALal+73Os5w7un+1QvJUAjH5+DFDaO6kso5f8H0QQuPtLxTusOA0Imvhr1IHqWQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ideasonboard.com;
 	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=J1CLJ6Ti;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=eR8n2VYj;
 	arc=none smtp.remote-ip=213.167.242.64
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F36606A328;
-	Wed,  4 Nov 2026 12:28:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8F36606A328
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296DB606A331;
+	Wed,  4 Nov 2026 12:28:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 296DB606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=J1CLJ6Ti
+	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=eR8n2VYj
 Received: from [127.0.1.1] (chfd-03-b2-v4wan-176392-cust229.vm15.cable.virginm.net [82.19.20.230])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 91F0C227A;
-	Wed,  4 Nov 2026 13:26:17 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4E317229D;
+	Wed,  4 Nov 2026 13:26:18 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
 	s=mail; t=1793795178;
-	bh=QKxOWMq2mrO+ZhX/hXtXscWz3CQJ2HSJtKRaOqECBb0=;
+	bh=ltdCNDPrIvBZM1IXM5E37lxQxzRiVtCeqvIPJqSwsYE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=J1CLJ6TirU+vsZ5bDdYdSgexqG48LdM2RMzZIIGmjlXTM7poz8gJhd5AyLtuv3sl1
-	 PClaw+jLyaXuIYhlgKRQmaWv0ny0W9hzBjYfx4S6eou8YyBWiPYz2iiTDFLV4WzB85
-	 /ncyQQkw9JVt9+dNhR5rMvPuVVm96JFUNd580MMM=
+	b=eR8n2VYjheaFHJWj5L766p7y7K3Tak+jDoYnD900zVghfjc+TY+46f0WHc90h2LTm
+	 RR+BM+tvf95NwAwyFEI8Ouiq7xfdOe2LFYBn9mqJUVOfWstbhMVDaG9OXQ/z5/nyLD
+	 KoGCdkUtOLtEKO+Pgiyi/C7sLOJN7NtpunVZRER8=
 From: Daniel Scally <dan.scally@ideasonboard.com>
-Date: Wed, 04 Nov 2026 12:28:19 +0000
-Subject: [PATCH 4/7] media: v4l2-isp: Use centrally-held data in framework
+Date: Wed, 04 Nov 2026 12:28:20 +0000
+Subject: [PATCH 5/7] media: v4l2-isp: Add v4l2_isp_params_for_each_block()
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -57,7 +57,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261104-v4l2-isp-resume-v1-4-06aeb8cf2940@ideasonboard.com>
+Message-Id: <20261104-v4l2-isp-resume-v1-5-06aeb8cf2940@ideasonboard.com>
 References: <20261104-v4l2-isp-resume-v1-0-06aeb8cf2940@ideasonboard.com>
 In-Reply-To: <20261104-v4l2-isp-resume-v1-0-06aeb8cf2940@ideasonboard.com>
 To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
@@ -74,253 +74,196 @@ Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Daniel Scally <dan.scally@ideasonboard.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10498;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7302;
  i=dan.scally@ideasonboard.com; h=from:subject:message-id;
- bh=QKxOWMq2mrO+ZhX/hXtXscWz3CQJ2HSJtKRaOqECBb0=;
- b=owEBbQKS/ZANAwAKAchJV3psRXUyAcsmYgBq6yTvS3ZhGmpjYItq83kuk8gql7DUC5in5AVtz
- nA1Sbc9DbeJAjMEAAEKAB0WIQQqyuwyDnZdb+mxmm/ISVd6bEV1MgUCausk7wAKCRDISVd6bEV1
- MoJLD/9FEjlxeciFVUqRQEBtXUJbkhEQbi8TgyiqD23l8BCcrAKTzRCGcEjhdFq9DTleMHDAAW0
- eeT3umnQV4GNeakYq/HFIAFBt8mxYkTF+ug3Yw77jpYrPPf6E03NCOMfX22UrV+QYsAqpLiabLf
- nVqyDwfw2ntixl067nrTgJbomjvoBvDU0Efp/bXA/20xDwnI2xLEyArxZWZy0FL4b2kR84tbBaX
- WATSzYtz3EiPhfzVyvOi2x7PieD6FRgNPvi0a/KqHlw74rhcQAivaaIpGW1sUySMMUVjqvH+qoO
- vx1emPURRvkUSlxhVFQbsUA8IXTVnlEVd9yfYMlI+YAymFjU8h/O4AOFxT5XuTnQSioUYY2zU8j
- cTpDzum/882RCzkzftqxuy4+3600LTFsGOZEWnz/1KCLS+88sDrASa8EIvLMOBmihbV6qUtQBW2
- NiRXV+1HnhZ+CwvP0tGTK6IbGOJPzd7lAIJQKtWHSQonJgNWZ+XfUVMNrt8KfMRNw3NzlL6vy6m
- kMsVnVUbVTXp+ZPSZunjd6mj1SezUw+2fRRd9L/e52EGL50U+QlxCLb+xpoqTD/VOY4xoiXlPBl
- 30BwkQ3QxRrhlboGnvcC2REv3YKn8fnH1ZSCgvRzq5SyChfI8fegHM8beny109Q2egCZmn/U/Rs
- C/tUtFNeUP4QJQw==
+ bh=ltdCNDPrIvBZM1IXM5E37lxQxzRiVtCeqvIPJqSwsYE=;
+ b=owEBbQKS/ZANAwAKAchJV3psRXUyAcsmYgBq6yTvnl4A37Ghp44Hmr1y2W//6eDyPqfblWa6D
+ SoBRRJZ3qWJAjMEAAEKAB0WIQQqyuwyDnZdb+mxmm/ISVd6bEV1MgUCausk7wAKCRDISVd6bEV1
+ MiymD/9J6qc+bXEerd6BO/Co4hlbWXkFQI3j2oAfwtWmnrG2W7VWW0PUfxZo9xKbV+GRtRxh/VW
+ RB4siAkS82Pup+WxS8KPYCzrPmJjD/iMnts53/l4YAA7Yjcw0fvcpxltGnGt85NwQ0MAqsP9hWY
+ ojqyXcBSXec3N5BNRSVvnxoUY78hrfRdgmdlpWc8TzsX+9nZA7FryNBk52HCwsNWc3sEMMf1/tz
+ Dx/WG38Lz2IWgxFGb1SW1T46SjNGk823UH2qiE4KrNg/ZES0D0lmpy69XXHiPt5YJPrg0fzAGka
+ pVARCsCG7N2RVI8T1MzEpkYtAk4rU5RE1P2BvmSmlBG4PxD/6BUBfuWftwgMb1Cu/lQGxJLm2LU
+ xbpgqznigS4H35sk6Ecde7bAliB0R1mppFzsrQ4UYy5y4FIWVH95jzAIG705z7dSWGM+NqrZqO6
+ feOOMMW/eq8Y+sF0BrLN8yQFL5FZuArMBjHUqYWbPI1XakVXtG3Flq42CK8lWScF28SkrT9+b4k
+ 3Zf+T2y5dXz+bPnZTGlXKbA9S4eVYrLdz2XtTBDM09tt7UamGr8b0suXBAdP1VfBxOmFugw0S6d
+ dMLLMu3Rn2sMQzVGdOhoRrPjuts9ssdxqHeKE4TBZxhgPx2QgQIossPYil+vqjboBxTFOdMgtcj
+ CXQcyKX1UD+p6JQ==
 X-Developer-Key: i=dan.scally@ideasonboard.com; a=openpgp;
  fpr=EEC699ACA1B7CB5D31330C0BBD501C2A3546CCF6
 
-Update the framework's APIs to use the centrally held data rather
-than require users to pass data in to each function call.
+ISP drivers using the V4L2 extensible parameters need to iterate
+through parameter blocks in a buffer. Currently they all open code
+this operation. Add a macro that can be used instead.
 
 Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
 ---
- drivers/media/platform/amlogic/c3/isp/c3-isp-params.c |  9 +++------
- drivers/media/platform/arm/mali-c55/mali-c55-params.c |  8 ++------
- drivers/media/platform/dreamchip/rppx1/rpp_params.c   |  7 ++-----
- .../media/platform/rockchip/rkisp1/rkisp1-params.c    |  9 +++------
- drivers/media/v4l2-core/v4l2-isp.c                    | 19 +++++++++----------
- include/media/v4l2-isp.h                              | 18 ++++++------------
- 6 files changed, 25 insertions(+), 45 deletions(-)
+ drivers/media/platform/amlogic/c3/isp/c3-isp-params.c  |  9 +++------
+ drivers/media/platform/arm/mali-c55/mali-c55-params.c  | 11 +++--------
+ drivers/media/platform/dreamchip/rppx1/rpp_params.c    | 10 ++++------
+ drivers/media/platform/rockchip/rkisp1/rkisp1-params.c |  8 +++-----
+ include/media/v4l2-isp.h                               | 15 +++++++++++++++
+ 5 files changed, 28 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-index 25f6a7d9bad9d61d641690f43faceaae0f938da5..f0b330520f97ad3bb701de3aed35670158508829 100644
+index f0b330520f97ad3bb701de3aed35670158508829..8ef8df7c033219eb11e7e9d8838c37a817153eb6 100644
 --- a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
 +++ b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-@@ -809,8 +809,7 @@ static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
- 	struct c3_isp_params_cfg *cfg = buf->cfg;
- 	int ret;
+@@ -594,23 +594,20 @@ static_assert(ARRAY_SIZE(c3_isp_params_handlers) ==
+ static void c3_isp_params_cfg_blocks(struct c3_isp_params *params)
+ {
+ 	struct c3_isp_params_cfg *config = params->buff->cfg;
+-	size_t block_offset = 0;
++	struct v4l2_isp_params_block_header *header;
  
--	ret = v4l2_isp_params_validate_buffer_size(params->isp->dev, vb,
--						   params->vfmt.fmt.meta.buffersize);
-+	ret = v4l2_isp_params_validate_buffer_size(&params->v4l2_isp, vb);
- 	if (ret)
- 		return ret;
+ 	if (WARN_ON(!config))
+ 		return;
  
-@@ -820,10 +819,8 @@ static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
- 	 */
- 	memcpy(cfg, usr_cfg, payload_size);
+ 	/* Walk the list of parameter blocks and process them */
+-	while (block_offset < config->data_size) {
++	v4l2_isp_params_for_each_block(config, header) {
+ 		const union c3_isp_params_block *block;
+ 		c3_isp_block_handler block_handler;
  
--	return v4l2_isp_params_validate_buffer(params->isp->dev, vb,
--					(struct v4l2_isp_params_buffer *)cfg,
--					c3_isp_params_block_types_info,
--					ARRAY_SIZE(c3_isp_params_block_types_info));
-+	return v4l2_isp_params_validate_buffer(&params->v4l2_isp, vb,
-+					(struct v4l2_isp_params_buffer *)cfg);
+-		block = (const union c3_isp_params_block *)
+-			 &config->data[block_offset];
++		block = (const union c3_isp_params_block *)header;
+ 
+ 		block_handler = c3_isp_params_handlers[block->header.type];
+ 		block_handler(params->isp, block);
+-
+-		block_offset += block->header.size;
+ 	}
  }
  
- static int c3_isp_params_vb2_buf_init(struct vb2_buffer *vb)
 diff --git a/drivers/media/platform/arm/mali-c55/mali-c55-params.c b/drivers/media/platform/arm/mali-c55/mali-c55-params.c
-index 06509152a51a1d47355d3c7c9985112ce3c20450..7b9d2650ce8730ccc05eee0c9dc33a88d022acf1 100644
+index 7b9d2650ce8730ccc05eee0c9dc33a88d022acf1..809a3587a5eee4d9817e720ae24e37f5f54397c0 100644
 --- a/drivers/media/platform/arm/mali-c55/mali-c55-params.c
 +++ b/drivers/media/platform/arm/mali-c55/mali-c55-params.c
-@@ -707,14 +707,12 @@ static int mali_c55_params_buf_prepare(struct vb2_buffer *vb)
- 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
- 	struct mali_c55_params_buf *buf = to_mali_c55_params_buf(vbuf);
- 	struct v4l2_isp_params_buffer *config = vb2_plane_vaddr(vb, 0);
--	struct mali_c55 *mali_c55 = params->mali_c55;
- 	int ret;
+@@ -817,10 +817,9 @@ static const struct vb2_ops mali_c55_params_vb2_ops = {
+ void mali_c55_params_write_config(struct mali_c55 *mali_c55)
+ {
+ 	struct mali_c55_params *params = &mali_c55->params;
++	struct v4l2_isp_params_block_header *header;
+ 	struct v4l2_isp_params_buffer *config;
+ 	struct mali_c55_params_buf *buf;
+-	size_t block_offset = 0;
+-	size_t max_offset;
  
- 	if (!config)
- 		return -EFAULT;
+ 	spin_lock(&params->buffers.lock);
  
--	ret = v4l2_isp_params_validate_buffer_size(mali_c55->dev, vb,
--			v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
-+	ret = v4l2_isp_params_validate_buffer_size(&params->v4l2_isp, vb);
- 	if (ret)
- 		return ret;
+@@ -836,24 +835,20 @@ void mali_c55_params_write_config(struct mali_c55 *mali_c55)
+ 	buf->vb.sequence = mali_c55->isp.frame_sequence;
+ 	config = buf->config;
  
-@@ -726,9 +724,7 @@ static int mali_c55_params_buf_prepare(struct vb2_buffer *vb)
+-	max_offset = config->data_size;
+-
+ 	/*
+ 	 * Walk the list of parameter blocks and process them. No validation is
+ 	 * done here, as the contents of the config buffer are already checked
+ 	 * when the buffer is queued.
+ 	 */
+-	while (max_offset && block_offset < max_offset) {
++	v4l2_isp_params_for_each_block(config, header) {
+ 		union mali_c55_params_block block;
+ 		mali_c55_params_handler handler;
  
- 	memcpy(buf->config, config, v4l2_isp_buffer_size(MALI_C55_PARAMS_MAX_SIZE));
+-		block.data = &config->data[block_offset];
++		block.header = header;
  
--	return v4l2_isp_params_validate_buffer(mali_c55->dev, vb, buf->config,
--					       mali_c55_params_block_types_info,
--					       ARRAY_SIZE(mali_c55_params_block_types_info));
-+	return v4l2_isp_params_validate_buffer(&params->v4l2_isp, vb, buf->config);
- }
+ 		/* We checked the array index already in .buf_queue() */
+ 		handler = mali_c55_params_handlers[block.header->type];
+ 		handler(mali_c55, block);
+-
+-		block_offset += block.header->size;
+ 	}
  
- static void mali_c55_params_buf_queue(struct vb2_buffer *vb)
+ 	vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
 diff --git a/drivers/media/platform/dreamchip/rppx1/rpp_params.c b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-index 5b8b471198ec1d540f31c0ac1b15d0d54bd808fc..aff3f3a997b4134b753fd1e1faf2058216f4b939 100644
+index aff3f3a997b4134b753fd1e1faf2058216f4b939..b8468d5c0fe1c783216567fab3366024fd9fcc63 100644
 --- a/drivers/media/platform/dreamchip/rppx1/rpp_params.c
 +++ b/drivers/media/platform/dreamchip/rppx1/rpp_params.c
-@@ -57,16 +57,13 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb,
- 	size_t block_offset;
+@@ -53,8 +53,8 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb,
+ 		 rppx1_reg_write write, void *priv)
+ {
+ 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
++	struct v4l2_isp_params_block_header *header;
+ 	struct v4l2_isp_buffer *cfg;
+-	size_t block_offset;
  	int ret;
  
--	ret = v4l2_isp_params_validate_buffer_size(rpp->dev, vb,
--				v4l2_isp_buffer_size(RPPX1_PARAMS_MAX_SIZE));
-+	ret = v4l2_isp_params_validate_buffer_size(&rpp->isp, vb);
- 	if (ret)
+ 	ret = v4l2_isp_params_validate_buffer_size(&rpp->isp, vb);
+@@ -68,14 +68,12 @@ int rppx1_params(struct rppx1 *rpp, struct vb2_buffer *vb,
  		return ret;
  
- 	cfg = vb2_plane_vaddr(&vbuf->vb2_buf, 0);
+ 	/* Walk the list of parameter blocks and process them. */
+-	block_offset = 0;
+-	while (block_offset < cfg->data_size) {
+-		const union rppx1_params_block *block =
+-			(const union rppx1_params_block *)&cfg->data[block_offset];
++	v4l2_isp_params_for_each_block(cfg, header) {
++		const union rppx1_params_block *block;
+ 		struct rpp_module *module;
+ 		int ret;
  
--	ret = v4l2_isp_params_validate_buffer(rpp->dev, vb, cfg,
--					      rppx1_ext_params_blocks_info,
--					      ARRAY_SIZE(rppx1_ext_params_blocks_info));
-+	ret = v4l2_isp_params_validate_buffer(&rpp->isp, vb, cfg);
- 	if (ret)
- 		return ret;
+-		block_offset += block->header.size;
++		block = (const union rppx1_params_block *)header;
  
+ 		switch (block->header.type) {
+ 		case RPPX1_PARAMS_BLOCK_TYPE_BLS_PRE1:
 diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-index 756332d8bd154c3175ad5d563f6e5cf615f42499..8974c520d1879f3f0f642819a41984f6ac3ee01d 100644
+index 8974c520d1879f3f0f642819a41984f6ac3ee01d..178da1f648869b7b963f634f29f5653cfb16dd77 100644
 --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
 +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-@@ -2735,8 +2735,7 @@ static int rkisp1_params_prepare_ext_params(struct rkisp1_params *params,
- 		vb2_plane_vaddr(&vbuf->vb2_buf, 0);
- 	int ret;
- 
--	ret = v4l2_isp_params_validate_buffer_size(params->rkisp1->dev, vb,
--						   params->metafmt->buffersize);
-+	ret = v4l2_isp_params_validate_buffer_size(&params->v4l2_isp, vb);
- 	if (ret)
- 		return ret;
- 
-@@ -2746,10 +2745,8 @@ static int rkisp1_params_prepare_ext_params(struct rkisp1_params *params,
- 	 */
- 	memcpy(cfg, usr_cfg, payload_size);
- 
--	return v4l2_isp_params_validate_buffer(params->rkisp1->dev, vb,
--				(struct v4l2_isp_params_buffer *)cfg,
--				rkisp1_ext_params_block_types_info,
--				ARRAY_SIZE(rkisp1_ext_params_block_types_info));
-+	return v4l2_isp_params_validate_buffer(&params->v4l2_isp, vb,
-+				(struct v4l2_isp_params_buffer *)cfg);
- }
- 
- static int rkisp1_params_vb2_buf_prepare(struct vb2_buffer *vb)
-diff --git a/drivers/media/v4l2-core/v4l2-isp.c b/drivers/media/v4l2-core/v4l2-isp.c
-index a979c0690d19d9956a45657561b510546b3aa8c2..925632e1037db18f0948ceb0ce7c652e167516c9 100644
---- a/drivers/media/v4l2-core/v4l2-isp.c
-+++ b/drivers/media/v4l2-core/v4l2-isp.c
-@@ -54,15 +54,15 @@ int v4l2_isp_validate(struct v4l2_isp *isp)
- }
- EXPORT_SYMBOL_GPL(v4l2_isp_validate);
- 
--int v4l2_isp_params_validate_buffer_size(struct device *dev,
--					 struct vb2_buffer *vb,
--					 size_t max_size)
-+int v4l2_isp_params_validate_buffer_size(struct v4l2_isp *isp,
-+					 struct vb2_buffer *vb)
+@@ -2291,19 +2291,17 @@ static void rkisp1_ext_params_config(struct rkisp1_params *params,
+ 				     struct rkisp1_ext_params_cfg *cfg,
+ 				     u32 block_group_mask)
  {
- 	size_t header_size = offsetof(struct v4l2_isp_params_buffer, data);
- 	size_t payload_size = vb2_get_plane_payload(vb, 0);
-+	struct device *dev = isp->dev;
+-	size_t block_offset = 0;
++	struct v4l2_isp_params_block_header *header;
  
- 	/* Payload size can't be greater than the destination buffer size */
--	if (payload_size > max_size) {
-+	if (payload_size > isp->params.max_size) {
- 		dev_dbg(dev, "Payload size is too large: %zu\n", payload_size);
- 		return -EINVAL;
- 	}
-@@ -77,13 +77,12 @@ int v4l2_isp_params_validate_buffer_size(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(v4l2_isp_params_validate_buffer_size);
+ 	if (WARN_ON(!cfg))
+ 		return;
  
--int v4l2_isp_params_validate_buffer(struct device *dev, struct vb2_buffer *vb,
--				    const struct v4l2_isp_params_buffer *buffer,
--				    const struct v4l2_isp_params_block_type_info *type_info,
--				    size_t num_block_types)
-+int v4l2_isp_params_validate_buffer(struct v4l2_isp *isp, struct vb2_buffer *vb,
-+				    const struct v4l2_isp_params_buffer *buffer)
- {
- 	size_t header_size = offsetof(struct v4l2_isp_params_buffer, data);
- 	size_t payload_size = vb2_get_plane_payload(vb, 0);
-+	struct device *dev = isp->dev;
- 	size_t block_offset = 0;
- 	size_t buffer_size;
+ 	/* Walk the list of parameter blocks and process them. */
+-	while (block_offset < cfg->data_size) {
++	v4l2_isp_params_for_each_block(cfg, header) {
+ 		const struct rkisp1_ext_params_handler *block_handler;
+ 		const union rkisp1_ext_params_config *block;
  
-@@ -118,7 +117,7 @@ int v4l2_isp_params_validate_buffer(struct device *dev, struct vb2_buffer *vb,
- 		block = (const struct v4l2_isp_params_block_header *)
- 			(buffer->data + block_offset);
+-		block = (const union rkisp1_ext_params_config *)
+-			&cfg->data[block_offset];
+-		block_offset += block->header.size;
++		block = (const union rkisp1_ext_params_config *)header;
  
--		if (block->type >= num_block_types) {
-+		if (block->type >= isp->params.num_block_types) {
- 			dev_dbg(dev,
- 				"Invalid block type %u at offset %zu\n",
- 				block->type, block_offset);
-@@ -147,7 +146,7 @@ int v4l2_isp_params_validate_buffer(struct device *dev, struct vb2_buffer *vb,
- 		 * with data that a later kernel, once it implements the type,
- 		 * would validate and possibly reject.
- 		 */
--		info = &type_info[block->type];
-+		info = &isp->params.types_info[block->type];
- 		if (!info->size) {
- 			dev_dbg(dev, "Unsupported block type %u at offset %zu\n",
- 				block->type, block_offset);
+ 		/*
+ 		 * Make sure the block is supported by the platform and in the
 diff --git a/include/media/v4l2-isp.h b/include/media/v4l2-isp.h
-index dc3e612ef79ea510ec1535f483fc16c6ec3d4569..b758d9b0e7f5c29cd8c4197f4a4a86cf3e5334fc 100644
+index b758d9b0e7f5c29cd8c4197f4a4a86cf3e5334fc..5f13651b53d3c06fc676b32826daa68ad77b5cf6 100644
 --- a/include/media/v4l2-isp.h
 +++ b/include/media/v4l2-isp.h
-@@ -91,9 +91,8 @@ int v4l2_isp_validate(struct v4l2_isp *isp);
+@@ -31,6 +31,21 @@ struct vb2_buffer;
+ #define v4l2_isp_buffer_size(max_size)			\
+ 	(offsetof(struct v4l2_isp_buffer, data) + (max_size))
  
++/**
++ * v4l2_isp_params_for_each_block - Iterate through parameter blocks in a buffer
++ * @buffer: Pointer to the &struct v4l2_isp_buffer to iterate over
++ * @header: Pointer to the &struct v4l2_isp_block_header to store each block in
++ *
++ * Users of the V4L2 extensible parameters will need to iterate over the blocks
++ * within a buffer. Rather than allow each driver to do that in a bespoke manner
++ * this helper should be used to ensure commonality.
++ */
++#define v4l2_isp_params_for_each_block(buffer, header)			\
++	for (size_t offset = 0;						\
++	     offset < (buffer)->data_size &&				\
++	     (header = (void *)&(buffer)->data[offset], true);		\
++	     offset += header->size)					\
++
  /**
-  * v4l2_isp_params_validate_buffer_size - Validate a V4L2 ISP buffer sizes
-- * @dev: the driver's device pointer
-+ * @isp: the driver's &struct v4l2_isp pointer
-  * @vb: the videobuf2 buffer
-- * @max_size: the maximum allowed buffer size
-  *
-  * This function performs validation of the size of a V4L2 ISP parameters buffer
-  * before the driver can access the actual data buffer content.
-@@ -106,17 +105,14 @@ int v4l2_isp_validate(struct v4l2_isp *isp);
-  * against @max_size and it's validated to be large enough to accommodate at
-  * least one ISP configuration block.
-  */
--int v4l2_isp_params_validate_buffer_size(struct device *dev,
--					 struct vb2_buffer *vb,
--					 size_t max_size);
-+int v4l2_isp_params_validate_buffer_size(struct v4l2_isp *isp,
-+					 struct vb2_buffer *vb);
- 
- /**
-  * v4l2_isp_params_validate_buffer - Validate a V4L2 ISP parameters buffer
-- * @dev: the driver's device pointer
-+ * @isp: the driver's &struct v4l2_isp pointer
-  * @vb: the videobuf2 buffer
-  * @buffer: the V4L2 ISP parameters buffer
-- * @type_info: the array of per-block-type validation info
-- * @num_block_types: the number of block types in the type_info array
-  *
-  * This function completes the validation of a V4L2 ISP parameters buffer,
-  * verifying each configuration block correctness before the driver can use
-@@ -129,10 +125,8 @@ int v4l2_isp_params_validate_buffer_size(struct device *dev,
-  * to prevent userspace from modifying its content after it has been submitted
-  * to the driver, and then call this function to complete validation.
-  */
--int v4l2_isp_params_validate_buffer(struct device *dev, struct vb2_buffer *vb,
--				    const struct v4l2_isp_params_buffer *buffer,
--				    const struct v4l2_isp_params_block_type_info *type_info,
--				    size_t num_block_types);
-+int v4l2_isp_params_validate_buffer(struct v4l2_isp *isp, struct vb2_buffer *vb,
-+				    const struct v4l2_isp_params_buffer *buffer);
- 
- /**
-  * struct v4l2_isp_stats_block_type_info - V4L2 ISP stats per-block-type info
+  * struct v4l2_isp_params_block_type_info - V4L2 ISP params per-block-type info
+  * @size: the block type expected size
 
 -- 
 2.43.0
