@@ -1,40 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793798469;
-	b=cxUi5CH0x5hpUD9W1v7pDHC2UTznzwLzUZnuwREjo4iEIVcqTHhyBMjMQHqms/1M/7aI
-	 qlfEAT2h/rNMXthaLAejdU0oZb9jsthFXVGfSyqx4KJKgWu+MKUGTK5qYFuS7prqRbFQI
-	 Od2G2xNEdCppyEJxhLjDwA3mbSKQNHcAXwujV5lLX5xrsXKNdWpukfu3Cf+j1mR6CcixZ
-	 srOAUYKl10ks9pdQYH2kSfOtdfxgzV69oJZYUS3JIwt6twQsAUkb/bpSNYXud3rvkKydy
-	 ZU51v1eonO5hXNk7/Ulw+5h6iSnSkAYy3ONrvoq5m2uRniU/5OS9jaaeUkttLImzy6g==
+	t=1793798511;
+	b=eySQCilZVjE17jwAiyc+XIe0FtnMv70onrlWGN12VqDKLHJDoQE9EqtkCwIOX6XFLEyA
+	 dnPsiuNk2NKelYMrxk1Xqs8DRMmYO2vCvZjYvEit5OzZfa822b4Kx5wivPvdYXgy4aF8k
+	 8jzncWBbLHeSGrYrmdrYWj72TXsaPuwThAjPpCv/60BBX+mcfVyLu895M28T8NB0pLqCz
+	 ybLgyZQqZR7pLMmBGnFj1urVvivTY+bYzKVPm+HgWIQAm04+nhTR07tx3fyyF2CUj76Ur
+	 /cqcCTRQlFac+UKqGYTZIAJaOmtg7dkeWoituE1nJlz7zHw/+GqHq1wtoly0I7oKcgg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793798469;
-	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=c0Uw+g2EwxMMpWbp4sFtotQBIYOiTAKEyRcbgueiNig=;
-	b=cv8uiLQVtWBkKfD5Va9AmNUg4+oXAKcWsiFUAWpDIC+QiU1Gtumqx/Q4c9Ij9gKMhkia
-	 KpLZkvbMD6DVVGGumZFfJmFzp2pMlf0G/0dxlmZc71+bVP0+Xf/q0Taeyfzsi/TG2sv3a
-	 7qzZ1blIzueGMcXYxvkXpGwmYF+FcwwzZEOOIrzN+tkPtKa+93CC0dao0lWdVlsdDLwD8
-	 L88Ge80VYjAYoFqo/awMn4y+ufpcUKhUcUwixnBgO4/w4eNHkuJKoqjmzj8pzpOG6DXDb
-	 tT29mzyfP/R7couOCpLsBHeGCJw50kO+vCzRxjgCeDu3SUiG+mKMf1YYq+93Tr7z6BQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793798511;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=nVUcBePgUPORxVVepL9f4xAsZjZWbYf+c0fXJmPOHsk=;
+	b=wZ5HYOT8tk7TqvNyUxzFtkeF27v3NfrcCGYwBATjzSQQDkj8jrGAitzAlA6VUtFrUDRr
+	 HzcXb5t4xXh6K2ZGyOZgo1AfqeLpzCbllfYGxJ3exeQ/bsTFHERGi7L7dSXEww21WWpk9
+	 kyGbg/HTtTigDHUj/9gHhaW3cRnxXYsZAKst6iZuZz6GqSvLgQJqRXT2KGdOfV39KfLO/
+	 Vbyf1xtZH03dCv9v2scCLRH+uFEHilCQ1W0Q+tLSkbnpHXD8bbOgwGcV7TxxF7c10goGS
+	 s+jT80+yq5idT+ms81HMXn631cvoNo/vTbayMBcQfDEQWTD68sljcsND4H5l2B/hycw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=hkXf3N1U;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFA0606A31B
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:21:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 897A71F000C1;
-	Wed,  4 Nov 2026 13:21:07 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: defconfig: Refresh for v7.4-rc1
-Date: Wed,  4 Nov 2026 14:21:03 +0100
-Message-ID: <d3335368d073f91745c2d24ffd462b11ed18f275.1793798428.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18907606D809
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:21:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 18907606D809
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=hkXf3N1U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=nVUc
+	BePgUPORxVVepL9f4xAsZjZWbYf+c0fXJmPOHsk=; b=hkXf3N1UHHdbGQ2wOytX
+	0E0roAVp45HjsZAHQHd69v1ND3Sh/QwV4uNmD5G78qx4eijShnQ1QlqVjS7bBGBw
+	gl2M7BAV9qo5l7kubbGyA+Dc1XtSUHjtCQPPiEh1IrVLFNB3p2cjMMnrETO6R7I1
+	hr2mmd2KziA5uPe/s1fr6hy4cfunXF/DkS3ABdmkyk5GSpAQxuXGJnCB4HpCeOhz
+	QtYkJxdQ8d3iEurbXgl736lviw7tIebzmSKH+p4+KaoSUlwRtmZbuSOs41ZhYLaz
+	oZA69gsrQV25MIslF/bxJWDF8Ml3hz6eiHFdUFYFRjAEcR+I5AhnB7611MXPS1lT
+	hA==
+Received: (qmail 736569 invoked from network); 4 Nov 2026 14:21:48 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2026 14:21:48 +0100
+X-UD-Smtp-Session: l3s3148p1@GhHZQnNfEI7AwtcC
+Date: Wed, 4 Nov 2026 15:21:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Myeonghun Pak <mhun512@gmail.com>
+Cc: andi.shyti@kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ae878000@gmail.com
+Subject: Re: [PATCH] i2c: sh_mobile: request IRQs after mapping registers
+Message-ID: <ausxa9vGb2laTzbE@shikoro>
+References: <20261017233416.47b09ffff48f.i2c-sh-mobile@gmail.com>
+ <ausul_FO8-1JKEmL@shikoro>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -44,53 +65,41 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x7kVeiDzJ1b6cNZm"
+Content-Disposition: inline
+In-Reply-To: <ausul_FO8-1JKEmL@shikoro>
 
-Refresh the defconfig for Renesas ARM systems:
-  - Move CONFIG_SPI_SH_MSIOF=y (moved in commit d696b9109d2315fc ("spi:
-    Fix the section ordering in accordance with the comment")),
-  - Disable CONFIG_DRM_RCAR_USE_DSC (defaults to yes since commit
-    c217ce005b232899 ("drm/rcar-du: dsc: Add rudimentary Renesas R-Car
-    V4H DSC driver"), but only used on R-Car V4H),
-  - Enable RZ/N1 timer support.
+--x7kVeiDzJ1b6cNZm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-devel for v7.5.
----
- arch/arm/configs/shmobile_defconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 58059f943a9b307c..3683276dd82ebd26 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -94,8 +94,8 @@ CONFIG_I2C_RCAR=y
- CONFIG_I2C_SLAVE_EEPROM=y
- CONFIG_SPI=y
- CONFIG_SPI_RSPI=y
--CONFIG_SPI_SH_MSIOF=y
- CONFIG_SPI_SH_HSPI=y
-+CONFIG_SPI_SH_MSIOF=y
- CONFIG_PINCTRL_RZA1=y
- CONFIG_PINCTRL_RZA2=y
- CONFIG_PINCTRL_RZN1=y
-@@ -149,6 +149,7 @@ CONFIG_DRM_I2C_ADV7511_AUDIO=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_RCAR_DU=y
-+# CONFIG_DRM_RCAR_USE_DSC is not set
- # CONFIG_DRM_RCAR_USE_MIPI_DSI is not set
- CONFIG_DRM_SHMOBILE=y
- CONFIG_FB_DEVICE=y
-@@ -199,6 +200,7 @@ CONFIG_RZN1_DMAMUX=y
- CONFIG_RCAR_DMAC=y
- CONFIG_RENESAS_USB_DMAC=y
- CONFIG_RZ_DMAC=y
-+CONFIG_RZN1_TIMER=y
- CONFIG_ARM_GT_INITIAL_PRESCALER_VAL=1
- # CONFIG_IOMMU_SUPPORT is not set
- CONFIG_IIO=y
--- 
-2.43.0
+> won't matter here, as I see it. Unless the later pm_runtime_get_sync()
+> the device should not(tm) be able to send irqs. Famous last words...
 
+Which only matters during probe(), not during teardown... sorry for the
+noise! Patch is still good.
+
+
+--x7kVeiDzJ1b6cNZm
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrrMWsACgkQFA3kzBSg
+KbYC8A/+NLfjDMbQOaNK5WFerv7OBKXC7mNPPi//O/tJLSteN3HXojxeP0z2fq8H
+XvuRLso6dJfXkduRNWc+eYEsgQ4p+g8E4Luo7Yl5IbpGiBgad0rpAQPhN34ppk5L
+E1JhUI5bk7scBm/B9dY7UeciAnOHUT1SI7kzCb3TpfvGHMqN3ql83SevYuLP5Dxg
+jGlnrPUae2zrKPaiZ9ViN30gCSrC98zCwHDPGs76q9DbYvn7acSSjsit67Vd9vhx
+vl8TmPzkP9xb4iD0LyElkGV33hIwgjjXhQlWmUCv39nCBsh/uL4peljgYwZ+NKBE
+NLLy9zcKsHQ/DbnqAVVPEODgoAvfQuUalLpqx3WRSqq+ouWHs5D9m5K0oQaMnaFQ
+8bCNlSpUEZZFUGDDstoaqYyF/qy1QnbMYfonstHu/QeezOetJDclMaAnwoS9G3CV
+B1Gh8MUgeQwr4KTAzVkDZRIK6FBajYoGfoBDnYWt3P99sP7oMbmfx/fRAgqCgGyc
+hht5ucV0Bkt58BhHHuzd87RsoQkjzT287AIRxmzJhmE5Wl9QNpzHyEmLQfWSV872
+343L1jTaI7gEf60Yn4he0ALyWayWE0kvV6h0mm0hwLQSQsWOCq7s2P86y/CbQoyH
+/FwKiRyPAoem37dko5sJ6l5Asxlfn+6p/Ejpl26j9hjXfKWYSr8=
+=RAe6
+-----END PGP SIGNATURE-----
+
+--x7kVeiDzJ1b6cNZm--
