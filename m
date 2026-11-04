@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=52.101.229.84
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1793809382;
-	b=t/zKAyEmdHCl5HSLjofaO+KjhNWKWzYvf90Ff86cuIZLiSrw8EyF1IH3axE37WkVfvv2
-	 yYzc/MjzmBS32Ql7aMqRpOxN1y7aivYz6SKtMTRLiSv5dZGfCDVIR4o7qZSy/Y0pYD8qD
-	 +FNoid0ORewqaf0yJ138fLpzfDi8nnFpnazq9WTtYsbBwpqr00q70B2vfv+qoSAf8rdCU
-	 Ezl/FKFTaOm8jv/QjaXlbWvX0UYWkGF1QqNOfZoOCf2xI//qtqmmzGvnxjbgTs4GSMUkk
-	 JpqAHHF8APk9EWY/5J/gWivP660OyX4VxJCEt+c4bwDNzeyXjhaiqlbGUBOPMB+6J/Q==
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.84
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793809393;
+	b=LQoPG4bfvfw92M1+LlfOBz52qQGF6dhYGizrvPk0cMJ21qPF8i+Wuny4fr3xspAhiRvm
+	 wH9EAFf8P4wSN3RukK1XYLTUXvjSmjjtXCpKTAmtRHChY5iAGpb83C5LE+r5HfysHNPm3
+	 hLSWzZNxAYsUWDQHqM6U79/xOPLu978AE3QOdW5fwHGeihSwhtrMnFANB7QYGQxJdAe/P
+	 CyjEEB9xauQLescT8souvfMsZ8WlCd9Zi459uT+afZMiaj7qCuD0Pb1De8hcY9B/HT4Nf
+	 k9jmHSQAnS65XuhpppX8fwFWYNFk1etBw78uKweL8uyakw9KO81mcFEEFoE3u1uEbzA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793809382;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793809393;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
@@ -24,54 +24,54 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=f5sd92Y+sgDHxIB9Sy2YuZFL8BI2wiy79lP6ceZ/DUo=;
-	b=y464x3eEk90Pp0RwnyJgKsRM8al9rABjE7JYs9mY13oooMuHi3XCh39jKIeYjeq5aU6E
-	 T4JobILzGhWvYF13j1wep9zBUOyzVPhGkiizyu/REI/jyuHyjN5LBdkDZ//NcwniMtHvr
-	 nsAg3cL6qepuo8nu6aLBhNB+uNF5WGBxxW+GZkcCzFOJiB8mr03Am6WhmKfZtgfgn0oor
-	 3AGBCsgTY04GxhpBI/Hs9oixy058R7YL4WPUofnNb2m4KQBJcJJ23FcVqLQ0GRweFdSVN
-	 ZKeBb2MnuhmZFYMKzEiycwO5jlww14J4wgFF+Oi+14qGJC7pRjaD/P2Rww55YqtAlEA==
+	bh=pdlXHI2X6pdqRrHHvmjfrLyomme5qFfK4YpZ+ASEvLM=;
+	b=gHrfidIdGngA1QJkYB4fDOx4nen8ZhYGeGhrZePAp03ZPpj9jgVoXvLzsH5juWes7kmo
+	 j+RWJIOUb1n8fMse23vRq2NaLFVsKDPa3gLTxpunY2L+xfKlCCyB2NXfbB6xacUnlZAlV
+	 Zmmq0DsA7XeC+31WrzJ1RegrQ4YFloVGwf1HFquo54UV14GiJOCHIc9FE+7x+o8j4cMG5
+	 wqTnGsKrHxdT0GcwoZymuEu5pZPwgSGMEZzjUCn6iuyU3UhjYCgqwoqrui4/QtIOKYl0u
+	 w3B9xIDjvUByPmqJYDnDyxVx1Mw7+zZaSs+3fzAjvel7nTu2qXBaoFRwgeLH1dLyAsw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=valinux.co.jp;
 	spf=pass smtp.mailfrom=valinux.co.jp;
-	dkim=pass header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b="weadjiE/";
-	arc=fail smtp.remote-ip=52.101.229.84
+	dkim=pass header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=BMUqSMnD;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.84
 Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020084.outbound.protection.outlook.com [52.101.229.84])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96849606B8F3;
-	Wed,  4 Nov 2026 16:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96849606B8F3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42461606D80E;
+	Wed,  4 Nov 2026 16:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 42461606D80E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=weadjiE/
+	dkim=pass (1024-bit key, unprotected) header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=BMUqSMnD
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ktm/s6F76Bcj7boZAAUETgOB6F+t/zREnqh6T9vBAElF5dOYcJgLD2Hmt4T7+BdVX3mECLo8jETaHkprYE+zOEBKoGNt+QiwbjhzV1D0gzEayJZYmr7BxXJL9zCJSGCa9ds7LDPkhbXjgUVXkXPG+CPl3DGTErpRGzExXYQ6pIpp0JIovu2280XOnLrD+3O2oYa4CflrlsGz+gcMxfmrYLjPayDpBwSHPN1R+Qcc5LdNeMUWltyNCgm23VTUx5pw2O8Egg+37KndiRqq39cH1i8iTKMBkeODvQlfA+/z8r5I/zAqTNmxxTHIcrLVc/dI6qwawH1WYAMF0y4wDhlWqA==
+ b=iuQNYLkIFb0AFgw5PtN/LtHZrONN/LNoKI/2V/pj3iXoO2qLQkVGpvFBJWw+mY5Md2ThovClzspDkT4YzsyFDmvyp+CvTr9tqlkDo9Slw8gXyBdq59Ab4ljhFt7tn8vkMZtf9IASySbnHncAdGEqZWjjIew7T+L7oaETLqruBEOj0VnIu/35/mV99YnMJPHqsRng1il6B0OwlA+B7FLoaBzBo5fL5ZhyTXtxgI2QfL0Rt8HIDJwrwnUFQQiKpTtKImZ7h4hKNF4yjUxF2eUav0iIn/PBoxQFtqFM2jG43AjGOYrh+ZphTFlXZBuLwZXgqEpSPf9io51ZA3g7F0Im6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f5sd92Y+sgDHxIB9Sy2YuZFL8BI2wiy79lP6ceZ/DUo=;
- b=EGe5A4m8eECurZl0XaVqRGOk/O8jhWYkk2/FYcKt8lK0QYf/qn6jlknYS1WK5hW/EhA58A/KXKdWnUo2OO5ISCQgI39qm0qHaJqOIoJgBsLKBY3R2IftWMwOMjZtBIVJnh0CmWV1NzrGE/Q8rX6+1f29rogF82EcoPbpzs0enY+JD+Quz5oI4UHNzlrAneielts1CgzclgnQUnV9etdmlemZ84fQ9Z4F5WZ5iOrJiDDRj+hBDjebILecd9w1eU3A5UN3OqZ80+BaUyrwJfaiRZSzcATZytWMKkrDAmZ4/X6S+uQTpkJF9ZMgzM0GxLE2rlAsI4VQfdLF04JZRRqkpg==
+ bh=pdlXHI2X6pdqRrHHvmjfrLyomme5qFfK4YpZ+ASEvLM=;
+ b=S3RIBBoZOTVnI1SYlgqaoIPmU5V1Xj057E87La013/ooR97XEeuf3EN/tMNQiURHEbNfaWs2T90I7X91mTvOGEuC73mjFR9COhCsimKdD6tLW10sfy7n+IZ5nZBOIqeAY1SlWrnSv+AJoRr8j2hLxAkF2KW8r7TPRytd9WbZzszyAUF9Scs2l+a3N6JKeUzOsOV4TyENpQ3EX8gwYEKpsrSdYPUyoqmw/MxI5tfLMrvRdI9joX3zigmJkV4074D2GtS1Wi0zrjNkpMc8RD6uRpwvev+yuXg3BL01hdbnuIFkGpyWmaIIQAvkI5NrKif1O9i9TvQmVm8xk3vAZY2Yag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
  header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f5sd92Y+sgDHxIB9Sy2YuZFL8BI2wiy79lP6ceZ/DUo=;
- b=weadjiE/XgSbm8vIpxvoPBRH3iDC/BU/PwAByxJLq4FTKzWwyD6W9653PZe6KF99qgSNhMp1x+o3CaUrKALs2AuMZ2g7x3SeCYWEixWu72pkUJawTZHjgRZhwj+HGPP1grKHWGSkhnJPD9o5wAFkJLhCtO5e0KoBt91rwiaDYoQ=
+ bh=pdlXHI2X6pdqRrHHvmjfrLyomme5qFfK4YpZ+ASEvLM=;
+ b=BMUqSMnD65W6WV6LKfK+/4/+8qmNYC/MeAybCfcwwLXyB2TdS1jMrHx8V3ogAqa524vTgGuFXyZk1VuK0dp2Fzb2INYs2v+AGqHV8Z4UNSainSzcoZEfwks6WvE8cB6gpe6YhesacY0XRY1g/q+Mrn2CUCT3uXaZH++QuiN7duI=
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=valinux.co.jp;
 Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:325::11)
  by OSZP286MB1462.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1b2::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Wed, 4 Nov
- 2026 16:22:59 +0000
+ 2026 16:23:00 +0000
 Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
  ([fe80::cce5:2aa8:53f9:dba9]) by TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
  ([fe80::cce5:2aa8:53f9:dba9%5]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
- 16:22:58 +0000
+ 16:23:00 +0000
 From: Koichiro Den <den@valinux.co.jp>
 To: "Joerg Roedel (AMD)" <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -84,16 +84,16 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	iommu@lists.linux.dev,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] iommu/ipmmu-vmsa: Propagate errors from iommu_fwspec_add_ids()
-Date: Thu,  5 Nov 2026 01:22:49 +0900
-Message-ID: <20261104162251.1749998-2-den@valinux.co.jp>
+Subject: [PATCH 3/3] iommu/ipmmu-vmsa: Keep shared micro-TLBs enabled while in use
+Date: Thu,  5 Nov 2026 01:22:51 +0900
+Message-ID: <20261104162251.1749998-4-den@valinux.co.jp>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261104162251.1749998-1-den@valinux.co.jp>
 References: <20261104162251.1749998-1-den@valinux.co.jp>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0248.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:456::16) To TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
+X-ClientProxiedBy: TYCP286CA0251.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:456::20) To TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
  (2603:1096:405:325::11)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -106,92 +106,300 @@ Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TY7P286MB6866:EE_|OSZP286MB1462:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f419a17-42f8-4bb9-436e-08df3a8fe3dc
+X-MS-Office365-Filtering-Correlation-Id: 5403297a-1b0e-4bc3-b133-08df3a8fe4d0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|7416014|376014|10070799003|366016|1800799024|261009223027099003|261021121427099003|56012099006|261021123027099003|261028144727099003|261022105027099003|261026140227099003|261102123227099003|10067099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|10070799003|366016|1800799024|261009223027099003|261021121427099003|56012099006|261021123027099003|261028144727099003|261022105027099003|261026140227099003|261026121527099003|261102123227099003|10067099003|22082099003|18002099003|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	Bh+wQPm7uWZjgVDJphhOUfFcA9h4O95ReT2HUpH3MLTSQWDEE6hZW9iXgaflKy4f3BgMWbcoetyhu0084niLiQNVoZbgnBmy2J8VY79T82EfQATfm9VE1gbLjALaxEHZpnIY9Jyze/o2/RqVnKPsHeqwFAdOJ7hXXmSU6slhuYjHVYQTaVoJ094rNJvpO4SkROk1ZTJBVCEyoxgtkdCx8xNwdn77PyYoaQxMLU+Cp8MEqLG5mpTFOXtvF8YXyffcXnMKtweh44c8KLxOybx5o4jqBqKzIWe9z3fxkOJvCL8V0ORCpqXKbzlUFdUgM9Lp2YQjoyEj7F7XVNSi+MUzhFIfnXogvIGIGihucN/YUhXS/6okNJEF4CfM/+XFR90OvwS7DnkYsxB1a4IYPMavIhIhGhYtYPNdSW84WCoxRUJRcLNX9b6oFosvbdvmg1x9d1RTQwQ7K/D/CXinJWg1QIqTbpDS1YLoGUGN5LLbpJHYdJRPTAqUfLLKow92eIEV2K0wek+z2ps+MbqQinPTyXINcTrmNrfm9CDMg+enxrg4noaEcvCerv0RBuvqPMwiVECIwhjEluMWqDTvhJHrftu1v0bmzBF4D8KKZPGSNyjA0UexRAkLZNpyumr08r+st8FufGhV74UOgtMtjRxCGHNZyJK+IKCbSFnpkrK0EZE=
+	hYwBYZBOMFZ/GU2CIzVmAwKENm/gpOd0oC7oux6DQNEbyDrbXmgrnTfJq63L+BoxruSvTWGatHLBlBrHEtKXHUOBjsQ4rnlXJkUyQZ5jwq2Atee8Mvh/V8zFEocJxJ5+4RvQdxp38cKjWu9n8g1yXLxAc9CJ4NcsoSUJDDV244ufjju+gRkk7cEcPVyV7LbPlMzCCbHB2NVqIWXWMyny/GYavqbc4R6eyQT2g18G4sHdyg8s55J11pthbqNgG//zPv8LxxR94aOcTvgRGzN0Mkp07sBxCzJMZe0cExCmd+bhI1FP7hERfgd1FWnNKLYHA29Ue2HWPb2i7UF7l2V79bBmlZvMVZiXqbxKnBe6QmJCg5kHSxLckArjhQUDqhwxAnzlvhFTU2PHarPBX7QJyH8FIooXzA/dMgVFXFMfqjHVQcEU+8gF3OxD4UIgan0EgHgzUvL7X84ENnpTBmlAjjQbD36vMPlledeb41ccrifJFnfz3pkHnrNqMkSsYT8ZidAL4ohQqJvDkQKbAVDYA5xbih3AR+ulJLpk+qKLOrGiK6Zn8Xc4QjeBrbEnXrsVPfVxOirCaSVF74bPsEs8QJlGWbOugPl7P4LNyDpBiScYvu+vNbDJZd2lMJzMM5uos6jMMoDf26xLw59GWVkPllawh0UJrTHEsXcRhlbpmKg=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(10070799003)(366016)(1800799024)(261009223027099003)(261021121427099003)(56012099006)(261021123027099003)(261028144727099003)(261022105027099003)(261026140227099003)(261102123227099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(10070799003)(366016)(1800799024)(261009223027099003)(261021121427099003)(56012099006)(261021123027099003)(261028144727099003)(261022105027099003)(261026140227099003)(261026121527099003)(261102123227099003)(10067099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Lc1Vkyc4airDrLLHWhamWpVHiivk2UcCiOR4pEX23NLvb8cKYpoJH3V/Y69f?=
- =?us-ascii?Q?NUErf+Ql0p58P7CHlmIDH0H5e2uZfNaKRxHYVCRvaTx/E9hQd1Cs0/aailr5?=
- =?us-ascii?Q?lyu94pWhbG3psDcYTs1a5DgmwZbbnzzwKJxa/gW0QdOFYJ6Op40GczJBZTwI?=
- =?us-ascii?Q?AWTYutaQt5opCq8PUhpMT2a84Gq5+Ft61wvBQfxhjbvzWt+7aLroytS5GFb3?=
- =?us-ascii?Q?AUzyT1tDBvcXAQoFH7Lri+OY7eRXokohiI58vq38b6KPEKNWzlfnMh+z4uR0?=
- =?us-ascii?Q?VVFT9uN2DbBq7ws2RlvWZ9T4QzyDThgAUF+fGLsgNe3X/63iQOn3VYssLCjE?=
- =?us-ascii?Q?5d0vrG8PSucLFnk8vbF7gv33fjpYB9PreBA+UEc5Mqa+TQebvz6s6pIXKDxP?=
- =?us-ascii?Q?YCycJmZgOao4yBrvDaLM0L020vgXNVnwL7AJRbGWuWRuvgFADLzIq6d93V1N?=
- =?us-ascii?Q?ntXgVHh7crbEHpFk4T1oPJCTcP+94wc6gqWMnqnqLtZjAP/kailmyf9XaNyY?=
- =?us-ascii?Q?ql0YG3W4aKYugBKDGRTwbJ+6OjBTHoWQRAOBecmmdu9kPYFSmpXrWxSVN73p?=
- =?us-ascii?Q?HdDnY48dZd9j73BPBKTqt+Kk5X3Iyth1aRnaYJFzDs7VtBEo+MFj8w3RcCmT?=
- =?us-ascii?Q?e6dx/bat0EeDw814bC/Atbas+Y5GoxMBLHIVRaDKnhNGKNiEacYUk/iX5qbI?=
- =?us-ascii?Q?SxZM7ZykGoFNid0m/ohaA1d/8UVhK+v/sCDPKKQJcsV1lEKBapyGJ9bJnl1O?=
- =?us-ascii?Q?hWign24lovZynmhTU989vaj4JfPW7mkjS1PVXHkytq7wKcPt0b2vXGNC3I04?=
- =?us-ascii?Q?PVPZp5ufhmhAaEfRCqeZTvyXlG1IZb9wYGJlVfEt14q35AkSme7V3NEgCOKt?=
- =?us-ascii?Q?HUC+LuEdJ0dZVHw7NYirjftrALxUvZ9sci8lpsIJsp2NpPTDRWK5e6qh8LiF?=
- =?us-ascii?Q?xth0XObhGb8xdW7ZqB3IL9VW9h88a7niIhtegkK0wzhQyyKSiMVZF38/FECH?=
- =?us-ascii?Q?0FO7UTPqRFV5ZaPQV45CrQGZ79jtdSGdgy9Jj1KbjzDkoGGhQJwEwVdvDPs5?=
- =?us-ascii?Q?5ydTpRhZqsVhZ+QRy9OwPd5ffmBHTzocXHRMnryDusG0bRDcUf2IoQ4ARFmb?=
- =?us-ascii?Q?2WDUZZEkXHZDq46O4m0uo4nczeoslkMBvBamdqGi3zWYBaXkp+Ly2JOcxms+?=
- =?us-ascii?Q?tTlmuyYkFV+OhM3c4564+X6bhe+HkP78irJ/7N6I0Y1VbOcJGdmJFhEF+mAb?=
- =?us-ascii?Q?lzonSNizHB0Lg6EejRTKmbJDQvRch7+rJKXqyGsYBbf2ST+4IGKbX78Iu60z?=
- =?us-ascii?Q?2db1jx+CJblyb57VzYBB985rQZdS49CKkpSndVQRr3uDPrrguVHpdydYWTfD?=
- =?us-ascii?Q?JkQ8PlSJvlswRC/MOhi8xGRO2RKhKrmKjSTFmpnvN61j1ACcsZe08Pm7sUYc?=
- =?us-ascii?Q?m7NBf7nACmsoifkNBZPGgaV2Z+O9CHKK+0RugnWZXhyWiOF1yVE3rAOuaH5G?=
- =?us-ascii?Q?SJmIpG/Hgxzuwowp9Yodl9sYxzIl8MfCHQ1C8UNPYYCSfeLdEbZmqkoclbXw?=
- =?us-ascii?Q?86ezlBuJNcMb+mS7WFLrTgf030D/+6tpIP4i4KFTTgHaahdCVrooY/LHcrqn?=
- =?us-ascii?Q?GDDx/KtVqv3GQ+FwbptKcquXj/TjWzdp9BIj/wvAIiK1IF7IzPJbPo4AFY8d?=
- =?us-ascii?Q?loQMgEObJXuN1VT/EehPU5Gzr8D4Mdlwhb9F1hotr/SFuUs33beyjVcb2zgV?=
- =?us-ascii?Q?q1W4DWFq5VHzIlpOhEwA72Aunvk3MhZVEOMp+4eLXYZOdAwq7sP0?=
+	=?us-ascii?Q?QJZZboHc8Q3uwrD7S5kZN5bocsgw4UxSd/k/YqleLO760A2ivRW5/sUbftjA?=
+ =?us-ascii?Q?gSFcuUYSAxT2M8+tj2qcMPHZr6nBXF3vtbpEBgCgtoFS4vyH7ZxQLy2wd0g7?=
+ =?us-ascii?Q?AjWI1wORTOCMCeT77urqfjmbNm7gtTHdxicy/BSc6r2OGeWG9REvsIatzN2g?=
+ =?us-ascii?Q?K0fez8TXhO4RE5NLe81WbEtPVX+dhN/Oa2bI9zzRIGdSDAW8Rv3pruYyrHlh?=
+ =?us-ascii?Q?voPlMwp0g1bPuMVkN/zByKIjOkVs4wJ58V5TOZ/WJJk7a/Q5o3KQ406a4cYZ?=
+ =?us-ascii?Q?LYmG+7nuEm0Rgwg78OQCXOt3xllrzPQ+TI/FzeMYnEwESUAWTMbbUYcaO2AA?=
+ =?us-ascii?Q?n7dNqPehTS6wrMU3CyRpSYDD8A8mxOYxd/4me8xScm/h3JG6oIU4M2/aMn4A?=
+ =?us-ascii?Q?zO4wugL8tj0eIigtlpEWFkc4H/+9cGT9vJqXcCVDV47By2UNO6lgDjSy6bJa?=
+ =?us-ascii?Q?c6DW1Hi3cWFO44rlPwmPsaYMSBf2xS5ZDwIGcIoDGsIFhHwGVeS7UC2OkpPp?=
+ =?us-ascii?Q?Ant+2JmdUxyNvbxLkHa+XR1PX99HXk3nwJCDk9v3L9cGGZow4M5Lv2TZ9y7b?=
+ =?us-ascii?Q?2yIooiyZkdR7f3DYEES1vQ48hcSMJhChRBYIVPfH3L0/QTftlg81tB8mOEiu?=
+ =?us-ascii?Q?WyMk2piSjHC02tmJHqXvR5vP7Z9Sp9xYbcTGjn6qEW1q+Gqm7JkD7cUJD65d?=
+ =?us-ascii?Q?AqzBOlmigGpmXGgh9oHgk8ssXqSF1ZiaQ77m1kqSqNys0+fWGO4s3+SlBL2r?=
+ =?us-ascii?Q?CmgRXQCggqkIyokQuyXAYf02zLk8wAOxmQnvh93zGCS4fdb/ULbakostjkyz?=
+ =?us-ascii?Q?G6r4A4cJRU8/kr2KqRBEJm5p7wupP+cQQNlex3iiUGfTLoYpJ2mc/NiOqfna?=
+ =?us-ascii?Q?Y7d4wv8Lq6SLTh8dSpVlP1t7QBa/sPVnPGaI5mbdOafU6Kyqy1nRFF7hazX7?=
+ =?us-ascii?Q?isCmjBSMjBq91Z9TTz0FE3Ry2BCoKSD5NmJl0GIzTZi4bgkWx1Z6veUhMRgQ?=
+ =?us-ascii?Q?Zl/FMYsGrv/F9Yxf00hQVUkhcLhyyyQpQioPm5B3wPlbmmVjtXBGr7O8u822?=
+ =?us-ascii?Q?P3Owh9/O3VODpAIR+4BVeZT7BTzoJHwOVBgfX4dhsF2eUSzL/L38g/UxtLpy?=
+ =?us-ascii?Q?2QvvvVtKePV/czNeP6aGV6racyV9k/N4RaZbjjFixZKoAGRcdbnnrnC9dAeY?=
+ =?us-ascii?Q?3SknRtVYGpb3gsblAexxKXfKs0tMCV0BdkT6Ck+2LVFTsUFn+3jUtFUoAAKG?=
+ =?us-ascii?Q?TNOe78JipAVqoLRnoZZv6/X2shuF7viGXu1UvGsKDeupTf6OLfmf8NDiJfBp?=
+ =?us-ascii?Q?1lwd0DQF+chrfzLLFGXVAVinLwKUUCLRo0qorD18ZIaccPk0xB6OWxMidwgL?=
+ =?us-ascii?Q?JcAB2QhQv56BBJYSCJS/qFkDKulSlsFYeGmNr9khQRwlJv0eK12EmbPsNpQc?=
+ =?us-ascii?Q?PF8BkeG/PTxkyxny+7T12CM034nHzmJiriS4ubEgRt287NzWGzgMlmVQftpT?=
+ =?us-ascii?Q?6fPHXBi74APAZcj89Yh+msoiD9UUeNRI2cXJa7Wfb970MYi5dL7mZdskylLc?=
+ =?us-ascii?Q?ljKritA+uERMzdo/u0Wcb8dSFKlmhmXZbmqkzsFHxj+Lho4jsAmAgdT64Q6+?=
+ =?us-ascii?Q?xqdZadi+PDgOzlDXxbGQSfvK4hyimVrGfR2NmDZnDlpRVIABGA0Yzs9+Ej4/?=
+ =?us-ascii?Q?Z4B7MUvStex/hXWYQzTOqvnFHiVUEdBChYBSW8spbDxmHFCE9P5+O/0+H9+W?=
+ =?us-ascii?Q?ZYSmWJRjHF9QE+HMRV/abwfMsyi7J7uZiJMdOWBlrqSCwUhGhizX?=
 X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f419a17-42f8-4bb9-436e-08df3a8fe3dc
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5403297a-1b0e-4bc3-b133-08df3a8fe4d0
 X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 16:22:58.8381
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 16:23:00.4333
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 250BNosZKSnbQy94+lzGVAw4dwNCj3jXKaxEA6Pybwh9o1uuSaNV+0kol2LDsnQ904w+OfU7rJPBlw2zuuMV2g==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 58ESAZUGF7ZYau/hsR0CbAQT8JPei0bLmLmcGnlFFeq6TD6YLXBmLEX2sp1I7YasmbbISTkud9PdmolNY1AB2A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZP286MB1462
 
-iommu_fwspec_add_ids() can fail while extending the ID array. Ignoring
-its return value lets IOMMU setup continue with missing micro-TLB IDs.
+PCI functions can share a micro-TLB. ipmmu_release_device() disables it
+unconditionally, so removing one function makes DMA from the others
+bypass translation even though they remain attached to a paging domain.
+Switching a device to the identity domain can disable a shared micro-TLB
+in the same way.
 
-Propagate the error so of_iommu_configure() can discard the incomplete
-fwspec.
+Count the users of each micro-TLB and disable it only when its last user
+leaves. Track whether each device holds a reference so paging-domain
+switches do not add another one and release does not drop a reference
+the device never acquired.
 
 Cc: stable@vger.kernel.org
-Fixes: 7b2d59611fef ("iommu/ipmmu-vmsa: Replace local utlb code with fwspec ids")
+Fixes: 24dfb197c3b7 ("iommu/ipmmu-vmsa: Call arm_iommu_release_mapping() in release path")
 Signed-off-by: Koichiro Den <den@valinux.co.jp>
 ---
- drivers/iommu/ipmmu-vmsa.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/iommu/ipmmu-vmsa.c | 121 ++++++++++++++++++++++++++-----------
+ 1 file changed, 86 insertions(+), 35 deletions(-)
 
 diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 9386b752dea2..99586c68ef35 100644
+index cea9348ac10d..bfbb6795ec13 100644
 --- a/drivers/iommu/ipmmu-vmsa.c
 +++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -778,10 +778,14 @@ static bool ipmmu_device_is_allowed(struct device *dev)
- static int ipmmu_of_xlate(struct device *dev,
- 			  const struct of_phandle_args *spec)
- {
-+	int ret;
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <linux/bitmap.h>
++#include <linux/cleanup.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+@@ -59,14 +60,26 @@ struct ipmmu_vmsa_device {
+ 	struct ipmmu_vmsa_device *root;
+ 	const struct ipmmu_features *features;
+ 	unsigned int num_ctx;
+-	spinlock_t lock;			/* Protects ctx and domains[] */
++	/* Protects ctx, domains[], utlb_ctx[] and utlb_users[] */
++	spinlock_t lock;
+ 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+ 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+ 	s8 utlb_ctx[IPMMU_UTLB_MAX];
++	unsigned int utlb_users[IPMMU_UTLB_MAX];
+ 
+ 	struct dma_iommu_mapping *mapping;
+ };
+ 
++/*
++ * Per bus master (device) data. Several bus masters can be connected to the
++ * same microTLB, which stays enabled until the last translated master using it
++ * is gone (see ipmmu_vmsa_device.utlb_users[]).
++ */
++struct ipmmu_vmsa_master {
++	struct ipmmu_vmsa_device *mmu;
++	bool translated;		/* Counted in mmu->utlb_users[] */
++};
 +
- 	if (!ipmmu_device_is_allowed(dev))
- 		return -ENODEV;
+ struct ipmmu_vmsa_domain {
+ 	struct ipmmu_vmsa_device *mmu;
+ 	struct iommu_domain io_domain;
+@@ -83,11 +96,18 @@ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+ 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+ }
  
--	iommu_fwspec_add_ids(dev, spec->args, 1);
-+	ret = iommu_fwspec_add_ids(dev, spec->args, 1);
-+	if (ret)
-+		return ret;
+-static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
++static struct ipmmu_vmsa_master *to_master(struct device *dev)
+ {
+ 	return dev_iommu_priv_get(dev);
+ }
  
- 	/* Initialize once - xlate() will call multiple times */
- 	if (to_ipmmu(dev))
++static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
++{
++	struct ipmmu_vmsa_master *master = to_master(dev);
++
++	return master ? master->mmu : NULL;
++}
++
+ #define TLB_LOOP_TIMEOUT		100	/* 100us */
+ 
+ /* -----------------------------------------------------------------------------
+@@ -281,11 +301,6 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
+ {
+ 	struct ipmmu_vmsa_device *mmu = domain->mmu;
+ 
+-	/*
+-	 * TODO: Reference-count the microTLB as several bus masters can be
+-	 * connected to the same microTLB.
+-	 */
+-
+ 	/* TODO: What should we set the ASID to ? */
+ 	ipmmu_imuasid_write(mmu, utlb, 0);
+ 	/* TODO: Do we need to flush the microTLB ? */
+@@ -297,15 +312,63 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
+ /*
+  * Disable MMU translation for the microTLB.
+  */
+-static void ipmmu_utlb_disable(struct ipmmu_vmsa_domain *domain,
++static void ipmmu_utlb_disable(struct ipmmu_vmsa_device *mmu,
+ 			       unsigned int utlb)
+ {
+-	struct ipmmu_vmsa_device *mmu = domain->mmu;
+-
+ 	ipmmu_imuctr_write(mmu, utlb, 0);
+ 	mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
+ }
+ 
++/*
++ * Enable this master's micro-TLBs using the domain's context.
++ *
++ * Several bus masters can be connected to the same microTLB, so count the
++ * masters translated through each of them. Moving a master from one paging
++ * domain to another keeps its reference and only updates the context selection.
++ */
++static void ipmmu_attach_utlbs(struct ipmmu_vmsa_domain *domain,
++			       struct device *dev)
++{
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
++	struct ipmmu_vmsa_master *master = to_master(dev);
++	struct ipmmu_vmsa_device *mmu = domain->mmu;
++	unsigned int i;
++
++	guard(spinlock_irqsave)(&mmu->lock);
++
++	for (i = 0; i < fwspec->num_ids; ++i) {
++		if (!master->translated)
++			mmu->utlb_users[fwspec->ids[i]]++;
++		ipmmu_utlb_enable(domain, fwspec->ids[i]);
++	}
++	master->translated = true;
++}
++
++/*
++ * Drop this master's references to its micro-TLBs. A micro-TLB stays enabled
++ * as long as other bus masters connected to it are still translated.
++ */
++static void ipmmu_detach_utlbs(struct device *dev)
++{
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
++	struct ipmmu_vmsa_master *master = to_master(dev);
++	struct ipmmu_vmsa_device *mmu = master->mmu;
++	unsigned int i;
++
++	guard(spinlock_irqsave)(&mmu->lock);
++
++	if (!master->translated)
++		return;
++
++	for (i = 0; i < fwspec->num_ids; ++i) {
++		unsigned int utlb = fwspec->ids[i];
++
++		if (!--mmu->utlb_users[utlb])
++			ipmmu_utlb_disable(mmu, utlb);
++	}
++	master->translated = false;
++}
++
+ static void ipmmu_tlb_flush_all(void *cookie)
+ {
+ 	struct ipmmu_vmsa_domain *domain = cookie;
+@@ -592,10 +655,8 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 			       struct device *dev, struct iommu_domain *old)
+ {
+-	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+-	unsigned int i;
+ 	int ret = 0;
+ 
+ 	if (!mmu) {
+@@ -630,8 +691,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	for (i = 0; i < fwspec->num_ids; ++i)
+-		ipmmu_utlb_enable(domain, fwspec->ids[i]);
++	ipmmu_attach_utlbs(domain, dev);
+ 
+ 	return 0;
+ }
+@@ -640,16 +700,7 @@ static int ipmmu_iommu_identity_attach(struct iommu_domain *identity_domain,
+ 				       struct device *dev,
+ 				       struct iommu_domain *old)
+ {
+-	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+-	struct ipmmu_vmsa_domain *domain;
+-	unsigned int i;
+-
+-	if (old == identity_domain || !old)
+-		return 0;
+-
+-	domain = to_vmsa_domain(old);
+-	for (i = 0; i < fwspec->num_ids; ++i)
+-		ipmmu_utlb_disable(domain, fwspec->ids[i]);
++	ipmmu_detach_utlbs(dev);
+ 
+ 	/*
+ 	 * TODO: Optimize by disabling the context when no device is attached.
+@@ -815,6 +866,7 @@ static struct iommu_device *ipmmu_probe_device(struct device *dev)
+ {
+ 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	struct platform_device *ipmmu_pdev;
++	struct ipmmu_vmsa_master *master;
+ 	struct ipmmu_vmsa_device *mmu;
+ 
+ 	if (!fwspec)
+@@ -830,7 +882,12 @@ static struct iommu_device *ipmmu_probe_device(struct device *dev)
+ 	if (!mmu)
+ 		return ERR_PTR(-ENODEV);
+ 
+-	dev_iommu_priv_set(dev, mmu);
++	master = kzalloc_obj(*master);
++	if (!master)
++		return ERR_PTR(-ENOMEM);
++
++	master->mmu = mmu;
++	dev_iommu_priv_set(dev, master);
+ 
+ 	return &mmu->iommu;
+ }
+@@ -848,18 +905,12 @@ static void ipmmu_probe_finalize(struct device *dev)
+ 
+ static void ipmmu_release_device(struct device *dev)
+ {
+-	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+-	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+-	unsigned int i;
++	struct ipmmu_vmsa_master *master = to_master(dev);
+ 
+-	for (i = 0; i < fwspec->num_ids; ++i) {
+-		unsigned int utlb = fwspec->ids[i];
++	ipmmu_detach_utlbs(dev);
+ 
+-		ipmmu_imuctr_write(mmu, utlb, 0);
+-		mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
+-	}
+-
+-	arm_iommu_release_mapping(mmu->mapping);
++	arm_iommu_release_mapping(master->mmu->mapping);
++	kfree(master);
+ }
+ 
+ static const struct iommu_ops ipmmu_ops = {
 -- 
 2.54.0
 
