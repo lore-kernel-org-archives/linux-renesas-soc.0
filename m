@@ -1,77 +1,127 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793810750;
-	b=edpTQp8j9JrXPCK9W+y/L5ZjQKZV3TQtZbtwH3Z0ivdjz/h5A/ehQdvjCboSS0nrQfD9
-	 M0+6LU6Vlmsab4PKDpTsH3zPKAlkY+eEL0L5r8nsYmexKwJ9mThXIcQ9L0m5QrzQJ846G
-	 NXOVEgnXA8X0YvZS3CWjpKX5iUsy6gIoAgkq3f5Iuq7AqBvnynHjiy6V/xFp21HtuDJwD
-	 O4TiCJ9QqZXUxgR4UAbaOva73Ki03ejEqQUj4OxJUVRD/PJWkQ1rjqqFfsNJ+PK2u9pPy
-	 Xg+puniJI/bfPiYVSuIsEj2laiJv8SE2CHav+6zy0rECuQgEuaEmOuU5cezYYX3s6sg==
+	t=1793811449;
+	b=Kzno2SZtbazCqLnh0IHFItgIFlFqFLgkoSV4k94DEGDVKDfPptpwShZKsQp7ssIWXXt4
+	 L+QJ7MIUzFWVkOv3aCFU/oYo9KIdQCWKkEoKJwdvORdmF3bCuVkTpkS0DdgsXWbHJjEXg
+	 EnbuJCJtSa3fao/4TbmK/5/GHvGdFacR2D8EncbFNt7e4bQuQ7iS2HBckiytnA3FINrS8
+	 StriIMBzq1ZZ/a80W2bsKczC1dNnnUY1v/qEEpPMSX7acckzPa9NU3fYnPZZxvgHRRxjy
+	 /M+gom6dBx/h6+Wz90reQWr2NckrtYHO2THn2oVZ8R9jhnIMwL12GikbP4TaRzeDjfw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793810750;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=7/PYDWmtNB1AMn5wxCKpnTjNlOxtiG/bHQ8Qe7AN3rc=;
-	b=eaPWT1V7dE6OQ+dvN6L/RyD6jfTxL2TWpmG6hznE7c3wknNM6hz8i5wzJn6KlAqgQDcK
-	 QIxTGeoROX11RyqIi+HWguu3n1I2ujiQjJ6YEULDXe6r5JaTwg34ixQUa7XlPg2RH3xR3
-	 QCa8A3gecN7xfCXbjR9jIGhCnrsaUApGU79ovw6XSw0pW2kdtVD8LLNP1G2/i4Ymi/bjD
-	 0ImKMcw1SPnZtKbAwE0e6uL3yR/J2jMhAABtjh8002G8WTbf3QmqxeDXg+/RXU5HoXoNT
-	 iW4gFtKfPVlV4jtNfkRUAMQwaCcj0+8xdPx0yu2fhUInrMwMKJps4gpTHrg45uFBdmA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793811449;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=8izICEiwnQYZgjlS2jA+WnZteNa4n7VbKpZ/O6pW3kg=;
+	b=d9wDYtR/jjO3iBJ8RL2h8F5Qs+RwqIsL6OEdhsypZ59Ma8Nv9BX6C59WyU8NIBCSHuRH
+	 9+kpr//B01lR+NG+euz92IkM7qQfpMJehYsnkSASHxte/M0Icb+Hxg+z53YgROR8bO9HE
+	 /u+pShf9oELvOhUTUqzXAtq9TDUtc/An0KmEuJw7F/EMvE/to1u8BHAuUEG4mySNNySjo
+	 SLxmilefWRAeCGVFt+5WADY5xlknhCgMKSaUzGIhFe+MIkBDA3ImePqlgOyKfsLsty8Gx
+	 daYcQrKoKn16ynPiEpGhQWbg0zxjllpw7J2vDbeDrVe2khncsMtob93lsH9w4B41qgg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.41
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kFu+4Fcc;
+	arc=none smtp.remote-ip=198.175.65.13
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6BF606A31B
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 16:45:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD6BF606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-9950a7530d9so496453241.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 08:45:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793810749; x=1794415549;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=7/PYDWmtNB1AMn5wxCKpnTjNlOxtiG/bHQ8Qe7AN3rc=;
-        b=KxWz1sCdtJnftLxyrDLw6an5i4Bgt7tPyrCO5V8+wXETj7zWqHhUGrw3k7n902Qffd
-         LjEuuPVCjNVkK+Tj35/rHJJCcG1Rgo9RPZvzSw1JydNW5lLVaIRMSEkk0AiEey73uJ0f
-         8t5AcQbjxufRhbmVAcPzhs7d3/Bb2PCkOji5zlUac7XUS7RWkVNFe2yk2wuWbeyeOO1N
-         9mOIYS2BXwqoTH3BdzfNaqm0sEwQs7Fc0pxsQata5mbW2epP0iY+T/jPSGlshi6YdRWn
-         StV3ZYik9y7oBQ5IZf7pjPQqaS1HgwuF1fjEroK91Xu8hRlAacyWdjLabAh4L+ZcB4Kf
-         7Ynw==
-X-Forwarded-Encrypted: i=1; AKwUvBxHVCCErOypa5sWMbsoY+nrlGNAXlZ1/+HmeTf0+NeDYRX1JvGvnwRHW2VvaqwImfGHBaHBF4h12m4yd77AyYhang==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9xOmy5o2Cjmc72uQ7AuFhXceq6s1to3MYvM3q76bN+nTgDsimf
-	WrL+nZMfJXg1xbj+aT8JcsWCL25YwHGZe2Ua2QALuvsD03AVQswkf8mzrPYXH5GaXBE=
-X-Gm-Gg: AYBFou2RQ772GIbvp5pubZfjJss3wjiAO3fKBIYhDQHaVYe+1WrJ+yXKjEIxPzQY8yH
-	vJ278zKT5nF/WtO/uUT8AnYzF8r+mI2iNTvtT2GAEYS+T8RKQtobgxxAUII831YHhQJOZhusCTr
-	JBhg1EJn2LyfobnOyLur/mKc1BNciqhi1S2qQWAdTR5TS+zdVAaaZAql96JrKu8RY5F4EAQrKNF
-	OwMjn7Rp8qmhBoS6D2AMImd0HsPVGt7LP4CVVTItMms0n4gaHZsnTwFLZzzs3MqeHoTs7YdyInA
-	Nd+/UhgEH07/lMX1TsSqbHpIc1EGbg3TjaM/CYjBinhdMZIlCkaxkaCXdfneI9Rb8CkKqgRSswA
-	2AQaRRhwnzximBfSlGrppQpMD7/OP1H/mwnQrwC9VL+xalO87gzF7s8vV5J+maZGfuDw6LGQdq4
-	B2CAtQF5usVbr2hTFVqdC6umoKU9vo0lP76v4obs/XrVcZWCRV3rRHaB1VTKMKISPI2QoGuxro6
-	qGhkadBSSlaHBbH4tWeEv2SXxZuRqCxklUQETIPYUeG0a1n8fvJZ5JlNIaDer51/BRKIE9DzFeC
-	NFvc8zGC91Dhk8Hd4T51k1T8Ok7W+NJFt79NK0HwbROEqpAobFUCdC6MXrlduQSW+bfjycpL+Py
-	V3yxa5lBh+/Q=
-X-Received: by 2002:a05:6102:5126:b0:7cc:2712:caf2 with SMTP id ada2fe7eead31-7d0726cbc51mr7209033137.23.1793810748728;
-        Wed, 04 Nov 2026 08:45:48 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-998d9c906fcsm2309517241.11.2026.11.04.08.45.44
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2026 08:45:46 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-7c322cbc998so218103137.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 08:45:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvByFyftcsGXwxlMGohJv0BHYMCn75NC+tZX5FP4HWsWeBVoUoFHiL8UL3XL4I5/x/aAnOw+xHb9E08WE8NA0M5bwGw==@vger.kernel.org
-X-Received: by 2002:a05:6102:b04:b0:7a7:198b:6747 with SMTP id
- ada2fe7eead31-7d072713841mr7188563137.28.1793810744356; Wed, 04 Nov 2026
- 08:45:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFF1606A332;
+	Wed,  4 Nov 2026 16:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AFF1606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kFu+4Fcc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793811450; x=1825347450;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kA+R8pE/sj6tJF3qdsiBNT3subr7oV44Dq41fpFh520=;
+  b=kFu+4FccF4mwUg+lujbS5S2z+QsSmjNhZ2VXE9pkRUGU5JFaHhAYGvqD
+   2m2d8WwUUduzhkv25AeyGq18y54cB2L2uwYz+0iORYVvJTVVqTvdzFX//
+   nY/LI7ZovPrR1J/Ai8kBe7wWWVYp/ULULxkbABr1DAiW55rj7hOf7G6gZ
+   WmDtFd7z6TbAA9Sx7emazezcXk6wyGhs6R9EPg4judjPYKUoCeL8ToSJa
+   3CitTzz5hVIteV4+ew2YrFRFmrpP9KOFL1SzmRjSdGs8owXQpa5mnZ86b
+   oA3jcPhvKxK5Rvl0dLUipiF0DGa6BFYUhPbp38L1Oxg0Ubz/xy5n/6N/x
+   g==;
+X-CSE-ConnectionGUID: yAIgH109T4WDBp+q75bbnA==
+X-CSE-MsgGUID: 13q1h3DKRZ+6UUAhKS5/xQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2455735"
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="2455735"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 08:57:29 -0800
+X-CSE-ConnectionGUID: i6LkdCHBS8aHv+axP23p/Q==
+X-CSE-MsgGUID: bTVdwHnSQh2Pf9cSJkKNSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="7158496"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 08:57:16 -0800
+Date: Wed, 4 Nov 2026 18:57:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Frank.Li@oss.nxp.com
+Cc: Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Radu Pirea <radu_nicolae.pirea@upb.ro>,
+	CL Wang <cl634@andestech.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>,
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
+Message-ID: <autj6pr_bPaul3w0@ashevche-desk.local>
+References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -81,71 +131,93 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20260929113921.119489-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260929113921.119489-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260929113921.119489-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Nov 2026 17:45:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX9bJB-BUqJxvzYbaVuNziux1NhgXvkY6rgvGC6tdYe4w@mail.gmail.com>
-X-Gm-Features: AclHuK8CcANpUVtg31h47wbirSO92khOvhLt-OHr-CDqoYw8N4PrzA7mWxauNt0
-Message-ID: <CAMuHMdX9bJB-BUqJxvzYbaVuNziux1NhgXvkY6rgvGC6tdYe4w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r9a09g056: Add ADC clocks and reset
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Prabhakar,
+On Wed, Nov 04, 2026 at 10:22:45AM -0500, Frank.Li@oss.nxp.com wrote:
+> 
+> Replace open-coded assignments to callback and callback_param fields
+> of struct dma_async_tx_descriptor with calls to the
+> dmaengine_desc_set_callback() helper across SPI bus drivers.
+> 
+> No functional change intended. Prepare make to struct
+> dma_async_tx_descriptor private to the DMA engine.
 
-On Tue, 29 Sept 2026 at 13:39, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add clocks and reset entries for the ADC controller.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com> # dw, pxa2xx, topcliff-pch
 
-Thanks for your patch!
+(Note, you forgot to add the list of the drivers to the Rb trailers of other reviewers)
 
-Similar comments as for "[PATCH 1/2] clk: renesas: r9a09g057: Add ADC
-clocks and reset".
+>  drivers/spi/spi-dw-dma.c          | 6 ++----
+>  drivers/spi/spi-pxa2xx-dma.c      | 3 +--
+>  drivers/spi/spi-topcliff-pch.c    | 6 ++----
 
-> --- a/drivers/clk/renesas/r9a09g056-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g056-cpg.c
+> --- a/drivers/spi/spi-dw-dma.c
+> +++ b/drivers/spi/spi-dw-dma.c
+> @@ -397,8 +397,7 @@ static int dw_spi_dma_submit_tx(struct dw_spi *dws, struct scatterlist *sgl,
+>  	if (!txdesc)
+>  		return -ENOMEM;
+>  
+> -	txdesc->callback = dw_spi_dma_tx_done;
+> -	txdesc->callback_param = dws;
+> +	dmaengine_desc_set_callback(txdesc, dw_spi_dma_tx_done, NULL, dws);
+>  
+>  	cookie = dmaengine_submit(txdesc);
+>  	ret = dma_submit_error(cookie);
+> @@ -498,8 +497,7 @@ static int dw_spi_dma_submit_rx(struct dw_spi *dws, struct scatterlist *sgl,
+>  	if (!rxdesc)
+>  		return -ENOMEM;
+>  
+> -	rxdesc->callback = dw_spi_dma_rx_done;
+> -	rxdesc->callback_param = dws;
+> +	dmaengine_desc_set_callback(rxdesc, dw_spi_dma_rx_done, NULL, dws);
+>  
+>  	cookie = dmaengine_submit(rxdesc);
+>  	ret = dma_submit_error(cookie);
 
-> @@ -539,6 +556,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
->                                                 BUS_MSTOP(3, BIT(4))),
->         DEF_MOD("gpu_0_ace_clk",                CLK_PLLDTY_ACPU_DIV2, 15, 2, 7, 18,
->                                                 BUS_MSTOP(3, BIT(4))),
-> +       DEF_MOD("adc_0_pclk",                   CLK_PLLCM33_ADC_PCLK_DIV2, 16, 7, 8, 7,
-> +                                               BUS_MSTOP(3, BIT(9))),
-> +       DEF_MOD("adc_0_adclk",                  CLK_PLLCM33_ADC_ADCLK_GEAR, 16, 8, 8, 8,
-> +                                               BUS_MSTOP(3, BIT(9))),
->         DEF_MOD("tsu_0_pclk",                   CLK_QEXTAL, 16, 9, 8, 9,
->                                                 BUS_MSTOP(5, BIT(2))),
->         DEF_MOD("tsu_1_pclk",                   CLK_QEXTAL, 16, 10, 8, 10,
-> @@ -634,6 +655,7 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
->         DEF_RST(13, 13, 6, 14),         /* GPU_0_RESETN */
->         DEF_RST(13, 14, 6, 15),         /* GPU_0_AXI_RESETN */
->         DEF_RST(13, 15, 6, 16),         /* GPU_0_ACE_RESETN */
-> +       DEF_RST(15, 6, 7, 7),           /* ADC_ADRST_N */
->         DEF_RST(15, 7, 7, 8),           /* TSU_0_PRESETN */
->         DEF_RST(15, 8, 7, 9),           /* TSU_1_PRESETN */
->  };
+> --- a/drivers/spi/spi-pxa2xx-dma.c
+> +++ b/drivers/spi/spi-pxa2xx-dma.c
+> @@ -154,8 +154,7 @@ int pxa2xx_spi_dma_prepare(struct driver_data *drv_data,
+>  	}
+>  
+>  	/* We are ready when RX completes */
+> -	rx_desc->callback = pxa2xx_spi_dma_callback;
+> -	rx_desc->callback_param = drv_data;
+> +	dmaengine_desc_set_callback(rx_desc, pxa2xx_spi_dma_callback, NULL, drv_data);
+>  
+>  	dmaengine_submit(rx_desc);
+>  	dmaengine_submit(tx_desc);
 
-The lists of clock and reset signals (tables 4.4-2 and 4.4-3) claim
-there are 3 sets of clocks and resets, one for each ADC instance,
-but this does not seem to be reflected in the register bits?
+> --- a/drivers/spi/spi-topcliff-pch.c
+> +++ b/drivers/spi/spi-topcliff-pch.c
+> @@ -1022,8 +1022,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+>  		return;
+>  	}
+>  	dma_sync_sg_for_device(&data->host->dev, sg, num, DMA_FROM_DEVICE);
+> -	desc_rx->callback = pch_dma_rx_complete;
+> -	desc_rx->callback_param = data;
+> +	dmaengine_desc_set_callback(desc_rx, pch_dma_rx_complete, NULL, data);
+>  	dma->nent = num;
+>  	dma->desc_rx = desc_rx;
+>  
+> @@ -1084,8 +1083,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+>  		return;
+>  	}
+>  	dma_sync_sg_for_device(&data->host->dev, sg, num, DMA_TO_DEVICE);
+> -	desc_tx->callback = NULL;
+> -	desc_tx->callback_param = data;
+> +	dmaengine_desc_set_callback(desc_tx, NULL, NULL, data);
 
-Gr{oetje,eeting}s,
+Yeah, data can be replaced by NULL as has been already mentioned.
 
-                        Geert
+>  	dma->nent = num;
+>  	dma->desc_tx = desc_tx;
+>  
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
