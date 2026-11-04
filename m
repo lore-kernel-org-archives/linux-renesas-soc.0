@@ -1,47 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793760811;
-	b=ABGNlg4Ve78k0P0/nYeTkbtJCViwJbnSXK99+9n7i/X2MYQYJKlgf73F24e4v4syuuj5
-	 gPG8XA52+VM64a4lH7VVxCq0MsKmGlPLiysZC8LhCbtEPBnTkBE6CmsUJP/6fV0Rf6ptR
-	 MGrPKdKomhR+RqYV61rtTDJnUZcvM45HKS/CjgJQ8AXXvW39Y3tNw+cM/anVDyT/nUtp0
-	 0VOXu3+CxPN3NJP61ECpxUGyqIM6RdDL5hV7NJF+r/hl75uFxXA0dJLaNeMW5LeqN0oFo
-	 lnp8NZLeY7qFgpclkc2wsLV1RI29DzQBPg48j2BqIIhxXixz7LBH757KveUijXKIkxQ==
+	t=1793768987;
+	b=oVt+UpHyi/GJqQ6oZJiskVk+dwh7XGsweOOn6g7hx/NTOUN8yqXbna57JBgIg5hl1oqE
+	 SzAm1mh9DMjW9SlwTSs1JVQCa1yQ3cpZLbBm8H/bYIHlgd2ii1++F+shZKChi2v+Ey/Wv
+	 JsfgdKNM5UEHQng9yyRq3K2rSsnQxF3cz6ntYE2mlA4dJF5fTiIlIeCEQ0nF7u1TJ4r+n
+	 eSM1ToIP+VlXhasekEj58SWK3SGBZSekWjMMMxiMCaHK+jjA9KUZ/GRozXd8PER9BjJDl
+	 RxAOBOVPbaiARHxJtyXFiAjzKl129mnJHxDHHGFV8dCazee4G6MTagtSxd+QeLe6ktQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793760811;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=vz6aqKUlAw4P2lbFBUu6CLePWoyHMXyD1Sd0NXGSTr4=;
-	b=knjIaS42mlTlo1/jDzbv7X5Dlouis3+Go9bQZeRy4fbglXTyg1uycqR5m9QmerrOPseR
-	 jeF6BvKMFv5v1ROpKPSSpPH9Bkqggm0Vx3AAm6byogsGfntBRT8AAqMzL53Rg8SStNjDo
-	 FjAhJoCIR9x4vnzzgtaOVaHZp1gjBCH4RzLsFAINP8RxhOL9+PilUtB+LVH/qdyI9wx4C
-	 Savfg8Gb13XhvS0VLLK7lzNSx3BNW9LscqGE/j8/HNGF2yBoKRFGPcsVAFO4/kfARWotj
-	 jFB6Zj5NxtWkJu51C4jvUHkFLt6qoZOh+wWkvPsklbvGPKu3wA1aeKp/FZfzddJti4g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793768987;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
+	bh=n6w25QXldxKqXI+FaY0Sg1PYQRh/ifXRDwx1Ijoxuzs=;
+	b=GW0xjH67eGEd9CA+dBGT7rxyGVhViQnaqhgaMFSUVCadkcdkjMYO1AJ44FtxMtg6iWCS
+	 WLbraxgjPKzB/ucM0UtEqjBgfow5ok4hWIxEk5atTOzGtLPlyoX2bv4DPQ4grfNkwFyD3
+	 KetrIqLPpoFyyP61EoRWTQ5eyIaLOsiZhv5Nnr6sEPvmCnZAq5x+0HxBhRb/Gp/YspZPf
+	 sVkQ2r1LtIoISnM6yk73q8F6u7q93ZY1HmOGDIVw6wzoLKxYtULUILEvZ8K4m4czowfwq
+	 3OFyM5dD/Zw7Ar7CBpPjRvONEMMTEc8FO/koiLkEf1se2FUr7ZVqOsBgtXLwKJOi6Fg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iscas.ac.cn;
-	spf=pass smtp.mailfrom=iscas.ac.cn;
-	arc=none smtp.remote-ip=159.226.251.21
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=u7SuaNAv;
+	arc=none smtp.remote-ip=80.241.56.172
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5A7606A326;
-	Wed,  4 Nov 2026 02:53:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BA5A7606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-01 (Coremail) with SMTP id qwCowABHcfsnnupqseQ+AA--.42699S2;
-	Wed, 04 Nov 2026 10:53:28 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	William Breathitt Gray <wbg@kernel.org>
-Cc: linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] counter: drop the runtime PM reference when enabling fails
-Date: Wed,  4 Nov 2026 02:53:37 +0000
-Message-Id: <20261104025337.1527287-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B81606A31B;
+	Wed,  4 Nov 2026 05:09:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88B81606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=u7SuaNAv
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4jKD5L4Ss5zMldY;
+	Wed, 04 Nov 2026 06:09:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1793768982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n6w25QXldxKqXI+FaY0Sg1PYQRh/ifXRDwx1Ijoxuzs=;
+	b=u7SuaNAvEoxamRy0OPW0VXMHT5yGBo6aTcsa55LdlK5lg4AxkP+mEvFluq0TtNwKCVl6Fv
+	OOiH/OfKI0OzjGs1Iji5nM3jRgfleV9ZR1hR47WXY1gyfT/kPU9m6Z1kYdTOqYWjHEgjGK
+	lX3a8ZfbN5CYoGYNMssQiamXZ60srTXlE5kyrnEHCeGXWb8tVBSwGL3lgf6u9p+6GMLdA+
+	pbYNJXfq3S7tntUAnHFbZfEwyDAwsk3EQfWNLuC8yw0RYqqkNrxspqUgFS3i43Ke6AoTwm
+	txKfMRiFM0lcD3TOkI5gZ8C8heayyInQVdeQqnDXgq8AOFLzKPsIvTOR4h4S8Q==
+Message-ID: <0128eea9-c193-4c09-8271-32307c464016@mailbox.org>
+Date: Wed, 4 Nov 2026 05:58:52 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -51,56 +62,61 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHcfsnnupqseQ+AA--.42699S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4kAFyDuF4kJrW7ZF45GFg_yoW8GF17pF
-	42qwn8ArW0yrZ7Ka17JwnrJryavw40yrZ5KFyrGay8X3WrArn0v3WkWF4UXF1vyrZ5GF12
-	qrn7W34UCFWDJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_Kw4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2
-	AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v2
-	6r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14
-	v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xf
-	McIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv
-	6cx26r48ZrWUJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
-	4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
-	rwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
-	1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAI
-	cVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU5Sg4DUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwcBA2rqZFjiNAAAso
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: rcar-gen4: Isolate 256B MRRS limit only to R-Car
+ Gen4 SoC PCIe controller
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20261028172208.20948-1-marek.vasut+renesas@mailbox.org>
+ <179334040211.5551.2573230628622674128.b4-reply@b4>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <179334040211.5551.2573230628622674128.b4-reply@b4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: u4w955mh74kurmw4oy7yn3ho3zsuxdf3
+X-MBO-RS-ID: f0973c2289f1e65d280
 
-rz_mtu3_count_enable_write() takes a runtime PM reference before
-initializing the counter. rz_mtu3_initialize_counter() can fail, for
-example with -EBUSY when the channel is busy, but the reference is only
-dropped on the disable path. Because count_is_enabled[] stays false
-when initialization fails, a later disable write returns early and does
-not drop the reference either, so the parent device remains runtime
-active forever.
+On 10/30/26 7:06 AM, Manivannan Sadhasivam wrote:
 
-Drop the reference when initialization fails.
+Hello Manivannan,
 
-Fixes: 0be8907359df ("counter: Add Renesas RZ/G2L MTU3a counter driver")
-Cc: stable@vger.kernel.org
-Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/counter/rz-mtu3-cnt.c | 2 ++
- 1 file changed, 2 insertions(+)
+>> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+>> index 9a64a9f4ab0d1..1e4405181eef3 100644
+>> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+>> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+>> @@ -99,6 +99,7 @@ struct rcar_gen4_pcie_drvdata {
+>>   	int (*ltssm_control)(struct rcar_gen4_pcie *rcar, bool enable);
+>>   	int (*speed_control)(struct rcar_gen4_pcie *rcar);
+>>   	enum dw_pcie_device_mode mode;
+>> +	bool mrrs_256b_limit;
+>>   };
+>>   
+>>   struct rcar_gen4_pcie {
+>> @@ -663,7 +664,7 @@ static int rcar_gen4_pcie_host_init(struct dw_pcie_rp *pp)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	if (pp->bridge)
+>> +	if (rcar->drvdata->mrrs_256b_limit && pp->bridge)
+>>   		pp->bridge->enable_device = rcar_gen4_pcie_enable_device;
+> 
+> I'd suggest moving this check inside enable_device() callback to make it clear
+> where exactly the skipping happens.
 
-diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
-index 7bfb6979193c..b828618f9033 100644
---- a/drivers/counter/rz-mtu3-cnt.c
-+++ b/drivers/counter/rz-mtu3-cnt.c
-@@ -508,6 +508,8 @@ static int rz_mtu3_count_enable_write(struct counter_device *counter,
- 		ret = rz_mtu3_initialize_counter(counter, count->id);
- 		if (ret == 0)
- 			priv->count_is_enabled[count->id] = true;
-+		else
-+			pm_runtime_put(counter->parent);
- 	} else {
- 		rz_mtu3_terminate_counter(counter, count->id);
- 		priv->count_is_enabled[count->id] = false;
+If we do that, we would end up with assigning a callback which always 
+does nothing on R-Car Gen5 (SoC with rcar->drvdata->mrrs_256b_limit = 
+false), that is not good. I think it is better to simply not assign the 
+callback on R-Car Gen5 at all. Hence this here.
+
 -- 
-2.34.1
-
+Best regards,
+Marek Vasut
