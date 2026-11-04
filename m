@@ -1,38 +1,39 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793798516;
-	b=vOMMoErax71CZECUITBNOi9Q0LmgTMfwBZv7bMLD4ky28TuEq48gv0qUsbGWQsGF6f6y
-	 QfJts1rDMRgDv9ywaOQHxiIA0nw27U87dURd0oyGltn7po5rVRm85WcroiI7+j6XkhtiA
-	 gAJwwagZrO++MGTyrKKBm+B/DuL+ugLXmifdeTxfVZpKLVKl17RTo+4SM/+A3CgA2UEhj
-	 /yKKoGXjAa0n6Xu4i4Q7HsTr+LTY+6nB8WmCMyTOwajQLIYnkfb+dRmHMyAADTW/+InJ+
-	 Hg4SoveUfP2G2QHKFEIvnB6k4NuxD2C8dLVJ6/h5heR77qUuBPaFQG+9OkE3N6pW+rQ==
+	t=1793798574;
+	b=R+Ax2It/fNzvAOKWdSg4LJkPh0KtxtTc5hLKM05wsGAgwyC2KJwsdG4/dONM5D7D4Cuw
+	 ZqUvd2DUjXah8uKD6XiigpXCrb7vJtRNE7r+BP2OCqdsdEbE7bR6kMVaE3BkrxnqbVLVl
+	 MClx5YE5WH30IBk/vEAXludDKHSWMI0xgLSWF0+VFFAFgAs3TifSs/R9eqxw9C+OfyIfN
+	 Hj6CdqKNIb1vOFVz1QgSyee4/hyZJj60GRggH/Uf68UbM/vGcxgahgQmUM/zVxLzs3R7b
+	 tIMuPlkufkDC7V6XRuCZTTgrS5/XAFBuUTnQX82DZSA6dKAo8p9mkr0lM9Bho/BIdJw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793798516;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793798574;
 	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=scTI70Tg8hvkhq4dFIqkNBfUsL6wPMgjjdfzf8xkiUc=;
-	b=W/BbFyOCQ4KCvOAWguUo+j5bR2yCARWRQl/Gz7a5GmFYK6aRqD23pW1ue/Y0Rj1sE06N
-	 ZtNsWj+pwvFrU1lMGxjAvhQeYcUotq8cqpVIcmKHUnBU5Cfhsh9i8iA8054FhKzr0cUra
-	 qg8CQbPuUHcB60LP41wW29TpqGIAPEw7gol/hKadXdENRPkQ21he5DWF48VI2NvyEMfLO
-	 wlBXVrAfbXyCzu3DCrbpXq1MtACC6ogLAPiwIgR1c01STdcRxrJ6k8VDRjRufyburpYnv
-	 N3qUe7+mtsh0DdsgXZfn9EYtLxXp5gyv7FkdtWSsDuAmBh0gh8toY9tQQ7ilKaJb8Ow==
+	bh=ilSioL1qvu/zbbHfHXynCf7z6kC3aLPVbEeX8HDmXNA=;
+	b=1Al2iX/ZgABaMkDDp+skB88pmil/Zh7ceGMlwl7O3XIySVSnjfmstGRhQ1zfEwyFVG1+
+	 LR4e8JJ/raa2RnLFlnWQOR4wj0OnhgtZQPdZCd292zG4XLYMbUKK3qItmSNXqE1IvaLZC
+	 0N090kZ7UsEyC7iC12vezMliCZivn05E01buppVBrB+qDGpKSrG5heSrs3O5h0+7PEsdI
+	 vp8/VDqQ57KpyQBIpaOuh8WKWtagKH3MZREbHG5J90UmVZFPm+7OFzOB9tJSHgHYTlWYO
+	 CByZog/beeNX08K6BBRaWeQMTM+GjYdRE/sfm7/swUbeD9nQNEh9eoG1/ohaFLaPSNw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1074F606A326
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:21:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9781F00A02;
-	Wed,  4 Nov 2026 13:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA45606A32C
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:22:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDBA1F000C1;
+	Wed,  4 Nov 2026 13:22:53 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v7.4-rc1
-Date: Wed,  4 Nov 2026 14:21:50 +0100
-Message-ID: <27bb44d9dd4ca7a8ca9bd47045cdab44266b1e00.1793798477.git.geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] riscv: rzfive: defconfig: Refresh for v7.4-rc1
+Date: Wed,  4 Nov 2026 14:22:45 +0100
+Message-ID: <ca5b7840d5e2ed20b06eed3364b1427ba67cbea0.1793798520.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -45,72 +46,46 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refresh the defconfig for Renesas ARM64 systems:
-  - Disable support for the NXP iMX8QM/QP ERR050104 erratum (not
-    applicable),
-  - Drop CONFIG_SERIAL_8250_RUNTIME_UARTS=2 (no longer needed since
-    commit dbe1ae2304a3b02c ("kconfig: fix extra output from
-    savedefconfig on out-of-range defaults")),
-  - Drop CONFIG_I2C_MUX=y (auto-enabled by VIDEO_MAXIM_SERDES since
-    commit b8749c5a6856fa4e ("media: i2c: add Maxim GMSL2/3 serializer
-    and deserializer framework")),
-  - Replace CONFIG_VIDEO_MAX96712=y by CONFIG_VIDEO_MAX96724=y (former
-    removed by commit 9e88bdefadd49906 ("staging: media: remove MAX96712
-    driver"), latter available since commit bccc36c35947d3f7 ("media:
-    i2c: maxim-serdes: add MAX96724 driver")).
+Refresh the defconfig for Renesas RZ/Five systems:
+  - Disable support for the SiFive MAL-9092 erratum (not applicable),
+  - Disable support for Page-Based 48-bit and 57-bit Virtual-Memory
+    Systems (not supported by RZ/Five),
+  - Disable the RISC-V RPMI-based Device Power driver (not supported by
+    RZ/Five).
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Not intended for upstream merge.
 To be applied to the topic/renesas-defconfig branch.
 ---
- arch/arm64/configs/renesas_defconfig | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/riscv/configs/rzfive_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 8e9d8e41ddf10ba4..3ead81d1155e3a50 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -56,6 +56,7 @@ CONFIG_ARCH_RENESAS=y
- # CONFIG_NVIDIA_OLYMPUS_1027_ERRATUM is not set
- # CONFIG_ROCKCHIP_ERRATUM_3568002 is not set
- # CONFIG_ROCKCHIP_ERRATUM_3588001 is not set
-+# CONFIG_NXP_IMX8QM_ERRATUM_ERR050104 is not set
- # CONFIG_SOCIONEXT_SYNQUACER_PREITS is not set
- CONFIG_ARM64_VA_BITS_48=y
- CONFIG_NR_CPUS=32
-@@ -180,7 +181,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_EXAR is not set
- # CONFIG_SERIAL_8250_MOXA_PCIE is not set
- CONFIG_SERIAL_8250_NR_UARTS=2
--CONFIG_SERIAL_8250_RUNTIME_UARTS=2
- CONFIG_SERIAL_8250_EM=y
- # CONFIG_SERIAL_8250_PERICOM is not set
- CONFIG_SERIAL_SH_SCI=y
-@@ -189,7 +189,6 @@ CONFIG_SERIAL_DEV_BUS=y
- CONFIG_VIRTIO_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C_CHARDEV=y
--CONFIG_I2C_MUX=y
- CONFIG_I2C_MUX_PCA954x=y
- CONFIG_I2C_RIIC=y
- CONFIG_I2C_RZV2M=y
-@@ -258,6 +257,7 @@ CONFIG_VIDEO_ADV7180=y
- CONFIG_VIDEO_ADV748X=y
- CONFIG_VIDEO_ADV7604=y
- CONFIG_VIDEO_ADV7604_CEC=y
-+CONFIG_VIDEO_MAX96724=y
- # CONFIG_MEDIA_TUNER_E4000 is not set
- # CONFIG_MEDIA_TUNER_FC0011 is not set
- # CONFIG_MEDIA_TUNER_FC0012 is not set
-@@ -388,7 +388,6 @@ CONFIG_VIRTIO_MMIO=y
- # CONFIG_XEN_PCIDEV_STUB is not set
- CONFIG_STAGING=y
- CONFIG_STAGING_MEDIA=y
--CONFIG_VIDEO_MAX96712=y
- CONFIG_COMMON_CLK_CS2000_CP=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_RS9_PCIE=y
+diff --git a/arch/riscv/configs/rzfive_defconfig b/arch/riscv/configs/rzfive_defconfig
+index a5d9622c47a00146..cfcd3f6a95e63a53 100644
+--- a/arch/riscv/configs/rzfive_defconfig
++++ b/arch/riscv/configs/rzfive_defconfig
+@@ -27,9 +27,12 @@ CONFIG_EXPERT=y
+ CONFIG_PROFILING=y
+ CONFIG_ARCH_RENESAS=y
+ CONFIG_ERRATA_SIFIVE=y
++# CONFIG_ERRATA_SIFIVE_MAL_9092 is not set
+ CONFIG_NONPORTABLE=y
+ # CONFIG_RISCV_ISA_SUPM is not set
+ # CONFIG_RISCV_ISA_SVNAPOT is not set
++# CONFIG_RISCV_ISA_SV48 is not set
++# CONFIG_RISCV_ISA_SV57 is not set
+ # CONFIG_RISCV_ISA_SVPBMT is not set
+ # CONFIG_RISCV_ISA_V is not set
+ # CONFIG_RISCV_ISA_ZAWRS is not set
+@@ -174,6 +177,7 @@ CONFIG_RPMSG_CHAR=y
+ CONFIG_RPMSG_CTRL=y
+ CONFIG_RPMSG_VIRTIO=y
+ CONFIG_ARCH_R9A07G043=y
++# CONFIG_RISCV_RPMI_DEVICE_POWER is not set
+ CONFIG_EXTCON=y
+ CONFIG_MEMORY=y
+ CONFIG_RENESAS_RPCIF=y
 -- 
 2.43.0
 
