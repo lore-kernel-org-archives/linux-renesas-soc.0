@@ -1,52 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793795323;
-	b=XWFciUffBoUPXviPnqOLBcmo3lFmsSseXIAhnw85nkG/1kAelj+FHrCHI5Mqn5HrGOcZ
-	 uKlWwUMofWJ7ZwXkAcIkdmDxpZGh00MU+/shbb8qmDSLBkbDccphL0xYWekERDjT8SgZR
-	 5qYbGeT9pLu3HudYSWNFUk0MImmrhDOEL2OlYmDZu4Q01zysB9JylvPqpvCYgbfQdWl7q
-	 L9/NenOKoc0nOpfSTXtDpItNrfaTojZH9dZ1JGPypckKic/frjIG4532PDRGlxJW0nvJu
-	 os+ep/205g3ful1txhxvWxKlpK6EeKCyxE7CcQey82XeZEhoLP1B4MPPn03o+zz3L+A==
+	t=1793796983;
+	b=vRlAdk/K/TG0CxO7TgXm6WuYn1fQbQb3pRkqOWLPhX6Mj9R9/N/E3G3tpfxY0FchbHYk
+	 ynb5s9qWrlhGliLeElefmJoLHyxURM0a8pn0uc97jI9/Nvx3yo04PzUPVW0nWVB0IRO/j
+	 0XERhiWUntY3pajT3K0rR2wOHlQRlTNGK9J9afvufL0feNhNx8JyN9rfbXUjRMDWnss2b
+	 esJMdy8fdIg5AgTlWW4M0o5H2LJijqAT8syHMSIE5goTwLqHu4MbV/Dl9hNYxe3FkuRp9
+	 RHR/dlHNGein5Jh+ISEXkB1eFmNU2FUy0NB5CGA5RW7ZL0S/gNvIRJTF9/57WkPLUNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793795323;
-	h=DMARC-Filter:Received:DKIM-Signature:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=PaYz+8zXO9ujogHakqrSWss0FJ/AVkkg/0HPhoXx4ng=;
-	b=dRxbHtM03/flIX6L03+WkpjMuPV6zcQ1k6kSS9ROTVETgr4vUJ4ZMvsDKXgVhOEtZ76j
-	 WZuDG/j1+Yb1mTmAQjrO+qB+jcMRwH6szTRuGQRVDjdwhE+o1e6OEqQPaCQlTijELbN2b
-	 QEZ5DNunMmZxDYbYNDXa7zbNsQpYyw/kTiNWSFCVNofvHrZygugOnR8IKRLMAbdzdadw+
-	 3DccPW8TkxhT9kAnhvxUptRCZ9HX2heJMZaOSYl0SymkVEBLT9XmA3x0n/3SdPULVAkPA
-	 SkpZjYFgHdfSG0cr1OSpSPUVpEmSTqbzn5eVJ7ra6z0fex4jDVraarjAZwPt5EH4nSg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793796983;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=WPFVDhDki1CZ9MBThbVi68MgMjOiFRfNBMjVL4sxVnA=;
+	b=AdwSP6rbEuS49387nj/HvoadagpHAFsCtaL/lqv7wZN6FnNctCZHWmF8F2JTblJWae1O
+	 vbKVmQDg6i4KKgeOpYxMs9d3yceaqar4DBKPD8BOmWMtGBDAGvzgL5xrLXuG7QKoHtVIT
+	 pGwntp5W2x9ptcug3YoxZ0CNw4b7gbhb3cLXrG0N3CuUdhnivQQAmMNoJCGqk60PcKrhq
+	 JAmSAS7sGilhIMnMslEMLTCWHYe+hc5kh93WsXMbNcP9Na/KPQVkIwFTXilBHxFTAZdBQ
+	 1U5K2pGiPBN7GQCRZogrMv8htVk3YZokDjAOdrXNr/vgBXFD5slh2J554B2WaTUdWvA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=WrE3Eg7t;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=J987gDQp;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F01606A336;
-	Wed,  4 Nov 2026 12:28:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 43F01606A336
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82044606A329
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 12:56:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82044606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=WrE3Eg7t
-Received: from [127.0.1.1] (chfd-03-b2-v4wan-176392-cust229.vm15.cable.virginm.net [82.19.20.230])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C4D292336;
-	Wed,  4 Nov 2026 13:26:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793795180;
-	bh=/KgvK7KKTO9K6EReqGFFUe9cgP7T3ggr+Oh0Hli0D+E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WrE3Eg7tu05mbUPJfbSn7qiWz9fCg+eQvd5j+ntdtiWdhhYUYR+wT8KBAdCOBP0kL
-	 v3Et+sHOQvxK++9cQNc6NvBN6V76GzuZ0Oy6wblSzfg3yHRzGaTYLuOUd7P79XHaNZ
-	 2WuO1JKW22S+kL8pOsjuqkD6B3+UjxP+7Kfs4jcY=
-From: Daniel Scally <dan.scally@ideasonboard.com>
-Date: Wed, 04 Nov 2026 12:28:22 +0000
-Subject: [PATCH 7/7] media: rkisp1: Re-apply v4l2-isp reset buffer on
- resume
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=J987gDQp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=WPFV
+	DhDki1CZ9MBThbVi68MgMjOiFRfNBMjVL4sxVnA=; b=J987gDQpgu3JJYvLTekS
+	IAQaQvz050/iGPqFKLlZjAYHb+zSppMq41f1Q69KZeNdMPsFObXAdz2oUOQAkgQD
+	WugXA+/hlC0IgAr7zo8pcUYoOIPJ9UVXZ80x08FPFFifl/bIOYq196iIXRwdN5wG
+	55UE5TjaNa8fNACJ+iXxTm1ROOQAqt1VKd8Bi9iyY9Zr4dzDUq33MwEA0P25ta9w
+	KMsPzsKaJE4x99YK7a5GJMypYgt75p+FmvGGKYroSj4Gnta9zvdWpE8YqhTGCpSV
+	n67kBqF+5JJmE2uamSHtw4u5QTqjH5JRkzN/22PvlcLAePKB+jtoBrr2waghyqCb
+	SA==
+Received: (qmail 728268 invoked from network); 4 Nov 2026 13:56:16 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2026 13:56:16 +0100
+X-UD-Smtp-Session: l3s3148p1@Ko+B53JfONLAwtcC
+Date: Wed, 4 Nov 2026 14:56:14 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Frank.Li@oss.nxp.com
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	"open list:RENESAS R-CAR I2C DRIVERS" <linux-renesas-soc@vger.kernel.org>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linux-media@vger.kernel.org>,
+	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <dri-devel@lists.freedesktop.org>,
+	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linaro-mm-sig@lists.linaro.org>,
+	imx@lists.linux.dev, vkoul@kernel.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] i2c: use dmaengine_get_dma_device() instead of
+ chan->device->dev
+Message-ID: <ausraZs-y811IzYi@shikoro>
+References: <20261103212655.1774644-1-Frank.Li@oss.nxp.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -56,116 +75,67 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261104-v4l2-isp-resume-v1-7-06aeb8cf2940@ideasonboard.com>
-References: <20261104-v4l2-isp-resume-v1-0-06aeb8cf2940@ideasonboard.com>
-In-Reply-To: <20261104-v4l2-isp-resume-v1-0-06aeb8cf2940@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
- Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Keke Li <keke.li@amlogic.com>, 
- Dafna Hirschfeld <dafna@fastmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Daniel Scally <dan.scally@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2936;
- i=dan.scally@ideasonboard.com; h=from:subject:message-id;
- bh=/KgvK7KKTO9K6EReqGFFUe9cgP7T3ggr+Oh0Hli0D+E=;
- b=owEBbQKS/ZANAwAKAchJV3psRXUyAcsmYgBq6yTv9E+f/HyYSMlzPK364U2jD1zhVCo/VXc5g
- j0gjbbuKT2JAjMEAAEKAB0WIQQqyuwyDnZdb+mxmm/ISVd6bEV1MgUCausk7wAKCRDISVd6bEV1
- MhosD/9QOIDvNLn4Zm14QQjjpvXfp+XO3nvoAtoii/VEUB96XunSKi2Dp8FQcxtYTz5gTpfH/WG
- D3ibtb57qPtSIPpaFen3ERDhvZb1vCkPi38JkJPtUoVIzdP+DlVygk7EuNQUkLCnEkRmIWWtSvF
- hGKD/y4OnNhDbwY6aGVt6RrlhrdsZQv4CcGSs5PF52+fioThJGhjheRHldWoj0dmQZRHG2IkAbi
- ApJQhAyc8kFOJytcsRH6Ao4kFxuVOIOOyxCXQr2kPIGYcG3RMFKBf3HPNHYnUaC/O2GovIOoIQC
- q7S8/k+XwyvhOiPhvDkfZpIhqrCA9g5WPBlMJ0TjVbrSihtpuajhTxPj1Z9g9uEwW1k60RKL4/R
- NQ+JpC4oA1bIj1wJ4NX6ARKAgstg4GZwBmmR/KaRkVmw2uHMnRl0C/Y5B59tTWTw+EnfJo9KfjV
- yW0zfTQFUEzozBfLTofPUfJ1kDP0TFz4LkKp76J5pzdJcvQwuONaz+FHmwCjt/d3nex7upv1EkL
- 7UxrZ2lgNPGOxYvRVoBtT/pjJgXKr+ptPLSJMeCIexSbFp212cIGO4NAI2TKMv+UTrvEFY6MxsI
- ppmrlwji/0nH+9s66taEQJ3paMBnT2js1SDXV8J9aTjiHcmqs1yrggsgVrXaWxtHgZPqSSHB9Py
- wBvRnt7VoUNvntw==
-X-Developer-Key: i=dan.scally@ideasonboard.com; a=openpgp;
- fpr=EEC699ACA1B7CB5D31330C0BBD501C2A3546CCF6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aloAu6dyzoHKdfGs"
+Content-Disposition: inline
+In-Reply-To: <20261103212655.1774644-1-Frank.Li@oss.nxp.com>
 
-When resuming from suspension or hibernation with an active stream
-the hardware will have lost all settings. The v4l2_isp framework
-defines a configuration buffer format that is extensible, meaning
-userspace does not need to pass in a full set of parameters for each
-frame. As userspace is unaware of suspend / resume it's very unlikely
-to pass a full reconfiguration.
+--aloAu6dyzoHKdfGs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Use the v4l2-isp reset buffer to re-apply configuration blocks marked
-as needing to be reapplied.
+Hi Frank,
 
-Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
----
- .../media/platform/rockchip/rkisp1/rkisp1-params.c | 35 +++++++++++++++-------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+On Tue, Nov 03, 2026 at 04:26:54PM -0500, Frank.Li@oss.nxp.com wrote:
+> From: Frank Li <Frank.Li@nxp.com>
+>=20
+> Replace direct dma_chan::device::dev access with the proper
+> dmaengine_get_dma_device() for consumer API.
+>=20
+> chan->device->dev is not always the device used for DMA mapping.  Some DMA
+> engines support per-channel IOMMU mappings, so different channels may use
+> different DMA devices.  dmaengine_get_dma_device() returns the correct
+> device for each channel.
+>=20
+> This also prepares for making the DMA engine provider data structures
+> private.  DMA consumers should not access DMA engine internals directly.
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-index 178da1f648869b7b963f634f29f5653cfb16dd77..952c4246ccefa81aa4853a18c941a6f10f456902 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-@@ -2326,20 +2326,31 @@ static void rkisp1_ext_params_config(struct rkisp1_params *params,
- 
- void rkisp1_params_reapply_config(struct rkisp1_params *params)
- {
-+	struct v4l2_isp_params_buffer *buffer = params->v4l2_isp.params.reset_buf;
-+	struct rkisp1_ext_params_cfg *cfg;
-+
- 	guard(spinlock)(&params->buf.lock);
- 
--	if (!params->buf.curr)
-+	if (params->buf.curr) {
-+		if (params->metafmt->dataformat == V4L2_META_FMT_RK_ISP1_PARAMS) {
-+			rkisp1_isp_isr_other_config(params, params->buf.curr->cfg);
-+			rkisp1_isp_isr_lsc_config(params, params->buf.curr->cfg);
-+			rkisp1_isp_isr_meas_config(params, params->buf.curr->cfg);
-+		} else {
-+			rkisp1_ext_params_config(params, params->buf.curr->cfg,
-+						RKISP1_EXT_PARAMS_BLOCK_GROUP_OTHERS |
-+						RKISP1_EXT_PARAMS_BLOCK_GROUP_LSC);
-+		}
-+	}
-+
-+	buffer = params->v4l2_isp.params.reset_buf;
-+	if (!buffer)
- 		return;
- 
--	if (params->metafmt->dataformat == V4L2_META_FMT_RK_ISP1_PARAMS) {
--		rkisp1_isp_isr_other_config(params, params->buf.curr->cfg);
--		rkisp1_isp_isr_lsc_config(params, params->buf.curr->cfg);
--		rkisp1_isp_isr_meas_config(params, params->buf.curr->cfg);
--	} else {
--		rkisp1_ext_params_config(params, params->buf.curr->cfg,
--					 RKISP1_EXT_PARAMS_BLOCK_GROUP_OTHERS |
--					 RKISP1_EXT_PARAMS_BLOCK_GROUP_LSC);
--	}
-+	cfg = (struct rkisp1_ext_params_cfg *)buffer;
-+	rkisp1_ext_params_config(params, cfg,
-+				 RKISP1_EXT_PARAMS_BLOCK_GROUP_OTHERS |
-+				 RKISP1_EXT_PARAMS_BLOCK_GROUP_LSC);
- }
- 
- static void rkisp1_params_complete_buffer(struct rkisp1_params *params,
-@@ -2891,6 +2902,10 @@ int rkisp1_params_register(struct rkisp1_device *rkisp1)
- 	if (ret)
- 		return ret;
- 
-+	ret = v4l2_isp_params_init_reset_buf(&params->v4l2_isp);
-+	if (ret)
-+		return ret;
-+
- 	mutex_init(&node->vlock);
- 	INIT_LIST_HEAD(&params->buf.queue);
- 	spin_lock_init(&params->buf.lock);
+Thanks for this, looks useful.
 
--- 
-2.43.0
+> -	dma_addr =3D dma_map_single(chan->device->dev, buf, len, dir);
+> -	if (dma_mapping_error(chan->device->dev, dma_addr)) {
+> +	dma_addr =3D dma_map_single(dmaengine_get_dma_device(chan), buf, len, d=
+ir);
+> +	if (dma_mapping_error(dmaengine_get_dma_device(chan), dma_addr)) {
+>  		dev_dbg(dev, "dma map failed, using PIO\n");
 
+I think we should populate a dma_dev-variable here and reuse it instead
+of calling dmaengine_get_dma_device() twice.
+
+Happy hacking,
+
+   Wolfram
+
+
+--aloAu6dyzoHKdfGs
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrrK2kACgkQFA3kzBSg
+KbbJkw/+KALNP+8RejO8KJPzQd6OWD7TMRhgH2+HxmyTJ1AVqOnGYuXP3m53IiNo
+C53q1AgBUCbn3daNJxDIjy1zDR1CnXZWtOX8qMtD+2RSI1/LOj1L3R2bkbtsECeW
+4yichs5kH6x9H9acHy08a5ogo4WDnO34sAHpkvUFp1XFTCRbA5DNGlacr/IgwI/0
+j8ZM9QpzVpivV6dXun0x+uO9vjAF6QUboYWWfmuRi7B26QGe1ySimvNZMg4hXLkU
+dt8mwJw5D4D/PJtrvIqhrggeA1HZ95Dbs3I7WqW/gWtEV2wmX09SBP+C8IDmgGBv
+Hur62uN8+FkPiEOySHVP0Hz8gYN8rZiJw6C9fyymbLRaGpSnuHF132zNCWmlixLs
+U8IfNCO7YQ+Lpu5sFy2cMQEqG39WtL0kVbEYy2o4KTtWmJoDIzBh83xHpIm/ty2v
+oAEcfLLJaK/DaAGN+B4fUUwYLBJfuz1dvIaF1FCNsnJhdxi7rCJZ4Fl9s3s4ccjy
+AeiAw9Ou+7ViHnrLV1YBIak+REikYlOxK6L0enCXgojJbER6j5TTx6zdMIYiF3GN
+Cvbisbho469h59MaRPwQWS4jRIGp3/02j9NrH61WfVRQfHIB8LgVj9tMhJUzuKa7
+8UOeDsLDX5osLe5IsCnKoGO1ZNg4KZ5I6tjfgX1FSpu5wmrbgIs=
+=Kk23
+-----END PGP SIGNATURE-----
+
+--aloAu6dyzoHKdfGs--
