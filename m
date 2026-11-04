@@ -1,47 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793813933;
-	b=hUI+VLpSV/ta984ZIZdX4jl/N17oa42hAaNIklaihoJmY85LwF4/81J2dCoJmxnL/7PW
-	 s3bFeUmS3Y2Wi6Xf9x0a1ZLX+F1QAKt275yaec14pKn83UrCbRA8ZwJdoIToKb09QJxIb
-	 oDXEIgWglDoqhqb4m4ELjesfAYATnjSuf83cc4AEQjgyLINdFeg84b5ns18nuCBOU4q68
-	 4JIBb3ZlwkC8bKYfpkoM90Pe6nZ6hslGdmwQ7uYN2whhzqlCal/KwU4tRXwLDhvfTbQsh
-	 /BgS6ivYxui4Mh0PvP274CzU6OG6DhJ0RN0LbScI2OacMoAjoBuqs61iSK3VF4lOtJA==
+	t=1793814182;
+	b=gX0ym459abBBjxG6rCsXHPnbHNOI9lb1HprTX2eeRZBopHkcXleuSd7mmQfXnI5s3Gmf
+	 1pQ08SVjEzMz1ZKieUjTtEmNRgCyiUQfo1plhUDJpjO0h/NvfiHb3M3RQIMj7IaIDTbTc
+	 YGQkfsKxZXnrMFuYFx/5v+NQFShhq2gYz6XwL2pSiCh2bkegQzUV565ihY5XRuo1UU6lx
+	 mNdwLa1f0LuH/IHP0HS5zm4/q0+Gfx6XmF/5FC2x2hCcktewAMLb9v/e/R6EkNUkNm8RI
+	 ujiubLwqjhkgqrYiPyPwJBPdRZjMHyy3PGz6ywjOpYLsGP8uUN2cEXWeCmgst5X+yOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793813933;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=VBTftESCyh0yxPgmjsbtevP+1+uG9koiMGzvN+ELLp8=;
-	b=Plh+J3O2B4EosF+30KyQXZHy+sN8pKC1Xgu7pZ6ICwbgo9ODH1YzYoDpUP7a5Z66R9on
-	 Wzp85JNopu8YIRxbJgP+r2muG2+CLiY0/nLmRE8PxfO07mroCHfnCaqvyGLnL3CotND2C
-	 upLT+g0X34RPduc7O4/iJWZSqU+BJnZsHb6lgSUMKZ/Qgmk29bInUDEBTXGk350OENnHp
-	 cYmcnWfNMGA3JyF8eoD8GgNQzBkfq8M/4YBlSk2pg/irwVy+rAPrFx/IuCIRIP8lybUZW
-	 8UF22ZTWTdR8b8+5Un7K00xSLevY747getmfmUspUVNFxy6nmD2k1z1nEu9M0+Kp6yQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793814182;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=D/ufQuT616L/slKbsMvHsuyGu7FrChwnjA8syXHjneE=;
+	b=1J1VMt6RJTiu7U0Hfg3IizRseowT6M+QpmRERwWqEdNPhM3qnnIIaVKQq8OxxEXZJckX
+	 75czz8olrdZTj+cbzLhHi3XmRHnIgQILhjIw2Mdt9Tndmtg19pITwG3Lyz7a3fXTsMTJa
+	 EOVXhFgKB/Z9K+vLhXnKkJubfPNx5SBJPfCQlDhsgDfeQQo2D0t6rtkjMQvKwe9oTZFGH
+	 9KEgXQOh7P7wsKkfZF5th6+XYOsfjomrqI6cpM7MLuzpwYYW2u9AkhFhUlygJKmmaCSof
+	 X82IjD5syKvbNBQ33GmPGP5tj37oYWpaMxU47P7+YhLsvVIKiOeIAMf7zvNsZS4Uiqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQtdgw0J;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9A606A93C;
-	Wed,  4 Nov 2026 17:38:53 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b="KPcKo/04";
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E15606A31B;
+	Wed,  4 Nov 2026 17:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48E15606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NQtdgw0J
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD821F00919;
-	Wed,  4 Nov 2026 17:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793813933;
-	bh=VBTftESCyh0yxPgmjsbtevP+1+uG9koiMGzvN+ELLp8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NQtdgw0JAZJnyRdcvgREO77S1JBlhrbMLT8xYWT9Ymw8m9R16hz1iQ6/w5YcDVPcD
-	 MExx0lk5JI4Y90lOOug6EBjj6waiJYKOuCd/pGJrum+ATMgimwBU5YXeV/Fsh2pMqb
-	 svZFEajEmUCtcamQT3L0ONP0k4wTRqtYOZsuOCwZ6v959MF0lFv1aS8Ru/H6lsCdGy
-	 ZDA2NrKu40mAzo2mtPxwNGOvA8lrcBk3TqU94GgCcAGeXne/KqLn2jhFfhWguQOEOF
-	 W0hssNC3Kywynv9/r1tn+6q4u+E29xTBdvNGgyApFVoKQ/S2tju6Wywm36Q7IUozjB
-	 l11w62SfMuHfA==
-Message-ID: <93534aaf-00f3-45f4-982e-7fd44ab3799c@kernel.org>
-Date: Wed, 4 Nov 2026 18:38:40 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=KPcKo/04
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A7741BB0;
+	Wed,  4 Nov 2026 09:42:57 -0800 (PST)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 005123F673;
+	Wed,  4 Nov 2026 09:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1793814180; bh=1CoUnHkJvq7fNArZYhXbaSulQ+DONEx5SVmufR69YZ8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KPcKo/048miBpsrKK9qd7lPKn5afNfN0G0JjZZh9fCJDFIyzkbTShfocwDB9yrqij
+	 caTD7IYV8qxi1/LtWKV6CN2UV8LEfhbFkvQ+Nu+qArzsUR7+31CT/vKUyJ2YFX74Ul
+	 XECBPwU5it1AttvWJhBPFtDsNHd0Doa4KTaM6jw8=
+Message-ID: <2d0fbfdd-4497-492e-be26-9f4b79fe47bb@arm.com>
+Date: Wed, 4 Nov 2026 17:42:52 +0000
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -52,141 +54,272 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: Convert to subsys_platform_driver()
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
- Andi Shyti <andi.shyti@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Frank Li
- <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Vignesh R <vigneshr@ti.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Linus Walleij <linusw@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20261104113316.1634141-1-peng.fan@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261104113316.1634141-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 3/3] iommu/ipmmu-vmsa: Keep shared micro-TLBs enabled
+ while in use
+To: Koichiro Den <den@valinux.co.jp>, "Joerg Roedel (AMD)" <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Magnus Damm <damm+renesas@opensource.se>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Marek Vasut <marek.vasut@mailbox.org>, iommu@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261104162251.1749998-1-den@valinux.co.jp>
+ <20261104162251.1749998-4-den@valinux.co.jp>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20261104162251.1749998-4-den@valinux.co.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04/11/2026 12:33, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 04/11/2026 4:22 pm, Koichiro Den wrote:
+> PCI functions can share a micro-TLB. ipmmu_release_device() disables it
+> unconditionally, so removing one function makes DMA from the others
+> bypass translation even though they remain attached to a paging domain.
+> Switching a device to the identity domain can disable a shared micro-TLB
+> in the same way.
 > 
-> Replace the open-coded subsys_initcall()/module_exit() platform driver
-> registration with subsys_platform_driver().
-> 
-> No functional change.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Count the users of each micro-TLB and disable it only when its last user
+> leaves. Track whether each device holds a reference so paging-domain
+> switches do not add another one and release does not drop a reference
+> the device never acquired.
+
+Shouldn't we just not touch the physical enable/disable state at all in 
+release_device? Once the device is removed, if it did happen to be the 
+last one in the group then the default domain will be torn down, so at 
+most I would think it should just be a case of ipmmu_domain_free() 
+detecting if the domain being freed is the currently-attached one, and 
+if so then resetting the uTLB to its desired default state.
+
+Thanks,
+Robin.
+
+> Cc: stable@vger.kernel.org
+> Fixes: 24dfb197c3b7 ("iommu/ipmmu-vmsa: Call arm_iommu_release_mapping() in release path")
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
 > ---
->  drivers/i2c/busses/i2c-at91-core.c          | 13 +------------
->  drivers/i2c/busses/i2c-davinci.c            | 14 +-------------
->  drivers/i2c/busses/i2c-designware-platdrv.c | 13 +------------
->  drivers/i2c/busses/i2c-imx.c                | 13 +------------
->  drivers/i2c/busses/i2c-mxs.c                | 13 +------------
->  drivers/i2c/busses/i2c-omap.c               | 15 +--------------
->  drivers/i2c/busses/i2c-pnx.c                | 13 +------------
->  drivers/i2c/busses/i2c-pxa.c                | 13 +------------
->  drivers/i2c/busses/i2c-s3c2410.c            | 13 +------------
->  drivers/i2c/busses/i2c-sh_mobile.c          | 13 +------------
->  drivers/i2c/busses/i2c-versatile.c          | 13 +------------
->  11 files changed, 11 insertions(+), 135 deletions(-)
+>   drivers/iommu/ipmmu-vmsa.c | 121 ++++++++++++++++++++++++++-----------
+>   1 file changed, 86 insertions(+), 35 deletions(-)
 > 
-
-
-> -subsys_initcall(i2c_adap_pxa_init);
-> -module_exit(i2c_adap_pxa_exit);
-> +subsys_platform_driver(i2c_pxa_driver);
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 15e14a6fe6dc..dd1f6f854a32 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -1188,18 +1188,7 @@ static struct platform_driver s3c24xx_i2c_driver = {
->  		.of_match_table = of_match_ptr(s3c24xx_i2c_match),
->  	},
->  };
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index cea9348ac10d..bfbb6795ec13 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -7,6 +7,7 @@
+>    */
+>   
+>   #include <linux/bitmap.h>
+> +#include <linux/cleanup.h>
+>   #include <linux/delay.h>
+>   #include <linux/dma-mapping.h>
+>   #include <linux/err.h>
+> @@ -59,14 +60,26 @@ struct ipmmu_vmsa_device {
+>   	struct ipmmu_vmsa_device *root;
+>   	const struct ipmmu_features *features;
+>   	unsigned int num_ctx;
+> -	spinlock_t lock;			/* Protects ctx and domains[] */
+> +	/* Protects ctx, domains[], utlb_ctx[] and utlb_users[] */
+> +	spinlock_t lock;
+>   	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+>   	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+>   	s8 utlb_ctx[IPMMU_UTLB_MAX];
+> +	unsigned int utlb_users[IPMMU_UTLB_MAX];
+>   
+>   	struct dma_iommu_mapping *mapping;
+>   };
+>   
+> +/*
+> + * Per bus master (device) data. Several bus masters can be connected to the
+> + * same microTLB, which stays enabled until the last translated master using it
+> + * is gone (see ipmmu_vmsa_device.utlb_users[]).
+> + */
+> +struct ipmmu_vmsa_master {
+> +	struct ipmmu_vmsa_device *mmu;
+> +	bool translated;		/* Counted in mmu->utlb_users[] */
+> +};
+> +
+>   struct ipmmu_vmsa_domain {
+>   	struct ipmmu_vmsa_device *mmu;
+>   	struct iommu_domain io_domain;
+> @@ -83,11 +96,18 @@ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+>   	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+>   }
+>   
+> -static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+> +static struct ipmmu_vmsa_master *to_master(struct device *dev)
+>   {
+>   	return dev_iommu_priv_get(dev);
+>   }
+>   
+> +static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+> +{
+> +	struct ipmmu_vmsa_master *master = to_master(dev);
+> +
+> +	return master ? master->mmu : NULL;
+> +}
+> +
+>   #define TLB_LOOP_TIMEOUT		100	/* 100us */
+>   
+>   /* -----------------------------------------------------------------------------
+> @@ -281,11 +301,6 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
+>   {
+>   	struct ipmmu_vmsa_device *mmu = domain->mmu;
+>   
+> -	/*
+> -	 * TODO: Reference-count the microTLB as several bus masters can be
+> -	 * connected to the same microTLB.
+> -	 */
 > -
-> -static int __init i2c_adap_s3c_init(void)
-> -{
-> -	return platform_driver_register(&s3c24xx_i2c_driver);
-> -}
-> -subsys_initcall(i2c_adap_s3c_init);
+>   	/* TODO: What should we set the ASID to ? */
+>   	ipmmu_imuasid_write(mmu, utlb, 0);
+>   	/* TODO: Do we need to flush the microTLB ? */
+> @@ -297,15 +312,63 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
+>   /*
+>    * Disable MMU translation for the microTLB.
+>    */
+> -static void ipmmu_utlb_disable(struct ipmmu_vmsa_domain *domain,
+> +static void ipmmu_utlb_disable(struct ipmmu_vmsa_device *mmu,
+>   			       unsigned int utlb)
+>   {
+> -	struct ipmmu_vmsa_device *mmu = domain->mmu;
 > -
-> -static void __exit i2c_adap_s3c_exit(void)
-> -{
-> -	platform_driver_unregister(&s3c24xx_i2c_driver);
-> -}
-> -module_exit(i2c_adap_s3c_exit);
-> +subsys_platform_driver(s3c24xx_i2c_driver);
+>   	ipmmu_imuctr_write(mmu, utlb, 0);
+>   	mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
+>   }
+>   
+> +/*
+> + * Enable this master's micro-TLBs using the domain's context.
+> + *
+> + * Several bus masters can be connected to the same microTLB, so count the
+> + * masters translated through each of them. Moving a master from one paging
+> + * domain to another keeps its reference and only updates the context selection.
+> + */
+> +static void ipmmu_attach_utlbs(struct ipmmu_vmsa_domain *domain,
+> +			       struct device *dev)
+> +{
+> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> +	struct ipmmu_vmsa_master *master = to_master(dev);
+> +	struct ipmmu_vmsa_device *mmu = domain->mmu;
+> +	unsigned int i;
+> +
+> +	guard(spinlock_irqsave)(&mmu->lock);
+> +
+> +	for (i = 0; i < fwspec->num_ids; ++i) {
+> +		if (!master->translated)
+> +			mmu->utlb_users[fwspec->ids[i]]++;
+> +		ipmmu_utlb_enable(domain, fwspec->ids[i]);
+> +	}
+> +	master->translated = true;
+> +}
+> +
+> +/*
+> + * Drop this master's references to its micro-TLBs. A micro-TLB stays enabled
+> + * as long as other bus masters connected to it are still translated.
+> + */
+> +static void ipmmu_detach_utlbs(struct device *dev)
+> +{
+> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> +	struct ipmmu_vmsa_master *master = to_master(dev);
+> +	struct ipmmu_vmsa_device *mmu = master->mmu;
+> +	unsigned int i;
+> +
+> +	guard(spinlock_irqsave)(&mmu->lock);
+> +
+> +	if (!master->translated)
+> +		return;
+> +
+> +	for (i = 0; i < fwspec->num_ids; ++i) {
+> +		unsigned int utlb = fwspec->ids[i];
+> +
+> +		if (!--mmu->utlb_users[utlb])
+> +			ipmmu_utlb_disable(mmu, utlb);
+> +	}
+> +	master->translated = false;
+> +}
+> +
+>   static void ipmmu_tlb_flush_all(void *cookie)
+>   {
+>   	struct ipmmu_vmsa_domain *domain = cookie;
+> @@ -592,10 +655,8 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+>   static int ipmmu_attach_device(struct iommu_domain *io_domain,
+>   			       struct device *dev, struct iommu_domain *old)
+>   {
+> -	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+>   	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+>   	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+> -	unsigned int i;
+>   	int ret = 0;
+>   
+>   	if (!mmu) {
+> @@ -630,8 +691,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	for (i = 0; i < fwspec->num_ids; ++i)
+> -		ipmmu_utlb_enable(domain, fwspec->ids[i]);
+> +	ipmmu_attach_utlbs(domain, dev);
+>   
+>   	return 0;
+>   }
+> @@ -640,16 +700,7 @@ static int ipmmu_iommu_identity_attach(struct iommu_domain *identity_domain,
+>   				       struct device *dev,
+>   				       struct iommu_domain *old)
+>   {
+> -	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> -	struct ipmmu_vmsa_domain *domain;
+> -	unsigned int i;
+> -
+> -	if (old == identity_domain || !old)
+> -		return 0;
+> -
+> -	domain = to_vmsa_domain(old);
+> -	for (i = 0; i < fwspec->num_ids; ++i)
+> -		ipmmu_utlb_disable(domain, fwspec->ids[i]);
+> +	ipmmu_detach_utlbs(dev);
+>   
+>   	/*
+>   	 * TODO: Optimize by disabling the context when no device is attached.
+> @@ -815,6 +866,7 @@ static struct iommu_device *ipmmu_probe_device(struct device *dev)
+>   {
+>   	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+>   	struct platform_device *ipmmu_pdev;
+> +	struct ipmmu_vmsa_master *master;
+>   	struct ipmmu_vmsa_device *mmu;
+>   
+>   	if (!fwspec)
+> @@ -830,7 +882,12 @@ static struct iommu_device *ipmmu_probe_device(struct device *dev)
+>   	if (!mmu)
+>   		return ERR_PTR(-ENODEV);
+>   
+> -	dev_iommu_priv_set(dev, mmu);
+> +	master = kzalloc_obj(*master);
+> +	if (!master)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	master->mmu = mmu;
+> +	dev_iommu_priv_set(dev, master);
+>   
+>   	return &mmu->iommu;
+>   }
+> @@ -848,18 +905,12 @@ static void ipmmu_probe_finalize(struct device *dev)
+>   
+>   static void ipmmu_release_device(struct device *dev)
+>   {
+> -	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> -	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+> -	unsigned int i;
+> +	struct ipmmu_vmsa_master *master = to_master(dev);
+>   
+> -	for (i = 0; i < fwspec->num_ids; ++i) {
+> -		unsigned int utlb = fwspec->ids[i];
+> +	ipmmu_detach_utlbs(dev);
+>   
+> -		ipmmu_imuctr_write(mmu, utlb, 0);
+> -		mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
+> -	}
+> -
+> -	arm_iommu_release_mapping(mmu->mapping);
+> +	arm_iommu_release_mapping(master->mmu->mapping);
+> +	kfree(master);
+>   }
+>   
+>   static const struct iommu_ops ipmmu_ops = {
 
-Apparently reviewing only a few lines out of 300 is still reviewing:
-
-https://lore.kernel.org/all/9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org/
-
-Therefore:
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
