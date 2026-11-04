@@ -1,61 +1,39 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793798511;
-	b=eySQCilZVjE17jwAiyc+XIe0FtnMv70onrlWGN12VqDKLHJDoQE9EqtkCwIOX6XFLEyA
-	 dnPsiuNk2NKelYMrxk1Xqs8DRMmYO2vCvZjYvEit5OzZfa822b4Kx5wivPvdYXgy4aF8k
-	 8jzncWBbLHeSGrYrmdrYWj72TXsaPuwThAjPpCv/60BBX+mcfVyLu895M28T8NB0pLqCz
-	 ybLgyZQqZR7pLMmBGnFj1urVvivTY+bYzKVPm+HgWIQAm04+nhTR07tx3fyyF2CUj76Ur
-	 /cqcCTRQlFac+UKqGYTZIAJaOmtg7dkeWoituE1nJlz7zHw/+GqHq1wtoly0I7oKcgg==
+	t=1793798516;
+	b=vOMMoErax71CZECUITBNOi9Q0LmgTMfwBZv7bMLD4ky28TuEq48gv0qUsbGWQsGF6f6y
+	 QfJts1rDMRgDv9ywaOQHxiIA0nw27U87dURd0oyGltn7po5rVRm85WcroiI7+j6XkhtiA
+	 gAJwwagZrO++MGTyrKKBm+B/DuL+ugLXmifdeTxfVZpKLVKl17RTo+4SM/+A3CgA2UEhj
+	 /yKKoGXjAa0n6Xu4i4Q7HsTr+LTY+6nB8WmCMyTOwajQLIYnkfb+dRmHMyAADTW/+InJ+
+	 Hg4SoveUfP2G2QHKFEIvnB6k4NuxD2C8dLVJ6/h5heR77qUuBPaFQG+9OkE3N6pW+rQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793798511;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=nVUcBePgUPORxVVepL9f4xAsZjZWbYf+c0fXJmPOHsk=;
-	b=wZ5HYOT8tk7TqvNyUxzFtkeF27v3NfrcCGYwBATjzSQQDkj8jrGAitzAlA6VUtFrUDRr
-	 HzcXb5t4xXh6K2ZGyOZgo1AfqeLpzCbllfYGxJ3exeQ/bsTFHERGi7L7dSXEww21WWpk9
-	 kyGbg/HTtTigDHUj/9gHhaW3cRnxXYsZAKst6iZuZz6GqSvLgQJqRXT2KGdOfV39KfLO/
-	 Vbyf1xtZH03dCv9v2scCLRH+uFEHilCQ1W0Q+tLSkbnpHXD8bbOgwGcV7TxxF7c10goGS
-	 s+jT80+yq5idT+ms81HMXn631cvoNo/vTbayMBcQfDEQWTD68sljcsND4H5l2B/hycw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793798516;
+	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=scTI70Tg8hvkhq4dFIqkNBfUsL6wPMgjjdfzf8xkiUc=;
+	b=W/BbFyOCQ4KCvOAWguUo+j5bR2yCARWRQl/Gz7a5GmFYK6aRqD23pW1ue/Y0Rj1sE06N
+	 ZtNsWj+pwvFrU1lMGxjAvhQeYcUotq8cqpVIcmKHUnBU5Cfhsh9i8iA8054FhKzr0cUra
+	 qg8CQbPuUHcB60LP41wW29TpqGIAPEw7gol/hKadXdENRPkQ21he5DWF48VI2NvyEMfLO
+	 wlBXVrAfbXyCzu3DCrbpXq1MtACC6ogLAPiwIgR1c01STdcRxrJ6k8VDRjRufyburpYnv
+	 N3qUe7+mtsh0DdsgXZfn9EYtLxXp5gyv7FkdtWSsDuAmBh0gh8toY9tQQ7ilKaJb8Ow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=hkXf3N1U;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18907606D809
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:21:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 18907606D809
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=hkXf3N1U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=nVUc
-	BePgUPORxVVepL9f4xAsZjZWbYf+c0fXJmPOHsk=; b=hkXf3N1UHHdbGQ2wOytX
-	0E0roAVp45HjsZAHQHd69v1ND3Sh/QwV4uNmD5G78qx4eijShnQ1QlqVjS7bBGBw
-	gl2M7BAV9qo5l7kubbGyA+Dc1XtSUHjtCQPPiEh1IrVLFNB3p2cjMMnrETO6R7I1
-	hr2mmd2KziA5uPe/s1fr6hy4cfunXF/DkS3ABdmkyk5GSpAQxuXGJnCB4HpCeOhz
-	QtYkJxdQ8d3iEurbXgl736lviw7tIebzmSKH+p4+KaoSUlwRtmZbuSOs41ZhYLaz
-	oZA69gsrQV25MIslF/bxJWDF8Ml3hz6eiHFdUFYFRjAEcR+I5AhnB7611MXPS1lT
-	hA==
-Received: (qmail 736569 invoked from network); 4 Nov 2026 14:21:48 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2026 14:21:48 +0100
-X-UD-Smtp-Session: l3s3148p1@GhHZQnNfEI7AwtcC
-Date: Wed, 4 Nov 2026 15:21:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Myeonghun Pak <mhun512@gmail.com>
-Cc: andi.shyti@kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ae878000@gmail.com
-Subject: Re: [PATCH] i2c: sh_mobile: request IRQs after mapping registers
-Message-ID: <ausxa9vGb2laTzbE@shikoro>
-References: <20261017233416.47b09ffff48f.i2c-sh-mobile@gmail.com>
- <ausul_FO8-1JKEmL@shikoro>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1074F606A326
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:21:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9781F00A02;
+	Wed,  4 Nov 2026 13:21:54 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Refresh for v7.4-rc1
+Date: Wed,  4 Nov 2026 14:21:50 +0100
+Message-ID: <27bb44d9dd4ca7a8ca9bd47045cdab44266b1e00.1793798477.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -65,41 +43,74 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x7kVeiDzJ1b6cNZm"
-Content-Disposition: inline
-In-Reply-To: <ausul_FO8-1JKEmL@shikoro>
+Content-Transfer-Encoding: 8bit
 
---x7kVeiDzJ1b6cNZm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Refresh the defconfig for Renesas ARM64 systems:
+  - Disable support for the NXP iMX8QM/QP ERR050104 erratum (not
+    applicable),
+  - Drop CONFIG_SERIAL_8250_RUNTIME_UARTS=2 (no longer needed since
+    commit dbe1ae2304a3b02c ("kconfig: fix extra output from
+    savedefconfig on out-of-range defaults")),
+  - Drop CONFIG_I2C_MUX=y (auto-enabled by VIDEO_MAXIM_SERDES since
+    commit b8749c5a6856fa4e ("media: i2c: add Maxim GMSL2/3 serializer
+    and deserializer framework")),
+  - Replace CONFIG_VIDEO_MAX96712=y by CONFIG_VIDEO_MAX96724=y (former
+    removed by commit 9e88bdefadd49906 ("staging: media: remove MAX96712
+    driver"), latter available since commit bccc36c35947d3f7 ("media:
+    i2c: maxim-serdes: add MAX96724 driver")).
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+To be applied to the topic/renesas-defconfig branch.
+---
+ arch/arm64/configs/renesas_defconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> won't matter here, as I see it. Unless the later pm_runtime_get_sync()
-> the device should not(tm) be able to send irqs. Famous last words...
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 8e9d8e41ddf10ba4..3ead81d1155e3a50 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -56,6 +56,7 @@ CONFIG_ARCH_RENESAS=y
+ # CONFIG_NVIDIA_OLYMPUS_1027_ERRATUM is not set
+ # CONFIG_ROCKCHIP_ERRATUM_3568002 is not set
+ # CONFIG_ROCKCHIP_ERRATUM_3588001 is not set
++# CONFIG_NXP_IMX8QM_ERRATUM_ERR050104 is not set
+ # CONFIG_SOCIONEXT_SYNQUACER_PREITS is not set
+ CONFIG_ARM64_VA_BITS_48=y
+ CONFIG_NR_CPUS=32
+@@ -180,7 +181,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ # CONFIG_SERIAL_8250_EXAR is not set
+ # CONFIG_SERIAL_8250_MOXA_PCIE is not set
+ CONFIG_SERIAL_8250_NR_UARTS=2
+-CONFIG_SERIAL_8250_RUNTIME_UARTS=2
+ CONFIG_SERIAL_8250_EM=y
+ # CONFIG_SERIAL_8250_PERICOM is not set
+ CONFIG_SERIAL_SH_SCI=y
+@@ -189,7 +189,6 @@ CONFIG_SERIAL_DEV_BUS=y
+ CONFIG_VIRTIO_CONSOLE=y
+ # CONFIG_HW_RANDOM is not set
+ CONFIG_I2C_CHARDEV=y
+-CONFIG_I2C_MUX=y
+ CONFIG_I2C_MUX_PCA954x=y
+ CONFIG_I2C_RIIC=y
+ CONFIG_I2C_RZV2M=y
+@@ -258,6 +257,7 @@ CONFIG_VIDEO_ADV7180=y
+ CONFIG_VIDEO_ADV748X=y
+ CONFIG_VIDEO_ADV7604=y
+ CONFIG_VIDEO_ADV7604_CEC=y
++CONFIG_VIDEO_MAX96724=y
+ # CONFIG_MEDIA_TUNER_E4000 is not set
+ # CONFIG_MEDIA_TUNER_FC0011 is not set
+ # CONFIG_MEDIA_TUNER_FC0012 is not set
+@@ -388,7 +388,6 @@ CONFIG_VIRTIO_MMIO=y
+ # CONFIG_XEN_PCIDEV_STUB is not set
+ CONFIG_STAGING=y
+ CONFIG_STAGING_MEDIA=y
+-CONFIG_VIDEO_MAX96712=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+ CONFIG_COMMON_CLK_PWM=y
+ CONFIG_COMMON_CLK_RS9_PCIE=y
+-- 
+2.43.0
 
-Which only matters during probe(), not during teardown... sorry for the
-noise! Patch is still good.
-
-
---x7kVeiDzJ1b6cNZm
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmrrMWsACgkQFA3kzBSg
-KbYC8A/+NLfjDMbQOaNK5WFerv7OBKXC7mNPPi//O/tJLSteN3HXojxeP0z2fq8H
-XvuRLso6dJfXkduRNWc+eYEsgQ4p+g8E4Luo7Yl5IbpGiBgad0rpAQPhN34ppk5L
-E1JhUI5bk7scBm/B9dY7UeciAnOHUT1SI7kzCb3TpfvGHMqN3ql83SevYuLP5Dxg
-jGlnrPUae2zrKPaiZ9ViN30gCSrC98zCwHDPGs76q9DbYvn7acSSjsit67Vd9vhx
-vl8TmPzkP9xb4iD0LyElkGV33hIwgjjXhQlWmUCv39nCBsh/uL4peljgYwZ+NKBE
-NLLy9zcKsHQ/DbnqAVVPEODgoAvfQuUalLpqx3WRSqq+ouWHs5D9m5K0oQaMnaFQ
-8bCNlSpUEZZFUGDDstoaqYyF/qy1QnbMYfonstHu/QeezOetJDclMaAnwoS9G3CV
-B1Gh8MUgeQwr4KTAzVkDZRIK6FBajYoGfoBDnYWt3P99sP7oMbmfx/fRAgqCgGyc
-hht5ucV0Bkt58BhHHuzd87RsoQkjzT287AIRxmzJhmE5Wl9QNpzHyEmLQfWSV872
-343L1jTaI7gEf60Yn4he0ALyWayWE0kvV6h0mm0hwLQSQsWOCq7s2P86y/CbQoyH
-/FwKiRyPAoem37dko5sJ6l5Asxlfn+6p/Ejpl26j9hjXfKWYSr8=
-=RAe6
------END PGP SIGNATURE-----
-
---x7kVeiDzJ1b6cNZm--
