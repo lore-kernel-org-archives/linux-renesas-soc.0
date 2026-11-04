@@ -1,80 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793816482;
-	b=zNq28aRBfyu05frcmztyq2TM3HGLXsj6rul5X48/tUKY5qywrFPL/2PhcUjISVXFccqi
-	 x0z/RNLAoAqm1ZGk1835SsuwZFsmZ+3Ci2nHNDN1AQV5q084aNCeSR+KJ4BaNqsDtZXHC
-	 Ux1pEvJFYeACONVNb9F1EgH06cg1bk0FAAc7WH8ltD3y0nE9MBp/NREq2CzkWUsTWKejs
-	 xOnpzfWDrjaztSHVt/Yk9Y+tOwzLMFWnXUeuHUH539mRbvqKXUMlpVKH015qmH0m27yDs
-	 dC0jbWNcg6tdgXWzNkyhGhoYw5nThIXtrreRsb1kTGlvNMukxhqylMjGuFD4NLM0Lig==
+	t=1793816484;
+	b=BpcviTj4RiXP5gBd7KHRzdyFuBovJ5U0AQKm9SMHNe99lHtAKYJ2ZthLOy/EuXzh8CSn
+	 04nLhL+aHoEkU7kVxMVAikmVsaQ6b/cUgQhKTtaBGu34nxUk7AxdPRs1wmz7RT11rXy1R
+	 kS479XslczQJuwc75pYjpTdypqfmilI0teDIL5eMIbid60KQ8VM7cVjqvrJ69/lYSXobz
+	 UJpTmi4dEIF6MwVx99/6F2x2c2O0/uulYQgv6pvH9DdVIfT4wlHWZGe/fVOnPJa6CoJ7p
+	 1r3/EWH5qXO8gLea7UtUH2CvmBU2B1p+W8NyTyUOufTp7ofrvW7fGBOqTrnk5g7mZKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793816482;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793816484;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
 	 X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=qoA0b0WqoQVyQ4s8ggfEko6YCn52CN5Lygx0rJr7TsU=;
-	b=oAynvW3LirE2R3RkYB6msapPJrAlDMjhDCsdqDpwuDf1E1qBvr3zLYJtFaftPJgaUPsy
-	 DetMkUK8yRpqn/huaLTRPulkNbFJZTnXBv8o/VUkucwgTfXH9oltQgjhcFKzYaqzlfizR
-	 9bWV2+wy8xUweTNTiyCc7wXYr62phSw3OhvhdG8VNt79C5+Vp1JpqNKpTFlozdRP9JGKs
-	 +eiL7gqfGsqL0hhN3sceLfXWc5UqHcB5L7pvIBdTXB/JE7wejCwWOWZchWJpfoaSV2mlW
-	 3AJBetTP53SszNi5/+beWxEspvfA23O+4oqJdq2v6UsYCjNPNGSXc9YL+qoKTUspzFw==
+	bh=xAFQ4NIpw4G2h3WAzyEmbQDopp5teXSrxNa8N1logrI=;
+	b=t5fA8qhiBZRkvLyV8U0VNZOXUEZ1FKkzFB+dPHxuS/o3hAJ2KCdEuX5A8/8jwNl8Qk1T
+	 8bK0eHQ7avw05fWvoWuxAJhW0Zls2UYxoK89FIMhDPfJPkoLcQ4cQKO3TjHS4gLwsLDrK
+	 Bnzbvda4SDjiM92zxoYzt8TZhrMkKcZYVSAb7Q7hS0vZCzlGSbIeWReEtrjtgpt/zT4ud
+	 gC9XqrQyEuNYAVvTcinCYZoCIigD1BW17W5LF//Sa3rI/J9kedzgWbJEmGZF3dQTzXN12
+	 DYSey/777IKvKOojzYDCps5GpJvW6cYgh4BTF7Pmd3pQ0i/FaeNpYEyxT5zU0jLZBFg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=G+cJhG4b;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7776F608362D
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 18:21:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7776F608362D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CC660A261B
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 18:21:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F0CC660A261B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a2000d5fb1so6416635e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 10:21:22 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=G+cJhG4b
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-490c1d337d8so330729f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 10:21:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793816481; x=1794421281; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793816482; x=1794421282; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=qoA0b0WqoQVyQ4s8ggfEko6YCn52CN5Lygx0rJr7TsU=;
-        b=B5corqjge8lxXP8hH2NNrMFHeSd6tqG7U2fOuevHtZCjzKMBlC7wko1wz1Zc+QvhOW
-         GguDbv+6DYxVrQ2PS/Jm7KIIO3enikMFBRIGGeQGI+VXDYF/+22Et2ITlZVCVop7/Nxi
-         6AbajOlVqPIfVFAQKhBq9aQ5oTCoRFpSN/tJmAvj7/jbDsjVZlt8h/xdSpCHTYI/xjEl
-         +tLpuLQC6Ww2S/IoslY7P53atZ7Ddl5Wn3gpNf2ERsj3Bm3+7TTCvvI5gfYqMCWp4yQr
-         LVWmEdX15TNTKJtr9WGw4n7yrWCe7jEDT2r68j7+9XKc2GoRD0NpHfddYBrUBfRig+9k
-         wjFw==
+        bh=xAFQ4NIpw4G2h3WAzyEmbQDopp5teXSrxNa8N1logrI=;
+        b=G+cJhG4bvR6+Z+oY8S4RJlEN38IG1EGgaF8mSO5/bCTCqWATVsH+4Y1VZGtcuLRjMk
+         VAFY+p/LPm43GaDRFhaqT+bL9cc5Jte+JSMCUNHxmogmCbkJMi533Q3QF07rFa+eR3C5
+         3PWz3vYqfDX15L8ZdXL0oAETyLZj2WU9Cxzxpi7YJGR8slBt8rBqn2m/JXVXVbzZxAW8
+         Wpb3HqBbwy670/5bgPUsSOOXWR/9wcNWZctApoIgpEW6rA5gtzwotyW6S9Gsn8TOwdMQ
+         gwRXdgmEGQXbCKkelU52x4emvfJjeRi07OAnOnUcqD0bdTy/crxb1V5NoX1rZ3KXk2FG
+         sQOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793816481; x=1794421281;
+        d=1e100.net; s=20260707; t=1793816482; x=1794421282;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qoA0b0WqoQVyQ4s8ggfEko6YCn52CN5Lygx0rJr7TsU=;
-        b=2DmSsUKXTDUdQq24oXNXIVoRIz9+JxCSLmWDEZhsRLZSD7DMtA5N2JA3plqmTnLLto
-         CDL9FqAxwYyXM0ToeQ6mlGYHUXYVfALqVnAWGDwt+BCe/Btdn0CzzT0UQ+2MpACMu0pD
-         HAHn64g6SNazgX0cWO8/ojdWrrv0aoIfeXiw1NdGF95FH+k33zseMsatCdVKzlVxkAom
-         Rwzn2Jub17BGrbr56Wi+d7lMWIWpyDyVy5TBzGkxsau7AI+pdkoPy0DeQQ4C+JCteWZZ
-         NkqbeInHWepP42jozSrNXv9WbzT6dYrAK0tuAI63HTLR5wPm3oa96RUoFN86J21nXwSh
-         X6Yg==
-X-Gm-Message-State: APuU4Z+cgcZOZWJEbcJVC5SOehreqlMppk704Sjt9BggDe25yY4ffpdV
-	pRyIH2qDHdrWXce1iLkDGHUErmyaFCC15BIPEaCKuGEsgEyhKN6L2umg
-X-Gm-Gg: AYBFou0YIi9HkpTZGckyw5E6he0Gwlwq06elRI/WZAJ2WqDrGV3UwoV8JZLHMGHxT/1
-	KirajjVg52iS931BRHd2P6l4j/tfz0j5wzuANXRj1kH2Wp8zT/dvbPrS/ju6Zux/XLX8y3pHklF
-	HOtxbGadZjmIya4nZkzcTg85MfCtJsk0djTc/6QRuwVksXdT0/uMabziScdl5TkJ1oLvezubNVM
-	PnapZqwAhSWcSl1Tt+iqzzUt4z1OiC/NUCPzqH7zzP7XN8Y/ZK2qtEgu+Ml6knHPQdQxl2in61Q
-	iE710X4Sip60PxyH7twErkz/iuB3ZN5dIANFzZqspy8AKBBpf/jA8J5fifWPwJMcBorG8/qzUtn
-	6BzTC43TIj/T4J28bnrD90cN84W1OmADpEpx3DT5FXOrJOFEAhojNOtRb6sHwWCPFD3ej7mSWJm
-	9aPt9pTbzyyH98QS3cevB89MM1sQg2lqb1T/tbYn6fyJc+vRaLg3CORUm2sIXleWJ56xKL8dlJU
-	YCsSZpRugchbCy82oyxYrqwO59xQ7SHvK8M0pHxJKA4tEQ/oAEEWLluwoz5YblI6J74iOikExgF
-	x7iFjhjAXDTnSUyvT8XgPNxIXamNp+nMVlRpxquvmm4NV1syWmHpN2uE00U98QvmuoLgTxeUGmM
-	zZsIsk4+DvYekHEWUDi3wdiwCXi7niiJ9hwCf1Q6apiPDS07/r7peAcayR7It
-X-Received: by 2002:a05:600c:198e:b0:4a0:2488:71cc with SMTP id 5b1f17b1804b1-4ac1932a23fmr387484835e9.32.1793816480738;
-        Wed, 04 Nov 2026 10:21:20 -0800 (PST)
+        bh=xAFQ4NIpw4G2h3WAzyEmbQDopp5teXSrxNa8N1logrI=;
+        b=2iFYJ7JqKzdMqaeqCR1MZ15Wd4mJk8b3VJQ46R4PVlsJd0kVU0p3Ny0oN6Jf9HIPo9
+         B53F2N6aqCwF8Zorwqm3QDkXCa5X8n5/JIHcHkDbIxQ8JEDt5tYltPozsTjtZtdjtxUV
+         ed2kRn788UM7zHi8hEnltdHIn9IqNQ5GjlFDSugrBUKHNLW+qF8o/fRU7NBrma1klE9E
+         eBgtJ4aoNA/7cc7rwJd8mj4S2oCDoet3nA8+eQ910U2F2yHGlDs+OZKgynDgcyJmmxXi
+         pjn4CjZH/NF5OC2ebXPoZQxQe4gMrELBN47I1GSjku2VsTMXRoL7zO8MPl99Mpqh97ji
+         j/aw==
+X-Gm-Message-State: APuU4Z9BrgB2fQFtEp7u+gutEB7cwOYhqjhU7r80UuxcjhNwKSRqhK2A
+	M2Rs0wWKrynZXZFbWOou2tlXWho8R0rvR4RaOwB2iPCFDlPQWhjCIjEW
+X-Gm-Gg: AYBFou2ERnlx9pYdXPKgLCuZDmGCmmCsKvXphGRqlhf21mzGvd3jGMklepDK5o67f2C
+	Hg1AnIVDgUuNowex5kho/icHTjyDI9pXXCAMmmffawSL/dMBPKmoOHgFs1Wj+XfB05XzERkFGmH
+	g4NLX+bLZQCtSTKRrStmbBK1oM0pBPmMT1zlEDoMq2SrKIzAtF9T86rHn150NJwyWvqP/mXV8X0
+	IXEByIzv4gH36S+WALLqZsDNvwmI5Z8XqRXqiAF0IgqXnvnIMXg2c4ZEmGzNwKlyewfbYqSuSbH
+	+/pXwEZX67szgQ/PNnMjdiH0Ke/muaSgoKFJMujN2rPC/t1+GJ/GT9NEEGjVCFKO2SZULBvbKJb
+	zD6+JmiJBBH8cNpwVRGkDN87IeBws+X/fqIeKDfF1DgO8cBZGKSet8VG42IqamuLBhLeRT2o6Wn
+	kjad9D8TbAr/ePb5orC33jLvN5x12W76OHQWTl5jGEX5ssyRd5fo0nByqUa808R9NCsChXgOGDD
+	y1YumZRZ1CPUkXiHGNFllaR7MjHKhQnQ3DUDVBho8g1oW1BDynTLrjrxPuEytWSDYJlWnU/Os1X
+	evZ91rYA1TRv52UWyNcphZMZPAj4q29HUuRJi5XX+vWN3r6HpnZcampsR7bcwZwHHoaAWZHaNm6
+	6QXRDIwt8obj3HgcgN5uavaxeZuklmHWKqgeMOg==
+X-Received: by 2002:a05:6000:e89:b0:487:baa:aa6b with SMTP id ffacd0b85a97d-48e6e4fac5bmr27612625f8f.43.1793816482340;
+        Wed, 04 Nov 2026 10:21:22 -0800 (PST)
 Received: from iku.lan ([2a00:23c8:254f:fd01:b079:a2f1:caf7:b446])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fed0844e2sm4073202f8f.28.2026.11.04.10.21.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fed0844e2sm4073202f8f.28.2026.11.04.10.21.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 10:21:20 -0800 (PST)
+        Wed, 04 Nov 2026 10:21:22 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@linux.dev>,
@@ -99,9 +102,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v4 09/14] net: dsa: rzn1-a5psw: Make use dev_err_probe()
-Date: Wed,  4 Nov 2026 18:20:57 +0000
-Message-ID: <20261104182105.1102555-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v4 11/14] net: dsa: rzn1-a5psw: Choose tagging protocol based on compatible string
+Date: Wed,  4 Nov 2026 18:20:59 +0000
+Message-ID: <20261104182105.1102555-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261104182105.1102555-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261104182105.1102555-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -118,12 +121,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Replace dev_err() with dev_err_probe() when reporting failures from
-devm_clk_get_enabled(). Clock retrieval may legitimately return
--EPROBE_DEFER, and the current use of dev_err() incorrectly reports
-such cases as hard errors.
+Prepare the A5PSW driver for forthcoming RZ/T2H ETHSW support by making
+the DSA tag protocol selectable through SoC match data. The RZ/N1 A5PSW
+and RZ/T2H ETHSW share the same tagged frame layout, but interpret the
+ControlData field differently, so the tag protocol cannot remain fixed.
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The common tagged frame structure is:
+
+  +----------------------+-------------------------------+
+  | Field                | Size (octets)                 |
+  +----------------------+-------------------------------+
+  | Preamble             | 7                             |
+  | SFD                  | 1                             |
+  | Destination Address  | 6                             |
+  | Source Address       | 6                             |
+  | ControlTag (0xE001)  | 2                             |
+  | ControlData          | 2                             |
+  | ControlData2         | 4 (timestamp, portmask)       |
+  | Type/Length          | 2                             |
+  | Payload              | 0..1500 / 0..9000             |
+  | Pad                  | 0..42                         |
+  | FCS                  | 4                             |
+  +----------------------+-------------------------------+
+
+The ControlData semantics diverge between the two switch families:
+
+  +---------+----------------------------------------------+
+  | SoC     | ControlData bits                             |
+  +---------+----------------------------------------------+
+  | RZ/N1   | [0-3]: ingress port                          |
+  |         | [4-15]: reserved                             |
+  +---------+----------------------------------------------+
+  | RZ/T2H  | [0-3]: ingress port                          |
+  |         | [4]: timestamp timer select                  |
+  |         | [5]: reserved                                |
+  |         | [6]: RED period indicator                    |
+  |         | [7-15]: reserved                             |
+  +---------+----------------------------------------------+
+
+Because these differences affect protocol semantics, select the tag
+format through compatible specific data. This allows the driver to
+choose the appropriate tagging protocol for each SoC while preserving
+the existing RZ/N1 behaviour.
+
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v3->v4:
@@ -133,33 +173,53 @@ v2->v3:
 - No change
 
 v1->v2:
-- New patch
+- Updated commit message
 ---
- drivers/net/dsa/rzn1_a5psw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/dsa/rzn1_a5psw.c | 5 ++++-
+ drivers/net/dsa/rzn1_a5psw.h | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-index 846216f22bc3..bdfa84745eda 100644
+index ee0187aae2bd..f8fe6f3b8e12 100644
 --- a/drivers/net/dsa/rzn1_a5psw.c
 +++ b/drivers/net/dsa/rzn1_a5psw.c
-@@ -1234,15 +1234,15 @@ static int a5psw_probe(struct platform_device *pdev)
+@@ -97,7 +97,9 @@ static enum dsa_tag_protocol a5psw_get_tag_protocol(struct dsa_switch *ds,
+ 						    int port,
+ 						    enum dsa_tag_protocol mp)
+ {
+-	return DSA_TAG_PROTO_RZN1_A5PSW;
++	struct a5psw *a5psw = ds->priv;
++
++	return a5psw->of_data->tag_proto;
+ }
  
- 	a5psw->hclk = devm_clk_get_enabled(dev, "hclk");
- 	if (IS_ERR(a5psw->hclk)) {
--		dev_err(dev, "failed get hclk clock\n");
- 		ret = PTR_ERR(a5psw->hclk);
-+		dev_err_probe(dev, ret, "failed get hclk clock\n");
- 		goto free_pcs;
- 	}
+ static void a5psw_port_pattern_set(struct a5psw *a5psw, int port, int pattern,
+@@ -1324,6 +1326,7 @@ static const struct a5psw_of_data rzn1_of_data = {
+ 	.nports = 5,
+ 	.npcs = 4,
+ 	.cpu_port = 4,
++	.tag_proto = DSA_TAG_PROTO_RZN1_A5PSW,
+ };
  
- 	a5psw->clk = devm_clk_get_enabled(dev, "clk");
- 	if (IS_ERR(a5psw->clk)) {
--		dev_err(dev, "failed get clk_switch clock\n");
- 		ret = PTR_ERR(a5psw->clk);
-+		dev_err_probe(dev, ret, "failed get clk_switch clock\n");
- 		goto free_pcs;
- 	}
+ static const struct of_device_id a5psw_of_mtable[] = {
+diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
+index 197ff5916578..e952afd95dca 100644
+--- a/drivers/net/dsa/rzn1_a5psw.h
++++ b/drivers/net/dsa/rzn1_a5psw.h
+@@ -236,11 +236,13 @@ union lk_data {
+  * @nports: Number of ports in the switch
+  * @npcs: Number of PCS connected to the switch
+  * @cpu_port: CPU port number
++ * @tag_proto: DSA tag protocol used by the switch
+  */
+ struct a5psw_of_data {
+ 	unsigned int nports;
+ 	unsigned int npcs;
+ 	unsigned int cpu_port;
++	enum dsa_tag_protocol tag_proto;
+ };
  
+ /**
 -- 
 2.56.0
 
