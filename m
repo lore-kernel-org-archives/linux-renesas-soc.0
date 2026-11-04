@@ -1,50 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793798907;
-	b=zO5PoJGPfNVud3Y2lBMcS4XbOWaq2e3n5AFGXlBCujevzg8i9Fi8sGZUYOG/kF6Nv97v
-	 xAHxa2Q1S6EmmGFBhFnnpMwDt8DVFCnHgWpVHfjS7H0zx5Qrsw8DGBpYM6M8RzAXxJyyQ
-	 gbfhJOlgzxKSQA20mr0K81vPIA2aCKIX85BF+DzBna0mSv/N2qcfOFmvYZhzW8GTvXbod
-	 yCwLrqGiBJ7WmEouhhm7OJVWUmxNECr6YEH1v1+/UY3QxMYU5HEvxsgJzFmOTNhxw//6U
-	 rmYgONo/FGcW9DxozipXRHphK/r1qFpiunGUzIi69RRjhYj7rHQv8ORLdB/vo/cgKSg==
+	t=1793799097;
+	b=ce1mfhFIqv/Tq4Af7Ogocpjf6waKim8CK7ghcfIz9+Z2pXlhB+K/5QIsJ1NUjw1bDZqs
+	 IkxBHdFoE7nFLXxMc1i3jFlGdgTrgiiSeoSSkgamueG502fCFKi8d8e09Y+O5snY9fx9B
+	 vIM+PyKlGbUrGlm0fIpoMPmPh30eckFdbLM81tCS07zMnNIZi9nqOmTt0E5z09Fu5YKqn
+	 ++tMuldny+89qKrIcAnCXZVbPYs0M3adDLEPrEGx/KhTL0xcr2espp6/DMerisoy25+Vi
+	 cVDzp+bgnH3PE5PX6GlleboN4/7tZ0RThjlmPgb/xpH/V5Uig9lH15WljntPh8kQ7Hw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793798907;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:From:Content-Language:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=8i8Gt1iQa78D7XvWjNqKDdpDP87VjZn0P4Fq7WSVPeY=;
-	b=fdtYX7U5vuYDv7Bjk+Q59Tpdo5yOnCVnMA2dg+tUPkCSzM3e1QFZo8NMWomUQ7zH5Nb2
-	 1KuuTU7AmymFGoRdnLFBt/dBSIJrcKz29t4xt4O7hWIP/FV/KtXIHfvayfYz1MmhpQMtW
-	 e1UjLE1as4VgKVp1x/4ShqdisZ0wwTFUBgprVMFjPd6xj59guTEZTbptkcuTACgNQo5Ge
-	 Ow+trJSBYFtlWe/FOONS/p7BvFZ0pF4cTIhq2KjVVYCi+UfPozORiizTMIhHwc0m3NvYe
-	 zEW9tHMIWlmLYuXg8kLgk3hpDBppRGsdTcPKJm+V6540a8e4rP26xFXFZ8/qMOmj+xA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793799097;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Gm-Message-State:
+	 X-Gm-Gg:X-Received:Received:Received:X-Received:MIME-Version:
+	 References:In-Reply-To:From:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Content-Type;
+	bh=+5GQvxlGfiedD5Vq6MiM1mQYT262DR/iV50xDACh4A8=;
+	b=S2ovWfzCBeghBUug1isF8x831rcVOMy1rrT6xFAi2BUEI42fIVHKVFVQrpvL+aydJof/
+	 KEM8AmBxHsgUb3+vaKZCPxVXzj6pQBQCfzug4nv0ZHZ7fyuQP52Yb83H1ODZugOAsBam4
+	 0g/eyzb8LQY0OGBaOUZfYbmfHhFS/zwK7HCa4MG7EQoAa428WB3da0YNF9vEZy6IujUG/
+	 tk3eHV3/464luaf2pVYJBKnV0QeXEO6PZi9WNm9ZMRl+hCkdHtz+apRxcZ1LImZJzvnc8
+	 xIGitipGCpZtXVnIUQadQVPH5p0MwHdouuwcmXlk/IrP96HDDIEz/IyJqaELCYfncCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=p2Ohc52d;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.218.48
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E83606A31B;
-	Wed,  4 Nov 2026 13:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 49E83606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=p2Ohc52d
-Received: from [192.168.33.24] (185.221.143.99.nat.pool.zt.hu [185.221.143.99])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DFDD8BE;
-	Wed,  4 Nov 2026 14:26:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1793798766;
-	bh=nle8zh40simosNCAgBe8q75lC3RldexvgyWriSXG2RM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p2Ohc52dt0m80OL1Gr9OJC3EQquraG8Rh4/BuTvyYdVE+BO1STm47R76Ryx1VcRWD
-	 xNdnX2vJIOWtYOX6wFe/EIgGvB2Zh3bt/lMhNi/PALWo6QXTAzzP4VxWNR2tpDi5Wy
-	 8Cg0ok+sboE7PX5EqcV5IICX+zVUePYBNXIIzjEQ=
-Message-ID: <a4923238-e911-4da1-939e-f888d8d0a01d@ideasonboard.com>
-Date: Wed, 4 Nov 2026 14:28:19 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90491606A31B
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 13:31:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 90491606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c418e215671so102011566b.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 05:31:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793799095; x=1794403895;
+        h=content-type:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+5GQvxlGfiedD5Vq6MiM1mQYT262DR/iV50xDACh4A8=;
+        b=YbBVe4wpqlLinWAFhqh+xBHm8rNFJpHGwMBxqMIvpMOgxo++PfZZV8xayYKPIwv5m9
+         97ACjgcTh1XcgyCHQ7LLZvtoudb5sNFPnwaseLj3STH9AFt1mSb8mmda5Eq7n6qCTbaZ
+         VJbUjJrwZi/mjbsk4gG0cnSfSQi4PLO5YprwRPe/m26QLjNced7yxNAEDxwUghDZWi1r
+         YU8JssnaL3oYQZ7d5ELWy5CzlpXir9Y1GLqrq4U+85R1gdN9ZO0XtRggQWCfB/5p49wf
+         VKf7nkMCXxGZ35J1g+MwJGohHcFyb54KcWBva1a0GyI9KuSMB4ByiUrE3zc2eyvT/Zpa
+         aBdg==
+X-Gm-Message-State: APuU4Z8mU+580y5CqBCkzgSOH/VNPXDsO2UJ7HF7jGMxMTAeoTD0+jKy
+	QPkjcNJEVzR2KMUOZwZ9kY9YFruuxynt4QjuXhIbPNcI6CNNCadqcL4zPfHrQb5E7ZA=
+X-Gm-Gg: AYBFou3jVE3k122dt7hywWZDWcHkymogK+AyobsVwsAIWzechngFZ4yScAhLhogtIL8
+	qwa0UITcctwZ//n7Xps/knn/UHJZxRZn7zOA1oVkntQCtfIk600OgL427K8XjgAkNvHk+IDt532
+	Asc4f+CeH1fter3+HxCaGR8kSXC8oiMMOk9yQuxZ9G0Ed2KIHMf+6PHiPiWqQaW0MYctgRaoLg6
+	Ax+aE2JRjZs89FaHUEJcfgdIPlAmlhDp2J3iOJMwdogMfWA+6HVVaqalrsyZ22CoPBnzBhNuRn7
+	nwymfd7WRAGSzGnULfRS44O2mKIODjgyAaRwxKwD4+kyBceVQlK/e+M0wXFBXuTQlw5tOQ720qc
+	PVVDBkIPVII0PF/rGvZcxc6P8xLp+yi3BUAXu72qEyKrd7haBR8n+Wyr1fxORw8zuELjVIMZZbp
+	Q9bd9svLMjeaf7Y3r1LQZjfUiQX2fwOxKUtrsBViXM/oC3inKWF9xZO2RrIX4aLk5yGGAzm0gRC
+	YiBpgDYHHB5hNARWJuX11Uxzke1wxECmEsIZu2gtpvzomm5sB/Z2vj/Er1GmVzXjr0U1UsrkhTO
+	ebm81lvqZPa7M0GizkWRB0KlcaRk65uEYBLJ0BVxXX2KQKKTHTG65h2+Y5/SVoPy4Q==
+X-Received: by 2002:a17:907:84b:b0:c49:8f1e:af0a with SMTP id a640c23a62f3a-c4ca795e453mr1375236966b.7.1793799094706;
+        Wed, 04 Nov 2026 05:31:34 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d0e424f94sm71115366b.24.2026.11.04.05.31.34
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2026 05:31:34 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b566cf56c1so366416a12.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 05:31:34 -0800 (PST)
+X-Received: by 2002:a05:6402:1f89:b0:6b5:47ea:ca2e with SMTP id
+ 4fb4d7f45d1cf-6b547eacb93mr4089361a12.11.1793799093761; Wed, 04 Nov 2026
+ 05:31:33 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -54,170 +77,53 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] arm64: dts: renesas: Enable ISP and IVC on RZ/V2H
- EVK
-To: Linus Walleij <linusw@kernel.org>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Conor Dooley
- <conor.dooley@microchip.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261027-mali-c55-renesas-dts-v5-0-51bbb43969c1@kernel.org>
-From: =?UTF-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze@ideasonboard.com>
-Content-Language: en-US, hu-HU
-In-Reply-To: <20261027-mali-c55-renesas-dts-v5-0-51bbb43969c1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAMuHMdWXPesKV7XE_QwLrM6pZ1z6GFC-SjJ1ceFTs4o=hv71Zg@mail.gmail.com>
+ <CAMuHMdX8HtWOAK6MDdN8F8V0aer0hTHzeAcnCGMycpS70hesNQ@mail.gmail.com>
+ <CAMuHMdUjse9v=U8=oZHDJx0Oh9uVzxVWYU+C9jaP_23UOBVMaw@mail.gmail.com>
+ <CAMuHMdVGnDg=zkjOSmCWAjEnjfSN9rhOCG-ubzeTf3mvjTEavw@mail.gmail.com>
+ <CAMuHMdXkdD0dN93zsQnjCzFo6ijS2xDzbh+GPGe6--_FuuRbHQ@mail.gmail.com>
+ <CAMuHMdV0KWN2nHDGT28ysTPwBTrachBSsGWf0hHqrci-d0U33A@mail.gmail.com>
+ <CAMuHMdUWt+h7=rF+Z5sjQ_=xvoK8FeDGk9OnL=2KJ+gFdTnp3A@mail.gmail.com>
+ <CAMuHMdXi1Ev3uKBVnrE5HO8=m+kkaXLc+5b92txFpB8rLUGrcw@mail.gmail.com>
+ <CAMuHMdVd=6eTSddjyr1TLeu6akVp6QMmz89JCb5e_oT2XjY2mw@mail.gmail.com>
+ <CAMuHMdU+Q=k3XnYUOytN4tOh_u=JyRr97XwX=vmV0V5ht8U6uA@mail.gmail.com>
+ <CAMuHMdXbJvFC9n=LTW=fXhGBRgrDzQG2LUDTbZZruyovU5OsQw@mail.gmail.com>
+ <CAMuHMdXPg6dBhvdgKwKVVDHP+7qJDKTfRzKGhXkUTb=gX833Ag@mail.gmail.com>
+ <CAMuHMdVJ2joZgT6Yp4VhXs3yr4ntgHSyCt0JiyWHXueN-3pNFA@mail.gmail.com>
+ <CAMuHMdUS=MTCYxgCzWT1K6NX-BzxxKpBm_Q85GbCGTN3ppUhYQ@mail.gmail.com>
+ <CAMuHMdW2d+kh=J2GUeL2f16DUM5ExBD4eva34tHSq-JH38RM+A@mail.gmail.com>
+ <CAMuHMdWBc002vKmUsTpDpxZPU+Z8J2=NM1hYXWj-z26oV3gxwg@mail.gmail.com>
+ <CAMuHMdVCcjNwnS+1cJ-EAhr9vdwZx2F97ta-nwrMEgqptboAvg@mail.gmail.com>
+ <CAMuHMdUQv9i1ZUhzZV+YhhmjbO-f-0n9ocfBYAiVYP6We5Evpw@mail.gmail.com>
+ <CAMuHMdUrk5GzMWqbYa7PnrQf157TCnS1xjyiV267EakcL+bCLQ@mail.gmail.com>
+ <CAMuHMdWM_Q-Tk++nt2ZhwpzZmo=M3fv0fzPr59jAv6q=ec=vtQ@mail.gmail.com>
+ <CAMuHMdX-QTWTukQbLn+pYgmzZBu0b4OtM_oTGhS5_SMMtazhEw@mail.gmail.com> <CAMuHMdXvTc8LEQNH06MQ7tDB9RDoLRnVRh=AqOqY2J7qfN9Qjw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXvTc8LEQNH06MQ7tDB9RDoLRnVRh=AqOqY2J7qfN9Qjw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Nov 2026 14:31:21 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdURL=yMXX2eB9egKtkqJR74yGgX3i87GPdi5vDvHnckPA@mail.gmail.com>
+X-Gm-Features: AclHuK--rgFO1C0e0HQwQD6yEG1JbwGYdp5lNKTsg71mKXGvshJw0SrMLwxXcZI
+Message-ID: <CAMuHMdURL=yMXX2eB9egKtkqJR74yGgX3i87GPdi5vDvHnckPA@mail.gmail.com>
+Subject: Re: Future renesas-drivers releases
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi
+Looks like I forgot to send the forecast for v7.3, sorry for that.
 
-2026. 10. 27. 17:11 keltezéssel, Linus Walleij írta:
-> Describe the optional ISP DMA line-tick and IVC frame-start/frame-stop
-> interrupts. Add the RZ/V2H(P) IVC and Arm Mali-C55 ISP nodes, connect their
-> video endpoints, and enable both blocks on the RZ/V2H EVK.
-> 
-> Two additional RFC patches replace bulk clock and reset operations in
-> the Mali-C55 driver with explicit sequences using named handles. They
-> reproduce the driver call orders from the reporters' working DT swap
-> while keeping the clock and reset assignments unchanged.
-> 
-> The Device Tree does *not* guarantee any sequencing of resources,
-> so these sequences must be handled in code.
-> 
-> Clocks are enabled hclk, aclk, vclk and disabled in reverse order.
-> Resets are deasserted vresetn, aresetn, hresetn and asserted in reverse
-> order. These are driver-only experiments: the CPG power domain can
-> enable clocks in DT order before the callback, and IVC may already hold
-> shared resources active. The physical transition order is not guaranteed.
-> These RFC patches have not been tested on hardware.
-> 
-> After these patches, and enabling the right Linux drivers, we get
-> this in the console:
-> mali-c55 16080000.isp: Detected Mali-C55 ISP 9000043.31032022.0
-> 
-> This was done in order to enable booting mainline with mainline
-> device trees.
-> 
-> The patches were authored with the assistance of an LLM.
-> 
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
-> ---
-> Changes in v5:
-> - Add two RFC driver patches for explicit clock and reset sequencing.
+Next planned releases, if all goes well:
+  - renesas-drivers-2026-11-17-v7.4-rc3,
+  - renesas-drivers-2026-12-01-v7.4-rc5,
+  - renesas-drivers-2026-12-15-v7.4-rc7,
+  - renesas-drivers-2026-12-22-v7.4 (TBD),
+  - renesas-drivers-2026-12-29-v7.4 (TBD),
 
-I also had the same problem as reported in https://lore.kernel.org/all/asz8oEtow_lrUU7K@zed/.
-So with the first 5 changes, the device will lock up when trying to stream:
+Gr{oetje,eeting}s,
 
-   [  124.093148] watchdog: CPU0: Watchdog detected hard LOCKUP on cpu 1
+                        Geert
 
-but with all 7, it appears to function. And I have also tested without patch 6
-(clock ordering), and things appear to function as well.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-My understanding of the problem is as follows: previously I have used a device tree
-that specified
-
-   resets = <&cpg 0xd2>, <&cpg 0xd1>, <&cpg 0xd3>;
-   reset-names = "vresetn", "aresetn", "hresetn";
-
-while the order in the driver is:
-
-   vresetn
-   aresetn
-   hresetn
-
-and given that the bulk reset api asserts in order and deasserts in reverse order,
-this would be
-
-   assert: 0xd2 -> 0xd1 -> 0xd3
-   deassert: 0xd3 -> 0xd1 -> 0xd2
-
-whereas this patch series has the order
-
-   resets = <&cpg 0xd3>, <&cpg 0xd1>, <&cpg 0xd2>;
-   reset-names = "vresetn", "aresetn", "hresetn";
-
-so the ordering is as follows
-
-   assert: 0xd3 -> 0xd1 -> 0xd2
-   deassert: 0xd2 -> 0xd1 -> 0xd3
-
-meaning that the order is effectively reversed compared to the working configuration.
-
-However, by sequencing them in the driver, the ordering is:
-
-   assert: hresetn -> aresetn -> vresetn
-           0xd2    -> 0xd1    -> 0xd3
-   deassert: vresetn -> aresetn -> hresetn
-             0xd3    -> 0xd1    -> 0xd2
-
-which restores the working order.
-
-Given that `reset_control_bulk_{de,}assert()` very clearly document the order
-of operations. I would also be in favor of simply reordering `mali_c55_reset_names`,
-as suggested in https://lore.kernel.org/linux-media/CA+V-a8vEub2y2gvXp8jkjVHOGuj1Eqkbq75t8Nezz95iidtL3Q@mail.gmail.com/#t
-
-
-Regards,
-Barnabás Pőcze
-
-> - Match the call order from the reported DT swap using named handles.
-> - Link to v4: https://patch.msgid.link/20261012-mali-c55-renesas-dts-v4-0-c410e280bf2d@kernel.org
-> 
-> Changes in v4:
-> - Provide interrupt names in both bindings, their examples and SoC nodes.
-> - Use Renesas RZ/V2H interrupt numbers in the binding examples.
-> - Link to v3: https://patch.msgid.link/20260928-mali-c55-renesas-dts-v3-0-2cf7eb746ebb@kernel.org
-> 
-> Changes in v3:
-> - Correct the ISP video and register clock/reset mappings by swapping
->    vclk/hclk and vresetn/hresetn.
-> - Add an optional ISP power-domain binding and attach the RZ/V2H ISP
->    to the CPG power domain.
-> - Link to v2: https://patch.msgid.link/20260925-mali-c55-renesas-dts-v2-0-69f728a474a2@kernel.org
-> 
-> Changes in v2:
-> - Add separate IVC and ISP binding patches describing the optional IVC
->    frame-start/frame-stop completion and ISP DMA line-tick IRQs.
->    Show all six IRQs in the examples using consecutive mock numbers.
-> - Add the IVC frame-start/stop and ISP DMA line-tick interrupt lines
->    using the confirmed SPI assignments, addressing Geert's IRQ review.
-> - Correct the IVC and ISP register sizes to 64 KiB and 512 KiB,
->    respectively, as requested by Geert. GPV_VIDEO0 is a separate bus
->    interconnect region.
-> - Compact the clock and reset properties and remove blank lines between
->    properties, following Geert's review.
-> - Link to v1: https://patch.msgid.link/20260922-mali-c55-renesas-dts-v1-0-cd63cdb51033@kernel.org
-> 
-> ---
-> Daniel Scally (2):
->        arm64: dts: renesas: r9a09g057: Add IVC and ISP nodes
->        arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add ISP and IVC nodes
-> 
-> Linus Walleij (5):
->        dt-bindings: media: renesas,r9a09g057-ivc: Describe additional interrupts
->        dt-bindings: media: arm,mali-c55: Describe DMA line-tick interrupts
->        dt-bindings: media: arm,mali-c55: Add power domain
->        [RFC] media: mali-c55: Sequence clocks explicitly
->        [RFC] media: mali-c55: Sequence resets explicitly
-> 
->   .../devicetree/bindings/media/arm,mali-c55.yaml    |  27 +++-
->   .../bindings/media/renesas,r9a09g057-ivc.yaml      |  22 +++-
->   arch/arm64/boot/dts/renesas/r9a09g057.dtsi         |  47 +++++++
->   .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts    |   8 ++
->   .../media/platform/arm/mali-c55/mali-c55-common.h  |  11 +-
->   .../media/platform/arm/mali-c55/mali-c55-core.c    | 136 +++++++++++++++------
->   6 files changed, 205 insertions(+), 46 deletions(-)
-> ---
-> base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-> change-id: 20260922-mali-c55-renesas-dts-74d4727f59e5
-> 
-> Best regards,
-> --
-> Linus Walleij <linusw@kernel.org>
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
