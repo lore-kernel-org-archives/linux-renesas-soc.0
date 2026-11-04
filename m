@@ -1,100 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.84
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793809393;
-	b=Q/OyGQDA190iXRxoVtJo8E061EGxlqErYQTRUqncJSPEX3FKDjH8cbBhezDDyZnJrL+/
-	 YIygPrKCISgG54V9t0G3a8hdzsPX4e8h7J0TEHSOu8QKlML++n33/OrIsirRpl00S/MyE
-	 eiAHMIC4flJ4EkCL0tNUOdDUG2yyImXZimTfX6pWGBgR5MAkX1FxqDYa8Rtknn4Amhg/K
-	 JEg3YuEDVHFeIcGVhqRkFQAt6KEOqJIa+kMz/4N2uh8JEe99ULD2c+YfIVqQbgWDsJJbC
-	 +N96wU2scoLUv/fGaSmS8odcpq1yu9f6FFjm6HPBI2q9VEPmglb/FrOrKAchqOezS3g==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793809393;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=39Mbjok2rPlXhRzIwTXY/VJmILyDqdEJizs/HLwXXVA=;
-	b=Tvzkz4cfuBnxcPQm7J/ybb6DluRKAFl/qd9ZmRtftlC0udMdVCR3jDG0mUIzrckUtO2W
-	 Aa9Ni7CeAFI7WpR7+d8YUBvRe7MxCZdrtKIk/2I9vv5CVjB26+xyxw7U+wjY/p0OxV76I
-	 Tk6Zfx2l5LAhZrW+enEKRYm5JlErOLzvWvBOeWvszRRJUTaswbHY06N+aLnDoEMP64Sum
-	 z+PCzcBtLNVBDYmIqreiEduDcgOUyqnnQSm9feUHJ4MW5YdcdJRskIwcEk3V29bTtEqpJ
-	 gUji8MSvxciO9D2SN7X0JwmBBmyaRWPwixMXmOajkaUiFebnHfNc3U/srVPeZxcvRug==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valinux.co.jp;
-	spf=pass smtp.mailfrom=valinux.co.jp;
-	dkim=pass header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=hMh5Or26;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.84
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020084.outbound.protection.outlook.com [52.101.229.84])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793809448;
+	b=hpj2TMPHo4n/v64WE2qVGGicDsEvv7kX17q3/Bmn53Z1qzGw5ntrPSU4+hbxzH5FVF1T
+	 bEmF6CkS4riscI/BLlV45sJ6YoE9aPjQzECUS2TSGXhdOHv9QSkiAIjJUqHdw/tosMPOH
+	 bkmv2N0OV3fpw62Y0EWsAVMs62syfiPT0ELdLBKJROzCVeilQqc+MlY2B72Xs/ZDpdG4C
+	 cWS6fbU+6TnNKaCH/RlaAB+t2CDZNOER4ZtmV6QVQaF+s/NjpSDsxP3jSkxveNNcj8dHV
+	 6LHiuJf8sSxL5tFD5LX2KFBvf/2kGMgeSWA1bM/CFS0XBqGK9F41xBs//KXyhalrRfg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793809448;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=8yMCvYeghmYZPA3TkxIffw8/jGubs8fIzlV+8czvpCA=;
+	b=hX8xGJ87d+aew6rSbhKCbVeU0pGAUngIXJHbhkrykfvuDCOTHrEZCdt0U7+bQrs6W3WS
+	 yNbWwBTLJpSzO7+Yv/x+A2PqwbVfjEoZnIRNZpgGZpBp1v0L17AhyVEt2izRqh58okJeJ
+	 KaVuwFtNEOdu64qg7aHc5o3ZQP4PpoKhJbbnuAAo9+H7HMeqkX90KEp6MvUNyCJMQLQQo
+	 m9fJiEycthCSSb8qB92y8VqCSSfhkSo8AXtwH4M5I+lweJy3HNM+jc6zgos0cJTAU3yos
+	 EhW3L77/FMVMDvGLcvvNsRflr8/Qkj054y1eILMWt4KdMlhvVlGMI2SyaWbxwIaU4+A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b="r/K7kW5K";
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BA5606B8FD;
-	Wed,  4 Nov 2026 16:23:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93BA5606B8FD
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB33E606A32C;
+	Wed,  4 Nov 2026 16:24:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB33E606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=hMh5Or26
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dLDqNo2gkSojktohdKeBTajGthffF8ojbay3Ka3a9wL2qZLfA3c5MgmyFd7+I22wL+AjbogggwxY3M7r6DUyEn8uhu1g7Se7kS7eIY081MnZjeGB9kG77qvJvBEafmxfH+DfeUz+bgKeVjwqzKV5lacrZsXmFQCIqS7Bc7pTAeGql349WxTdFrhAok7TFcHso/bD2odTI1jcNx92QU5Af/Ni8oxW8NvFhUR3bnkuLK0hIwDCPta/bB+extgwX1ZKlVs2yIZ5skRobUn6WJSAfpxP7H/7ZjYjKIJWfJA/1nsFU1zUUWAyEfqVM0i+DllMj3sH9sjlqJQ82Hn/OaD7jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=39Mbjok2rPlXhRzIwTXY/VJmILyDqdEJizs/HLwXXVA=;
- b=Wx+TwobqOCnK8rRk7dD2iY4oSom1T8QbLeIMlWtdfMbCYZQHMsGnMw3BBzASrUTKnscdJlmgASr1hi+TykMmUgVrD6Y6mSVQtdGD+hzOfc06Kj6cmFyTPebRneO/bUarXaNF9FQhlHT/6zySrxKzsMP1oyJq1P+C8DVB7i5bv4Gd8iDS5okPGJ3YBddBiyyEhMewKxljlty7mxFVRMQwhE595zuD+bPr5ldyI0ZPQ3xWVQTcAVYQwbZ5gn4U3GYIiK64FsUsX6rRrqDxiQVKX4GjcjNI5ZYQnqQeHwwjBdutdoWIdco+okResAFhXFFjfiJrfx1CoLPrRdLy9niH7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=39Mbjok2rPlXhRzIwTXY/VJmILyDqdEJizs/HLwXXVA=;
- b=hMh5Or26J+kK4W2WtVAlO1x2U+hG0kJ7qXNKODk0OSw80AuwwpcxuXhGGQjwktiUK7af8zJQ2yIUN5cp80AkM+Laln27HNKYJGFCKrcdL2iDV/V5C/SjWzrkwVRt1O7L0vTHv7LIJRg80utGa1iVSiMj4uSnT082lezfXABJQ5k=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:325::11)
- by OSZP286MB1462.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1b2::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Wed, 4 Nov
- 2026 16:22:59 +0000
-Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- ([fe80::cce5:2aa8:53f9:dba9]) by TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- ([fe80::cce5:2aa8:53f9:dba9%5]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
- 16:22:59 +0000
-From: Koichiro Den <den@valinux.co.jp>
-To: "Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Marek Vasut <marek.vasut@mailbox.org>,
-	iommu@lists.linux.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] iommu/ipmmu-vmsa: Move device initialization to probe_device()
-Date: Thu,  5 Nov 2026 01:22:50 +0900
-Message-ID: <20261104162251.1749998-3-den@valinux.co.jp>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20261104162251.1749998-1-den@valinux.co.jp>
-References: <20261104162251.1749998-1-den@valinux.co.jp>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0243.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:456::17) To TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:325::11)
+	dkim=pass (1024-bit key, unprotected) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=r/K7kW5K
+Received: from [192.168.0.43] (chfd-03-b2-v4wan-176392-cust229.vm15.cable.virginm.net [82.19.20.230])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BC42C4DC;
+	Wed,  4 Nov 2026 17:21:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1793809307;
+	bh=GdIuvaxUvWhoJU/w/vWgBMZrzMuLhEaSuLfiGH2sLkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r/K7kW5KiYEp9y9wOYKdtSRQ4by97MqGLfkx9aviIaNEUy4Dp/2lrAdJxHyhIy8+y
+	 1o39aKfeBdk6OkvgXjhGucLTu0S9XBelREZZcZ6PQKW1fJZHYL9I+vT8cGhPRB472p
+	 /UFKSdXJ9Phv8ew01QDF/BdY+OQ+OJzsCDxxVAQ0=
+Message-ID: <6a86cb84-c4b4-44b3-9977-12ac1dc8505c@ideasonboard.com>
+Date: Wed, 4 Nov 2026 16:24:01 +0000
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -104,153 +54,155 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY7P286MB6866:EE_|OSZP286MB1462:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97574062-c48b-40bc-7cb9-08df3a8fe45a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|7416014|376014|10070799003|366016|1800799024|261009223027099003|261021121427099003|56012099006|261021123027099003|261028144727099003|261022105027099003|261026140227099003|261026121527099003|261102123227099003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	pVF7//Sig5EMHfBZOdqwN3sDD/4u3TXvEDi0om/I5yxjmgwCEKfPfE0kbPnvkgkIhKztUUVPW2i2SXNksXNFVBSfpDHUVJKoe5ju2HhCGSoQAu8wwYGnzvAmGKJQLN6bf2LkaqOFwTOixt0xPeO2NQ31AT7rcu3Ftiv/dnr5QiSj0ucWTnIpiqWeEY6ngofE2reNwxxplgQFcft2yQJitXmUVSxSPdSBCjlBatjuKEqAWK06orfApqSSUJ5N/OAmpb0EcEHUul63ccwFt3Nn1h3rVsXo1YOtfUybAIMpDNGUjTrFxSd3Gb1nB3ufMuBw/Mnx3Y1ZzHZQ01VOcK7XTnppZtHKH+yze5D1aX/nWxwx2tCs7/AX5d1kr9cjKIGGAoZRkpw5E/FEu/jZWXxT7YCQIs+iDWlSOmVBrtxnipXD9vInG9nT4SZcbYKyRG6Iz3CxGGvuUvq1w4W3XLZXvINBj9iDSLRD+OSjOCQCFYtAIPrDqnt/Y3CvwWPJgOMo/L0zgOZTz7ee03lbxm00h+2llPowSx28V29O1HlkWnKWaq3JaAXj5Pmu4SHyWLMoIIuv+tjPNYsAl10HTFeffyaW4K5/+f2Ua9kccCEaj1r/RgOnx7rX87fAzlcJZIB4YD15G4jDzEdPk8kmztxAcwR8IQRfOIFAdzG/1Lq2YYQ=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(10070799003)(366016)(1800799024)(261009223027099003)(261021121427099003)(56012099006)(261021123027099003)(261028144727099003)(261022105027099003)(261026140227099003)(261026121527099003)(261102123227099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6OaEFs7zjLuLUxqlsAlk3SObjAoQ1xjY1G/yVUnJ1JyVWRY7YwnK9ZWPAWm5?=
- =?us-ascii?Q?aIHJeRM6roR07BLLPo6E8UBy9tpDcieHRMbsnkOiiBDZF8hKjX2nfU0BmjeV?=
- =?us-ascii?Q?6wRcR972rq1yWOBFmsRJObenTxckE2etaIOy6Kk6BEZj22uPETMyzHmP/j6X?=
- =?us-ascii?Q?XGXPE3TTseXRvoIR8ez6BPzPCapgj2+TW1N96o8cm+6gvfrzfIRw568NC5gg?=
- =?us-ascii?Q?2UR/qLmz5biMQhxEqHP7E38HaZNSxP0QpK42oC9vK9oDOTbtuzqzqELrPvW/?=
- =?us-ascii?Q?hTAUp0rYw5/FsYlQ+J7YTLzNvpBpx+mkXHmZRnTecgQDhP9yKzK32J/OEHIg?=
- =?us-ascii?Q?qvEGiEH06j1e/sL2M7u/AHUW6h3Sou5WEqowExuw4zJNMH6yZe1NEFBMSGU4?=
- =?us-ascii?Q?HDVb9sNZs6I+ImBXiZsX28+dBd+kxJxM+F94LOb8/SU840MVNpPqflrBEcTF?=
- =?us-ascii?Q?4ZzYJIzHmI3wOdVP3Iyb5fnLhUL8gnFmiENbjI2KsdkxEi3/NeiM5MpgLEwb?=
- =?us-ascii?Q?8Ha+aEdwgDRqApUPgAlpIGSMWbgNfBpbhO/ckn+AhfogAMnRcZ5DNDANdz7w?=
- =?us-ascii?Q?V4uLx+cDu522IGQYQNcPs4jk9E22aqkt8zuoHJJcPqwM3MSqrzdp1CYIHLku?=
- =?us-ascii?Q?YVPJ/Lk/cEA3WNaXqHhsndEaBp0QTpFESKklG7cpGFDqi6/d0POkojCSRZfc?=
- =?us-ascii?Q?FZQRoue6q3txx2JfXjfo86hpQa73xH0k1mK9bjBs5xXGVrIDY7GfXzmoHvI7?=
- =?us-ascii?Q?fQ2uF1v3KVMOd/QkQf44fLNymLltLKYjZ4b7TTFiv/9+R/wjBIqjL/N9PLNv?=
- =?us-ascii?Q?07rJCW4QcH+pTzc5/Ebk5ggSS5T5Y2QZ2Z3gy1D6WoUzvdoq/ywrU5Q8NLEb?=
- =?us-ascii?Q?L+Ibt5y9ohUcoFzKGO7/5aHygwaQy2dyu1d4Slfok+rFYn9AH+PqaWeL9/fC?=
- =?us-ascii?Q?x6edk68yLKVsNozMch+3jPLo9yGbChjJv/3eAa0ozWsXX++Wy6vFoGoSq+rd?=
- =?us-ascii?Q?ciynNrYQrYt/fgdWT/Lznqfej6Ky9wjroWiZmIO3A4zPggHKVngwlmOWEr+Q?=
- =?us-ascii?Q?evFqp7qPLt4OMYmRYRfJuk7Vvil+YvTjuKO8rA2JgMpK+1d+IODwZpdSMCE0?=
- =?us-ascii?Q?5cqC5Mg4cQ5gFQjMS7aV2LwbxC8Nlir0rv3ykkA6CQf9DNv3kFILAKzVQC0p?=
- =?us-ascii?Q?nJMPpur/wJMa7xOQhaLUMM0njK+ZoJlKnujB6gIMrgtxFzJybKEjsz7Pmi8M?=
- =?us-ascii?Q?ecVWSkpWDWE3wy2PTm6VrWgHh+4l4FemCLPVTagzwzbxNICltVj5t2hzu2nw?=
- =?us-ascii?Q?3c5aXR0Fadra84FiNJweq/NF9w16AXXnhf1csRr0u3TYPj6H9bGuxHVjccWM?=
- =?us-ascii?Q?d/L4h9QPzdVwwO6i9f8wcLjbTC+yk7YPnuvN1igT82pLxuXuIz1eiaBpF+9e?=
- =?us-ascii?Q?spjlBmeHEAmswJMJpmrTPHUWeUNMQYgPNAaUJqH08yQxXVZ5u6JHv0KuL91l?=
- =?us-ascii?Q?3xJ4UAD1qlRjb55FpvmWGNYxXGXzzirqX8KfkTeA2+XZedTGu5BR/rbZjX8D?=
- =?us-ascii?Q?KkJVTdg9X9Vb+oHzAt//OM5386I8GpgLszAZ2jKI8UBeLYd12q3o56sIP7fQ?=
- =?us-ascii?Q?w/4bzXvKVFENZyDv2Z/W6d89+6VVG04iq/azTuylr2bdc/omjXOuUrzKVzIX?=
- =?us-ascii?Q?KjVr4Rk4zqcr5CHhNn3fqi1fCvrGuxA23TdGAE9Q7RmxWsEubh3aigYH8zyB?=
- =?us-ascii?Q?nNJbQ9vjgLLtUx5rL7JeNzmX30W5eE+CYnKO338KKwLefHHj1iEz?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97574062-c48b-40bc-7cb9-08df3a8fe45a
-X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 16:22:59.6363
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w4mAZrezNxqe5V7rSywUSaMsG2FYsW4iD68RDCl9Ekv0D/Ad5nQ1WgQo6+XWW18vyPTtx0TK5DRkoj0LuLCeWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZP286MB1462
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Introduce v4l2-isp reset buffers
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+ Jai Luthra <jai.luthra+renesas@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Keke Li <keke.li@amlogic.com>,
+ Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20261104-v4l2-isp-resume-v1-0-06aeb8cf2940@ideasonboard.com>
+ <20261104142302.GK1959885@ragnatech.se>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <20261104142302.GK1959885@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Move the IPMMU instance lookup and private-data setup to
-ipmmu_probe_device(), using fwspec->iommu_fwnode. This prepares for
-per-device attachment state managed by ipmmu_probe_device() and
-ipmmu_release_device().
+Hi Niklas - thanks for commenting
 
-No functional change intended.
+On 04/11/2026 14:23, Niklas Söderlund wrote:
+> Hi Daniel,
+> 
+> On 2026-11-04 12:28:15 +0000, Daniel Scally wrote:
+>> The V4L2 generic ISP parameters buffers described in
+>> Documentation/driver-api/media/v4l2-isp.rst has a problem in that if
+>> a driver using the parameters format is running a stream and the
+>> device is suspended to RAM and later resumed, userspace will not tend
+>> to reconfigure it with _all_ of the possible parameter blocks. The
+>> format allows only a subset to be populated into the buffer queued to
+>> the driver and this is the common practice in libcamera. The effect
+>> will be that a resumed device will have lost any configuration that
+>> tends to be sent only a single time at the start of a stream, for
+>> example lens shading table settings.
+>>
+>> This series performs some preliminary cleanup and then adds the "reset
+>> buffer" concept to v4l2-isp. This is a mechanism through which user
+>> space can flag a struct v4l2_isp_block_header.flags as needing to be
+>> reapplied on device reset, such that the v4l2-isp framework will store
+>> that block into a buffer allocated for the purpose when it validates
+>> the block.
+>>
+>> The last patch in the series updates the rkisp1 driver to use the
+>> v4l2-isp reset buffer to reapply that saved configuration on resume.
+>>
+>> An alternative approach might simply be to store the "last seen" copy
+>> of any block in the reset buffer - this would be a simple change.
+>> That implies a lot more processing on the majority of frames, as we'll
+>> then always copy at least something, but it reduces the risk of losing
+>> a setting. That amount of processing each frame seems very undesirable
+>> to me though, particularly given the scene will presumably have changed
+>> after resume and so the settings like AWB gains that are applied for
+>> most frames are probably out of date anyway. On the other hand we may
+>> end up flagging a lot of blocks, as there's parameters that might be
+>> changed mid-stream (like gamma) but would not be so regularly changed
+>> that we could just rely on them being sent naturally on resume, so a
+>> third approach might be to invert the meaning of the flag and store
+>> any block that _isn't_ flagged as _not_ needing to be reapplied.
+> 
+> Is there any reason not saving and restoring all relevant ISP registers
+> directly in the suspend() / resume () callbacks? AFIK this is what most
+> drivers do here and it's not clear to me why this would not work here?
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Koichiro Den <den@valinux.co.jp>
----
- drivers/iommu/ipmmu-vmsa.c | 47 +++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 31 deletions(-)
+I don't see any reason that would not work, and maybe I overthought this indeed. This method does 
+still seem to have some advantages to me though; it means we can easily reuse the existing function 
+in the driver that applies the parameters to the hardware, which should make adding suspend() and 
+resume() support for a driver that uses the extensible parameters much simpler. If we were to read 
+the settings from the ISP registers and store them in suspend() instead of doing it this way I think 
+I'd still want to re-use the normal "write-params-buffer-to-hardware" function (for example 
+rkisp1_ext_params_config() in the rkisp1 driver) to avoid the risk of ending up with differences 
+between how the parameters were applied on resume() and on the normal handling of a parameters 
+buffer from userspace, so I think that we would end up populating a struct v4l2_isp_params_buffer 
+that was stored in the device's driver_data struct anyway - the difference would be that we'd have 
+to build it in suspend() for each ISP driver instead of having the core handle it in the course of 
+normal operation. I could knock up an example for the rkisp1 of creating that buffer in suspend() to 
+see how it looks perhaps?
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 99586c68ef35..cea9348ac10d 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -709,22 +709,6 @@ static phys_addr_t ipmmu_iova_to_phys(struct iommu_domain *io_domain,
- 	return domain->iop->iova_to_phys(domain->iop, iova);
- }
- 
--static int ipmmu_init_platform_device(struct device *dev,
--				      const struct of_phandle_args *args)
--{
--	struct platform_device *ipmmu_pdev;
--
--	ipmmu_pdev = of_find_device_by_node(args->np);
--	if (!ipmmu_pdev)
--		return -ENODEV;
--
--	dev_iommu_priv_set(dev, platform_get_drvdata(ipmmu_pdev));
--
--	put_device(&ipmmu_pdev->dev);
--
--	return 0;
--}
--
- static const struct soc_device_attribute soc_needs_opt_in[] = {
- 	{ .family = "R-Car Gen3", },
- 	{ .family = "R-Car Gen4", },
-@@ -778,20 +762,10 @@ static bool ipmmu_device_is_allowed(struct device *dev)
- static int ipmmu_of_xlate(struct device *dev,
- 			  const struct of_phandle_args *spec)
- {
--	int ret;
--
- 	if (!ipmmu_device_is_allowed(dev))
- 		return -ENODEV;
- 
--	ret = iommu_fwspec_add_ids(dev, spec->args, 1);
--	if (ret)
--		return ret;
--
--	/* Initialize once - xlate() will call multiple times */
--	if (to_ipmmu(dev))
--		return 0;
--
--	return ipmmu_init_platform_device(dev, spec);
-+	return iommu_fwspec_add_ids(dev, spec->args, 1);
- }
- 
- static int ipmmu_init_arm_mapping(struct device *dev)
-@@ -839,14 +813,25 @@ static int ipmmu_init_arm_mapping(struct device *dev)
- 
- static struct iommu_device *ipmmu_probe_device(struct device *dev)
- {
--	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
-+	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-+	struct platform_device *ipmmu_pdev;
-+	struct ipmmu_vmsa_device *mmu;
-+
-+	if (!fwspec)
-+		return ERR_PTR(-ENODEV);
-+
-+	ipmmu_pdev = of_find_device_by_node(to_of_node(fwspec->iommu_fwnode));
-+	if (!ipmmu_pdev)
-+		return ERR_PTR(-ENODEV);
-+
-+	mmu = platform_get_drvdata(ipmmu_pdev);
-+	put_device(&ipmmu_pdev->dev);
- 
--	/*
--	 * Only let through devices that have been verified in xlate()
--	 */
- 	if (!mmu)
- 		return ERR_PTR(-ENODEV);
- 
-+	dev_iommu_priv_set(dev, mmu);
-+
- 	return &mmu->iommu;
- }
- 
--- 
-2.54.0
+The "reset buffer" idea also means that if we extend the parameters buffer for an ISP with more 
+blocks in the future there's no extra work to do in the suspend() and resume() callbacks for them - 
+as long as userspace flagged the new block then they would just be reapplied "for free".
+
+Thanks
+Dan
+
+> 
+>>
+>> I'm open to opinions on how best to set the balance!
+>>
+>> Please note that the changes for the C3 and Dreamchip are only compile
+>> tested.
+>>
+>> Thanks
+>> Dan
+>>
+>> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+>> ---
+>> Daniel Scally (7):
+>>        media: rppx1: Drop max_size param from rppx1_params()
+>>        media: v4l2-isp: Hold v4l2-isp data in central struct
+>>        media: v4l2-isp: Update users to initialise and validate new struct
+>>        media: v4l2-isp: Use centrally-held data in framework
+>>        media: v4l2-isp: Add v4l2_isp_params_for_each_block()
+>>        media: v4l2-isp: Introduce "reset buffer" concept
+>>        media: rkisp1: Re-apply v4l2-isp reset buffer on resume
+>>
+>>   Documentation/userspace-api/media/v4l/v4l2-isp.rst |  19 ++++
+>>   .../media/platform/amlogic/c3/isp/c3-isp-common.h  |   2 +
+>>   .../media/platform/amlogic/c3/isp/c3-isp-params.c  |  28 +++--
+>>   .../media/platform/arm/mali-c55/mali-c55-common.h  |   1 +
+>>   .../media/platform/arm/mali-c55/mali-c55-params.c  |  28 ++---
+>>   .../media/platform/dreamchip/rppx1/rpp_params.c    |  30 +++--
+>>   drivers/media/platform/dreamchip/rppx1/rppx1.c     |   8 ++
+>>   drivers/media/platform/dreamchip/rppx1/rppx1.h     |   5 +
+>>   drivers/media/platform/renesas/rcar-isp/core-io.c  |   3 +-
+>>   .../media/platform/rockchip/rkisp1/rkisp1-common.h |   3 +
+>>   .../media/platform/rockchip/rkisp1/rkisp1-params.c |  61 ++++++----
+>>   drivers/media/v4l2-core/v4l2-isp.c                 | 126 +++++++++++++++++++--
+>>   include/media/rppx1.h                              |   2 +-
+>>   include/media/v4l2-isp.h                           | 109 ++++++++++++++----
+>>   include/uapi/linux/media/v4l2-isp.h                |   1 +
+>>   15 files changed, 331 insertions(+), 95 deletions(-)
+>> ---
+>> base-commit: 00178eda305a332f302882849ff7374d4169be8b
+>> change-id: 20261030-v4l2-isp-resume-41fad731df28
+>> prerequisite-change-id: 20261028-rkisp1-suspend-and-resume-7d4f388a9a61:v1
+>> prerequisite-patch-id: 8f6b499ef7898229c5b02e987822dd676a0cfd74
+>> prerequisite-patch-id: 56d0852983c6f46537c03ca3bec71e0ce4046431
+>> prerequisite-patch-id: 0b9edd21d24a25c620792dfa692d91346ceccdde
+>> prerequisite-patch-id: 3b9425028cd62b60b3dc3dbd2fc3b5a8912a1fb4
+>> prerequisite-patch-id: 771f986e2754383e7b5a920b25bf1609dc96f0b4
+>> prerequisite-patch-id: 79c95d6375d662a4f75cccd8650b3fab05e4e66c
+>> prerequisite-patch-id: e2ff2463db4934e707afbf0a239270d26dbf8189
+>> prerequisite-patch-id: 5a923b7606f7cc60fd6b75be2d73231470043bcb
+>> prerequisite-patch-id: fb80748a1a24316cdd77481b60936f716fd0aa71
+>> prerequisite-patch-id: 1450f7d1f4b1a41e7ce65ea6d2fbd450d3a198ad
+>> prerequisite-patch-id: d1d2ba9927536b110f7fbc0c68698d08afb74c27
+>> prerequisite-patch-id: c2ae6f91cb9662307f90070523945ee03a79c4c3
+>> prerequisite-patch-id: 87b425bde44fe889367a93302629dc011a3ec88a
+>> prerequisite-patch-id: 25e4c9ee767dc61406adcf1e1463796a79832795
+>> prerequisite-patch-id: 82388f762700dbcf39fdc43e6ba56c1feb55733a
+>> prerequisite-patch-id: a4ad2fb2c7f8659c6d9bdcd9718a7ee69f124838
+>>
+>> Best regards,
+>> -- 
+>> Daniel Scally <dan.scally@ideasonboard.com>
+>>
+> 
 
