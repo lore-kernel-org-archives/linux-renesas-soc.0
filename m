@@ -1,163 +1,127 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=192.198.163.8
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1793793332;
-	b=shFvafoJT8s9ahpCS6oCZ2OpEEAPZCkFS8YxC/MF1E1jhiGMa62nrHSt5TsxJn2F+veq
-	 GB/o/zZAANqS9iZjSNX1DkSWlBcVyIsXyEoJkZitVsxzQwhHZCE/tYRRULY+VRiB4UzDp
-	 QynehSWirzipfilcOBhxBuFHn9517U/755Ao4xhGrgQA1YkX1B42qHvCYN9v1XT40EX7U
-	 FN/SvVZFZegx+/wGye/NzU6yxAQKsnugNSojbzqzRa6Z4yVv6Bt+HOxajkF5H7N5lue8t
-	 SetRO0mm5YqnlvKQhLfv4OJtm/zzFdzeiHnA9lBzjYJMonaDiN3KLanE9bfvgXmmcSA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793793332;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Received:
-	 Received:Received:Received:Message-ID:Date:User-Agent:Subject:To:CC:
-	 References:Content-Language:From:Organization:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-	bh=Au7xWnr11aLp+AqFJCgd1SVfAHLSdBG2su+FXLK3Pr8=;
-	b=oXiAUn4EfBLrToF4zq7nk8uSoFl68z8jkMTgMmoB9+NWXUcVXzbb2YGAlC2sxhzpLe24
-	 O+gzXe8TEl2DVF+527KofxZOuKlELcsXHYlOHyfcr7WtkL1VHfOLgbsJwUzlW6Me2NuJG
-	 f2RqQiMApxT35Fd8/ebjKejOsCSnGLpcZxp3MkX2QamkzxPan78NwDf9eJEe5bN4akHRU
-	 noV/wF7IFzRSX7MWftZvXo4eavwgykBbs2n151S6u3b7MvPxfj+oHwdL9VQR9k85zM96b
-	 GjMkqfSI+yPyWwY4jc4lJ4gUdWJ0+XKupTSFQeD2r8Ybz2kX7UXCCeJBixnQMDZlsFw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="OQka8r/m";
-	arc=fail smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.154
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793794126;
+	b=VSbxvBn4bzbOdrUy6GS7XBGChJfirAj0+OnH5s9OkBoAauu+8hZWYZx/OTLouPS86TeT
+	 lof+i7v38CUfNlp1ehb/M8BXAG3KM8N3XNqlDgIKoSHzhBBri/3//TruL9p0wFkCQ3dfT
+	 1Zr8cGkYGQOjbx+DlLC1gD90voouMPk0bs5sQStfsVJfSOe/0etZhyPfzgYfXIGmBF3Ig
+	 7k9uhuuSHSzPsTSQd9l5nZGPSDYmvoTCZCs1j+o8w0WFSm5JVSICoQIQ22wxRXsPNxnvc
+	 jZSFLtYsUZCGGsFDIglhlQn9SxMeiF/mJNR9dlqgUxfhhTl5ChD8E9a6SNEb5HG75Vw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793794126;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=Ha95tUVFvbef8Jnm/EtOJv0oztJbiVeJR2PUT0pSnG0=;
+	b=OmGBzA5eM5t8e9TLR2yeVr5TDdAYZpJxJhz/fwkvOWG7zyC8d34zCrk/710uMdmKoOGe
+	 2NJmnjw0tezp1/eCckHdHpYaZZwYP4cRta/8Zk7fqvIjarMur6gvQYQKu7oEtCMvTRg4l
+	 VEc8WqewToT1Pwo3FIwKfANNp3LktB7Ja3Le7P0P7lmrQvAGgEuiCfzb6E5ewSiu1cnhq
+	 tJVSC5ArzQGQvMAQsj8o0XiI682tTJjnl0RTmvFSY5TmZLJsHuxVIq56CmEoP7FvcN8hn
+	 sYBUa71xTxewJtExYxKY/CX1rZeJT0sQyu6mwfQfABE7sszq8yndRgqU5ymi5VjHrwg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=ragnatech.se;
+	spf=pass smtp.mailfrom=ragnatech.se;
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b="nrgc2LH/";
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=iC6+m3yf;
+	arc=none smtp.remote-ip=202.12.124.154
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A716B606A326;
-	Wed,  4 Nov 2026 11:55:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A716B606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE976606A31B
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 12:08:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BE976606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OQka8r/m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793793330; x=1825329330;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qNcO95K7m48XYrCCkTNhVdbScPZbElA3kmgKqcWC5Yg=;
-  b=OQka8r/mb1lqQTkDig2QrOEV6jSd0uvGwkYlotwOJ09rUahzxu3bb+45
-   6mvwi4YfgHliR9yYt9UvDczrBze8e9ilTVOK+XoA8wC6QaMivb4TBZPtC
-   rf6jjKkzbYjg2zb8QjiqnRMGesvUa1rfdwuMZcXvrCq4WcBWCwnSZko8i
-   GRRbhZ8CwkxaamBdZ+oWcUqJPJvObelv+V9NZ2T9YFhB4n8IDk/2MBgPC
-   3shjSWqua+cMGI2AxJyiWl9MiIylLe3dc2FwEPXyVCrtolmjsBBiYab3s
-   mJFIMaQkgJmIojK4uydDedD2hdgf6gBQtWfoF/KYW4F/GSHuOMbq1giZ4
-   A==;
-X-CSE-ConnectionGUID: qkGvk3yNS+eDeyGyhSpFBQ==
-X-CSE-MsgGUID: RvEUuUnzTfO72Oi9PNJo3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2430829"
-X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="2430829"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 03:55:29 -0800
-X-CSE-ConnectionGUID: LnEY4PyeTmCuZIVgCCp0Ow==
-X-CSE-MsgGUID: wNdDFEFARkm6/BB7VPqzuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="6720350"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 03:55:28 -0800
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Wed, 4 Nov 2026 03:55:26 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56 via Frontend Transport; Wed, 4 Nov 2026 03:55:26 -0800
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.43) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Wed, 4 Nov 2026 03:55:26 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=blfvMAtPKVoCoqWWJzsij0vKL43zeAlbgpF+azoj01QOGGAjyn/NyvQZOeL3j4+YBmaxheqMrg5718Q8b5PX41OeargNzT+5ew3lMaat+KyGYXCUDkXWz5VEuh9kR2D2MbCRH3XZKLhgyqghqXDQJ0gQ/d/U50xpjpuud1I0jHeEjSOCZ7QO8cwm37JEOuZxohLI1rRb6eMMzWJB94ykHsAOYKW3clnHK2GJpvHPG9ZbaXE5F34Kx3Ng2B4CpOqtzFuux2w14p8J6h0o55FeOnODp0uYkjirG/sw4XA6NQCLbFF4BBd+j2CGWY3OmWsmKi5k5mciiBaWqHycLxwdag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Au7xWnr11aLp+AqFJCgd1SVfAHLSdBG2su+FXLK3Pr8=;
- b=dQ8eUsYbwBEfHLNwi0sc8ZzRMZDLMWnl2zNUJwPkPPEwLBgDygfOvGWY4XCLb1Gbk+y9m5k/dH3040KOc9n3STznDX64whQW4xIuQg5RpniO54v7915N69T0LVOmZsJLIow3jv4V2NddoWB2OKpC+lLELNClFs7Qgmww3RTTydZmao33CDQUdstsjwRjz8+IlmbaPdj5UrsAA98EHGckszq98dq5RTx+A4Iyuftnkpkda8Rd/weBBm4xfsx8+YulQLmPVPJeQFubLyPtUWBhsijxkPxVX/aXPsYvzPzKC/fM6WkvZ62FsVXCO6f9+Ir+lhFgMUBhqmjjB9G7GWFDug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by CO1PR11MB5057.namprd11.prod.outlook.com (2603:10b6:303:6c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Wed, 4 Nov 2026
- 11:55:24 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.21.0569.011; Wed, 4 Nov 2026
- 11:55:23 +0000
-Message-ID: <027e79aa-1634-4389-a04d-25d4b5f229f7@intel.com>
-Date: Wed, 4 Nov 2026 13:55:13 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mmc: use dmaengine_desc_set_callback()
-To: <Frank.Li@oss.nxp.com>, Aubin Constans <aubin.constans@microchip.com>,
-	"Ulf Hansson" <ulfh@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, "Broadcom
- internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
-	"Jaehoon Chung" <jh80.chung@samsung.com>, Shawn Lin
-	<shawn.lin@rock-chips.com>, "Frank Li" <Frank.Li@nxp.com>, Sascha Hauer
-	<s.hauer@pengutronix.de>, "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, "Aaro Koskinen" <aaro.koskinen@iki.fi>,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam
-	<mani@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Kunihiko
- Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu
-	<mhiramat@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson
-	<lars.persson@axis.com>, John Garry <john.garry@linux.dev>, Hemanth Selam
-	<hemanth.selam@gmail.com>, Pengpeng Hou <pengpeng@iscas.ac.cn>, Rosen Penev
-	<rosenp@gmail.com>, Fan Wu <fanwu01@zju.edu.cn>, Marco Crivellari
-	<marco.crivellari@suse.com>, Pan Chuang <panchuang@vivo.com>, Zhan Xusheng
-	<zhanxusheng1024@gmail.com>, Rakuram Eswaran <rakuram.e96@gmail.com>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, "Ethan
- Nelson-Moore" <enelsonmoore@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>, "open list:MULTIMEDIA CARD (MMC), SECURE
- DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>, "moderated
- list:ARM/Microchip (AT91) SoC support"
-	<linux-arm-kernel@lists.infradead.org>, open list
-	<linux-kernel@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
- ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, "open
- list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..."
-	<imx@lists.linux.dev>, "open list:OMAP MMC SUPPORT"
-	<linux-omap@vger.kernel.org>, "moderated list:ARM/ACTIONS SEMI ARCHITECTURE"
-	<linux-actions@lists.infradead.org>, "open list:TMIO/SDHI MMC DRIVER"
-	<linux-renesas-soc@vger.kernel.org>, "open list:ARM/ARTPEC MACHINE SUPPORT"
-	<linux-arm-kernel@axis.com>
-CC: <vkoul@kernel.org>
-References: <20261102172126.3890568-1-Frank.Li@oss.nxp.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <20261102172126.3890568-1-Frank.Li@oss.nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB8PR06CA0047.eurprd06.prod.outlook.com
- (2603:10a6:10:120::21) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=nrgc2LH/;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=iC6+m3yf
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 1A61A7A0176
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 07:08:45 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 04 Nov 2026 07:08:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1793794123;
+	 x=1793880523; bh=Ha95tUVFvbef8Jnm/EtOJv0oztJbiVeJR2PUT0pSnG0=; b=
+	nrgc2LH/rQJsCgvNAfVOYZmoUmpMb9J7BQ7InLlrz1Si+6xNHp7IERX47mmjlLAE
+	9FfpzBeD73OrwMNR0zfL7oA265j6/iMk+ptaehDTK8ouDgskNmG+2EkunjH/axOX
+	qaD5GhplQ8F2MAqzPqM7r8ycdIcEwX5LKp2UwEih8AcXdP4AWqgdwRiPztgAniqU
+	l4m3BonTqytxRltRAONTl6BejxAJ8tZO8yu9ILr6fKZ+xBP1D3zKx5FK0wQ6Pkgm
+	kp4RvIujKIVJc8omn6LFBjlTpuJfuAuBqb52Dg/dYX2zfMGM4UdsigpOgtlP059T
+	Fk81MUCnA00iJvEK9M4A2g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1793794123; x=
+	1793880523; bh=Ha95tUVFvbef8Jnm/EtOJv0oztJbiVeJR2PUT0pSnG0=; b=i
+	C6+m3yfjbGEE/k2XkI0ccU+F3Fge9LbXJooUVCDbV5sEP/Zld7R1o3oD65+zZRTT
+	19Fk24F9Ix36Dd2nJhMFo5GtqiJJBDVaJEtqNgMEXx5jdrMpsRiK8N53EPE8NxL2
+	T/+Q6Dw/YP2OVCKu0Osenh25i0b+Enrfv2jJHSz0oepu7eayRQjn3KUSVqNMks2n
+	gsMUkgIgxC5j5uMHpt0OEglw5w/Ywls3LDdI3mOwS1i5Mx4V7p9bAOLy9blgKpvu
+	2TRYjNYR934snzO4vk5GumsGfoLxii0m7TjefAQMYDeOWwmN3m3UunVW2Sxdv4/J
+	RZiyC526+EYSahZDrvaIw==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793794123; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm2:rsa-sha256:OhiR36zrRkER2q/cpZTszsLvPOlXvsYTtBpgB+RdmOdpV1m
+	aXc87upRWkxCwqoiblETODZVO+uJheu+kS771CUBYiBjAqp6BsOGeR4aeIkoc7km
+	ERmoflimWVkPhrihfR2W1IBE1EGn3GMMGh4rCwBbzSkBAZqtvQIe6P/A2gOP/dJz
+	u6ZfzCf21joJ8uEQn9STdg4IoBcrn91BmhcmhunWUe8vGseov4c/wEDGk9JCNGdM
+	9hdp2YYoI4Y/W0wZntQbeqQZB+hZ4NJgFaN8CQ88ctRcZZgjqcpBtKpEzdqF4nho
+	XFTYWp9gLbXBrC/VTlTXB5N/h2tRNB5vGZHxnHQ==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+	repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+	action=mi-m=1; hc=13;
+	hn=cc,content-disposition,content-transfer-encoding,
+	content-type,date,feedback-id,from,in-reply-to,message-id,
+	mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:iq7+eC97MvUIif0lc+C0hsEZz8rVt1oD+bG8YPcKuUY=:2HP85t6sUSrQXl9dARzlF2lfNnykW6yC3ekysC6UnyU=;
+X-ME-Sender: <xms:SyDravvRE33Lo8IsuMIL8CFIK7L_1R23bmUIz1xlLRAr-dvXsPQKUg>
+    <xme:SyDrasW8YESNolcPzjzmfaDHr2nGTGOpwdslgGsfERsWHRxQjC6mo1bb_YTjr07RO
+    ybjLrCeZIou7XDDGJ7iBKgjh3J34VmZGZsgYLKcg3teW1BpQLcBVGY>
+X-ME-Received: <xmr:SyDravx4MLJW4Vo53dSLMXrlWt1U2TD8VCrrEDWXFlTyG2raGX4r5Md1xQYNMgVVN0YY4ozyxeCyeIMg5RjyNtFvONnf7w0>
+X-ME-Proxy-Cause: dmFkZTFWBTx2Gy3fgW2vFvqZLUtP68yO2YegaBBKFyM+kvOL1Br8KeTM0G7Qtaectxl2+/
+    kI10Osb9hxILD901OotKT/HDXw8oVIf7wdN1ZnQa+yb3BKTx06WtpATuifZYXoXGUou2Ij
+    dV6OqEQnYhplXaN+1DYFn/nvpdTZG4KAN3npVyEd+KrBQ7t2IKDfAnm51kfpHYR/6oWkMf
+    99XpxRSP7VV0G7d9nVJgic8Ux9sWwxSTUAObRNmMgV5z7/LJRvxtzxlsdeoTGc9cWCiFj1
+    iuFxY7+8iUIx+FZmvDHrJDoRR88eqz6YGHEsbnxHyn+GXkjD9KxeTiGyezU5AShEBLRqX/
+    8tmWVSS8OQKn8dOAcSTxBZH8wgIMClax4aSh+ITOwt51tkYsPD8tEpJW9BcQLxrvs9PWjg
+    ueoosDc1/IeUtL8z+4f79Vc4l5y8kI137AWqXGBsA0lZyQDYTSprU28FNDNevsnHCjM3s9
+    wSd1ajHN2wy9wxcA9/0BHfeq0uNAvhbM5lnP7yyV8FVm0qopq25ebLblfTiAzZj8eOkclK
+    pvwhpmO/vmqVuyFxA/qx2QsgrNfjLSPVcdoNrhDSHW/xi/Iqj2w7NCR6ZyMZxgrLZh1oJ5
+    Te2esut/6Akjb36ogEB65IWbH7XV3Edl3TGQLfJllYJ8APuIJ/w/gNqrIf9A
+X-ME-Proxy: <xmx:SyDrajFW1zhJ8aHtLNOITIwYI7Cm2cG48TC7yRhjKfVtnn4UK84I-g>
+    <xmx:SyDrakvynGbd47RJnroA1RWhov71XvMph0vc05aNOK0PD2S58-fAUQ>
+    <xmx:SyDrajDJVExbXNegCByGeffnJ4j5Bx5qzOnHYOcqdszsX0gU18XjXQ>
+    <xmx:SyDravBfpQvzHl8JpyI-lYI-qJbr7M9wyt59nCExslv6t2eFfoMgMw>
+    <xmx:SyDraixuYMMP7YTXznjAlOCsDZHkZ67HFNi8rjYtX2GG-1_6tFOLRwVL>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Nov 2026 07:08:42 -0500 (EST)
+Date: Wed, 4 Nov 2026 13:08:40 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Li Ximo <lixicaicai@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Wang Haoran <haoranwangsec@gmail.com>
+Subject: Re: [PATCH v2] thermal/drivers/rcar_thermal: fail probe when no
+ sensors are probed
+Message-ID: <20261104120840.GJ1959885@ragnatech.se>
+References: <20261103084604.700540-1-lixicaicai@gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -167,116 +131,77 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|CO1PR11MB5057:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7390fd0-1b71-4830-4583-08df3a6a8222
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|23010399003|1800799024|366016|921020|11063799006|56012099006|261021123027099003|261021121427099003|261009223027099003|261102123227099003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: yDrvOnAvuFnHYkcIoTrLWxx6+Z1KIkDOGVNHX/Cb8DQY7RyLw5Gf2qlD02UEzE24MZVBCx3d7tJf4tyCI7td4Yex5mwaksuLGHkZ+G9emRsyLEWlFYmTD417/GCT8AjGdKjCpbai+eZGMAw8iqGGyiwcI0EJeticmHPLV1Jz3SKTto+QpJ6YpoSa4P1RXiQtF4wLGwUols/eh8bni1nv5N7e7r8oKfMTFBk92Iz8PVAaVlaEgj+XApveRLBUkMs5rM3TwfGyqI0mXnYQmFkyj/nDjQX5aiIvvXfxeCIL+XAJ3luH5LqlJzt/WyeNlILSZRakyhP7PmbbvW3lIZveyPfUzOT0fvOfS6ppz+CzmOllp5RiNyRWGkoHq4IW9RXWWvdF8TkFXAIzaeBMK5ayomUadiDlJ1a9XxaWOvOiNKgp8PUftyKlgWEZQ8eCaBZeCWLXHGNAo3MFpljh2tFlDWVYTv4f4npfSLIjhk+BVLd/DwAjH5iskQI1UfNXnAkqyZEQqo041Svb5ebWq8+NmSDrII9CjF6lAYSe0W4bqpJB2PYUJ6Na8VL/rLjCsP1qt1k/wFYa8osh8Cj+FJG3zIQZQpsRNQ2nUO9A7hcIL3e4vhYs6cFrXS4rHsHzCzgqZ8HyPQsUCYlU8rIir6DScyIJHLqThw5bWYGyXXAeuFFzjhpuBjYMLXRNmqEX/HjtrQbx3XutBTth2dKRjLep2w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(23010399003)(1800799024)(366016)(921020)(11063799006)(56012099006)(261021123027099003)(261021121427099003)(261009223027099003)(261102123227099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SEJEcFN5Mm1lUU9kT0t0ampiM2x6OURTR2VMckc5UytwdXh6elFsQW9EdlAw?=
- =?utf-8?B?d2RBZ0V2SDc5b2NHOEhZWVVJNzR2V1dOcGl4RGY1bWg2TklaTk9ENHBTcjJ6?=
- =?utf-8?B?a3drZzNCd0dYZUlhZ3JuNElSc0MxYVpBeHV5VDJuNXZJMkZ6cSsrNElVYjdH?=
- =?utf-8?B?VzlMemk3Rm8xQ3c0cXZ3TkM5STdST1lqNG1lUFhDcU9Mb3RTeEQxYXI4ckxC?=
- =?utf-8?B?Y2NtYkNpSmh1bm1mWEdQSlowcVYrRkFqRi9TN2xXNitST1ViN0NCK21xSGtk?=
- =?utf-8?B?bDdMVWY0S0lYdnlwdGRaSnN5SEx6ZVNVWDVBZG1NT3FCaW9Ta2hYNFpqVEJj?=
- =?utf-8?B?dnVYRHFrcmcvK2lMS0s5ODZXY1FGWnUrNnVoVDhxdkdvSW1PaVByT1RFUUN6?=
- =?utf-8?B?MlNMeFNlaVdPWncrYWQrbENmclEwRTRXUmJ3SzVLaTY4V0kyUlNRWTRiOEdI?=
- =?utf-8?B?dW54RFJMaFc0eEJRS21Qeko0b2lzOC9BbWYvcXA4dXBENVNMNnF2NFQ3bVlQ?=
- =?utf-8?B?NW1VV1lGZkhFWC9vcjdqTWhIU05tWTlMSVc1MHZoNTI4L3hWSjlBS2xCK0xY?=
- =?utf-8?B?enlHeTlSb0xlRXBYMytMcjJicjBoYXk3ZWczUzNRTjBtc1V1UlpHMDkvbUZB?=
- =?utf-8?B?c1FUTmlHTnI5ZkJQTlJKTTllQzRteFVibk42blRHYW00UnlhWGZIcVg3ZUpD?=
- =?utf-8?B?Z0tjRHV6ZjVJT2tqbndSV3JmMlhnOGgvRTQzV040aEY5SzAwbXFWcmVPZW5Q?=
- =?utf-8?B?UWw2WVJRd0NBVkpqSjVWdkNERFN1cUgrQ1d3V25vQk44VHlraG16K3JKQ244?=
- =?utf-8?B?S3JiZGZVRzIvQUNiZS9YeXpKSlBKUUR5WFdXanVLNjdkNngybmt0SmtxZVJs?=
- =?utf-8?B?RWdMNGpzbGZYejZaYlltM2Q0bkdzTnJLR1Z3SDJDQTRkNlZ1YlcyWWdYRGI5?=
- =?utf-8?B?VTh3ZDZmaUF5T3RoRmJSR3NOV3JhbU1GY1VveGRET1U5dFRIU21heVlGOFZ4?=
- =?utf-8?B?WXdBVnZ1dkFWbnl2ZXhlR0x6WjNyeWpYT2l3dkdiem11WkUvd0NLVUsydnd3?=
- =?utf-8?B?WUo5Mk5iRlN0RXdBcTU5REhkMnNVVjl6ZXhpOWd2TlBMd2w1WGhpUS9vUnph?=
- =?utf-8?B?cFVMSkNKQUVocEZUa1BXVUg0cURzcDJRUk1pUWRaUndjaFljaUd5a2oxRGxD?=
- =?utf-8?B?SnAzWDMvVXcvTmYzMUFVM0ozY29NQXQ0c3phZlBjZHVFMXNFdnAwd3ViRndO?=
- =?utf-8?B?SkJPK3BVQWlrU0RuNjQ2ZUVXdC95aThNNitKMDZrcWxLUUIreGlXZjBsaEFX?=
- =?utf-8?B?dUlxaW9FMHF1MHRQTUtuOExVVk5xanhHM2g5U2diVkMvaDFBdDVVQ0FQSE5X?=
- =?utf-8?B?WVhieHhlaEcvZmhKUWZoVGZ3RjkzSndRbmFwSVBHTGlQK3NhUXBhQi9Va0k5?=
- =?utf-8?B?cFhrMWFCTFBvbWFsTHI4elQxTUtyQk9pTlhxM1F6SlpwMWRQVkgvQXhuNGdo?=
- =?utf-8?B?YnVEQzl3cFZIaWc1SUdSZWFuWTZ5YWs4dFBaYjNnTkVZZm9yNGQ1ZWpoNmhL?=
- =?utf-8?B?aFdGTkpsQnBTazhHRUxSWnlNWTBhQVhDTVU1cEl6UkwxODFWYVBGQnZnTEtY?=
- =?utf-8?B?M3VKMWpxK0xVTmt2Z3N1RnVuR2xxclVaOXdTVFhiSEVOaVlZRG9oRVI0bXVM?=
- =?utf-8?B?YThOM0tPczBDa1lZalNBZTBvUHhOSTI2Q0FXY3ZleWtBaU1qL2d4dFNhVFBL?=
- =?utf-8?B?TDdyd1pjcHE0N2JpTDh0L1hwOGVtalRVSXZTZnpHN3BkMUkxMGVFaGs4dFJJ?=
- =?utf-8?B?R29IWDlpSzJZc0MwWldOR1VicytoOFJpV2RrOHZXRmEyYkxKekVSNjNPbTQ4?=
- =?utf-8?B?VEx5QUtSUmdHeG9wVy8xRHRZNVBXb2Y1ajZvZmMvNjYrVHB5N0o2L2dmcXox?=
- =?utf-8?B?ZG5HT2ZDczZrRHM5WldLY3RBbzRXZ1hOY3Zhd1N5b3UyalJybHdiRlpwRFpX?=
- =?utf-8?B?MWtlYUZlQVM0aU9ITnF5TnhWWWJzNWFJbnAzVTg1ekUzSTBma2djRVpjQm5F?=
- =?utf-8?B?VVJOSnR6Q0l0TXJUM3VwdEJvcWtBcUNUK1BLUHF1a2pjUERyNHdRN3NzRUNL?=
- =?utf-8?B?RnFnbmh5QUlaQWV2dU81N1hoL20vNk5paXlYVVJzMGdIemtFcnpKTVBuMDVI?=
- =?utf-8?B?VGxFNlozNy9UZ1RLZzJScDA2MXUrNDNpbm1FL1RFRldmK0U0MUc0Vm13dWNN?=
- =?utf-8?B?SGxKS1R3Z1FLNE1FSUlkZEo2V2xKZXdraGJJK1RPbWlBcnNCM3JWK3Z1eFRy?=
- =?utf-8?B?YzRrbUNzS28xMGI3c05hb3RuTk5kVlJaVXlzUGExMlpubEtnVmw1QT09?=
-X-Exchange-RoutingPolicyChecked: so4tITgPhduRC5CgqEDsJOhLBWLVDvGZpLhm+PUs5+WO5lichjAcZ8z6EIrPHGXdGXIcMFCq1cPECuMR+NEzglQMqGOUtpTxrf0+uhPa1TW6Fsiq+GyUNB1RiSLWE+9evHpib4abVAdtKMrmLO5LZbGuWgxM3T/K5ascz3pT4PfP2i76v/rpZifRlIz3FELV8Us8xP5rzoujeR4K993wKVG4FQ/YYDRfxgXHyoT0Nz+UMJNCt1nLhaD1IjakMnBLatXrr8An8K1ksjwVcPEVW5YK4WxhJWqJlwn2zRKGw3xy1/sPmkLfIrcsJ+0Oblb7OkM5u2MQXcGQl2aOZS1ygg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7390fd0-1b71-4830-4583-08df3a6a8222
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:55:23.7104
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0tUVpSj7X6VRJrUcHY1GGoO+rSQQS5S2VndXcE0zS6c+YFV0nKyS0OaLxim+eMDovuW1F2/QUVup/4NhhiApvQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5057
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261103084604.700540-1-lixicaicai@gmail.com>
 
-On 02/11/2026 19:21, Frank.Li@oss.nxp.com wrote:
-> From: Frank Li <Frank.Li@nxp.com>
+Hi Li,
+
+Thanks for your work.
+
+On 2026-11-03 16:46:04 +0800, Li Ximo wrote:
+> From: Wang Haoran <haoranwangsec@gmail.com>
 > 
-> Replace open-coded assignments to callback and callback_param fields
-> of struct dma_async_tx_descriptor with calls to the
-> dmaengine_desc_set_callback() helper across MMC host drivers.
+> rcar_thermal_probe() returns success even when zero sensors were probed
+> (the per-sensor loop simply falls through with i == 0), leaving
+> common->head empty. rcar_thermal_suspend()/rcar_thermal_resume() then
+> call list_first_entry(&common->head, ...) unconditionally, and
+> list_first_entry() on an empty list does not return NULL: it returns
+> container_of() of the list head, i.e. a wild pointer into
+> struct rcar_thermal_common, which is dereferenced at
+> priv->chip->needs_suspend_resume and in the MMIO accesses that follow.
+> A malformed DT node with no MEM resource triggers this at every
+> suspend/resume cycle.
 > 
-> No functional change intended. Prepare make to struct
-> dma_async_tx_descriptor private to the DMA engine.
+> As suggested by Niklas Söderlund, fix this at the root instead of
+> tolerating an empty list in the PM callbacks: fail probe with -ENODEV
+> when no sensor was probed, since a successfully bound driver with zero
+> sensors is meaningless. The error path through rcar_thermal_remove()
+> already tolerates the empty list (it iterates with
+> rcar_thermal_for_each_priv()).
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> This issue was found by static analysis; we do not have R-Car hardware,
+> so this is compile-tested only.
+> 
+> Reported-by: Wang Haoran <haoranwangsec@gmail.com>
+> Reported-by: Li Ximo <lixicaicai@gmail.com>
+> Signed-off-by: Wang Haoran <haoranwangsec@gmail.com>
 > ---
->  drivers/mmc/host/atmel-mci.c             | 3 +--
->  drivers/mmc/host/bcm2835.c               | 3 +--
->  drivers/mmc/host/dw_mmc.c                | 3 +--
->  drivers/mmc/host/moxart-mmc.c            | 3 +--
->  drivers/mmc/host/mxcmmc.c                | 3 +--
->  drivers/mmc/host/mxs-mmc.c               | 3 +--
->  drivers/mmc/host/omap.c                  | 3 +--
->  drivers/mmc/host/omap_hsmmc.c            | 3 +--
->  drivers/mmc/host/owl-mmc.c               | 3 +--
->  drivers/mmc/host/pxamci.c                | 3 +--
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 6 ++----
->  drivers/mmc/host/sdhci.c                 | 3 +--
->  drivers/mmc/host/sh_mmcif.c              | 6 ++----
->  drivers/mmc/host/uniphier-sd.c           | 3 +--
->  drivers/mmc/host/usdhi6rol0.c            | 3 +--
->  15 files changed, 17 insertions(+), 34 deletions(-)
+> v1: https://lore.kernel.org/r/20261026115018.3227372-1-lixicaicai@gmail.com
+> v2: completely rework the fix per Niklas Söderlund's review: fail probe
+> with -ENODEV when no sensors are probed instead of guarding
+> suspend/resume.
 > 
-
-[ ... ]
-
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index efb4c7742fe21..18aca84834fb6 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1298,8 +1298,7 @@ static int sdhci_external_dma_setup(struct sdhci_host *host,
->  	if (!desc)
->  		return -EINVAL;
+>  drivers/thermal/renesas/rcar_thermal.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/thermal/renesas/rcar_thermal.c b/drivers/thermal/renesas/rcar_thermal.c
+> index 9a9038671..6a1e977d8 100644
+> --- a/drivers/thermal/renesas/rcar_thermal.c
+> +++ b/drivers/thermal/renesas/rcar_thermal.c
+> @@ -514,6 +514,12 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+>  			enr_bits |= 3 << (i * 8);
+>  	}
 >  
-> -	desc->callback = NULL;
-> -	desc->callback_param = NULL;
-> +	dmaengine_desc_set_callback(desc, NULL, NULL, NULL);
+> +	if (!i) {
+
+While this works I think it's fragile as it depends on the loop variable 
+of the last loop. If the loop is changed, or a new one added, this check 
+can break. Why not make it robust and check if any sensors where added 
+to the list containing sensors (common->head)?
+
+> +		dev_err(dev, "no thermal sensor probed\n");
+> +		ret = -ENODEV;
+> +		goto error_unregister;
+> +	}
+> +
+>  	if (common->base && enr_bits)
+>  		rcar_thermal_common_write(common, ENR, enr_bits);
 >  
->  	cookie = dmaengine_submit(desc);
->  	if (dma_submit_error(cookie))
+> -- 
+> 2.30.2
 
-For sdhci:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-
+-- 
+Kind Regards,
+Niklas Söderlund
