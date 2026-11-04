@@ -1,87 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793805316;
-	b=40oDfKZtP9XIXB3aeOEAW3gLydxu1/jku6IOtbGCVHPmqRv3MeV7UlN5dplLu1FyFUkU
-	 7t1uAkaqXYCLosA0C7J+VqTPLy9J0+nq3tssYjurkOa8elMVitALM1n7VjsDHRyV9x0NN
-	 58sI2bTN7FF7IuQTFI2sueyokAvDS0hNRKRxZxFFxySQY59R/G8Fq6bH/OIJNbQXs4GxG
-	 qrUg1npZ220prKSchPsWsHZkKIenyte6fv9Pf5P7uViGLcDJ/J5BCWqEmngV3eqiDXAqS
-	 93Lhtbyv+e4Qt6HbBYt56+g7IME5QK0p02lNqsTxmn1G9L1T1+PPQS4XEBzzpKFidtA==
+	t=1793805317;
+	b=jWDz+5rP7sBfZUqXYSzrT0d8mr/gC7zPuKeGokpdGc7Hk0IwOQO0np+BN6XH9AWi4xsF
+	 TzOONSV1vXnUImRel0/WTYw0kciiP2NzzhUYVRkz565nRGbkiHQJWZKbLjMQeTTf+pTY6
+	 um5H/6TTwlFFIbl1Vu41NRGJy1nmcR9g7VRdTUv8vwcFmfFzYr2j64mO1G4dQERx8X2s/
+	 9tMojBSOb45bf0iQA4zMKsmFLAQiTaW7gZGftaLXWaFx8NOAhFLQplNIJPpBIM+CxDWCE
+	 /0tN6QtvU0Apxt1V3j579a1wzksH/xj2R2yhW0AvzhIwQNVhLVmi9PtZyVOaezranEA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793805316;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793805317;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Subject:Date:
-	 Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-B4-Tracking:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=DvzKNWBCSVLjdhk3OCIyEzZaa47Q2w26gD0E6/7Rlz0=;
-	b=DFbvraE3vImsowrR8BszmWjdb8L0W6sIKpZHY5SgZLs62qriOMLEmPP5yRHickYgdtRE
-	 tKXibIqJK+5wHgfOjfisbtaMrVM9Nt7Dl4K/rPJwcq7lOqx41q+zlOEJPd4P2IJmRnEO0
-	 jOYzRnBkitg4lCqa22RedbnA2/OB7my22L2sxR//vqBZZ1LKig/hKI4DXw0kcy1r6n3mk
-	 4WDBFvd/xOXKCCYwGxdu5YDp7vYW0fzZJ6z0tsP2IYjrksGvj/Q7VDC/9cCxc0oa5boBR
-	 caxKLHKqMvAF76X0ZVKCkZfzX3dCorqZB+0ptf4DMF91Hd+ajhQUT6+4FzsXJ+LOBgg==
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
+	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=DFblrsKj7wHc7kkkI+I8FwISQ2EQY25liHLiJP/E5C4=;
+	b=1wjwbhwrQ+hDdK28D9PMGqUGgXRItYPQZR2eF7c+X2K2wn3eJkn7WvjbvlOWNU9+h9hT
+	 uv4/0RFn9VWVVaXQxVqzfUvADvlki+DSnDJ0WlANQburh2ZOQ0xdZsTDboBtvan/Mb+sr
+	 uvonI901d1PMrRpuZfUskx8uNS32RFL581ScpAY9yp5wl1lgGFeVPP+tHteRrEf8jrmb4
+	 wqibcPyLQ5zpOCpy39cyYajTTTAOuSVlvlZNxS8PzMsybfF9KzJRtOsZUxTF9FE3ZFvkK
+	 59WsJwqNpHkBoNa76HtuUW6BdoKR7ug9Zr6qQiuiqqrjPSr3NTs2EmC/5q+0dyRTSqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Atw0LqGM;
-	arc=none smtp.remote-ip=209.85.221.46
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tQfuAzn2;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F16D606A32E
-	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 15:15:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6F16D606A32E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4491C606A32E
+	for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Nov 2026 15:15:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4491C606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Atw0LqGM
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-490a0e72588so272667f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 07:15:16 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tQfuAzn2
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48e10a70540so519593f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Nov 2026 07:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793805315; x=1794410115; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=DvzKNWBCSVLjdhk3OCIyEzZaa47Q2w26gD0E6/7Rlz0=;
-        b=Atw0LqGMB/2/XTkOeKqUeHo62urG3bqpCUaO1iiTZqhwAZKM0tCVFLLTFdcigPn3Ni
-         hREtpXhXKweCPF3emkM7dRNbA0KypJrTYOOwV81hV63Ej+9uK4IQHVBfSt44WgMRocKD
-         YEA/4s4cVoebzCQGw0cy0gSDFGKx8ye5WUKui3y+tXrNTWyG8BRYF2rA9kHRhTQe3HGH
-         GQObvpisw8rOBuiUL2l3NNhIgICacb+NbbIDUQzx69RO+EHptQLd2ZLvw7EbMT7Iya0U
-         QRqf2mlLif1JqVac3SptEfVasbVwAqdIAuvXXIuYxxzveBpN1/Bl++SF3IGZWtYoNR+Q
-         I0Dw==
+        d=gmail.com; s=20260707; t=1793805316; x=1794410116; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=DFblrsKj7wHc7kkkI+I8FwISQ2EQY25liHLiJP/E5C4=;
+        b=tQfuAzn2MJXlUP1IwBT/Ie+7FBsFWL2r1J6cTk0T1/Ywv0mZDjArS1W/RjnlRbGhwk
+         cKjLZ1M1rzvkeULmCjJ66msIxDPdIcedzILWSgPDMzRzmqEF50xbSFy5qjy205UctCab
+         K/2LGlcYLyR45yZTgMzItubACYaKtx42THcgR1s+ewkEbfaKA1U8Ub96nUua3C/C1k+d
+         8UZDqRzjruwXJmZySPrCP3mKUFDeb/AqCE79p4OzZXbD40HeUSzS8UmCxftlOlQ0jAt7
+         KVQo0Wi/t5rdWDQ6rDa6vZ4TBU7FtZa41Jc7Wr4HMwGhhQ45fkblta4MoU2XBsE0Dath
+         7+bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793805315; x=1794410115;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=DvzKNWBCSVLjdhk3OCIyEzZaa47Q2w26gD0E6/7Rlz0=;
-        b=DU/rneLZMjFT61lFXf0e3KY15HBFZD4oX5u1HmV29kHH9ceRl6mNjs935XV1PZF3wJ
-         LZQZYeS6VxUzpsLY4KcoALVqM8Oi1zDN6YOlxd5Wfcz8p/MxVu3PRoOHLZ5THCkaJHXq
-         Sn9OJ5hIBt9QDDoiGDlFNzVRzbjEVp5y4yEmqLVNlutQgnBVpbDyVMx0/w3zuLxCJtiz
-         sRe8ejyBP4x/G6+stAJdZp05PWfo6fEdxWwdXOF9JG3egKXVNFOzbu9P+KSwdcEi5Q1R
-         oeG8j79TUXeKcUAMQxkkHzwBgZaEsbCXV93Ey0smy4y5YluN/3r5OuMWu83qDRiCcXnW
-         GAbA==
-X-Gm-Message-State: APuU4Z/mdlNLzmCupeDRfrbvFl7zAjqhxhCwm8CJkgLtkumuo5xyT3U1
-	bVmDCmTq9+YLEOfc/J44JpKW3kgMJmuR+KX0tzOr0KJNTNw8YUy0RfuY
-X-Gm-Gg: AYBFou1jf7NB7MZ1qKQ5qiDOyQwvOUCrGJvR8181R2f9CPeqWDsdbygU37R6xAFEBM1
-	IbSyVKnP0GxvMWbAL2aQjbJdcdww6q0E05KvCNdGWfJHqVH4v8uVO10ZiqCmnTwjLrA4LJdfRIj
-	ntwcnxyPb1LbDTMMGrgV+EmNCPPtCvc9CXE+9mDwV4KLxoZdyR4ngibx6IE01JwhQMbwUaI2Qiw
-	ncHfb1Z0eGV0NBMNKqbhnrCOKi0DVRjkVwh1TDBSh3JbwzE0MPqFFJi8z8NA7MVGgHtUD1TPPUE
-	xP97AF+upNkhkcPmOB9xZ01jn3LqPJQsf0/YetBUJcMBjW9rhnoajDoskB4fqi8N6mGyoPxuRkG
-	vNuZRBds512McFCOIPbvDQQb81BvrYVy/18iKXd3WxedJKGZAMid/JDglOY7IZdlimB95hb/rw6
-	tdrHSbIkRNJ5g0Iap2YghPzniqTrR3VG4lMPLuXl3Kf/mURQh6uShEa8bUbNShEY6gOU2bs8yg9
-	ohp9LotAulGzYcaNKfY8v7ZqKgTbfcdYOw590kbYAeNo7gG63XDtRXt+VQWL+uFxQmV1GMvzXVh
-	it5WrzbDk/2yx3rCu7DYIzyNyslRM0atXTx9HRqJhsohc+O5wBWRF8eVGBcBNDr97L+YSCbDiIQ
-	2KQfAXsvP/Y8=
-X-Received: by 2002:a05:6000:2410:b0:48e:6674:3b2f with SMTP id ffacd0b85a97d-48e6e5005c5mr38318127f8f.51.1793805314720;
-        Wed, 04 Nov 2026 07:15:14 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793805316; x=1794410116;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DFblrsKj7wHc7kkkI+I8FwISQ2EQY25liHLiJP/E5C4=;
+        b=ZmUMxYxNuRX0n0Kr7TF8izpMRYmAvDN57l85EnnvSobH5T49J9dXKWF1ECK8RgijSP
+         sZCE399E3vYzmoAwJMHSinahtQiUT1hTnpmkeT1mkN+agDcMVY+3i2Lsq7msSzid+UfW
+         Zyu+D9Uk5qooEAFKTCaAM48+ZaogP7oxC4xfhdpGLNd+dZ7joY1XGwGbeKnZUYWvrfEN
+         R5Wr36Epd5fw5aX/K7Z0TN/G50qt/UnsV43WXz3mpIsbYGYHuW2RPi+Oh6mJvwxUbXPZ
+         T3QhTom9S3YM41HnvlUYUI/Va8ENekxkkZNfa/8znR8t1w5NQo0WJnsYzVmF9nliRWRb
+         fr9Q==
+X-Gm-Message-State: APuU4Z/qjUQ5K4kEUsDi5o0KP1vnt7gY8VfWlSVgDOlGzdd/QKiTiAnB
+	ntWWPFCLbnfin0e68/q/bD2fgqGUHHU0ByrZjmxtsTnKzj5jE/DFlQPMoLPGdA==
+X-Gm-Gg: AYBFou3Kz2Q5SHqDBWyc+7QghycJwKZB73DNMI0AzNuItXf86nCUaYeD3IcD8UukHjh
+	iz4UUHMg6B7GNBvNqIT5sbe7fFd1EWeVzWWyztYLiJRfPk8wCWV0lkimBu6uzhsYGMzlkNBnVvM
+	wWFEqa0hX9ECfWM4ahz1BoFFa+5YWaRZtvnlw6f86YYqQuA1AAjJDWQd7l/NaLggCXQI735LNFv
+	xAoACytbyur9V6gYWIo7Ugsrf8Tv4qvdBs7o7kV8aeqzZB64XYOeTkrg97FZD+GidbUr4R8LoVf
+	PwkkDcfsJTa3kd+c8YDlFUbwl+ZWmpbLeu+tYGFXqlxzFdtGXBJ4MrcvgpAniay4SziOu3hQSH1
+	0BteN/WAuTrXiMIhbzLrJKHEnt0RiSs/kF/s1NSRwy7+4YHnECvtCUSiYSrvli7X2/3aKNfT/0U
+	RrbFzlpuFkUhqhU0/nY9rjefCpqeTzFpjhumYm5MGiud1TzCP0gTVExGDK+c4n9dPY10qQ01YSt
+	wwFGUdr499ri8kHJlwSPwnrn2JGgyIP+Bfnl1bHeVJy/doNazd6qq/UsclgVvg/D3GmxEnp4bwA
+	P92i0GJLBIsaXxR/QNupBdMDdyARp3bA+vZdMs9L6dajD+tl9uBVj1iCG2FloaMX/0gMIZw/tr5
+	dm8MlsYdkVxs=
+X-Received: by 2002:a05:6000:40cc:b0:48e:5ea7:b1b9 with SMTP id ffacd0b85a97d-48e6e30543fmr39077085f8f.31.1793805315536;
+        Wed, 04 Nov 2026 07:15:15 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:23c4:a702:d301:f5b6:cc80:9262:e168])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fee968763sm4435197f8f.56.2026.11.04.07.15.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fee968763sm4435197f8f.56.2026.11.04.07.15.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 07:15:14 -0800 (PST)
+        Wed, 04 Nov 2026 07:15:15 -0800 (PST)
 From: Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v8 0/4] Enable USB2.0 and TSU on RZ/G3L SMARC EVK
-Date: Wed, 04 Nov 2026 15:15:09 +0000
-Message-Id: <20261104-usb_rzg3l-v8-0-ab109c4bd108@bp.renesas.com>
+Date: Wed, 04 Nov 2026 15:15:10 +0000
+Subject: [PATCH v8 1/4] arm64: dts: renesas: r9a08g046: Enable TSU
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -93,9 +94,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAP1L62oC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyLHQUlJIzE
- vPSU3UzU4B8JSMDIzNDQwMT3dLipPiiqnTjHF1Ds7RU0+Rki0QLoxQloPqCotS0zAqwWdGxtbU
- AAgjMGVsAAAA=
+Message-Id: <20261104-usb_rzg3l-v8-1-ab109c4bd108@bp.renesas.com>
+References: <20261104-usb_rzg3l-v8-0-ab109c4bd108@bp.renesas.com>
+In-Reply-To: <20261104-usb_rzg3l-v8-0-ab109c4bd108@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
  Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -103,55 +104,143 @@ To: Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793805313; l=1499;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793805313; l=3652;
  i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
- bh=gHvgnd4OP4SdT2y42oAvYKf3GElQNiCR0xYw32xnBHg=;
- b=fQ3AQclEY2DOskFDLtq6EMJ3Sd6igp7HqCHLlTD4VC6AgnHTLAqrGCbq47fp9NRymKzapBwcL
- vw7uwp9FLbnCr/Yo/i+vH5DWxy/5BnCLwji8f+bg6KueJ/hg7/fLUfr
+ bh=XRcEYurVJ3RtFvSbUwyqsFOLiicLqaaDuk5zv/Zmpaw=;
+ b=qWa+sU7QYRPyPhTsTBf773Xnwyx7TZ8z3MOIIhxftcxt6p6lAhZYB8C9KERtOY0KrNKg/27rt
+ rEtz0RvvzyjDbtX9jLWzlf6smm0CFuGu7614JBjaIEAz0y4sKzknFre
 X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
  pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
-Hi all,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This patch series aims to enable USB2.0 Host/Function and
-TSU on RZ/G3L SMARC EVK.
+Add #cooling-cells to the CPU nodes, and describe the ADC1 (used
+exclusively by the TSU) and TSU nodes along with a CPU thermal zone
+using passive and critical trip points, with CPU frequency cooling
+maps for thermal mitigation.
 
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
+---
 v8:
- * Moved patches from [1] and [2]
- * Replaced place holders.
- * Updated commit header.
- * Dropped redundant nodes from board dts as it is defined in common
-   board dtsi
- * Dropped usb1_pins.
-
-[1] https://lore.kernel.org/all/20260812141940.246223-1-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260925061617.127349-1-biju.das.jz@bp.renesas.com/
-
+movedvfrom [1]
+[1] https://lore.kernel.org/all/20260925061617.127349-8-biju.das.jz@bp.renesas.com/
 ---
-Biju Das (4):
-      arm64: dts: renesas: r9a08g046: Enable TSU
-      arm64: dts: renesas: r9a08g046: Add USB2.0 host/phy device nodes
-      arm64: dts: renesas: r9a08g046: Add USB2.0 function device nodes
-      arm64: dts: renesas: r9a08g046l48-smarc: Enable USB2.0 support
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 66 ++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi         | 193 ++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts |  42 ++---
- 2 files changed, 210 insertions(+), 25 deletions(-)
----
-base-commit: d6bcfc94eb4da6e089c5473970cd96727292fd97
-change-id: 20261104-usb_rzg3l-16fe5cc8a82d
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+index f33d5d7468ff..35046c7dac54 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+@@ -179,6 +179,7 @@ cpu0: cpu@0 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC0>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -189,6 +190,7 @@ cpu1: cpu@100 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC1>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -199,6 +201,7 @@ cpu2: cpu@200 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC2>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -209,6 +212,7 @@ cpu3: cpu@300 {
+ 			next-level-cache = <&L3_CA55>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R9A08G046_CLK_IC3>;
++			#cooling-cells = <2>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+@@ -374,6 +378,37 @@ scif5: serial@1004e000 {
+ 			status = "disabled";
+ 		};
+ 
++		adc1: adc@108c0000 {
++			compatible = "renesas,r9a08g046-adc1";
++			reg = <0 0x108c0000 0 0x10000>;
++			interrupts = <GIC_SPI 378 IRQ_TYPE_EDGE_RISING>;
++			clocks = <&cpg CPG_MOD R9A08G046_ADC1_ADCLK>,
++				 <&cpg CPG_MOD R9A08G046_ADC1_PCLK>;
++			clock-names = "adclk", "pclk";
++			resets = <&cpg R9A08G046_ADC1_PRESETN>,
++				 <&cpg R9A08G046_ADC1_ADRST_N>;
++			reset-names = "presetn", "adrst-n";
++			power-domains = <&cpg>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#io-channel-cells = <1>;
++
++			channel@8 {
++				reg = <8>;
++			};
++		};
++
++		tsu: thermal@108d0000 {
++			compatible = "renesas,r9a08g046-tsu";
++			reg = <0 0x108d0000 0 0x10000>;
++			clocks = <&cpg CPG_MOD R9A08G046_TSU_PCLK>;
++			resets = <&cpg R9A08G046_TSU_PRESETN>;
++			power-domains = <&cpg>;
++			#thermal-sensor-cells = <0>;
++			io-channels = <&adc1 0>;
++			io-channel-names = "tsu";
++		};
++
+ 		i2c0: i2c@100ae000 {
+ 			compatible = "renesas,riic-r9a08g046", "renesas,riic-r9a09g057";
+ 			reg = <0 0x100ae000 0 0x400>;
+@@ -1382,6 +1417,37 @@ stmmac_axi_setup: stmmac-axi-config {
+ 		snps,blen = <16 8 4 0 0 0 0>;
+ 	};
+ 
++	thermal-zones {
++		cpu-thermal {
++			polling-delay = <1000>;
++			polling-delay-passive = <250>;
++			thermal-sensors = <&tsu>;
++
++			cooling-maps {
++				map0 {
++					trip = <&target>;
++					cooling-device = <&cpu0 0 3>, <&cpu1 0 3>,
++							 <&cpu2 0 3>, <&cpu3 0 3>;
++					contribution = <1024>;
++				};
++			};
++
++			trips {
++				sensor_crit: sensor-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++
++				target: trip-point {
++					temperature = <95000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
 
-Best regards,
 -- 
-Biju Das <biju.das.jz@bp.renesas.com>
+2.43.0
 
