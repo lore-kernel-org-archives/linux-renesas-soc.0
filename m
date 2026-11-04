@@ -1,49 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793814182;
-	b=gX0ym459abBBjxG6rCsXHPnbHNOI9lb1HprTX2eeRZBopHkcXleuSd7mmQfXnI5s3Gmf
-	 1pQ08SVjEzMz1ZKieUjTtEmNRgCyiUQfo1plhUDJpjO0h/NvfiHb3M3RQIMj7IaIDTbTc
-	 YGQkfsKxZXnrMFuYFx/5v+NQFShhq2gYz6XwL2pSiCh2bkegQzUV565ihY5XRuo1UU6lx
-	 mNdwLa1f0LuH/IHP0HS5zm4/q0+Gfx6XmF/5FC2x2hCcktewAMLb9v/e/R6EkNUkNm8RI
-	 ujiubLwqjhkgqrYiPyPwJBPdRZjMHyy3PGz6ywjOpYLsGP8uUN2cEXWeCmgst5X+yOQ==
+	t=1793814903;
+	b=ljVCsrY2aeNSHN+y+SCJ7fxWcKZjGSeuzQmvqCJS4hNk7dXjKnG8in1lW+9IwPmvsl5b
+	 v0Nq1NILM+0AFF55cWunknGcP9aOqE3QAdtHHY4pTUoCHgx7Ve1obQ7Lqri1BteyD+bwW
+	 kYlQhDHpgq2fmZH8M9VnSMmcoM534ZZSFyVV3n41sILN06wUndhn4NNu3O311GS91pk/S
+	 j6M1vFPugnekao1rmzMYUSD2Tvy9Dhu+4voD/diIZ5US6Rr256n74Sg6XxIa2mwUh9VLZ
+	 4tPoVexQIDRKQlBrCeS8pkUTxuwXBKCakp+p6zqsrJv5Hrx0+44qwLO4pFV1q+A9qQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793814182;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=D/ufQuT616L/slKbsMvHsuyGu7FrChwnjA8syXHjneE=;
-	b=1J1VMt6RJTiu7U0Hfg3IizRseowT6M+QpmRERwWqEdNPhM3qnnIIaVKQq8OxxEXZJckX
-	 75czz8olrdZTj+cbzLhHi3XmRHnIgQILhjIw2Mdt9Tndmtg19pITwG3Lyz7a3fXTsMTJa
-	 EOVXhFgKB/Z9K+vLhXnKkJubfPNx5SBJPfCQlDhsgDfeQQo2D0t6rtkjMQvKwe9oTZFGH
-	 9KEgXQOh7P7wsKkfZF5th6+XYOsfjomrqI6cpM7MLuzpwYYW2u9AkhFhUlygJKmmaCSof
-	 X82IjD5syKvbNBQ33GmPGP5tj37oYWpaMxU47P7+YhLsvVIKiOeIAMf7zvNsZS4Uiqg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793814903;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=PY5BnPqOpEzILm/pwQ0SRDj3n4U4TC8x8WrWVFUHndU=;
+	b=IRN7/3KoHqWzXCB06uE2bMEsrtPYVpXugZAldEc/UA7oUijElte03u+JWYpixhWIAWMc
+	 noW2K3f7mDuBJL9PQIlcbiM6MYdsMqTLj118EOiMbh2ivYEw2oLlecEzC/tmG/NIWlFCF
+	 Xr2o4mpW3voo+U5KSk7EPM/BqVaSywinW3BnTksdUEJRI8fqvGCu0Rlabnt/tPmJryC2R
+	 97+7J1sS+db2O1pz/erSzCFneQkinHshrojVyp9F4EeCHLeQHIXd535BYNyP5sAEI8kPl
+	 oS1b4w09ub+YoOlnAKwQt6pYbzQuCkAr6xuqHfPqHsTkr1p0E3ET6nJZfr8Vu3qhV1w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b="KPcKo/04";
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E15606A31B;
-	Wed,  4 Nov 2026 17:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48E15606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GbYUuPrh;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AE360A381F;
+	Wed,  4 Nov 2026 17:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=KPcKo/04
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A7741BB0;
-	Wed,  4 Nov 2026 09:42:57 -0800 (PST)
-Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 005123F673;
-	Wed,  4 Nov 2026 09:42:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1793814180; bh=1CoUnHkJvq7fNArZYhXbaSulQ+DONEx5SVmufR69YZ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KPcKo/048miBpsrKK9qd7lPKn5afNfN0G0JjZZh9fCJDFIyzkbTShfocwDB9yrqij
-	 caTD7IYV8qxi1/LtWKV6CN2UV8LEfhbFkvQ+Nu+qArzsUR7+31CT/vKUyJ2YFX74Ul
-	 XECBPwU5it1AttvWJhBPFtDsNHd0Doa4KTaM6jw8=
-Message-ID: <2d0fbfdd-4497-492e-be26-9f4b79fe47bb@arm.com>
-Date: Wed, 4 Nov 2026 17:42:52 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GbYUuPrh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B7781F00919;
+	Wed,  4 Nov 2026 17:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793814902;
+	bh=PY5BnPqOpEzILm/pwQ0SRDj3n4U4TC8x8WrWVFUHndU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To;
+	b=GbYUuPrhlCfQxi95k6+MF9mey6QLrKubSnhR4tXl8lBqok54QNrcY4GOyIfpXXoug
+	 3lJEyKub1kW0RN3jb82yih1lpFC7wrj0MR/pVV9ibtOcwWvbviIl23BhIz+L6xhFIj
+	 QO9dskSMTgspJwCQHR60oocAKhpQUe9sGiQvr8sjsInyiGqI0/8Zuse1HOwFFFUG/u
+	 gjVwHU7AjembehxcvGhk/bt/LpYiH//FgSaNeuyHyGqFmJ6J1ZjofQTNSdqS0dbXDH
+	 zBBTVcQmWlQWWd392wVPVpnNxHUsYJ5a/dPjxpOAwgvtFMTOSwIs1V4I12QDbliXZu
+	 EbO0GEYY8mg+g==
+Date: Wed, 4 Nov 2026 11:55:00 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Yuho Choi <oss.patchbox@gmail.com>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: rcar: Release temporary device tree node
+ reference
+Message-ID: <20261104175500.GA1357062@bhelgaas>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -53,273 +63,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] iommu/ipmmu-vmsa: Keep shared micro-TLBs enabled
- while in use
-To: Koichiro Den <den@valinux.co.jp>, "Joerg Roedel (AMD)" <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Magnus Damm <damm+renesas@opensource.se>,
- Jason Gunthorpe <jgg@ziepe.ca>, Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Marek Vasut <marek.vasut@mailbox.org>, iommu@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261104162251.1749998-1-den@valinux.co.jp>
- <20261104162251.1749998-4-den@valinux.co.jp>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20261104162251.1749998-4-den@valinux.co.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260924010418.726980-1-oss.patchbox@gmail.com>
 
-On 04/11/2026 4:22 pm, Koichiro Den wrote:
-> PCI functions can share a micro-TLB. ipmmu_release_device() disables it
-> unconditionally, so removing one function makes DMA from the others
-> bypass translation even though they remain attached to a paging domain.
-> Switching a device to the identity domain can disable a shared micro-TLB
-> in the same way.
-> 
-> Count the users of each micro-TLB and disable it only when its last user
-> leaves. Track whether each device holds a reference so paging-domain
-> switches do not add another one and release does not drop a reference
-> the device never acquired.
+On Wed, Sep 23, 2026 at 09:04:11PM -0400, Yuho Choi wrote:
+> of_find_matching_node() returns a referenced node even when it is used
+> only as a boolean test. Drop the reference right after the match check.
 
-Shouldn't we just not touch the physical enable/disable state at all in 
-release_device? Once the device is removed, if it did happen to be the 
-last one in the group then the default domain will be torn down, so at 
-most I would think it should just be a case of ipmmu_domain_free() 
-detecting if the domain being freed is the currently-attached one, and 
-if so then resetting the uTLB to its desired default state.
+I guess this actually fixes an of_node reference leak, right?
 
-Thanks,
-Robin.
-
-> Cc: stable@vger.kernel.org
-> Fixes: 24dfb197c3b7 ("iommu/ipmmu-vmsa: Call arm_iommu_release_mapping() in release path")
-> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
+> Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
 > ---
->   drivers/iommu/ipmmu-vmsa.c | 121 ++++++++++++++++++++++++++-----------
->   1 file changed, 86 insertions(+), 35 deletions(-)
+> Changes in v2:
+> - Use an explicit of_node_put() instead of __free(device_node) (Marek Vasut)
+> - Switch to my oss.patchbox address
 > 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index cea9348ac10d..bfbb6795ec13 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -7,6 +7,7 @@
->    */
->   
->   #include <linux/bitmap.h>
-> +#include <linux/cleanup.h>
->   #include <linux/delay.h>
->   #include <linux/dma-mapping.h>
->   #include <linux/err.h>
-> @@ -59,14 +60,26 @@ struct ipmmu_vmsa_device {
->   	struct ipmmu_vmsa_device *root;
->   	const struct ipmmu_features *features;
->   	unsigned int num_ctx;
-> -	spinlock_t lock;			/* Protects ctx and domains[] */
-> +	/* Protects ctx, domains[], utlb_ctx[] and utlb_users[] */
-> +	spinlock_t lock;
->   	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
->   	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
->   	s8 utlb_ctx[IPMMU_UTLB_MAX];
-> +	unsigned int utlb_users[IPMMU_UTLB_MAX];
->   
->   	struct dma_iommu_mapping *mapping;
->   };
->   
-> +/*
-> + * Per bus master (device) data. Several bus masters can be connected to the
-> + * same microTLB, which stays enabled until the last translated master using it
-> + * is gone (see ipmmu_vmsa_device.utlb_users[]).
-> + */
-> +struct ipmmu_vmsa_master {
-> +	struct ipmmu_vmsa_device *mmu;
-> +	bool translated;		/* Counted in mmu->utlb_users[] */
-> +};
+> v1: https://lore.kernel.org/all/20260801233841.469826-1-dbgh9129@gmail.com/
+> 
+>  drivers/pci/controller/pcie-rcar-host.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+> index cd9171eebc289..1f5e33c802b5b 100644
+> --- a/drivers/pci/controller/pcie-rcar-host.c
+> +++ b/drivers/pci/controller/pcie-rcar-host.c
+> @@ -1122,7 +1122,11 @@ static const struct of_device_id rcar_pcie_abort_handler_of_match[] __initconst
+>  
+>  static int __init rcar_pcie_init(void)
+>  {
+> -	if (of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match)) {
+> +	struct device_node *np;
 > +
->   struct ipmmu_vmsa_domain {
->   	struct ipmmu_vmsa_device *mmu;
->   	struct iommu_domain io_domain;
-> @@ -83,11 +96,18 @@ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
->   	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
->   }
->   
-> -static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
-> +static struct ipmmu_vmsa_master *to_master(struct device *dev)
->   {
->   	return dev_iommu_priv_get(dev);
->   }
->   
-> +static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
-> +{
-> +	struct ipmmu_vmsa_master *master = to_master(dev);
-> +
-> +	return master ? master->mmu : NULL;
-> +}
-> +
->   #define TLB_LOOP_TIMEOUT		100	/* 100us */
->   
->   /* -----------------------------------------------------------------------------
-> @@ -281,11 +301,6 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
->   {
->   	struct ipmmu_vmsa_device *mmu = domain->mmu;
->   
-> -	/*
-> -	 * TODO: Reference-count the microTLB as several bus masters can be
-> -	 * connected to the same microTLB.
-> -	 */
-> -
->   	/* TODO: What should we set the ASID to ? */
->   	ipmmu_imuasid_write(mmu, utlb, 0);
->   	/* TODO: Do we need to flush the microTLB ? */
-> @@ -297,15 +312,63 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
->   /*
->    * Disable MMU translation for the microTLB.
->    */
-> -static void ipmmu_utlb_disable(struct ipmmu_vmsa_domain *domain,
-> +static void ipmmu_utlb_disable(struct ipmmu_vmsa_device *mmu,
->   			       unsigned int utlb)
->   {
-> -	struct ipmmu_vmsa_device *mmu = domain->mmu;
-> -
->   	ipmmu_imuctr_write(mmu, utlb, 0);
->   	mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
->   }
->   
-> +/*
-> + * Enable this master's micro-TLBs using the domain's context.
-> + *
-> + * Several bus masters can be connected to the same microTLB, so count the
-> + * masters translated through each of them. Moving a master from one paging
-> + * domain to another keeps its reference and only updates the context selection.
-> + */
-> +static void ipmmu_attach_utlbs(struct ipmmu_vmsa_domain *domain,
-> +			       struct device *dev)
-> +{
-> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> +	struct ipmmu_vmsa_master *master = to_master(dev);
-> +	struct ipmmu_vmsa_device *mmu = domain->mmu;
-> +	unsigned int i;
-> +
-> +	guard(spinlock_irqsave)(&mmu->lock);
-> +
-> +	for (i = 0; i < fwspec->num_ids; ++i) {
-> +		if (!master->translated)
-> +			mmu->utlb_users[fwspec->ids[i]]++;
-> +		ipmmu_utlb_enable(domain, fwspec->ids[i]);
-> +	}
-> +	master->translated = true;
-> +}
-> +
-> +/*
-> + * Drop this master's references to its micro-TLBs. A micro-TLB stays enabled
-> + * as long as other bus masters connected to it are still translated.
-> + */
-> +static void ipmmu_detach_utlbs(struct device *dev)
-> +{
-> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> +	struct ipmmu_vmsa_master *master = to_master(dev);
-> +	struct ipmmu_vmsa_device *mmu = master->mmu;
-> +	unsigned int i;
-> +
-> +	guard(spinlock_irqsave)(&mmu->lock);
-> +
-> +	if (!master->translated)
-> +		return;
-> +
-> +	for (i = 0; i < fwspec->num_ids; ++i) {
-> +		unsigned int utlb = fwspec->ids[i];
-> +
-> +		if (!--mmu->utlb_users[utlb])
-> +			ipmmu_utlb_disable(mmu, utlb);
-> +	}
-> +	master->translated = false;
-> +}
-> +
->   static void ipmmu_tlb_flush_all(void *cookie)
->   {
->   	struct ipmmu_vmsa_domain *domain = cookie;
-> @@ -592,10 +655,8 @@ static void ipmmu_domain_free(struct iommu_domain *io_domain)
->   static int ipmmu_attach_device(struct iommu_domain *io_domain,
->   			       struct device *dev, struct iommu_domain *old)
->   {
-> -	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
->   	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
->   	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-> -	unsigned int i;
->   	int ret = 0;
->   
->   	if (!mmu) {
-> @@ -630,8 +691,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
->   	if (ret < 0)
->   		return ret;
->   
-> -	for (i = 0; i < fwspec->num_ids; ++i)
-> -		ipmmu_utlb_enable(domain, fwspec->ids[i]);
-> +	ipmmu_attach_utlbs(domain, dev);
->   
->   	return 0;
->   }
-> @@ -640,16 +700,7 @@ static int ipmmu_iommu_identity_attach(struct iommu_domain *identity_domain,
->   				       struct device *dev,
->   				       struct iommu_domain *old)
->   {
-> -	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> -	struct ipmmu_vmsa_domain *domain;
-> -	unsigned int i;
-> -
-> -	if (old == identity_domain || !old)
-> -		return 0;
-> -
-> -	domain = to_vmsa_domain(old);
-> -	for (i = 0; i < fwspec->num_ids; ++i)
-> -		ipmmu_utlb_disable(domain, fwspec->ids[i]);
-> +	ipmmu_detach_utlbs(dev);
->   
->   	/*
->   	 * TODO: Optimize by disabling the context when no device is attached.
-> @@ -815,6 +866,7 @@ static struct iommu_device *ipmmu_probe_device(struct device *dev)
->   {
->   	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
->   	struct platform_device *ipmmu_pdev;
-> +	struct ipmmu_vmsa_master *master;
->   	struct ipmmu_vmsa_device *mmu;
->   
->   	if (!fwspec)
-> @@ -830,7 +882,12 @@ static struct iommu_device *ipmmu_probe_device(struct device *dev)
->   	if (!mmu)
->   		return ERR_PTR(-ENODEV);
->   
-> -	dev_iommu_priv_set(dev, mmu);
-> +	master = kzalloc_obj(*master);
-> +	if (!master)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	master->mmu = mmu;
-> +	dev_iommu_priv_set(dev, master);
->   
->   	return &mmu->iommu;
->   }
-> @@ -848,18 +905,12 @@ static void ipmmu_probe_finalize(struct device *dev)
->   
->   static void ipmmu_release_device(struct device *dev)
->   {
-> -	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> -	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
-> -	unsigned int i;
-> +	struct ipmmu_vmsa_master *master = to_master(dev);
->   
-> -	for (i = 0; i < fwspec->num_ids; ++i) {
-> -		unsigned int utlb = fwspec->ids[i];
-> +	ipmmu_detach_utlbs(dev);
->   
-> -		ipmmu_imuctr_write(mmu, utlb, 0);
-> -		mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
-> -	}
-> -
-> -	arm_iommu_release_mapping(mmu->mapping);
-> +	arm_iommu_release_mapping(master->mmu->mapping);
-> +	kfree(master);
->   }
->   
->   static const struct iommu_ops ipmmu_ops = {
-
+> +	np = of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match);
+> +	if (np) {
+> +		of_node_put(np);
+>  #ifdef CONFIG_ARM_LPAE
+>  		hook_fault_code(17, rcar_pcie_aarch32_abort_handler, SIGBUS, 0,
+>  				"asynchronous external abort");
+> 
+> base-commit: f0100363d8c374bd8e9ea7c9ba02744f0b802ca4
+> -- 
+> 2.43.0
+> 
