@@ -1,55 +1,130 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793869103;
-	b=W1ug7MgDFHvW+xtY3YWe8Ajb2TbE+kXqPidRUIGqjgQ35mYCrU/BWfwNTM6SQUurAsap
-	 b7DoyIujMgXjz2JXyiA6PVthHTlg+t2l2C2j4nlFCWCW5lca64H4XvieKksbOzTRUPQqq
-	 4r8SQWJ8W6iMUpSqB453L0Dgu7uyGUN3kz1ifjYgMnW1JmQ2c/tig1fpE4LorVXrKXjMH
-	 3oDBXvC6lg1p42/CqwXoWxtoUJ9z31fVhUxVV3AH/PiRlGSWYUZhmSOcylFU8uR1AeXRb
-	 MGCEaezTWav/oLIOhwRWnf8PLio0dEf9SaQwGu5ouTNxSFImuUq1xGkLr2kfaxCPSIA==
+	t=1793869318;
+	b=cgD/iKS7kwv9nb8ixROHv22BN2BKWqbmbcUkviqPGbPYSTtLJXJgfIbGhcfKdhRItbob
+	 hK964BYB28NgV8ekO328qk2ehmLkBDU2yypmurP7nBtUbKqPuS/SfuUkd0AKyOPpjZf/W
+	 kur5BabWnJq1AhT/+1+OKCaYpYmYqwwPSo3i5/iyOMZyIAJ7NRy44so7sV4wUNh6/gL9W
+	 F543W28PSG9R6C4VPEMqQWtp4BuALuqyBNyQXfPsZiY1NpTgNHg8U8xPpDo+BGcvlxcuu
+	 zze59DqLkvAzyMY4SeE+ioYwOVmAE5/38r7kOgPRxR4Un1IAXiJ/blZorRWBLyYGI+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793869103;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=PKNly8UN9EHaaYP2x5RRnRjXy9kMnNoiMkXmJ60sgLU=;
-	b=d1OrlNBm9so/kJlEv1HhLp0D28EZxpj4ckK8b2ik6CIuJzOtRVozVeJsMHbIzGi5nEUk
-	 lTFFeG0qQIbWzsAHsl3XDwelLvm8DFJzGErnXvuero1BN6FHUV+vdIoeff9W/sTQ2Ftzs
-	 idkUjvcMnCA9odjXgyHPnSx+9iD/GPTE5Koq6mcjxy3aA1M7aTCyAChhgtXeM7qmLP5Lr
-	 0LNLQUN2bpFw0qLsVYwSEUviHnx8WFngUx7SYjAOWV55EHdijMlXCQqWaShalvsk0D4aV
-	 4DIT0lu8/31WjvhLFJYWb7DdKNXh3MuEMbINHtiE2HdeP9AcnbLGAvWNi0xRZclzdcA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793869318;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=MOT/eVT47O4WVQDSlL8Tk9BW5VeaSSIH+swxSEeZrwY=;
+	b=mqr2er90CUKQYDqi6nNIx2aH0+cURbVWO/f0rRd5yBPe6xox2mfA5oZIPutKvBiDd14w
+	 APzbDT/WQqCQsm2TWjF77Xv6vPC6NzmVuhXOqGDVrm98AhgN1mBRjTKuXUqMafVBPAgID
+	 uNMDh9d5QhSV7opDUMoJm+iua4DAUQcolI7wQ9uKXwpAuEbglxiBWQnlSS6C4ejvDbpkU
+	 4jEIHzQ8JhEfnI2xCG0yt9YnivSlwLk+wuKdgMH6SsFnVsgqbHd8YJaernpd0Px8doa0W
+	 NcY3AiqQrNIc+lnXy3+RsEgQ8OzgmKwPzD3SQ6zjgYnr+m4k7P1e2LEl6Sghyqjj3MQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bfqBdZFc;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dYbcBbgV;
+	arc=none smtp.remote-ip=198.175.65.9
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23161606A329
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2026 08:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423AA606A31B;
+	Thu,  5 Nov 2026 09:01:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 423AA606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bfqBdZFc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B00671F00919
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2026 08:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793869102;
-	bh=PKNly8UN9EHaaYP2x5RRnRjXy9kMnNoiMkXmJ60sgLU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=bfqBdZFcg1vlT9xo6LwjDU5axc25ZOYu5IeDBRpvqKcR5bUdGOo+kR7fbU4Z0z1ax
-	 dcca6Mk1trHKjDHRcBxWjU4DDbF1juP0jqJcMw3CyRs01tkfqR2K9LBq37fpzE0TFE
-	 rgftkXDmwBscUBDfcu7CO4GEIy+6Q9F0fUQLRgZnfJtsWTAvFraOUH7+1kS9/o/Dm+
-	 XecD0OTWxXl++bygASGRu+YeLllQi4FTDe73wWpsRv6TGnrQ91Y1X8upmNy3yd/3L2
-	 Crsj1QJ2N6KDl8482xRQbAObmc4nzqtQ5RJhcrk5mGdXSqtS7l8We+hp+WvR9ZVvwB
-	 AJ3ljOcsfoMHA==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5bfa65c8617so934231e87.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Nov 2026 00:58:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwavGZaGaBHdJTmdtSNM43C9okTh03sxRAXqzGb40IvLl/ekRhGOclQ5tV++Qi292MKt0n7quZGavYrgo98JY2A/g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/08eEoT6STWnp+GeaLkpyDcPW2EJA2aX/++MrP1eKQxRD5b9ZN
-	FN4vzMeJUvsXqigxtsbtYqFKEeoQyFgT7n4eIwjCzz4uPl6pAy27uB5kYk/W9oaRbZ3gLYk7bQM
-	PJMgY8xq79orZOvXIs9kAi5bTLzjoYBA=
-X-Received: by 2002:a05:6512:304f:b0:5bf:cfcc:5444 with SMTP id
- 2adb3069b0e04-5bfd94cc790mr6486911e87.0.1793869101536; Thu, 05 Nov 2026
- 00:58:21 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dYbcBbgV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793869317; x=1825405317;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HsF2OB4+TAKcLaK6X2CbxWBe2H+bJw89o7MCcGnPEhE=;
+  b=dYbcBbgVOlUSBxnyE/4Gn0ptbmxEULSOiQnRKhRdhR1dNwvkZEAGcBuW
+   jMGs9M8e2KtibZ9mqnsLuDgF2TnXPMSyoYpOjhE5TQuw/Ph6XPqm7v/Un
+   vW6ZLA1Qbxu4GLPOQProELEU9WMw/GIN9X7kmrpLHqk2swWjomMmvWaDn
+   rBA39dBwuBWaFYeYb3YYXhvyjAtbelrh0EUophzQqLJGqvju6z1pp0XBU
+   Ab+GSP2w84Khkqk1Kvv1wvK9D6JlP7+ZtdY3PdZcbHqya2uczXHsrgC09
+   wsL95xS41h36OPsA44P9Kf6dj1AoU+znKlJjpx+6j+H/bBkcxqHTS+N45
+   A==;
+X-CSE-ConnectionGUID: mWzUxRhiQdWvO5I7z4uI2w==
+X-CSE-MsgGUID: Iw37O7BMRHakcvb72FXWTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2547930"
+X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
+   d="scan'208";a="2547930"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:01:56 -0800
+X-CSE-ConnectionGUID: 73i/m+mbScKfalk02iBJcQ==
+X-CSE-MsgGUID: 7N01rw1qQ3OIr7PEIb3JjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,196,1787036400"; 
+   d="scan'208";a="7121379"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:01:43 -0800
+Date: Thu, 5 Nov 2026 11:01:41 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Konstantin Ryabitsev <mricon@kernel.org>
+Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Radu Pirea <radu_nicolae.pirea@upb.ro>,
+	CL Wang <cl634@andestech.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>,
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
+Message-ID: <auxF9RT5aljXkfh7@ashevche-desk.local>
+References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
+ <b656861c-a087-4087-952e-91fd15fadd52@kernel.org>
+ <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
+ <fbcb650d-0f60-468d-b1cc-255ea8a93db3@kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -59,54 +134,51 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261027-mali-c55-renesas-dts-v5-0-51bbb43969c1@kernel.org>
- <20261027-mali-c55-renesas-dts-v5-7-51bbb43969c1@kernel.org> <CA+V-a8vEub2y2gvXp8jkjVHOGuj1Eqkbq75t8Nezz95iidtL3Q@mail.gmail.com>
-In-Reply-To: <CA+V-a8vEub2y2gvXp8jkjVHOGuj1Eqkbq75t8Nezz95iidtL3Q@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Nov 2026 09:58:09 +0100
-X-Gmail-Original-Message-ID: <CAD++jLn_3X65zu8q-DfWbn4xjyPrSfp5BVH4SO96XCxmegcvXg@mail.gmail.com>
-X-Gm-Features: AclHuK8AQIjDmJmMWxQBLXnB8djEy8vqJf8iVobRFUYDEbaAMH5O2I21RMaJX7I
-Message-ID: <CAD++jLn_3X65zu8q-DfWbn4xjyPrSfp5BVH4SO96XCxmegcvXg@mail.gmail.com>
-Subject: Re: [PATCH RFC v5 7/7] media: mali-c55: Sequence resets explicitly
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Daniel Scally <dan.scally@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbcb650d-0f60-468d-b1cc-255ea8a93db3@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Prabhakar,
+On Thu, Nov 05, 2026 at 12:02:21AM +0100, Krzysztof Kozlowski wrote:
+> On 04/11/2026 21:44, Andy Shevchenko wrote:
+> >> Andy,
+> >> These three lines look correct.
+> >>
+> >> LGTM:
+> >>
+> >> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > As
+> > 
+> >   Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org> # atmel-quadspi
+> > 
+> > Note, it's in your power to ask the author to split out what you maintain
+> > to a separate change. So, it's your choice what to do, Ack the full patch,
+> > give a partial Rb, ask for a split, ignore reviewing (often means silent
+> > agreement when maintainer just applies that kind of a patch)
+> 
+> The "# note" after the tag solves the problem partially, if people were
+> actually using it. Solves people looking at the Git commit and being
+> mislead by partial review applying to entire commit. Does not solve
+> credits, because Rb for three lines is not the same as for 100.
+> 
+> From v1 of this patch, four people (Alain, Lab, Troy, Kunihiko) did not
+> use it even though reviewing only part. Only Wolfram, so 20% of partial
+> reviews, used that syntax. Without that syntax, b4 will pick up Rb tag
+> like it was for entire commit.
+> 
+> So I do repeat - if one does not want to use that syntax, then just Ack,
+> instead of creating false impression of reviewing everything.
 
-thanks a lot for your help!
++Konstantin, then we need to teach `b4` not to break that or convert it to
+something like
 
-On Tue, Nov 3, 2026 at 2:47=E2=80=AFPM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
+  [FirstName: reviewed only ...]
+  Reviewed-by: FirstName LastName <...>
 
-> I tested on the RZ/V2H EVK with the clocks and DT left untouched,
-> changing only the reset order.
->
-> The hang comes from the reset assert order in __mali_c55_power_off().
-> Asserting vresetn (the ISP core reset per the RZ/V2H manual) before
-> hresetn/aresetn wedges the ISP. The next power-on then stalls on its
-> first register access. The deassert order doesn't matter.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-OK I will drop the clock patch and keep this one.
 
-> Asserting h->a->v (deasserting v->a->h) passes repeated runtime-PM
-> cycles and also works with the IVC enabled. So 7/7 gives the right
-> reset sequence, 6/7 isn't needed for this, and the existing DT mapping
-> (0xd3 =3D vresetn =3D ISP core reset) is correct.
-
-So this is a Tested-by for this patch?
-
-> A smaller alternative keeps the bulk API and only reorders the names:
-
-I guess that works, but I'm not sure the reset bulk API in the
-kernel guarantees any order, so we better keep this patch as-is if
-it works so we explicitly show users that this is critical.
-
-Yours,
-Linus Walleij
