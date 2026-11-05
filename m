@@ -1,49 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793892748;
-	b=YVE22qJ6v3BNJUyc+e3zhqCcaEnd2J0jQzPn9oKzP5o8O0ZhLHOmqJ9RWKYJIsvJVsQa
-	 LKgmnHnG80jZ7GJs2I+9Lw1mQh7/aA4BQoGqf4d8GeDSpvsOl+xD+4UOU68JeLq2cNITm
-	 Nuezhwj9MvQ6ms6rkduE8c74RWFPW28qKS6Q3mnfDQR8Lt1E0ICn9pWrR1mBjiI5Ai6Mv
-	 ILM//rMqaugROq4+KXRrhRBY5XEaXYbiOqlPVdvjFsdyelU5m4avz4qrwOHwI3ZmFFVK7
-	 m+Q6gx8Mz3fOMlrRL32IUE5kquBq6yfdmuuA8j7o8wq27DxlUbxlCwlh9lcF9B5K6Ww==
+	t=1793893463;
+	b=Hzuqeno2xp6U0qijrKEcYEPw58cQIbOPOcZHB7HzN4iFaz1HrIFX5TZEiCvruqNbJStt
+	 tBrjriG865qRQUjt6A/Tlr1/mIdC/wHtg0YB18oxECTY3fqDirfQzDYilT5cVP8NfbcX3
+	 RN4mG2lHtlWgcJ99TwW82p++45mBiv2imBoVbCrIIqjijttFCl4F/rmyBAMFXNvBTnPUp
+	 yv/T5UNFe8oFE7GLpLLU4j7T7HrSKT27kERtH3oxntEgq5iZuUrmpw4RnWH5+vqko6CVE
+	 1GW8hqeW0EOjIfyNycftfYbVpdqa9cGh2VVOqmShx3J0L2IYIZlIn/GIUs8fSQztJFg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793892748;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793893463;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=oEwFU8kxGNootWbanLckfnHabmnx6wi8GHXlgZkhggc=;
-	b=bkAVvGNBCnsih/RcD/rzAGrrNxc+JdZwJ2BI4Y+oxxNvN0c9xw4jksZ4Z3hpSSoTA4d1
-	 Gu0QBt0URfymK/KVTk4XOw+wr+rvMTBE241nQYYDXVGaPXbxNg5ix8i05BaJIKw8BUD/C
-	 SHIVviPnW0ackFBZWolzNKMxtC9Nw07hcuoLnFm7x5iKeWGwoKxygb277XLAEXlzeMV9I
-	 kMgVYD1WWMg3yqL7IgzKiKmViPWhB8aUH+Hx05tBoj1W9mLOKu+HyEbWHG49tnHKpnmtM
-	 SqOYUlQYeLJu53WxL1RD+3CZP8HI9XTtJVJzPONjpDoPh3XcD00/EseSiFmIy1z201g==
+	bh=vUZYNYP+HlSxJDxKR6PlbRdK/bEVEhte9YIsZkClTjw=;
+	b=iGBjQKr9Z2vsx/Xi76x1A/h1PX3V2jTl1TIutGtt4HEDzrGs77rJjYGKBdHGAKPU6JXj
+	 zZAqZNuG9aWpvCO7JjsdoDc4f+sFUhBxmNZOh/wi6aT7tN+Wy+Odd+voltGZTexLB8qU7
+	 jqr9/g5/hJJ3ox9Xa9//hokLNCaa8UC2CLb//Fh4WV+fgHkegoC4n8i4u6GgIwQylu3oZ
+	 n59gCfJp+3ZPXv5X7vPWYKuFkHUuI/Fu+wPzN3tR2vdrUx7TBtkULf8dLl1jAoNDB4W+P
+	 fRKOhN83XI5NUwGDH3q2o+6fgU4R+82VolTUBrIbyPJL7N0CfqIr/kPKgh3PiOtiy6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="MnSr4U/w";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hKlrWqyk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074B7606A326
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2026 15:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621C6606A326;
+	Thu,  5 Nov 2026 15:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MnSr4U/w
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 593221F00919;
-	Thu,  5 Nov 2026 15:32:27 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hKlrWqyk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A87D1F000C1;
+	Thu,  5 Nov 2026 15:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793892747;
-	bh=oEwFU8kxGNootWbanLckfnHabmnx6wi8GHXlgZkhggc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=MnSr4U/wt5dQXEBlE6k5NouHUv7UDgSS7NOfc1aUrXforJ8VYdkdYlBSrakMkj3MQ
-	 1JNneSDggTVzLsKyzONW0raE7ujyW52rjQuVcv9oLOEvmH6u5gq8ai4AaI2C2kcwSy
-	 JWH81ZVOcXW4Bsbwf7NIguWhb0qgzH1k7ziiQ64GkUnUAkpdUsj7cvpqNaoHzV5bqF
-	 BZ3+MXIKg97WO+Y9kLVVVIbINSJo/Ejn3f3gY9ojdghCfd299hQsevH8ob48si1S51
-	 EeFQaJbEcsEdO98LdXt7kvVYVxFoNqn5+fDJWLSocSSC/x3HKpSUmWPWPbb0/gtf3R
-	 +Dbd4Oko38QYQ==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Thu, 05 Nov 2026 16:29:46 +0100
-Subject: [PATCH RESEND 37/83] drm/shmobile: Switch to
- drm_mode_config_create_initial_state
+	s=k20260515; t=1793893463;
+	bh=vUZYNYP+HlSxJDxKR6PlbRdK/bEVEhte9YIsZkClTjw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=hKlrWqykDo5Y6WVtvsI9GVmy//gFv5TKSkZjFcqR/LdxqQW8oa56Wk9dleYYfcTlp
+	 yd+GP52ZyjFADjd9Od42iv78wUUfiwX+wdVoruTATiLZBru9/QjuNlafzRhMKjNORo
+	 DMC5lnvRXi1fGN+VKhKNuQ47h/EhgQiNGgEuLagWeg3JhQn58jJiKa5A0IJ9frsOWR
+	 d24QyoQx6LOMe2FXbCHk2HbujSJqNQm+USu39KqVrkLlty0B0IaxGvCj+h1+bDfM+y
+	 /iIYj5qxGoHZqVni3SNekT+vvIMXYXD/8sG6n0aJ2sxi3SnF1ekVvBYQxnBzaZB5/0
+	 z+vDKMrv3ritQ==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: linux-pci@vger.kernel.org, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Koichiro Den <den@valinux.co.jp>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20261026224447.606715-1-marek.vasut+renesas@mailbox.org>
+References: <20261026224447.606715-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH v2] dt-bindings: PCI: rcar-gen4-pci-host: Replace
+ sft_ce IRQ with AER IRQ on R-Car Gen5
+Message-Id: <179389345264.20463.1333025624372387908.b4-ty@b4>
+Date: Thu, 05 Nov 2026 21:14:12 +0530
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -54,59 +67,32 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261105-drm-no-more-config-reset-v1-37-1f58d1e33380@kernel.org>
-References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
-In-Reply-To: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
-To: David Airlie <airlied@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1251; i=mripard@kernel.org;
- h=from:subject:message-id; bh=MPnP1Fdgr/1ZHUd5Tng6g/AyYwiboeB5nV/LUg9cRvE=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlvFrzd72Zm11LUqj9xfYvf3pJKycQPDp8f8C0I4/w5u
- VzUUUemYyoLgzAng6yYIssTmbDTy9sXVznYr/wBM4eVCWQIAxenAExkwwzGhv5XxnsUP3Jf+7i8
- 6Kjl57w5or1L96joK1pnebyLrz+i02nbvlyy0fCNaIz/kyXPIh8JMdYXhzrw16qwLA0w4Hy6c7L
- eosR7d9vMDgi/FXhZvf3xTYtHwj2hMV3VEv99fbdOsam3vA0A
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=388;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=Igew3MpuryH+bhdXudZ0o4WGp8t19Sb83Yrwye+sXPw=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBq7KRVI3QcRwxzJybG4KeYGMNfuZNBBlevx8+CJ
+ UQvXQ4gKiSJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCauykVQAKCRBVnxHm/pHO
+ 9e15B/9/R0gbIwb0uTMPKubPnMWvMZspyoqIwBFHARMK4zGQEqiwroxSNW15pxsJrG0jWrroI3T
+ /La+QJoMH9QXJjVG7tfDDrB8oJGxXTL2GPq7HtTPLoOK8V41itxkfMXrjsiadS8ZKwLe1IwCZEe
+ nRbDFTrzEFqGh1E6CiVp5zK13oUXjaJ+aQSm0QFSJZ3GMRhRCW9Zv2ipnvFm2yjy+1MRE8jpLZH
+ PIDL+TSDkyonurIv6FxpWkejJvLp342UMxzjRsfhr1gJEoYPZKIKGngj0ghFEBQZV5499NDagw4
+ 9U0J7iQPUkbXfWg9hTui6Rmfk4PtjgqpxDoQuTcC6es/ih1V
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-drm_mode_config_reset() has a dual role: it creates the initial KMS
-state at probe time, and resets hardware and software state during
-suspend/resume cycles.
 
-Since the two roles need different behaviors (notably for objects like
-drm_private_obj that must persist across suspend/resume),
-drm_mode_config_create_initial_state() was introduced to handle only
-the initial state creation at probe time.
+On Mon, 26 Oct 2026 23:44:18 +0100, Marek Vasut wrote:
+> dt-bindings: PCI: rcar-gen4-pci-host: Replace sft_ce IRQ with AER IRQ on R-Car Gen5
 
-Switch to drm_mode_config_create_initial_state().
+Applied, thanks!
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[1/1] dt-bindings: PCI: rcar-gen4-pci-host: Replace sft_ce IRQ with AER IRQ on R-Car Gen5
+      commit: d0373ae3a85d8bfe3f2e96f2d8acd2774b079660
 
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-index fd9460da1789..4d3a714e255d 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-@@ -176,5 +176,7 @@ int shmob_drm_modeset_init(struct shmob_drm_device *sdev)
- 		return ret;
- 
--	drm_mode_config_reset(dev);
-+	ret = drm_mode_config_create_initial_state(dev);
-+	if (ret)
-+		return ret;
- 
- 	drm_kms_helper_poll_init(dev);
-
+Best regards,
 -- 
-2.55.0
+மணிவண்ணன் சதாசிவம்
+
 
