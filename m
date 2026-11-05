@@ -1,118 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793888580;
-	b=s8+ZRCvWDxp+KKLYKlrDMQDJh2LCJtyewGt2vQEeKP23F3MF15SKoKJsU7ZXoIF9NIIV
-	 8ZUqmKevQV7j07wCE+PXpFCDtAxFswjovZucVsRfm74p+OzJ2n+TqCbepb4KJrhfVCVUX
-	 ap/nlhVcyKDGV3ywrQas4Igy2s8RMa3Q/E+l96H8FAdsT2Rv0Z2owltCrphJIP4trFsBU
-	 MpeJq7Z+hOwK1PPwdxVEViJ8a6qKcl0vnk75s4r7hfmjDaT4hsl9q0p8FmhQ+WUEdJpN9
-	 2YF4pX1Hw5zgqU1RCSG6Z35p7qNcraj/moIg7uZgF7pqIClwjsf59YNEn+88WzI1C2g==
+	t=1793890182;
+	b=1+tWvO3c1ZwUf0kjlYlkH6UGblhUzQRB9Sx3+r6/cd9pqnzCk9gm6mVpLT2BeePfe9Zi
+	 jiQhRSV7V18BkdQ6inEJmNZtFg44Q3GnZdtUAL8GJ3U+wOsxJkkjFOyRT3MugPW+g9Mef
+	 GE34tmsB15zCE0CjQAI3iqs6/PhtL6qQJyAjbRCDRAzkA3ElBBRC+nvxhMuEIhyoinwGq
+	 whsavs7z3V8Aqvt0DPU0i5Sww6/z9EW9nbyLO5RaoJ9bO9CXv5AXNajmK/V1mVMS8e/G5
+	 min7H5SSAXjxELH1M8pe/3GCDh6f44DqEvgHMtEHZHsbWcvxq/ZED7hlp0sqYpYerCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793888580;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=fr/sToHFkpF9BPihxA953uG8doO1fE0lFSHPRxWhDoE=;
-	b=U7Dh5zbJaSE4+k8E3AAl7dpNXC+IqrGNusY7aXFwOLic5YlfeCYwpH/fJAQNEiwfcims
-	 Mhwo/uYdR48Anp3oqCgUfIQ/YpcSHP3pGNAc9rSYOya8NjZKi/pCkCQ3f57ivDGQzr4Ab
-	 RiyZqq2287FUKRD0lboHVBk4lTlmwOg3elQesYxsNPc0tfadcb3Djtj6i3a/InDPZQVeg
-	 BzLfPP/cQgOJv1NPlirf6m1erZZrKiZTafImpiYsle1PHSNfQcjWd8ZGGkgE8Z8pTSDZu
-	 HOnmYN+ZghZFfa6Xp7fRhWigDsO6idZBBgSvGES/7IasXIHNQ5/Da6+962OOoZXmvOg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793890182;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=QpwPqOLAugA67x75tYz1g7ohdoIGIFAO4TwGyxZEzGk=;
+	b=3cZMe/7gwNxiD0aTRWL0V0tr0z+k05AQap/kGqpab1PBCM1aLjeJXi32pTe8Zi05JxLb
+	 MiOQtlu2PN4kaHqAISj5pU/rjweAplezhpQx7N+oazZtwEoTX5rVM5v7vY5MvFyOM55MT
+	 BA+0p+RDD0iaRJM7UltosMUMBBu+SDbwFY2yOyZkg+zFEzKjJo/1qBnMqErNkFEGKOFEE
+	 oR9aVbHmNV8qY1HhLzxa8fxwq43xh9+Mb+icHzH9wHuMcmnP2CqwVhMvdxdI9r1uBHQ6Y
+	 ovWsbnk7f3QXKf4Hpg4x3Viu+L96Ro+W3//XZykyMRcfpLG7cuSdpInzNI56nZpdEzg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kqUQNpzO;
-	arc=none smtp.remote-ip=198.175.65.17
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.222.43
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C548606A326;
-	Thu,  5 Nov 2026 14:22:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C548606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kqUQNpzO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793888580; x=1825424580;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=8aE99+VJcMQQ2lFtFNMEVuo+WAHaGpOaIlVw0wUkjj8=;
-  b=kqUQNpzOAFCaYDSHcp8Wj4WmpoX3nJS4a+Kgf73h8jtx535iIXYYaWOe
-   K0Ea57swpZPo5j8bLuVT7bTDYB4F+f0tuwUQH4ZC99CXKTnfsFDX5TXY/
-   i6xUcn5URrVaHkYLilXDyz909mDABgqMSPSqwyt9RxltWwqH0JvaREGZX
-   Ofz5IGRm296N/vS+3rBNBIhX/rQ4IfGN4Uy7pR6YI8GSgrLaksPFXeES8
-   KU9Dr+YOg76ZZmPaFzwIFGav1dnKbeabAUU7RzNkIgXYEpEPxT85n/Ebe
-   bct31QF/JCTlCuG/1Mod9N6tbDgiVUZCYJf6T/+vjf7AaH8uVllOkmbT5
-   g==;
-X-CSE-ConnectionGUID: 1l10Jx00QbyIWqho+oNmdA==
-X-CSE-MsgGUID: dc6UTu26R/qspd0UlFgWQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2703073"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2703073"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:22:59 -0800
-X-CSE-ConnectionGUID: /K275MsMS2iu65atWdhLvw==
-X-CSE-MsgGUID: RsKg5am+RfCPmB5pvRDPCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7192371"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:22:47 -0800
-Date: Thu, 5 Nov 2026 16:22:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Imre Kaloz <kaloz@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-hwmon@vger.kernel.org,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	"Enrico Weigelt, metux IT consult" <info@metux.net>,
-	Viresh Kumar <vireshk@kernel.org>, virtualization@lists.linux.dev,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>, linux-aspeed@lists.ozlabs.org,
-	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-unisoc@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Michael Buesch <m@bues.ch>, William Breathitt Gray <wbg@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 00/23] gpio: Improvements around device-id arrays
-Message-ID: <auyRNagFOmxf_3nW@ashevche-desk.local>
-References: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
- <2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe>
- <auxh9PxpJScFO3i2@monoceros>
- <le5gbua6s2mhhv32di4j77qr2we5z5ngzyzmiemhodmblvjiji@q4wf5tdgrbtv>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941DF606A337
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2026 14:49:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 941DF606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-9912c47367cso529382241.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Nov 2026 06:49:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793890181; x=1794494981;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=QpwPqOLAugA67x75tYz1g7ohdoIGIFAO4TwGyxZEzGk=;
+        b=YDud29UnxNDkljnehiqskeR9jNpH70H/sjpxf1Vh6izYGV3GqQEIY/SRr3x6FrgA+n
+         C5iT58IKuWssAQDJ+pyg8eiiK1zOW8uDGk0xmwlk0ENMSs/rHjOLQ+mnGGz4y6DlZ6hg
+         1CWuwaJdWvBP2yMZ6EeSxH2pif4T0t82o0+fCWbQYD9WOmZiNtTlC37enJiquyB/Yeyg
+         TY6xFkKiXH37dXLRunK0y2jl2AmoTEsfTvOTBeXNW+MvNZBgG7HVle7OA7xGN6+3VAOT
+         mP82jE96HDQjk4BelqZBmezGOzIQ55HR8/UbPJ2KqQ/xUPoBRfvlJI5kyApKngK37Gxq
+         4pRw==
+X-Forwarded-Encrypted: i=1; AKwUvByUQwzKDn5rcCyCLLjgJ0PnEVUsBkOgUURLYTWBXNUckBoVZmCCaR841MXuFDvDylIAPMpvVlhqoE3QZnsw6J1kfg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9afzXFLpF5PgvDtztRLHN88RnKfSuE/YnMeELXg8WoNYLlteSv
+	3FEoQkElC3lZ8TYndxOwOHXvBXTS1fOicN2MyUSO1gC4G5iHfLJZ/GUQNK2ECj2sank=
+X-Gm-Gg: AYBFou1FXSkfyLcibiwQkUKOHdg04p7F5rews2n5BaPmRYKu3Rvkuv3tXvfBSLcV1mj
+	Qi8xZy3mOuprmBnEEBWMlnfyWlOqZQbI9QCHxyzHOxkMyKO2M7S0mIpCt2A/KBUQBFuMfCzZLrW
+	610AaI7Y1djbHApBwxRd+vvxkk2R+w3wQ05PuvziBXCIofnUYCxfZYmvDaUiYqcVLCUB0gJiJov
+	SGUvLK5+uQ9EPq1HjqR8gsq3ND34Q81nRWYsnsuFXToOz0Rw+lIcgyyKbF06Mxf8Mp+Q9MyqouK
+	9l5KwOdGhaGLh6aHZjFCmmAkwKQuVWqWvRfORoRRBVhK9jxv7SvyUfTCsLZP5wWbHYv7+VIRYpe
+	sRaa6VlZH26aQzyIjUKx7qwulnfIEmSRi3+EoK2ygwQl3t8MbGEH4VGvfbERfgCLR073+0qthrw
+	wbWBIR4mapdsMsl7bM/QrymUbGO8NzEEIY3XBSh2yjRqEL5Unw0y8hdVaNPhPxvJbvi//XcmGk2
+	Z4iSrcthhCey7cVGtd6s/tYU1CPJqABDveGwQZEuiniOuVMuMVTHbQIWaVGHQwcLK2Y4FXutBim
+	gvacKGY8G1bbrE9qbc00U+WLIHDDOtgN8hNsWK1WF7ez0IrahGMkcXdBERw4i2qtgQ==
+X-Received: by 2002:a05:6102:570b:b0:7a5:673f:9a37 with SMTP id ada2fe7eead31-7d286a045c7mr1513901137.15.1793890181541;
+        Thu, 05 Nov 2026 06:49:41 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d277d13753sm3698781137.10.2026.11.05.06.49.40
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2026 06:49:40 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-7ce78f9d6baso531768137.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Nov 2026 06:49:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzSzfJ8F9H2t8KxGx0JSJeSxqE+VmUc5GAxBj1s+Nx7tk0MIHFrRm7J9iT7TPhuSSgQNasZxOFtwJmUVNmqRpdJOQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:3590:b0:7cb:91a5:7cb1 with SMTP id
+ ada2fe7eead31-7d286b9063fmr1558321137.39.1793890179880; Thu, 05 Nov 2026
+ 06:49:39 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -122,30 +81,109 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <le5gbua6s2mhhv32di4j77qr2we5z5ngzyzmiemhodmblvjiji@q4wf5tdgrbtv>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260929113921.119489-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260929113921.119489-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdX9bJB-BUqJxvzYbaVuNziux1NhgXvkY6rgvGC6tdYe4w@mail.gmail.com> <CA+V-a8tbWcODg8E1qDwXU63ohfSgdeMm6GuEkrg=vyrNLQpbgQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8tbWcODg8E1qDwXU63ohfSgdeMm6GuEkrg=vyrNLQpbgQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Nov 2026 15:49:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX1j6G+Kd80-6s5PEVkOfG_tS2U8p47929G9kHvD1S-eQ@mail.gmail.com>
+X-Gm-Features: AclHuK8-DY11fAp-Ju55qxGdxFOla992yKCcExdnlJgG4bXumg-5poK1WA750QA
+Message-ID: <CAMuHMdX1j6G+Kd80-6s5PEVkOfG_tS2U8p47929G9kHvD1S-eQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r9a09g056: Add ADC clocks and reset
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 05, 2026 at 01:25:34PM +0100, Bartosz Golaszewski wrote:
-> On Thu, Nov 05, 2026 at 12:06:33PM +0100, Uwe Kleine-König (The Capable Hub) wrote:
-> > 
-> > Maybe you just need to add `-3` to your workflow? ISTR this should be
-> > the default for b4, but it seems if failed to mention the -3 in the git
-> > am cmdline.
-> > 
-> > Should I still resend?
-> 
-> No, it's alright. I would have preferred a clean b4 shazam but that
-> works too, thanks.
+Hi Prabhakar,
 
-To make that one should really have a unbiased base with the gpio/for-next,
-say v7.4-rc1. Then with --base present `b4 shazam` should follow that.
+On Thu, 5 Nov 2026 at 15:03, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Wed, Nov 4, 2026 at 4:45=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Tue, 29 Sept 2026 at 13:39, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add clocks and reset entries for the ADC controller.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > Similar comments as for "[PATCH 1/2] clk: renesas: r9a09g057: Add ADC
+> > clocks and reset".
+> >
+> Ok, I will apply the same fixes here.
+>
+> > > --- a/drivers/clk/renesas/r9a09g056-cpg.c
+> > > +++ b/drivers/clk/renesas/r9a09g056-cpg.c
+> >
+> > > @@ -539,6 +556,10 @@ static const struct rzv2h_mod_clk r9a09g056_mod_=
+clks[] __initconst =3D {
+> > >                                                 BUS_MSTOP(3, BIT(4)))=
+,
+> > >         DEF_MOD("gpu_0_ace_clk",                CLK_PLLDTY_ACPU_DIV2,=
+ 15, 2, 7, 18,
+> > >                                                 BUS_MSTOP(3, BIT(4)))=
+,
+> > > +       DEF_MOD("adc_0_pclk",                   CLK_PLLCM33_ADC_PCLK_=
+DIV2, 16, 7, 8, 7,
+> > > +                                               BUS_MSTOP(3, BIT(9)))=
+,
+> > > +       DEF_MOD("adc_0_adclk",                  CLK_PLLCM33_ADC_ADCLK=
+_GEAR, 16, 8, 8, 8,
+> > > +                                               BUS_MSTOP(3, BIT(9)))=
+,
+> Shall I also rename this adc_0 to adc_?
 
--- 
-With Best Regards,
-Andy Shevchenko
+OK, let's match the docs.
 
+>
+> > >         DEF_MOD("tsu_0_pclk",                   CLK_QEXTAL, 16, 9, 8,=
+ 9,
+> > >                                                 BUS_MSTOP(5, BIT(2)))=
+,
+> > >         DEF_MOD("tsu_1_pclk",                   CLK_QEXTAL, 16, 10, 8=
+, 10,
+> > > @@ -634,6 +655,7 @@ static const struct rzv2h_reset r9a09g056_resets[=
+] __initconst =3D {
+> > >         DEF_RST(13, 13, 6, 14),         /* GPU_0_RESETN */
+> > >         DEF_RST(13, 14, 6, 15),         /* GPU_0_AXI_RESETN */
+> > >         DEF_RST(13, 15, 6, 16),         /* GPU_0_ACE_RESETN */
+> > > +       DEF_RST(15, 6, 7, 7),           /* ADC_ADRST_N */
+> ADC_0/1/2_ADRST_N?
+>
+> > >         DEF_RST(15, 7, 7, 8),           /* TSU_0_PRESETN */
+> > >         DEF_RST(15, 8, 7, 9),           /* TSU_1_PRESETN */
+> > >  };
+> >
+> > The lists of clock and reset signals (tables 4.4-2 and 4.4-3) claim
+> > there are 3 sets of clocks and resets, one for each ADC instance,
+> > but this does not seem to be reflected in the register bits?
+> >
+> The clock tree in r01uh1072ej0130-rzv2n (additional document).pdf
+> shows single clock is shared by all the three instances.
 
+I take your word on that (I only have the additional doc for RZ/V2H).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
