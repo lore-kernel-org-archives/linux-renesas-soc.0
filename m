@@ -1,99 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.74
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793846979;
-	b=vv/AZsoE3fHDgIDpegy0FnRvdgFVFE2ViVXJrRiVnkxVUhVSey/MtY2pc0cC0Ub4TM3e
-	 nGt7xFAR/I/nBEbx+CgsmZupZQ8D0vY/idpqY2c9e9lEkvda9k9gIGfcul7XHG7tX2lBh
-	 KAmY+xdV374hUvA3OK4i8MX81vZc9FVZIEIYNNbnwF8Yc1i55DxltoyUCOyq/75NNAC9D
-	 WuN07GUhYKXXJf9em9r4hVCvjU/44S0mV6iTgdmMfgyHynzdVZg5q65NkzSag6JI/nz6A
-	 gTyRJxbOj/33NhuJ2XW6RRCiCQmYU+miSrwZWiC1APLsSKvvAezRyD6TMYrrvki7Z1w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793846979;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:Content-Transfer-Encoding:Content-Type:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=lGTNRUNx7jKoADGU6nChE0bYV1JxVaw3Ybd2726he3I=;
-	b=lfYqAIyZ7wbex+Q5OVSOrzRISPDkqAfMeN+fjoawNUD+KFJq1i9r4aoqi59kgYQnd7Th
-	 +kXiOiy2hwqokEA2nUI/3EGbfOJh8BorjQ+jG6gb02Ti76Kj3ZFWFyDjdqMDR50XvzBMn
-	 eDqJZFD3fHUt5Vxcr2MzqLhHYmcEsrZdoKlXAWYpKZ/SKAZYiesslUF8jV7rY0fl9JOS0
-	 8sA3G4y94+jWJVdSqMh8HbJ8Ygl462k/MohEKAbkxT0KrIPz0hP4xPxLs7q/SKwfCd2mR
-	 ZDfrWbonsbfi6fFg8NXm4fuCEgYgjPPdEgIAcVLIe47ItOJzhzBHFgnV3FTJ9Vfk69w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valinux.co.jp;
-	spf=pass smtp.mailfrom=valinux.co.jp;
-	dkim=pass header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=f4hU4SAi;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.74
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020074.outbound.protection.outlook.com [52.101.229.74])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793866589;
+	b=LDVUHSKZatsD3xmf9mwIw32wkNsWKU8Kcoi29F9hpbsJyNql7pRKzJYck3qts1MvIpw4
+	 adx4NkBmPLOAAJdMpTXdmflshqyVXLak1X/si+KXujGy8XTe3SF1if91D6qWlmSFvBZh0
+	 heUm+7/cOI00F2sDRMg7FesnuGrYGJFPv97xTpHTJz/dEDcBUVH8X4uwgwcDo63Ww0CBl
+	 arg7zzSBoWYlR7KVTHBnUbOnq5h+W6ZPiPvp7Ty9FE9icYtIs2z3t/E0mGn4BveCl0Usb
+	 v+l4Fp30+cY4ipy/pYLq0pfN+lPALVXwuIVLeBuUAXhrQI5DnCI3WXNnSD8snfky/mQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793866589;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=CuJQoyb7IoYC0y7UfGHpRmB84OJXh943j/1/oLn+lg0=;
+	b=PXdRP2OME6mGXqN6z8guPkZvQHyDEE+Rz4NkBOhe8EW4dNhx7VjjDmZQZ3MviGcjQyEH
+	 4DtHZxUvfNRnNLR6UGH6UlYt6Fo5yWLgZAvAZ84szEtQKmuSffzjITDm+Jet0IUfg9CQc
+	 Xg+5OD4Z7A+o1UlFD7vEdjVrPQ1Bc+AoGi5A8MX2D6CgWbac7xO7Ym5ycqvyw/EfGa/fM
+	 Fb3zqL2X8dHKPZX9NvRE0imGAMx5Cy2m6qGa0CT5pQdqYxGh70REWqlIWqQkCPspMxXpX
+	 qnaVvo/GFxo10kME30iHE/uP593qJQHgyrg8Efzh0NMGu73eLi38N+1uNzfCZjS95kw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GkEDMbG3;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F63606A31B;
-	Thu,  5 Nov 2026 02:49:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 46F63606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B789E606A326;
+	Thu,  5 Nov 2026 08:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=valinux.co.jp header.i=@valinux.co.jp header.a=rsa-sha256 header.s=selector1 header.b=f4hU4SAi
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pbjLJJsv8me7fLOw0DhjCoyA+r7hLFgLQG0tQyNl8nxTxze6A2NBBeiVth370BQWJh5JuuDLoDpoEQ6OgpyXxCs2GDeRLCdqbdu/5HHUTpLqIm1btkH8koj4tINaSkDWKQM122oqZ9YI88J7E1HXeWpEBbtxaUL2Kf0rQxz66NkEv31h78zIf/o/5aPaHnKkEe4e5jFora1X9vpv9loQOoLC9CBXo/BFeI6LuUtOZCRZ5GxMANVe8ZjOOhSlc31emhiOiYtA+HKXi97HPEjSaDmlQZXvOSWo/bStJhZXx7rnWUo81/gYxa0AjfNxYvX0/GUWNKT9xalOKnPpfGKPNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lGTNRUNx7jKoADGU6nChE0bYV1JxVaw3Ybd2726he3I=;
- b=mTi58ezScHr53EgXm/vYVysmW0S/K5g3ruqsxoQ+Vt3jqG6dFmtWirzZHcyBklXUlL42dpFxkSgajDr9oRRlcr7JX8XjzNo+79Yj99eZHzUXUFr7XTNK/9YDVEjpNkcX9VM5/v1xd6SMot7m4YyZZmuEQv6RAd1KKZDdKt2hI/8N7d1wLklrvDT6UX049v/OeBKX9oAfux0lm8BEA++1EzCH6Tqlm8fm11KvR6QszbMvs9HZxOt2V6yIoSbWiK/6ukWIm2uE2JHQdW+2GNJ+VYfpjN4lKbjidFjQbb/T0Z6jgyDbapnyM4eE3C/Fs6N8jATSNFO4qLcpB++HfbUj3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lGTNRUNx7jKoADGU6nChE0bYV1JxVaw3Ybd2726he3I=;
- b=f4hU4SAihd1Xy28BN9nVjAB68QAyvvmkMDhu6sk4jTMHQKbDWJfLpVbxkrWPVr1wJdGU8mneaNwbKey7JJAB9YSdeMl9srFU8YAvQSiTYrshSIpvuruiRk0kZNR7B3r233EYkUML6SfWLqHz3r4DC45As1Nimnv0FG7lz3JkP9g=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:325::11)
- by OS3P286MB1661.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:178::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Thu, 5 Nov
- 2026 02:49:34 +0000
-Received: from TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- ([fe80::cce5:2aa8:53f9:dba9]) by TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- ([fe80::cce5:2aa8:53f9:dba9%5]) with mapi id 15.21.0592.009; Thu, 5 Nov 2026
- 02:49:33 +0000
-From: Koichiro Den <den@valinux.co.jp>
-To: "Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Marek Vasut <marek.vasut@mailbox.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	iommu@lists.linux.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] iommu/ipmmu-vmsa: Keep shared micro-TLBs enabled while in use
-Date: Thu,  5 Nov 2026 11:49:08 +0900
-Message-ID: <20261105024910.1879230-1-den@valinux.co.jp>
-X-Mailer: git-send-email 2.54.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0196.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:385::7) To TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:325::11)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GkEDMbG3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49381F00A1D;
+	Thu,  5 Nov 2026 08:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793866588;
+	bh=CuJQoyb7IoYC0y7UfGHpRmB84OJXh943j/1/oLn+lg0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=GkEDMbG3pbvOmv5QL4XpIyruzvCSEfqqg7tw75JazXjzBE9yvyowMepOn3y6+Som6
+	 7bZHMUqOxbR+1afQEh4X82o+M7uBBtCmbmCrBd5nH38d+ZFUyy3I4KRFYRc88Lvm4d
+	 lBe8qw2bc/IRVFhNya7rKkiajtNroKwHTm0QOMzaSLnDW4zquT95X7oazy/nNUGhtl
+	 7Fnay1nN7tTQn++UjaZidM0Cz2h86y4vRunnxH3KU1Y2ZpxnqTDaoX7OjobZCB674s
+	 bolXu8ulBcO5NL7Vio6ysB8oYk1nctYzD7LDAhYQD/GU0KjZDgVyBeoqHqUz5uujYP
+	 2TsXd8gBTPirg==
+Message-ID: <c6664dd8-871e-4b38-8017-d4c1a02fd36e@kernel.org>
+Date: Thu, 5 Nov 2026 09:16:15 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -103,92 +51,145 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY7P286MB6866:EE_|OS3P286MB1661:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b7fb7df-78d5-47ce-85ba-08df3ae76bed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|23010399003|366016|1800799024|6133799003|10067099003|18002099003|56012099006|5023799004|261026140227099003|261026121527099003|261022105027099003|261028144727099003|261026135527099003|261021123027099003|261021121427099003|261102123227099003|261009223027099003;
-X-Microsoft-Antispam-Message-Info:
-	2OiR93dH5RLTQ+dqIwsKJwKFm0eTT2AUcwiOGxgFSjlGRmUG8Os9Lmd+Q83OyT6h9seThlnrJ2Mcvbgo+woTflll8zOpWmW6EF8QRydv1UTTDiB1BfIlRkk/3eWED6c44R/T2oMzAWPwkZTqeNPtZsPzyYK804ZLodd7UtF0rYWohOYuKU4NGamTI3h7HTtDw7GLPXoN/1QRdtMxRGajTxovOG9hsQmm+j37IAbnoGKmLmU02BVNJSiU0hN8QBcc6pBYLZXIlMUW1l5y7C1P3Eygrt/9+vxN46EKd7K6Sd4Trle/RDBwvzL8C4YBORqvGx+vTSyFVtrzkBqXcad8pkQo3V1Wxw1izGJUhfzz6BIrQ8WdySv15nOgr9lSejIdYf/5ug23WqA4akZYwaT9ElS5lt2H/hqp5/JkUsvMxKE9kh0RCLQdzvTyav6GLbG8rqzrXDXyzk6vNa8Y36Yq2zNDJ9znls7/CiiACxT4zXbk9iEaMtbiDdaqIc8Qp4JXyDxHaNbKuIIMfy1Z95g7gHv6OWxPHuamgrn6ksExC9K5yltM7ZzeezwiW8RxMMSGFZNrrG1S9bSaxUeZ0ZE5z2QrXHXu5u4QnCi8Ab+GSm4u9tUysnsRfbmryvotneKK
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(23010399003)(366016)(1800799024)(6133799003)(10067099003)(18002099003)(56012099006)(5023799004)(261026140227099003)(261026121527099003)(261022105027099003)(261028144727099003)(261026135527099003)(261021123027099003)(261021121427099003)(261102123227099003)(261009223027099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BG2rYwNpIiYyuaNHUXkYb2d+73xEs5Pc5XCxRDp8y99lczF5r8e5jbvhXVe+?=
- =?us-ascii?Q?+tka1edzgPx+vbG2wVRpNBlACimjRrblDD76JZuDRLSiEjbb/SIuFHZ170iF?=
- =?us-ascii?Q?s5M0rTUjFoq1VBAy15bhdJVcHsb7Ro/Z6UyKBV7N6OdNrWDM3DpAMXQc1pHB?=
- =?us-ascii?Q?LVBHd408wGRuSHgspK769fJHSAHVOeu6k5ftfcmhNZDuOKVSMuSyHcga6Xd4?=
- =?us-ascii?Q?tDxh7mEDYWuCFxvWTeX+jc2iqpoqWDEgKYTjTlfMlpsWTIDo8xjw0BHyTDIK?=
- =?us-ascii?Q?CuFHAMifXauNyCPCOgHqUOQJspkhPOaKXNDIBr9T1BRW7JM+Vxcfe+23eKyV?=
- =?us-ascii?Q?1IoYsar2m9l7SWoCCH0fwTi19XQkX0ofDEkBugLPQLmmg3izow/BP0Vc07+A?=
- =?us-ascii?Q?8JrzB6p7PpyZvDiH/QTpy++skfYtYpXm0Vbe5AoZV3F9lnjOSIIVRCLf+HxA?=
- =?us-ascii?Q?Z/TcgBCU6BGUcHR7ic7nBo8mvcyczipFirJz7FjfTaoO2v0MBUgjRz+HddpD?=
- =?us-ascii?Q?/PEGXpit04P20PS0oogFFu8fcAFi5Ae9pdNHAo/YYEzSkVzaH6ytZJS0ypTW?=
- =?us-ascii?Q?dAs30bY0SylL5PCf4ncapJKawRZvBtubz0Ta8qolTNDOKTdCwaFE4BPaXbBv?=
- =?us-ascii?Q?4wsQcA4XhCOO3lT29GroZGx7aWE+4XbUaR97iJhsclYcmtiVkEq2kNY1CtDE?=
- =?us-ascii?Q?PCKdFyHeDuLFbiC4jXgbWIn6/WSvUfbIB6FlKguTAisR5pT3sv3M/GedwxGH?=
- =?us-ascii?Q?wCslWC3vTJ4RCRArtnZ9AUTFvgPxrJjuD1eRJ2lKJm8V/egVlnttp74rhR7n?=
- =?us-ascii?Q?mi85iVmnFNgDzQ+2L+fe9Wz496We6PoiJ19zqI2/PtEuT3m6DufLAeuXzMK1?=
- =?us-ascii?Q?TWFc9oJiycIJtXhnBuBgcUprg/bMrZAge/strhocMBPgt1qEpO4yxM3CZnWY?=
- =?us-ascii?Q?4NCpy+hgQr/BHlHOLGX9qQUojf5pE5CypGwxs1v1KxX3V2JZYgwIf5Qz9fdP?=
- =?us-ascii?Q?0SwprBX2xc/NFp3rSo6OtKxI2zo5bHk0H3w7SlXNLaeisJXKOhQeuPfm+tzJ?=
- =?us-ascii?Q?+JZ1qslJ7Cn9thefP1kfZ8GtoP2wp+iZrg5NhkPzsoNVcW2LtJyS/JIqP/Fp?=
- =?us-ascii?Q?VF224k31FkVuZ5f/yBDRKB8ukkENES6XD+cSEoDKNwhwee1wbKWNAarmzHub?=
- =?us-ascii?Q?rocx7mhvXurXff6bVHFTpGyuAjabxc4L3BwDbP7zJJEQhzlLn+493x1fY9lf?=
- =?us-ascii?Q?rmx6PfJmuQGojWMf2BRLj0XSU5lQviNT07U9RfthkMvNQs6MJwEMjNefmaw+?=
- =?us-ascii?Q?QrjkYBXfVLR+TI8+j816F+9mQqz9UCKidDH2oAn10Vf9TqwLqS7cT7RiyH1h?=
- =?us-ascii?Q?Jt9WU9VALnsm+doaGPDcfPaZ37lgEWGI4mTIsVtk1TtnBdISzG652TZL2ZL7?=
- =?us-ascii?Q?1rIo+MWG0eFpxJa31KloPfUgozdR1QZwvNN2D8fsntfhTNFe58gEXNfOP6Gv?=
- =?us-ascii?Q?X2ind6ZZR1NwYFWVgLt0OOjNwImA3EIsN26ywqetcoRw/pqpD5JB28nC0tBC?=
- =?us-ascii?Q?xyxRtkv2sv7XaXNEJKJJZfRiU674jYAPm93e+SqrFJQfOB9qxNQQv41GrFPg?=
- =?us-ascii?Q?Mv9AvbrAvjlk2MQ/hzUkjomCBCtf6ts34Pana8CcoitVKBR66hEKwkY3po79?=
- =?us-ascii?Q?66kI4+UxEs5gQlUIrbhvA8C7uhDfPgo2US4X4HTFSdbXlApF9xoK67cwh+ZS?=
- =?us-ascii?Q?stwy1Qa19972sd8qQBIUiUgk6KBQ6+IqXrdkEYozJ6s4VU+2oxQb?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b7fb7df-78d5-47ce-85ba-08df3ae76bed
-X-MS-Exchange-CrossTenant-AuthSource: TY7P286MB6866.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 02:49:33.3138
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Bv+zG+S0WABcPh/urPWbwJNNbRgYvHPdqLo26jf59n+kzIC1c3sS43cEktMp6DW/K9AkqIwF/zk3Ws26Lub3MA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB1661
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: Convert to subsys_platform_driver()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+ Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Frank Li
+ <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Vignesh R <vigneshr@ti.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Linus Walleij <linusw@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20261104113316.1634141-1-peng.fan@oss.nxp.com>
+ <93534aaf-00f3-45f4-982e-7fd44ab3799c@kernel.org>
+ <auuXnndiQOkEaOsj@ashevche-desk.local>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <auuXnndiQOkEaOsj@ashevche-desk.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 04/11/2026 21:37, Andy Shevchenko wrote:
+> On Wed, Nov 04, 2026 at 06:38:40PM +0100, Krzysztof Kozlowski wrote:
+>> On 04/11/2026 12:33, Peng Fan (OSS) wrote:
+>>>
+>>> Replace the open-coded subsys_initcall()/module_exit() platform driver
+>>> registration with subsys_platform_driver().
+>>>
+>>> No functional change.
+> 
+> ...
+> 
+>>> -subsys_initcall(i2c_adap_pxa_init);
+>>> -module_exit(i2c_adap_pxa_exit);
+>>> +subsys_platform_driver(i2c_pxa_driver);
+>>> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+>>> index 15e14a6fe6dc..dd1f6f854a32 100644
+>>> --- a/drivers/i2c/busses/i2c-s3c2410.c
+>>> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+>>> @@ -1188,18 +1188,7 @@ static struct platform_driver s3c24xx_i2c_driver = {
+>>>  		.of_match_table = of_match_ptr(s3c24xx_i2c_match),
+>>>  	},
+>>>  };
+>>> -
+>>> -static int __init i2c_adap_s3c_init(void)
+>>> -{
+>>> -	return platform_driver_register(&s3c24xx_i2c_driver);
+>>> -}
+>>> -subsys_initcall(i2c_adap_s3c_init);
+>>> -
+>>> -static void __exit i2c_adap_s3c_exit(void)
+>>> -{
+>>> -	platform_driver_unregister(&s3c24xx_i2c_driver);
+>>> -}
+>>> -module_exit(i2c_adap_s3c_exit);
+>>> +subsys_platform_driver(s3c24xx_i2c_driver);
+>>
+>> Apparently reviewing only a few lines out of 300 is still reviewing:
+>>
+>> https://lore.kernel.org/all/9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org/
+>>
+>> Therefore:
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> In the similar way
+> 
+>   Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org> # s3c24xx
+> 
+> (Note, I specifically put double space in front to make this as an example and not overwrite your tags)
+> 
+> And to others, the problem with partial reviews are lying on the side of the
+> sender as it's not reviewer's fault that unrelated things are going in a bundle
+> and not in the proper per-driver series (where each of the driver may have
+> distinct maintainer).
 
-Removing one PCI function can disable the micro-TLB still used by other
-functions, causing their DMA to bypass the IOMMU. This series leaves
-shared micro-TLBs unchanged on device release and cleans them up when
-their domain's context is destroyed.
+Re-iterating my earlier opinion, the reviewer is at fault as well
+because either should use Ack, because person did not review THE patch,
+or at least path-limiting comment like you pointed above.
 
-v2 was retested in the same manner as v1 (with the Linux PCI endpoint
-framework exposing two functions to an R-Car S4 Spider host, by removing
-an unused function that shares a micro-TLB with the remaining function.)
+I'll send v2 of my patch for submitting patches mentioning this syntax.
 
 Best regards,
-Koichiro Den
----
-v1->v2 changes:
-  - Move micro-TLB cleanup from device release to context destruction,
-    drop per-device reference counting. (Robin)
-  - Drop v1 patch 2, as it is no longer needed.
-
-v1: https://lore.kernel.org/r/20261104162251.1749998-1-den@valinux.co.jp/
-
-
-Koichiro Den (2):
-  iommu/ipmmu-vmsa: Propagate errors from iommu_fwspec_add_ids()
-  iommu/ipmmu-vmsa: Keep shared micro-TLBs enabled while in use
-
- drivers/iommu/ipmmu-vmsa.c | 42 ++++++++++++++++----------------------
- 1 file changed, 18 insertions(+), 24 deletions(-)
-
-
-base-commit: 528280c12a26c9da2449c42c5ab4a5c4fe6dbb9c
--- 
-2.54.0
-
+Krzysztof
