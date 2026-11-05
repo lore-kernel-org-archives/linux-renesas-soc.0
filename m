@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793892741;
-	b=O8cJsI8T8AmtB96cQXhJbhJNkgYZ2uDGAfbcBv9kpXqsIWkNwFtHcTJNiptvt19ux1mb
-	 QdBTyIBrmg7MzK4A+fkgwuq0X10ztG1L98s6TZxvSDOtZ1f8z943hLeb4vPjf1CRs2V3H
-	 6/94fpXprmohGsNvmkIJNHfGvdmcaVF1w9elLAM2si4leaBKb6ZW3p+0TMAw3jH01dfL7
-	 6rSQztKXse5rnlXWuTQjRB+fdLk1eAhH/8mhZFQwYpKRvJr3r2Gxs3JaqwYsAnlTOh991
-	 +3QEinD+tfmdkyINxoelXzfyjMudG4N24ciNV+DJM1t84zBCpoEOkeFOOp273D8XAYA==
+	t=1793892744;
+	b=ODTBYWZvqNSjJnDZ8bMD66nZAuO8IEbQTjpluXlCZqAySmipGrsLT4wqyG+ci5YosAu9
+	 ZHAn1xWUoetvO0YKT9Bj40WyyfraFuU7m/Sr6IJBxPS/Bhw0YUbfF3T4vZwOjIBtiRYCg
+	 koBxVGSteo36weOJX+OFW4ONHkR7lVduvqFQ1ktivFPCjgm8njuHr39epXLS5jrgda7JP
+	 +1p7Z5ZEJBrWveUps1gWnUfY8g0HHQxrDRwfMpdbiLMjN9CYLyQY6oA7/ifkXK+NJSRmj
+	 4bUceGUwRtVh/llN8OuNVSl3Sk7HNoO8FkLoDyI42x+iDjmbGRiZTmlzd8yk3n8jomg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793892741;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793892744;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=h7kXjIvaD9I4Ytlo9V6WrbW5s+lf9mwR20Esdy6Qa9c=;
-	b=iMSJj37F+vPK3WHYOEUR5xbNA6/OpT28hWY9+0siDTqXWmmQ5n813oLQ1zfdzAkSMt+h
-	 nsTCEDoFN56eJQq+E8fAIWRQVwvC2A/n4SOi3Hcbr30qeM8u0z+CavFEoVcEH1IEEJclz
-	 K93u2Hf9Uux8c90SzOz9TO/Pg4fs4VJcAxBT39oePfGLEDqNqUQZtqargCR6RGWNeSMcK
-	 N1atmWKHS55PLTT/wl524AFK0eNIXKUvS+ot81OFMop45MjXlAAsDJfcKN7k58wDICM4S
-	 0ewMnejHBvsHGb729AbUu9r9AjrQhylruhLPuyZfRvbeDuaYVVmiLUatVpL4QEWDWqQ==
+	bh=U4qTLL4GdrGy+i5Fi0inWkeQg5wg4Sk7QHXJit4B66M=;
+	b=NdSOt/vA8f4lPLlV8/s+hYGS0MawWFs5pxg6asEjAI8OKAZGNarHoVQ7xIEMZeJufH9q
+	 lIPcjI5i4hSRrd43HMG3Dg9+03I0QzYPQC5MZQlSJJS+ZvNDVG0B6SXfs9udczhSYA5wv
+	 f7di6sCO5o3zwQQ8EgySwp61vL3g8rEP4cehFTbACgxfJyLyNsr92yT8zzIwnheDj22is
+	 44NqrgIB79V+uwhH82oBz2YsJQCjjd1W27LCzG8aE5rtwZO30eGy27HqD0WVYEVAu53wG
+	 4PTwKtySgn/0J56oAIiGSGMr50TkBRRRHzoP7N8zzbFDqW+AYfyUgke5lyXNOtdXz5w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RC1dOEFw;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P6aMFSMd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF03F606D811
-	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2026 15:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C70606EE80
+	for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2026 15:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RC1dOEFw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1151F1F000C1;
-	Thu,  5 Nov 2026 15:32:19 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P6aMFSMd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9761F0093A;
+	Thu,  5 Nov 2026 15:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793892740;
-	bh=h7kXjIvaD9I4Ytlo9V6WrbW5s+lf9mwR20Esdy6Qa9c=;
+	s=k20260515; t=1793892744;
+	bh=U4qTLL4GdrGy+i5Fi0inWkeQg5wg4Sk7QHXJit4B66M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=RC1dOEFwPSrVrMHwQzh6gsFEOepNrbeQSmyAIV7q+YwvzYXH3e05slNif55FNpSrL
-	 Imc4EVFWHElYIGlnggB3OX4JVFjSx4NndbofqJ6vxmIfViY01KM56g8eDYWKw5cNQd
-	 5VY+NIeJ/McY4/2SmSVJks8Cr/Q+WmHYhD/Nb3sVWfBiECmk/FS3F+irdRoQ0xwufK
-	 xre0l9GqM9gfpaOxew4e22gxHAC9zgty6Ef3Wlj3JVZM9HhTfYc3/0XOZtB8qTLjK/
-	 Xwzu8BGDiPBpgYlRxn0F38gjl9VTf1ORwAw5zBjeW7+1bA1wN5K+ytAKbxb65stjVz
-	 wJoDzzrGQ3CjQ==
+	b=P6aMFSMd1QowdLiFdAqorhSeJvHqd7xNrYY0LXzlKk4LEP4A2P/VCplOI79JsH7o2
+	 KgPIjwQXf7hHpu1CmsTeksYOUm/dHXkMQdY5J8yHQoYi/ZgD6CDxmSYS9nSWor0hc2
+	 lYs3oOpBf7xn7meJJNktBcLqXbS+QJlaa0ZQ7/RQP4wx8Yc0gFhngXLGdt8KuE10xh
+	 B+LnA4o3zygR0MmHCNB8LW5zVxrZWVcsqzFjYB7M8mPQDMzj35yUVaupXI0CPNSDeT
+	 a9BDYXYuc6YBPHZIxiLWraJAezbdah36zja3YVD0Rth5N/oKhoSva5nuwO+64YuJ7P
+	 SAXLETw41EkCg==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Thu, 05 Nov 2026 16:29:44 +0100
-Subject: [PATCH RESEND 35/83] drm/rcar-du: Switch to
+Date: Thu, 05 Nov 2026 16:29:45 +0100
+Subject: [PATCH RESEND 36/83] drm/rz-du: Switch to
  drm_mode_config_create_initial_state
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -55,26 +55,21 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261105-drm-no-more-config-reset-v1-35-1f58d1e33380@kernel.org>
+Message-Id: <20261105-drm-no-more-config-reset-v1-36-1f58d1e33380@kernel.org>
 References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
 In-Reply-To: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
 To: David Airlie <airlied@gmail.com>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
 Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- linux-renesas-soc@vger.kernel.org
+ Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1497; i=mripard@kernel.org;
- h=from:subject:message-id; bh=hPGIK5YZmvGETlt8Fu9SkSwdVK9ySZ5w82wooG5le/g=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlvFrxp+/Su6B3f31v6jz8xqWTop70+80b09iHnrY1+c
- z9PsKvX75jKwiDMySArpsjyRCbs9PL2xVUO9it/wMxhZQIZwsDFKQATWZfO2NAVmyBsPSGw/Ibm
- /w0hXV9EIxPXHpBiYlzDu/i6NvOdvTn/1sQ2RPck2IidKueaseGhOWPD6mKtjEkl3IetY6+n7V1
- t2PzrqHlNwLJpi4qXX57ec4Rvz/59qf3Xikr46hPqqxXvHvQAAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1211; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=Xx+LYaqASLs8iN4K0HiKC5Ge2XL3pVC8a3xfBXe+Ba4=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlvFrxNE2rMs94iy1/79VjYpw+2US2KS/p1ptRMaNbXY
+ /slJGPWMZWFQZiTQVZMkeWJTNjp5e2LqxzsV/6AmcPKBDKEgYtTACbSvYGxYbKfRuzCnPszNRlM
+ WOt9BJZ4n3X8uWJ37qny62XPzUvfJD4we77Q+HL4rIQX0qdv15wWY2y4x8M7y+scy8WG62bHPbp
+ Sp/zMEXosahUjcCIlNXJC8pUwqwDv/d/bJXWmFJxjZ0rmWAkA
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
@@ -91,22 +86,18 @@ Switch to drm_mode_config_create_initial_state().
 
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c | 4 +++-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-index 9228a7ad0dfa..7fddde804dc6 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-@@ -1003,5 +1003,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 	rcdu->dpad0_source = ffs(dpad0_sources) - 1;
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+index 87f171145a23..07171f2f3052 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+@@ -472,5 +472,7 @@ int rzg2l_du_modeset_init(struct rzg2l_du_device *rcdu)
+ 	}
  
 -	drm_mode_config_reset(dev);
 +	ret = drm_mode_config_create_initial_state(dev);
