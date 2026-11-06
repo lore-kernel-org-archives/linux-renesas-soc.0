@@ -1,68 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793979899;
-	b=yzTTYI7NlpEu9zUOOBnTsVUGKAk+VNABmpKYDhoIQEQXrDA6Urj/G9vhGZUqG9GNQMdz
-	 AAGF9VEem4KAHvEpnneiyhjzGLahQ/p2HRJcTpv7Qe1Il3uOd7Ml8FOHELNmEggPpNG0e
-	 JWTWqDdqzerDgJ6rR2+hXBJSfNUNi4r+cKNQA9tST57mJ5bHUI6JDzcORbM+X2ckbwaVs
-	 emDX8sABQFQ8auvyTqObK3jMjBPJlkLF/GruS7GtG42fLnnW1guUiHwkvQbBolr6AVREK
-	 tV2dni90ebb2kM7X5QkIJ2rVNDzXtLkKGPKS8RSJLJZ5fiq9R2rgjUnrMcfBY5B6SXQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793979899;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=m7TGBcFGJ25PzS3E5FjcY3XCx1Va4AtTHtI7meNpbaU=;
-	b=B+dZ88Zv8TcK9q/QNVB/170OI8zJGz9wMvBg/4VPrZbINgCrfHGNyetYSfdEK377cgG+
-	 q/Ox4kU02wfejhQo3lWP2xQZDds4O46VE/zSQVsCwOfu7hjRmqteTIVUEr7lNSS39fnKA
-	 5RilJ4mhfp0poFaUbS9NjnL4C08VW+A1K8byAl0ZS7QmxUU/nc73sg1ZHLB7cKgKZcVl1
-	 RZDnu/Czx/rKJP1nb6z/tZwfsLD+KN/OgStgXfzC+5kfktPzH9EURGgYHXIBWfCii8shj
-	 0bVBbgEHSh3Cnncea+V0jOXnL40gQjRfLIQyMqb4tsYQFCjGloXXuBhcmTaNP5ZqLAw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KxXy4qR8;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.50
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793987600;
+	b=zifsDAG0zC3MWMGQhq9Zy0Liubot19WYDUihQcPxa4KsmEr94DKhhk7wi7rGGLWnALKo
+	 e60TYuV/qlaftGOOFWCnJBdifhWLfFeEAlvljBMtvsppBJht9il3+wMNwT75Ne8fs7PlT
+	 erPXSgP+Vilbs5O8Ah+imxsiu5xYKPvRwf+Uin3cd3DxExoEunGNWIv4J62Dh/rqIp18l
+	 8tlmqaOeOAB5xXnpxMQyEl7kPMPCRoBxNNgycCDyNcAt2Gj2uQZHFLLDDrn3ILksvFbRm
+	 PvlF0ZAhBgsWU55a5SOfQ2C5nvSHPFjvhW0J1Gh1oI6EriTLjjObz/zo0i4zG3zwGmw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793987600;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=5pDupBwR2/7t1JImpr59IJwI8nCk2i1PzTMP7JDf060=;
+	b=j+HuBYcm/Lv8wezFQFZvi6QzWEMS9fDSOsh8Szk8Zx1Tl7T5g8m2ma/yjgPPfqLnpLyS
+	 /5Zw3NOXeH+n/0ix7RrrrHrQs5oZ/h0q6iCRpCYE0IBavXVyHLuneoh0gdyyglXq4dBBA
+	 RZm0F3M+dTH7J+ub5BE/PgbKldZN3qLRTPDcFjLkZjl1rqEsomxsMzV+CDloCpXHHrTCK
+	 mfPYDiETJhTOAN3W8cTeC/XHRktSOLkX7aCAJiEDKKknap3Ue9/00i+yV3pRcF6XNecvW
+	 fAk7GukKa++nwjSOBOrJ/49zPRMEFiBvJGPHlP5RYl88dSVsi1JV4Ogtz48i50z8Zqw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=jlcDAy1q;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.50
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A972606A326;
-	Fri,  6 Nov 2026 15:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AE2606A332
+	for <linux-renesas-soc@vger.kernel.org>; Fri,  6 Nov 2026 17:53:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 74AE2606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KxXy4qR8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128ED1F0089F;
-	Fri,  6 Nov 2026 15:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793979898;
-	bh=m7TGBcFGJ25PzS3E5FjcY3XCx1Va4AtTHtI7meNpbaU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KxXy4qR8Ki5rez09gboTTO/asVqsZh7bhqaj7H0ubtK5UcVhdVXNvVphmGw+crUeU
-	 jBgvKz0u4gwBCPv+/f09/WHCQs5SflTaYwnT4ZYM/k/+0d9it6wH8PZV9SL0E9byYm
-	 9jf3V4E/IrxVIZUhQZp0f6K4TDhF6nx42wiM3ede/LBZTtNXgYwT0S+xg/sQGwY1u0
-	 ocU9HjN8/KCTBJZAGYUyXn+gS0o473ZB/9dR7w3NQbiK9sc2wje7dDl2BwEsSrKs75
-	 GMFOIzeF0YKp8IcSkK3bndx1ysdn0TUnAxFXTzFeTRtkQXn/KsJ+pGzJgMMab+JzId
-	 PItBYW1yiZ2mA==
-Date: Fri, 6 Nov 2026 09:44:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@linux.dev>,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v4 05/14] dt-bindings: net: dsa:
- renesas,rzn1-a5psw: Disallow ports beyond port@4
-Message-ID: <20261106154454.GA3654918-robh@kernel.org>
-References: <20261104182105.1102555-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20261104182105.1102555-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=jlcDAy1q
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6b571a45a2aso4023a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Nov 2026 09:53:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793987599; cv=none;
+        d=google.com; s=arc-20260327;
+        b=JtYUEfC537WVbu7Pe7q8dKr/RZ9zmLfB3nKg8b99lGvQtCUirp+Bgw9fcJD2X7Vc7r
+         NBzBOeJm9/fpoqHqqEhZ5U4E94PPISwFRz840uzQDJCNZowzFeoQRIzZAmEBw2XiNZNz
+         FeXV8nUyqb2u6w6Nsp/ZPGxCxqnDoqzK9UJ70C2nCUX7qrViy9RITfhJGK7roUXAjaKn
+         ZElNA9XNTBq/f7tpyY2nP99XHjSvpNaMEEurnmd/lhSIE8SVCX9QpaJzGHEhZoLEKlxz
+         6Q9sh0rVQoTc1+hswsa/5WBu9HtuP1KkgEMWEEMwA53qYBqmwaVEuLvyQEBCgcqPLLYH
+         aUsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5pDupBwR2/7t1JImpr59IJwI8nCk2i1PzTMP7JDf060=;
+        fh=xDK0WMCRMegVfDIo/5LTemiuor3bjzFDYYaLKAlbtEg=;
+        b=o5cv+LITFFdnnT66TyD/qgk7bs/YYjpagrKlOZwRlJfego5ukejT67/zWmeFH3a764
+         jPpWyjKZlGB1/w831p4Ml2JiHejiN9oKE/b/u0IVVGNn5LHCCPooonVBlYkmBVkLbWfo
+         OBTVS0tpyDJa3LmQM6mL2R+Yq9RlmHUih0hoRpdOFSbFjR6y05tPeyIBoH4yfkeCDRlf
+         5Qoih5jhakgWD8iPd1RIAyacyBT8MgMTEjAwwjvn3M6dDoJIAytz0AfvLp4A/6gNAT02
+         mvCWy84AEFdXYX2BA6BUcMQjVQaGCGMRKNCs9uhz/ZTEumGuqVLvHFjAa9P8iwgxCSb+
+         D6yA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1793987599; x=1794592399; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=5pDupBwR2/7t1JImpr59IJwI8nCk2i1PzTMP7JDf060=;
+        b=jlcDAy1qwlP8CV/J8ziGOhM7zgiwe1Yqasgt18zZ9BLFfbdjvFbOPJHelnnlWn7/NF
+         Iv0y6BvcfswTFEAK+vaTKFWw4pm1SC9i7SkbSqJgyIWek4Oq+yCZaP0CXyGrm6BTXeAy
+         PMZhXc8r+FCA+Uan8Tn54ozp3MQPEOEFZdVxBH5ggJzVX08faCYPNZDo3xsJ3VF8tmEg
+         pX3urwYaX0msYCvMLpruaNTx6NxqPVTVZ/iC58DSiI1w9TNgPQSmlsdvsWkpbFzggva5
+         DeXnKd9qGJxbmFLWSsqwsQR8pJQE3NG/l6oFkjRU8+PfaF5R3/yJ38vi2guHN24z+b5U
+         +fdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793987599; x=1794592399;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=5pDupBwR2/7t1JImpr59IJwI8nCk2i1PzTMP7JDf060=;
+        b=VZ/u3hIN+Z6Pp46l+m3njvWIBo+9Q+nyCzM2iyBAWXehHUvgftdQxb/gNh2NGsffiO
+         Vbh3q7MVQoOj3TaWsauEaKIHtJwk6Loh3sxS4XnsyNm77xZ3aAcR/WfeSl4UPHYegQrs
+         r1ILHDfElMGHx3SpjroDjWiV2MYi0PNAREXpkSYzlCpuKA33x7IHcmY9mU7cT+7Cb/aw
+         0kSXG3/NI6i2c3xWhAltA28iPrfuP5vhdRTEgBmU/p/FNXJHVHBUxIhp/UZaiZMS8BxZ
+         ikKPInC9l4Q6JRkeg0IHxuod0Aesi8MwGlDzGiqHOPTGcTXVh1+Av9Iku2FRyFM4Hui8
+         Ei3A==
+X-Forwarded-Encrypted: i=1; AL+hErF0qn9yAZaL+xCSAz0mDOIRankYEJq/+Htppi3Mvd3nGayDJlIGg5OjGm0CoDrIzNoa9OddfEM8C+6Fbtlb3SfACw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/OMQ4YJHLdhFGRp3BfLPzPSybmSPxgCQdZxYe7pOdqXZvKj9c7
+	UuQRaxOMXK9rXhA49JZ3i068gd1MHUoePPU+zdxEBDK2wntIb6v9/OSnRG2lDZTKLqF29nWNhGL
+	IB7Q0r5U8dMnV7XOtLYFWaGKyvVnmrWXPUWwXZLzT
+X-Gm-Gg: AYBFou3Zu8WJ3iLzmbXFFkZmeA1zH2Y9dyXSy2bO/QvL+JPZfAv5cY7lCXawLkFOSC3
+	/CYI9i/p0tsksBlFVipWYE/ukaJMFDwR5V6SF6esYLFzJGMGIMqAOV0HkOoyVWmaRYSS+c4hnJ9
+	N+lJEb/zY2yChuSnRPRrNqwSYmwMhWtdNqB/p/rwiX6XgzfsNz5t08g6i+4w5SAi0Bizp1A3cgp
+	0g6wXwn+G4STnYrUtUNE3+mcEPi/t2X4bg0KTLWwNom4tHI+bD4c4G/E+PFwz+I92yUs2RZ1Kjx
+	hRGl6BAwaTsOvBfnGm+r2rrsSQ1/7XupMxT/fHmUN6FwrOrzgdeobSovaMQRfZyZxrwKODZ6Mo9
+	i9aP+8OD8VOaWerG8c0t/0H9ebn1wbAM6ljIEPzGxRDBsfpHYjyo7FvRb+8v1BP/bunM=
+X-Received: by 2002:a05:6402:20d2:10b0:6af:97c0:ce51 with SMTP id
+ 4fb4d7f45d1cf-6b6f84514ccmr6722a12.13.1793987598073; Fri, 06 Nov 2026
+ 09:53:18 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -72,73 +104,120 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261104182105.1102555-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261103211424.127627-1-almasrymina@google.com> <cf2e3292-d591-42a4-bf6e-76f4567604c6@kernel.org>
+In-Reply-To: <cf2e3292-d591-42a4-bf6e-76f4567604c6@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 6 Nov 2026 09:53:06 -0800
+X-Gm-Features: AclHuK9NbTvBEPfZwCm6iqd7sXh-jqNYXp8FMPv7QJO9bGGBVmf4WllHJrUhzyo
+Message-ID: <CAHS8izO7QmD1qp=QfUsCq-R+p7OuOVUtqPJZh1k+u7H1J3KnoQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v1 0/5] net: deprecate skb->pp_recycle and skb_mark_for_recycle()
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-mm@kvack.org, bpf@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-doc@vger.kernel.org, 
+	bcm-kernel-feedback-list@broadcom.com, imx@lists.linux.dev, 
+	linux-rdma@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Willem de Bruijn <willemb@google.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Bobby Eshleman <bobbyeshleman@meta.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowangio@gmail.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Sabrina Dubroca <sd@queasysnail.net>, Johannes Berg <johannes@sipsolutions.net>, 
+	Byungchul Park <byungchul@sk.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Wen Gu <guwen@linux.alibaba.com>, 
+	Philo Lu <lulie@linux.alibaba.com>, Justin Chen <justin.chen@broadcom.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Vikas Gupta <vikas.gupta@broadcom.com>, 
+	Michael Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, 
+	Doug Berger <opendmb@gmail.com>, Nicolai Buchwitz <nb@tipi-net.de>, Satish Kharat <satishkh@cisco.com>, 
+	Wei Fang <wei.fang@nxp.com>, Frank Li <frank.li@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Joshua Washington <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Jijie Shao <shaojijie@huawei.com>, Jian Shen <shenjian15@huawei.com>, 
+	Fan Gong <gongfan1@huawei.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Sunil Goutham <sgoutham@marvell.com>, 
+	Geetha sowjanya <gakula@marvell.com>, Ratheesh Kannoth <rkannoth@marvell.com>, 
+	Subbaraya Sundeep <sbhatta@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>, 
+	Felix Fietkau <nbd@nbd.name>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Tariq Toukan <tariqt@nvidia.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
+	Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Daniel Machon <daniel.machon@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Yibo Dong <dong100@mucse.com>, 
+	Brett Creeley <brett.creeley@amd.com>, Justin Lai <justinlai0215@realtek.com>, 
+	Larry Chiu <larry.chiu@realtek.com>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Paul Barker <paul@pbarker.dev>, Masahisa Kojima <kojima.masahisa@socionext.com>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Siddharth Vadapalli <s-vadapalli@ti.com>, Roger Quadros <rogerq@kernel.org>, 
+	MD Danish Anwar <danishanwar@ti.com>, Jiawen Wu <jiawenwu@trustnetic.com>, 
+	Mengyuan Lou <mengyuanlou@net-swift.com>, Ronak Doshi <ronak.doshi@broadcom.com>, 
+	Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Jordan Rhee <jordanrhee@google.com>, 
+	Ankit Garg <nktgrg@google.com>, Tim Hostetler <thostet@google.com>, 
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>, Eric Joyner <eric.joyner@amd.com>, 
+	Mohammad Heib <mheib@redhat.com>, Prabu Thayalan <prabu.ponrajthayalan@amd.com>, 
+	Chintan Vankar <c-vankar@ti.com>, Nora Schiffer <nora.schiffer@ew.tq-group.com>, 
+	Alexander Sverdlin <alex@sverdlin.org>, Kevin Hao <haokexin@gmail.com>, 
+	Karl Mehltretter <kmehltretter@gmail.com>, 
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>, Meghana Malladi <m-malladi@ti.com>, 
+	Jacob Keller <jacob.e.keller@intel.com>, StanleyYP Wang <StanleyYP.Wang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 04, 2026 at 06:20:53PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Restrict the A5PSW ethernet-ports node to ports 0 through 4, matching the
-> hardware configuration of four external ports and one CPU/management port.
-> 
-> Although the schema pattern limits port nodes to port@0 through port@4,
-> additionalProperties: true allows other port nodes to pass validation.
-> Set additionalProperties to false and explicitly allow #address-cells
-> and #size-cells so that ports beyond port@4 are rejected.
-> 
-> Existing in-tree device trees describe only port@0 through port@4 and
-> are unaffected by this change.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v3->v4:
-> - Added reg items validation for ethernet ports
-> 
-> v2->v3:
-> - New patch
-> ---
->  .../bindings/net/dsa/renesas,rzn1-a5psw.yaml         | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-> index 9c477ceb170b..250c59e58439 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-> +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-> @@ -63,12 +63,22 @@ properties:
->  
->    ethernet-ports:
->      type: object
-> -    additionalProperties: true
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +      '#size-cells':
-> +        const: 0
-> +
+On Thu, Nov 5, 2026 at 8:36=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel.=
+org> wrote:
+>
+>
+>
+> On 11/3/26 22:14, Mina Almasry wrote:
+> > Remove the per-SKB skb->pp_recycle bitfield and skb_mark_for_recycle()
+> > helper, and reference-count netmems directly by their underlying type
+> > via netmem_is_pp() inside netmem_inc_ref() and netmem_dec_ref().
+> >
+> > This series simplifies SKB and netmem reference counting:
+> > - Reclaims 1 bit from struct sk_buff (skb->pp_recycle).
+> > - Unifies reference counting of SKB fragment netmems and regular netmem=
+s
+> >    under netmem_inc_ref() and netmem_dec_ref(), eliminating the separat=
+e
+> >    skb_netmem_ref(), skb_netmem_unref(), and skb_mark_for_recycle() API=
+s.
+>
+> Part of the performance gain from page_pool was to completely avoid the
+> atomic refcnt operation, when we can see that page refcnt=3D=3D1.
+> Are you removing this?
+>
 
-Drop all this.
+I am not, and this is a very sharp observation, because retaining that
+optimization was one of the things I struggled with my LLM to come up
+with a way to retain that optimization without pp_recycle. Patch 4
+includes verification from pp-bench that the fast path remains just as
+fast:
 
->      patternProperties:
->        "^(ethernet-)?port@[0-4]$":
+   - no-softirq-page_pool01 (fast path): 37 cycles (18.7 ns) baseline
+vs      36-37 cycles (18.5 ns) patched.
+   - no-softirq-page_pool02 (ptr_ring): 77-78 cycles (38.9 ns)
+baseline vs      76-77 cycles (38.4 ns) patched.
 
-And make this "^(ethernet-)?port@". Then any node will get the 'reg' 
-schema applied. That doesn't check the unit-address, but the way to 
-check that is comparing it to the reg value (not yet implemented except 
-for specific buses in dtc).
+But the sashiko comments indicates there is at least 1 race related to
+this we missed. It looks like a smp_rmb() after checking the page is
+exclusively owned may fix it. Let me see if that works.
 
-
->          type: object
->          additionalProperties: true
->          properties:
-> +          reg:
-> +            items:
-> +              - maximum: 4
->            pcs-handle:
->              maxItems: 1
->              description:
-> -- 
-> 2.56.0
-> 
+--=20
+Thanks,
+Mina
