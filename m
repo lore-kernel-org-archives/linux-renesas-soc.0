@@ -1,72 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794082379;
-	b=lkKo+VL/3gLg48JeMwzv4gQB65+ji7sGoXjDMO7AUn862t3MN+Aan4cPOtm2Ikd179q2
-	 GUfocSvKyJ4kakxxUN5R7UQDMuRasmb6ZlmVxAvb+k4gNWzQt9FH3tilgz/pBetpAhHJd
-	 4XF0q6fTYAIwXnxXp3v0db6EPIYE4gi5/VQKagiW4TSmTiJ7NthMG4pqM0zzfOblId4EJ
-	 U5MG5zyk9DvMT4ITEdsc+SkSPvyE7LwYH8xTxep+qpJsMshqdygTHddKh+/blctSXHaK/
-	 CZvIEZg/l4PNOx7zFYPebtxuNF2IhLNHk9CRMmu6Q1c6MpoCE70hOXo0VFaOi8uG1oA==
+	t=1794082382;
+	b=cGb48FszPmZwtka6UZZnPt69jKbIuBFgDMlrH++8pGm0DlVCpPNlnUQsyklPzGgDGwuw
+	 W/cBmkVwkNUfV0g+WSAqV0wh+vAx5HtF8grTesI2QRJcKqTzYV22onQn9G9o9LeRTaHGe
+	 D4By+2a+vlA3sDqLP/c0wG0tGAS4TyqHxwSTGDQdsiFNkwvW+lZBiDoiAMGHgnGFNWCnE
+	 tNpTiPUf6HdVM6Y2pNBA6R8+13GsDjm9YELAQbuGEUmAwVYuMt/11O+58e93x2o2Pz/a6
+	 Hdwz00Mgs/12Q0zVkKP68ew60nsLVb8lC8DqsElcYlobyY+ke6kt8atdyFJmgiDUnGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794082379;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794082382;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=ITiDeBlYByumad4I/LuK3iRUkjJJZT9G1thTcrVXBwo=;
-	b=D89OARvga9whFDd9ieumqhPoCYNI4ZkCbBY9sRBi6OMeXdqGVG6exKfy5N6VVsftZn2l
-	 ynm5VcTfTjsYaagbDHPvk+Bj/9wTJvay/bN9fS47pAWZ/i+ZOshkxZaGps7g1TuCSLKrX
-	 LnzNl7H9jucFe6Aculv0Z1x1keADwwIOOS/qvIL2gtu72VNiQOtMYLFbYWwwSbOSURWqP
-	 nVRgzMtPcSMYHdigWqUPGh4YSkuBTOnUTCHZFtKN/XJ2JdP/XnFo5sf+g/lQT/2WhjAOC
-	 9lnS21+YWRO6XG8vs9/ao2fJGgBvDtVCBa2zNcOJprf10to5txQeyMFOyL0CbShDEAQ==
+	bh=q10HEz8kiYMrWgvOwqfdg5IG6VH+ZxR/JVM/7JXlHp0=;
+	b=4cgiLi8en8wq8C6CZ47RFPbXb/JwIpp7YsH8qZbl+D4v5NM+95PV60fEC2HKgIaoaWiC
+	 KvWd6ZUn8mR0bZlX6p4Wg1zMkIr/MRBkGZQB8v4qatxp0ZOSGNE1YiBUb7OqJ2GvXmCS0
+	 l5Pns9Oj3oqg9pXEhOIJniZx2RVHOeJOcBdM9tfXkWwgETXuH2W8bLsDUSHzSGpYUC823
+	 70+/0vKASPuov9NO5HkGn/J7RHcSE5zdadbaPPStMIlZSVCzc+NCjrZLM+kBRRcK4gQMj
+	 37tWS4SD9XwnK6sPf4FnZoQzEWQpipAZHsF2J8hr0ZYuf8N9gnlthW0B/J4rj9OD/cg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=fail header.from=gmail.com;
 	spf=pass smtp.mailfrom=upstreamdata.ca;
-	arc=none smtp.remote-ip=209.85.160.49
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	arc=none smtp.remote-ip=209.85.160.44
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2501B606D801
-	for <linux-renesas-soc@vger.kernel.org>; Sat,  7 Nov 2026 20:12:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2501B606D801
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2991606A339
+	for <linux-renesas-soc@vger.kernel.org>; Sat,  7 Nov 2026 20:13:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C2991606A339
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=upstreamdata.ca
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-499f20c7054so7580fac.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Nov 2026 12:12:58 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-483d290f398so3955fac.2
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Nov 2026 12:13:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794082378; x=1794687178;
+        d=1e100.net; s=20260707; t=1794082381; x=1794687181;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ITiDeBlYByumad4I/LuK3iRUkjJJZT9G1thTcrVXBwo=;
-        b=zpZx36tQYHIINfetin4GsyrW+K7p3oSljSvsw0GdX6EXLJx/ubJVSVSS6u6x4bi2+L
-         SbHcHBLbxoKcqfO28mHWUQ0+lzF/3dspO9ettFGe1ohtvuEFICUnQ60jWYvensqCpJVy
-         RNh3d/OngJs1R9uRR+e28fI7DpXpktcbSMvuwx/STGoqaJzbK4qUFvB1JgdMDZiXrPRO
-         t88hl/jcvXw60taKs5Shn6xuFnq6SU/LcPWAO5kiLhko7+gd33Wvkh6VwQ6y68zNhI0R
-         1CtZngpyg5LWhn6KQkqcRHTz7HLGtlKM6wYgU+bI971arNKt9plV86UfLSVIAmQq/rAi
-         47jA==
-X-Forwarded-Encrypted: i=1; AL+hErGtsQSvkJ4k0FFrinqmkrp4FDRDaQe+99V8hWQzrinSAbLqftjcytti7k+DwE3aMdhBxpPR/jdefXW8nT8AnMSzkg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9RMj3ncoKzF7zCbFRu6+Lr/inE40v1E2kknB4GlRTkFhkq/4wL
-	Cgkm2jw2XbEodKU3Icln1T4U8d+EFSWvRIzGbmpl80XlCAp3AIAwl9JFC44BJEI70BU=
-X-Gm-Gg: AYBFou1lJFufHYr6sRN3bIh5Yuemq9E9wGcLqVM0N2Xy6PR1YbLl+mUEWukZ6LMyeL6
-	e2Oo+o5tlcgzHTcARTTuWT1l+6UO87Z9hF3UN5igSBasFL2eIJwE3TNNG3tA0hs0G8PVEQYFbG3
-	zk1DdlCTnpmhQzrdjPRgoqMwynTXCR6gmPi/c0JJufa6EycaSscBsMma6mCK86qFHZn9xnof0EH
-	h0kAe2um/1MUA84IZdAq9mcqlyAnQBzxIymHvbSx+UyfSOtX812jR1/NJV5DLWrdOC1PmXi+Cgq
-	rzEKXf3iGAuQXVk1m+Q0XSWdkrr3rglNebpZz2Q8AUDgoYbfwA4H81cfVLvf7PfOWGBUI2u59w2
-	eFakgybf0k5W9DdGz5bHtAZuh3UilrlTZ7mcC4eo+fz51iuKsgYWLFBWJPY8eLQVFY3LIB1dLTd
-	QeX+aE9ZQmVJmbLM8D5VkiPoGeQBhhb0Gl51It1NWlR5QX5UVJ8gjuR6n6+dbSZLbQAwN1Vdwcg
-	57iAuk1UB4MSV0ZLa8EJTAHD7U8wKOooPUWGGk1fQTz/IZ6x43MkDP3YRcmJIJkwO2VbFoeFYL3
-	mzhYmkdKrcorROZwrCUokYwk2iezmBteLzlEmBVv3pkkJFCvxKXAXsnx+4ei
-X-Received: by 2002:a05:6871:7426:b0:456:5d8b:5681 with SMTP id 586e51a60fabf-4ad9869f851mr4516599fac.1.1794082377926;
-        Sat, 07 Nov 2026 12:12:57 -0800 (PST)
+        bh=q10HEz8kiYMrWgvOwqfdg5IG6VH+ZxR/JVM/7JXlHp0=;
+        b=0H/1S2Iq2++fVkZfOSi1bp/PKRRFEu0IaO/5z/3v3dVbj98lQ5J+G13KPXaPmF/1/E
+         yYUKEaqOA86aZKz8Ov7hkHaFifNKr3hbXI+v/IPg8eXTh0PQ2RC77+twuLyRY3zRUYFF
+         mDmf4aTFhOQgNetN1tYQu1OEYvQ9PBWTdOKZIQqAVgPOrwy/Xl1KzXGJ3P4jicjRySAT
+         G6mFhmClBMJfBiJYbVwteXKEJaw2JUOdEtUV7Zv7G5xXlOco/6cNGCQu36ScC3CuC0+f
+         Hu47GE/aE2JsIBfENjKWDSjIAX7pjEi19Xgamv/gi6nDiq2PdwPcJLBRb5WVnWhSseZR
+         G+Vw==
+X-Forwarded-Encrypted: i=1; AKwUvByMGc6Vn4C8yI8RXKfGA0Z1b5LNRjMqPldUdJ/dRV5GoU/aPkUrxJ3Rm89ejHXOso5KvXiayfLzy4AMHMYD+9earg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/pBT2T3YJ/bWSHeBMlq22FmXor+K6cRC1+XzUsDPvbiEgnI8dk
+	RD9lEXZ9v/hzndYYW8c/mxpNOKEmAkVfwjE3tAYlznTHkD/Pwe3QW6AFVTdEB/azF3Q=
+X-Gm-Gg: AYBFou1VIYjb2LivS2bhiWOb7O6/+xJkPzu2qpufBU5rEnZkzKSbm3LF7ACvNEYZCq/
+	x0nbxMxSzXJFg1l6xk20tsi6+DdlvogT998SBJDwAM7TIjfyfJsewU5y/WEYgvAxV73XLRQNodO
+	07CsjUQP8lBGJ7WMtfMpNZHsGcD56P80lwucynmGkBc6hdPldqorXk2E6HiHCNlOCkuQS08ER0X
+	V6GQs6VBl3saikw10L7L8kxPi+iu8s6bZebOOpFrVY+OCxF19VIVvA1Nl6Q+Oi3qDa/dE0KedXz
+	Tr30xw0597mD0pMSYpln3Lc4T4YiElU7gG+Ar3Mgf9Ume6sFLWHDAdl50tGxEiF9aYg7KtJd7IL
+	UrbBDPyreUXSt/GdEblNN5bzeFaJBo1mLacszXg/yG4HRK6NjAi1QyODDGIEUj745n3NK8d0kov
+	Y+P1/5gwZar4OyUUyPAuiLjld1hX4XFlL7f5hkq9FM9ELfnIeOdNftpzHUOzqa22rvafh//pdeX
+	7J9gRhlz2fLObefavx1/ZFUxxq+023R8Dxa2pbQUONe3hBzkj6SztXgRiNvwa4JjgUE07YITfAY
+	uE5QkhoNc22grYRlXJMeRprw/W/AWPvX43lRxGROIMapD2KLv0/AM9Up7SNX
+X-Received: by 2002:a05:6808:4f67:b0:4f5:cb60:33c5 with SMTP id 5614622812f47-567e098c179mr5133579b6e.6.1794082380862;
+        Sat, 07 Nov 2026 12:13:00 -0800 (PST)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4ade68aa561sm226096fac.5.2026.11.07.12.12.55
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4ade68aa561sm226096fac.5.2026.11.07.12.12.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2026 12:12:57 -0800 (PST)
+        Sat, 07 Nov 2026 12:13:00 -0800 (PST)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sat, 07 Nov 2026 03:16:26 -0700
-Subject: [PATCH 29/58] mtd: rawnand: ma35d1: retain open-handle state on
+Date: Sat, 07 Nov 2026 03:16:27 -0700
+Subject: [PATCH 30/58] mtd: rawnand: pl35x: retain open-handle state on
  removal
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -79,7 +79,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-29-0181ef0cc4c8@gmail.com>
+Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-30-0181ef0cc4c8@gmail.com>
 References: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
 In-Reply-To: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -141,69 +141,73 @@ Keep chip metadata and controller storage alive until the final MTD
 reference is released. Unregister and disconnect each published chip
 before releasing the resources used by its hardware operations.
 
-Unlink each chip before dropping its initial lifetime reference.
+Unwind chip ownership on registration failures as well as removal.
 
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- .../mtd/nand/raw/nuvoton-ma35d1-nand-controller.c  | 44 +++++++++++++++++-----
- 1 file changed, 34 insertions(+), 10 deletions(-)
+ drivers/mtd/nand/raw/pl35x-nand-controller.c | 46 ++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/nuvoton-ma35d1-nand-controller.c b/drivers/mtd/nand/raw/nuvoton-ma35d1-nand-controller.c
-index f659d3a6b9ef..90bdf2635a44 100644
---- a/drivers/mtd/nand/raw/nuvoton-ma35d1-nand-controller.c
-+++ b/drivers/mtd/nand/raw/nuvoton-ma35d1-nand-controller.c
-@@ -849,6 +849,11 @@ static const struct nand_controller_ops ma35_nfc_ops = {
- 	.exec_op = ma35_nfc_exec_op,
- };
+diff --git a/drivers/mtd/nand/raw/pl35x-nand-controller.c b/drivers/mtd/nand/raw/pl35x-nand-controller.c
+index 26b61d856143..952fe5dcc84d 100644
+--- a/drivers/mtd/nand/raw/pl35x-nand-controller.c
++++ b/drivers/mtd/nand/raw/pl35x-nand-controller.c
+@@ -1049,6 +1049,11 @@ static int pl35x_nand_reset_state(struct pl35x_nandc *nfc)
+ 	return 0;
+ }
  
-+static void ma35_nand_chip_release(struct nand_chip *chip)
++static void pl35x_nand_chip_release(struct nand_chip *chip)
 +{
-+	kfree(container_of(chip, struct ma35_nand_chip, chip));
++	kfree(container_of(chip, struct pl35x_nand, chip));
 +}
 +
- static int ma35_nand_chip_init(struct device *dev, struct ma35_nand_info *nand,
- 			       struct device_node *np)
+ static int pl35x_nand_chip_init(struct pl35x_nandc *nfc,
+ 				struct device_node *np)
  {
-@@ -866,8 +871,7 @@ static int ma35_nand_chip_init(struct device *dev, struct ma35_nand_info *nand,
- 		return -EINVAL;
- 	}
+@@ -1057,22 +1062,24 @@ static int pl35x_nand_chip_init(struct pl35x_nandc *nfc,
+ 	struct mtd_info *mtd;
+ 	int cs, ret;
  
--	nvtnand = devm_kzalloc(dev, struct_size(nvtnand, sels, nsels),
--			       GFP_KERNEL);
-+	nvtnand = kzalloc(struct_size(nvtnand, sels, nsels), GFP_KERNEL);
- 	if (!nvtnand)
+-	plnand = devm_kzalloc(nfc->dev, sizeof(*plnand), GFP_KERNEL);
++	plnand = kzalloc_obj(*plnand);
+ 	if (!plnand)
  		return -ENOMEM;
  
-@@ -876,17 +880,19 @@ static int ma35_nand_chip_init(struct device *dev, struct ma35_nand_info *nand,
- 		ret = of_property_read_u32_index(np, "reg", i, &cs);
- 		if (ret) {
- 			dev_err(dev, "reg property failure : %d\n", ret);
--			return ret;
-+			goto free_chip;
- 		}
- 
- 		if (cs >= MA35_MAX_NSELS) {
- 			dev_err(dev, "invalid CS: %u\n", cs);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_chip;
- 		}
- 
- 		if (test_and_set_bit(cs, &nand->assigned_cs)) {
- 			dev_err(dev, "CS %u already assigned\n", cs);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_chip;
- 		}
- 
- 		nvtnand->sels[i] = cs;
-@@ -905,17 +911,27 @@ static int ma35_nand_chip_init(struct device *dev, struct ma35_nand_info *nand,
- 	mtd_set_ooblayout(mtd, &ma35_ooblayout_ops);
- 	ret = nand_scan(chip, nsels);
+ 	ret = of_property_read_u32(np, "reg", &cs);
  	if (ret)
 -		return ret;
 +		goto free_chip;
-+	ret = nand_set_release(chip, ma35_nand_chip_release);
+ 
+ 	if (cs >= PL35X_NAND_MAX_CS) {
+ 		dev_err(nfc->dev, "Wrong CS %d\n", cs);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto free_chip;
+ 	}
+ 
+ 	if (test_and_set_bit(cs, &nfc->assigned_cs)) {
+ 		dev_err(nfc->dev, "Already assigned CS %d\n", cs);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto free_chip;
+ 	}
+ 
+ 	plnand->cs = cs;
+@@ -1089,23 +1096,34 @@ static int pl35x_nand_chip_init(struct pl35x_nandc *nfc,
+ 					   "%s", PL35X_NANDC_DRIVER_NAME);
+ 		if (!mtd->name) {
+ 			dev_err(nfc->dev, "Failed to allocate mtd->name\n");
+-			return -ENOMEM;
++			ret = -ENOMEM;
++			goto free_chip;
+ 		}
+ 	}
+ 
+ 	ret = nand_scan(chip, 1);
+ 	if (ret)
+-		return ret;
++		goto free_chip;
++	ret = nand_set_release(chip, pl35x_nand_chip_release);
 +	if (ret) {
 +		nand_cleanup(chip);
 +		goto free_chip;
@@ -217,52 +221,55 @@ index f659d3a6b9ef..90bdf2635a44 100644
  		return ret;
  	}
  
- 	list_add_tail(&nvtnand->node, &nand->chips);
+ 	list_add_tail(&plnand->node, &nfc->chips);
  
- 	return 0;
+ 	return ret;
 +
 +free_chip:
-+	kfree(nvtnand);
++	kfree(plnand);
 +	return ret;
  }
  
- static void ma35_chips_cleanup(struct ma35_nand_info *nand)
-@@ -928,8 +944,9 @@ static void ma35_chips_cleanup(struct ma35_nand_info *nand)
- 		chip = &nvtnand->chip;
+ static void pl35x_nand_chips_cleanup(struct pl35x_nandc *nfc)
+@@ -1118,8 +1136,9 @@ static void pl35x_nand_chips_cleanup(struct pl35x_nandc *nfc)
+ 		chip = &plnand->chip;
  		ret = mtd_device_unregister(nand_to_mtd(chip));
  		WARN_ON(ret);
 -		nand_cleanup(chip);
 +		nand_disconnect(chip);
- 		list_del(&nvtnand->node);
+ 		list_del(&plnand->node);
 +		mtd_put_master(nand_to_mtd(chip));
  	}
  }
  
-@@ -948,16 +965,23 @@ static int ma35_nand_chips_init(struct device *dev, struct ma35_nand_info *nand)
- 	return 0;
+@@ -1146,6 +1165,11 @@ static int pl35x_nand_chips_init(struct pl35x_nandc *nfc)
+ 	return ret;
  }
  
-+static void ma35_nand_release(struct nand_controller *controller)
++static void pl35x_nand_release(struct nand_controller *controller)
 +{
-+	kfree(container_of(controller, struct ma35_nand_info, controller));
++	kfree(container_of(controller, struct pl35x_nandc, controller));
 +}
 +
- static int ma35_nand_probe(struct platform_device *pdev)
+ static int pl35x_nand_probe(struct platform_device *pdev)
  {
- 	struct ma35_nand_info *nand;
- 	int ret = 0;
+ 	struct device *smc_dev = pdev->dev.parent;
+@@ -1153,12 +1177,14 @@ static int pl35x_nand_probe(struct platform_device *pdev)
+ 	struct pl35x_nandc *nfc;
+ 	int ret;
  
--	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
-+	nand = kzalloc_obj(*nand);
- 	if (!nand)
+-	nfc = devm_kzalloc(&pdev->dev, sizeof(*nfc), GFP_KERNEL);
++	nfc = kzalloc_obj(*nfc);
+ 	if (!nfc)
  		return -ENOMEM;
- 
--	nand_controller_init(&nand->controller);
-+	ret = devm_nand_controller_init(&pdev->dev, &nand->controller, ma35_nand_release);
++	ret = devm_nand_controller_init(&pdev->dev, &nfc->controller, pl35x_nand_release);
 +	if (ret)
 +		return ret;
- 	INIT_LIST_HEAD(&nand->chips);
- 	nand->controller.ops = &ma35_nfc_ops;
+ 
+ 	nfc->dev = &pdev->dev;
+-	nand_controller_init(&nfc->controller);
+ 	nfc->controller.ops = &pl35x_nandc_ops;
+ 	INIT_LIST_HEAD(&nfc->chips);
  
 
 -- 
