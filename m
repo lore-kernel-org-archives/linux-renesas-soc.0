@@ -1,23 +1,23 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794038911;
-	b=nAowMCtuOhnaHxeyJiycNvnGir8JjE7K1A4HgDi8mg1oU1rsaDp3xYTb6Ssn4L0wS8CS
-	 2fmok5huJgRVM6ivi1LdmrS7kS8ViGFrXA9MjOA/MfUnzgc2ufXd+jo9JBbP4xcWbyYOM
-	 QlVa1UFxug1M6eM8MFeeqEOhNG/tJXxvyrZedQ+kG+Bj/wHgxppB2nc8zyIZhUIlsX1nU
-	 6qnA1JukRj5dUqdCveo2so0x9OoiJ31UyZ2XEFS1GHHQpgxNNLLB7opn4aAT7mel/akCp
-	 CIf99+Uu4/+eDXAFVif+zaxYJsHm1wHNuVRHVv+j76HX5oVaPp7MkjzWiHq31hzk02Q==
+	t=1794038916;
+	b=XXbUq/8PvtGYR+zCwg0qHJssOFD1VgrmSlI2bUzzqN9DrDWvz2VeSCt8U88UVSDKEVXV
+	 OUjcgltc9FX+rmmiQ9pPGz5A5wrBuDrZ8/CPe2OFPcNMonXaWgxsbOwJ6EJB8v1pZ1lk8
+	 6Wq8kH3v+AfaR3hiL9VOnECrYo8KfummXIwmtpUSdOfkgpbLnaiw0Y1qvhYypgUXOn8cp
+	 U9FvOsmmUFuDRY9C+LpXpH2D3FnTDpWRVsmisPWnnZR676eXw/YXb5pdCnnjAotpdwB7V
+	 8Z2qaYwTHzoBgWjkT+qFEIPUZldiyfg/Z/+jwJ0QbhntttAP7azmq5YjNIJCgrF2Dlw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794038911;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794038916;
 	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
 	 Message-ID:In-Reply-To:References:Date:Mime-Version:From:To:Cc:
 	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
 	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=5dGP7OsYZrgZld9I1X847oOXXK6extHaSO2lUmdQfn4=;
-	b=4t90a7A4+UmJVrV4D3bzZC53PrA859852pfzTFj6VtVafp1iV3KRmwEupnGdjJuDDw0D
-	 QoICuy8/hvovxmtRWLzXto479hvPbtZ73dmXAQDS7QwDT9LuKGQURzlOaaf3W82Yo9xEk
-	 V01p/HECe7kFXArTbLNIJ3PeKFBfLNk5/M6pwNJMNE8mL7WFy4FPFFW3cWur7rMYIQ5WX
-	 2fVpyp7OYU/tCCismxf0lk6VSNmf/sVQ+4NbDft6SPFnFBAKFp1kGyJZp5BKXdYn21LPX
-	 95jqNaAJ93o5lo3BKRvKEsfEIQyjJ36L+u/GYdGEA3+iOpLivgucQ90yxRdu95IJZLw==
+	bh=EG+y83gpbL7hXWFwNvkWQQTjH9VbIPQJjGC4yYN624w=;
+	b=BC+0UKErgwF6Kki7h2htwPPaQLjITeawpkVlTuekb/qraJoVO9GVP3QpVh6z92guf9aK
+	 15mgo3FN7fASSVzmNOjyIjgI1NPq22va8ZSxiNrCRYRW2vyDAu5a4LprMuGfACzu/7awu
+	 osYNUIsX/wc3tIVowCW3SwVaXJ0HCFXssJuILuSI6Dcrunitcv6TmLpL7GXzLsm7RZI81
+	 gti/zR7mchUSk9r3bccvCvSNxrbPk0LiM3B4Is9zqX8GF8zuEhlKZcW2cu+lYM7c6duTJ
+	 /3yDxMztJYZIoIII324TvYwdfxuI1Zl8ZD5Jahns787/mqpZDwIllXVS6guvRW/0SOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=zte.com.cn;
 	spf=pass smtp.mailfrom=zte.com.cn;
@@ -26,30 +26,30 @@ Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BCB606D828;
-	Sat,  7 Nov 2026 08:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1BCB606D828
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F369606A334;
+	Sat,  7 Nov 2026 08:08:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F369606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jM7wB3t1tz57HS1;
-	Sat, 07 Nov 2026 16:08:26 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 6A788OUH022866;
-	Sat, 7 Nov 2026 16:08:25 +0800 (+08)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jM7wH5Klvz57HS2;
+	Sat, 07 Nov 2026 16:08:31 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 6A788NtQ096673;
+	Sat, 7 Nov 2026 16:08:23 +0800 (+08)
 	(envelope-from shao.mingyin@zte.com.cn)
 Received: from mapi (xaxapp02[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Sat, 7 Nov 2026 16:08:27 +0800 (CST)
-X-Zmail-TransId: 2afa6aeedc7b7b3-93351
+	Sat, 7 Nov 2026 16:08:25 +0800 (CST)
+X-Zmail-TransId: 2afa6aeedc79740-932de
 X-Mailer: Zmail v1.0
-Message-ID: <20261107160827257FwoXZMjcThgcfD-ZPfKsk@zte.com.cn>
+Message-ID: <20261107160825704ak9coG8uWvEC-daLg4OkT@zte.com.cn>
 In-Reply-To: <20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn>
 References: 20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn
-Date: Sat, 7 Nov 2026 16:08:27 +0800 (CST)
+Date: Sat, 7 Nov 2026 16:08:25 +0800 (CST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -68,55 +68,38 @@ Cc: <lgirdwood@gmail.com>, <heiko@sntech.de>,
         <linux-sunxi@lists.linux.dev>, <kuninori.morimoto.gx@renesas.com>,
         <linux-renesas-soc@vger.kernel.org>, <srini@kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIDUvNV0gQVNvQzogcnNuZDogZml4IFNTSVUgbm9kZSByZWZlcmVuY2UgbGVhayBpbiByc25kX2RtYV9vZl9wYXRo?=
+Subject: =?UTF-8?B?W1BBVENIIDQvNV0gQVNvQzogc3VuOGktY29kZWM6IGZpeCBidXMgY2xvY2sgbGVhayBpbiBydW50aW1lIHJlc3VtZSBlcnJvciBwYXRo?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 6A788OUH022866
+X-MAIL:mse-fl2.zte.com.cn 6A788NtQ096673
 X-TLS: YES
 X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Sat, 07 Nov 2026 16:08:26 +0800
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 16:08:31 +0800
 X-CLEAN: YES
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEEDC7A.000/4jM7wB3t1tz57HS1
+X-Fangmail-MID-QID: 6AEEDC7F.000/4jM7wH5Klvz57HS2
 
 From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-rsnd_ssiu_of_node() returns the child node obtained by
-of_get_child_by_name(), which holds a reference.  rsnd_dma_of_path()
-only tests that node and never drops the reference, so every DMA path
-setup leaks the SSIU node.
+sun8i_codec_runtime_resume() enables the bus clock and then calls
+regcache_sync().  If the sync fails, it returns without disabling the
+clock, so a failed resume leaves the bus clock enabled and its enable
+count unbalanced.
 
-Put the node after the SSIU branch has used it.
+Disable the clock before returning on the error path, as
+sun4i_i2s_runtime_resume() already does for the same failure.
 
-Fixes: 4e7788fb8018 ("ASoC: rsnd: add SSIU BUSIF support")
+Fixes: 36c684936fae ("ASoC: Add sun8i digital audio codec")
 Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
-diff --git a/sound/soc/renesas/rcar/dma.c b/sound/soc/renesas/rcar/dma.c
-index 793dd4adbe5c..ece23ef5e56c 100644
---- a/sound/soc/renesas/rcar/dma.c
-+++ b/sound/soc/renesas/rcar/dma.c
-@@ -791,6 +791,7 @@ static void rsnd_dma_of_path(struct rsnd_mod *this,
- 	struct rsnd_mod *mod_start, *mod_end;
- 	struct rsnd_priv *priv = rsnd_mod_to_priv(this);
- 	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct device_node *ssiu_np;
- 	int nr, i, idx;
- 
- 	/*
-@@ -803,13 +804,15 @@ static void rsnd_dma_of_path(struct rsnd_mod *this,
- 	 *	rsnd_ssiu_dma_req()
- 	 *	rsnd_ssi_dma_req()
- 	 */
--	if (rsnd_ssiu_of_node(priv)) {
-+	ssiu_np = rsnd_ssiu_of_node(priv);
-+	if (ssiu_np) {
- 		struct rsnd_mod *ssiu = rsnd_io_to_mod_ssiu(io);
- 
- 		/* use SSIU */
- 		ssi = ssiu;
- 		if (this == rsnd_io_to_mod_ssi(io))
- 			this = ssiu;
-+		of_node_put(ssiu_np);
- 	} else {
- 		/* keep compatible, use SSI */
- 		ssi = rsnd_io_to_mod_ssi(io);
+diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
+index 2e4a205e4e56..e7d5c81ae1ef 100644
+--- a/sound/soc/sunxi/sun8i-codec.c
++++ b/sound/soc/sunxi/sun8i-codec.c
+@@ -259,6 +259,7 @@ static int sun8i_codec_runtime_resume(struct device *dev)
+ 	ret = regcache_sync(scodec->regmap);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to sync regmap cache\n");
++		clk_disable_unprepare(scodec->clk_bus);
+ 		return ret;
+ 	}
