@@ -1,110 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.15
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793996067;
-	b=tHwNnyksS93cP5oPQoOiHjwqUU7JaEY6aRDWjZ9D76ThzzsNUl/ltBjgaPa59hJPKIEf
-	 7dISyDCIUcWV4pHedJHgqn4FYyBLzjLQreqdhi7Vj8HryI/vOCvWz2Cc0Ju4MsMVkG6I1
-	 dSEwP88zmZhNZ21wTU14Ftu9AE0SlUq9IzrF+cNepf7dNPw4MZdbTd6XOtwq5wkLnRYw+
-	 w6Q9Fierlj39g77vWkArshP8zmHrhttHZSh1gqTA/y8zk5WjBmFhrDJIZ61QypOyInik1
-	 //y6sf77tosoWh3IlIbeZHBgtt+v9rj8QilPQsrgmm6Wvzl0sNJh6VZQ1XOnTgTqi7w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793996067;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=/dvpqTBdTg8jwAIJdZk4vV6CbCCoV5swPBcoydrPufs=;
-	b=YveB8tan22RGNVuXxZwnl1uDvTp+boMQJWgK6Tr+8HozbwVLv6pwguHyttyClC+BCqV/
-	 kCklS7NTT8EkHVChRUimXgSIEWZBkd/CcnE9S++HabpExNE7xgB0OGvNdDF/irRvLor4S
-	 gCxTVgOsaun05GIVOS49tvYIlLBuig9pn2sPt1GJHUTm+AcZz7DhYKwXXR5loLSycJvxQ
-	 2rvR+DbIQzIZUEDI0hajKyXXl+izybDWXU6tf4R5PuPemkcE4xJc4VN+iIf47HA5WQOyP
-	 V51M31MdlhQuFVViWrk7wLgsWNqVYCOLAm8Arun/UNgDydTCPxAvpqbjzE3fGqnbC7g==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=s34qy8Q0;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.70.15
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011015.outbound.protection.outlook.com [52.101.70.15])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.35
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794038900;
+	b=omUgLjK41rDrF3u+qTkJ+8fttix4vCTQjVs+U5Tgc3YAIfkTnba6Pi35EYidDFZQwCX8
+	 RY9F1+tc4cRdzlDtCWNPtwvGrawhZG4B6z5f1VCimUtT5JYgDNj3/FfbkdqF3Q8bh1zOP
+	 EMdSX1Sev3pMEofSgjoZKKE2NmgKXxy8N+wQ2Tfv18Zy+C8lxY2CQHKegPfJ9TzGjrHG/
+	 eP+9nTza8Es6z1zG8celWAW9DAmJfBbs9nJGQLcz9rXgh1xSS2MxK/GGzW/nRCd+xXZHa
+	 ySWdJ/3GMvJ7Cq1nrpO5td7wf0zMDvCXSVxzGGl+aKPMxcWRVKRRqQI0rp8ummO5XIQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794038900;
+	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
+	 Message-ID:Date:Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:
+	 X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:
+	 X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
+	bh=e/rFmgN3Z5KxfWW+Rzz0lvQ+GFMHmAzHgZaIrh0Ft3U=;
+	b=kvEWgFL+ZM8xbh/KlfRY4ouFcvcn+a1LqC64rGleUoGwV7kYvX6vVycoQg2plKrk2PZm
+	 zRbkrrXQQuVT3DIAiry4P0nit2Jju8kJIeQZC3CREF16INIaWMKeHDaDOR6iCds4Z8I8j
+	 Lx0cB0mEl1kNGnJPyr1S0uH5wmCcyYO4q82h0jQYEei0Ds3ftIQ2sk589hzGCl9JYcvZN
+	 T0HTgCpqGBDmRew2wzBS+KaQS+UFRrb+I1MJMtpJOfdI0QcPE5XrVGsY813a/uaXniIPD
+	 7PueBCI9CfKxupIjkYPdMbKJWqXxTmZN2UG2s0/i6500SHPCEanqsyUDNM3lXPHQ2Lw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=zte.com.cn;
+	spf=pass smtp.mailfrom=zte.com.cn;
+	arc=none smtp.remote-ip=160.30.148.35
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8214606A331;
-	Fri,  6 Nov 2026 20:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A8214606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=s34qy8Q0
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LOvcwdRLe7nqw2FiGw+7G2R3bjC0G4z40BdscIZTTN4pJrXupjCgLAT0YGuw8d5klP3vR7j9Dc+oMWLSim6kOE+gKM9DXyCCTVg1sxE5Kl97wZf1mC43rOgUjuqIJalvVfpinQWKEMUz4bbE+AqWjFuH9IH2uwqOk/A86SsO3+dKlnSt4uRGxvLE+gE/q+iQB3wH08+tchbzrNYfCtTqJVPpt+OCu7mDogcbuU3IxMbtHvLiLqXPR1lgefm6dU8FD06Fbj/r9hdSbXVn8PKCAdvznsQyk2Oqb3F0v8nVKw+xF+m752Us8lIMoMgWO816b89tkSJkeckgpQZUYukQDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/dvpqTBdTg8jwAIJdZk4vV6CbCCoV5swPBcoydrPufs=;
- b=xygQSTN3MEyzbOmTXUITj8y+Gds97tCCK6WADRzCNlV3DRvempX2Eh3/qukJ0zpSU7gXW0AvjZzIbuvCFqLFDBQTiQ3FmKiVPKElIlIkanXPw3FBA+k51WxABTwxEQ7SyyNWlyqwFAMasOazq+JBWOUOmDFijDFXAP39wJKAwNST81TYop2NaOquYEin6BJcPkiHTnQNnqJWe9w3a9ZzVM/XE7h3auQbHZV9Zs5ZIm6Ww1EfPwcLXm+ll8Lsg2b0CkWms0KpmCu+JNdYMdZL4vEqEzDkZmzm9ExLE00zMV8G5zFf0OMxCZValIeC1/7JZRl07R08eyh6JjGs1tmROg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/dvpqTBdTg8jwAIJdZk4vV6CbCCoV5swPBcoydrPufs=;
- b=s34qy8Q0SIuoclOVezzE7lCRr+Qc+IALK5KY4HFpMbR38fT7duNasUqz/CtmUqH5XX6BCsJdekLyVGG3cLE9OLWqaJMKyUEjZgrQOLAGJAfN3oZFegrSw4tNgXVnS1Q/UA2AviDuXEsgNkCHFfzyuskadoMBjMnF4rZfGo+QiItZ6oRJFkICm0XGYzhZhBM2u986O1KRR6+M2tHBQ8YcysxBbcRQdKeLZ/zY1JPumawIOtkeRk9DUzNDMBNqIwKjcwmQi8rE6e9OUhU384ndjyIPTTSIccR8ArkGvtsEBVBmiUA547RfbJQ03+ZWygrn6RkJDj9F5Q+S71o+lc5DDg==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by AS8PR04MB8580.eurprd04.prod.outlook.com (2603:10a6:20b:427::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Fri, 6 Nov
- 2026 20:14:24 +0000
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0592.010; Fri, 6 Nov 2026
- 20:14:24 +0000
-From: Frank.Li@oss.nxp.com
-Date: Fri, 06 Nov 2026 15:13:48 -0500
-Subject: [PATCH 4/4] ASoC: ti: davinci-mcasp: Use
- dmaengine_get_provider_device() API
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261106-dma_sound_cleanup-v1-4-5eb8a7b81e87@nxp.com>
-References: <20261106-dma_sound_cleanup-v1-0-5eb8a7b81e87@nxp.com>
-In-Reply-To: <20261106-dma_sound_cleanup-v1-0-5eb8a7b81e87@nxp.com>
-To: =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Sen Wang <sen@ti.com>
-Cc: asahi@lists.linux.dev, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-renesas-soc@vger.kernel.org, imx@lists.linux.dev, vkoul@kernel.org, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793996035; l=1601;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=tTdEtmGF/eZ9MbgcEArCNHLYLbLOQYCkQp0npfYxRSU=;
- b=aKbDKrRpKHf00jQA2ib+eAJlTNJOTqk0/xCX4MgwBuEjrT3c58khKDSzsqiu+wk0ERb3J9QJe
- 1cmRLKOEPwaBDBkEcdElO1R/WilOkQCTgNs4OzQW37Wod+ad/AWrLjA
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: PH7PR10CA0024.namprd10.prod.outlook.com
- (2603:10b6:510:23d::13) To MI3PR04MB12438.eurprd04.prod.outlook.com
- (2603:10a6:290:76::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547AF606A33C;
+	Sat,  7 Nov 2026 08:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 547AF606A33C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jM7w265jZz8RVJk;
+	Sat, 07 Nov 2026 16:08:18 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 6A788DXS022834;
+	Sat, 7 Nov 2026 16:08:13 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 7 Nov 2026 16:08:15 +0800 (CST)
+X-Zmail-TransId: 2afb6aeedc6f415-84fc1
+X-Mailer: Zmail v1.0
+Message-ID: <20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn>
+Date: Sat, 7 Nov 2026 16:08:15 +0800 (CST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -113,117 +56,67 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|AS8PR04MB8580:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8191fbb3-dff6-4921-70ee-08df3c428cdb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|19092799006|1800799024|366016|23010399003|6133799003|22082099003|18002099003|10067099003|921020|11063799006|261022075727099003|261009223027099003|261021121427099003|261021123027099003|261102123227099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	8chwAjnaG0h5rb2OmD9EJhPDY5ziiy1xuLpewb+fcB0aB1XIVc9cZl9jg1DkgL0jKJbeEDnYpt0dqcmOa64r0y4FzA9HzrxBAGjq6UXWPYMkVDDXTW3g2W2mD7iCwB006BQ6OkhLh7LPlUz/MDzsZQAWQHBJ1M0XnoQ97GRdLA58+Jy6kAsiHD6GX8RGXIrSXS8/Yk3UgwAjjD7CnTI/I+QvR0LsrE9/0LLAJ/3cBXyqBQImwjDOtvLPXRC3OiWeQpKeWYaUBrCJv3c6SIjRUonodOtbpoY6vTqS9njgW2rAWi7wGxNsuVKq9/KX+opBaqFWplEr5a4aQx52+zVtnz1+mEGSCPr/+SHK6lcjL7ishsh07iEUO2r0RUJ9NFiEfaRpI2fkBQfsXmX09fUBLkS+vbtlYO2TlzSPUCE6LUuqhqpug9kk9EovdNu67u1mek66NYJMrSs3sXfpFaLF2XR1MMGPFUetgJ0P9Bp59hYYWHbZfeTlNlfzj2r70hZ6wznoESfiYtCb5lGqBhagcdwdk/pwY76sSI2LAitxd7T6PPdxfFvgbITeAEWCFL+pOB2HSRLZMs2uOFoEVctmkjnPKmfZIhkIqb+goFRSREEqin+cxt6OR9/MPRqwioardEO+CbhONZ5MxmDQbpy3phNPH52/wy0BCMWT84tMoXQU+cwzCfxxet07Y2XG0G2DygK1AVMOFsYG63HH+58wXw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(19092799006)(1800799024)(366016)(23010399003)(6133799003)(22082099003)(18002099003)(10067099003)(921020)(11063799006)(261022075727099003)(261009223027099003)(261021121427099003)(261021123027099003)(261102123227099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dVJBR05oUnI1dGNsMGNBOG1heURMTHlHQVhVZ0ErTElUS1AraUVScWpjUHdj?=
- =?utf-8?B?djVLU3NZSDBHRnhZTGlhVjhjL1VNbzU3SFN5R2RwREJzcy9nWGE4Z0E2Undh?=
- =?utf-8?B?aHdsRTZIYUd1WXdNdzhRTlpYbnZFRnZGSVlUUWE4VFNWaHJJdVBDMTBJcWNC?=
- =?utf-8?B?eG92b3RTMDBtZVRTZDhlcnFOdWdIbnUwWWs4UHZBdmg4YzF0SGlNN1EyMnhK?=
- =?utf-8?B?VXEvQUJ5MFpsam5Sd05ndDFKU21TL1NOdVdlaUxLbFZENEZqVHplREEvaEoy?=
- =?utf-8?B?UHdJN0hmcmlMSDl0aGxxUi9Gc0ZmWjVVeUFYR2lBaGJiQzAxNXNJcVdaRVJP?=
- =?utf-8?B?c3pDR1FWTGQwQ215L1M5WkcwdWU1cURtLytLNVhpZGlFYWxkSnNYN2ZVV1ZX?=
- =?utf-8?B?b1YybEFURGN3SmExS1lPcE05M0wzYUxpNFYxZ1hhTktlMzhESU9YRXpmQVNi?=
- =?utf-8?B?R0VPMUpQSDFCWCtwZ3puUUFPNjhGc3NTRmZPd2xrWWJqb3lIQU1Ba2h6M1Bu?=
- =?utf-8?B?ZFlDKzcxVFAzUU03THcwQW5uZW83UHVaOXhPZzdtTnk1RzZ1OUVFUW5KZTJB?=
- =?utf-8?B?aFdJTzdPSWN3dFVIa3BxTzg3cTJoUkJpcCtaQVcxMFY0dUNDYWVRbmdEZVZL?=
- =?utf-8?B?UjVpWndTL3MyNWl1Nks1R1J3L01CQXBuMmlJUytyQStlVG1uWkhuUUliRkdR?=
- =?utf-8?B?bHpVaS90QUxrc1NsMjROOEIwUXg2WWFUKzIrZFJQMEVGRHZRd1RVby81S1Fz?=
- =?utf-8?B?WndJZFRyYmo4YmY5UU5rV1hCNXFnd0N2QzlRU1pjNjQrQTV0aExBeHRyRGIv?=
- =?utf-8?B?WjdvdUV5QVNBbitBMFFvd3dUZENFYmI1eFVFYjMybHpKdmNRdGl3RzVIclJk?=
- =?utf-8?B?bGlNSkFnakg4cmRUNWd1eSs2QmFTK2M3TnZnd3lxQW1ROEh0ME9xSnBaV2l1?=
- =?utf-8?B?SXNwTjdBU1QzYThjVFRrdVJlK3YwOCt1cTFSSUZob1ZwbVBBOEJlcDRPR1gv?=
- =?utf-8?B?NTVhUWlhUitkckhFbXFnZnZJemFDalF5ZU04Rk9iaUppcUV1SysvTTdLWmNw?=
- =?utf-8?B?NGVEOFM0eTB0Q0d3dW8zbXVtVWpFVnBoOFByOXlQTVZxM0xxM01NeU5LMU9K?=
- =?utf-8?B?MzRGNU1lVjBVTGRoSXBjczgwVHNld1c3SXl2bnlJSUZQK01TcXRlYnlnVHpj?=
- =?utf-8?B?anhMNEZVTEZaREFPb3NndDZsUENKMlZ5L3RsYkdhSGFrdE9zbTk3REUzNEt5?=
- =?utf-8?B?ZTJSTzRHbitGN2ZJZmsxeUE1V2NFNGFRRWNhZ29qSld3RlBpODFWbW5IM1o2?=
- =?utf-8?B?YW1NUE9BTE40ZFhRZlIwVEF4bUdMblVibmsrMnc2YkE2eFIxTCtEYWE3WWhi?=
- =?utf-8?B?Ymh1L2xxRE5meEZob0U3QkNxbExwYWJsYjJwQXFscFhiRjkyZmlXeWpPZStl?=
- =?utf-8?B?dTRhL0lZMW1xQUpjMnlFQVNkUUk5V3NCNWcvVG4wcTUvODN5NlFEVmpkSE9P?=
- =?utf-8?B?WENJQnp4U0FOck84Smd3N1E3eHg4K3ZSdllKd3BJbWRweHlFb2lnTDlMaFFJ?=
- =?utf-8?B?SzZaUDZjZkhzN25rWG1JZmpnQVZsUzBGdGVxdGVIZ3Q3YUo2Y0tka0lQUFFx?=
- =?utf-8?B?THpkRFcrVldHaVF3N3BTNXRBS3doQy82OUgyaGszS2dZeFBLcm5PaklpZm5a?=
- =?utf-8?B?ai9OTUhFNTk5VElNcHRWeUlPVmhzT2MyNnhVakNQM1FYUDg4VUxYY0QzWlFQ?=
- =?utf-8?B?d0JvRWtpSS9STktQc2d5M1doTUR6MHZaV0oyRGI5WmJnMVRpUHpidWFGU3VW?=
- =?utf-8?B?WWxkMU96L2djY1FvUHRsZ2p5QmNSSG5rYUU2UHJtQmMyYVpCQXdCQ2pKL3BL?=
- =?utf-8?B?elVjRk9NWlR2Ulh2bnduQUdSU3hHQUZYV2d2d3VIMXEyZDV3MW1VTkdhR3NO?=
- =?utf-8?B?VDNhSkU3VjNCaW1MWGxQUkxvNzBMOENIMXg4LytVUkN1ZXdMcEV1bTJxZ05k?=
- =?utf-8?B?US8yWGF3ajhBa25PbFhEZ0M5SFQ5Z0h3Vmw3UlNyYnZneVpQWTFjWUVQaDZa?=
- =?utf-8?B?dE1pV1Zrc0lWbU1JaG9SVE9jNmVTSkw0OEZHaDlDSmZzcjh3YkRmMk51OC81?=
- =?utf-8?B?eXJZLzdZRUtCL0E5K09ieTBKcFE4eVA2Z21kQU1tMkVIUFlMTXFqY0FtU01J?=
- =?utf-8?B?WjRndml3UEVBS3JNcFRiUzVOVkFqQWN1aUVxMlpGb1FubWhINXgvcE0xOWZ2?=
- =?utf-8?B?dGhFakhRZ3pUMG5HMTJqam82UHlmMzdqRG1FbnlkSVdzRGtUNVFsSERCYWxt?=
- =?utf-8?B?cVNMenhjejJkb0JZNTJwQVdTRm5BcTg0dlcwN0hwSG9qVmVibStQRFdDa1g0?=
- =?utf-8?Q?JTv6SNbEdsM/dwmBVcIckrhtLM1vRPQPrv6hc?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8191fbb3-dff6-4921-70ee-08df3c428cdb
-X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 20:14:24.0604
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GCXZyBVHSIJ/FPm2Gh91sM7Gae2lmRS+BmHB4QA0AhmuDzpGUwmTiw082cql0bkLdXhCT/2Chi8pM2XWGk13KgGhAVaVDevs8LD4p+lHcfEjvB96AdUyGx4VVhn5bq0w
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8580
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
+Cc: <lgirdwood@gmail.com>, <heiko@sntech.de>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <wens@kernel.org>,
+        <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <linux-sunxi@lists.linux.dev>, <kuninori.morimoto.gx@renesas.com>,
+        <linux-renesas-soc@vger.kernel.org>, <srini@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIDAvNV0gQVNvQzogZml4IGVycm9yLXBhdGggbGVha3MgYW5kIGEgTlVMTCBkZXJlZmVyZW5jZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 6A788DXS022834
+X-TLS: YES
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SOURCE-IP: 10.5.228.132 unknown Sat, 07 Nov 2026 16:08:18 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6AEEDC72.001/4jM7w265jZz8RVJk
 
-From: Frank Li <Frank.Li@nxp.com>
+Five error-path defects in ASoC drivers, found while reviewing against
+linux-next next-20261030.  Four of them leak a reference or a clock, or
+drop one twice, on a path that is easy to miss; the fifth dereferences
+a NULL remote port while parsing an audio graph.  The patches are
+independent and can be reviewed, applied and backported separately.
 
-Replace open-coded chan->device->dev with dmaengine_get_provider_device()
-to avoid direct access to DMA engine internals. The WARN_ON check for
-chan->device is no longer needed since already checked return value of
-dma_request_chan(). It is impossible dma_chan is not NULL and DMA engine
-device is NULL.
+  1/5 ASoC: rsnd: fix NULL dereference when remote port has no endpoint
+  2/5 ASoC: wcd9335: fix SLIM interface device double-put on error paths
+  3/5 ASoC: rockchip: rk3399_gru_sound: fix codec node reference leak
+  4/5 ASoC: sun8i-codec: fix bus clock leak in runtime resume error path
+  5/5 ASoC: rsnd: fix SSIU node reference leak in rsnd_dma_of_path
 
-Prepare to make struct dma_device private.
+1/5 returns early when a graph endpoint has no remote port; 2/5 removes
+the four manual put_device() calls that duplicate the devm action; 3/5
+puts the codec node on the two skip paths of the Rockchip DAI-link
+parse; 4/5 disables the bus clock when the regmap sync fails; 5/5 puts
+the SSIU node after the DMA path lookup.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Patches 1/5 and 5/5 are R-Car (Kuninori Morimoto), 2/5 is the WCD9335
+codec (Srinivas Kandagatla), 3/5 is Rockchip (Heiko Stuebner) and 4/5
+is sunxi (Chen-Yu Tsai, Jernej Skrabec, Samuel Holland).  All go
+through the ASoC tree.
+
+3/5 was tested on 7.3.0-next-20261030 in a QEMU/TCG arm64 guest with a
+synthetic DT; the test section in that patch describes the setup and
+the observed reference counts.
+
+Shao Mingyin (5):
+  ASoC: rsnd: fix NULL dereference when remote port has no endpoint
+  ASoC: wcd9335: fix SLIM interface device double-put on error paths
+  ASoC: rockchip: rk3399_gru_sound: fix codec node reference leak
+  ASoC: sun8i-codec: fix bus clock leak in runtime resume error path
+  ASoC: rsnd: fix SSIU node reference leak in rsnd_dma_of_path
+
+ sound/soc/codecs/wcd9335.c            | 4 ----
+ sound/soc/renesas/rcar/core.c         | 2 ++
+ sound/soc/renesas/rcar/dma.c          | 5 ++++-
+ sound/soc/rockchip/rk3399_gru_sound.c | 8 ++++++--
+ sound/soc/sunxi/sun8i-codec.c         | 1 +
+ 5 files changed, 13 insertions(+), 7 deletions(-)
+
 ---
- sound/soc/ti/davinci-mcasp.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-index 481d1042ddb6d..e871925517dca 100644
---- a/sound/soc/ti/davinci-mcasp.c
-+++ b/sound/soc/ti/davinci-mcasp.c
-@@ -2477,6 +2477,7 @@ static const char *sdma_prefix = "ti,omap";
- static int davinci_mcasp_get_dma_type(struct davinci_mcasp *mcasp)
- {
- 	struct dma_chan *chan;
-+	struct device *dma_dev;
- 	const char *tmp;
- 	int ret = PCM_EDMA;
- 
-@@ -2488,13 +2489,10 @@ static int davinci_mcasp_get_dma_type(struct davinci_mcasp *mcasp)
- 	if (IS_ERR(chan))
- 		return dev_err_probe(mcasp->dev, PTR_ERR(chan),
- 				     "Can't verify DMA configuration\n");
--	if (WARN_ON(!chan->device || !chan->device->dev)) {
--		dma_release_channel(chan);
--		return -EINVAL;
--	}
- 
--	if (chan->device->dev->of_node)
--		ret = of_property_read_string(chan->device->dev->of_node,
-+	dma_dev = dmaengine_get_provider_device(chan);
-+	if (dma_dev->of_node)
-+		ret = of_property_read_string(dma_dev->of_node,
- 					      "compatible", &tmp);
- 	else
- 		dev_dbg(mcasp->dev, "DMA controller has no of-node\n");
-
--- 
-2.43.0
-
+base-commit: 7649ba73f9e7e1e04d0b46213e39c79ae09dd55c
