@@ -1,72 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794082409;
-	b=m1mJNFM313AYEJ+MBAl+eq9a5Kygk9QYbh/xovNHbYPkndb+LR4ZY9i09XDGlqx3gvKE
-	 Rx48LwmHNogoeN4XqjVfs4y4HesSCteuLuYFPy7OfykPkpmLlz3mPgrsb1liYrgC/7REV
-	 hp3vd2lK4Tx3p6mFEHO/uNwJM2zN9EXaYV/Lle0r1wewXCTVlAj6SmDbe5J/IHBEIYR7E
-	 YvSIH1/JOuOpLTr4VpPlDqbQAZE1fWhpBDeoNb5gwgCkT8H2zAq5VZwxsWZtDiG0rujR5
-	 BaPi/bU5m7lmXGoYoh0G+s3XTyDMHQiAeNnuUX23cgEZ5hYacz2QHak0q4MdcBk15yQ==
+	t=1794082412;
+	b=E1z5gFo+tZYYd09Y6aFN5yrJLrAVRyTY2rkT2ZjyOErJ4hFmMToxyYa+HSJaPA5KtZR+
+	 +cSn7nuUlHOVOpKVO+X2NgTqxSb0Ti8HpGaahi2GGyRar/DaPKGqA+FrWQYuWJJvMJmsA
+	 DcjNIDUVeBGhDt/2DL+UxJ60rqByCxjhvDySJe2kqwW8gug6hyB/tRaUOf7jnXbOtimh+
+	 yqFLquSVx5qumCtoglAC2JvXmTzZsvLReixX9+jKRjoXH7k+QVIySP+4+Scs9TpZq6svm
+	 KEKvEpYEzBNYDV+KesVhQvnCzjxOMzQi34GJgZ9Ze1iy2tHc1NdUskJmDdCbeEwX++g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794082409;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794082412;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=d6C42oxILqzAGe2XSYpJ1wKWPDH0Wjq+6Bkl8QonrCw=;
-	b=rjnfd9tA97S0XH8vq1OrgR2N/oxBstBQPEfHGrWEaf7lIfFTCcsgI+vS6rImU3iobfnJ
-	 9K8zs5naqSQGzb0ItNFojrPHanRNqx0ziSrdeLRMkPR+9bkzf6JhTOfpdJOUCWFcYciT9
-	 +ocjJAs0hzoygZ2GLB0/CgqOyerxnyP/ZV2sxGlNaX1BoC8d2e0UBd90sRzpzxn2SiNVK
-	 AyzT/3px7VywvY1Q1etEuSLnZAaeCFlCMXAWNsKH4l/hFzv3zXZ5+ksWHSTVHVeySay0q
-	 5mU5BfT8kD/E+nGMPKM0nNhg5nGh5YXx8rnl1tdMlg09KCEg85z4anq9+8c3xf/OM6g==
+	bh=Y7c6OOYT+qEeDVQYiysesbJy0c+qB96uscD707pwGC0=;
+	b=MwRB9H+2c0ntTInXDLI0RiiT3+HYKDQZwcWwOxgLgFxUGrw5ZS/XNJrxfnFkE8NWzwz6
+	 /wBTy4CfOU8c4G9YOGXVrVz1LFlvXgMhFLK9OdsYGj89YOQbsm6eJ5GfaTdJ34o9xSTC2
+	 Vliuuko8c6nSlshN8+osF3ALofg7sGQ8bM6gBQHUqE5Gsz1O1T5C/jjbN26oQ4wpS5egq
+	 ab4+gaZZ7hfe+mQx9mLhn62yHMy/AWp2y9YjlEZZQ/RcUxKJMhLUlj2er59RBLqTW8lG6
+	 OpKuaWx6ChDi/edQv+Ao22BAiBeN6GtpjtCDAtFuclBZlLUifVtgj5pfEF/SFljzrTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=fail header.from=gmail.com;
 	spf=pass smtp.mailfrom=upstreamdata.ca;
-	arc=none smtp.remote-ip=209.85.160.50
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	arc=none smtp.remote-ip=209.85.167.172
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DD3606D836
-	for <linux-renesas-soc@vger.kernel.org>; Sat,  7 Nov 2026 20:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7DD3606D836
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149B1606D811
+	for <linux-renesas-soc@vger.kernel.org>; Sat,  7 Nov 2026 20:13:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 149B1606D811
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=upstreamdata.ca
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-4ada9579947so5485fac.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Nov 2026 12:13:28 -0800 (PST)
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4f14642adb4so3983b6e.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 Nov 2026 12:13:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794082408; x=1794687208;
+        d=1e100.net; s=20260707; t=1794082411; x=1794687211;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=d6C42oxILqzAGe2XSYpJ1wKWPDH0Wjq+6Bkl8QonrCw=;
-        b=NDvc2cWOwY0V6OUY6pLGMcOQg6y1eHSiOgb9FoPQsBkwgVf1B3MJWKzpCYlBMHVkey
-         T6tinhgY2W2PbQgkO4731OHsQepeYFNxnP65UautHTv4uINvqAdS4yJhK1E4MWEsPnK2
-         KI642sLwd4zHiKY/Mna5ZJi1vCHn02JkOnavODxC0AGMenU9OPLPiJGb4m9reuEajSuS
-         BwsM2UgOjYhLzRzigFp2smh0NJgmyx1Upcr/5QbnSj6CqbIDtsFinQhrlS8xMbPATYd1
-         87W637RjIzFs7MXTAfMR7Y7qCmMD3R1uFaGgW26JiAmgjAZAgftPeHTZ4r6pLeKQO/EB
-         9x/Q==
-X-Forwarded-Encrypted: i=1; AL+hErEIUH/yg1qq5WpDfzOR7M8VPauyLNvbfIqiZYatAbweeOsHWhkRhYXsorOlTSOBUwNTUgWqBhRQKgqn7ahXBIYW5w==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8t4eAdwR9xHynx9pZwBrezPn0B49/5A/HEXYqT7EPq00BEvSey
-	Gclwy74oRW+0hLh6ngJlTGB+ItxdPHZyHXWRnlDzwv5G2/EeKzYZN2Oc0c8iUYQiD+8=
-X-Gm-Gg: AYBFou2eAJQ+/AKbVSxJpEl9KllCBz7kjKLqJ6AWw3lunereGQK9LCJ8ossYkY8rqro
-	aopMTWndMdpmiKbHvDUeiuJRIbEJmXbgc7IWSAhoQ0LgCyDF22POZAJ12FnKYmeLgdQ2k8F5SS+
-	NkdJXyM7hnGZJqXEkDIgPbmr9kwo+/6Oe8QE10K2EusX6hBPEOw9Sc5UfS1d/rTR8l2d+ZpTpii
-	sRT3Qke2uTOF3W3nXNC8smsymd2bjHW3jdzMHyG1K0PpM/+ayrsh7PQFyaptTYANGvkSceRRYzf
-	iz3Dj+0Omzk22woVFII+nKGPrP4eA6yzNtCalE7L4xAMd6FAs+aZ2MKIKp8gT5wnIxY4nPku1ze
-	2brVbtapINOvH/hBa2TGvh2t1fFkt/cK2lswSl9wG3qHn/nP59DXpuJiwAIx6qzYocqRj1Ld/+p
-	8Rw/92Ps/MHBflifTCSp65+Of5hcjV+s2lEKL1Owk5SKGPM6Qx6rw017lc0YRq+MgQUE4UxzaNu
-	aonkIDjvSdY6S53tKS2o3neWUWwuWp7H32Qp3lQhbVr1lcM6dF9Wsi2C+oUg7HDcoD6xaJhx6uN
-	MrG2djGnh7JeFxPtOAIwsi1yYuvZNhLDP/Pdkk3DU0uPsjpsp0b6gD7WIULXfg==
-X-Received: by 2002:a05:6871:2b26:b0:4a2:c175:d339 with SMTP id 586e51a60fabf-4ad98e4af21mr4151086fac.39.1794082407651;
-        Sat, 07 Nov 2026 12:13:27 -0800 (PST)
+        bh=Y7c6OOYT+qEeDVQYiysesbJy0c+qB96uscD707pwGC0=;
+        b=JWxSLO99rcnN8m1LNa71ywn+/5/GyxH5y3oZqj+FAUA3YKHN4wi8TYS4ehgdUXgxx1
+         oOsuzrCriu7kiuwPEeVutcwtJUH7nH49lhm1rQnkRDEmsC8kfAyV8Grtq2axKWYPI80O
+         HIRUT5ehHE6dg02epaOkC7VYA+NRrRwc6MDo5zJa+wuYdVzU3SAC7tYQ5MwAUhtehgoP
+         xr7qivi3EBBssYSJVjKA+HjgDo8DCp/RpJglOP6gAPlVIdD22zQN/mvno2G63dcB8FFA
+         g+Ku7xh/6DVS31j6RU2bz+m3ad9zMZhHK0kkJOJlIBa1AqzE1uW0NjapBdGuYrkFq02v
+         Bu9Q==
+X-Forwarded-Encrypted: i=1; AKwUvByy5YC2HwWndB+dfKmidYGVF1oxZKp7SlhZkBLIDmLxMaV637mZ4AXXnc7LX1npOKuM2xI/bL3xRHMFJfRG4fK1YA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9qUL/HP4vx+SI4OpdA2DHJL2b8/0+MTu3Wk16VViuOSvD1jfW6
+	GXhr31iaRHEyZWyGAgF3fHshfmWjbp0F87X8obdf3XcMf0zAT8Nk+pM2Vl+g2IC/cPQ=
+X-Gm-Gg: AYBFou1gdvrprFkUX0tQW3ULMylzIsPj/BrWOpbK9GFVVsuP26NxpmZWQE4Ajkdv7IM
+	sQsNkonzYoVVqnerFKuZ5EXBWDNr297YymXGOddgqSc6UqptuCXZQhdla7qLTpa3tqQwU33I9kN
+	2fLXc9ukSkYiC+30XRYoZXLGlm0wZL0aASlzQaybKzCFDzl2vy9n4WuXQMUEsnJVfWeww/vtzjC
+	FboQXFk40/LBsei8pnBB4pVincVYq2pA04lnHGlgJvxjA2aTTIoZrre23xv8SCWWvml7CRFr1F5
+	hjFU55BQ7lKAe/Ue5SgMsQ2EeAOJxKcdEewNinyhMKoQhIn39pmLpVrJjDik9Oto0ReVMfDQmMg
+	DV9Kh6RgcCverRQkVw/h1MWyPNXJcfs8MSK7CXHiwWmj0l5jM1fIP/u/gazHDzPXP4aXPZ2gOJU
+	OKv5YQRNJDOfnRqgQSUv0AEnx01+fZa1bvbigmca66a33B0NXPdGUYkmr5QvsdiVaFOoAcOpH2X
+	83pvaVFhYNXeol4VVfGoKfGJXyEj6vT7T+xkP3rNSUkvU86qsiDjh2YWVCxAPxble+bXkGH44gI
+	7uzFpni9SU8LJeOG8hs1rW+bXTGi0f6SL8xInrWISEI9/nos9lcWV5Nm5BbI
+X-Received: by 2002:a05:6808:6412:b0:4cb:818f:d56f with SMTP id 5614622812f47-567e0f98da3mr4920477b6e.23.1794082410773;
+        Sat, 07 Nov 2026 12:13:30 -0800 (PST)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4ade68aa561sm226096fac.5.2026.11.07.12.13.24
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4ade68aa561sm226096fac.5.2026.11.07.12.13.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2026 12:13:27 -0800 (PST)
+        Sat, 07 Nov 2026 12:13:30 -0800 (PST)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sat, 07 Nov 2026 03:16:36 -0700
-Subject: [PATCH 39/58] mtd: rawnand: qcom: retain open-handle state on
+Date: Sat, 07 Nov 2026 03:16:37 -0700
+Subject: [PATCH 40/58] mtd: rawnand: cafe: retain open-handle state on
  removal
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -79,7 +79,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-39-0181ef0cc4c8@gmail.com>
+Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-40-0181ef0cc4c8@gmail.com>
 References: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
 In-Reply-To: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -141,177 +141,112 @@ Keep chip metadata and controller storage alive until the final MTD
 reference is released. Unregister and disconnect each published chip
 before releasing the resources used by its hardware operations.
 
-Validate boot partitions before publication and unwind partial probes.
+Free DMA memory at teardown and clear its pointer before deferred
+detach.
 
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- drivers/mtd/nand/raw/qcom_nandc.c | 74 +++++++++++++++++++++++++++------------
- 1 file changed, 51 insertions(+), 23 deletions(-)
+ drivers/mtd/nand/raw/cafe_nand.c | 37 +++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index 2d98f79b492d..f812de1d776f 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -1900,7 +1900,6 @@ static int qcom_nandc_setup(struct qcom_nand_controller *nandc)
+diff --git a/drivers/mtd/nand/raw/cafe_nand.c b/drivers/mtd/nand/raw/cafe_nand.c
+index f3117b031cd2..bcf7482410e7 100644
+--- a/drivers/mtd/nand/raw/cafe_nand.c
++++ b/drivers/mtd/nand/raw/cafe_nand.c
+@@ -651,7 +651,10 @@ static void cafe_nand_detach_chip(struct nand_chip *chip)
  {
- 	u32 nand_ctrl;
+ 	struct cafe_priv *cafe = nand_get_controller_data(chip);
  
--	nand_controller_init(&nandc->controller);
- 	nandc->controller.ops = &qcom_nandc_ops;
- 
- 	/* kill onenand */
-@@ -2007,6 +2006,11 @@ static int qcom_nand_host_parse_boot_partitions(struct qcom_nand_controller *nan
- 	return 0;
+-	dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
++	if (cafe->dmabuf) {
++		dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
++		cafe->dmabuf = NULL;
++	}
  }
  
-+static void qcom_nand_host_release(struct nand_chip *chip)
+ static const struct nand_controller_ops cafe_nand_controller_ops = {
+@@ -659,6 +662,11 @@ static const struct nand_controller_ops cafe_nand_controller_ops = {
+ 	.detach_chip = cafe_nand_detach_chip,
+ };
+ 
++static void cafe_nand_release(struct nand_controller *controller)
 +{
-+	kfree(to_qcom_nand_host(chip));
++	kfree(container_of(controller, struct cafe_priv, nand.legacy.dummy_controller));
 +}
 +
- static int qcom_nand_host_init_and_register(struct qcom_nand_controller *nandc,
- 					    struct qcom_nand_host *host,
- 					    struct device_node *dn)
-@@ -2019,13 +2023,16 @@ static int qcom_nand_host_init_and_register(struct qcom_nand_controller *nandc,
- 	ret = of_property_read_u32(dn, "reg", &host->cs);
- 	if (ret) {
- 		dev_err(dev, "can't get chip-select\n");
--		return -ENXIO;
-+		ret = -ENXIO;
-+		goto free_host;
- 	}
- 
- 	nand_set_flash_node(chip, dn);
- 	mtd->name = devm_kasprintf(dev, GFP_KERNEL, "qcom_nand.%d", host->cs);
--	if (!mtd->name)
--		return -ENOMEM;
-+	if (!mtd->name) {
-+		ret = -ENOMEM;
-+		goto free_host;
-+	}
- 
- 	mtd->owner = THIS_MODULE;
- 	mtd->dev.parent = dev;
-@@ -2050,11 +2057,7 @@ static int qcom_nand_host_init_and_register(struct qcom_nand_controller *nandc,
- 
- 	ret = nand_scan(chip, 1);
- 	if (ret)
--		return ret;
--
--	ret = mtd_device_parse_register(mtd, probes, NULL, NULL, 0);
--	if (ret)
--		goto err;
-+		goto free_host;
- 
- 	if (nandc->props->use_codeword_fixup) {
- 		ret = qcom_nand_host_parse_boot_partitions(nandc, host, dn);
-@@ -2062,10 +2065,21 @@ static int qcom_nand_host_init_and_register(struct qcom_nand_controller *nandc,
- 			goto err;
- 	}
- 
-+	ret = nand_set_release(chip, qcom_nand_host_release);
-+	if (ret)
-+		goto err;
-+	ret = mtd_device_parse_register(mtd, probes, NULL, NULL, 0);
-+	if (ret) {
-+		nand_disconnect(chip);
-+		mtd_put_master(mtd);
-+		return ret;
-+	}
- 	return 0;
- 
- err:
- 	nand_cleanup(chip);
-+free_host:
-+	kfree(host);
- 	return ret;
- }
- 
-@@ -2077,15 +2091,13 @@ static int qcom_probe_nand_devices(struct qcom_nand_controller *nandc)
- 	int ret = -ENODEV;
- 
- 	for_each_available_child_of_node_scoped(dn, child) {
--		host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
-+		host = kzalloc_obj(*host);
- 		if (!host)
- 			return -ENOMEM;
- 
- 		ret = qcom_nand_host_init_and_register(nandc, host, child);
--		if (ret) {
--			devm_kfree(dev, host);
-+		if (ret)
- 			continue;
--		}
- 
- 		list_add_tail(&host->node, &nandc->host_list);
- 	}
-@@ -2119,6 +2131,26 @@ static int qcom_nandc_parse_dt(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void qcom_nandc_chips_cleanup(struct qcom_nand_controller *nandc)
-+{
-+	struct qcom_nand_host *host, *tmp;
-+
-+	list_for_each_entry_safe(host, tmp, &nandc->host_list, node) {
-+		struct nand_chip *chip = &host->chip;
-+		struct mtd_info *mtd = nand_to_mtd(chip);
-+
-+		WARN_ON(mtd_device_unregister(mtd));
-+		nand_disconnect(chip);
-+		list_del(&host->node);
-+		mtd_put_master(mtd);
-+	}
-+}
-+
-+static void qcom_nandc_release(struct nand_controller *controller)
-+{
-+	kfree(container_of(controller, struct qcom_nand_controller, controller));
-+}
-+
- static int qcom_nandc_probe(struct platform_device *pdev)
+ static int cafe_nand_probe(struct pci_dev *pdev,
+ 				     const struct pci_device_id *ent)
  {
- 	struct qcom_nand_controller *nandc;
-@@ -2127,9 +2159,12 @@ static int qcom_nandc_probe(struct platform_device *pdev)
- 	struct resource *res;
+@@ -683,6 +691,10 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 		err = -ENOMEM;
+ 		goto out_disable_device;
+ 	}
++	cafe->nand.controller = &cafe->nand.legacy.dummy_controller;
++	err = devm_nand_controller_init(&pdev->dev, cafe->nand.controller, cafe_nand_release);
++	if (err)
++		goto out_disable_device;
+ 
+ 	mtd = nand_to_mtd(&cafe->nand);
+ 	mtd->dev.parent = &pdev->dev;
+@@ -693,7 +705,7 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 	if (!cafe->mmio) {
+ 		dev_warn(&pdev->dev, "failed to iomap\n");
+ 		err = -ENOMEM;
+-		goto out_free_mtd;
++		goto out_disable_device;
+ 	}
+ 
+ 	cafe->rs = init_rs_non_canonical(12, &cafe_mul, 0, 1, 8);
+@@ -785,9 +797,16 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 	pci_set_drvdata(pdev, mtd);
+ 
+ 	mtd->name = "cafe_nand";
+-	err = mtd_device_parse_register(mtd, part_probes, NULL, NULL, 0);
++	err = nand_set_release(&cafe->nand, NULL);
+ 	if (err)
+ 		goto out_cleanup_nand;
++	err = mtd_device_parse_register(mtd, part_probes, NULL, NULL, 0);
++	if (err) {
++		nand_disconnect(&cafe->nand);
++		cafe_nand_detach_chip(&cafe->nand);
++		mtd_put_master(mtd);
++		goto out_irq;
++	}
+ 
+ 	goto out;
+ 
+@@ -801,8 +820,6 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+ 	free_rs(cafe->rs);
+  out_ior:
+ 	pci_iounmap(pdev, cafe->mmio);
+- out_free_mtd:
+-	kfree(cafe);
+  out_disable_device:
+ 	pci_disable_device(pdev);
+  out:
+@@ -816,17 +833,17 @@ static void cafe_nand_remove(struct pci_dev *pdev)
+ 	struct cafe_priv *cafe = nand_get_controller_data(chip);
  	int ret;
  
--	nandc = devm_kzalloc(&pdev->dev, sizeof(*nandc), GFP_KERNEL);
-+	nandc = kzalloc_obj(*nandc);
- 	if (!nandc)
- 		return -ENOMEM;
-+	ret = devm_nand_controller_init(dev, &nandc->controller, qcom_nandc_release);
-+	if (ret)
-+		return ret;
++	ret = mtd_device_unregister(mtd);
++	WARN_ON(ret);
++	nand_disconnect(chip);
+ 	/* Disable NAND IRQ in global IRQ mask register */
+ 	cafe_writel(cafe, ~1 & cafe_readl(cafe, GLOBAL_IRQ_MASK), GLOBAL_IRQ_MASK);
+ 	free_irq(pdev->irq, mtd);
+-	ret = mtd_device_unregister(mtd);
+-	WARN_ON(ret);
+-	nand_cleanup(chip);
++	cafe_nand_detach_chip(chip);
+ 	free_rs(cafe->rs);
+ 	pci_iounmap(pdev, cafe->mmio);
+-	dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
+-	kfree(cafe);
+ 	pci_disable_device(pdev);
++	mtd_put_master(mtd);
+ }
  
- 	platform_set_drvdata(pdev, nandc);
- 	nandc->dev = dev;
-@@ -2188,6 +2223,7 @@ static int qcom_nandc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_setup:
-+	qcom_nandc_chips_cleanup(nandc);
- 	qcom_nandc_unalloc(nandc);
- err_nandc_alloc:
- 	clk_disable_unprepare(nandc->aon_clk);
-@@ -2203,16 +2239,8 @@ static void qcom_nandc_remove(struct platform_device *pdev)
- {
- 	struct qcom_nand_controller *nandc = platform_get_drvdata(pdev);
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct qcom_nand_host *host;
--	struct nand_chip *chip;
--	int ret;
- 
--	list_for_each_entry(host, &nandc->host_list, node) {
--		chip = &host->chip;
--		ret = mtd_device_unregister(nand_to_mtd(chip));
--		WARN_ON(ret);
--		nand_cleanup(chip);
--	}
-+	qcom_nandc_chips_cleanup(nandc);
- 
- 	qcom_nandc_unalloc(nandc);
- 
+ static const struct pci_device_id cafe_nand_tbl[] = {
 
 -- 
 2.53.0
