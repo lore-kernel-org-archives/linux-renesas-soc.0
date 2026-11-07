@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.34
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794038907;
-	b=nObYfHP/NK1AZc9wh2nvJXMObFsYCpdTP/yizXisDn1s6GRxDm0oOz3oqogWVTLSFOZz
-	 0CZdbKfZ71TTkAwdgYkjHuhmXD6os6aSMR1XIIp2adIqTmkQnJgl16g8WrjNPRPuxXz9o
-	 VfbYvmUN3G1pvfHtw+n0natnfu0wfcI+dyoJjoR8Mksspg9wFBKvk9AvVjr1H+skBMqMS
-	 PAcwmmREmLaA/bzdyJSnQbFQzNu+FAJEf/i29abdxfRYvr3CfXYqHI1XRLcAqzA/xu9v/
-	 wafMm7Li1h7z+EQ9yp/D7RPS3ag4FXdl4sJBZksNQoYTEs8xJMr2PGi2hBZRiYL3iWQ==
+	b=SmaZFiZ7Q+fd2dhAiT3c1tfAW2WveGg2fYxAVT2XckNM7um2ADQFWD/D3H9oh2CMwGo1
+	 Zx0z90K9iRLuQeQWZCNAeJzDG30qzp/Pz/oUFnw8U1uu9nULpaLRnTJTuf6cG3j6AN4E1
+	 UJ06aCwtKR0wdIehL2wd7mMff4l6vkVz99YDg140u/g1ugLyypQIktHuaGRbHob5XQeLB
+	 xaEQ/+xqkREeRcGMii/MSHGNuA+zueJK6Ak90CJoVr2mAg5h0Hhxp5q7U5aV+d80Uqa1Z
+	 73BIlpD8RHBw6dOxPNBmakVN66CoWvHEadq6BL4n8MZvSdmTR14ciLufQkMoIwOA10w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794038907;
 	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
 	 Message-ID:In-Reply-To:References:Date:Mime-Version:From:To:Cc:
 	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
 	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=ekhsu2gD2ffd2XUnkad76rYwYpPwsHO9XjiLqW89QII=;
-	b=smcfyRWoTnhSIeXHGLvnvTewNfw6/EV6x0KL3Ohm2T/I1Z+xxQDVLP1kYu+bqSzY5BnP
-	 PTTRJqBNv4UiMd5B9OyL9N6BstRUd2p62KnXfQSFvnuk+r0y/U+AF56R1rt0aMhYlWUz0
-	 +fdPVqI5hObhi9aYjyYoi2lPzk7hBop/jAOr/M7a4vZaxCO61LiMSwPlK5Ttv1geQePy3
-	 BNPIQNEjmZsDfBs3fi/wskOLZ53FCq/94v8lhDjzacJvQsga+rmbohLVKi6wHp4q7Inqf
-	 RQvzx4tm4X93bs08rLzYt1umQojRMHq85wybTgax5jG9OgtctkfcaKmWhSKYrhqkNEA==
+	bh=zrJYAF9LebqD+H/242H7Pwb7Q/5emLnbPPmBS+xTCHg=;
+	b=GNRb6vv+O/FJq70mssOpZdT7xXfePY7ysrYRVvaNZ+6p4fuoikORWidAIqtfQtG2jZOQ
+	 aUviNdScDkmgqsDMae08co8Odc2MP0y32MJQZnh66j9S+D0aXqTOf+0lbNnzsb221b119
+	 o9ZCHapp9ueZ0LawXg56UN9Jws/trGEGnBFasj9lIUAO3tRVJxHMhkPd32hy3Q92np4jS
+	 hOn2xkLxpUO6u8e2J2vXdxYfARhL8UOCwVKzbWipd1Wkv3gH+rsu2upfH32RoW0bjXlSv
+	 ZqI1/itaY3sZ7i8qTHwL1SbhMWgKVvv77z5avDTbtdrSGoYViyxLufWan6hFM4Od0mA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=zte.com.cn;
 	spf=pass smtp.mailfrom=zte.com.cn;
-	arc=none smtp.remote-ip=183.62.165.209
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	arc=none smtp.remote-ip=160.30.148.34
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C48606A330;
-	Sat,  7 Nov 2026 08:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23C48606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35969606A332;
+	Sat,  7 Nov 2026 08:08:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 35969606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jM7w53lPSz57HS0;
-	Sat, 07 Nov 2026 16:08:21 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl2.zte.com.cn with SMTP id 6A788J1W096644;
-	Sat, 7 Nov 2026 16:08:19 +0800 (+08)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jM7w8641rz5B12h;
+	Sat, 07 Nov 2026 16:08:24 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl2.zte.com.cn with SMTP id 6A788Kub096651;
+	Sat, 7 Nov 2026 16:08:20 +0800 (+08)
 	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
+Received: from mapi (xaxapp01[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Sat, 7 Nov 2026 16:08:21 +0800 (CST)
-X-Zmail-TransId: 2afc6aeedc75063-80c13
+	Sat, 7 Nov 2026 16:08:22 +0800 (CST)
+X-Zmail-TransId: 2af96aeedc76952-81502
 X-Mailer: Zmail v1.0
-Message-ID: <20261107160821263n_tb5YdtJX-icNTWJbOW9@zte.com.cn>
+Message-ID: <20261107160822723MQsHLesOdU6-MJoFTSUkb@zte.com.cn>
 In-Reply-To: <20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn>
 References: 20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn
-Date: Sat, 7 Nov 2026 16:08:21 +0800 (CST)
+Date: Sat, 7 Nov 2026 16:08:22 +0800 (CST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -68,41 +68,62 @@ Cc: <lgirdwood@gmail.com>, <heiko@sntech.de>,
         <linux-sunxi@lists.linux.dev>, <kuninori.morimoto.gx@renesas.com>,
         <linux-renesas-soc@vger.kernel.org>, <srini@kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIDEvNV0gQVNvQzogcnNuZDogZml4IE5VTEwgZGVyZWZlcmVuY2Ugd2hlbiByZW1vdGUgcG9ydCBoYXMgbm8gZW5kcG9pbnQ=?=
+Subject: =?UTF-8?B?W1BBVENIIDIvNV0gQVNvQzogd2NkOTMzNTogZml4IFNMSU0gaW50ZXJmYWNlIGRldmljZSBkb3VibGUtcHV0IG9uIGVycm9yIHBhdGhz?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 6A788J1W096644
+X-MAIL:mse-fl2.zte.com.cn 6A788Kub096651
 X-TLS: YES
 X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 16:08:21 +0800
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 16:08:24 +0800
 X-CLEAN: YES
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEEDC75.000/4jM7w53lPSz57HS0
+X-Fangmail-MID-QID: 6AEEDC78.000/4jM7w8641rz5B12h
 
 From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-rsnd_parse_connect_graph() uses the node returned by
-of_graph_get_remote_port_parent() without checking it for NULL.  An
-endpoint node with no remote-endpoint phandle yields NULL, and the
-following strstr() on remote_node->full_name dereferences it during
-probe.
+wcd9335_slim_status() takes a reference on the SLIM interface device
+with of_slim_get_device() and hands it to a devm action
+(wcd9335_put_device_action), which releases it when the device is torn
+down.  Four error paths also call put_device() directly, so the devm
+action drops the same reference a second time at teardown and underflows
+the refcount.
 
-Return early when the remote node is absent, so a graph link that does
-not lead anywhere is ignored instead of crashing the kernel.
+Drop the manual puts and let the devm action own the reference on both
+the success and the failure paths.
 
-Fixes: beed78aeeb10 ("ASoC: rsnd: move HDMI information from ssi.c to core.c")
+Fixes: 082723fee626 ("ASoC: codecs: wcd9335: Fix SLIM interface device leak in wcd9335_slim_status()")
 Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
-diff --git a/sound/soc/renesas/rcar/core.c b/sound/soc/renesas/rcar/core.c
-index b7954746e953..6fba4f46868b 100644
---- a/sound/soc/renesas/rcar/core.c
-+++ b/sound/soc/renesas/rcar/core.c
-@@ -1140,6 +1140,8 @@ static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
- 		return;
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index a98d1fd78925..0f8c9ccd8500 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -5136,7 +5136,6 @@ static int wcd9335_slim_status(struct slim_device *sdev,
  
- 	remote_node = of_graph_get_remote_port_parent(endpoint);
-+	if (!remote_node)
-+		return;
+ 	wcd->regmap = regmap_init_slimbus(sdev, &wcd9335_regmap_config);
+ 	if (IS_ERR(wcd->regmap)) {
+-		put_device(&wcd->slim_ifc_dev->dev);
+ 		return dev_err_probe(dev, PTR_ERR(wcd->regmap),
+ 				     "Failed to allocate slim register map\n");
+ 	}
+@@ -5144,7 +5143,6 @@ static int wcd9335_slim_status(struct slim_device *sdev,
+ 	wcd->if_regmap = regmap_init_slimbus(wcd->slim_ifc_dev,
+ 						  &wcd9335_ifc_regmap_config);
+ 	if (IS_ERR(wcd->if_regmap)) {
+-		put_device(&wcd->slim_ifc_dev->dev);
+ 		return dev_err_probe(dev, PTR_ERR(wcd->if_regmap),
+ 				     "Failed to allocate ifc register map\n");
+ 	}
+@@ -5152,13 +5150,11 @@ static int wcd9335_slim_status(struct slim_device *sdev,
+ 	ret = wcd9335_bring_up(wcd);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bringup WCD9335\n");
+-		put_device(&wcd->slim_ifc_dev->dev);
+ 		return ret;
+ 	}
  
- 	/* HDMI0 */
- 	if (strstr(remote_node->full_name, "hdmi@fead0000")) {
+ 	ret = wcd9335_irq_init(wcd);
+ 	if (ret) {
+-		put_device(&wcd->slim_ifc_dev->dev);
+ 		return ret;
+ 	}
