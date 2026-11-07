@@ -1,53 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794038900;
-	b=omUgLjK41rDrF3u+qTkJ+8fttix4vCTQjVs+U5Tgc3YAIfkTnba6Pi35EYidDFZQwCX8
-	 RY9F1+tc4cRdzlDtCWNPtwvGrawhZG4B6z5f1VCimUtT5JYgDNj3/FfbkdqF3Q8bh1zOP
-	 EMdSX1Sev3pMEofSgjoZKKE2NmgKXxy8N+wQ2Tfv18Zy+C8lxY2CQHKegPfJ9TzGjrHG/
-	 eP+9nTza8Es6z1zG8celWAW9DAmJfBbs9nJGQLcz9rXgh1xSS2MxK/GGzW/nRCd+xXZHa
-	 ySWdJ/3GMvJ7Cq1nrpO5td7wf0zMDvCXSVxzGGl+aKPMxcWRVKRRqQI0rp8ummO5XIQ==
+	t=1794038907;
+	b=nObYfHP/NK1AZc9wh2nvJXMObFsYCpdTP/yizXisDn1s6GRxDm0oOz3oqogWVTLSFOZz
+	 0CZdbKfZ71TTkAwdgYkjHuhmXD6os6aSMR1XIIp2adIqTmkQnJgl16g8WrjNPRPuxXz9o
+	 VfbYvmUN3G1pvfHtw+n0natnfu0wfcI+dyoJjoR8Mksspg9wFBKvk9AvVjr1H+skBMqMS
+	 PAcwmmREmLaA/bzdyJSnQbFQzNu+FAJEf/i29abdxfRYvr3CfXYqHI1XRLcAqzA/xu9v/
+	 wafMm7Li1h7z+EQ9yp/D7RPS3ag4FXdl4sJBZksNQoYTEs8xJMr2PGi2hBZRiYL3iWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794038900;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794038907;
 	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
-	 Message-ID:Date:Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:
-	 X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:
-	 X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=e/rFmgN3Z5KxfWW+Rzz0lvQ+GFMHmAzHgZaIrh0Ft3U=;
-	b=kvEWgFL+ZM8xbh/KlfRY4ouFcvcn+a1LqC64rGleUoGwV7kYvX6vVycoQg2plKrk2PZm
-	 zRbkrrXQQuVT3DIAiry4P0nit2Jju8kJIeQZC3CREF16INIaWMKeHDaDOR6iCds4Z8I8j
-	 Lx0cB0mEl1kNGnJPyr1S0uH5wmCcyYO4q82h0jQYEei0Ds3ftIQ2sk589hzGCl9JYcvZN
-	 T0HTgCpqGBDmRew2wzBS+KaQS+UFRrb+I1MJMtpJOfdI0QcPE5XrVGsY813a/uaXniIPD
-	 7PueBCI9CfKxupIjkYPdMbKJWqXxTmZN2UG2s0/i6500SHPCEanqsyUDNM3lXPHQ2Lw==
+	 Message-ID:In-Reply-To:References:Date:Mime-Version:From:To:Cc:
+	 Subject:Content-Type:X-MAIL:X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:
+	 X-CLEAN:X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
+	bh=ekhsu2gD2ffd2XUnkad76rYwYpPwsHO9XjiLqW89QII=;
+	b=smcfyRWoTnhSIeXHGLvnvTewNfw6/EV6x0KL3Ohm2T/I1Z+xxQDVLP1kYu+bqSzY5BnP
+	 PTTRJqBNv4UiMd5B9OyL9N6BstRUd2p62KnXfQSFvnuk+r0y/U+AF56R1rt0aMhYlWUz0
+	 +fdPVqI5hObhi9aYjyYoi2lPzk7hBop/jAOr/M7a4vZaxCO61LiMSwPlK5Ttv1geQePy3
+	 BNPIQNEjmZsDfBs3fi/wskOLZ53FCq/94v8lhDjzacJvQsga+rmbohLVKi6wHp4q7Inqf
+	 RQvzx4tm4X93bs08rLzYt1umQojRMHq85wybTgax5jG9OgtctkfcaKmWhSKYrhqkNEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=zte.com.cn;
 	spf=pass smtp.mailfrom=zte.com.cn;
-	arc=none smtp.remote-ip=160.30.148.35
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	arc=none smtp.remote-ip=183.62.165.209
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547AF606A33C;
-	Sat,  7 Nov 2026 08:08:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 547AF606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C48606A330;
+	Sat,  7 Nov 2026 08:08:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23C48606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jM7w265jZz8RVJk;
-	Sat, 07 Nov 2026 16:08:18 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 6A788DXS022834;
-	Sat, 7 Nov 2026 16:08:13 +0800 (+08)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jM7w53lPSz57HS0;
+	Sat, 07 Nov 2026 16:08:21 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 6A788J1W096644;
+	Sat, 7 Nov 2026 16:08:19 +0800 (+08)
 	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
+Received: from mapi (xaxapp05[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Sat, 7 Nov 2026 16:08:15 +0800 (CST)
-X-Zmail-TransId: 2afb6aeedc6f415-84fc1
+	Sat, 7 Nov 2026 16:08:21 +0800 (CST)
+X-Zmail-TransId: 2afc6aeedc75063-80c13
 X-Mailer: Zmail v1.0
-Message-ID: <20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn>
-Date: Sat, 7 Nov 2026 16:08:15 +0800 (CST)
+Message-ID: <20261107160821263n_tb5YdtJX-icNTWJbOW9@zte.com.cn>
+In-Reply-To: <20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn>
+References: 20261107160815352Q4eO0zXOX0KF5AwEbOJ6f@zte.com.cn
+Date: Sat, 7 Nov 2026 16:08:21 +0800 (CST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,57 +68,41 @@ Cc: <lgirdwood@gmail.com>, <heiko@sntech.de>,
         <linux-sunxi@lists.linux.dev>, <kuninori.morimoto.gx@renesas.com>,
         <linux-renesas-soc@vger.kernel.org>, <srini@kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIDAvNV0gQVNvQzogZml4IGVycm9yLXBhdGggbGVha3MgYW5kIGEgTlVMTCBkZXJlZmVyZW5jZQ==?=
+Subject: =?UTF-8?B?W1BBVENIIDEvNV0gQVNvQzogcnNuZDogZml4IE5VTEwgZGVyZWZlcmVuY2Ugd2hlbiByZW1vdGUgcG9ydCBoYXMgbm8gZW5kcG9pbnQ=?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 6A788DXS022834
+X-MAIL:mse-fl2.zte.com.cn 6A788J1W096644
 X-TLS: YES
 X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Sat, 07 Nov 2026 16:08:18 +0800
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 07 Nov 2026 16:08:21 +0800
 X-CLEAN: YES
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEEDC72.001/4jM7w265jZz8RVJk
+X-Fangmail-MID-QID: 6AEEDC75.000/4jM7w53lPSz57HS0
 
-Five error-path defects in ASoC drivers, found while reviewing against
-linux-next next-20261030.  Four of them leak a reference or a clock, or
-drop one twice, on a path that is easy to miss; the fifth dereferences
-a NULL remote port while parsing an audio graph.  The patches are
-independent and can be reviewed, applied and backported separately.
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-  1/5 ASoC: rsnd: fix NULL dereference when remote port has no endpoint
-  2/5 ASoC: wcd9335: fix SLIM interface device double-put on error paths
-  3/5 ASoC: rockchip: rk3399_gru_sound: fix codec node reference leak
-  4/5 ASoC: sun8i-codec: fix bus clock leak in runtime resume error path
-  5/5 ASoC: rsnd: fix SSIU node reference leak in rsnd_dma_of_path
+rsnd_parse_connect_graph() uses the node returned by
+of_graph_get_remote_port_parent() without checking it for NULL.  An
+endpoint node with no remote-endpoint phandle yields NULL, and the
+following strstr() on remote_node->full_name dereferences it during
+probe.
 
-1/5 returns early when a graph endpoint has no remote port; 2/5 removes
-the four manual put_device() calls that duplicate the devm action; 3/5
-puts the codec node on the two skip paths of the Rockchip DAI-link
-parse; 4/5 disables the bus clock when the regmap sync fails; 5/5 puts
-the SSIU node after the DMA path lookup.
+Return early when the remote node is absent, so a graph link that does
+not lead anywhere is ignored instead of crashing the kernel.
 
-Patches 1/5 and 5/5 are R-Car (Kuninori Morimoto), 2/5 is the WCD9335
-codec (Srinivas Kandagatla), 3/5 is Rockchip (Heiko Stuebner) and 4/5
-is sunxi (Chen-Yu Tsai, Jernej Skrabec, Samuel Holland).  All go
-through the ASoC tree.
-
-3/5 was tested on 7.3.0-next-20261030 in a QEMU/TCG arm64 guest with a
-synthetic DT; the test section in that patch describes the setup and
-the observed reference counts.
-
-Shao Mingyin (5):
-  ASoC: rsnd: fix NULL dereference when remote port has no endpoint
-  ASoC: wcd9335: fix SLIM interface device double-put on error paths
-  ASoC: rockchip: rk3399_gru_sound: fix codec node reference leak
-  ASoC: sun8i-codec: fix bus clock leak in runtime resume error path
-  ASoC: rsnd: fix SSIU node reference leak in rsnd_dma_of_path
-
- sound/soc/codecs/wcd9335.c            | 4 ----
- sound/soc/renesas/rcar/core.c         | 2 ++
- sound/soc/renesas/rcar/dma.c          | 5 ++++-
- sound/soc/rockchip/rk3399_gru_sound.c | 8 ++++++--
- sound/soc/sunxi/sun8i-codec.c         | 1 +
- 5 files changed, 13 insertions(+), 7 deletions(-)
-
+Fixes: beed78aeeb10 ("ASoC: rsnd: move HDMI information from ssi.c to core.c")
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
-base-commit: 7649ba73f9e7e1e04d0b46213e39c79ae09dd55c
+diff --git a/sound/soc/renesas/rcar/core.c b/sound/soc/renesas/rcar/core.c
+index b7954746e953..6fba4f46868b 100644
+--- a/sound/soc/renesas/rcar/core.c
++++ b/sound/soc/renesas/rcar/core.c
+@@ -1140,6 +1140,8 @@ static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
+ 		return;
+ 
+ 	remote_node = of_graph_get_remote_port_parent(endpoint);
++	if (!remote_node)
++		return;
+ 
+ 	/* HDMI0 */
+ 	if (strstr(remote_node->full_name, "hdmi@fead0000")) {
