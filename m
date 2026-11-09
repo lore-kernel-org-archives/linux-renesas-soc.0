@@ -1,52 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794231362;
-	b=cDe+jcThbIEWaEvRfmKlPRYePKJfBeba6+jipJeo5eB/Ok69f+4Rj5a0pW0KWJoOyqvc
-	 cpRJVbi8F2E+wqZ3HRt5ip6N+/y7q9ULtB3kfBl5dIC9GRF1HhwmM0m9OEyVdne9tKXcw
-	 dag3vJWe/QL9coAY/rqGJR3MbviCs2wQb9mVCRSkcNGhrtP4GywnBmO4DMchdJP7T0CG+
-	 +SEmyZPKvQsq0OiEyVT9fb6ecFouYN0O1fG4BZ1Pxp11tUnfM0/cRhLT5YbLLfUH/prqY
-	 PNKulDQX+ZOt1+VkQp37tfEoVxj2IEq2P4jh8e9uxmYUkfwwHQcacZTosL1craiylXw==
+	t=1794233458;
+	b=uGej/QNc7DI9O8QSq/Of3nLxLwoq07xQVmrpRJo7NVIE3z0ELmAjFxPSfwKR4dxixbI4
+	 0K+NK8MJwZBAlHu+AUK2XR8tCPPsXyJ3bRVCOmW2jILjKJpB2F4sel+KR1GNbfZGfkyKp
+	 s1Zar9LtAf39sgg7P13OsVAK6tMDyTlHSdeAEl35CGJ+QsU/YxtQeWVSKFQ/dwl31ry1J
+	 7n1BJkh69eKIgRjP9ORYIzpEn6R2qFlhjYLh5yzjx2tdg8+E4G2CbhG919SAenZTNUtfx
+	 2z1KQAtT2Jg+mdyzzKXIPIqZ0yhpHCB/x4RlWvBhjZfbYyCyqTPZ0achxMX6+56gvSg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794231362;
-	h=DMARC-Filter:Received:DKIM-Signature:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer;
-	bh=uznXjmkiTWgfr98zmBQdrDMNZkUNxUCbvJ6ZfvHz890=;
-	b=MjuyCUXoAA433Vka9yXOegjKqKVvWBSTBQHbpQW7UV+Vju0SWlcb+VO6JGWRZIhOGIsd
-	 J6MXD5w/ULlpiiFXmrFJ065dWJBGSE5nAMRc7CpEEBcR+mrGbymoNbb8e0jE3jcJUGsUF
-	 uV09thvu9RM3hn+OfwUUsJ5Z8DaBsmoLbHDvwjhO7gc9GCWbVSb+0n3WCG3uoUtatk5e8
-	 g0Dwgl1ovU8TRwXD1bho7XHiMK5/IujrfZR1sSyLIiVXLhuCDfNsFvzNfVTbQgA6fjN7t
-	 DALzcl6UwL3HbkGmXwljFF8kf5KG7nW9EN4LRUaWa+jc2bS5EmasqqfUgEDQnXH7OcQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794233458;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=Tz1cDpa5AepSCwsliEOBWV2ZbIXpdMUmAVTrHLbgBBk=;
+	b=nSr/YzJFQTnGxdWt4zBJVqux2xb3PChzdjQtTU9rjAAbiVZD5Oc0VoK+XglaJ0OVKiYT
+	 1tQ/bMzNcp6WVGnRAeHenoDnzlVPjzJFgreyF1z9NQcM3Hcyh+4p1i4+2Gf7k0HxiOLAh
+	 cXvwgev6cvCMTNzHbJyy87l/MBTNIUKV2zu2fOKJ3VbPgyeENQgUSuCP6oV2plBh9PHr2
+	 wajn152+JYfDyjvaJ35dovthcHhkVhc/zeFWvZphlSV/ZHt9ebIp6TZ8u1HI0Rg3Qw6lp
+	 kQByUQcF1UH3hDLite6fE4LLv9iNPFK2E7XzfRJA3PTSBR3g8rOvEVcmQJbSU5at/Zg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=NpDJfk8W;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.218.42
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE77606D822;
-	Mon,  9 Nov 2026 13:36:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9DE77606D822
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=NpDJfk8W
-Received: from neptunite.rasen.tech (unknown [IPv6:2400:2411:160:2f00:7074:f4f4:e983:bf17])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8CCAA219;
-	Mon,  9 Nov 2026 14:33:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1794231218;
-	bh=gGqO8nVz867c6XThKctEkhYpYd9ubmcf2l1S/Rb7Zr0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NpDJfk8W/JZFZnnW4MrohS7IVZJm99HTCMLNVdLC8uuBy1S+YWPwR+/V5v3s5ZPz6
-	 35arQ74YMKo9Ns8IVX5iPHZeKhKrPbbV2sfrui6e2xfonlVUg7pfBJyRzhEYhBG2Mn
-	 mYAdeFdN4YKP0ZFomtE8xGUFeCYwrvfmhmf1ZBVE=
-From: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Date: Mon, 09 Nov 2026 22:34:34 +0900
-Subject: [PATCH DNI v4 13/13] media: rcar-fcp: Check device revision at
- probe time
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC1B606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Nov 2026 14:10:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2CC1B606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c247f6687dcso156360466b.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 06:10:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794233456; x=1794838256;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Tz1cDpa5AepSCwsliEOBWV2ZbIXpdMUmAVTrHLbgBBk=;
+        b=YqqbnAhZ7VXuR60MtSZHYXAhcDlNXuLjibD9IegGJQHbl81MSd141bdo/s9LBmqq0d
+         YU3A6HiUm7YwyJkiJ285K0pka/LGCYgLqJMhcK14FCU9TUv/bObWd5bGE177ItYg0u+y
+         Iqe1K3GzJ9EP0JNUK8PlULVj6a80z3t5BSDl5Qtw25KxbvsFwAmuLpS8kIcvsHJ3Ndfi
+         oTbdwBSYZc4P3X0eMNJLYQqNRov6p/xHMmsKWcH/uNK0+3XR2z6ENdT9rnXZaap3Itch
+         SQiOqS3rvq0ZOByuQhlqINI/gFOZShoN35086MbSwjoyjn8O2KL6V1ihaBtBlncxDpg7
+         E7qg==
+X-Forwarded-Encrypted: i=1; AL+hErFZQdcPFLavRxIzo0VjSxogPhIUefoX+c4e4+mi5WgVqwELEtHxmbQH2L1wq+aQel9CdP/ZGYH64J+rZFk2m/fG3A==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+a5tLr00M+aHqsTpx1MfXZ9aygOwRODknRC6TTlFUt7Oxwh3+4
+	DEM0gfdgWpO2Y6hjhwnYEagMrnqk2myQT0ge8XUcf/9G/DL6d1PKOAVydhVDO0BOHTU=
+X-Gm-Gg: AYBFou1/KRz92FIUBlpdT7mK2mll2dbZsF8Z3VFIjTZVZRsN78s5eYWhbndH+1iWsa8
+	fGRs1wdbox3k6NKQQ8SpTxhpSsYCZ8YvhvalfJycnZJ2HL9vfjIYmmDYFxU/eel5oBsEt2Alnu8
+	hMTUpXRqlZEpeT4JTtyqGfiwVJ//T5Ks0LZn1rvlYxrTlJijBYm9USjREjTusBigEVanZYFk4yl
+	oUeMaO2VfxTVt/kuXvAdIUZexHxXvIiDKAtTvU4FvTakHfarvnkIPnTldDx7wkIUyKlVugnEtZY
+	p/Wl0k28llcRazU25n5t/s8QJJ2d80KH+TXr0onE0bA33MSgoCy+2a7ZOHhNtzJVw+LsjpeQ0u5
+	SMsZR3VcNtss6fxqbjANbwyyBA/S1EYDyi5qxhnbrsCDl3RPfqy47WkkKhQX68SOsDbkl4FDfFI
+	wVRXGHYIYWqRkLJYGm6wugrGS8aKf6vHfC7p0fLWXmDjTP8KlsZEs2jhIjJXw9t1Bts9Brvjjiv
+	weOxJ1Anow+8vSJc4H5UekZc5iNWQxtIZbIKSOStOCiLKvqCgXyTWlNwnSRopG/YHlFrOzVR8Sw
+	DR6UfuiKeSlKP+OkRM+KYwMCCaxbVLRjqH7V+hziuagHh80CKoZjWsjzvEP/V3Qv6g==
+X-Received: by 2002:a17:907:3f8f:b0:c46:7ec3:fdfb with SMTP id a640c23a62f3a-c4d6d1af6fbmr270377566b.7.1794233456446;
+        Mon, 09 Nov 2026 06:10:56 -0800 (PST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d69f94420sm172143866b.29.2026.11.09.06.10.54
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Nov 2026 06:10:54 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6b65d69f5c2so1227835a12.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 06:10:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEA2cjkPmVUJo8uswj0UVu4opWCDKWQ/IxhuGWZ3TpoJiCE657XQ3sT226AVAzrf8jptO2VIy/3sXKOouR5gJF+wQ==@vger.kernel.org
+X-Received: by 2002:a05:6402:51d0:b0:6af:9a96:5324 with SMTP id
+ 4fb4d7f45d1cf-6b722473406mr2715103a12.33.1794233454340; Mon, 09 Nov 2026
+ 06:10:54 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -56,240 +80,90 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-13-1b2072e8c37e@ideasonboard.com>
 References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
-In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Ulf Hansson <ulfh@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-media@vger.kernel.org, 
- Paul Elder <paul.elder+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: b4 0.14.2
+ <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-13-1b2072e8c37e@ideasonboard.com>
+In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-13-1b2072e8c37e@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Nov 2026 15:10:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVh2RiRhBHmuYupK5H81njgaqNCuFWVUiHjTN17+8a+dQ@mail.gmail.com>
+X-Gm-Features: AclHuK_UOMGJNMSt7XpVPImhuSlb374iqFlByrKa5-w4LBZZoP4MvZOgp7Ag9nE
+Message-ID: <CAMuHMdVh2RiRhBHmuYupK5H81njgaqNCuFWVUiHjTN17+8a+dQ@mail.gmail.com>
+Subject: Re: [PATCH DNI v4 13/13] media: rcar-fcp: Check device revision at
+ probe time
+To: Paul Elder <paul.elder+renesas@ideasonboard.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hi Paul,
 
-Verify that the device revision register reports a valid value,
-otherwise reject the device.
+On Mon, 9 Nov 2026 at 14:36, Paul Elder
+<paul.elder+renesas@ideasonboard.com> wrote:
+> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> Verify that the device revision register reports a valid value,
+> otherwise reject the device.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
----
-Changes since v2:
+Thanks for the update!
 
-- Add FCP type information
-- Reject devices with an unsupported version
+> ---
+> Changes since v2:
 
-Changes since v1:
+You missed the changes since v3...
 
-- Use devm_platform_ioremap_resource()
----
- drivers/media/platform/renesas/rcar-fcp.c | 126 ++++++++++++++++++++++++++++--
- 1 file changed, 120 insertions(+), 6 deletions(-)
+> --- a/drivers/media/platform/renesas/rcar-fcp.c
+> +++ b/drivers/media/platform/renesas/rcar-fcp.c
+> @@ -14,28 +14,80 @@
 
-diff --git a/drivers/media/platform/renesas/rcar-fcp.c b/drivers/media/platform/renesas/rcar-fcp.c
-index d782101842af7acbb3c0675d72677bc5a4854cac..93584fdc19cf46e021efeed0f47064dea96a4edb 100644
---- a/drivers/media/platform/renesas/rcar-fcp.c
-+++ b/drivers/media/platform/renesas/rcar-fcp.c
-@@ -14,28 +14,80 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- 
- #include <media/rcar-fcp.h>
- 
--#define RCAR_FCP_REG_RST		0x0010
--#define RCAR_FCP_REG_RST_SOFTRST	BIT(0)
--#define RCAR_FCP_REG_STA		0x0018
--#define RCAR_FCP_REG_STA_ACT		BIT(0)
-+#define RCAR_FCP_REG_VCR			0x0000
-+#define RCAR_FCP_REG_VCR_CATEGORY		(1 << 8)
-+#define RCAR_FCP_REG_VCR_REVISION_H3_ES1	(1 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_M3W		(2 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_V3M		(3 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_H3		(4 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_D3		(5 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_M3N		(6 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_V3H		(7 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_E3		(8 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_V4H		(10 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_V4M		(11 << 0)
-+#define RCAR_FCP_REG_VCR_REVISION_X5H_V1	(12 << 0)
-+
-+#define RCAR_FCP_REG_CFG0			0x0004
-+#define RCAR_FCP_REG_CFG0_FCPVSEL		BIT(1)
-+
-+#define RCAR_FCP_REG_RST			0x0010
-+#define RCAR_FCP_REG_RST_RIIFRST		BIT(22)
-+#define RCAR_FCP_REG_RST_RSIFRST		BIT(21)
-+#define RCAR_FCP_REG_RST_DCMPRST		BIT(20)
-+#define RCAR_FCP_REG_RST_MODRST			BIT(4)
-+#define RCAR_FCP_REG_RST_SOFTRST		BIT(0)
-+
-+#define RCAR_FCP_REG_STA			0x0018
-+#define RCAR_FCP_REG_STA_ACT			BIT(0)
-+
-+#define RCAR_FCP_REG_TL_CTRL			0x0070
-+#define RCAR_FCP_REG_TL_CTRL_TLEN		BIT(31)
-+#define RCAR_FCP_REG_TL_CTRL_VPOS_C(n)		((n) << 16)
-+#define RCAR_FCP_REG_TL_CTRL_VPOS_Y(n)		((n) << 0)
-+
-+#define RCAR_FCP_REG_PICINFO1			0x00c4
-+#define RCAR_FCP_REG_PICINFO1_STRIDE_DIV16	((n) << 0)
-+
-+#define RCAR_FCP_REG_BA_ANC_Y0			0x0100
-+#define RCAR_FCP_REG_BA_ANC_Y1			0x0104
-+#define RCAR_FCP_REG_BA_ANC_Y2			0x0108
-+#define RCAR_FCP_REG_BA_ANC_C			0x010c
-+#define RCAR_FCP_REG_BA_REF_Y0			0x0110
-+#define RCAR_FCP_REG_BA_REF_Y1			0x0114
-+#define RCAR_FCP_REG_BA_REF_Y2			0x0118
-+#define RCAR_FCP_REG_BA_REF_C			0x011c
-+
-+enum rcar_fcp_type {
-+	RCAR_FCPF,
-+	RCAR_FCPV,
-+};
- 
- struct rcar_fcp_device {
- 	struct list_head list;
- 	struct device *dev;
- 	void __iomem *base;
- 	struct reset_control *rstc;
-+	enum rcar_fcp_type type;
- };
- 
- static LIST_HEAD(fcp_devices);
- static DEFINE_MUTEX(fcp_lock);
- 
-+static inline u32 rcar_fcp_read(struct rcar_fcp_device *fcp, u32 reg)
-+{
-+	return ioread32(fcp->base + reg);
-+}
-+
- static inline void rcar_fcp_write(struct rcar_fcp_device *fcp, u32 reg, u32 val)
- {
- 	iowrite32(val, fcp->base + reg);
-@@ -154,15 +206,62 @@ EXPORT_SYMBOL_GPL(rcar_fcp_soft_reset);
-  * Platform Driver
-  */
- 
-+static int rcar_fcp_setup(struct rcar_fcp_device *fcp)
-+{
-+	static const char * const models[] = {
-+		[RCAR_FCPF] = "FCPF",
-+		[RCAR_FCPV] = "FCPV",
-+	};
-+	static struct {
-+		u32 version;
-+		const char *name;
-+	} versions[] = {
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_H3_ES1, "H3 ES1.x" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3W, "M3W" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3M, "V3M" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_H3, "H3" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_D3, "D3" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3N, "M3N" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3H, "V3H" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_E3, "E3" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V4H, "V4H" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V4M, "V4M" },
-+		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_X5H_V1, "X5H v1.0" },
-+	};
-+
-+	unsigned int i;
-+	u32 version;
-+
-+	/* Check the device version register. */
-+	version = rcar_fcp_read(fcp, RCAR_FCP_REG_VCR);
-+
-+	for (i = 0; i < ARRAY_SIZE(versions); ++i) {
-+		if (versions[i].version == version)
-+			break;
-+	}
-+
-+	if (i >= ARRAY_SIZE(versions)) {
-+		dev_err(fcp->dev, "Invalid FCP version 0x%08x\n", version);
-+		return -ENODEV;
-+	}
-+
-+	dev_dbg(fcp->dev, "%s %s device found\n", models[fcp->type],
-+		versions[i].name);
-+
-+	return 0;
-+}
-+
- static int rcar_fcp_probe(struct platform_device *pdev)
- {
- 	struct rcar_fcp_device *fcp;
-+	int ret;
- 
- 	fcp = devm_kzalloc(&pdev->dev, sizeof(*fcp), GFP_KERNEL);
- 	if (fcp == NULL)
- 		return -ENOMEM;
- 
- 	fcp->dev = &pdev->dev;
-+	fcp->type = (uintptr_t)device_get_match_data(&pdev->dev);
- 
- 	platform_set_drvdata(pdev, fcp);
- 
-@@ -178,12 +277,27 @@ static int rcar_fcp_probe(struct platform_device *pdev)
- 				     "failed to get reset control\n");
- 
- 	pm_runtime_enable(&pdev->dev);
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret < 0)
-+		goto error_pm_disable;
-+
-+	ret = rcar_fcp_setup(fcp);
-+	if (ret < 0)
-+		goto error_pm_put;
-+
-+	pm_runtime_put(&pdev->dev);
- 
- 	mutex_lock(&fcp_lock);
- 	list_add_tail(&fcp->list, &fcp_devices);
- 	mutex_unlock(&fcp_lock);
- 
- 	return 0;
-+
-+error_pm_put:
-+	pm_runtime_put(&pdev->dev);
-+error_pm_disable:
-+	pm_runtime_disable(&pdev->dev);
-+	return ret;
- }
- 
- static void rcar_fcp_remove(struct platform_device *pdev)
-@@ -216,8 +330,8 @@ static const struct dev_pm_ops fcp_pm_ops = {
- };
- 
- static const struct of_device_id rcar_fcp_of_match[] = {
--	{ .compatible = "renesas,fcpf" },
--	{ .compatible = "renesas,fcpv" },
-+	{ .compatible = "renesas,fcpf", .data = (void *)RCAR_FCPF },
-+	{ .compatible = "renesas,fcpv", .data = (void *)RCAR_FCPV },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rcar_fcp_of_match);
+>
+> -#define RCAR_FCP_REG_RST               0x0010
+> -#define RCAR_FCP_REG_RST_SOFTRST       BIT(0)
+> -#define RCAR_FCP_REG_STA               0x0018
+> -#define RCAR_FCP_REG_STA_ACT           BIT(0)
+> +#define RCAR_FCP_REG_VCR                       0x0000
+> +#define RCAR_FCP_REG_VCR_CATEGORY              (1 << 8)
+> +#define RCAR_FCP_REG_VCR_REVISION_H3_ES1       (1 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_M3W          (2 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_V3M          (3 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_H3           (4 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_D3           (5 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_M3N          (6 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_V3H          (7 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_E3           (8 << 0)
 
--- 
-2.47.3
+For R-Car V3U, the revision number is 9 (according to the documentation,
+I haven't boot-verified this), which is missing.
 
+> +#define RCAR_FCP_REG_VCR_REVISION_V4H          (10 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_V4M          (11 << 0)
+> +#define RCAR_FCP_REG_VCR_REVISION_X5H_V1       (12 << 0)
+
+"git grep -l renesas,fcp -- arch/arm64/boot/dts/renesas/*dtsi"
+shows a few more SoCs having FCP blocks.
+
+Interestingly, the documentation for all of the recent RZ parts (G2UL,
+G2L, V2L, G3L, G3E, V2N, V2H, T2H, N2H) claims they use 9, just like
+R-Car V3U.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
