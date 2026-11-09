@@ -1,85 +1,135 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794243063;
-	b=AkTNpdofo7zzwiFAruhWHvDRDyqR1r1P3rOxWz+mpomSKiV7OB5qcW/krEhylSf6SgFt
-	 yxmuWNGFcCrQ+CgzwG5o0imSkaLsnCv/bEC2GonCWUdaB1Ziv3Pih2LO3YvVLn7Bqoi2R
-	 KDrf2pOOT+nqIUiJCKTgbvqtBwaSCYTwRXKmkF51DNa1VZf8/sKPWnaYHrx3mbSyOxuFE
-	 E1d1WIt6mk1+Cdt3UZTITv3/g3BPyaD/V67LSMeL7X/wFGKC/evt16GbYufWaFa8CL76o
-	 vZArIjmaX5ubvsqTRUsx5AquqXeKToTamgb+1zPPUQM46WLXPzzS2o4Z1QlyyMNTJwg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794243063;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:From:Date:Subject:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
-	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=KWdwoMQXiTShR7rGuGU+FCAUlgJV+S6GbsCQM41btuc=;
-	b=3b16tDzdgobGE5pX8msB98JQqw6YxG1wVdtVHCf7vCg/1ep1Di5kQ6iHK2NglqU3dqea
-	 POm62/ZgUo0o+qJ5IA/dkLsSA/vxSihKaEqv75YShLNMHlHMhaoU548eexYepARfmLpk7
-	 lYgACdVw+8Q02afTE0UYFY8thhaVtiVjTLCCqmPFOn4PZiSdIPs3Sx0kAqUQEqa3B+3+h
-	 ZylZahvZqwALUesVGHQ2Ctz14gNI1Vk1IFjkrbb5KWtugoMh5f776UwkuyN0JhVpESzut
-	 lP9d+3aHYQWr7ETdMUnlPOd+DSCI2Tzdc2i741Cq0crKwqAiyiX4g5vsdpfeNW5/NEg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=eSUzICYL;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794247063;
+	b=tiC/VFf3BUGk1Df55SC/rN/kMKp9FAzhO7WmP4W1cNs9sW44QHbVQCYD+D/YeSJIVVNV
+	 hcmutZZJjiLYpCbRWGa7fjOXM/7afJ2+AU0mdq7KP1+mHvP+m8+smhxU/wyjA87r0v7UM
+	 Z5p+G4Bw3kKlryjMVui/pfW/2P8chworSwAFnsncxTFff/vbKRdKnZhPKsVK2HVoYlaXb
+	 /I8Q1bwUXmCJwxseFWxU6kdyo4BOFTJQs3o6sH8Xd/vghWzYCBp7w5kWpxboh5Ez2HdhR
+	 3Evq5PRnBUOeAkLhw7/jzB86S5hCsIP4fA5kj2tnKjW1KZwQUBu96pbaerzw1plQJjg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794247063;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=9Cc+2gtfN2/LHuRHGFLJjMnOZd72QDWhyPb9mjrBQIM=;
+	b=X1gN/k2HEpg8EJv3s+0GEcEAn1pTutt/VrfFrUq9dy/1hdIPQh8U/10aEHTx1IllmHAe
+	 y9OnyXL7W3RsjYg7DZjSMViSl6mnd63UMZxoxcGsTEmKB4iA3B/cgXW93W7sSNCqYuGcD
+	 8ZH407KVCQuBCZ/rLIKzFp5kgdR62dbO3kSou51VkvDtUbrSUKMIf3rx55Q4V+4S+OuQB
+	 EReEfAGQMKVoKRoZWkJpKl4dmgc/btiBxVq8PtJ3zIU1dgBPChbsqR5NbB1nDLWCaWY7d
+	 Duujcv4bi8T+ISXs10jcFZEzm6UoMy6KtV4ck6TtFj5LvIjoaX46rSvbUhT/Xq/+q4w==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RYE80E4L;
+	arc=none smtp.remote-ip=198.175.65.11
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8420606EE94;
-	Mon,  9 Nov 2026 16:51:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B8420606EE94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6DA606A330;
+	Mon,  9 Nov 2026 17:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0B6DA606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=eSUzICYL
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 74B0A202929;
-	Mon, 09 Nov 2026 17:50:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794243053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KWdwoMQXiTShR7rGuGU+FCAUlgJV+S6GbsCQM41btuc=;
-	b=eSUzICYL5Pjk5juWywMwcLKqW/avcVWTQSGTuZ6byUyEY7lv6LcI+XvH5HriOPkAbNA7LH
-	48IXJYxXNuuXi+5IQQQVzJ4JgXl+gtMl2RQb/a2D1jlN4IWHYTw2i8eTCHfeuTLlyo/dTR
-	jxDUgg8I3/u8rxxS9bZ9bSEIZ+H5SzeX0GZbHUbyFlkdHMdPgDwpKKwPPMoDP1KvNjXkiP
-	50ZzFzkCuqLQDAbeIkT9hLPlXxTr3wq/T2VsKPk2JC926Xifr/1YItvXHXFdgvpt3csDk0
-	T865t82RVb36gp1cl4tHuCTmHClKkq+yvP6uXiwrfDF++Xn7lKWCtttwtvz9GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794243053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KWdwoMQXiTShR7rGuGU+FCAUlgJV+S6GbsCQM41btuc=;
-	b=A4Ide3cnG/8S+uWkzS/DuvatL8yERG8LOJCBFypT+psvy5UFAldNjxBz2VlAzCQb2nfAJD
-	y3LVhE8LxgxzbkZmo0zj++dwRC2siymLsQlAc7GoNbva9o0izxYL1PUcYcsKwvEhrF2KIJ
-	swmmbLu7prAuNsMOuXVXFSz1I44VpL1WhqwFvT+BCdCDAcmnOVvVoJjKEDUBg8tCBZoSlb
-	wEJ4f+QNowlRWOvyM91F3Uoap0PL4Id7ZeXhk6xzbyB8NO8+gw2wZgUP8rUZR8xU6icKnp
-	THXrthwD1c7MMp1itZc1w4G3MDMgqotCGPU1qbqdDGYz+LhlOXel2w7sWemAFA==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794243053; a=rsa-sha256;
-	cv=none;
-	b=cHobY6+Natq80bFXoWs2lwFO/M67RyxEYB91mL4LqjP2LiY+ayfVXvOUnYPGX0br2buHZH
-	jXl/gQxv7kvRA2EWfR7TChYd81m8jEon+LBVN5GErEsLwkNToiUaf3D8YOjFJ0OY8ANWXk
-	FRQ9vVcLuuX/K/fs5j6621sBCRygdNCtBTHPhWWyWbur0EBbL/cbRYvb31d1bDIwr0pmuL
-	Z+sLUSjMK8I7eEpr1PSTkU5AWM2BOrsqVXUoDzjD7FjKpYLgeNfxYSKs5cabIcmxJK8b5O
-	Fek0A7Nm5EE4LkZ+8TNn/Qa5EWJxUwUPZ3tZTXyS8uLgf8vQevPORtFbdplhaA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1xQSa5-003N3i-1F;
-	Mon, 09 Nov 2026 17:50:53 +0100
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Mon, 09 Nov 2026 17:50:48 +0100
-Subject: [PATCH v2 6/8] reset: rzv2h-usb2phy: Use regmap_test_bits in
- rzv2h_usbphy_reset_status
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RYE80E4L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794247062; x=1825783062;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/GGAxNjyNSTAgb+4GsAIS07jSZ/uzkJHlCxb0K1tUUw=;
+  b=RYE80E4L4jf+eo3yiNmYGvjkREiK14P7tpe2VTbck8ZSyfp/TeAWS5he
+   Ydc1pMWVHQTvD6dqXwK2DCBMJREpZ2FA0BK5yRMiv3HT2aHyRUMQpt/ad
+   0YsiSK6ITcQ6TMxMbD0ojpZZtMh8nej1ULGVuNc4NOQje0LVgQI7V9k1n
+   RwbgmQ1f17yoZnD3BGGoXT+41rwyrOKWFwlc09/3aKQ3FWis09A6urYN1
+   he6mfWqzIbpzf4W+kESQ1CHyspmUeLnmkAMmd5Dc/Eo9K51umHnm+CxzA
+   Rrq7rC/Vq8QK2pdUWOp6cryd3vA2ccLYPwU43a/bRbqxyqnSiLqQvuerk
+   Q==;
+X-CSE-ConnectionGUID: FpfBUQ7BRR2TCnmIZkPejA==
+X-CSE-MsgGUID: o+1uwiCcRj2issQ5Lq+qow==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2866556"
+X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
+   d="scan'208";a="2866556"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 09:57:41 -0800
+X-CSE-ConnectionGUID: wb2AMpMXSwWy17Y7mVRXlA==
+X-CSE-MsgGUID: AJ9NiomKQuqzRxE8oUxCRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
+   d="scan'208";a="7927416"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 09:57:29 -0800
+Date: Mon, 9 Nov 2026 19:57:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Radu Pirea <radu_nicolae.pirea@upb.ro>,
+	CL Wang <cl634@andestech.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>,
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
+Message-ID: <avIJhv7p2v30U8H9@ashevche-desk.local>
+References: <7f96599b-681d-4963-bdda-1274371ac84f@kernel.org>
+ <f1fa853d-1703-411d-b2d2-0fb0b176c2fa@kernel.org>
+ <autqC143h7Qf1R9H@ashevche-desk.local>
+ <9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org>
+ <auuYcS7-YqJKcUbE@ashevche-desk.local>
+ <63c24437-4261-4a51-be7e-31ac0759a095@kernel.org>
+ <auxGom0XR-Hax9b3@ashevche-desk.local>
+ <00390a20-7630-4066-9779-06c8f915a176@kernel.org>
+ <auxNmE8yZVP-wL2e@ashevche-desk.local>
+ <3dc7277e-2f6b-44a6-9085-2e33d989c1c9@kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -89,53 +139,81 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261109-reset-regmap-test-bits-v2-6-c886689bb85e@pengutronix.de>
-References: <20261109-reset-regmap-test-bits-v2-0-c886689bb85e@pengutronix.de>
-In-Reply-To: <20261109-reset-regmap-test-bits-v2-0-c886689bb85e@pengutronix.de>
-To: Damien Le Moal <dlemoal@kernel.org>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Valentina Fernandez <valentina.fernandezalanis@microchip.com>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-X-Mailer: b4 0.15.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dc7277e-2f6b-44a6-9085-2e33d989c1c9@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Simplify rzv2h_usbphy_reset_status() by using regmap_test_bits().
-Now propagates errors.
+On Fri, Nov 06, 2026 at 08:20:33AM +0100, Krzysztof Kozlowski wrote:
+> On 05/11/2026 10:34, Andy Shevchenko wrote:
+> > On Thu, Nov 05, 2026 at 10:07:30AM +0100, Krzysztof Kozlowski wrote:
+> >> On 05/11/2026 10:04, Andy Shevchenko wrote:
+> >>> On Wed, Nov 04, 2026 at 11:54:56PM +0100, Krzysztof Kozlowski wrote:
+> >>>> On 04/11/2026 21:41, Andy Shevchenko wrote:
+> >>>>>>
+> >>>>>> But sure, if we want to play such numbers game, I will be sending
+> >>>>>> reviews for single lines.
+> >>>>>
+> >>>>> I'm not playing anything. The problem is that the patch unites the files that
+> >>>>> have distinct maintainers and unrelated to each other code. That's why in the
+> >>>>> subsystems I maintain, I almost always require to split on per-driver basis.
+> >>>>> Yes, exceptions are possible, but has to be quite rare.
+> >>>>
+> >>>> That's independent problem. Patch could be split, but it was not. Since
+> >>>> it was not, receiving end should act accordingly, e.g. when performing
+> >>>> incomplete review of only part of the patch, do not call that entire
+> >>>> patch was reviewed by giving the Rb tag, but give Ack tag.
+> >>>
+> >>> No, (partial) Rb != Ack.
+> >>
+> >> It is, because there is no partial Rb tag.
+> >>
+> >> There is partial review, but not partial Rb tag, please see exactly
+> >> submitting patches. It repeats the same in three separate places:
+> >>
+> >> "Acked-by.... user may not have carried out a technical review of the
+> >> patch,yet they may be satisfied ..."
+> >>
+> >> "Reviewed-by:, instead, indicates that the patch has been reviewed and
+> >> found acceptable according to the Reviewer's Statement:"
+> >>
+> >> Above important: "THE PATCH"
+> >>
+> >> It is not "the patch or its parts"
+> >>
+> >> Further:
+> >>
+> >> "I state that:
+> >> (a) I have carried out a technical review of *this* patch to evaluate
+> >> its appropriateness and readiness for inclusion into  the mainline kernel."
+> >>
+> >> And further:
+> >>
+> >> "A Reviewed-by tag is a statement of opinion that *the patch* is an"
+> >>
+> >> In three places it is THIS or THE patch. Complete (exhaustive) list of
+> >> options what can be reviewed to get the credit and give statement of
+> >> oversight.
+> >>
+> >> Statement of oversight DOES NOT include "part of the patch".
+> > 
+> > So, it means I MUST from now on REQUIRE a split before reviewing.
+> > Right?
+> 
+> Why "from now on"? The reviewer's statement of oversight is worded like
+> that since beginning? Also nothing stops you from reviewing parts. We
+> discuss the statement of oversight and its result: giving Rb tag. The Rb
+> tag is not output of some review, but agreement with statement of
+> oversight and performing what is stated there.
+> 
+> You can review parts, but you do not provide Rb tag.
 
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/reset/reset-rzv2h-usb2phy.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/reset/reset-rzv2h-usb2phy.c b/drivers/reset/reset-rzv2h-usb2phy.c
-index d96042e28cd5..e644092cc2f7 100644
---- a/drivers/reset/reset-rzv2h-usb2phy.c
-+++ b/drivers/reset/reset-rzv2h-usb2phy.c
-@@ -68,11 +68,9 @@ static int rzv2h_usbphy_reset_status(struct reset_controller_dev *rcdev,
- 				     unsigned long id)
- {
- 	struct rzv2h_usb2phy_reset_priv *priv = rzv2h_usbphy_rcdev_to_priv(rcdev);
--	u32 reg;
- 
--	regmap_read(priv->regmap, priv->data->reset_reg, &reg);
--
--	return (reg & priv->data->reset_status_bits) == priv->data->reset_status_bits;
-+	return regmap_test_bits(priv->regmap, priv->data->reset_reg,
-+				priv->data->reset_status_bits);
- }
- 
- static const struct reset_control_ops rzv2h_usbphy_reset_ops = {
+No, I'm not going to review something that I may not put Rb tag on.
+I can NAK or ignore (or Ack without viewing, but it equals to ignore to me).
 
 -- 
-2.47.3
+With Best Regards,
+Andy Shevchenko
+
 
