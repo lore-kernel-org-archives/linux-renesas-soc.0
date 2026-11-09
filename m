@@ -1,101 +1,113 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.49
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794240054;
-	b=ooiZ2dWsWef6RrX5m+t9bBaLRlRI3f8UkVGvn5J6RyskV9H1eo607Yy7w9HSNnoBvlfT
-	 os5qarnkhdEMW+mEMBSK31s8Ywl3uzNxdCqwdLCnCKm1zJSQ603LVtPK7CnFYX1Aej//s
-	 Tg2jRHCVrWtGL39hPzQglKO6Yrb1CJ21y9UZ7W5wI1Dc96bzRcIA3sPYgzuo7hXmck6T6
-	 u63Epst7faML5cVd11uKhjdJcX7LhGgToliQaAjmaDoN4aoAoov+6Mh2xqhFpXGULJ0sJ
-	 X1Du6+uZt9XHkUfoVP+OKwTICZOX47jVuV950Thpdedur/tIyCffNOivQwrJyaL0k3A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794240054;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=zUAAWlNbR6q9k12Xva7G11dNMgLZ5tfgag11tYRdXFs=;
-	b=Ixo27OPOfFVQmrAbC0BceHAC7qdCb1q+HSdbkXv+gj6Xligh51myK8VXCDgkXXAKITqZ
-	 WrWEwe9ASEUJNNehBO6wS+L2ndqsA6oTLstqPF0I/6xHQEUqpzdlz+OwfxbrjZivW7ar5
-	 Vh/Kul2ans1sO/2LlxNfLNVBVXiPAsY15JWiVvhZJKGS5C4uV86BytMR2Kn1U6NSlpXQj
-	 qfCw88MUM3gG7QecxliKsAQkcSlddEv5LXr9rNcu+nL/nPvF30Gx+8b9PZFgJlynHs3PA
-	 elHrPAw5jPneppbAoeejm4e2bAXKo3ZpPeOpSpisVhoZ646zG53T4vTAWHry+f4PbXQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XsshOqMz;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.49
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.104.109.113
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794242646;
+	b=HJfRZWzUsGto3s0wYLnDlos/ZLPESP2mYUlugh1bNazB+IMKn9802tY9rLCQuFsPoEUM
+	 ruVzz5cvyzlbpq4Fz58NwWUt7zAYE824hCH5sUU6+y4a3H01ay/tHBlvOxJvL/PKylOmk
+	 MOHp6DLM//S078a++x4Gfgz9qZrvPwcbZDnl/SdzNh7KKHEXNu/SM+yWKGQ17QRRR1jZV
+	 zI/hzO+3CSfYISRxvsOAjpfpsyDJzR9oAKYdkcF8Do8A7i3ppNTax1ZnBKi9tR6rs6pvz
+	 kMKFy3k9I+qoBoE9mRW5LHo00sCUcFP0+oZ8QWxxYWD8TuvEQypLUWW5t6AK/WggvGQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794242646;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:In-Reply-To:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
+	 X-OriginatorOrg:X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:
+	 X-Mimecast-Spam-Score:X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding;
+	bh=lKdeNI2C1JIdHaqLbneHv1qoNsRo1CMptwMq1YCRXUc=;
+	b=0g+S6pS7sw4hExQlfs4irxNTnE65NddoVz+vSD1fhmOZ2ZvQ+4Flc3/qMOe2JLnSdjjl
+	 1C7T+a/HDKcM6w1yodcrjbWrcoHYN9BdnliDzAJgYneWB48DPBjcmLX5wZ+bQSCOaZhsG
+	 XZjbwTaEeL4e+TGkMSaDPRKcpLW2kSE23goRYHJ4gijTE0c0gDU30rAFwlg3NNZK+veQC
+	 zRcwkpKl0jG51o5XPyoLFKmRZbX9URqbSr2Y0kKIcwLZTb/F/oiP5PnvMyi+aALg5e0oh
+	 fZyZAvlTwxnkcDCiNZ4em7WMD/SEYSyUGGbt5oqcPg+A8z5/+HXKu1ku/u0qTnxmVZQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=toradex.com;
+	spf=pass smtp.mailfrom=toradex.com;
+	dkim=pass header.d=toradex.com header.i=@toradex.com header.a=rsa-sha256 header.s=toradex-com header.b=lcH6mcvo;
+	arc=none smtp.remote-ip=194.104.109.113
+Received: from de-smtp-delivery-113.mimecast.com (de-smtp-delivery-113.mimecast.com [194.104.109.113])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B10E60A262C
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Nov 2026 16:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3B10E60A262C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D61C606A330
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Nov 2026 16:44:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D61C606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=toradex.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toradex.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XsshOqMz
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b7221c0f2cso1683775a12.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 08:00:54 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794240052; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ULLwx61+BKvjICZMSInIYyxwZagDNQ1Kga1o1RsbIEEHv4PVAkP1aNPU1aeqoAIybv
-         1M8NW8Wyvhr0cSeXfyPGT2AhZo2KvCBvL/rvHBX9FXAnBk6A/Cw1SzOA7UCZg1icVNyY
-         z2RZTAu1Sk0yedh++nA02nOcAN/EzQNYJ68gDIu3Rod+FtP1KBft7PqWbLVyeMecddsz
-         EXfJccfBx+p+kse5FBHT7V29TJ+46eJ519HYk3uDiqT2kzF3LzS1oXqaajSm83fTYqvC
-         VYpEOFOnwTP+FxJDe3SE4ghPQryI0+eBDkT1v5fYbZk9xFfF9Hpggz14m/401uwTHNDY
-         A8vQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=zUAAWlNbR6q9k12Xva7G11dNMgLZ5tfgag11tYRdXFs=;
-        fh=lEF5N5phFfeoOpiR3kmBJsfBlwYecGGnMIDkzFQUmL4=;
-        b=LaoHC/7WpBf27ao0WWAmOF8MpTYlbhCnHqCnn1/NJ953LMuBBZ/+o2FGNzGGUdjk4d
-         /KOovJ6lUWUnBZL8V+ku2/5/Gr6x7QL6ApyATTzlrGQR0rVY6YayvNNLWzx1kNLyualH
-         NCAr0YLS4Z2WUrEAy387NkOJ5xBVpLcER69sPNR77jmBTcAxSB+A5cNaQrpVqIjyMnbM
-         OC08o0QfzaBvLBEian0FgH2GqcMjT7aUrC+c+PJ9LwJRhTyEul8k1ojtowpSHAM7jYAO
-         q9MyIfcZ7YhPx1tAIQuh5opoPoOWxpXWJHdv+LIWzU/9ldYYrjYFchVGKPHD9Bo4wsQg
-         PB8A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794240052; x=1794844852; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=zUAAWlNbR6q9k12Xva7G11dNMgLZ5tfgag11tYRdXFs=;
-        b=XsshOqMzA4g7VkUFJSMBdIgw+TyNKoOTeZcdXvA2/JueLosVVFf1C1anFVPFqzsdm/
-         +il24/vmlBaJ+7GEebvhk8L6xeucLXfjMgk4BCtasOETmK2ilY0mnGPZJiMUCECbmIOT
-         qh5NN0+nRWZcTbaiPUHeRJDKjbLLCNKGkgeHK/ulASwD+SBj0PafYUVdA+gU/Zk9PmDe
-         sKkXNPtxtGoHTWYE2OJRyc/+zykR19F3iaUdLi/Zy78CpfTt4Q6And+Wj4tufyBodwVc
-         ctKxYkiw3BSI0Tx+qZwpeeuCXN5Fwat8kOF+OWPx7UHHKkU9mMIV0n+rYKpkal3eyCj/
-         71Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794240052; x=1794844852;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=zUAAWlNbR6q9k12Xva7G11dNMgLZ5tfgag11tYRdXFs=;
-        b=JWGsrR6O8uwqzB7odgck6oYVyaOl9s2iP65InGbAvIBQ5ud0FklDqINgVWlm3LG8VJ
-         aol+lCEmGp8r3PXWCbTJbDgCmzrf2MQfkzsAOf1RURcCWB4Z9tck/91Zcl98bOo36qxb
-         PjzGTK7dRWfd+U1j4IX7GUVL4hrq/sa4v1RqYA4i56Ol6D56RRM0CAwQynHtHbX3Ki90
-         KuJz9n6r+35vJUs3OEoV4FMSRskDQpfaDxJIK7YXAfMah8+2UmtZkJowYq5ZI0jk37NA
-         TEhFvyqTX8+Ozun0son3FqvUua4GwSFF2mKB7eDL4PQ28vqkiWXk5kC/T3IgHgNH5WVz
-         5qtQ==
-X-Forwarded-Encrypted: i=1; AL+hErHgKOVbSpGJ+xPIqsheuhktUIBKQu+MQR8JkhTX01upGsWyJjfnn3bmOOXVsccZWAAgnEHDpWKtUZ0Axp7xFQ57OA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Ro7QthzEKrlDLkO/6lwdxMfFCGnOlJvebnfjZswrrR3FCZoVi
-	1I+q54swcPaCVikVw50Y89u1syyYoXulnC5RDe28uPowbyO/zjm2XI07HAeAANiN/K2ke7I8qSJ
-	nkte2CDzcvUj6ptVYkzCn3lIe8L8lHKs=
-X-Gm-Gg: AYBFou2/DnxePSqLvMldfc825/IYOSLK6LAWWitjSLP3G0gOsGI869I1hy/2OowoNHL
-	MgT4G1xg3QwjbvceemZjX2YK7p0/f6YeztUfaaIQWzSriBFYAQvH752bQ8KVxzztGrjyc8K/w0o
-	6hWn13tWp0+R6QhJnOD0PDE6NSRE5/VL+3Wg5SiS3WDCFdy/jl1PppiLYP6OJruIrxLHUh5zv94
-	2B7okR7geV6EwBZPuMNBip0i0Qi4Mfxx/IcixGuMRco1h7mtS76wBgoAFKpE4Wn3LNEG2yJ1IKF
-	cglOTTIfJ54Ozeyc6uUyS0f+b+Z+fDoSvuhOznj1rxsSiE6Yd9HwrFLMqBvxHum8cNfafEtfY1v
-	C15z/NLKx4zrWPo6JbyVxHz2+EOTZYZVshOJXhAc8xxTAw2yib94Vc4CfTLc2dykKesGTJWeb+h
-	1ScicFpEEa2RPrrkI193c1xSPsPGSFi6giuANAtoLkyibqatqbNqp6Fs3bHA==
-X-Received: by 2002:a05:6402:3908:b0:6b5:47d6:a8b0 with SMTP id
- 4fb4d7f45d1cf-6b756afd795mr8207a12.37.1794240052060; Mon, 09 Nov 2026
- 08:00:52 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.a=rsa-sha256 header.s=toradex-com header.b=lcH6mcvo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com; s=toradex-com;
+	t=1794242638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lKdeNI2C1JIdHaqLbneHv1qoNsRo1CMptwMq1YCRXUc=;
+	b=lcH6mcvoxIIjXb6i9biWj95wit3tZ0+J2Yi424qoEDd2f3+3yJ8L1jut/UrsNE6e0c4UHh
+	8WUTEVsGiWJHvg2SNRtrMdlcmedsFlaBijAJxHmBtEy/vb0gV8fiJkxaBC5GpI9GsI7cvo
+	txCgnBcceychlxLfL6RCXJrEM+IHmqs=
+Received: from ZRZP278CU001.outbound.protection.outlook.com
+ (mail-switzerlandnorthazon11021072.outbound.protection.outlook.com
+ [40.107.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ de-mta-55-xo4ETarDPvKSOxY18QZSIA-1; Mon, 09 Nov 2026 17:43:52 +0100
+X-MC-Unique: xo4ETarDPvKSOxY18QZSIA-1
+X-Mimecast-MFC-AGG-ID: xo4ETarDPvKSOxY18QZSIA_1794242631
+Received: from ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:2e::8) by
+ ZR3P278MB2228.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:c1::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.592.13; Mon, 9 Nov 2026 16:43:50 +0000
+Received: from ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::88:6821:13f5:a5b2]) by ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::88:6821:13f5:a5b2%3]) with mapi id 15.21.0592.010; Mon, 9 Nov 2026
+ 16:43:50 +0000
+Date: Mon, 9 Nov 2026 17:43:48 +0100
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Kiryl Shutsemau <kas@kernel.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	"biju.das.au" <biju.das.au@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	Au Dang <au.dang.jx@renesas.com>
+Subject: Re: [PATCH -v2] MAINTAINERS: Fix Intel TDX kernel file patterns
+Message-ID: <avH4RI_0OyePjWJp@francesco-nb>
+References: <20261027055750.GBauA9XlPykc1c1Xhv@fat_crate.local>
+ <TY3PR01MB113468FBD8E5EFA65C4B4E5EB86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <072dd88c-4ca1-4c8a-98b1-7783bc43c1c5@kernel.org>
+ <TY3PR01MB11346BAE55FF22F66E86A6F8B86602@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <afdf1864-4721-4177-bc18-2a5821d97559@kernel.org>
+ <20261027205411.GAauEPc4AtLwvrDfFr@fat_crate.local>
+ <7b0a2e98-c614-4cdd-8604-3b5b21e8474f@kernel.org>
+ <20261028154743.GCauIZH3pZm24jCX9b@fat_crate.local>
+ <20261030023338.GGauQCAuYyXGwIhlqX@fat_crate.local>
+ <20261031030112.GHauVZ-OI2KjdkjrcY@fat_crate.local>
+In-Reply-To: <20261031030112.GHauVZ-OI2KjdkjrcY@fat_crate.local>
+X-ClientProxiedBy: ZRAP278CA0003.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:10::13) To ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:2e::8)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,121 +117,97 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261001165201.763882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8u-3NFryZA_8GN=fR09+fcyvNGLMV-09z-mPXTePxkgvg@mail.gmail.com> <744d20c9-9aa2-4f3b-b42f-cfdd0a17da65@roeck-us.net>
-In-Reply-To: <744d20c9-9aa2-4f3b-b42f-cfdd0a17da65@roeck-us.net>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 9 Nov 2026 16:00:25 +0000
-X-Gm-Features: AclHuK9DoJ0CyffK9_ibsQ9MndPimemnqbVSvRuC8icXaKh7HkxYXoo5YAyMhM8
-Message-ID: <CA+V-a8uHLK4-GFhWQO96yHBDzXYXQ+aggbWfskzXsK_17dAKCw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/7] Add syscon support for Renesas WDT driver
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Brian Masney <bmasney+clk@redhat.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZRAP278MB0495:EE_|ZR3P278MB2228:EE_
+X-MS-Office365-Filtering-Correlation-Id: edbe18ad-fb95-4ae8-d02d-08df3e80a1a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|23010399003|366016|376014|7416014|1800799024|18002099003|22082099003|4143699003|56012099006|10067099003|261028144727099003|261026121527099003|261022105027099003|261026140227099003|261009223027099003
+X-Microsoft-Antispam-Message-Info: 56GL8oGC2yEDqmb8N7M1t2kMdMWGUO+gWwesE8UvW5zx3vgUAAHGesqXYM5hAMMlXleQBDItFtdhSQje29SOm8inJHv+dBXDHgW+pUEJT4zCvfJ4894MuBs1AzevnfLXGL4OLR9jGn24ztJzOyJYtIfqKXkUBgct6S3PQVkpclMRYzChKUuHFy61f6sHlrZXBEeMoC7JE/MoZlRL/13fp4tFZOG7Lmau4W96tNkV3LdtWsnoMfLsPth4eH8SH0PWZA7JE6xiegmGezpIbnywne/RV175031JuodVsMb4w6FMtgOpli7ZT3TI+6YRQMx6BSpgUNHWMUAWIdnV+9KKBf0xRoglZ6eR/Yy/mFfguFgyNUyvLTwCrJs6ROJMEQF1upidD/lO2RdhSKQkxWuZK7uy0VfHAco9n6BqF1bVYlZqbcy9YgbrgPXtF8t+ITx3PqYYYwsAPNAH4/aRD6sGUQbu5hNhQbsETrvbQuloZ9hBaiP+be10qocbxUsYNGDpVZ+ZaAxiKvBtXNRDaUCzOr3KZKDqoSKciIUfW6iRZrO2iSl5EItDHR637NHD+K+dtdJvDru7dGAG8oVfWyndOCNPzy2hF6LnBytP+F2ODdH/kUXzzOvm+2H+lcGBolPl
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(7416014)(1800799024)(18002099003)(22082099003)(4143699003)(56012099006)(10067099003)(261028144727099003)(261026121527099003)(261022105027099003)(261026140227099003)(261009223027099003);DIR:OUT;SFP:1102
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LCEAcxvzyEtBtO+G6cawy93DBu5qalvdWsLLNrPFFKr6li0dr5Q+ML5Z1cnz?=
+ =?us-ascii?Q?51YgrqSrwLhvGXDyP1fynC9/9hruzKtqZ7BqiqXf5lrFfHzVZjiVcA8mqll0?=
+ =?us-ascii?Q?s+ltYCgJiheAWcaDPCPirg7vBg7batNHnWWls/xWk5sk/jkyIasefIXyVbkk?=
+ =?us-ascii?Q?zo01cArCzzHTfLTI2WE+qUlfDw5/C1ffqo+2OQF3Ug/yTeO9SRNzVlLFCcQU?=
+ =?us-ascii?Q?L9gvj55T98kTCtniGgssfOkgydxW5eiDYd2WfNJOXWeWB7Bjh+Iq7XLkbMrH?=
+ =?us-ascii?Q?fECz8ABP9OdflbS2SyySDFrOrTOGsFKxKY+KSLyNOzKCg+LAw39bI3fBToFJ?=
+ =?us-ascii?Q?oYBMGKE+N6V5lKjkbuMJT95tKDNHw89d5ZzJr+mdqmHZdGSq5u+7fH4zFxDn?=
+ =?us-ascii?Q?wyjViqUJTL8PE7tKbcDEBnueyJb7UQ+KzFout4c+67HMHaUvqkQ9uTYtDQFm?=
+ =?us-ascii?Q?KcVfc0hVogYG9G6vMiDhW3w1oJN/1EITK9x5Zox6/wIE7ZAoqqQ7j+QEw1rW?=
+ =?us-ascii?Q?+3xTErM00AJ6rJ6qnoTK/m2OQErkJ5BCKF3B5vrA2gp+DJ3Kc50/E+1Cg9Xq?=
+ =?us-ascii?Q?9oxcapyI+8gh0E96sfgd9ntFeQ+4FHVl8sXnIivrXUjyi4GDGrId8P1Se36g?=
+ =?us-ascii?Q?cg9Bx7BNRCDNYR/t0Q4y9bv/tKQR4dAC4LirUbQBE/LarLPwLhBKEQxjeImB?=
+ =?us-ascii?Q?ICqAysEAE9DSfqC6B2x3MieUhj0C6iqa3XMRavASLLxRtFSQA1/kYcNbwLNy?=
+ =?us-ascii?Q?XpTgfl6t3MdRFamqULMCGmK8lUbv66YWZ2zIae/GeHY1bCiJtJRxXoQAAbJm?=
+ =?us-ascii?Q?+PxR5Owl5W6peSi4/6XK/7PCZrfAlIlNhX8KA/4nukvukipktQOmpYy71s7G?=
+ =?us-ascii?Q?VdiGTtk2EEeS9age8hmW87n6IcSyedocgiE5CcB5XZfAi6D1APvmi7GSVxc/?=
+ =?us-ascii?Q?UivkdiD705v2xUQBxp+Al5TL8Tc1XaLoYvuIcZ0754TAbY22Fer71gbJyCBX?=
+ =?us-ascii?Q?fQrv1jCDuvZ32C/meJPcK8XzOZGOeWMXdlxcgkv+YDzLukTVyvSSyPnlLOK7?=
+ =?us-ascii?Q?YqAI3Qzv2D9+OVfU0XZ03Hrvy32pEb/7gTaCsAlYzhbdubY8/dz1k6kjJQS8?=
+ =?us-ascii?Q?rFBpIXwAQ6f8Uj4pftLoQBxhaWpVw2X0GsJ/wQn07FKWeKo50PQPl6dk5v8s?=
+ =?us-ascii?Q?bOHby3zkiYx2KiePq0Z5uiFleNjdcHZYbByl9VQPJiETLMC5xhmWIEVqY7Vi?=
+ =?us-ascii?Q?J4OenlN9Fyh7lILh/C3jiCbIDHYFfv357an/npmptkf3mjaQHhD//b93FYv4?=
+ =?us-ascii?Q?th4U0VQtmpmAowurAWeGX+Sf5Y+hXZd3iOMgCi5n8WWXYx4eCPAnzI/1Che8?=
+ =?us-ascii?Q?AoLwV8TC8b6YQhCxWXjE8zp3VRNtpsnVrKnMLc+D6xNqL+GepBhVoZldW40H?=
+ =?us-ascii?Q?bLtSZFLNuYP46CQYP1EnXoRX8i8/o4GWcpjNXny8x68Xgl/zXCNKPryWkN0P?=
+ =?us-ascii?Q?dS/U5SpuePy2lufcg8idPQa847QCIIoHiESluO9oYS067lOyqTxUjYc4zCos?=
+ =?us-ascii?Q?BflCTSobJcuRoBwbD98OyCroJY4ojRN4diZTvYOR+nXigBVkiQ0L8IZLgf6Q?=
+ =?us-ascii?Q?YeCs8cnPwxDid9zGavmK8n9U8qpmSHvxuqlc47kmfaeT9nCsprUV9rNtJ64k?=
+ =?us-ascii?Q?l81aP4o8CpCcQ++WdfreuncW5oS6djZm5ZHnN9TDW5Q0C/yuu1qNHaCuWxt1?=
+ =?us-ascii?Q?pJb7Q6qSwpGAJCSjaeIMQkKb/UiVHxk=3D?=
+X-Exchange-RoutingPolicyChecked: m5sPu7HIxuavy5SeRnreUmRrHx5zD1+LhHxAkXSiWzNQWm6+k2vDUID1pLdJ7fONq65l+B+k94QRxmhv0zY4Ws+rXJrrXBk7cZbdzxdHwHAN6SKHOTllhqZ78Xq8llWIrUJ8pvhKDyBqnjI+ixyAjKBH79UGBAWbh6PiRolrVrE/ivzYMbDB7Htc678OR2uuc01bVFEtIzoflYUmlmt6bhotmR9JFlrAvVFcbkID9y/UjaG+SfxgwN6RhHXSaqK6GANu9SUe5c1eGfBK4uKnw6ABnFJteMqs54aXqlk7Ross4J2YPA0mMsyw7nfiGx5In4z33rCbK0QDNOAkvQfQxA==
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edbe18ad-fb95-4ae8-d02d-08df3e80a1a2
+X-MS-Exchange-CrossTenant-AuthSource: ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 16:43:50.2200
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ecjeyswKGG4MFLOhx4KvTy8J4ENIFLWbwTKvqkD/jiSMhOQ+ksfAJzJDM1f0h5by6GqfSLGwvVO0b9f/Q21crzlMlKyVzomc1RykppHbQe0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR3P278MB2228
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: M3wM0AFnvBSjs1sSBYi_dRBKPF2ixLR6fXTNWz0O8dQ_1794242631
+X-Mimecast-Originator: toradex.com
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hello,
 
-On Mon, Nov 9, 2026 at 3:28=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On 11/9/26 04:27, Lad, Prabhakar wrote:
-> > Hi all,
-> >
-> > On Thu, Oct 1, 2026 at 5:52=E2=80=AFPM Prabhakar <prabhakar.csengg@gmai=
-l.com> wrote:
-> >>
-> >> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>
-> >> Hi all,
-> >>
-> >> This series adds syscon support for the Renesas RZ/T2H and RZ/N2H SoCs=
- in
-> >> the WDT driver. The WDTDCR register is part of the CPG/MSSR block for
-> >> which the CPG driver registers SYSC regmap. WDT driver now uses this
-> >> syscon to access the WDTDCR register.
-> >>
-> >> These patches were part of two seprate series [0] and [1], out of whic=
-h
-> >> certain patches have been queued separately, so I have included rest o=
-f
-> >> the patches into this single series.
-> >>
-> >> Merge strategy, as the WDT driver now includes renesas.h header file,
-> >> the driver patches can go via renesas-soc.
-> >>
-> >> Note, patches have been rebased on top of next-20260930.
-> >>
-> >> v7->v8:
-> >> - Dropped patch "watchdog: rzv2h: Drop enabling clocks in the
-> >>    restart handler" addressing Sashiko's comments
-> >>
-> >> v6->v7:
-> >> - Added a new patch to introduce rzt2h_cpg_wdtdcr_count_start() functi=
-on
-> >> - Added new patch to drop pm_runtime_resume_and_get() &
-> >>    pm_runtime_put_sync() calls while accessing the WDTDCR register.
-> >> - Dropped propagating WDTDCR access errors.
-> >> - Dropped converting WDTDCR handling to regmap as this would require
-> >>    resource address comparison to get WDT index to call
-> >>    rzt2h_cpg_wdtdcr_count_start().
-> >> - Made use of rzt2h_cpg_wdtdcr_count_start() in restart handler
-> >> - Added if regmap is available, use it for WDTDCR access
-> >> - Updated commit message
-> >>
-> >> v5->v6:
-> >> - Used pm_runtime_put_sync() in rzv2h_wdt_stop() function.
-> >> - rebased on top of next-20260922
-> >>
-> >> v4->v5:
-> >> - patch #1 is new addressing Sashiko's comments to avoid potential dea=
-dlock
-> >> - patch #4 is new addressing Sashiko's comments
-> >> - Dropped checking rzt2h_wdt_wdtdcr_count_start() return value in
-> >>    restart path.
-> >> - Handled the regmap locking in the driver and introduced nolock
-> >>    version to be used in the restart path.
-> >> - Added review-by tag.
-> >>
-> >> [0] https://lore.kernel.org/all/20260817192540.423994-1-prabhakar.maha=
-dev-lad.rj@bp.renesas.com/
-> >> [1] https://lore.kernel.org/all/20260814191415.2110732-1-prabhakar.mah=
-adev-lad.rj@bp.renesas.com/
-> >>
-> >> Cheers,
-> >> Prabhakar
-> >>
-> >> Lad Prabhakar (7):
-> >>    clk: renesas: r9a09g077: Add helper to start WDTDCR counter
-> >>    watchdog: rzv2h: Use pm_runtime_put_sync()
-> >>    watchdog: rzv2h: Drop WDTRCR_RSTIRQS define
-> >>    watchdog: rzv2h: Drop runtime PM handling from WDTDCR init
-> >>    watchdog: rzv2h_wdt: Add syscon based WDTDCR access
-> >>    arm64: dts: renesas: r9a09g077: Use CPG/MSSR syscon for WDTDCR acce=
-ss
-> >>    arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR acce=
-ss
-> >>
-> > Gentle ping.
-> >
->
-> No feedback on the first patch of the series. If you let me know which pa=
-tches
-> don't depend on it, I'll be happy to apply them. AFAICS that would be pat=
-ches
-> 2-4 ?
->
-Yes, that's right. Patches 2-4 can be applied without the dependency patch =
-#1.
+On Fri, Oct 30, 2026 at 08:01:12PM -0700, Borislav Petkov wrote:
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+>=20
+> A K: is a content regex file pattern which matches any text in a patch
+> so if a commit message contains "tdx" as in
+>=20
+>   has_tdxe_auto_clear
+>=20
+> for example, see
+>=20
+>   https://lore.kernel.org/r/20261026-g2ul_sci-v3-3-b3097163edd5@bp.renesa=
+s.com
+>=20
+> get_maintainer.pl erroneously adds the x86 gang to the Cc list for what
+> obviously is a completely unrelated patch.
+>=20
+> The same happens when someone uses it to check
+>=20
+>   drivers/power/reset/tdx-ec-poweroff.c
 
-Cheers,
-Prabhakar
+And I just send more unrelated patches ... "tdx" is just the short form
+for Toradex (since 2003 ;-)
+
+> So switch the x86 TDX patterns to files and directories (F:) wildcard
+> type patterns and group them by path, for less false positives.
+>=20
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Link: https://lore.kernel.org/r/20261027055750.GBauA9XlPykc1c1Xhv@fat_cra=
+te.local
+
+Acked-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+
+Francesco
+
