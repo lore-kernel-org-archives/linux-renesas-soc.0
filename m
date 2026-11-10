@@ -1,100 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.208.51
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1794276332;
-	b=nhCMxsn3/XB+Z6sXi9iVHLsTZkT+uSzEgi06CzV6rgh74wxCDQA2SJe5wPJxAwwCorDr
-	 cVVcQ/FJNY19HeWgc5dWjdPRGwzL/S7rzhwYkxLzDP84/TFEfxZp0R40tU1d8flwhOQKU
-	 jOE3+D+4FOYUGKLAy89VbQF3L+FMQzTGvuV2h1/Z1VbhiK10fKJXqdvMS4PWWf6ND5sZa
-	 jmwROMP35BZXYuisz9JaTA5HwdLNiD5IehgUxdigmBqB81f/Qe2wEgDyoK7a9/xd5trg+
-	 2ti1fkIV1p0jAqVOfo4B0db2fYGmDFuE8zncD6SM7sfg/Lar1hTK875xoe8711PszdA==
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.46
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794276353;
+	b=jMY321OIzidSp9RtftVsv8jhq0bTQ9suGR4ZWD8cqquk3uxzh92bod1i7Snq8rDUh1v9
+	 aMfhMx6Gm4NQLjv9zA+VIMAruLgovSzoax9ZA/TfAYmjjNXDiFMg+uWl4XNm96+MBxWBS
+	 jkhA/rwoaFxrhRHY38tFtLRmEebHLOPyWESHqen3ydN7cBM6XV38c+NUmDVuu86VgE50M
+	 S/UReqKSANfFfo4T2176bUwjz+Ynz1z0aAXtnB/zRoUTEsRe6twQ5CjZpz+PTrIs478bZ
+	 4OVpPYC1Cxlpt6wrBWjzxHawWdWfy3SKWMm4BMcLbI37wBEnIRKMZD9BPU/48U+H1vA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794276332;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794276353;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 MIME-Version:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
-	 Content-Type;
-	bh=5ly06LzxCxcnT+eqtxnGyn9sAp0YbS1j8iArjzdSjzk=;
-	b=mXSxbDXRp1mKHhJ254bSOk028R/NnMdltPIK3Mb03S9d6iMQ0FcF3QDAc4L/0c5adhTZ
-	 gFWXvW9pDGwO54I5wOAF0LpGxJbJQ92s35kq03Zi5lIfUNzjWUcdm+2ZO9PlMosla7SJl
-	 D1ciRIf1wPKr2bnlrfL2F02AHa0cyhd3dKZro+u7+9rwSXeF7Pot+lYLOvGLC8J8UcPXz
-	 v8MtLuTjOVB0ePajtFcEdtGaMUwcBBE+4J9NE+T3RKcGUCU3jTyOo7Q1dkqC2Sn09yhBf
-	 dIGy7mEH4jk3448n5KdXozKSQ3AnTH7mxghuH1oIlshAV6e/Xwvc5b+15CFxKY5/wrg==
+	 MIME-Version:From:In-Reply-To:References:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=Eeq5wOXfk2/ATFa6gkhyCWFMX/JX34himi45U6XUrLI=;
+	b=2FrM6uUpT6WWq1XCM6k7DHSqENZ6p6SXLisgbccVtE8hcjd7qS0cPQePOKDUyvsZQLBi
+	 I2aDkHjOMitnt7pxXrIRUMr/vjl52qr/E3AKEFzQtd+k3bHjE/654DqzahpUJdUn8a6EE
+	 QjQY+UYNMGr+5wilEuua8FSglNRCI9UNvVHBFeZKoyIp6khMwlrq8omuisw31Vr8xIqpQ
+	 zjw54oREhMAmUFyYcZZI2Ww0IDcgRvLwaFMHO2TjBKB/TeypBHvuNJxFiz6+tzZZeXaof
+	 da6dclwvvh+tZBSHD+EsvWmkQGhJysMou2QSXhQZGOodFYgDPRXFfqgdcPm7L9TWuQg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WeSmmqPj;
-	arc=fail smtp.remote-ip=209.85.208.51
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=miY8TFcZ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.46
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5C0606A332
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 02:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA5C0606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC933606A321
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 02:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CC933606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WeSmmqPj
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6b75712fb57so623853a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 18:05:31 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794276330; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=miY8TFcZ
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6b408f2d936so2295702a12.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 18:05:52 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794276351; cv=none;
         d=google.com; s=arc-20260327;
-        b=OY7ExdTrp05FLA9/ye0EhEMnKyjlTUtrXIBlBTQFB2GGliJHb5KGy97zHedmLCHaSX
-         UIwnk4HDxLGHgmv3bPI8jPkfPeJbpPq9tVnL95n82FXg11Xlmp24AiMP4VE+OabEC7XM
-         /SCI9lQSf7b2zNzoqEUUQqNuCLj9W263MDR02F+ZKO76Uo/f/YQB+THbJOv3gX+XkCAw
-         Q8N/D55+ZY1AXObh2Zp9P+dbIZpI7PI++IswvIvBcm4zX4ljnwiy1PhMFtxWZuMR42hT
-         0eQscn1uDKSRhCtqad99JtkkLVafRdyQ6Z8DqvyxdDQIQ0oIF8UcAukN3woGXU1UiKxl
-         LBCQ==
+        b=Qkb/bsvSStt+JjV3gWrEE+YccEubYHMQorwf0pEU08/ciUVVZ1WtsIa8NvGUpmi7kW
+         lgTJ5+nV+ffMbMuq2nQgRj4kjHWjGDwFmb36cnusNZ7b9YKcLThO07QzBfvQ8QuuTJgr
+         Dl97PchyWsb3BaIHoDyXBnEUg3XBF1xHL+PcmgirJolKLehg9KFE7LYz091Hsff7C3h9
+         NOOlrBzW9ZETeto+0QzQJOCnoBMO46hCibiyXKxA7cOvRDoLEBppFTPdrZdnwL9o6Vmb
+         eMT2FtvzAPGbMkiAHdwuEDZ9n6+4+Yn6lckTkzH3Bqj3KEnOto0njmQq0ZycLAF1JF/J
+         TQSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=5ly06LzxCxcnT+eqtxnGyn9sAp0YbS1j8iArjzdSjzk=;
-        fh=zlwrcYCfG8mmNNC1cbhhsciV0MEExiTEakLQRf2Ckxs=;
-        b=FSES1PmftgWTeJ8VCh8srARm9TOUFCA2/WFrEldJQrlFY+DWf0pWx17HzalGHIONJ/
-         KXWOTuPH4ifQ6MZ6PsxGchPCG+9Wfv2XqX9Sd9RQxZH0XVEFyWH2gBELrziy7dD7BgKR
-         dEi8+oV0W19HAXsDoU5nc/CC6F7lZ6hX688mi7zwwMAbd5CRhlANswsq6bTz3Sdky4mj
-         VH6M9Mgj1aqzPdiRaAm4pjpoe8d/rdNbOlevqadIEdrsXx3xgz31qTg7JUczrBG8SrGC
-         DOFgRF4Nr0I92appsYzT7MnBLpcJRYWFyD3y/DT/Y4MbxFYQRTjaZntI+EMoU1NP6ke1
-         6LKg==;
+        h=cc:to:subject:message-id:date:references:in-reply-to:from
+         :mime-version:dkim-signature;
+        bh=Eeq5wOXfk2/ATFa6gkhyCWFMX/JX34himi45U6XUrLI=;
+        fh=Fmbl3QwIraNsqFEGbVOpA1DJrB0Fx2fOjN97Y2DCsvI=;
+        b=crC98HKGUQiSIaHJWtKJqAwM3NTTjACbTprb9Lw3+eFNiTufIBEmOqyIsTuTv5m12x
+         UJ8ARztp+VnKJo30fE3T/0qgYUcMWRq58o0O0UkmqaZbRiI/Xo81sJE/aoKwElVOy8KO
+         i2tIsiwJltLii6qPbd2phoIUiMcoRIdWgvWjNxqGlSHN3v5ZysKsAvm3mDXyeHglrNxq
+         c2pcorVRHXdLcGe61liGL4e5b4i63R+e52DnsNEIF0/Yv21Q8QFaWQOfC7nG5goEiA9E
+         hdpaWJKFJX171vR7zdZwIcHi6lekg0OoT9K+Tz5KAx9daFE2aK+baPYj+/Rcke65SrJe
+         rDLg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794276330; x=1794881130; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5ly06LzxCxcnT+eqtxnGyn9sAp0YbS1j8iArjzdSjzk=;
-        b=WeSmmqPj9oYt6CbGz2WJL1YHOSbW3KRP3BlaJT3/RZecDRCwFl9shRmqGLP+4GWoJR
-         iUGkcG2vxUqZb0p2S2Wrq+uynYiIFP9Dzml0Q8pJmy2//UEsRR5NFRTDPabVXInnvo/v
-         VZKGPU7xyXY6+d2xJu53l9S4ztCKhYEQE+AzDQ3/s7J7hpyjlCyGC1NtFsLRszg91uRo
-         SN+gDbsxK+pDUOcGzhrN7GFM6fB3EbhzsWBaRx3p1rF7ebWMT61fsLe20jRQBsblZRBU
-         uEdURgh/7Rp2GsTZV2YT9wKjy6WXLZ6SDM47f+KOZ2UIiLrHD0yIaZHrB8TdmGLOlbDk
-         sc4g==
+        d=gmail.com; s=20260707; t=1794276351; x=1794881151; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+         :from:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Eeq5wOXfk2/ATFa6gkhyCWFMX/JX34himi45U6XUrLI=;
+        b=miY8TFcZ2rbwMLQkWSsDD7zmZ6ooCAoUOcq86QZk8i41fGcql9y618JRlOnqnT6ee4
+         O6BmRN4/erPMZ3vJ2i/O6d62S1w2jX3dbdzsxEiZZyYB8fi/+1t1s3UcBW5d3Ksdh0K6
+         95qghzTlJWFatSeMWJLvfN19lDgMS/BVwtC34gHX+ShHcvFloNUOqf3GxU4uUyEC8w+p
+         OxMqCx9Lhbz4p8taLazb5es9R5363LgPZYAEubiybrtVCXDd4SDeu7oSHqph39dFRBzV
+         EPcOlyobqmHCKTnD1RgVIc3AMtlnKbC7I5FQSEIezQUlJWhx5SIQo2uJgYvueq7FdsI/
+         wEqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794276330; x=1794881130;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=5ly06LzxCxcnT+eqtxnGyn9sAp0YbS1j8iArjzdSjzk=;
-        b=RH8yt7JwYQB2mbwy4UoL4QmI52pSSzEFjJVQ09gEaEMhIvSK7MQaG8AVVOfrH7XMQi
-         Wy+iOfBf1sxynncy1VKsKbpCvGC4aYvSAdjlqxDJFhCSBEtGmM/+AcNmP/p0b8H/cB0x
-         u4B+tb2MEMYF9lFySh+Uv52IdSn7a/REoV+lJqao6BR7xsOiEUv/Tn3v4J1F7muA0agj
-         rI7NZxYFgAHdsw3dxYEBfhdQ9u7H/RskJHCNk5M5uMhAs5JmgqEWl1WV27lyUkW9JyOO
-         3dKD+Y97x4A0MaUCgT0q8Ms62YPbAySYRPCv7eLx69rMHV9RYC3XrCdyvRnDWtTTcZhR
-         NK9w==
-X-Forwarded-Encrypted: i=1; AL+hErH+A6gDpqhLzhyueinwQ1Eg794sWFj7gKaGTxTTNvDeCeENAbO4REYOMLcpJgx9UBlM1bKwLkNe6HBkdPLuot1nyg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+yYM4yjtUUJ9OGBzHYU7uRs+8mImDCUiVYfyZkMHNUuH4RSsP5
-	jTSE1jQU0K6pCM3/RCXuAL3QIQdUB3ixCcyfs7P4tgEpgOveYrJwAuewSeIz4NXRq1bri/5OzGN
-	DUrDl1U7szxge61kCVPa4ufp87JqymQ==
-X-Gm-Gg: AYBFou36mtYu6Y5TDwM4COANuNaYtaW50/F69Ge0REa/hSTqXuFRiBP/ijXdLXPHZic
-	tWr5NardSXQy+u5wMqu0LCe51wgieHxCmLMrD//3uX92SgXEnp8VpWIGqTaQM7mVB7pU4tufGMS
-	FwlvYBiBbyrUpMmwqjLiZTqiwsL5Jd8GiId6dSJdl+sukIL7q3BapW1NahsrtlaWglMK+NrHA5M
-	TGmGzpixiCvFVFcZhn4jcizb9axeGDPpHf3LmtJbuFp920s2bouYp7mJGPmB5xR1raIRk4elDuQ
-	P/MTQinibxtGKyEjAulXtEllElybalY8iI8rhfJbXZ6x3Ku1reL6tq7P9ymXiNk1OAteRux73tH
-	IgSO7DTmfdskcPzHzxNVGogaojLE8AALMfnqiqqTA1eBattEorcB2MwjU7/b7MOZElxe4GaW0mb
-	PH3M0xSnp99J0UXyax02+avsAuDZ0rflgor16+eb8hWJx+65es5tA1iAaFrfD1+qec
-X-Received: by 2002:a17:907:c5ce:b0:c33:ca5e:8ddb with SMTP id
- a640c23a62f3a-c50495fe76emr88017366b.28.1794276330124; Mon, 09 Nov 2026
- 18:05:30 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794276351; x=1794881151;
+        h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+         :from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Eeq5wOXfk2/ATFa6gkhyCWFMX/JX34himi45U6XUrLI=;
+        b=ZL0y82UOP61Bwlr+BJpqP+eeNcnJdRs4lMyybI9VMrXpT8JoL/0QC0zejO3yTY2y/L
+         I/5fXvo7uexoHYQ3UaUFscZnO2qYLqS6IcE1U/68oMNOFFEMAFBlCHh87+KAFwptw5bt
+         CW8ev4ZVsZKInv9zP8nigjqXIebe5ej84xp0mFi7X0cW1JojV9EbfOz0yGfdrYVVJ3v6
+         55zfnrWFhZ3VCCzmDXffp9fFMLumswVyZInzmpk2lNep+REgeC5VFbz5lIrk8IKSv/dU
+         BngSNp7D5G0THB1AlwLZ8slFFJYjM2EON6oqO/06uvGXMrpMC5zggpLJh1H3wzH+utCQ
+         CBdw==
+X-Forwarded-Encrypted: i=1; AL+hErFFDJC6hxC5mu794ZKjemtEjduk8ugW+ed21niKwjwvmLPjA8u/SNf9ZbsUfnICMJb+19XeJFVwglFQ6RCo9qe/kA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9av1jhYvLRPV47FTWPGbkiCWkaK+/peLXX1kaeDle5xqGxC5ho
+	edFGOuuStdN1A1/PbG1T/JOv5A5GVJGUBQN2YxaZojRNdWIw+jZUzf5hvUE6Yxs5WsZ2UJXWGIv
+	beuEdRcv5KWogDb4j2WMTR7JbjSGHtg==
+X-Gm-Gg: AYBFou3e07Zd7kSk3GE8AayVbQ/YgFkoIOXHlWi1ZbM0Ezo9JTzbjeQOQBR3Bj6DALx
+	c0+EMgEx08hGFmCPN3g+9s2KLAE/H6t4p/IeaWEp9ErNviIUjVTmu4/hQ1x7LakuZp4VvWlJZ90
+	3mktzOPIXIl77SlO24eaNAczMQeYrmdbHBrI+ulVQs1SraR4WE6L9TCujyU1VlqF96M6fuwe3yv
+	0XRbKR/m2Aahosuwkua/rIw78WlAUhmMjCY52LeQ4U6aArHjmgfjlQPW4YVXstlRGsebEZsguqm
+	EzVGtfaPepae6MlC3TO+jLn317nZqpphbiSEF5Zd2/5D6zRM+yWQ2WotJxmgS7ADNBACGUPkm8s
+	XQVXrDvVkz8Wrh5enqAz6eHYZ05F4Krz2tp1yK/9QTiHQFaMa1l9Yf0pcVJjTDXN01h0cuuXatz
+	xFT8mINMfbPFMDPaOPM6PcABTDXdzMmGUPQy0pOHM4FHYj
+X-Received: by 2002:a17:907:3c94:b0:c40:f89f:d91d with SMTP id
+ a640c23a62f3a-c50495b3696mr78780966b.28.1794276351043; Mon, 09 Nov 2026
+ 18:05:51 -0800 (PST)
 Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Mon, 9 Nov 2026 18:05:28 -0800
+ Mon, 9 Nov 2026 20:05:49 -0600
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,10 +107,13 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 From: Myeonghun Pak <mhun512@gmail.com>
-Date: Mon, 9 Nov 2026 18:05:28 -0800
-X-Gm-Features: AclHuK_B1IgAnEVdazOZdTLnofngIFWRqke7PWcMcLBdIVd8SA8s9C2nwtymCu4
-Message-ID: <CAGEsz8Hvy-jde6K7vL4B4M=hpZpTYz2a1D_qza81uyhD=Fr8Sw@mail.gmail.com>
-Subject: [PATCH v4 0/2] media: rcar-isp: fix core IRQ and probe error handling
+In-Reply-To: <CAGEsz8Hvy-jde6K7vL4B4M=hpZpTYz2a1D_qza81uyhD=Fr8Sw@mail.gmail.com>
+References: <CAGEsz8Hvy-jde6K7vL4B4M=hpZpTYz2a1D_qza81uyhD=Fr8Sw@mail.gmail.com>
+Date: Mon, 9 Nov 2026 20:05:49 -0600
+X-Gm-Features: AclHuK9rTjy88XXbmF3NgOYWoI2XaAbuNurVjlZRMzsYFXvkTmaFvaUM0hy8Db8
+Message-ID: <CAGEsz8Hf1rpg-6spE_S98i0CKrOHrpGHeTZft=UQyA-0FChq9Q@mail.gmail.com>
+Subject: [PATCH v4 1/2] media: rcar-isp: release the core IRQ before
+ destroying RPPX1
 To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
 	Magnus Damm <magnus.damm@gmail.com>, 
@@ -118,24 +123,139 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesa
 	Ijae Kim <ae878000@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Fix the core IRQ lifetime before changing resource-error handling.
-Patch 1 delays IRQ registration and releases it after I/O drain but
-before RPPX1 destruction. Patch 2 distinguishes an absent optional core
-from initialization failures and preserves deferred probing.
+risp_core_irq() accesses the separately allocated RPPX1 object before
+taking core->lock. The managed IRQ can remain registered after probe
+failure or removal frees that object.
 
-Apply in this order so resource-error cleanup cannot invoke the shared
-IRQ handler after core->base is cleared.
+Request the IRQ after initializing RPPX1 and the handler's state.
+Free and synchronize it after draining I/O queues but before destroying
+RPPX1, keeping completion IRQs available during drain. Unwind the
+subdevice and mutex on IRQ failure, and convert -ENODEV to -ENXIO so
+the parent does not mistake the failure for an absent core.
 
-Both stages: Clang 23.1.4, ARM64 W=1 object builds. No hardware testing.
-AI assistance: Codex prepared the split and descriptions; independent
-Codex agents reviewed the code.
+Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+Changes in v4:
+- Move IRQ lookup/request after initialization and fix its error unwind.
+- Apply before resource-error changes to avoid DEBUG_SHIRQ cleanup
+  with core->base cleared.
 
-Myeonghun Pak (2):
-  media: rcar-isp: release the core IRQ before destroying RPPX1
-  media: rcar-isp: distinguish absent cores from probe failures
+No hardware runtime testing.
 
- drivers/media/platform/renesas/rcar-isp/core.c     |   44 +++++++++++++-------
+ drivers/media/platform/renesas/rcar-isp/core.c     |   27 +++++++++++++-------
  .../media/platform/renesas/rcar-isp/risp-core.h    |    2 +
- 2 files changed, 30 insertions(+), 16 deletions(-)
+ 2 files changed, 19 insertions(+), 10 deletions(-)
 
-base-commit: d48723711bae9b8cdc56719c448ba42fef28cbee
+diff --git a/drivers/media/platform/renesas/rcar-isp/core.c
+b/drivers/media/platform/renesas/rcar-isp/core.c
+index 586a5ad..14f3c8f 100644
+--- a/drivers/media/platform/renesas/rcar-isp/core.c
++++ b/drivers/media/platform/renesas/rcar-isp/core.c
+@@ -798,15 +798,6 @@ static int risp_core_probe_resources(struct
+rcar_isp_core *core,
+ 	if (IS_ERR(core->base))
+ 		return PTR_ERR(core->base);
+
+-	ret = platform_get_irq_byname(pdev, "core");
+-	if (ret < 0)
+-		return -ENODEV;
+-
+-	ret = devm_request_irq(&pdev->dev, ret, risp_core_irq, IRQF_SHARED,
+-			       KBUILD_MODNAME, core);
+-	if (ret)
+-		return ret;
+-
+ 	core->clk = devm_clk_get(&pdev->dev, "core");
+ 	if (IS_ERR(core->clk))
+ 		return -ENODEV;
+@@ -887,14 +878,27 @@ int risp_core_probe(struct rcar_isp_core *core,
+struct platform_device *pdev,
+ 	spin_lock_init(&core->lock);
+ 	INIT_LIST_HEAD(&core->risp_jobs);
+
++	ret = platform_get_irq_byname(pdev, "core");
++	if (ret < 0)
++		goto err_cleanup_subdev;
++	core->irq = ret;
++
++	ret = devm_request_irq(core->dev, core->irq, risp_core_irq, IRQF_SHARED,
++			       KBUILD_MODNAME, core);
++	if (ret)
++		goto err_cleanup_subdev;
++
+ 	return 0;
+
++err_cleanup_subdev:
++	mutex_destroy(&core->io_lock);
++	media_entity_cleanup(&core->subdev.entity);
+ err_unregister_v4l2:
+ 	v4l2_device_unregister(&core->v4l2_dev);
+ err_destroy_rpp:
+ 	rppx1_destroy(core->rpp);
+ 	put_device(core->vspx.dev);
+-	return ret;
++	return ret == -ENODEV ? -ENXIO : ret;
+ }
+
+ void risp_core_remove(struct rcar_isp_core *core)
+@@ -905,9 +909,12 @@ void risp_core_remove(struct rcar_isp_core *core)
+
+ 	dev_info(core->dev, "Remove ISP Core\n");
+
++	/* Keep completion IRQs available while streaming queues are drained. */
+ 	for (unsigned int i = 0; i < RISP_CORE_NUM_PADS; i++)
+ 		risp_core_io_destroy(&core->io[i]);
+
++	devm_free_irq(core->dev, core->irq, core);
++
+ 	v4l2_device_unregister(&core->v4l2_dev);
+
+ 	mutex_destroy(&core->io_lock);
+diff --git a/drivers/media/platform/renesas/rcar-isp/risp-core.h
+b/drivers/media/platform/renesas/rcar-isp/risp-core.h
+index 627a762..9e057bf 100644
+--- a/drivers/media/platform/renesas/rcar-isp/risp-core.h
++++ b/drivers/media/platform/renesas/rcar-isp/risp-core.h
+@@ -112,6 +112,7 @@ struct rcar_isp_vspx {
+  * @dev:	(OF) device
+  * @rppaddr:	Hardware address of the RPP ISP (from OF)
+  * @clk:	The clock for the ISP CORE
++ * @irq:	The interrupt for the ISP CORE
+  * @rstc:	The reset for the ISP Core
+  * @csrstc:	The reset for the ISP Channel Selector
+  *
+@@ -138,6 +139,7 @@ struct rcar_isp_core {
+
+ 	u32 rppaddr;
+ 	struct clk *clk;
++	int irq;
+
+ 	struct reset_control *rstc;
+ 	struct reset_control *csrstc;
+
+
+On Mon, 09 Nov 2026 18:05:28 -0800, Myeonghun Pak <mhun512@gmail.com> wrote:
+> Fix the core IRQ lifetime before changing resource-error handling.
+> Patch 1 delays IRQ registration and releases it after I/O drain but
+> before RPPX1 destruction. Patch 2 distinguishes an absent optional core
+> from initialization failures and preserves deferred probing.
+>
+> Apply in this order so resource-error cleanup cannot invoke the shared
+> IRQ handler after core->base is cleared.
+>
+> Both stages: Clang 23.1.4, ARM64 W=1 object builds. No hardware testing.
+> AI assistance: Codex prepared the split and descriptions; independent
+> Codex agents reviewed the code.
+>
+> Myeonghun Pak (2):
+>   media: rcar-isp: release the core IRQ before destroying RPPX1
+>   media: rcar-isp: distinguish absent cores from probe failures
+>
+>  drivers/media/platform/renesas/rcar-isp/core.c     |   44 +++++++++++++-------
+>  .../media/platform/renesas/rcar-isp/risp-core.h    |    2 +
+>  2 files changed, 30 insertions(+), 16 deletions(-)
+>
+> base-commit: d48723711bae9b8cdc56719c448ba42fef28cbee
