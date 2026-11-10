@@ -1,76 +1,133 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.156
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794297476;
-	b=zvI42qRlQmwLcpye+mMV4uZNrM1RBWx3c7zOc8yBNUDVbMib7NHZPC16XrE5Cl1Cgd0K
-	 CjS0jrfITObuT8mbHVzxsWnrO8ZkT+Zmbm5fxEp3sdYuBLotIEZVrJzlNH5VHzi6uHySf
-	 cnhV0SdJ7Uh8frRrDKLVygv/CZqYTXqY1NojVYfofHrHEEmOVxuSsxb0893NNNvrXVsgL
-	 5G4mtithRtXWpfeJDs6lLSE4E2Ans/TBXHZ1X3JxOXWbo30mt/BGPACH7uAmL4JW940Hi
-	 Yd1KFJlO0EIKW3vbDJ6xLC/h6pHVb15gn1fw4keT5E0ORB0U0xPiQxP6u02Bj5iZ0aQ==
+	t=1794298196;
+	b=CVpN3gsZIg5KhvsACG/12kBsaHMhUzHR43Puy6NDhC2+3FhWZBy0MTnYbec5dxz2wb/+
+	 3wPuY9/Vp/VR8q7tDo+7mV0V7lWsVGnbuKl0kzwfCjNO7EAi1dI5RpQwh6uBLaYwHmuTs
+	 bc46qObCALJmtvErhOCD2pHtrc8Fjra4XQsaNt48FXWOUrgBRNyaFI8tKrDpGqaEclw1g
+	 FfpIEGpoMGWjbQ3Nrcj25Fia2jm9hOQByufFZG2VaS10jMzBCDN1ISLswEbaGkRRPqHnk
+	 eUW0Y3mdw9knuen370NbceBu2TYpArAmmJ+JQY1EwvarZlsucvMIf7Eem6DvzNI3GKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794297476;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=Bh9PLp3fsMYJMJTRrDf+gKXw1r5bvWitb4XoPWpFjfU=;
-	b=vRX71dePad5Cwb1ClNCt0/7wuWvc6G80Dze++K7qv8/Jz5a+w4ka5RWA3rjFBJakMV9L
-	 YKpV9XGj/1o6IUMwwgN3yx3FKCZDbBGHq8EjNIBmdt0VEVmGc1YotsrbBPYCUOvT4bB90
-	 qhunIujDqOSCRMW9ypDcDAnmykkC9WtfBDc3J0o44kpIfEHqPKumUzVnQpwrYvU3I61Qo
-	 8w8UCcOfrQD3XVbNZLJa227hGkqnZeCRAmHSNZZSMIibH2zaWg0BrAJGXkTWLx9GQbO+W
-	 9oDvMoxrWDqb4QI89oVjPEQWUqD+jdjw8IpVdMr+URKnFYORqVpSI4gVQ22TJdedsNA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794298196;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
+	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=eu67nKrl8thChRWWxwnPMWk5WRVt8b81znEUdh6QWzI=;
+	b=mbTnBippYFTt+zaDhyUoqk61Q9enNN76nUAwPskI+lkd6ZtosKk690fbRXEHWJjzWxxb
+	 0pEGtD258A+hQeDVK4yf48TMuPqNDfMQJChfRaePOgkH4szZ7uZvYzctqR1Ue8yrkYdKV
+	 +ugBIV6ANhhGZNvxlhn5zpAe68W4TYDhcHJ9JOI7qKZILyQ0La+GqXucFclTJk9hTdlZt
+	 Qmh53Cxtf8X71m+HF2LjmeMitythNYiv5BPoGjjvEY0ls1e8xe+b0yOG+SCF3Mb/7OzYD
+	 r/YJ5eKpQS/eTQD3mnxSroUyWheZvTz8aMhtA4FXbwm7Tns/vnYsXtFEDKV0RtWuGEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.44
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=ragnatech.se;
+	spf=pass smtp.mailfrom=ragnatech.se;
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b="y/syhfkP";
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=XdjsUDVE;
+	arc=none smtp.remote-ip=103.168.172.156
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFB5606A33D
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 07:57:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6DFB5606A33D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-7d2dbc0a8d4so616485137.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 23:57:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794297475; x=1794902275;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Bh9PLp3fsMYJMJTRrDf+gKXw1r5bvWitb4XoPWpFjfU=;
-        b=c2XTQHj7ZGvCqa4/B1EQgmprpaUAtaGrzMhqGDGdDU3tUSREz+rEYrQ7sf3ArutIc/
-         x+qHtck1+ypo6NcMvJgvWAJHrH/hcwnslyiNMEswq53LnxCUzb5z94xcuamYhm6ftGqF
-         ClK2kqPyaAU+oE+L3EM2EI/ZXsMIATiR1Uqbs0QZHzrkouSaT9jWpCDo/AnUO0cmCG9I
-         CoTL3HtlehDoqwbnZ8Rt4HwbCO0jQ+JxINAd4mkmcHUKeF7ESfkakWEdTWvH++L5nBqY
-         ocB5IibIBNg1ZCoglreWF41LYIFVzGpnXqyosvx4SkWmfS30ibBKBfU3iwYpzdKnZKKt
-         6qJQ==
-X-Forwarded-Encrypted: i=1; AL+hErGVi0DDBXipZgyKHksSQHOMM08IPjCO5GsnUZn3WYzsm90s5LMiO0Ibm6rpCdwKleU5L4Bqs1QJxAOXWUO+Jg6Eew==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8c5e50/hqDYgk7aml0Bbme5eouyl/Ytg6GFgeKfCHsOIV6ncRa
-	F+mpjFZUIPIHxF4//WQrnV39+WJ0g5tVksliAcN2yPmVgi7NAAWEVz2JBA5mYUzvLSU=
-X-Gm-Gg: AYBFou28I/U8/yP2Vanu32SrEChBtrM86BSNA+5vVRvjVAf0MnWsWK9P1hlMzsTmK+s
-	DylfqIT0QoHNMZBMuZunE4uqJztMEa5bj6V+99tY0BQ/Bw5MHLvR2DCkfNhyBNLLre5yf4C1tGf
-	4shoxuCVhhqe/gKeFNWbkdbz20QcguSaMqhmfPvRuOoheqlEGKWyD/w9+Vw4b3YLuIf9y8X7z4g
-	re5Z492CDgKTQFgylI1S+Uqo7tK3URqWxw/OlqqU+FR2xRkslZQVoetUydPYCGrFqwkmWLyVPcd
-	qeE/VRt1/SoZroOJ/y3q/QofmSyrAQUp7mivEly0JEvl3VrD35F2mbG0CI3d/V21pC8HyJY+ZhS
-	zgp6zT+jGq5RtTGROi2F7FNR5rTEfgAxpa5O3Ij+ya+vG3/dV6vrEnSXR93fg2LhkrYJFYUk5S+
-	dtYr2rEC5RfUDlhvBjkl/AZ+7D6eGaXc4qswUK2s4BQw9EG7+QYQT4hpTEmCAa9S7+JrHOEjvYB
-	iB0lMjTEqiHwJC3CjA+JOUzXS4ogq4BmUmFlqyoD8INsgQlPxfrh+bGXM/ZGB687g/5sFk7xoKi
-	h1LhznQ7/nESvfIUoAcGjOUC8LJrvNmmeiK1wI7ygn8Se4c9DYzNwY2TTsEImfRTiFY=
-X-Received: by 2002:a05:6102:1622:b0:7bd:b263:14c8 with SMTP id ada2fe7eead31-7d301c2dd9amr487345137.30.1794297475268;
-        Mon, 09 Nov 2026 23:57:55 -0800 (PST)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99c2003b37csm1401833241.6.2026.11.09.23.57.51
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Nov 2026 23:57:53 -0800 (PST)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-7d2dbc0a8d4so616471137.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 23:57:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHA+WSxXezdMs9E8DJhDMXJl3Ha4N5+sW0mAUurqzNC0lODc7bfAYELdsAYYw7d0Zw5HtUtZr+Op1YiKW6l1jR7dw==@vger.kernel.org
-X-Received: by 2002:a05:6102:4190:b0:7c3:2b19:6266 with SMTP id
- ada2fe7eead31-7d301bfd9b1mr443049137.22.1794297471476; Mon, 09 Nov 2026
- 23:57:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE528606A325
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 08:09:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BE528606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=y/syhfkP;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=XdjsUDVE
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1327314001F1
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 03:09:55 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 10 Nov 2026 03:09:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1794298195; x=1794384595; bh=eu
+	67nKrl8thChRWWxwnPMWk5WRVt8b81znEUdh6QWzI=; b=y/syhfkP403rxRY5aW
+	4UpgzANsj8E0MAbkBBPA07ISUS4KydP15mLBcHzK0ZmlkxJwcAG2Ji5lo3TBE7lp
+	j8EaHEeHEDHBOxpzF5oizS5LkQbeut0djMESJ9gGCv/OHjjucmUFJ38gsOMWbGAy
+	kXwnn0o1pNEXKIENmebdYfFAmdIMgdYPfzlRCx5iAPVjTbSprZp0i9Idt2dAjhbq
+	9jru00HSL3rDyCW/y6vI+zRPuhsqJQtqvcqsdLhkpD0F8kGveOSxVCtE4BEo3+dA
+	C0QsbRukKIPEWl7VfpPusI7LtmIV+Pc1Wvf21F1I/4ZyOYTiW0oCCP4ZHs2BMJ7Y
+	pr7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1794298195; x=1794384595; bh=eu67nKrl8thChRWWxwnPMWk5WRVt
+	8b81znEUdh6QWzI=; b=XdjsUDVEf94E3xANi69dMR1naQqB8VwLV/BO+9thFopH
+	pXW0opbhG56tua/opc2AOjR9YqqSPkWs9s/F0GHNQv47/MWsxJl92SM+FboY8/ug
+	4RtWB/To5MIb6coAb5pbR5mSHYExjIoXOPI548UgCvE8zLIMlOVAy0zsI93FLCyM
+	71l9HaHjBzXSQfk2UxNAiCN3EisPRmhMKnoYMR/aVnJEkBkXfR3Y+DI72HTRIWTP
+	k/cAcC+7+/5FUpVBhk+6+OsCMqHF9pl3DEC3TlViPPolD+Tlm6tvDYVx1zyM1vFL
+	AxGlsRwdC+Z8lpgKAUFkg3noEql7iRoyTg4hoy7yOA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794298195; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm2:rsa-sha256:El8IBMQB66KINniGNeRN+CRQxBnBw4NMKlqLMuc6yTWDGiZ
+	te676lxlZ0vjiHp9OlGno6q9zA7YudftwXZyoYXT3IxWet2gamBEZM8SdAto7Fka
+	kzFoOsMYQJgnzQgx33fUlIhVj+WcvnRibeJXQsIzdwQ34uBeVCpbly1n7lDqF7+3
+	LNO1Dd/67aucG5VIJBLa9NUwO8pN2NkNIwz2KL/Z4qk39e2Olx8Y1AaYuBiP1U96
+	RZdbty+ml2N8RM1LFGwCmTO/2Ce97zLE3Lb/qUyy/8pRwqfp6F2lV77e2aikhVtL
+	OmK2sRe7C0hyi4YfF5HgmbYnK7dqnuWCha9dKTw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=10;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,message-id,mime-version,subject,to;
+Message-Instance: m=1; h=sha256:vFlTB+7NMWqbCiHv5a8jcx5fz7fA1PmDFOeLrmACpRQ=:tSe0HwHwGaHBzXco/aL/zhpyFQADcXLLOcWq3KMpRAQ=;
+X-ME-Sender: <xms:UtHyal8qHkLquz6HXdJ661IwLGe00OeyJSZWXCAX2FxclTE420yvCA>
+    <xme:UtHyaicApk8cepSRVOPCaVwuUZHwn4s_QN3Y2kLz5_PgD7Xz-9E0HWlawALlNAruM
+    1XQRN8FqPW36ddfyIYrUb63P1AcPY4xKkiKIpJU1ZERrVyQ1H_gGKDZ>
+X-ME-Received: <xmr:UtHyahs6ZE5Y2D4-ssKkED4gyV6MGZfpdD6EdpswQYO_Ee8Rus2C7v9jE_0WPPmT4LAX0Ib0T2wrCDOueKETryQOiejuH2I>
+X-ME-Proxy-Cause: dmFkZTFr2ruVCGVVVj8QksznlxJg6gwOFgezUDl1jMUM3ma1FT5YDj99x6ZnMvG8hkIPZr
+    MzAirAuCzS9Ycyz/RQ0an3sTy0qEt0qVCAx+Kk7aGwRWpaW7N+a6jUK8KQUJzrhvjodvvA
+    3Hw6iAkJYfzz52z/GKaukH7PTr90ixclE5/MdoGz80uUf6h0SOrxvedEsL1NAljjo2FviW
+    FiQahowzpwh6HHwd8BClJ+PkcRsFz8WYSODvQ8Wxwaos7SD47T9IzDNZgelT8fe+Gu7mKr
+    ga4Wlw4tMifT0zxFLfgq1KLT9oMETOKhy6HJSRk+spfsNjKTyTN0cYucCRRho087J0mFCk
+    pOfNh8uxMUvJNDbrcFA7FKabwpcSBsissSjN6XdnhicJsT3J5FnWhR4NCKzAMcLdyl6R7k
+    CLfQDupqUoQFPl+mejQ/oSDt6pKYIaBvzrN1QNLRwpvaq7Zj0WrR+TF/eUNUbNwS3Lxr0F
+    z4sjkB1Nvs2lJ6rIGlwNphOwvDnS3r2REkelkcgYfBcgTzG4jZqTb4S7vJJ+BvMTuF4O9v
+    1trBb3ftSHGTQ7jrE/b1fYbEk7PPDnrikGaf8WyOxOHQD41WO9YRRELih3+xEC+ti+VuL+
+    Uzar+/SKbWnoARMKcVaYbtcHk30ZQG74K8WM4jc7WDxBlt43/rdshk82gDZg
+X-ME-Proxy: <xmx:UtHyar2W38kQlI24Y1u5Oxa0rVI0bgGZnFNC9g2bdDDSH__jssTPaA>
+    <xmx:UtHyauC7k02q_c6sPNjX-CA_9l9_YgOeeBGPNO1xdWra11kP8cr-hw>
+    <xmx:UtHyagf1KDkGDMV3qvYuUkNY3UleTR9VSmozN8gWO2SrD0vElt5BHw>
+    <xmx:UtHyaoynriwIB6gK7FuEwkonN1EGrXCvIvdKlc03Z86L-29eV6kH-Q>
+    <xmx:U9HyakVCsHC1EEqW-XWidwzMYf1YA-7Kuxu6ni33wQgweAutp0XFE7iT>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 10 Nov 2026 03:09:53 -0500 (EST)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"DavidS. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Sergey Shtylyov <sergei.shtylyov@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH net-next v8 0/3] ptp: Add driver for R-Car Gen4
+Date: Tue, 10 Nov 2026 09:07:24 +0100
+Message-ID: <20261110080727.2377040-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,46 +137,62 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-i2c-remove-dont-use-autosuspend-v1-0-49a08b8daf36@kernel.org>
- <20261109-i2c-remove-dont-use-autosuspend-v1-4-49a08b8daf36@kernel.org>
-In-Reply-To: <20261109-i2c-remove-dont-use-autosuspend-v1-4-49a08b8daf36@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Nov 2026 08:57:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV-2XT7Npksv2om+ZRxOAQJfc92VpLD4sPeoj8AgKUU=w@mail.gmail.com>
-X-Gm-Features: AclHuK9JsEgh5r73zJDHAyGi1UgY8FApv7iweIjEvmBZD0LvfpJpCmquM1eWYd8
-Message-ID: <CAMuHMdV-2XT7Npksv2om+ZRxOAQJfc92VpLD4sPeoj8AgKUU=w@mail.gmail.com>
-Subject: Re: [PATCH 4/6] i2c: riic: remove redundant pm_runtime_dont_use_autosuspend()
- calls
-To: Joshua Crofts <crofts@kernel.org>
-Cc: Michal Simek <michal.simek@amd.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Chris Brandt <chris.brandt@renesas.com>, 
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 9 Nov 2026 at 21:51, Joshua Crofts <crofts@kernel.org> wrote:
-> Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosuspend() on reinit()"),
-> driver core is now responsible for undoing any
-> pm_runtime_use_autosuspend() calls on driver exit.
->
-> Remove the redundant function calls.
->
-> Signed-off-by: Joshua Crofts <crofts@kernel.org>
+Hello,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series is the first part cleaning up how PTP timer support is
+implemented on R-Car Gen4. Currently there is partial support for it in
+some of the Ethernet devices that can use it, but not all.
 
-Gr{oetje,eeting}s,
+The partial support have been implemented by hacking the gPTP module
+directly into the first Ethernet device driver that used it, RTSN for
+V4H and RSWITCH for S4. This is understandable as earlier R-Car
+generations had a dedicated gPTP timer for each Ethernet device, but on
+Gen4 there is a single system-wide PTP timer shared by all.
 
-                        Geert
+The current implementation makes it impossible for other Ethernet
+devices on the platform to use the PTP timer without messing around with
+other Ethernet device drivers.
+
+The effort to clean this up starts with this series which adds the
+system-wide gPTP timer as its own driver and device tree node.
+
+This series will be followed by work to the RTSN and RSWITCH drivers
+will be be switched from its current partial support by mapping the gPTP
+address space directly to instead use this driver.
+
+Having both this and RTSN/RSWITCH described and enabled (!) in device
+tree will not work as they will try to use the same memory region. For
+this reason this new solution will only be enabled on platforms
+after all user's of the gPTP clock have moved to only use the new
+centralized timer. But in the interim both devices will be described
+(but not enabled) in the platforms base dtsi file.
+
+For some platforms this is straight forward, such as V4H Sparrow Hawk,
+which only have the RAVB Ethernet interface. This platform currently
+have no users of the PTP timer, but still advertise it supports it. This
+and the soon to be posted RAVB patches solves that.
+
+The gPTP driver itself is heavily influence by the existing partial
+support for gPTP in the RTSN and RSWITCH drivers and the Renesas BSP.
+
+Niklas Söderlund (3):
+  dt-bindings: ptp: renesas,rcar-gen4-gptp: Add R-Car Gen4
+  ptp: Add driver for R-Car Gen4
+  arm64: dts: renesas: r8a779g0: Add gPTP node
+
+ .../bindings/ptp/renesas,rcar-gen4-gptp.yaml  |  64 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi     |   9 +
+ drivers/ptp/Kconfig                           |  12 +
+ drivers/ptp/Makefile                          |   1 +
+ drivers/ptp/ptp_rcar_gen4.c                   | 225 ++++++++++++++++++
+ 6 files changed, 318 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ptp/renesas,rcar-gen4-gptp.yaml
+ create mode 100644 drivers/ptp/ptp_rcar_gen4.c
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.55.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
