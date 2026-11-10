@@ -1,76 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=68.232.153.233
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794317968;
-	b=B2jgwa0EmBk+h2gaJbrmZCAd2b7VDTNJnD9eV0KdwMhKxOxGhDsmEBmn2Yi2w/nsZKmE
-	 uZz4hYEI+jieKXbRGCbpbxBXXB8hNrF928F5255jpacJe9gAr5HsUnpK3g7JXcc9CCr3T
-	 LcB+oqHunR8nYAwMiLed2lXxK3fEir1lQmXTzn86kRuweH95hZTat8hT/FlijD/V7tl8Z
-	 r7xNypWYthpgSy68Ax0TJdOdNVoNaHcHiJvLc9qtOZbPW33LtV0dycBX8A8mBbwXkc2F6
-	 zCYsWHtw+G9i/VDS/VWQ2vw0oEAh6EG2v4t57wqjxAgXIHjRRGm5FDzbr1H5YWzW81Q==
+	t=1794318102;
+	b=onZBplXS5pbuVGqEtV/MfFGpKTlYD8XF4TMIIggjMFvEXnQFwm7eDCm0ay+SamU9fvJv
+	 iAmgqmJp+8FQ7HDUj+zWI4RUvTvHYQ3ztLCx/wQlG523ZFXGB9o9ME2ZRhGctEN1OVcuz
+	 ObS811o5lLcqX3qGKLNCmu1857M4X4mpyVQiJdl8L8nw9bOHFI5jI4o38MqCZ5JNBFi0E
+	 mFT3FyKlpn2IFntH2VwndKvXcOc5+k9id4qycRlqPUsKsrybDLjweHbDo0a2BFHi5kWVs
+	 RcqtPD9OxHmRvkQnhiyxae/O2VqmRGVNktULCHB0eraLEr9Dkvmd5iVpUsmHaz4l8HA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794317968;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=kSnlaqH2icJsjwNTkwpevxyVadDJDL69yr1qt1A0z9U=;
-	b=0SH/MW2mvsCo1Ksd5UUGcVfZkwB5SQ96dxPdmkOHjP4D2sSdCBLkYmvy+RGnkN6vpxwV
-	 +IKTkEFD63AdkEVndwkTCXgbfD4HnA+LDFnUl2BaV9EdcmNLd9KfYfLxxr3t0cam5HC5O
-	 TKF6B8IADIMM8lfBSfA8U2OE6TBZ95ap9biV0+MLGwt6Gw+KXlwoLFaictDhiEJpMqujS
-	 QLgnAjS4BD3qLp7StwXjpfSAiz849dwn2jyhne2k/n0XPx3oCI4VkZ2QF74HPQpGGHNTt
-	 QfyVnuLvRdHTA2yJlEu66DkgjzWliUz5EeohGUcKky0y2KixFCcJpiTSN7JizzBQW2Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794318102;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-Amp-Result:Received:Received:Received:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:Date:Message-ID:CC:From:To:
+	 Subject:X-Mailer:References:In-Reply-To;
+	bh=lasqxXVeKXMxHny0oj9QIIm0EdQKa7hCoZn0gBzmIq4=;
+	b=FekfZoBchlVTwebS8x6KVP5+kgbciAwZPaHK6uWaNX9qTkquEWik6nRkhCNlDHlMfiIW
+	 G/NlpUUVVt6L/pfLZ0hNROYBpU7rPzlNF5afWzWIPbvXE8jfcsGv2Ly+/wRZSYClqMhpg
+	 6/4Id0r59YIrHeRsgU1BGg7X9QCIi6+WawIGBsXzwp2Spu+6AJjqbLWI8bh95tYSHUF1l
+	 v7JQeb2JX/fB2m/YMUPaxq4dR/wJmyy/C7J8RvqcKYHuAU0bMozK3RoS5tc6UKCFGrhHu
+	 0lHD8+EvLydJ9HEqTCNbw14WIHqT9eYMHK3mzzyC1wz/m5pEtZkgmJrWClJE+F/TgOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.218.46
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=microchip.com;
+	spf=pass smtp.mailfrom=microchip.com;
+	dkim=pass header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=iW59M+8o;
+	arc=none smtp.remote-ip=68.232.153.233
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD89606A752
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 13:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CDD89606A752
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c4682977f9aso254471366b.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 05:39:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794317966; x=1794922766;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kSnlaqH2icJsjwNTkwpevxyVadDJDL69yr1qt1A0z9U=;
-        b=BjqdNttoJH/vwjdSRBDtBIlVIDwSFbbnHaSUHL7bSvshUgOPUnCJp+r1vG/y4FkXgi
-         iAMsb+K+njKL1uPx+CbTqY5lXH+wRBRTdTwAExj+uxgkqeNXe+3fOfUs2qvjMaUm9zKG
-         p9+8n+norDZ5SkvdnBjGDXv+E2Y7/jedI2UpwWpj7OEiZSEnJ2rP8fEBD2riYjEC4r1L
-         jCV6e1IYpyaQcg8bsxGLdgmlb/6GrLfyPcRiD+4L7st/6PNv4D0ZMmi5CeV7k7oZcOT1
-         5Uapc3ovDtb8xEdH1HBlLUQTS+cC2DQcpFAOh5aKZyL5i6PpaP0e2JdqckLw1cYRI/Bc
-         wUEQ==
-X-Forwarded-Encrypted: i=1; AL+hErH6/XCJSTNmugJvFSHNVFFJgwPNE38hs1yMftcMo7qZIoAUBCfcNnebEsCWxPpz6NVOOKGyro5dNp0OSdJ3uqGDbg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/p0DRZNR+SFRG+8kDdXCWaiHIoC93Hppi7NATAKzwWFDZYS9Yy
-	B9A4iQDRHaxKkXlOzodQNJGYR508sLnby94/9gNvkJ5oQzeEnghXxNT4Tq0hvDGiuAw=
-X-Gm-Gg: AYBFou1KvMxKVFY7w53T6qXa4e2UwmbHGLp0q1TZwV+iGT2gTkXEqsvsudG7DeQG+vM
-	WvOBW4u9Y8Rpb/nEtGURuq3wRu39StFcsEAXVMdOaqVbxlG8NvfY31d070ARc/pIBNRBQPsT74J
-	94sEzjtFTxPo1FDoQWpOROQsaDbFtt3b66Kuzls6k/Kry4zvYrQNFrnUQLWSWO/e0J1INu29POm
-	AXSTPgHy9mzdGIazkfuTO1VyR9KPePDYNC4fwLMbrz101vZYiu/VO6U+P8qO6Wl7RQbQZdPOjWb
-	1h8+OMH8qDmIHj69IzBJa6pdH7kjwBqQz0P0GWDpM4wsfj0M3wUHQR723sZUk/gJqEM8Ku87OJe
-	awtlU5DTxuicatBHIN84Ssgv/T7eSwOvGsZpafDTkgyvcsT3IGAh50hnCaH7OK9qawDPmcAMZ+W
-	CUDL3+6vpQeaL8EnA9Q/PUe99vsS4IqGY6K0U0fkP/9xkzBciWLfaj+e0MGd0JrRvvY7nIsllVs
-	1S2tYVKJ0qakBvdpEOLgB9ftiBrn9GZSKpAaEwF9hf6EgUhf7zdrv4//bc2XK8RRb5VhTpUKzH8
-	BeZcn8HdSETxooO07Ps4iLT0JaItzW4oZBYqTv/GLJGv3EgLheWiBLMQ5yZM5PBg94c=
-X-Received: by 2002:a17:907:da16:b0:c49:b952:5425 with SMTP id a640c23a62f3a-c50496547b0mr222439366b.45.1794317966166;
-        Tue, 10 Nov 2026 05:39:26 -0800 (PST)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c504a683d72sm108297166b.81.2026.11.10.05.39.21
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 05:39:21 -0800 (PST)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6a642495d81so3128377a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 05:39:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGEvsA+03AeEipOZyejhGebwzDDAEI9SQQrmz+EQ7TFd9ic5JrVdOHSjicJV/2qx6nF0u/ASV74ntcdmgMmi9EacA==@vger.kernel.org
-X-Received: by 2002:a17:907:2d06:b0:c46:a607:6922 with SMTP id
- a640c23a62f3a-c5049585db5mr235694366b.25.1794317961521; Tue, 10 Nov 2026
- 05:39:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99D2606A321;
+	Tue, 10 Nov 2026 13:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B99D2606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.a=rsa-sha256 header.s=mchp header.b=iW59M+8o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1794318107; x=1825854107;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   cc:from:to:subject:references:in-reply-to;
+  bh=c/J2BX5zYovG7XXcvnry2XAw/WRw3cFjhkZ9MkToNyk=;
+  b=iW59M+8oln9X+WWzxl0gG8aKrZSib7EeaX9KFoZN9Fsztq6VU6OmILYd
+   dNflNr2PUJ4ruZxMPNR1KHBdcxwZPHqo6GHW2wZyn8XUFsCHc99OJteVg
+   iMDaZUQJGjxxlnfRyaeZ3nbRKibkZKXYa0wSJQ09gstX4UTnuTfLKLeFG
+   udDwFnMDAMzHcKG5w4LG15Ulmn+eDVZt5B/QlzCiCjTZQ0STyT2qjixT+
+   IJRl2+UnZKpqjomchMUXJIALaWq1kdoe7SN34luaR9Kn7gbChKd+JJ7EC
+   BjZP43wW2Mvx+OpOVzHrunbms/VagrrcHStpu4Sw5t8cc3+QOlx0alaKc
+   w==;
+X-CSE-ConnectionGUID: 6uO7UKHWTY+5neRwOdB0yw==
+X-CSE-MsgGUID: O8hmv08iQbeHE26wbSZtlg==
+X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
+   d="scan'208";a="76951348"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 06:41:41 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.56; Tue, 10 Nov 2026 06:41:34 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
+ Transport; Tue, 10 Nov 2026 06:41:33 -0700
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,47 +71,223 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261106110923.164090-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20261106110923.164090-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20261106110923.164090-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Nov 2026 14:39:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXppNKiFH-Q+q_fZNwCABWw8KG2Jcwc9jL5+GmNFuouHw@mail.gmail.com>
-X-Gm-Features: AclHuK_lqFzG1K7YY8lxHYxynu6A8iqMxQa89_kBquxOkn_I_cpIfpAejrm3I1U
-Message-ID: <CAMuHMdXppNKiFH-Q+q_fZNwCABWw8KG2Jcwc9jL5+GmNFuouHw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r9a09g056: Add ADC clocks and reset
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 10 Nov 2026 14:41:32 +0100
+Message-ID: <DMRKOG9MGJ12.7OG591B2X3XB@microchip.com>
+CC: <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <horms@kernel.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<woojung.huh@microchip.com>, <linux@armlinux.org.uk>,
+	<Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
+	<geert+renesas@glider.be>, <magnus.damm@gmail.com>, <edumazet@kernel.org>,
+	<richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+From: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+To: Paolo Abeni <pabeni@redhat.com>, <jensemil.schulzostergaard@microchip.com>
+Subject: Re: [PATCH net-next v16 1/4] net: dsa: add tag driver for LAN9645X
+X-Mailer: aerc 0.21.0
+References: <20261103-dsa_lan9645x_switch_driver_base-v16-1-781c96d735cf@microchip.com> <20261110112810.235223-1-pabeni@redhat.com>
+In-Reply-To: <20261110112810.235223-1-pabeni@redhat.com>
 
-On Fri, 6 Nov 2026 at 12:09, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add clocks and reset entries for the ADC controller.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue Nov 10, 2026 at 12:28 PM CET, Paolo Abeni wrote:
+> This is an AI-generated review of your patch. The human sending this
+> email has considered the AI review valid, or at least plausible.
+> Full review at: https://netdev-ai.bots.linux.dev/sashiko/
 > ---
-> v1->v2:
-> - Renamed adc_pclk_gear to pllcm33_adc_pclk_gear
-> - Renamed adc_pclk_gear_div2 to pllcm33_adc_pclk_gear_div2
-> - Renamed adc_adclk_gear to pllcm33_adc_adclk_gear
-> - Renamed adc_0_pclk to adc_0_pclk
-> - Renamed adc_0_adclk to adc_adclk
+> --- Patch [1]: [PATCH net-next v16 1/4] net: dsa: add tag driver for LAN9=
+645X ---
+> commit 9f0c74e8611a75335b66615c753e5ac04e4a4bc9
+> Author: Jens Emil Schulz =C3=98stergaard <jensemil.schulzostergaard@micro=
+chip.com>
+>
+> net: dsa: add tag driver for LAN9645X
+>
+> This adds a DSA tag driver for the Microchip LAN9645x switch. It uses a
+> front port as an NPI CPU port, with a long prefix plus a 28 byte IFH on
+> extraction and a bare IFH on injection. On receive, the classified VID
+> popped by the rewriter is restored as a hwaccel C-tag. On transmit, a tag
+> with a non-zero VID is moved from the payload into the IFH.
+>
+>> diff --git a/net/dsa/tag_lan9645x.c b/net/dsa/tag_lan9645x.c
+>> new file mode 100644
+>> index 0000000000000..9b373bac91e90
+>> --- /dev/null
+>> +++ b/net/dsa/tag_lan9645x.c
+>> @@ -0,0 +1,513 @@
+>
+> [ ... ]
+>
+>> +static struct sk_buff *lan9645x_xmit(struct sk_buff *skb,
+>> +				     struct net_device *ndev)
+>> +{
+>
+> [ ... ]
+>
+>> +	qos_class =3D netdev_get_num_tc(ndev) ?
+>> +		    netdev_get_prio_tc_map(ndev, skb->priority) :
+>> +		    skb->priority;
+>> +	qos_class =3D min_t(u32, qos_class, GENMASK(IFH_QOS_CLASS_SZ - 1, 0));
+>> +
+>> +	/* Make room for IFH */
+>> +	ifh =3D skb_push(skb, LAN9645X_IFH_LEN_BYTES);
+>> +	memset(ifh, 0, LAN9645X_IFH_LEN_BYTES);
+>> +
+>> +	lan9645x_ifh_set(ifh, 1, IFH_BYPASS, IFH_BYPASS_SZ);
+>> +	lan9645x_ifh_set(ifh, tag_type, IFH_TAG_TYPE, IFH_TAG_TYPE_SZ);
+>> +	lan9645x_ifh_set(ifh, vlan_tci, IFH_TCI, IFH_TCI_SZ);
+>> +	lan9645x_ifh_set(ifh, qos_class, IFH_QOS_CLASS, IFH_QOS_CLASS_SZ);
+>> +	lan9645x_ifh_set(ifh, BIT(dp->index), IFH_DSTS, IFH_DSTS_SZ);
+>
+> [Severity: Medium]
+> [Finding: main-7-6]
+> [Sources: opus-5-5]
+> Should IFH_IPV be set here too?
+>
+> The field table at the top of the file lists IFH_IPV (pos 48, width 3)
+> under "Extraction/Injection header". Nothing on the xmit path writes it,
+> so after the memset() it is 0 for every injected frame.
+>
+> The commit message says LAN9645x is in the same family as lan966x, and th=
+e
+> IFH layouts are close (IFH_TCI is at bit 103 in both). lan966x_ifh.h
+> describes QOS_CLASS as "Classified internal priority for queuing" and IPV
+> as "Classified internal priority for resourcemgt, tagging etc".
+> lan966x_port_xmit() sets both of them:
+>
+> drivers/net/ethernet/microchip/lan966x/lan966x_main.c:lan966x_port_xmit()=
+ {
+>     ...
+> 	lan966x_ifh_set_qos_class(ifh, skb->priority >=3D 7 ? 0x7 : skb->priorit=
+y);
+> 	lan966x_ifh_set_ipv(ifh, skb->priority >=3D 7 ? 0x7 : skb->priority);
+>     ...
+> }
+>
+> The lan9645x switch driver in this series reserves buffers per
+> (port, prio) through QSYS_RES_CFG. If IPV stays at 0, would high priority
+> traffic injected from the CPU be queued by QOS_CLASS but charged against
+> the prio 0 reservation? Any tagging or mapping based on IPV would also
+> see priority 0.
+>
+> Could IFH_IPV be set to the same clamped qos_class? If LAN9645x ignores
+> IPV on injection when BYPASS=3D1, could a comment say so?
+>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.5.
+Correct. With IFH.BYPASS set the analyzer is skipped and the queue
+system takes the egress queue from IFH.IPV, so every injected frame was
+queued in queue 0. The next version sets IFH.IPV to the same clamped QoS
+class as IFH.QOS_CLASS.
 
-Gr{oetje,eeting}s,
+> [ ... ]
+>
+>> +	/* While we have REW_PORT_CFG_NO_REWRITE=3D0 on the NPI port, we still
+>> +	 * disable port VLAN tag pushing with REW_TAG_CFG. A frame ingressing
+>> +	 * on a vlan aware port, which is forwarded to the CPU, will not carry
+>> +	 * vlan info in the frame data, because the tag is popped. The
+>> +	 * classified VID is only communicated via the IFH, never in the
+>> +	 * payload. We therefore restore it via hwaccel and must not pop an
+>> +	 * in-band tag here.
+>> +	 */
+>> +	if (ifh_gap_len) {
+>> +		/* The tag is restored as a C-tag, not as the TAG_TYPE the IFH
+>> +		 * reports. The classifier recognizes both TPIDs as VLAN tags,
+>> +		 * so an S-tag has already been used for classification by the
+>> +		 * time we get here. Restoring it as 802.1AD would make the
+>> +		 * bridge push it back into the payload and reclassify the frame
+>> +		 * to the port pvid, on a different VID than the one the
+>> +		 * hardware forwarded it on.
+>> +		 */
+>> +		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vlan_tci);
+>
+> [Severity: Medium]
+> [Finding: main-1-1]
+> [Sources: opus-5-5]
+> Do lan9645x_xmit_get_vlan_info() and lan9645x_rcv() agree on which bridge
+> VLAN protocols are supported?
+>
+> On xmit, the bridge TPID is read with br_vlan_get_proto(). An in-band tag
+> is stripped only when its TPID matches that protocol, and an S-type tag i=
+s
+> signalled for 802.1ad:
+>
+> lan9645x_xmit_get_vlan_info() {
+>     ...
+> 	br_vlan_get_proto(br, &proto);
+>     ...
+> 		if (ntohs(hdr->h_vlan_proto) =3D=3D proto &&
+> 		    ntohs(hdr->h_vlan_TCI) & VLAN_VID_MASK) {
+>     ...
+> 	*tag_type =3D (proto !=3D ETH_P_8021Q) ? LAN9645X_IFH_TAG_TYPE_S :
+> 					     LAN9645X_IFH_TAG_TYPE_C;
+>     ...
+> }
+>
+> On rcv, IFH_TAG_TYPE is never read, and the tag always comes back with
+> vlan_proto 0x8100.
+>
+> With a VLAN-aware bridge set to vlan_protocol 802.1ad, br->vlan_proto is
+> 0x88a8. Wouldn't __allowed_ingress() in net/bridge/br_vlan.c then see a
+> protocol mismatch?
+>
+> net/bridge/br_vlan.c:__allowed_ingress() {
+>     ...
+> 	if (skb->vlan_proto !=3D br->vlan_proto) {
+> 		/* Protocol-mismatch, empty out vlan_tci for new tag */
+>     ...
+> }
+>
+> In that case the bridge pushes the tag back into the payload and puts the
+> frame on the port pvid. The comment above says the C-tag choice avoids
+> exactly this, but it only does so when br->vlan_proto is 802.1Q.
+>
+> The commit message says:
+>
+>     This assumes a bridge vlan_protocol of
+>     802.1Q, which is the only protocol the driver offloads.
+>
+> Is that enforced anywhere? DSA has no handler for
+> SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL. __br_vlan_set_proto() sends that
+> attribute with SWITCHDEV_F_SKIP_EOPNOTSUPP, so changing vlan_protocol to
+> 802.1ad on an offloaded bridge still succeeds.
+>
+> If 802.1ad really is unsupported, the TAG_TYPE_S branch in xmit looks dea=
+d.
+> Otherwise, could rcv take the TPID from IFH TAG_TYPE or from the bridge
+> protocol? tag_ocelot.c does this in ocelot_rcv():
+>
+> 	vlan_tpid =3D tag_type ? ETH_P_8021AD : ETH_P_8021Q;
+>
+> At the end of this series the lan9645x switch driver does not implement
+> bridge join or program VLAN classification yet. So this path stays dorman=
+t
+> until bridge and VLAN offload is added, and the tagger is not changed lat=
+er
+> in the series.
+>
 
-                        Geert
+Dismissed, intentional.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The driver will not support 802.1ad bridges. The hardware classifier
+treats both TPIDs as VLAN tags and the egress TPID follows the ingress
+tag type, so following the bridge vlan_protocol in rcv would hide one
+symptom without making 802.1ad work. On xmit the TPID is taken from the
+bridge because the stack picks the TPID of the frames it sends.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The bridge offload patches will reject joining a VLAN-aware bridge and
+enabling VLAN filtering when vlan_protocol is not 802.1Q. A later
+vlan_protocol change on a bridge that already filters is not seen by the
+driver, since DSA does not handle
+SWITCHDEV_ATTR_ID_BRIDGE_VLAN_PROTOCOL. Rejecting it needs DSA to pass
+the attribute to drivers, which is independent of this series.
+
+>> +	}
+>> +
+>> +	return skb;
+>> +}
+>
+> [ ... ]
+
+pw-bot: cr
