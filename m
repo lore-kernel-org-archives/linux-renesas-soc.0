@@ -1,106 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.50
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794276507;
-	b=5Pc8HGC70WWL2nm9mYzzZtmM3ysqtIx8yFZc9xYlxnoyUo/yhNojwu3lYJ9Nof7VNMLc
-	 eZKXor9RRgYbXfb88KEHaF6M3YKsHSLoZisi/jG6AMMLQetBV1yqf4l9vOUr/NB0vkDhc
-	 UAhMdr+bj8Glmh3mY7RwnbGBoaIz4hPOyL1AIBLOr2YseF04xRcAoozaiAOwGQMWwuRDP
-	 72iAFfSrz8gfIqwb0PrQgFviUSqrnAsiGY/Ln+kTJEMpmVKhXkNjbZSJcqneq1rVtU2AO
-	 bo0hMg0Xln5gwVCGTozZx4fnQLAKG+n5CZ2SBmnscxMIK9agIsd517W/1becDoJLDNQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794276507;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.181
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794279549;
+	b=r4qejE6lTB6Eethyin3nllrPIU4im9Y9DVHV1SR41yqE4r6LaPHCG6Bt7tFhJA7ajxsb
+	 WLRlCyytaiV6H/xSoUH5TwKsrl/Y///4o9AHA/n2fdleNSK5jvSxH9Eg8DKOGv9+qYuc7
+	 t6faf9OtsPknMmE5/6WU/6kKrgymEeDDdn80gKJtlOS8iltqwtfEQGc/b6nJ8kTt2RJ/v
+	 dAJWHoTcu4X9YcAN+R3wGNrEYqUvapZnrqh1ThVEMQ84eyswzI9SBxiUZwLur6UQoRFJs
+	 FpRP8JH+4ZaCZACFP6t8TaHp9dXr6EYe/kjOpbG21n08W28Xaz24Q13IZBq6jTUdPTA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794279549;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:MIME-Version:Received:From:In-Reply-To:References:Date:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=xzg2mafdxdFEs1lOpJlsFyILGqsWsSSyX3pGfyNClE8=;
-	b=rUkP+8aeOdrHHHxlT0qpzIIfOm/M6GFuY6hVM6PRqVzeh1zKIxORHkqdpvSxnwec2B2S
-	 r9nR5lDff5JhgC7pyz3tU1IDQEyLQQQrUQTzc4RFq2FoV132q83YgTWW4a2iv6jO4rjeH
-	 JlyGB0qagjjOPM3JUGWXR6CAH/5T/ZC3mveodPIfR7DEgR6bfQVO12n8D3FblsYxfRz1G
-	 TgY9m1SDy5PjE37gUvIod6vVyBbxu1OrSI4oVaGPEVvHTl94Zp5TlbE+NiguOwtxVOKRL
-	 zRW3tC3f7j/Zo82toffmMl23M49zdrhvpwzjixmKPLnGVBoRmVnzwG+pX/Wo8V4/xqQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	bh=nGrmkDqvafTIDrI9ZJ867+6zF4oKvoOxGUyEpitlLog=;
+	b=rffipwrgty5IKLkmhms9SDMSkkc5uczDWGb1YKNc2ELY92DcT7tpWhBw2wbovZVZ/y7m
+	 6vL/FiM4Xa6tslRTQLxTjyNa8uW1Pq7HxPT10zp5swlBPT+gUjEL2U6w6gPfQVaPHekV/
+	 Xlzhz+Bcz6VYcCJIzzVN+yGF+yjTd4Id6AkbzjchXqZ0sw3uhaKLZ+TFG4DspxaEEantm
+	 ThaR69qUgwzrZolW57bmY4rqrTlLMRzr14eO+ZZYCTZvRNDGCactEsDjynV+wPCW6yVnX
+	 gJzsvaNanUZKUqdStOgx7ORumhfcTE4uJfDkykIny795BcngU3lTG/16/fnEXS97a7Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=g37a4kR2;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.50
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tVs11Bvb;
+	arc=none smtp.remote-ip=209.85.160.181
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A250606A321
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 02:08:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7A250606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95325606AA1A
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 02:59:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 95325606AA1A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=g37a4kR2
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-c4d581da0aaso157672066b.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 18:08:27 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794276506; cv=none;
-        d=google.com; s=arc-20260327;
-        b=imRko93lYNEwjEbOsxM5D7vibRPdBotsRuULpkpeXkd60SJXhckZxoYxriu0V1O/7u
-         j7l12B5RBhvGHWytuEsZzxSBAV3MWahrVoGE9MoIiPe2ImUybE4e32skBgCY3SO1KI58
-         rzDXnQIWVjODivOrNl1IZUHfq3tf5+Okovn9i70h3CnqOLDCOreUFol1CJAo+Jo4Sy0A
-         qPOt1P3pGq0TsK0ZDA9XJGcwmrujs4H2sL8I3zkggmzTN3OInJkgoh2sCJ6bvhDTlyJK
-         3v8TWtOcRiiiRMu+E1a+byM8S+GKTFuvlfg4OxtpIeFgDQLjkW74FgnBmmU/6M9jzJwK
-         2sKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :in-reply-to:from:mime-version:dkim-signature;
-        bh=xzg2mafdxdFEs1lOpJlsFyILGqsWsSSyX3pGfyNClE8=;
-        fh=0CQMBAHM1zRgmPbAA5WvAetVJ0FigXuiWzwV58jmVZ4=;
-        b=IxgFU1SMjUUHImCawQ6Q78MJ4i8dZKBL/boZoJlrwoZMSuJHqA061qXFcYYoR/vl8/
-         dO7oju5Gnp4oRqDeAqA3NTApRewRba9UtJl0FEjUsoXlJBWoO7VirzCSAFkie9KZ2sAK
-         LQ8OUFjVsHju0FxsUqWWhlPkQC6HWC7f/YeJOOqUENepAsX4KOKv3GuV5rx2s23AxQvB
-         Dv8qkYU8xdSpoT04ju6+UgUT+UpNUI/YfK2hmd4ZdsKYJNfRDMXe9+6mbWKdmkXeDghr
-         Dw0Kd6lROHHc7gGmcKElYpgTfv3MKNf0cPtXTWALm2e+Dm5deLI4wQJ2TLUpbGitEV4i
-         SsPA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tVs11Bvb
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-5365f9a04c5so20074281cf.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 18:59:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794276506; x=1794881306; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:references:in-reply-to:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=xzg2mafdxdFEs1lOpJlsFyILGqsWsSSyX3pGfyNClE8=;
-        b=g37a4kR2OYKgQA6R5gsDZ3w+ZslaVu5nQQYNH6WhIbL8yiCQgzA7D2ZFEzzf/Uyi1L
-         ms+IVBX416UN0axrp2IrbT7uQDhVyGpa/n+iK4ZTlddd0PpEBhkuxCh+aUB8O5awVI4e
-         V7toYv5zJA5WX2qlPCVlnWyJaefJxlDH6kwtknCChi/fd8EyO7Sb8gHCBeYRtYqp6kdF
-         bpad+lD4UgzPg7O88Qdg+nBBBfKX1hZYZKDXPyvt+F02rGBnw0jjmUg8WSQXAlnbJK5D
-         +CxeTkQgWXy8raJlGxdWhhSn4XIhjN/sb3JCNZ5ddWfRnMJBbJdpjLK9JvzgTa6qRgy6
-         Kl1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794276506; x=1794881306;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:references:in-reply-to:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1794279547; x=1794884347; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=xzg2mafdxdFEs1lOpJlsFyILGqsWsSSyX3pGfyNClE8=;
-        b=fDdnuda2VtoCuaihzl+faNufdTE5FgYrXdCeO/s/sMN80te/FpXQ0UmF/ubWahxvxx
-         Q9lV3jN8SKMbfaO8iGxISkq/rvg2nur+WWunS8I/WQVru83XxVT4DOSUSLZLsvtPmO29
-         harzmSIDXPN5LNC9bE8FSDydRqC9BRiGiihrcx9bNbuLoVrwsQSurI5vT2qFzEvOvMwt
-         hDQXYF3s8q0rUAogRznQQYOz6wpBAwBpSrjdYYnibAxkynJd+APRsY51j2VTr/bhwuyp
-         K9rZXrFOMTCCr33BPx3ly2Z7iMk60DyCtF7NZy+HoWrGxp3GwE8+p1C5IR8tC/J6jzZ1
-         xETQ==
-X-Forwarded-Encrypted: i=1; AL+hErG0TMgXCmGgc0xkm2+8uPcsj501hhKfaUMs53bjMzR0uO45HoeL7QILNt53tueD2o+mCILGiNs4zZziqVk1Jj9wJg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z900wfHRXQPq//MW9q+bXafAEMrKF0AhSazVSrOPP/BI3w0bmN+
-	1dOfqmheEcKdOxfqyfiUyx32ablXXlyVP2SUDjhiTZUvLvKiQU5ZGikElF12nj8SjtyJMopsFzv
-	GtsHnP5wKl0rMK1KliXcy1ncUO3Ykcw==
-X-Gm-Gg: AYBFou1Vytay3YzCKJmKLTvJuG17pdCcuH7p/JUVIglKtMtBFPa01/xIaTG3aAeK/iX
-	9Nq8ftwkYMxknQyDtv6NOUHzfhNpBSnFt7/HW+60Tx2XB1kDmN82o+RzImHyV99VQpg3zuhmKKD
-	HlgqqJD/XHbcRlJNxa3wiFCNBe2O4LGF4WMHG6oNA5BOA3IPezEHNCvEP/3dd0hVxUWTfvFrW2F
-	TNwpBo9hlOuZ4v2p3G0YYPGc5MW8Bp6rmpQ28EEzQ+86OZH2FI3MVMINF8bQEImEUtDA4xraMjl
-	62QnMERd2/Hwx7QGY426TqQlqQKZhG9I/lC3VFC0Togl2dDuBcn5rQGQtzeGFhOFkErw2C5Hyf5
-	cGoSss9AwBnjyygT5/sEpAa/BejTQNDx+JEA7KHDDiT5ouD5LQjNoS8Fr7ZH53MzqGw0H7nhhp4
-	4gWg5ZsbDUxmRb5LAWXOwrJ/rN9BXWH7gLTBmx+rvY1C4=
-X-Received: by 2002:a17:906:f58d:b0:c41:7e99:c6c2 with SMTP id
- a640c23a62f3a-c5049656cbamr100998466b.44.1794276505640; Mon, 09 Nov 2026
- 18:08:25 -0800 (PST)
-Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Mon, 9 Nov 2026 18:08:24 -0800
-Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Mon, 9 Nov 2026 18:08:11 -0800
+        bh=nGrmkDqvafTIDrI9ZJ867+6zF4oKvoOxGUyEpitlLog=;
+        b=tVs11Bvbn2d+gL5BWwC2m/viV4nrJeThHyuvCZDzw1Fvz4vCP0E4CmVRFsXywgJHIY
+         7LTSviGZ1TH20B7cqWPSnImrklhjzzXSicv358px46izZzvsVQBbXufQHCZex31NLJbV
+         1Yjqu7vKkr2sQr5GU2L7sVRoDf2Q5elBoQwKzbOiDy7mr3QzRgDLTrmevKYP3F8DmsE8
+         agMvIRPrZcSXmAJTdEh2fkLpIG4smUtofpVr7fzO0snW42MVbShD+ZXHAfITn7XFOMEZ
+         EIy4K5RboZwR6wZEonkflUS3wV0/xEQyuMEOSpthO7kX5F+LZJ65NH55+Oz4iWbrg4T+
+         Q58g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794279547; x=1794884347;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=nGrmkDqvafTIDrI9ZJ867+6zF4oKvoOxGUyEpitlLog=;
+        b=yMz7Sq0CfdIzGXQzDb92agA23Sn9EXPMBnavQsWXJpR1L5CiLV4VO9RFATGLgxNtJr
+         aq7tPmdP9s7CIW5aPEY7RBTQvwpgZI9gmyJ0UVD0GXqXxu4QNglAt5kvq+nnhuzXUpoU
+         9IisaLEC0vzmVlL5a7l5RNwnkqRFJMVWZtYVM5LMlnf7LuleI0N3ILemMFVbGXdndN8b
+         Y0RjhKYE3MI1jhsxsEiHkbHnWn8fOs8Wih94j7z9fVm+bQiqDdc79Ea/JIdLaIwF9+Tf
+         PymDcm1GEJ1TelDmH27FviQKVReOByyFhrCAHElyBSkKPLpMuUlE4RkXytPzdZxhJFaj
+         BQoQ==
+X-Forwarded-Encrypted: i=1; AL+hErEBnWULoyifAAFQ6NSmE+7M6gJ6T3/w4Hn5JYbe1e23YyOCRn1T2+KxBVGbSUdTbVNRC1tfYOMrUF9NqkTWjmiNew==@vger.kernel.org
+X-Gm-Message-State: APuU4Z80DwBW6r+o/FylAZmh9XQ1aB2UiqgwvH7K7/bvaA/tNbsSeN2s
+	qgo4k2vLGdkP9Darvh24POX3qhNqZeuH8CxJI9kDH/SYjFLgHliLIb0=
+X-Gm-Gg: AYBFou1EaV8K4LfKly/cZy9Hlz4AQFxTS2XjKsyc+fZIVdKNdE3ftE0n0GAEZneRoV4
+	EqtXszV9ywY6B+sSiGggV/m8oh30xJSOcYtfIa7736MlNor6i+r/uyhW/HIMItb5OxueQUuBNJ8
+	PjRnXGzx66fSgzgFP6lI0Sq1CuihleoZZj2di6l8Ca1cMI4WffHphJNtdF1Baokj5MZ5cpRCyV2
+	X2aQpOqGxuErqybn3mEnFfz7AIJYPFn5D3plNaimDSeS7CibrH0QxPmlsxeWkUaLVorMw1wiUNi
+	bQrNkWznTRxCpmdCrYSSbQgz8SvBXUZNMNzyvn5dpUr+QuUpP89frVqmBGrcGyXqYcX7kgSledF
+	RFa3jg1LGooqr9VUDA7wArJPq4A/XGyV8nI5/+mhy1KOh62KkEcPjX99eZ/zVInyZFRkXfSQT6b
+	ubhEe9wy8EGpT1qstaweyQEQWeUsqltxDGDyxYOoV7ZvP1jjoH6VML6SljqwjNAgUi0mVg6sFGT
+	bBSO5JD2/KwWFnRilG95q+Q/hT7AWwUMnGyVdUcymWfw+WHF3eHVDWg/0Qt7QSl6oE5K24xhU3h
+	Tacm+DruOND6YdUnNZNmbyNroEocW7PVEWz8K0iZfJjhgt6mHNIvcboGnKXSyCcuHB2KS2UULck
+	PHjJBw3+TP63vlHl91hG/m4PRSJ2RBXja11lOHJBMqqhOa5J33SIAVhmXk+CPULMR
+X-Received: by 2002:a05:622a:4c6:b0:536:6d2:2c0e with SMTP id d75a77b69052e-55527b1b214mr20635311cf.36.1794279547476;
+        Mon, 09 Nov 2026 18:59:07 -0800 (PST)
+Received: from localhost.localdomain ([104.39.152.7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5550c21e1fbsm12601771cf.27.2026.11.09.18.59.06
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 09 Nov 2026 18:59:06 -0800 (PST)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ijae Kim <ae878000@gmail.com>
+Subject: [PATCH v5 0/2] media: rcar-isp: fix core IRQ and probe error handling
+Date: Mon,  9 Nov 2026 21:59:03 -0500
+Message-Id: <cover.1794278853.git.mhun512@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -110,106 +103,25 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Received: from 77377267392	named unknown	by gmailapi.google.com	with HTTPREST;
- Mon, 9 Nov 2026 20:07:59 -0600
-From: Myeonghun Pak <mhun512@gmail.com>
-In-Reply-To: <CAGEsz8Hvy-jde6K7vL4B4M=hpZpTYz2a1D_qza81uyhD=Fr8Sw@mail.gmail.com>
-References: <CAGEsz8Hvy-jde6K7vL4B4M=hpZpTYz2a1D_qza81uyhD=Fr8Sw@mail.gmail.com>
-Date: Mon, 9 Nov 2026 18:08:24 -0800
-X-Gm-Features: AclHuK9zIcEhLJfPfTc1f-zmgRBrGB7NhIU0-U0vwWpTSSE_uoc-gqIjLG_ZynM
-Message-ID: <CAGEsz8G5RuLvQUkfg-H0zArwLrPuoCWEt2tNO+nMssu+w38sMQ@mail.gmail.com>
-Subject: [PATCH v4 2/2] media: rcar-isp: distinguish absent cores from probe failures
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ijae Kim <ae878000@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-risp_probe() interprets -ENODEV as an absent optional core, but resource
-setup also returns it for initialization failures and deferred probing.
+Fix the core IRQ lifetime before distinguishing absent optional cores
+from initialization failures.
 
-Reserve -ENODEV for missing core MMIO or the renesas,vspx property.
-Preserve clock/reset errors, defer until the referenced VSPX device
-exists, and use -ENXIO for malformed VSPX data or failed RPPX1 creation.
-Convert remaining resource -ENODEV errors to -ENXIO so the parent
-rejects failed initialization instead of continuing with the channel
-selector.
-
-Fixes: 2151350f60d1 ("media: rcar-isp: Add support for ISPCORE")
-Suggested-by: Niklas S=C3=B6derlund <niklas.soderlund@ragnatech.se>
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
-Changes in v4:
-- Handle resource errors and preserve deferred probing.
-- Apply after the IRQ lifetime fix.
+Changes in v5:
+- Regenerate for git send-email without wrapped diff lines.
+- Use media-committers next as the base; no code changes from v4.
 
 No hardware runtime testing.
 
- drivers/media/platform/renesas/rcar-isp/core.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+Myeonghun Pak (2):
+  media: rcar-isp: release the core IRQ before destroying RPPX1
+  media: rcar-isp: distinguish absent cores from probe failures
 
-diff --git a/drivers/media/platform/renesas/rcar-isp/core.c
-b/drivers/media/platform/renesas/rcar-isp/core.c
-index 14f3c8f..0a32201 100644
---- a/drivers/media/platform/renesas/rcar-isp/core.c
-+++ b/drivers/media/platform/renesas/rcar-isp/core.c
-@@ -800,20 +800,20 @@ static int risp_core_probe_resources(struct
-rcar_isp_core *core,
+ .../media/platform/renesas/rcar-isp/core.c    | 44 ++++++++++++-------
+ .../platform/renesas/rcar-isp/risp-core.h     |  2 +
+ 2 files changed, 30 insertions(+), 16 deletions(-)
 
- 	core->clk =3D devm_clk_get(&pdev->dev, "core");
- 	if (IS_ERR(core->clk))
--		return -ENODEV;
-+		return PTR_ERR(core->clk);
 
- 	core->rstc =3D devm_reset_control_get(&pdev->dev, "core");
- 	if (IS_ERR(core->rstc))
--		return -ENODEV;
-+		return PTR_ERR(core->rstc);
-
- 	of_vspx =3D of_parse_phandle(pdev->dev.of_node, "renesas,vspx", 0);
- 	if (!of_vspx)
--		return -ENODEV;
-+		return -ENXIO;
-
- 	vspx =3D of_find_device_by_node(of_vspx);
- 	of_node_put(of_vspx);
- 	if (!vspx)
--		return -ENODEV;
-+		return -EPROBE_DEFER;
-
- 	/* Attach to VSP-X */
- 	core->vspx.dev =3D &vspx->dev;
-@@ -840,7 +840,7 @@ static int risp_core_probe_resources(struct
-rcar_isp_core *core,
- 	clk_disable_unprepare(core->clk);
-
- 	if (!core->rpp) {
--		ret =3D -ENODEV;
-+		ret =3D -ENXIO;
- 		goto err_put_vspx;
- 	}
-
-@@ -860,10 +860,15 @@ int risp_core_probe(struct rcar_isp_core *core,
-struct platform_device *pdev,
- 	core->csrstc =3D csrstc;
- 	core->csbase =3D csbase;
-
-+	/* Keep channel-selector-only configurations working. */
-+	if (!platform_get_resource_byname(pdev, IORESOURCE_MEM, "core") ||
-+	    !of_find_property(pdev->dev.of_node, "renesas,vspx", NULL))
-+		return -ENODEV;
-+
- 	ret =3D risp_core_probe_resources(core, pdev);
- 	if (ret) {
- 		core->base =3D NULL;
--		return ret;
-+		return ret =3D=3D -ENODEV ? -ENXIO : ret;
- 	}
-
- 	ret =3D v4l2_device_register(core->dev, &core->v4l2_dev);
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
