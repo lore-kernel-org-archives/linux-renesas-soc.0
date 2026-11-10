@@ -1,90 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794296701;
-	b=SKMDS0uIj0HKBDTpGXTj7mRw35U5cLwii2nIqYoR7JX0jLxwjYL6YpBMZ1MhZ8k3Cbot
-	 VQesysws/MchXbVO+KInb98XDWytAJmV88fNHISlwFQJMXAwkndrAAghnSiDa3Mxk7ceA
-	 rP4PIUMzZKNIGbdAyINrgx7cPdwyOs22uOwHE9fOkPOS6s5/taIkoPkTLxf1QCmUrfs1z
-	 fuAjnUqLGDVp/fVHu3MlVDUv0qCGzgkIHB1ZHxj6HhbURFTYhqEAF+aQ8fKEYg6ACEClc
-	 FtSny0YJvCPMcuP7TdbYDu2OvctqRLH9rWCte5jpnk3yP9XFwKMEcqaWD17R+9jkscg==
+	t=1794297476;
+	b=zvI42qRlQmwLcpye+mMV4uZNrM1RBWx3c7zOc8yBNUDVbMib7NHZPC16XrE5Cl1Cgd0K
+	 CjS0jrfITObuT8mbHVzxsWnrO8ZkT+Zmbm5fxEp3sdYuBLotIEZVrJzlNH5VHzi6uHySf
+	 cnhV0SdJ7Uh8frRrDKLVygv/CZqYTXqY1NojVYfofHrHEEmOVxuSsxb0893NNNvrXVsgL
+	 5G4mtithRtXWpfeJDs6lLSE4E2Ans/TBXHZ1X3JxOXWbo30mt/BGPACH7uAmL4JW940Hi
+	 Yd1KFJlO0EIKW3vbDJ6xLC/h6pHVb15gn1fw4keT5E0ORB0U0xPiQxP6u02Bj5iZ0aQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794296701;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=G4p84d6kmQsbShYbyTJT0Wg4TRDkWtUX1VnhI2g77QM=;
-	b=3UW+1ZmVxbKU90KqGpSBQa8HWvohvFnO/DOPdp1htKHQj6VTa3mlG4DCVp0+a9QeklGy
-	 8iSrmmaamrBW5fkPNBXlMcg2Q4Snl9WJPdcLStEUgkHeoSJ2CdiRw0/w1tyAtRZRVAqW+
-	 v8zqHyY9P7ua2y0eUFtqTwceSsBavhHih9Twhw2VbkDkj83agjTAQlE2Ec0bEoq131VsK
-	 A3Dgjsym1IFXUuBpjdcIj8ek8h4r5KfG36Rp6vDIhRzFyXXwBmuykqCKIGEqoNm8bipT+
-	 IXS5RdIsfyPOiH+DOhGX7p8PDhqITPHFsUTVcZiE1UBm6BvbPhHR+bfihUcDUHXDHWQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794297476;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=Bh9PLp3fsMYJMJTRrDf+gKXw1r5bvWitb4XoPWpFjfU=;
+	b=vRX71dePad5Cwb1ClNCt0/7wuWvc6G80Dze++K7qv8/Jz5a+w4ka5RWA3rjFBJakMV9L
+	 YKpV9XGj/1o6IUMwwgN3yx3FKCZDbBGHq8EjNIBmdt0VEVmGc1YotsrbBPYCUOvT4bB90
+	 qhunIujDqOSCRMW9ypDcDAnmykkC9WtfBDc3J0o44kpIfEHqPKumUzVnQpwrYvU3I61Qo
+	 8w8UCcOfrQD3XVbNZLJa227hGkqnZeCRAmHSNZZSMIibH2zaWg0BrAJGXkTWLx9GQbO+W
+	 9oDvMoxrWDqb4QI89oVjPEQWUqD+jdjw8IpVdMr+URKnFYORqVpSI4gVQ22TJdedsNA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
+	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=b2CB9Pdi;
-	arc=none smtp.remote-ip=209.85.167.179
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	arc=none smtp.remote-ip=209.85.217.44
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC24F60A2603
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 07:45:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DC24F60A2603
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFB5606A33D
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Nov 2026 07:57:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6DFB5606A33D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=b2CB9Pdi
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-53ec92375d2so658833b6e.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 23:45:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794296700; x=1794901500; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=G4p84d6kmQsbShYbyTJT0Wg4TRDkWtUX1VnhI2g77QM=;
-        b=b2CB9Pdi2KGdYd3XTwHCIhue90S8Rl0qIGulashxnwX7x5aaHQnN8Fw6Bvv12qDcRW
-         1SG2fnaCPUNjywRvlLGyrGqFosCigIia1pymGokvRh/s5pH4aQRgJnZKKQrVWWNB+7Zo
-         13t24kDwqT/bq+GbU4/xLDTnJohKcehOelvtJ67Wt0AsaNuK2NbSXGc2oSeDQULndhLA
-         s6Kor1OaB6+WIzS4jPykCWjrj6PgW+ILtYw6BkkQUycyQSWB1CliQIzwOsXUr0ECPdn7
-         LBDIHYlKyTLwOLeIMqxR2MtFoo3BMZwNvTgyvO+VXRLS95ZVocAIv6mYbZwZyC9PaEu0
-         3Jcg==
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-7d2dbc0a8d4so616485137.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 23:57:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794296700; x=1794901500;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=G4p84d6kmQsbShYbyTJT0Wg4TRDkWtUX1VnhI2g77QM=;
-        b=s7v2ORE6b7qOoxgqZtIeEMj7Gm9p5/AFK8FCsqlAMIR2Y+/AqVP2dnhggrqvcUwCZy
-         IiiqmpolA5c3y1ZLiW02DJM8Idi8BG1b08dR6lFwUF5MvnSU3kqUfbmo9bZZt2lAsGkZ
-         f9xiMUvueZ3KK8svZxuTQpN0Uc05E5Nfr4Vb4KC0Lw+j4JH5KniQCWq7CYSuFZOSvrhO
-         Soq/9PtuXZVy1Zw3JRW5PmKbG+0WvV9iYwRhIFjO0vkCE7gzchQNsuU+Y0q4o7qXK26s
-         5JY4eQ3AWHDmsXKEeNLcORgihPOZIMD4zhkXD+xKsCEf7i9MBVM/eOujssu/0F/hMhsC
-         aiqg==
-X-Forwarded-Encrypted: i=1; AL+hErGlFy7+tysGtfMQmC9XMc5Rr22bKIEmv3tZmwOHbJWFhqrcdxrBj2qQtC3iT++S6b6Sl+Yzhqhlv2H49EH51pA2kw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z85uFocNdKSBO7F2NVk45LX+nnEuD/I/UMrmpcw+M11DIiExlPT
-	5HFYmNAltkuiyk+SCoh/BevODtpYHD4I26qiz3drfVWkC1h1GZ9Y91N9
-X-Gm-Gg: AYBFou2iigTK3ubDZVA2UZsOMqCI/FXuvxcXyUWQ5m1Thot9q5KBpuubyUL2MGfVmVU
-	izjreY4I19sP0whPaUeiflPNuv7yCMLyeTJxX0hyw3KAmfnL5FCGeqNpWCM6sBa0lB1l9H/+E+c
-	2zWawKw0uJc+zZfISKTSuU4Q8YxVf2TYKzaNif9m2d+tVf9Avtfy+Z/joLg3i3bhjRoz6JkmCZi
-	11BgGSLuV84O7SrkdAPhCrlHqLnO3BzaRI33g4TkGhEihQ0lJdwpEEUumLHPI5JTeFZej76XQyh
-	l8Qgapv8IRY1ozBQ0AFbO7L8W0et+aDbJvTy9aTcbMGepp2T9g5/hXQSu3cRjKdLOQdB5naptRq
-	/z9d9MfEpfbE/Zw9k3a/UXOAM7KaG/kgMuVBwTFdOVu9Us+Cjbvq9SQC4EK5sFFf0vKHnwYyF69
-	9wWeTa3+J2xCmElv8MXzsqkXy9mqMvMUqGz6sYJYWM/bQiSbW2zgoM5h5WLje7fyYb3QuZxq/FH
-	7F9OnI/i4LFUMC+r6FdSM3NsFu74RUDFhqzIm8c59jeW8A+DWlz0ia2X2BFqGriRigQvrRxA/nl
-	4H31l9X1jLhj0YkG5O4sz2jRPL0tZQmUVHnCEjOfCiCYHQedG4CZ+LJOOh15IlZbZ8pdAC+dEaX
-	g11OVaSF4i9Zo9uuObKJZkP2QfYwWkZisr2gz9QeHIjVDHtyLs0I2jA18gc8y8k0i+hlyrHmGVC
-	L9BufEMVdGTNoIMb+vlgZG+bZjDyfSb407WdfJ0kJE4XBr5dNchiM=
-X-Received: by 2002:a05:6808:670b:b0:4d6:9283:1df2 with SMTP id 5614622812f47-5683cdd6dd5mr1430636b6e.61.1794296699815;
-        Mon, 09 Nov 2026 23:44:59 -0800 (PST)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-5690504fdb5sm1522804b6e.3.2026.11.09.23.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 23:44:59 -0800 (PST)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Tue, 10 Nov 2026 00:44:39 -0700
-Subject: [PATCH v2 36/58] mtd: rawnand: renesas: retain open-handle state
- on removal
+        d=1e100.net; s=20260707; t=1794297475; x=1794902275;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Bh9PLp3fsMYJMJTRrDf+gKXw1r5bvWitb4XoPWpFjfU=;
+        b=c2XTQHj7ZGvCqa4/B1EQgmprpaUAtaGrzMhqGDGdDU3tUSREz+rEYrQ7sf3ArutIc/
+         x+qHtck1+ypo6NcMvJgvWAJHrH/hcwnslyiNMEswq53LnxCUzb5z94xcuamYhm6ftGqF
+         ClK2kqPyaAU+oE+L3EM2EI/ZXsMIATiR1Uqbs0QZHzrkouSaT9jWpCDo/AnUO0cmCG9I
+         CoTL3HtlehDoqwbnZ8Rt4HwbCO0jQ+JxINAd4mkmcHUKeF7ESfkakWEdTWvH++L5nBqY
+         ocB5IibIBNg1ZCoglreWF41LYIFVzGpnXqyosvx4SkWmfS30ibBKBfU3iwYpzdKnZKKt
+         6qJQ==
+X-Forwarded-Encrypted: i=1; AL+hErGVi0DDBXipZgyKHksSQHOMM08IPjCO5GsnUZn3WYzsm90s5LMiO0Ibm6rpCdwKleU5L4Bqs1QJxAOXWUO+Jg6Eew==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8c5e50/hqDYgk7aml0Bbme5eouyl/Ytg6GFgeKfCHsOIV6ncRa
+	F+mpjFZUIPIHxF4//WQrnV39+WJ0g5tVksliAcN2yPmVgi7NAAWEVz2JBA5mYUzvLSU=
+X-Gm-Gg: AYBFou28I/U8/yP2Vanu32SrEChBtrM86BSNA+5vVRvjVAf0MnWsWK9P1hlMzsTmK+s
+	DylfqIT0QoHNMZBMuZunE4uqJztMEa5bj6V+99tY0BQ/Bw5MHLvR2DCkfNhyBNLLre5yf4C1tGf
+	4shoxuCVhhqe/gKeFNWbkdbz20QcguSaMqhmfPvRuOoheqlEGKWyD/w9+Vw4b3YLuIf9y8X7z4g
+	re5Z492CDgKTQFgylI1S+Uqo7tK3URqWxw/OlqqU+FR2xRkslZQVoetUydPYCGrFqwkmWLyVPcd
+	qeE/VRt1/SoZroOJ/y3q/QofmSyrAQUp7mivEly0JEvl3VrD35F2mbG0CI3d/V21pC8HyJY+ZhS
+	zgp6zT+jGq5RtTGROi2F7FNR5rTEfgAxpa5O3Ij+ya+vG3/dV6vrEnSXR93fg2LhkrYJFYUk5S+
+	dtYr2rEC5RfUDlhvBjkl/AZ+7D6eGaXc4qswUK2s4BQw9EG7+QYQT4hpTEmCAa9S7+JrHOEjvYB
+	iB0lMjTEqiHwJC3CjA+JOUzXS4ogq4BmUmFlqyoD8INsgQlPxfrh+bGXM/ZGB687g/5sFk7xoKi
+	h1LhznQ7/nESvfIUoAcGjOUC8LJrvNmmeiK1wI7ygn8Se4c9DYzNwY2TTsEImfRTiFY=
+X-Received: by 2002:a05:6102:1622:b0:7bd:b263:14c8 with SMTP id ada2fe7eead31-7d301c2dd9amr487345137.30.1794297475268;
+        Mon, 09 Nov 2026 23:57:55 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99c2003b37csm1401833241.6.2026.11.09.23.57.51
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Nov 2026 23:57:53 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-7d2dbc0a8d4so616471137.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Nov 2026 23:57:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHA+WSxXezdMs9E8DJhDMXJl3Ha4N5+sW0mAUurqzNC0lODc7bfAYELdsAYYw7d0Zw5HtUtZr+Op1YiKW6l1jR7dw==@vger.kernel.org
+X-Received: by 2002:a05:6102:4190:b0:7c3:2b19:6266 with SMTP id
+ ada2fe7eead31-7d301bfd9b1mr443049137.22.1794297471476; Mon, 09 Nov 2026
+ 23:57:51 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -94,162 +80,46 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261110-submit-rawnand-retained-handle-lifetime-v1-v2-36-9137d08f05df@gmail.com>
-References: <20261110-submit-rawnand-retained-handle-lifetime-v1-v2-0-9137d08f05df@gmail.com>
-In-Reply-To: <20261110-submit-rawnand-retained-handle-lifetime-v1-v2-0-9137d08f05df@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- James Hilliard <james.hilliard1@gmail.com>, 
- linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.15.2
+References: <20261109-i2c-remove-dont-use-autosuspend-v1-0-49a08b8daf36@kernel.org>
+ <20261109-i2c-remove-dont-use-autosuspend-v1-4-49a08b8daf36@kernel.org>
+In-Reply-To: <20261109-i2c-remove-dont-use-autosuspend-v1-4-49a08b8daf36@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Nov 2026 08:57:40 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV-2XT7Npksv2om+ZRxOAQJfc92VpLD4sPeoj8AgKUU=w@mail.gmail.com>
+X-Gm-Features: AclHuK9JsEgh5r73zJDHAyGi1UgY8FApv7iweIjEvmBZD0LvfpJpCmquM1eWYd8
+Message-ID: <CAMuHMdV-2XT7Npksv2om+ZRxOAQJfc92VpLD4sPeoj8AgKUU=w@mail.gmail.com>
+Subject: Re: [PATCH 4/6] i2c: riic: remove redundant pm_runtime_dont_use_autosuspend()
+ calls
+To: Joshua Crofts <crofts@kernel.org>
+Cc: Michal Simek <michal.simek@amd.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Oleksij Rempel <o.rempel@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Chris Brandt <chris.brandt@renesas.com>, 
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 
-Keep chip metadata and controller storage alive until the final MTD
-reference is released. Unregister and disconnect each published chip
-before releasing the resources used by its hardware operations.
+On Mon, 9 Nov 2026 at 21:51, Joshua Crofts <crofts@kernel.org> wrote:
+> Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosuspend() on reinit()"),
+> driver core is now responsible for undoing any
+> pm_runtime_use_autosuspend() calls on driver exit.
+>
+> Remove the redundant function calls.
+>
+> Signed-off-by: Joshua Crofts <crofts@kernel.org>
 
-Disconnect all chips before dropping runtime PM and transfer buffers.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
----
- drivers/mtd/nand/raw/renesas-nand-controller.c | 45 +++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 12 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/mtd/nand/raw/renesas-nand-controller.c b/drivers/mtd/nand/raw/renesas-nand-controller.c
-index 201dd62b9990..a8d9e701d7d7 100644
---- a/drivers/mtd/nand/raw/renesas-nand-controller.c
-+++ b/drivers/mtd/nand/raw/renesas-nand-controller.c
-@@ -1201,6 +1201,11 @@ static int rnandc_alloc_dma_buf(struct rnandc *rnandc,
- 	return 0;
- }
- 
-+static void rnandc_chip_release(struct nand_chip *chip)
-+{
-+	kfree(container_of(chip, struct rnand_chip, chip));
-+}
-+
- static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- {
- 	struct rnand_chip *rnand;
-@@ -1217,8 +1222,7 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 	}
- 
- 	/* Alloc the driver's NAND chip structure */
--	rnand = devm_kzalloc(rnandc->dev, struct_size(rnand, sels, nsels),
--			     GFP_KERNEL);
-+	rnand = kzalloc(struct_size(rnand, sels, nsels), GFP_KERNEL);
- 	if (!rnand)
- 		return -ENOMEM;
- 
-@@ -1229,17 +1233,19 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 		ret = of_property_read_u32_index(np, "reg", i, &cs);
- 		if (ret) {
- 			dev_err(rnandc->dev, "Incomplete reg property (%d)\n", ret);
--			return ret;
-+			goto free_chip;
- 		}
- 
- 		if (cs >= RNANDC_CS_NUM) {
- 			dev_err(rnandc->dev, "Invalid reg property (%d)\n", cs);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_chip;
- 		}
- 
- 		if (test_and_set_bit(cs, &rnandc->assigned_cs)) {
- 			dev_err(rnandc->dev, "CS %d already assigned\n", cs);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_chip;
- 		}
- 
- 		/*
-@@ -1257,23 +1263,29 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 	mtd->dev.parent = rnandc->dev;
- 	if (!mtd->name) {
- 		dev_err(rnandc->dev, "Missing MTD label\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto free_chip;
- 	}
- 
- 	ret = nand_scan(chip, rnand->nsels);
- 	if (ret) {
- 		dev_err(rnandc->dev, "Failed to scan the NAND chip (%d)\n", ret);
--		return ret;
-+		goto free_chip;
- 	}
- 
- 	ret = rnandc_alloc_dma_buf(rnandc, mtd);
- 	if (ret)
- 		goto cleanup_nand;
- 
-+	ret = nand_set_release(chip, rnandc_chip_release);
-+	if (ret)
-+		goto cleanup_nand;
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret) {
- 		dev_err(rnandc->dev, "Failed to register MTD device (%d)\n", ret);
--		goto cleanup_nand;
-+		nand_disconnect(chip);
-+		mtd_put_master(mtd);
-+		return ret;
- 	}
- 
- 	list_add_tail(&rnand->node, &rnandc->chips);
-@@ -1282,7 +1294,8 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 
- cleanup_nand:
- 	nand_cleanup(chip);
--
-+free_chip:
-+	kfree(rnand);
- 	return ret;
- }
- 
-@@ -1296,8 +1309,9 @@ static void rnandc_chips_cleanup(struct rnandc *rnandc)
- 		chip = &entry->chip;
- 		ret = mtd_device_unregister(nand_to_mtd(chip));
- 		WARN_ON(ret);
--		nand_cleanup(chip);
-+		nand_disconnect(chip);
- 		list_del(&entry->node);
-+		mtd_put_master(nand_to_mtd(chip));
- 	}
- }
- 
-@@ -1316,18 +1330,25 @@ static int rnandc_chips_init(struct rnandc *rnandc)
- 	return 0;
- }
- 
-+static void rnandc_release(struct nand_controller *controller)
-+{
-+	kfree(container_of(controller, struct rnandc, controller));
-+}
-+
- static int rnandc_probe(struct platform_device *pdev)
- {
- 	struct rnandc *rnandc;
- 	struct clk *eclk;
- 	int irq, ret;
- 
--	rnandc = devm_kzalloc(&pdev->dev, sizeof(*rnandc), GFP_KERNEL);
-+	rnandc = kzalloc_obj(*rnandc);
- 	if (!rnandc)
- 		return -ENOMEM;
-+	ret = devm_nand_controller_init(&pdev->dev, &rnandc->controller, rnandc_release);
-+	if (ret)
-+		return ret;
- 
- 	rnandc->dev = &pdev->dev;
--	nand_controller_init(&rnandc->controller);
- 	rnandc->controller.ops = &rnandc_ops;
- 	INIT_LIST_HEAD(&rnandc->chips);
- 	init_completion(&rnandc->complete);
+                        Geert
 
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
