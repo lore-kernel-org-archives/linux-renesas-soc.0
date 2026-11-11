@@ -1,111 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794395246;
-	b=Wpa5VhQmbCS4lohibJQ7B2q0L3eQuI2ABLr8S2F8h0vCMVQ7pIJmBX24oAZnEcJdYnUs
-	 LVwFdXlwDZNSksUym3k1cjvc72nhcYB7W9+quMunSkgHJpzS+uZ/D6hOnePweC1c6Nh+1
-	 RpuecP7EEh2lJvnHMJ48LruKeK6iv6C9oTKFo7y+a54zXQjEf+atPUEZriscrjpLaFZmD
-	 kpqu1CV1oXnOH3ZHcEreyvv4YxQzQFodU1GEIyRolIi0NpFgEYALlv7U8HTYu0DF68yIe
-	 jtXn4TUAst3n4woXchSarWHLyj8aocXGc/FLnjmtwvfF89JGNAAbekNfAXgIURXeDBg==
+	t=1794395383;
+	b=KDNAdtbNW11GubBjeqS+iW1vbsHENxfm8rpLLXTQsePywd8X5r7L3qzeeQ6nRM0RLTqo
+	 mk6CJGs+UakDdu79L4d37hzk60ek2/P+GFw2NmoWfZ2UKR+uaWri0y/yrjCDL0VY6eEHJ
+	 9hLbiFnU0edfF1sj94FJvgP9Vu/X/Os2C4QJabgMnRCsU4a/W70n2egKe9JC3HE6BtOYF
+	 OdgSPPyFf3U48NpwJAmDf1ZkdZiitygPfZyizdVOGFQUwrdeyCJeTlLV2FOxD1FuPbKJh
+	 9MT3GAOKl742ZKxSXlVsCTmXgcdtDgF/fbLFN7zFoaeucwDJNCnlP3X8kyqB8gF/2wA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794395246;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
-	 X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=n7jE022UMmN+ZLB+al6dQVRyXDSvEj4PVxUiWuWub7w=;
-	b=tzjt9N9BHFXUFvwzzai0kWaDxT3ygU4YVz/aMAnXF/Y6CEUjwaSrLNzpD2l5MT8Tm8Mn
-	 kSMYuTVGOJdLSr4B3yDBFKYO/G4aXAlZKX+yteAxOPazbvFAgzwoT6BWKqByXR00x3Ynr
-	 4x3UmdorPYriZUb/fUHOtXnKr2MBwfvqIeaVHBAC7RaDGeC/5IQ5v8Ck1wG4JONDCRWKh
-	 R94D9D4joSjHizbCNdY7wgwjsHHyoZ2o5m6W5iBU1B1cbWwXeDi1YlvUj+U2aXp9WMIIj
-	 jMJLiRCJmKgipL7DpKAtjfAmPt9mfwJtzvLbL2P3Sb0S0cz1QQ2aygiJzW/5ERV5rkg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794395383;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=yn5y2q3JJulnHdFFu2RjD/z39f48yWR7C6Zxb/M775M=;
+	b=kEdibbviYluyhZYhVHtwMbxtJYPDY4LGOve5rsfZE36wX1EXhZS5PVml/z1hZaIYzkqe
+	 U6yFWAgKMMU4dNLaswOcOskMWfvXT5UFruVxDqAJL/jFDP9A5C7ZrBwFq2Iu9wb+Lcx9a
+	 J2nK5QNCzz5qgjQQLCw+N9p1BjID7dvlYvS5TZyJ8q43hTuF5Y1+MHpPbTHh+c9TX9p7J
+	 H953VyUUzMrObXMLiqlODS9Axs2kc1+G6eDyBnV64FRVymclGLDAT5QtvRUclXV9hcvOs
+	 Yz6RI9d9IIG+nf+i3d0qnROiu75Vwy0/bQkGi3Msj0r1fxXhOiO7znFkSnJjynzwpMQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
+	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KV5BJQEa;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	arc=none smtp.remote-ip=209.85.222.46
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE02606A8AB
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 11:07:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4DE02606A8AB
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F05606A331
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 11:09:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 70F05606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KV5BJQEa
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so30661995e9.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 03:07:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794395245; x=1795000045; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=n7jE022UMmN+ZLB+al6dQVRyXDSvEj4PVxUiWuWub7w=;
-        b=KV5BJQEaU4htQDaRkbnxr7DuDzj4kgGeEfhToTDv1CrTxoIOjCIvWU3RBgL9h7DIgL
-         O6wMLLwkNiBHGmNNJu7Tyy8SwnIl62SQ+7IKS6P6JBf6PoR9tWJptCpon2bwWsWqshKD
-         y7JxqYFHyvdoC85pKBsbHEIVXnvHa7S8iQVQ4G6ofsFRtRgVYmQ1jLkhd7XmzWlgVq18
-         LFznO4HsikwwUcUedN+JvAlG1eU++1ioINed2uxEzcVV1uQcsWLBDemePUSTN3ecXts2
-         cIQfkjI28RD63/5CulQjxKYwgHxd6gcIoULHhGSq7T/TOvB5okJernHgXYLtXyfl9yHd
-         YCIg==
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-990a39ba4fbso758374241.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 03:09:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794395245; x=1795000045;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=n7jE022UMmN+ZLB+al6dQVRyXDSvEj4PVxUiWuWub7w=;
-        b=cwwMFyOd3Z7NaVh1mhYPA1LtV4cRcW8mT23n3xYESYp+AGvKdZsVb40R5wSLI4fTKm
-         hP+JTS5eEDVPNR3v06Y/Koc5cwTTlU2KDvzWqUVuqC3xaeGRoD0x/1t7yWLELbqYQyLf
-         xnXZ+fl3KAS7RNDDArZH5jErrMGl5rF+o69FGOHxwJi2M61OvRshnVhvw/mC/Ut+UTMf
-         kQpuP3+rtnsJfh2M+NO9Cw53EQyHy/AuTEgqPg1BIglE4dN1eT6sS0KqatUilOTEnWrx
-         kj9sIceo54e9HLcKMiJUeOkHDdYDx1maSkImxva5QTbV+XLECX4v9DAleXZXIX27sypI
-         9GlA==
-X-Gm-Message-State: APuU4Z+Mbi+6icEQc0CVrEo3wiU6VDbOyjZes9RmgcnI4YCw9NZK4CUz
-	cdKxMPQC5CYEZcyBnIoeTHB3RoPLM2O2fZBeJx9Nvjxazpt3XwsxNJDV
-X-Gm-Gg: AYBFou0CxaoFspzT23toEkPniHMtDiQmiZPTAABQ7rwo9nJ750x/e4/PY34ALJcNZkV
-	OQ2d8AaUSGi7UKjQNzXzGcsjLlPqvotdZdbIyl6XoY8ZVHsOENsIxFGqSQVJchJY73UQRybbwfS
-	/MwCdgkybu/YSu2JXnxMqxDjQjHW77Rt9mIL048z8z2YMdXxfj80kxvEhNvsQikOmMAQ9aji7e7
-	P+1l7cMBXsoLTpqo508HtVyWnKnWZazD8SnaOsMq0XVaPoGTDBiHdQyIxJzgjGMunWJDKLGafdm
-	OQxmptlqB7EwBe+IT9g6bWrALXJRZ53OhfvparBEqajJW/zb9TAQNJv/UIX1MQABHDGOBIoUi+/
-	gXF56vkBMaRoBiYGajU8dU4633LqB/zT24Gf4SNzrTcEHYuSmeYrEzk+4XqH/y1xUJBFnC/MpCU
-	QghJqn14BzYVWVnkI8pnqYZ8nYEfL8hxotlMOJ57LZUjg2AcDHEtaxD4oYAFvwWkO8v2oiNGd4c
-	xeAdjT0S/BUfu2At7OXvo6ukRfsEhJjSoq0UtdH9qiXXfUQu0IarJYVP8dediermIPQwTs2IaG+
-	2N8LC9pgsL0ARtLHaXmrpeHu2+8ggoQWNGC19/ZozhMbrYocetvxrTlFsZYwW8qi+YNpWeBe6Ag
-	uZm6UwgdBuyGJArbTfIdx32aIDpt6J+upXsJeAq8mzTHOVr63bA3fkFxrGDCuNFtFa6zrqndjuF
-	bJcbAWCrzy
-X-Received: by 2002:a05:600c:4f10:b0:4b6:267a:dd6e with SMTP id 5b1f17b1804b1-4ba093c53e1mr41140325e9.28.1794395244647;
-        Wed, 11 Nov 2026 03:07:24 -0800 (PST)
-Received: from iku.example.org ([2a00:23c8:254f:fd01:783d:786e:fe55:f40d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba0203a6b0sm146727295e9.5.2026.11.11.03.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 03:07:24 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v9 4/4] arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
-Date: Wed, 11 Nov 2026 11:07:00 +0000
-Message-ID: <20261111110700.3331225-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.56.1
-In-Reply-To: <20261111110700.3331225-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261111110700.3331225-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20260707; t=1794395382; x=1795000182;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=yn5y2q3JJulnHdFFu2RjD/z39f48yWR7C6Zxb/M775M=;
+        b=LIjL+GFppA3x+aJ/aMHwtg11VS9MPVyUcqvgGreu9BpufK8SWpQbdpFe/JQXqbKfYm
+         vgghAce9gwP/zeK6nOlv44LvAicoluo1yFKyD3UovF9yNxXrxiHMIP+HnEJ4yfGI6idI
+         rPA8ZOA1eQIq2jVCWrKNmdqQ69jTpM3C/EXxt72ECU6iZeIwzQ+EZC45Xx9qQqU88QID
+         rIPfaWvpcriQ6p4Cb0Oi4D4CcPsd+IXEQQbpk9hFjNBNF3K0mw1b42WtS0NXvSnKmD4i
+         hz/ocPr7tlNSPNErL9+8gyVyxkgxvLNlirbePRaCNJuIEXkzmxDvCe8eR7+1n4GYD5i/
+         JiXw==
+X-Forwarded-Encrypted: i=1; AL+hErFUfRs0ntR+wY2zusOP6Iy/jW6tDcsinGkAjQXXp/tG6OgZydHlpWzIGfZEwDH97cbkJhyMM7we0x424O/gbT9ctA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+EUligTbHn+EyQkwerz4BsARovIkJOzBFbFKWworpUyi+nHqZt
+	rZDdr9dq1OWPJplWyrIPjfGTOH9JMia43YwgqHkjBw4f5qPQ28pcrhFPK05CxHFOeS8=
+X-Gm-Gg: AYBFou3GRN7b59PqDunZE8AAyj+hlGEo/VVXBjHnSXL+9MjEq261NdjpJaJA03b5y2U
+	/egbFgCshLm/Ov8Yec6bZQaEyiqGMegPvQJ2MUwzC9q8hxgeB8vmGE8gHxV59OpzxJdXo33w6uY
+	Qx+zm8q1q1LMPXLfmqzgyKssnIi5F5Z6VsiJc3GQXxuoBZG7tHRLrsKe15U+aYtClheh2/zLuVj
+	0JFJTtO0GnTJlgYLkmrQuilZTTTvf8bDQ/CJNaXG8pAaZz+ImWddf3gvWX3nsGmXH76xcxLF6yl
+	b+qgdQ2ZpCk5FGLXOefC1MxWaMt4vP66SyorcdNefh+alespZP+XPpfnw4otveRDmH8w9P6e7DT
+	XJ6pRL3/HT+VuzKhqFC7uNKIVpV6VgB8giOpevzkktCl2hPLw7O31CLxBE/tGp16enZZGNcmgsg
+	1Ge0dHjoflXCwUdNjnCJToTDp0exPPgu6gB2gmKWYoMQVttJClbwyiFnvZm7VLvhxt7hFvpqVNn
+	bX/VXiH01m5DaUPXZBt++h23AxcC5cY2XqM+qPYo0ZVikgRNR0LPrNcN+Q/uzEhZpM+ZzhOowTi
+	QKUzVViWULno3NBE4NJzThMPJ3PEqiE2rFUfCAhsgF5EuLvycxtRZvnD6e8gBzZR/QM=
+X-Received: by 2002:a05:6102:3e89:b0:7cc:2cef:b341 with SMTP id ada2fe7eead31-7d4ee1e4fc0mr439545137.4.1794395382205;
+        Wed, 11 Nov 2026 03:09:42 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99c1fffe63asm3589867241.4.2026.11.11.03.09.34
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Nov 2026 03:09:36 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-7cc91ddf447so1207780137.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 03:09:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFvGOTcUPshuFUNjzS0ihtLPZVYmmnlo9LNQcS8eYCZD1zAD5VbLGk6ZU6OPjJ86CKoo9bkOzkYIE5PAyO7eBCJxg==@vger.kernel.org
+X-Received: by 2002:a05:6102:d8e:b0:7c8:1fd5:82b5 with SMTP id
+ ada2fe7eead31-7d4fb291ba2mr478980137.14.1794395373576; Wed, 11 Nov 2026
+ 03:09:33 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -115,127 +81,89 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
+ <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-1-1b2072e8c37e@ideasonboard.com>
+ <20261110-steady-kangaroo-of-mastery-5fcd7f@quoll> <179438844820.272237.18262716067322018404@neptunite.rasen.tech>
+ <e179b228-3f18-4b99-9c54-93699d13e63b@kernel.org>
+In-Reply-To: <e179b228-3f18-4b99-9c54-93699d13e63b@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Nov 2026 12:09:22 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXQOMX2GXnBpH=onofFp1w+TyZPNc3RWjM1pDbpLTG1fA@mail.gmail.com>
+X-Gm-Features: AclHuK-p812fgpXzcAZTo074hP5s29t5onlgPposQZBLZQWezlnyhodp5CVCArI
+Message-ID: <CAMuHMdXQOMX2GXnBpH=onofFp1w+TyZPNc3RWjM1pDbpLTG1fA@mail.gmail.com>
+Subject: Re: [PATCH v4 01/13] dt-bindings: clock: renesas,r8a78000-cpg: Add CPG_SGDn_VIO_DP_{TX,OTHER}
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Paul Elder <paul.elder@ideasonboard.com>, 
+	Paul Elder <paul.elder+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, 11 Nov 2026 at 10:16, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 11/11/2026 10:14, Paul Elder wrote:
+> > Quoting Krzysztof Kozlowski (2026-11-10 18:30:50)
+> >> On Mon, Nov 09, 2026 at 10:34:22PM +0900, Paul Elder wrote:
+> >>> Add the CPG_SGDn_VIO_DP_TX and CPG_SGDn_VIO_DP_OTHER clocks that are
+> >>> used by FCPV, VSP, VCON, and DPTX cores.
+> >>>
+> >>> It should be noted that there is likely a discrepancy regarding the
+> >>> clocks. In practice it ought not to be an issue as all the clocks der=
+ive
+> >>> from the same SGD1_VIO_MAIN clock and none of them are programmable o=
+r
+> >>> gateable.
+> >>>
+> >>> According to the datasheet, the FCPV[BID] and VSPD cores use
+> >>> SGD*_VIO_DP_TX=CF=86 while the VSP[BI] cores use SGD*_VIO_DP_OTHER=CF=
+=86.
+> >>> However, educated guessing suggests that IP cores in the same pipelin=
+e
+> >>> should be using the same clocks:
+> >>> - FCPV[BI] -> VSP[BI]:                  SGD*_VIO_DP_OTHER=CF=86
+> >>> - FCPVD -> VSPD -> VCON -> DPTX:        SGD*_VIO_DP_TX=CF=86
+> >>>
+> >>> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+> >>>
+> >>> ---
+> >>> Changes in v4:
+> >>> - Add all the clocks
+> >>> - remove DNI
+> >>
+> >> What is DNI?
+> >
+> > Do not integrate. Most of the patches here were DNI in previous version=
+s
+> > because they depended on a lot of downstream things, but now those depe=
+ndencies
+> > are in the process of upstreaming so these can graduate from DNI status=
+.
+>
+> Upstream clock indices ABI does not depend on downstream at all, so
+> seeing this unmergeable is just confusing.
 
-The WDTDCR registers for wdt0-wdt5 reside in the second register region of
-the CPG/MSSR block. This multi-function block is now exposed via a unified
-syscon regmap interface.
+In case of the clock indices, "work in progress" would be a better
+wording than "downstream": multiple patch series are adding indices
+in parallel, so some of them may need to be renumbered. Just like when
+adding syscalls.
 
-Replace the direct mapping of the individual WDTDCR registers with the
-new "renesas,sysc" phandle property pointing to the CPG/MSSR block syscon
-node.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v8->v9:
-- No change
+                        Geert
 
-v7->v8:
-- No change
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-v6->v7:
-- No change
-
-v5->v6:
-- No change
-
-v4->v5:
-- Added review-by tag.
-
-v3->v4:
-- No change
-
-v2->v3:
-- Renamed the "renesas,sys" property to "renesas,sysc"
-- Updated commit message
-
-v1->v2:
-- No change.
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 24 +++++++++++-----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 243b851cc0f1..9056df917a2e 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -327,61 +327,61 @@ channel1 {
- 
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082000 0 0x400>,
--			      <0 0x81295100 0 0x04>;
-+			reg = <0 0x80082000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 0>;
- 			status = "disabled";
- 		};
- 
- 		wdt1: watchdog@80082400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082400 0 0x400>,
--			      <0 0x81295104 0 0x04>;
-+			reg = <0 0x80082400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 1>;
- 			status = "disabled";
- 		};
- 
- 		wdt2: watchdog@80082800 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082800 0 0x400>,
--			      <0 0x81295108 0 0x04>;
-+			reg = <0 0x80082800 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 2>;
- 			status = "disabled";
- 		};
- 
- 		wdt3: watchdog@80082c00 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082c00 0 0x400>,
--			      <0 0x8129510c 0 0x04>;
-+			reg = <0 0x80082c00 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 3>;
- 			status = "disabled";
- 		};
- 
- 		wdt4: watchdog@80083000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083000 0 0x400>,
--			      <0 0x81295110 0 0x04>;
-+			reg = <0 0x80083000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 4>;
- 			status = "disabled";
- 		};
- 
- 		wdt5: watchdog@80083400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083400 0 0x400>,
--			      <0 0x81295114 0 0x04>;
-+			reg = <0 0x80083400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 5>;
- 			status = "disabled";
- 		};
- 
--- 
-2.56.1
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
