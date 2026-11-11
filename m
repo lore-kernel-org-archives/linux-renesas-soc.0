@@ -1,67 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794397717;
-	b=nwznMg4JgZRnlPDRE+PkEdRHUAvsW+F16oUbYri3vn0OHrzsmGRVSZjtQ4KLjEuBE3Xg
-	 m7vgD0KRFM/sGB+7ypKoshgPfPqUDnXXA/+V8tpZgEc8hpigHBIhQ5FMOHxc6JzthGt2b
-	 7yc0OaOKyESDjHz/1u1aF+huujFjyOPXbS/qiM8KLs00gZJv1lnPVmcGA9Qg5dxN9xrC7
-	 ZyQGKAplnflVr1Fpd6c/jsisJrEx097IWlzT17Fo4kqqK/95g3W7CVOVfiaDTAr9K1Fnd
-	 KJLW5ac+WIb1w0t8YkKTUXWniy3HuvKfMoi93U9QJgm1klzQDJvqMsJU8r9BTkHXNRQ==
+	t=1794398083;
+	b=hHV/i8h3NojLF2dHk9/NNkglYlgwQlNF8XqiO5cqJAuEz36Lw/8Dzi9iJ4jy09mGaCDu
+	 5AzOOiKzv48M4TuQ68rll31TXKF70uPn9gTaXkQjxer3SFJGzJFpTLft3rbyYmErBN3ao
+	 O/05mODmX2v3PZpRJ8aC8ZbsJfYY+UeJHNzwJJJbEJZqenyR7oks8W9B/87cyTSrcqvhs
+	 VC6Tor5QlN1AuT+Am9MtB0KiPX+sT8lMF1F7i8eXF7lHKn+FZ8mqra/b3guEmsL1SbNJH
+	 GciGL+csEcFm19QkGAx8+aaHi94IEJJb4maTsFfUOMbw+FbYOvQIapg/ThaU4P3t08Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794397717;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794398083;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=CY7wMtMqvjq9EHixuVLhnrITTo0ITK/tiq+5GxWmBNk=;
-	b=j32WUo/E6QgAztsdtTkoCvb2aDQ4x8vvmYt7nrlnDjAUBQ5TE0KSIwNmZJmk7nfJT3CJ
-	 98LBfG+YbwZJvkwqFFjZnfmuyON2LKNexp4DVVACOLcNQHJkxxlI9qfhYdVYfOqizYtNA
-	 +13BGNjiy7jnL+FiohVOtFI2T45eCV6DsyUy+7+1W7u3iATXMzmxIFZYJLYv7YSaRQECQ
-	 dBINHAFDvej1i7b3yY5sn85VhFUW2fnWScTAW7hYcHgzhvozYiymmqYCK0MvTiZ+M44uS
-	 AOlBx1rdptMdkiGu5bOkm5YFgsWIxYXLdIEiVYVP+ZDHIC42GUys1Bp05oSIvCIeanQ==
+	bh=bk/xtUL0TQa1hkGHi57+F0vnkupo2qPX6iYJ2SnqDe4=;
+	b=3X9gMgg9s2iJn7CwlRVL6wbFdZiyglq51ztKaXUjoQZCO70tmICeZ6AfLCVYYDJIDqbg
+	 eTaz/l80xPB2+vS+mdbKm8Uly6aeqpdsjOYS+RNXkR43SaQNTnDzlZUsnr80ylDDrpmre
+	 ioTUg6MvcTuxiukkC0TeUrCQiZFQiFOfnje4u9ssNZ8lOKxovNtxBwxhcL1GeQM74FPQH
+	 QMZduXBIP2wRmWqtWIoGMiUqZ4R4jVHjBvYd2hVc4kSJQBhiCz2I0TBcwc3S8sPxjdrmf
+	 k0kqvxofatD+HyHcAebzsD+uvUZXBydiza7bfUjdMKMI+X5XGwxZvbGKgfxUWqv05xg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=JG5z7lvi;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=khnIYuOL;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB689606A326
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 11:48:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB689606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480C5606A33E
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 11:54:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 480C5606A33E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=JG5z7lvi
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=khnIYuOL
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=CY7w
-	MtMqvjq9EHixuVLhnrITTo0ITK/tiq+5GxWmBNk=; b=JG5z7lvimNrZx0mVLYWX
-	Y/hRCe4vE08yRzmZooYP5BVrsXBlTIVBCVTPMUThB+EiNu3cFH5QIAWbGKMUC064
-	lfyev7DOU2igxxI1PsXfF1IFJ1SGuovoEq2rBXEBmb+H/KRfiqDjIBjpvD4N114/
-	qIXiwIrajtPQm1UAlGN+P+pQBwU9CBB8teED/hhQRJKizk3XdrxpIzz3k73aSTzP
-	6EKMvDQislrw6QSfxhW3O4biFsHQChx+GtvjRGQsYBLVRW7Hu9QQf7bScpBBqQTf
-	v1sQ7nEaewtTGvK2M3u2Cb4yxN+Drq55/ShQM9chiR/8jqVkrghEtQFvcERqiov0
-	Nw==
-Received: (qmail 597096 invoked from network); 11 Nov 2026 12:48:33 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2026 12:48:33 +0100
-X-UD-Smtp-Session: l3s3148p1@TrFJxv5f3Ioujnun
-Date: Wed, 11 Nov 2026 12:48:33 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=bk/x
+	tUL0TQa1hkGHi57+F0vnkupo2qPX6iYJ2SnqDe4=; b=khnIYuOLGFscxVwD2A2f
+	Pikm3TGugPqReJTjPxxakdZ/vMxwRm0e24O3jzg+Y8IVMJUuZ9otGGzPmDn0xgDi
+	ZWXNJ717x9IHhh7F2v4qAdVKxcH5h3w0ZFUNfXyWy/CcxhwaQB3LGg43rAnnP8zW
+	bPHP88yr5UK7bDYDTSAKCh799LNYkKbrPd9vvZXGnbFKs24j441Ri0al+ZLjA60H
+	sd4JKKk8LIGr/5hFNrzdNrJukUUgUFaLHXI1sNFsOcC0erynx/Q6paPZSsJEb18z
+	nqy1MN+/IFAla5ELrJFgwRVi//R+D1TalBrTke2mVpsasBtT/wiMnPP5Fu8zpJmB
+	9A==
+Received: (qmail 598728 invoked from network); 11 Nov 2026 12:54:40 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2026 12:54:40 +0100
+X-UD-Smtp-Session: l3s3148p1@Mi0k3P5f8Lsujnun
+Date: Wed, 11 Nov 2026 12:54:39 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Biju Das <biju.das.au@gmail.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: BeaCox <0xbeac@gmail.com>
+Cc: Ulf Hansson <ulfh@kernel.org>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v25 00/11] Add Renesas RZ/G3L SD/eMMC support
-Message-ID: <avRWDN43k3LcFVRa@ninjato>
-References: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [RFC PATCH] mmc: tmio: disable dma_issue work before releasing
+ DMA
+Message-ID: <avRXf6SJuXxslsbx@ninjato>
+References: <20261101063739.89331-1-0xbeac@gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -71,63 +68,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A8I0l+X9w89eWS8f"
-Content-Disposition: inline
-In-Reply-To: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
-
---A8I0l+X9w89eWS8f
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20261101063739.89331-1-0xbeac@gmail.com>
 
-On Wed, Oct 28, 2026 at 12:51:17PM +0000, Biju Das wrote:
-> Hi All,
->=20
-> The Renesas RZ/G3L SoC has:
->=20
-> Channel 0 supports SD and eMMC (including HS400/HS400ES).
-> Channel 1 supports SD and eMMC (except for HS400).
-> Channel 2 supports SD.
->=20
-> The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
-> not support IOVS and PWEN in the SDHI register (no internal regulator),
-> unlike SD1 and SD2. It has an internal divider for all modes except HS400.
-> It also has a 2048-bit divider compared to 512 on others. Moreover
-> RZ/G3L supports HS400 enhanced strobe mode.
->=20
-> This patch series support all modes except HS400. HS400 support will be
-> added later.
->=20
-> This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
-> rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
+On Sun, Nov 01, 2026 at 02:37:39PM +0800, BeaCox wrote:
+> tmio_mmc_host_remove() drains done and delayed_reset_work, but leaves
+> dma_issue pending or running when it releases the DMA resources. Its
+> backend callback accesses the host, controller registers and DMA state.
+> 
+> Disable dma_issue synchronously before releasing DMA. This also rejects
+> late queue attempts from an interrupt handler that is still running;
+> cancel_work_sync() alone does not provide that guarantee.
+> 
+> Some DMA backends fall back to PIO before initializing dma_issue. Move
+> their work initialization ahead of the fallible setup so the work is
+> always initialized when a DMA backend is present. Skip the disable call
+> when no DMA backend is configured.
+> 
+> The analysis, patch and validation were assisted by OpenAI Codex.
+> 
+> Fixes: 85683fb39d9b ("mmc: sdhi: Convert from tasklet to BH workqueue")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: BeaCox <0xbeac@gmail.com>
 
-Tested with a Renesas Salvator-XS board (R-Car M3N). I don't see bugs or
-performance regressions. I think the series is good to go!
+Real name, please.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Thank you!
-
-
---A8I0l+X9w89eWS8f
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmr0VgwACgkQFA3kzBSg
-KbbhKg//WgV01398alqqFtiGlZ6zl9AbafPAbhuQ+yMTZS8WnX6z9Dq3f4jW2WRP
-1O/VtUbduz0PZCw65b2UvGZxeEfO04heW+HfKWlCFUrZtmqSmJ5XHCo3Fb26+cYo
-+D+fe+arXT1zRdLKQOTzeCk8tJz8UNKBZjpqJLLjoT5l1O+PJgr93YusJ+KlV4JR
-EarER4dx2dusqyblPigbqRJO2RBQ0c1UVj2981HpCh6sSJ/LOk5vbus4S6GL2SIp
-6+eevkHM2Z6DM00L86CNtAdWVW8A4EEhZMa1ui0yLCbaDz51k3WG4GRvoj9wBLfL
-hKZgSNc7W07WAOvVtizVpZvqoEUIFevewZMnjtdY5lg2OAQxISgMfCEIy/dRd4jJ
-QOJoGD5ZCTTYS5C1X4g4RPrOaxVlxKq8xSQIaNToXPd9klXPZr9VniGtp7f5QKEw
-5vEw16bdb/OTAtNv/jHJ4p+K2gd60Rz8hDq0JufFzORO2RCF8fpk14auNM+yogSk
-I9BlPtrpeaEot4QbQ79I5Lb2IWX3r7cISc/Ae/Bs77NgU7AM3QksnONy9ACl8aqj
-w1z8Pr14rEFLpsxMqTvgmbrtYYGHU9baZ4tqDZvGPoRjQxZZai2T7cYfykbxI1oO
-EDlt4JcK4UWnkMlGTGD3ETbZnJq36IaRvZpRYJ9/n5I3iAzHtzk=
-=3Hq2
------END PGP SIGNATURE-----
-
---A8I0l+X9w89eWS8f--
