@@ -1,102 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794396782;
-	b=V+MfP1uXZCb/bf+5Mn4tBGMkVd1SsF0u06RWEo5c82pRBT5JjTSEyneO616e/XnzvjRd
-	 Z/aZUD21bIJ+MZFCnhwwg15MML0KPvzafnb7gf0Gabyl5ECbPYzzvfo25Wo0M4ebeCJ03
-	 RNCESQpsC6VRZU5f85J0zzWhzBzkK5Ni7bExb+ExMdYBU9OiRir9yNim5xPKew+0NbNZ8
-	 4HbCRMlQq+F7bbzWSzOpM1/XPAh8nUcpVjJXohkLeswzQ3ljHnTcUXHdN2BlplVkcPBbr
-	 jQH1D5z1LIP1lxpUTvVZpy1Eb92e7pEBtRCuXT0uFxC6N9F/ao9lHi2qkcdg+mZBBeg==
+	t=1794397717;
+	b=nwznMg4JgZRnlPDRE+PkEdRHUAvsW+F16oUbYri3vn0OHrzsmGRVSZjtQ4KLjEuBE3Xg
+	 m7vgD0KRFM/sGB+7ypKoshgPfPqUDnXXA/+V8tpZgEc8hpigHBIhQ5FMOHxc6JzthGt2b
+	 7yc0OaOKyESDjHz/1u1aF+huujFjyOPXbS/qiM8KLs00gZJv1lnPVmcGA9Qg5dxN9xrC7
+	 ZyQGKAplnflVr1Fpd6c/jsisJrEx097IWlzT17Fo4kqqK/95g3W7CVOVfiaDTAr9K1Fnd
+	 KJLW5ac+WIb1w0t8YkKTUXWniy3HuvKfMoi93U9QJgm1klzQDJvqMsJU8r9BTkHXNRQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794396782;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=iCl816dJjsFMtzXM34P9Bj/aT+Q38xCsbIh0P58fbE4=;
-	b=Sm4Yw4pyc/1n1ej46mqcYSJxZUHXZ/wIKalrA/N7KiryeqIXL5UAoivFlgOpzf5iFfMt
-	 LFOzHwJ11nEo7f5YH7+Qc2qTcr1BHQ8MS4ZjQ086azmYDA6CE7IX6+DVjTllJWIPp9hWn
-	 z+03Yb4H0kYPmQQRw4C8ctWmK2tostlA36wZj0vIUF9RL7pSbP8W1LnKXBtZryOTLCbRb
-	 88ImaS8I3N+usDdzGRJoN8jjDTlS0CVb5zoR8QYmFk6wKcbj8JWTaxfwhUNRlMUv24rVB
-	 SCwdTiBsKx3mxT9rG6LXvKZ0Pmr8AN581hyNeUO0MO5aEx+Es5Ycnx0qjJAWAZQnJKA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794397717;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=CY7wMtMqvjq9EHixuVLhnrITTo0ITK/tiq+5GxWmBNk=;
+	b=j32WUo/E6QgAztsdtTkoCvb2aDQ4x8vvmYt7nrlnDjAUBQ5TE0KSIwNmZJmk7nfJT3CJ
+	 98LBfG+YbwZJvkwqFFjZnfmuyON2LKNexp4DVVACOLcNQHJkxxlI9qfhYdVYfOqizYtNA
+	 +13BGNjiy7jnL+FiohVOtFI2T45eCV6DsyUy+7+1W7u3iATXMzmxIFZYJLYv7YSaRQECQ
+	 dBINHAFDvej1i7b3yY5sn85VhFUW2fnWScTAW7hYcHgzhvozYiymmqYCK0MvTiZ+M44uS
+	 AOlBx1rdptMdkiGu5bOkm5YFgsWIxYXLdIEiVYVP+ZDHIC42GUys1Bp05oSIvCIeanQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DSpjBAa3;
-	arc=none smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=JG5z7lvi;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5860D606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 11:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5860D606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB689606A326
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 11:48:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB689606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DSpjBAa3
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a214af2076so22686515e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 03:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794396781; x=1795001581; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=iCl816dJjsFMtzXM34P9Bj/aT+Q38xCsbIh0P58fbE4=;
-        b=DSpjBAa3fHgs5xi6TYeBkieQIBksFiFWXzU1BAwPYTdAavDx7l9vzIKN4wcOfJ3got
-         K+aKHIEvDj4wB++gAH/BNC9bfSADGedR8M+CaxpF1B41UEbuLyWxgyuNzBZj3q4hclf9
-         mB+H3+O0yLkRQNtchJTzvRckAIhYM/PVhDIdeC3LJjtRIrsCBdkdsKvtzCfdrMMLSUSJ
-         epjLGvKKbkTqO+L+iNCKZiZTOUX2veLsfeXsPYUTtk9pOb4wrZY8NlDhuYpEGIPc+1ry
-         imJKI5XeHKMPBZJziUut4GWUH9OLoVvHOIKPevcZycDpIUErfm+vx8kwd3/5uPppMOoq
-         /aCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794396781; x=1795001581;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=iCl816dJjsFMtzXM34P9Bj/aT+Q38xCsbIh0P58fbE4=;
-        b=RSMfcKMyB0sfQqmFRWWtwUEmbS2+OriZ2KsFNDZc24wfKUXxpTnr8dSqSZ4Q1SE5XR
-         d0J+qUX9ZNmhsrxJfbdcx/pzsg4U7F15pQtNusEWqeeQT/4CLxFXlcwEGEd5jp4JIYHg
-         4T6OnQFpsUV8jjwhLiD3twxTFEh0XFAdi9U1r0mLCM6UfT8BTL42PQ8iGB9yUCM5brYj
-         oVgXFmOGdFKFMkWqwBOM5oVE3do548Frx+BqaikUg/OAyAaGZSVYVO3g7r+cUToad4M/
-         6xanl8hcC+flLMQe6K3VmnOkmlKv/cdrMpVdK59NuF9BFkomDnKjPeixGOcP3EZ/Smla
-         Sq2A==
-X-Forwarded-Encrypted: i=1; AL+hErGD4csP9jhHeasp0qo1jmCC91EXV2sM8jV3HXkSANZtzIt8ANIx44aI2eH7dusy6I4YONWJkBgv5MwikfBs6SYPBw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9YaFsF0RYEXr2Hz7ccb27TrmnrzpTx5yciX1C81m8keuynBaR7
-	7gtGhCv4+8ArT56wcVt2JyeX4l5L7cRpPOKQOYvUIAoJ4GSkBbyUjKwb
-X-Gm-Gg: AYBFou3zkH/3sa8GY9cMDsb43h2O7GcDezcV7Y2nX2pfimfEMrECM43XmDOau6XUdkw
-	lDfVy9etIMIOT+z8zWcQAND/dvN8V5Ux/jezVKfY75rlV3EbPoRKTBLl2DlE3nQZgDSYuqIY0eN
-	zeOy+cQqqcHYELAGTj9pia1lvNUSxSqKdibutdmFBGXmOCuzxmnShGFMKTs3MxON4dcY+K2R823
-	h/XAkIpqF2zGEOmF0/IlaKYF+ZSxhD15KDykJybRMW5RL9Rt23wTd1loeVrS9ElBqwEYejXDCsw
-	zjN6yRe+NsZc90QWqzjdd/Z737Q5erP5OWiXfbO0yhHwbc5e5WgSvu8u+VgVyk6IgWnz+DBgI24
-	yDV1+6uBePj6gmzd2n2hy2Oj9z/EFsj8SduAFgHUSGbD87VYgVPUEbF/38sfUcF6m7h0RNfYwPf
-	FieqgF/Bgoc0ZXpOZFGuo8amux/xa+96ut+Rh21g8kMzP8U6iUmdzTSFk1IDJK8syYQ0Jyg+JEg
-	8EaaAF30L0OHLQxSrLiQJBeOWNRAp6m2M++a2GqNxL0oCLhirNxndKrpKHWkGt5zYurQrdx10+Q
-	t95/J1qGqW6XyJjXf9yEKOzMaFhMZGNvmdx3tG4vi6DE3KJ5fmL7bAoXvMJ8IbSKmR88BNwLK3E
-	7U0FG6ysjwZB1y+48OjuJPCpfy1Alo4aeYUZtapJWtATij/UT67+/nYxtHyPlV93I4/0xf6UjCm
-	X22eDfesfA
-X-Received: by 2002:a05:600c:83cf:b0:4a2:191f:7cbd with SMTP id 5b1f17b1804b1-4ba0935cc7fmr37812795e9.11.1794396780617;
-        Wed, 11 Nov 2026 03:33:00 -0800 (PST)
-Received: from iku.example.org ([2a00:23c8:254f:fd01:783d:786e:fe55:f40d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba01fe9357sm159274795e9.9.2026.11.11.03.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 03:33:00 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=JG5z7lvi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=CY7w
+	MtMqvjq9EHixuVLhnrITTo0ITK/tiq+5GxWmBNk=; b=JG5z7lvimNrZx0mVLYWX
+	Y/hRCe4vE08yRzmZooYP5BVrsXBlTIVBCVTPMUThB+EiNu3cFH5QIAWbGKMUC064
+	lfyev7DOU2igxxI1PsXfF1IFJ1SGuovoEq2rBXEBmb+H/KRfiqDjIBjpvD4N114/
+	qIXiwIrajtPQm1UAlGN+P+pQBwU9CBB8teED/hhQRJKizk3XdrxpIzz3k73aSTzP
+	6EKMvDQislrw6QSfxhW3O4biFsHQChx+GtvjRGQsYBLVRW7Hu9QQf7bScpBBqQTf
+	v1sQ7nEaewtTGvK2M3u2Cb4yxN+Drq55/ShQM9chiR/8jqVkrghEtQFvcERqiov0
+	Nw==
+Received: (qmail 597096 invoked from network); 11 Nov 2026 12:48:33 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2026 12:48:33 +0100
+X-UD-Smtp-Session: l3s3148p1@TrFJxv5f3Ioujnun
+Date: Wed, 11 Nov 2026 12:48:33 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Biju Das <biju.das.au@gmail.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4] drm: renesas: rzg2l_mipi_dsi: Remove redundant driver data assignment
-Date: Wed, 11 Nov 2026 11:32:59 +0000
-Message-ID: <20261111113259.3334619-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.56.1
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v25 00/11] Add Renesas RZ/G3L SD/eMMC support
+Message-ID: <avRWDN43k3LcFVRa@ninjato>
+References: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -106,42 +71,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A8I0l+X9w89eWS8f"
+Content-Disposition: inline
+In-Reply-To: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
 
-From: John Madieu <john.madieu.xa@bp.renesas.com>
+--A8I0l+X9w89eWS8f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-rzg2l_mipi_dsi_probe() calls platform_set_drvdata() twice with the same
-arguments: once immediately after devm_drm_bridge_alloc() succeeds and
-again after the DCS buffer has been allocated.
+On Wed, Oct 28, 2026 at 12:51:17PM +0000, Biju Das wrote:
+> Hi All,
+>=20
+> The Renesas RZ/G3L SoC has:
+>=20
+> Channel 0 supports SD and eMMC (including HS400/HS400ES).
+> Channel 1 supports SD and eMMC (except for HS400).
+> Channel 2 supports SD.
+>=20
+> The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
+> not support IOVS and PWEN in the SDHI register (no internal regulator),
+> unlike SD1 and SD2. It has an internal divider for all modes except HS400.
+> It also has a 2048-bit divider compared to 512 on others. Moreover
+> RZ/G3L supports HS400 enhanced strobe mode.
+>=20
+> This patch series support all modes except HS400. HS400 support will be
+> added later.
+>=20
+> This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
+> rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
 
-Drop the first call and keep the second one, as it is closer to where the
-platform data is actually used.
+Tested with a Renesas Salvator-XS board (R-Car M3N). I don't see bugs or
+performance regressions. I think the series is good to go!
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v3->v4:
- - Updated commit message
- - Dropped the first driver data assignment in rzg2l_mipi_dsi_probe()
- v3: https://lore.kernel.org/all/20261110114622.229608-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
- v2: https://lore.kernel.org/all/20260501080818.955914-1-john.madieu.xa@bp.renesas.com/
- v1: https://lore.kernel.org/all/20260425022857.2382603-1-john.madieu.xa@bp.renesas.com/
- ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 1 -
- 1 file changed, 1 deletion(-)
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 5b257f5adf06..65f26f889a67 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -1532,7 +1532,6 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
- 	if (IS_ERR(dsi))
- 		return PTR_ERR(dsi);
- 
--	platform_set_drvdata(pdev, dsi);
- 	dsi->dev = &pdev->dev;
- 
- 	dsi->info = of_device_get_match_data(&pdev->dev);
--- 
-2.56.1
+Thank you!
 
+
+--A8I0l+X9w89eWS8f
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmr0VgwACgkQFA3kzBSg
+KbbhKg//WgV01398alqqFtiGlZ6zl9AbafPAbhuQ+yMTZS8WnX6z9Dq3f4jW2WRP
+1O/VtUbduz0PZCw65b2UvGZxeEfO04heW+HfKWlCFUrZtmqSmJ5XHCo3Fb26+cYo
++D+fe+arXT1zRdLKQOTzeCk8tJz8UNKBZjpqJLLjoT5l1O+PJgr93YusJ+KlV4JR
+EarER4dx2dusqyblPigbqRJO2RBQ0c1UVj2981HpCh6sSJ/LOk5vbus4S6GL2SIp
+6+eevkHM2Z6DM00L86CNtAdWVW8A4EEhZMa1ui0yLCbaDz51k3WG4GRvoj9wBLfL
+hKZgSNc7W07WAOvVtizVpZvqoEUIFevewZMnjtdY5lg2OAQxISgMfCEIy/dRd4jJ
+QOJoGD5ZCTTYS5C1X4g4RPrOaxVlxKq8xSQIaNToXPd9klXPZr9VniGtp7f5QKEw
+5vEw16bdb/OTAtNv/jHJ4p+K2gd60Rz8hDq0JufFzORO2RCF8fpk14auNM+yogSk
+I9BlPtrpeaEot4QbQ79I5Lb2IWX3r7cISc/Ae/Bs77NgU7AM3QksnONy9ACl8aqj
+w1z8Pr14rEFLpsxMqTvgmbrtYYGHU9baZ4tqDZvGPoRjQxZZai2T7cYfykbxI1oO
+EDlt4JcK4UWnkMlGTGD3ETbZnJq36IaRvZpRYJ9/n5I3iAzHtzk=
+=3Hq2
+-----END PGP SIGNATURE-----
+
+--A8I0l+X9w89eWS8f--
