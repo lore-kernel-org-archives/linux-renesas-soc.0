@@ -1,111 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794405302;
-	b=K/teAzk1rD+pl7UvBRLJxtz8GuHI6nXBIJ/qEALzJd6cSSZ2UfByi/w3UX9PM0lbWtcj
-	 HmPcQ51OoNydO+eaxhDbaqu2uL3k7nvLpyGOnwx9CwLJ7+PADW2h/Lc9OPhewRwvpVQ7h
-	 +IwKcsJn0o9kFfMloiYprqvG+1RXKNq9H20SM5zymQ5FQJVcug2gb84c2z/vGwtttHXp5
-	 ML0DbUz1QE73hI+dNn/jvkkjobhYerHdRD8B541kpfd9QmMuybowI8O8PAwNF4RNg1NWy
-	 fOh1L2qkXUZkzl6I/l3t14xjtn3us0CDtlZcdxrnCFdoA2i3Q2EjGc/YeCzbOwMA7JQ==
+	t=1794405328;
+	b=QRHXBbVls+nzLZOQ7ScMf6TEM7K9zxy9Srcl5KdDmbRmphgRVbF3T/Uo3PXqlV7MfFsG
+	 NIzP3/GtzJW72niFhBeazBsJMPM5KiROmdEnvSiP6GiXtXs+npRMday4lh+KqcAcJdkKI
+	 jLIOpDVSq3zcP6MTsNQbmR9qavVlh6Npw9ffhDhhSxdmbdpZ6cS3lklA6flUcxNyhonH3
+	 c4OWhdP2X6cD4+K9wMey5GsYXnk5hlqtE6yz88HI2GFLdUqlJ29AjaO2lWeHrR8H+prIm
+	 LY/aS7z1/8MQ1ZxRAquvpRCFsUdDRX78R52Ya6loqt0ITiclQ+ISDyhoBvngAPP3FVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794405302;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=VpAH/0mUJUkWVy1SXpnGYdECeWaz3fWTw17UYKA398Y=;
-	b=POhEZH9vN5r1vvB63hPr+n2nhsVxDSYKJz1wqDcwb8h0mkrIgKuJh/XEP5wHwWS4cj+7
-	 MgMJ8aE2F8OuGjbWfUlPEG1JV8WJFCkaR+CPUCGBjG2lntYwr/SPEmJMAA+9sPZxGXIYS
-	 l02c23nolpa8NMYaLSwfkqFpL56GVGPjtIsXlDeky+jfzDE1sGLhkRPtJprhrP3cymr8z
-	 pYeeek57wwCSKwGHKg3BLQ+U36GNDlCJnqkvexWRk0iuJmGZW/O3lIdWdW1EMBNrYdviQ
-	 i41pWJWdFiC0OPP9ADiFI4blo4K+uflWBOjs3tfpFXKSG6/j0EMrdAlAYqYSUyab8mA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794405328;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=ddCUeiN3E1ZZymg8J04D9Ehoo5C6Buvuv4KFxnyLfl0=;
+	b=uXWt/EGQabiASaCw88H9CEH0qy/TKdatnUzgJDp11NiLZ/lApp7xbYwyItx/oIDqWdyX
+	 eyyeVyIn64ZMgNO4elegoIMhgMH94xrnn1W2sDKLGaGEeyJeADAaZVCm21HFPGVIzlNPX
+	 hP1Q6oPlGxBQcN4XsPxyZZvUtetdHxOAB/Oo7CGqYbiuhcPKbX9asJ9MndJ8c1hMRf8Pg
+	 dA68jEFDo+D5x1k6WoheFtxmUyDYbqibJIJ5fpQypw/3y6bZ98HLSsLhKqnL6ZTnM/8gA
+	 /UuMaMDrAAWc0SMb6MTo26yYw60oAHfAXt3KwqRr7Uiut8XtB+SkvMBzn7KUR60lEHw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=kVyG+dO8;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=INsB0tuu;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H01VzIsw;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9EB606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 13:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD9EB606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6906E606A31C;
+	Wed, 11 Nov 2026 13:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=kVyG+dO8;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=INsB0tuu
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABCYuf62356419
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 13:55:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VpAH/0mUJUkWVy1SXpnGYdECeWaz3fWTw17UYKA398Y=; b=kVyG+dO8zANLoad/
-	wQzD1VvOMsR5njVZRsBUAwr1vGCA+k1kx2rll10semchFO+6p06x2v6hw2XJbuCi
-	diz9X8+HNoZpyuReAW57RdbkJcxDD0h27gVlSzcLKSa8fMDztQcZoha2DgXHJTGa
-	wDz1IPHcQwWep6bpuI7VEDihm9deUngM6uxwM5HZ7QRwfsOmKUW+/dmYtZo7cmR+
-	hoOYlZYrz1KalQs9VTuhI+Fi27Q+Yg71QDkPjxPIZ5No/MB8TvGpM8qQl+xzWyZ5
-	fIqgAqGZihkbHZ5beE6FOr3ST5xApgQJcml7GzbF5viuYPQc/rfKEjc9p8s7Afto
-	gelvmQ==
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hvgjdj2x1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 13:55:01 +0000 (GMT)
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-99063f4065eso1033212241.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 05:55:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794405300; x=1795010100; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=VpAH/0mUJUkWVy1SXpnGYdECeWaz3fWTw17UYKA398Y=;
-        b=INsB0tuu7o7leLOp06wb8UvSl2tznoIEaTg/FRT/XY6/EeFBtBikngmzc6G0Ly0Np6
-         DfTOApPCSMSZu/sA6bqeULTaxGWCnhmWRtXKrrfC/p0dxamDYYKU1vqDFMY8yIEESH0W
-         zG5mteZdKYPa7Fn15773zSioJvcWdhJYuopcm9i/Ow8r+XQNv+TKL19UVvDk6gV4wmSp
-         GV1h1BPOncxrhNVFM53plvEipqtYgCx+HT+PjAMaiGsfeBh5kt5lqpuOlEIFVMg4HWbt
-         Pr14ISSVtuIJ/QUzKfP5fylJ2VYJ3/YFljMfVkbA3VbE91t0nTQfXrjQDu8m0NHEwbLr
-         AdAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794405300; x=1795010100;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=VpAH/0mUJUkWVy1SXpnGYdECeWaz3fWTw17UYKA398Y=;
-        b=f8yk8hKUCBcTSTIkRxOW30jHd8BNpbcuqR+8QRf5kgECbJReK/waek2NQuvPFak7oA
-         vy0DmlBc35nDonXFjpRb0X52BbC4baRLxbaTyPtSpZHVBbcAd8GFnNYZmwKOlyOYEt8g
-         FAN+uarsV+PgfAbZtOMTiBD0HJS3X/XuDuqBHfXV3jM+OBOyCdgUbXz1DwUt7CySHEOu
-         LD7NJ77R7i3aZbCLPppAyNPEQAihcOzd+ra+bsZumBQj9B85GFc276vdFxS0vFcVF09i
-         IaGWAX/v2WK6NM3lT08IXv5JPSMBRTb6Nr1Kim2DXxJ9D5oAPix9L+innyP7oyUmZGRQ
-         dA2g==
-X-Forwarded-Encrypted: i=1; AL+hErHs1lHnWhq7zQ18sbeeA6OssLYNbfu3/6LXWuNprsGreh/EFLVED5ub9MlkTXBoZxXTxdXRs8l+LTRx/VVKDD15TA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8q2MUsTFdKTX9s+mZ/Z6UtLppwvaCM6A/KJUQaDN7zO8TtF7Yw
-	XgFLFji1XRZ3WYJkgMrZB5T8yIvwv87bKT93101Htr/qST8fjsbzTEV3LSOYA9d5nYBLKX+YPT3
-	Z4zg5Opztr9BaSG7h49hb0pFMstfIMXX1jgcJ6pRXCOPQoqyInikRWtGSLlI5ydO4Fhi1iV7WaA
-	==
-X-Gm-Gg: AYBFou2OhCO0/H2Ifzkpjpk4Ea8FWLCvw9EI0nta3f5rQV6uvnmsi1CVyLGdu460qiW
-	iZ2eZTh5r+neDzDSReVcAOF3Z1XDQZ5lD7EDp+3UtB/Yz9aObXY5IiuKJFTcwtIMBKgF2OrWFJi
-	FvrHjujoB+BWv3qyGVTGeagxY2G55c9UMMyl5KrTo9NpcK7ln0XKHk7KDMImwPM6u87VtmwFklX
-	J6/Bll01ytnLPCsluE4VXki/pvUKK93mQXrZV68WSemn1oYi+5vw/Z7ngDJtKKEwYoiMsYxyJq8
-	1pX0XmpcMHmubEU0mlK/KVpuGu/+Mi8TXl10KDuqlu2U8ucROOBEvraRQBMtoqBeFF/ShZmXYP5
-	VkaNU64d8UAM8fsNM9u/bHxlyEkCitzuH3mhBBUVS080pOu6Smccdm2BaoJhK+cUL5gzUnaexhe
-	0=
-X-Received: by 2002:a05:6102:3fa7:b0:7d2:7dcd:7c99 with SMTP id ada2fe7eead31-7d4fb22fca9mr601637137.7.1794405299716;
-        Wed, 11 Nov 2026 05:54:59 -0800 (PST)
-X-Received: by 2002:a05:6102:3fa7:b0:7d2:7dcd:7c99 with SMTP id ada2fe7eead31-7d4fb22fca9mr601610137.7.1794405299222;
-        Wed, 11 Nov 2026 05:54:59 -0800 (PST)
-Received: from [192.168.1.110] ([178.197.218.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba01fe2c5asm217004135e9.5.2026.11.11.05.54.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2026 05:54:58 -0800 (PST)
-Message-ID: <8a557bae-42ae-42bd-a149-cf854b7af9d5@oss.qualcomm.com>
-Date: Wed, 11 Nov 2026 14:54:54 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H01VzIsw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7194D1F00A06;
+	Wed, 11 Nov 2026 13:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794405327;
+	bh=ddCUeiN3E1ZZymg8J04D9Ehoo5C6Buvuv4KFxnyLfl0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=H01VzIswK3JJSNRKc+p58OHa2otZ/NkOzlEw537v4yIRU6L3mh4GwYplZ+QrHn9q8
+	 AcQm9Fj74s9B1s2NmzWraQbZyTNa/6ySuWu6CuqetG03q/8jp83/AhgFH3aCGOpMjI
+	 rzqwz0H1Y2vnN+JnuVfngMJVfMRvbVN5BjQifdQwfGCWm+POzZwqBvT4aLe3y+rX+p
+	 cn99+YqsEGcbi3ioJgjSwFqrx956J9X4JQp0+SKlX1I2SUFS0AelXPjtO0OCEEaf+Z
+	 Z6FVZjYFGftSMkX8QFB9IEaywrwW7oBHdfXc2/vEjdmY94UdSn9zt+drHrdkyGivE/
+	 LjuEqrzdYMPkQ==
+Message-ID: <85acc16c-01e7-46a4-af68-3d6f24fe90c1@kernel.org>
+Date: Wed, 11 Nov 2026 15:55:21 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -116,132 +52,62 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: display: panel: Make DSI panels port
- optional
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Joel Selvaraj <jo@jsfamily.in>,
-        Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Cristian Cozzolino <cristian_ci@protonmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Ryan Brue <ryanbrue.dev@gmail.com>,
-        Nickolay Goppen <setotau@mainlining.org>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Alexander Koskovich
- <akoskovich@pm.me>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        Barnabas Czeman <barnabas.czeman@mainlining.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Arpit Saini <arpit.saini@oss.qualcomm.com>,
-        Michael Walle
- <mwalle@kernel.org>,
-        Ritesh Kumar <quic_riteshk@quicinc.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Svyatoslav Ryhel
- <clamor95@gmail.com>,
-        Danila Tikhonov <danila@mainlining.org>,
-        Jens Reidel <adrian@travitia.xyz>,
-        Michael Srba <Michael.Srba@seznam.cz>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Alexander Baransky <sanyapilot496@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Romain TISSERAND <romain.tisserand@gmail.com>
-References: <20261111110338.81717-2-krzysztof.kozlowski@oss.qualcomm.com>
- <avRM_GhtR8vMdTO4@houat>
- <c8dea6ad-ce41-44d2-96ab-233b0a4b1340@oss.qualcomm.com>
- <43373a9e-9ff3-4641-b961-b63f4de21cb9@oss.qualcomm.com>
- <oubzclitudtqiv64wvg5lvxvbhuffxmc5bgbsdz4ou24pfhbb4@decarhvjzl2a>
- <0f2c0eae-ed05-41a2-8688-e4b6fe1b7ff3@oss.qualcomm.com>
- <avRy_D6MTK5u01_9@houat>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v7 00/14] PCI: rzg3s-host: Add PCIe hotplug support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, p.zabel@pengutronix.de,
+ geert+renesas@glider.be, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
+ <atphAmy8ZIjY_JNC@ninjato> <f1df2818-be5c-4019-a86f-4e782a70d3fb@kernel.org>
+ <avOBDu8XaZ-kZIsF@ninjato>
 Content-Language: en-US
-In-Reply-To: <avRy_D6MTK5u01_9@houat>
-Content-Type: text/plain; charset=UTF-8
+From: Claudiu Beznea <claudiu.beznea@kernel.org>
+In-Reply-To: <avOBDu8XaZ-kZIsF@ninjato>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=E7tYNqdl c=1 sm=1 tr=0 ts=6af473b5 cx=c_pps
- a=ULNsgckmlI/WJG3HAyAuOQ==:117 a=uyPgTw0bjBTS2cVxpiNm5w==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=24t1FKQVs-zwlIjxmd8A:9 a=QEXdDO2ut3YA:10 a=1WsBpfsz9X-RYQiigVTh:22
-X-Proofpoint-ORIG-GUID: u5Yiq8wvT6fu4vnGgPSz_VLbx4WYIZYR
-X-Proofpoint-GUID: u5Yiq8wvT6fu4vnGgPSz_VLbx4WYIZYR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDA1NSBTYWx0ZWRfX+itoglX5njrk
- E7GumVU8JOSJNTDTwZqF/prsqftExfmz2ncgoDbBy1gTmtfmJIo1G1/3+ijZZGQLVg/QguXsGMY
- jpDrnEd99Wwc9cX3DkFx1KqGZO7R3JpGf6k4myt5R5zBVSTJynL/kCu++tjPGTQNpT4rHU2xy3P
- BepLrLPXmpMkmy5obq9FxUEs9oivft9kqXyn63VOxTVOm9gVdSSojEm8zR8NuQox5r7MP5nc2sP
- EjbnkDWWUR91OzjEcnjFBAaYPUFgAEL8hMlqu++dFg8gyUnwFAgWNvV+SAUJ7hUKWpGIrmEXZgk
- dhYcy4Uxpzsak5yOK7YN8Fd3j9LhZ0rfkZ2Qph9NLGOKtkSrYWY2l0QRaPJsZDx9hcxxTZnW+WO
- kq7Isgyd/cwOSDlgy5koNQlsxW8wTpjyEgLYTwbxjVaX2/zsXXeGNV+IVn6m3zqZNF91X8GG09W
- 3LgXglLqmVs1i+PvFmw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDA1NSBTYWx0ZWRfXy3JpR69/PiRF
- ak7b1J/3y7zyehpSiidGqnm61BLstLxhC0IP2iFk+NVgMaKdgr4BKPc8p8vtlTKNythpTm+4JJh
- REX+jq/1yRCFCxm/xm7dZo8MEzQr1GQ=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-11_02,2026-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- malwarescore=0 clxscore=1015 bulkscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611110055
 
-On 11/11/2026 14:52, Maxime Ripard wrote:
-> On Wed, Nov 11, 2026 at 01:44:23PM +0100, Krzysztof Kozlowski wrote:
->> On 11/11/2026 13:37, Dmitry Baryshkov wrote:
->>> On Wed, Nov 11, 2026 at 01:31:39PM +0100, Krzysztof Kozlowski wrote:
->>>> On 11/11/2026 13:30, Krzysztof Kozlowski wrote:
->>>>> On 11/11/2026 12:13, Maxime Ripard wrote:
->>>>>> On Wed, Nov 11, 2026 at 12:03:39PM +0100, Krzysztof Kozlowski wrote:
->>>>>>> DSI panels can be placed under DSI bus directly and many Linux DRM
->>>>>>> drivers will work fine with it: mipi_dsi_host_register() adds device for
->>>>>>> such panel and DRM driver does not use OF graph to configure lanes.
->>>>>>
->>>>>> That's not true. We do use the endpoints to configure the lanes through
->>>>>> the data-lanes property. See drm_of_get_data_lanes*
->>>>>
->>>>> Some drivers use endpoints, some not. As discussed on other thread,
->>>>> there are more than which do not.
->>>>
->>>> "there are more than one which do not."
->>>
->>> Which means that those should be fixed. We have legacy cases where the
->>> drivers assumed that, but we should not target legacy.
->>
->> These legacy drivers work fine for 10 or 15 years, like Exynos.
->>
->> You can improve them, for sure, but if no one does that then requiring a
->> graph is a mistake there, from the panel point of view.
+Hi, Wolfram,
+
+On 11/10/26 22:39, Wolfram Sang wrote:
+> Hi Claudiu,
 > 
-> At the very least the commit log needs some work then, because the
-> situation you describe in it is simply wrong, and quite different to the
-> situation you then described.
+> finally, I got around to it...
 
+Thank you for checking this.
 
-Commit msg said:
-"many Linux DRM drivers will work fine with it"
+> 
+>> I currently can't reproduce this on my side. Do you remember if you executed
+>> the below command before your test:
+>>
+>> echo performance > /sys/module/pcie_aspm/parameters/policy
+> 
+> No, I did not and it makes a difference. With the command above, removal
+> also works fine. But leaving it and letting the policy stay "default",
+> removal doesn't work. I don't even see this line:
+> 
+> pcieport 0000:00:00.0: Recovering Root Port due to Link Down
+> 
+> Is this expected? I'd think "default" should work as well?
 
-So many->some? Is this the only problem? What else is not described in
-commit msg?
+What I suspect happens in this particular case is that due to the PCIe link 
+being in a power saving state (when ASPM policy is default), and since the RC 
+don't have native hotplug support, the RC is unable to see something happened 
+with the link and to trigger the link event IRQ. Any subsequent operation that
+gets the link out of a power saving mode should  make the HW aware of something 
+happened at the link level and trigger the link event IRQ as well.
 
+E.g.: if you keep the ASPM policy to default and generate a link up/down event 
+that will not be seen by Linux. A subsequent lspci will trigger it. Steps to 
+check this:
 
-Best regards,
-Krzysztof
+1/ Make sure the link up
+2/ echo default > /sys/module/pcie_aspm/parameters/policy
+3/ trigger link down; at this point Linux should see nothing
+4/ run lspci; at this point link IRQ will be generated and Linux will take the
+    action to remove the PCIe devices
+
+Thank you,
+Claudiu
