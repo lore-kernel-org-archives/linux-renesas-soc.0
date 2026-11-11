@@ -1,160 +1,123 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794400662;
-	b=QriQHb0lJmfKou/YzQ7edY86czncx0fY+QEHoqKn+YQ4fCn/Zly5oPc/hk76pW38xA13
-	 9KcjShr7J2SJUeN1jQhNbf/f3mKjRgMvPBYpmIVcbRLKVG8azws8BnzrktkAcQSn+DJGs
-	 iT1Wqv7eKooatWsrDBMTHKszamh3zyveoyi9W0RYXR9qZ9IjLZ6PJHsk4xiUgJmMvQlhA
-	 WPBE2IKnMH3//TSwU3HOW/hYg889YnPx0eDfPcrWdgySEIOXaKLcahlCWL8UG93XzOm8s
-	 9Q1PC+7g8dqkWrQVxupH8tCK+Jj+8qi7XPGmN/ZBRv3wvfbwsQCbhKES3Pwss+QokIg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794400662;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=205.220.168.131
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794400677;
+	b=I6xRRTCUF0bDwkXJSMgnEKq4gO0mWzqHlKXFzhBmV81qt/P4KguEqLMr1EVycCUlv4zz
+	 L1lpX9Fat3L+lKeT4IZoSA+YMeA/xTPYXeOl3+VDeyKsbIFWo5AvWOSP4dunyXk8njfMO
+	 b+0+uPxG3s3lCbAnCIXCWcJv8pq+lgcpOd2v0867O2cNuQXWVX7i8e1+6xKMHME3jh9//
+	 sY+0RGqj4FpFwDEoErDMPRewvXBkYlXpPf1YODGgv6JAqOc59wCE3cIjRcKrc/wU+olX/
+	 TTkGxPLYGH5PyhtMiK8bePRrSS10tOYnOerdKTGm7MTpVICrCS/IFZMbc5F5T/L5vwA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794400677;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
-	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Authority-Analysis:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:MIME-Version:
+	 References:In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:
+	 Cc:Content-Type:Content-Transfer-Encoding:X-Proofpoint-Spam-Info:
 	 X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
 	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=j7Eov7QCrd5XGLBKc9xY69NQW70wVEQfOB1xyPudY0M=;
-	b=nTvxKtYeb9GeNpFodIqmB3XD5jlJYinlZAPVY+86gHAcdkvrmzxl4Xwyixh5nyoocU0i
-	 4E4qDvnrexNoV8cqkTK/V+/AktZ6s58Z9BHZ0F/EZi5WfyAKyEdzXErNnqybHeTykf2qS
-	 O6jlLee3ynyjw6ZyzPdoBSAX/vxLaDnW3vsR8nr8KHO/7vqKu2yMKPzgYw9iKFkbn4R9A
-	 Pp6xo5sPNkFZ7jZa1wjAYzsqreyd1uSX1OIsf8h0FkZpvlm9FYSRgG9kh/HvTwJFCx5Ei
-	 FXMAex/TcZWBVA1ATd8WFCtzWjafy9ofxqz0qdLjSjAOjdtVozeyGaCWrhO4O39XyPw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	bh=Gul0DZZy2os3Oi+7MpRNBs1ymdpKQ0Ark8+uU45of0k=;
+	b=hqCUQlokiJo3TwVoRL5zg8u6EBUU+UpTCmANpelNRvqvgoukfA5/vb5KtKtgQbCgvVZF
+	 uWhFVj9hLnDNI8cNssD9s+UXlpWK1AbplV6owmLHAUkk0GdCShg6P1kqso/7QQ19yPhY9
+	 93Cp/yNvokjTWxc4gB7uEB8LUlEoi7d/G5/A0h3MfZzjHRPY5GnCQD4wy50VV2492zpJ9
+	 IAdLj+ZK8xf3Si9XTaZg5VqsEYcPxwWYEWWttmjbFR6aumUFz9qaTD0HSi8+jP8oCNFHg
+	 ZneHixpyjf6mjwhMLi6cyUjxndkrxnl/+JdF761TKbNBClb20uMFEgHCohyLV4GnXHA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=YFHZ8li5;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b="TsTa0C/B";
-	arc=none smtp.remote-ip=205.220.168.131
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ObCDNI7m;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=d8SCx8aw;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=205.220.168.131
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6340C606A327
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 12:37:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6340C606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E138606A33A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 12:37:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9E138606A33A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=YFHZ8li5;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=TsTa0C/B
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABCZGTk2357069
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 12:37:40 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ObCDNI7m;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=d8SCx8aw
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABCYufJ1806586
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 12:37:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=j7Eov7QCrd5XGLBKc9xY69NQ
-	W70wVEQfOB1xyPudY0M=; b=YFHZ8li5L4X9140/AZUrRCb8X38ZctH0/QEhSMvb
-	7ODW3rWz/hQ/Km2Q4gsTNJ7uW09FggFfhpmYZiOP74/jEgDG7+sbYk9Ryp8CleEj
-	O4hehlMqkEs8irOFwd8egTprRksuaWKMIA0T3Cf4x1izcl4zpPPaDKhauHG2lxbu
-	opDD9nQtEIHel1L5PsM92NBt+Fitt/2aZ5msIfevKiZoUFVbOvRZL8WSzz2HQgTY
-	4+qgE+TTY1ESp1wwL8qAF6L+GverVjB8WBxTZJyZvog5u4fgvfxdJSqBVfdOs5Vw
-	eTzBwhzaHrWyg2w6Xpq08VyEDHRT52LXsjOPipJ20KKRDg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hvgjdhu3v-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Gul0DZZy2os3Oi+7MpRNBs1ymdpKQ0Ark8+uU45of0k=; b=ObCDNI7mu00vdBlM
+	BdBftEbOXb0MFSAzbf38IabYbXVhCYnZv+YNaCYl7C4Q7AS/dDd5M3CswUF/aHGz
+	OAIQ1Nh/zwCm4VIaM1tK9AidZpylVdpLwsvEkGHcUB6ceKGi/JvBnZ4fqZyQ+Mar
+	iuCNDgxdNDWqL3Fmm3k+67gBLEvrriB5uKBnhPxJ+6rLV1b3mIJxe1Mbf6F5cS0j
+	M424PRdc8UuxPAcrq/2q35bmVPUVqcYr6AlcR7A9kOlxmK+Ip9zCPrJ93BSkSEBp
+	48JKJbHtDL0vSEiX4oRyWJxON+Vu/kFzSqLBAj/dzc5PQhQ5IGHpj7nuEv32lYYH
+	BmRZ0Q==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hvfawj4ud-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 12:37:40 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-91ea0c20af3so59769736d6.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 04:37:40 -0800 (PST)
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 12:37:55 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3ae19907a31so2859642a91.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 04:37:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794400675; cv=none;
+        d=google.com; s=arc-20260327;
+        b=qWX7NSz13j1s6X+nJ5dvf2+dU/5mHj5GuDsZoKjuQg3C7dnhqKQD4Ab0UU+PGLfl+U
+         ElU1ehdbnatpK1q79MKMbOytAfcARjO9MJB9B0nFVLFY40M1DUp9SmTQYthwWMomsRmf
+         uGoG3QmWi2KaXAewBEmpf9mn2SPpco1w7sL0ztKdMYwE+4BXISA0nbTZoqPSF5WrGHlx
+         FyNF0qdRStVNO3EqmYeKtRudJlH/QgXekruhSZXZaLexxvdCjm50JEHVjtM0Dc5yAVb9
+         IqEbUaZTQtsVYFwTCpfL4DYW2e8sG6cRi2ngcMTIe/+U4hhhMBKZYKoIG9nSbnFjl1Ze
+         bA5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Gul0DZZy2os3Oi+7MpRNBs1ymdpKQ0Ark8+uU45of0k=;
+        fh=YynoBAGSyqIXcACBMmUaBwvNxHkl9bZcVsuGiKe+Sos=;
+        b=Ad6WcKt1WkiiMYMxG73/lAHlwjn/6bsMErw+XmMuz1wQMd8a1oYEvOIqYrat1cFnjh
+         ouZQxFmtUhIAidjH131LiQ0TB88YKVCj1A1aRcLtuAfHX3IsKSLAFPjCMh0MRgqZuVaR
+         LTveYp1Qv//aSUD/8SbDqF8vdqzIM+55OgeQiKFPT6RMijo5e2gndeRMDI5bO4hTw0nG
+         NbKl4H2V4/tFUOOrBtM4Z/MZG2sJxCeOT5Put+XOJ4tQ39/ykISummeVRICLCPMLdFMV
+         jpRFFusbcvIGLOOkeRxiv+0i8HcY+sR1Z4E1ZzTCGaLwkfXFIhaqKs9wL38Gqzimfxnx
+         l3mA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794400660; x=1795005460; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=oss.qualcomm.com; s=google; t=1794400675; x=1795005475; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=j7Eov7QCrd5XGLBKc9xY69NQW70wVEQfOB1xyPudY0M=;
-        b=TsTa0C/BgDZvFvGW2TSP0xoIKSR4h6Wbt1D9hhkDhKA+2ugwkGeANRjdnJS0iIUlkN
-         rpMEra6CgfGkVMW35lQxsspZJVQusaQ1bcy2lJbGhJEu8NoqYRKATi3nnPeATbO88BLG
-         OtRS0AflCelqUlvs7UqyxSGpwhbYCUemYWIHhk9l6kIqmJEheFcqxKsO8I13uAC5Zxht
-         SPv/bRAi98UKC+54AbGFZkcx8Xq5XkjsSF4PlTXevRe7SH/bb6sQyqBUnewQsImI6A6w
-         69BWgQgxoz60EvS6+1+kq9+HM16RXLEEBhLxxA3MJSeXtQvRizk43hCI+q0R5igx9ZHX
-         29eA==
+        bh=Gul0DZZy2os3Oi+7MpRNBs1ymdpKQ0Ark8+uU45of0k=;
+        b=d8SCx8aweQlwQ2YxeaMGmjD5J7/IfmK8T+IN5kjZRKgZPojzsT6xY1gEDFdpg6m2/K
+         fLAtMG9oG0JnGrsALGFmjRjj2pBCG+CAKTfzb5eT9i4bS8fNo+EnQEo/gpgF8Tte3CAG
+         hPQ9BSWfMu37R+o854ad0wJSj+2os9GQ2OWKL1JpTBHdJUlw6OYyvX/PJZSi5vwsuTd3
+         yxFQ/kx8iHWfeKbqvUK+Pg0eEVRrpGhTXkrUS07U1q9bYfy0BKtdLrthVEr1CUlue8sz
+         l8IHGRQCU+TxAcXGFd7/1GkSH/TFjVciVgmMd5Y1yCy68aHe8BaOlJTigZ+kCmOgORLR
+         d+tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794400660; x=1795005460;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1794400675; x=1795005475;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=j7Eov7QCrd5XGLBKc9xY69NQW70wVEQfOB1xyPudY0M=;
-        b=ZhriIE1tESePhX9OZWzA1ixbNOnbyNhjqczzJVqbTBhoBhwrlRm4F5Dm9QIdjRi92I
-         W6xtDwlouacQkvUzyPCBnSEeSXnqIejfDxbi20ecXf+kTOKKorL6RkbJ7875XvBv0Mh8
-         Zbvkx5Gy2aBLOZ+8TuF2pRt3lIcxjqnc07Dm8D2g8OJZy/iukhjIaNQZbvNm+eenXsAK
-         VzJizULQmN0UyRcDSO/NPZutH/y2ApKo9jjQLOYb2Fo99UjUAeWhm8a36GOWZeGHHvNz
-         R6FsvAXhynHhWwx8yHA+fUU26rdrH8654DFSUgq0xwF0+hJSn51wyQHQuWKSudIeTxbf
-         By1Q==
-X-Forwarded-Encrypted: i=1; AL+hErGIcENeug6X2Q/7Vzd82KyBnf3ajJjwzbEZ9txw7QZ/DQI3S0eA+cBKrFYywaxNHem1dFJtfrTXZ2bRRJNBH+9XVA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z813Zk6EnDTyx3djIZ3yXMAC/X01DuxFXTjGgg8r/7rtTml6F1y
-	fh9kIXd5JJylimB16op1sZMB8GLN8Xhub0bFDkYCPqqCvvdL9JmUhjcukEuBD/HhvWmffsLsW3g
-	NUkHGfdMVA/UEJjTiBEzIOSmkExspq5jmWi8HNlitcmDD0W+HhFt0SpsfQJtnTxhtmSFu6fIzYQ
-	==
-X-Gm-Gg: AYBFou00Kw8hb3LvCo9mSMedpDCKlLRzOK1f+Q+xQ9Djqqxjh2EBi2/YwmSh/Rblsca
-	6FdnV6euYUI0UTbgxCy8PXuvjKfj8jJ5YfsrAX4MeH/FiyD8sJhzty8oWo1LPT2MN1trw3evMDT
-	Wwn1n+5YG0+4Pmf1Jrs+tM10/mnkT5lzin6qdqrZmbwtojh4StieGzX4J6Ue6OU1f59u5nNkGjA
-	40tV3M3rGk/P3lWiKVrXN0PPNewS+nMhfWcFRY3avWRImeHueEOMBVrZoIDbTSsJfX8AOtpYZjl
-	DBfXn9jHquRIMkPD2CbXSg8Umiq286A/iUhRqWOn8Oap29JArv22rThObIM5qzilb8HCeOAoyOD
-	+JyVSrlrWkBXHhOBU8FJVB4H1X+Ywr6Wp4DuoPaTiB3LUfL4xzXoO5gpqfs806ruOhmIUG1FTfz
-	at7gjf2iIorysUmRQfk9bGQhNN5huSliS3p83JQjBhN9dypdJDiNklXUbB47mJHg==
-X-Received: by 2002:a05:6214:20eb:b0:91c:63a1:1432 with SMTP id 6a1803df08f44-91f03e0068dmr39815006d6.6.1794400659395;
-        Wed, 11 Nov 2026 04:37:39 -0800 (PST)
-X-Received: by 2002:a05:6214:20eb:b0:91c:63a1:1432 with SMTP id 6a1803df08f44-91f03e0068dmr39814136d6.6.1794400658706;
-        Wed, 11 Nov 2026 04:37:38 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ae0928bd0asm10461021fa.36.2026.11.11.04.37.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 04:37:37 -0800 (PST)
-Date: Wed, 11 Nov 2026 14:37:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Joel Selvaraj <jo@jsfamily.in>,
-        Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Cristian Cozzolino <cristian_ci@protonmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Ryan Brue <ryanbrue.dev@gmail.com>,
-        Nickolay Goppen <setotau@mainlining.org>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Alexander Koskovich <akoskovich@pm.me>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        Barnabas Czeman <barnabas.czeman@mainlining.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Arpit Saini <arpit.saini@oss.qualcomm.com>,
-        Michael Walle <mwalle@kernel.org>,
-        Ritesh Kumar <quic_riteshk@quicinc.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Danila Tikhonov <danila@mainlining.org>,
-        Jens Reidel <adrian@travitia.xyz>,
-        Michael Srba <Michael.Srba@seznam.cz>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Alexander Baransky <sanyapilot496@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Romain TISSERAND <romain.tisserand@gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: panel: Make DSI panels port
- optional
-Message-ID: <oubzclitudtqiv64wvg5lvxvbhuffxmc5bgbsdz4ou24pfhbb4@decarhvjzl2a>
-References: <20261111110338.81717-2-krzysztof.kozlowski@oss.qualcomm.com>
- <avRM_GhtR8vMdTO4@houat>
- <c8dea6ad-ce41-44d2-96ab-233b0a4b1340@oss.qualcomm.com>
- <43373a9e-9ff3-4641-b961-b63f4de21cb9@oss.qualcomm.com>
+        bh=Gul0DZZy2os3Oi+7MpRNBs1ymdpKQ0Ark8+uU45of0k=;
+        b=EXtjvwt0OkKqF9zbH24SzGs/MglccowmtiUxci9XR2dCacWl/6JovRTyesCjWj2VNd
+         FzGGpk6EcStvvinZ4XVqFi0IzdJLY6N3Ce5vSHIcL1RVkr5E/XO/GP0amwTSRW+Wndfd
+         pNWjc7Y0onfR9lyM3K2JiYRKmUPfqathPXiRtrsQRrrAY61mtsEuqu7DyS0cijieMsm/
+         hl84IRz3f1yq+ajujx/2ZeZ9WsZRpTVKZ5debOzNIi4ObkkgL3Ni1TVq0Vk/NxppZ4OB
+         V06gO1pF296tKEc+s/s4SpAAmH6W0avGyVSBBdfdyQw7v1exKSdbafMGCz3VHNuhOaqe
+         Ap1g==
+X-Forwarded-Encrypted: i=1; AL+hErHqIWWLf5/mGIwN7dTMxtLA6+2pJZw4sCj5cmT1JNzSd5rYRhR+J5SrDM2+KCHk+fTuNQszRXeO1DT9qFhwoCzgkQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+Z0U7VOGJou2Et9TX8YKv2glL2+RQwG8jGQq86sC0GcY7FJe94
+	H3Qfidp7WbrOCoNI182/7ImKPx19ZUsp9YAvoY5H31lPWtx2gv3ZbmBYMpkQdPcJAh+CQViiwxM
+	SUNY9q5Yy/3gYGEXelQ6HdEvr+DxDGA+iL6i6zkFTwvqszvgegodIHrXbTl7uq2XzEzge1kHMST
+	TTUYp1++OI1Z/NHBnyD94Z6+9RQJmdhFgB8glrIPQNsmxzkmCr
+X-Gm-Gg: AYBFou08QF35wU2HrRfUogBvZH6Nmr0NPdfDfX26Fz2M+9j0qt7dCQGht3Kqe/6XHgt
+	/vVxt+40MTWvQmUHGgL4oP3Ryiu9rkRPy6S25UZnVaEVrut304W0lKWHJoBRuAA6qnthaI8/FID
+	6mejGUGQ4w94sNs7I2fn9qVJF5rO09grGSzeafNyWiJIT0l8RH8uPlmNuhCg==
+X-Received: by 2002:a17:90b:51c3:b0:3ac:9ad9:6afe with SMTP id 98e67ed59e1d1-3b182f9d62dmr1559002a91.39.1794400675202;
+        Wed, 11 Nov 2026 04:37:55 -0800 (PST)
+X-Received: by 2002:a17:90b:51c3:b0:3ac:9ad9:6afe with SMTP id
+ 98e67ed59e1d1-3b182f9d62dmr1558976a91.39.1794400674641; Wed, 11 Nov 2026
+ 04:37:54 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -164,82 +127,118 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43373a9e-9ff3-4641-b961-b63f4de21cb9@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=E7tYNqdl c=1 sm=1 tr=0 ts=6af46194 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=pGLkceISAAAA:8
- a=EUspDBNiAAAA:8 a=1dMmzAFpFYDdDQwHOzYA:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-ORIG-GUID: l7-UDKIlP8_KC7NC0xRCaNJH2mnxZRDC
-X-Proofpoint-GUID: l7-UDKIlP8_KC7NC0xRCaNJH2mnxZRDC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDA1MCBTYWx0ZWRfX3EbKY7TA41z9
- XuFAdG+blbux0gSogvqgd4I5OHIl0NFTnLHEzCL6linK8jFRGFiogaKlDfA2Ievm0UiAOP48USa
- niNjQdBgmvBI6++9s2JWCr7EH6K2oNAFl9SUuqD0Z1uAISsJxdUcjtsONViesvkPctij2GClKXR
- a/+63aFe3kguZW0ZPfftwD4TGTUSq//JEbqWvLFm+wcf+PIRoktqlH8Driso0M2GuWHPH+tVxRg
- t54bgHxUg/z4KA3bIE0Wd3sWUS7s2GoxyqODObp9jApHJS2QNgipu1jWYFfBETQ+AopydUFJUi5
- OyyiyxpqbYJdFVjmLza6XNnblZXf4MHKl1YlZYwILka31bFYvR6/hKaUGkrK7hdeCCEB9US7JR1
- ge9mJRuWs9Cz3Blkfx2rE3vG2eF8OikNv3okHH/ATz3fEHqrPY/ZVpudUqQRL3mRbg4R17hkw4e
- AXAbI0V+XWGBdveHhIg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDA1MCBTYWx0ZWRfX/l8KVuuE95Qp
- XVXgUmcWaLLQlMn+4HLVqnXOTbGgX2OOS3V74nwQ2jVSnZY+zGNCxHI636eP9+NMeb0GSAmxhuX
- xFyZ6wIfXi3UdVQPrypydKya8yX5HEc=
+References: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
+In-Reply-To: <20261028-rzg3l_sdhi-v25-0-57f16691c2ed@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Date: Wed, 11 Nov 2026 13:37:43 +0100
+X-Gm-Features: AclHuK8o0uVdfxHZAmhvgIoBqg4smXNKTRXKoYRu3--Rc_VHFBtg03dl4JTb9lM
+Message-ID: <CAPx+jO-Fv_qnq_ibUP9A4iY7k8d9u4W5D=2PzF+w9oF0NXDDXA@mail.gmail.com>
+Subject: Re: [PATCH v25 00/11] Add Renesas RZ/G3L SD/eMMC support
+To: Biju Das <biju.das.au@gmail.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDA1MCBTYWx0ZWRfX9rJsSm9FMuru
+ WYSbdyjB529pkx9uEwPKcLEG//qdp/HQf8NRjHZZgibzCl6HvGZQVtaAO46Oe1jonVBw3Tpxg46
+ pR4nDkzNT8InBJyD2Lt7eG+0TdRim50=
+X-Proofpoint-ORIG-GUID: OIIJuw02NPpGEEXCwCOr3TX61w-P39LH
+X-Proofpoint-GUID: OIIJuw02NPpGEEXCwCOr3TX61w-P39LH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDA1MCBTYWx0ZWRfXyd4DwwDNTHID
+ ayfI2Sj82SVwp5PvDHRNZm61fFs+pqIXF0CpB78p/m7SFu1kDUJ7XXX7RyRCtTGkehLdnzE3wM4
+ ofiEWppr+V/mbx/e9tk11K0BVfoD7BNC1HndENOBN0AImqf4Umle3St/t9R4DezqNXWa3CUOxSP
+ hJZfG5xM724M2d0rjoh+UJsZ7TJG9y7w+CISmBRxBa197V8vudt+PHN5h47V8FsLq2BhcXUmNQU
+ 4lOt++pSwoAuhaT/fPSFOB+t4qqRuzssnWwynCMNz18XjyZVyo7srdAqHnlBa5OU+ZjR67Doz9x
+ wEbqZGz/AFuUomuy6gNSHqYuN2hjl6iEXNA/7mk7y94GBHywqJ5zFhEz1gDbuCKcB8g74NmVI45
+ Ycpy0MyjKRlEaZNUzURIqrV85FF+nAPs7jkIiAxBIeMW6Xhxuc26h6LReHFQdWrvYSO8nesJcKd
+ v9BFshfQyVs/zOJ/XJQ==
+X-Authority-Analysis: v=2.4 cv=CZadd7rl c=1 sm=1 tr=0 ts=6af461a3 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=_K5XuSEh1TEqbUxoQ0s3:22 a=pGLkceISAAAA:8 a=F2NunwkvNQPXbRNSDdIA:9
+ a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-11_02,2026-11-11_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- malwarescore=0 clxscore=1015 bulkscore=0 spamscore=0 lowpriorityscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611110050
 
-On Wed, Nov 11, 2026 at 01:31:39PM +0100, Krzysztof Kozlowski wrote:
-> On 11/11/2026 13:30, Krzysztof Kozlowski wrote:
-> > On 11/11/2026 12:13, Maxime Ripard wrote:
-> >> On Wed, Nov 11, 2026 at 12:03:39PM +0100, Krzysztof Kozlowski wrote:
-> >>> DSI panels can be placed under DSI bus directly and many Linux DRM
-> >>> drivers will work fine with it: mipi_dsi_host_register() adds device for
-> >>> such panel and DRM driver does not use OF graph to configure lanes.
-> >>
-> >> That's not true. We do use the endpoints to configure the lanes through
-> >> the data-lanes property. See drm_of_get_data_lanes*
-> > 
-> > Some drivers use endpoints, some not. As discussed on other thread,
-> > there are more than which do not.
-> 
-> "there are more than one which do not."
+On Wed, Oct 28, 2026 at 1:51=E2=80=AFPM Biju Das <biju.das.au@gmail.com> wr=
+ote:
+>
+> Hi All,
+>
+> The Renesas RZ/G3L SoC has:
+>
+> Channel 0 supports SD and eMMC (including HS400/HS400ES).
+> Channel 1 supports SD and eMMC (except for HS400).
+> Channel 2 supports SD.
+>
+> The SoC supports a maximum frequency of 150 MHz. The SD0 interface does
+> not support IOVS and PWEN in the SDHI register (no internal regulator),
+> unlike SD1 and SD2. It has an internal divider for all modes except HS400=
+.
+> It also has a 2048-bit divider compared to 512 on others. Moreover
+> RZ/G3L supports HS400 enhanced strobe mode.
+>
+> This patch series support all modes except HS400. HS400 support will be
+> added later.
+>
+> This patch series tested on smarc-rz{v2l,g2l,g2lc,g2ul,g3s,g3l,g3e},
+> rz{v2h,t2h}-evk and hihope-rz{g2h,g2m,g2n} boards
+>
+> v24->v25:
+>  * Added max-frequency is a required property for SoCs with internal
+>    divider.
+>  * Retained the tags as the change is trivial.
+>  * Restored struct of_default_cfg.
+>  * Updated commit description for patch#3,#4,#6,#10 and #11
+>  * Dropped initializing clk_mask as it uses the default value.
+>  * Added suffix ULL to macro SDHI_CLK_MASK_DEFAULT.
+>  * Fixed a very low or zero clock rate from the clock provider that cause=
+s
+>    an infinite loop in `renesas_sdhi_set_clock` by max operator.
+>  * Restored the data type of max_divider from signed int to unsigned int.
+>  * Dropped initializing max_divider as it use default value.
+>  * Updated mmc->f_min calculation with clk_round_rate().
+>  * Updated the comment using "ilog2(max_divider)" instead of "{9,11}".
+>  * Dropped initializing clk_div_mask as it use default value.
+>  * Updated renesas_sdhi_set_hw_adjustment_delay() with force_clear
+>    parameter
+>  * Added a comment in renesas_sdhi_execute_tuning() for tuning delay.
+>  * In probe, if the SCC registers are not available, it clear the tuning
+>    delay flag.
+>  * Dropped default masks from struct of_data_rz_g2l.
+>  * Dropped renesas_sdhi_is_internal_divider_enabled().
+>  * Added a comment about the internal divider in
+>    renesas_sdhi_clk_update() and replaced 'clkh_shift =3D 1' with
+>    'clkh_shift--'
+>  * Moved mmc->f_max to probe() and made it fail if max-frequency is
+>    not defined in DT for SoCs with an internal divider.
+>  * Updated tmio_mmc_host_probe() to set write32_hook() to NULL if
+>    TMIO_MMC_HAS_IDLE_WAIT is not defined.
+>  * Added macros RZG3L_SDHI_SCC_HWADJ2_{1_8V,3_3V}
+>  * Replaced the quirks sdhi_quirks_rzg3l with sdhi_quirks_fixed_addr.
+>  * Added helper renesas_sdhi_sclken() to handle 16-bit and 32-bit access.
+>  * Updated renesas_sdhi_set_clock() with max_divider check for
+>    TMIO_MMC_INTERNAL_DIVIDER instead of SDHI_MAX_DIVIDER_DEFAULT for
+>    consistency with tmio_mmc_reset().
 
-Which means that those should be fixed. We have legacy cases where the
-drivers assumed that, but we should not target legacy.
+The v25 series applied for next, thanks!
 
-> 
-> > 
-> >>
-> >>> The affected here Linux panel drivers do not use OF graph, either.
-> >>>
-> >>> Requiring graph port for such panels is tying the binding to one
-> >>> specific implementation of Linux DRM drivers, e.g. Qualcomm DRM which
-> >>> requires the port.  The port is not needed for the hardware to operate
-> >>> and for some of the Linux drivers, so it should be optional.
-> >>>
-> >>> Suggested-by: Romain TISSERAND <romain.tisserand@gmail.com>
-> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> >>
-> >> DSI busses can handle multiple devices, and multiple data types. If we
-> >> were to drop the port node, how does the upstream video device know
-> >> which device it should send its video output to?
-> >>
-> > 
-> > We do not drop the port node, who suggested that?
-> > 
-> > You do get, that we are not talking about the DSI host, but the panel?
+[...]
 
-The panel might be driven by the host directly or there can be other
-chips on the bus (someboby has been asking about the retimer or
-something else sitting on the DSI bus between the host and the panel).
-
--- 
-With best wishes
-Dmitry
+Kind regards
+Uffe
