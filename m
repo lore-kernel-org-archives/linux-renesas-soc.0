@@ -1,76 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794495030;
-	b=yiPDiUVFTJHP/kPv3JmYWq7iKBK3jGDGKFCGcYUTjs9bAvxyLu+sKxvlLHAqjpE6np+4
-	 n6O8IUe+CisgOgJapcACHXiEtdVjIEJxo31y6s7pgE4Xb82Lh0AH/O6mGxs3GbtIZf5R+
-	 IlB1zVWiRSFkWd/XCdwBAPXfkAxvCN3i6kJ0e4DbX94p3Z6BGxPnfLxnro8dQl0J3AQmh
-	 sGwaVl2yrw5EemC3dje/lrSiEWI97jNIhFEa6gf8pkklLFPG7BOZdK4SDNKGs4ym3egGG
-	 SVMpfz1b3El1rYLbgnv4Jc7KoOBTHIsFzg1CI4A8c8IrjgPOwPyRZpTwmUZCUh/mkJw==
+	t=1794495299;
+	b=ipeJQse2JTPksctB4bReDnTvWLVYSahiQgEup4+PHRyGqdDknIZL4EHmvrZrwmT7IaIT
+	 TjoOJoiakEB6wPfamsQPG1LlsBV2cHX/QTviJdgVNU9qhuv65bYi8xIDVDwDSqofh48BL
+	 /NUT+CZ393qhrWKNCJpdxuPA8Gr0DXe34TKuG03l8xodMmC1MiwSLXQbZleZbjE9zE6Em
+	 ioRCINr4V3QDyN/Fq2QwBRDXHSXaMPuAGkqZkBmAeTrbqS7EBFegewgoD38ELm0kSduDX
+	 8r6sCIOXAfIoA4sSDZNsf8pHTGuYpvij9TdbVCpaI0LNUm+fMlNsKIhvf12O+dswfpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794495030;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794495299;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=+5BCTHh1J6xXvkZ55mDmFJRrwUlGVc7lU2YIf178GaQ=;
-	b=Oh3blPQA698BfkR+NxhQhCrEW/v9Zmx+JMVDHgX4OWzZV564GALIG5dn0OukRfb0Y/vS
-	 a361qa3vM4gVnWWSzWMqYfuJYL4LcltktzxivjAulsdcsTOYNpB7nUYnvQKkG6bShmgMr
-	 enXNE73zA0qsykNBunLKX+LcjzQt6iypz9xHoFL8yazFS81pIg3WTmfT2JoRdQYmSXADP
-	 yevAS+jCLhREbW6iTfXfEng0R46fBG6O1G7wIS1KHOlTqAhzE6Agbwr1JarA3SBbKKiwy
-	 3Kgbpve1v+9/wfZ/K2oty+nECpc2ARaVF2Bxh+bTnCb7JjLA+nckd/rrvdhsAogKBrg==
+	bh=DeS1JutKTfuhS5q6pNbvmoX+jSrEwDPcQETf0SHwj/c=;
+	b=Qus5gp+/hmx3oAf8Rk8dtC3aS9V4xi/9e0FGjmkz1Aaa37rH2d9uC0cx0ySztjPXcXv/
+	 zqHhVrjBz0sBpAYXV5FrBtjBlFTfqVSguEHmCvaaw4T4lvH4ryW8dn0YFTwsnAwzg+Vz0
+	 c2x61xTKDfS9qL2wtWBUKP5e933UVkM5re7E5211iBkiDhkQLQqq/n7toovNfS4nhX6BZ
+	 he0wUZ0QFKVHmqzlZd9MBYrYSgyNHDTeCJ6tcVrBsPnWjnXQSKfz3Nd+ZjaUTSwIyJYjq
+	 bBqXC3fXqNWsYki6/HdeRuLfnflPBtIl1cgy4FwQRA5Rydr0zESL7aiEBKr80GXoY3g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.50
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	arc=none smtp.remote-ip=209.85.167.174
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75415606A332
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 14:50:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 75415606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E80606A333
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 14:54:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83E80606A333
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-7cc0ccc2fddso1429870137.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 06:50:30 -0800 (PST)
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-4ab8cb2a6e4so2777223b6e.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 06:54:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794495029; x=1795099829;
+        d=1e100.net; s=20260707; t=1794495298; x=1795100098;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=+5BCTHh1J6xXvkZ55mDmFJRrwUlGVc7lU2YIf178GaQ=;
-        b=tIA6dXnNl4CN2DE+w98REHgN6z/olmx0BYad+0KFjjrzfhXn+6L6UnuRdggOxBZgmB
-         O7HWrBO2TAXnH/slW3q/GHthZ5awo3jwV9LwkjiuMxn1gNU9/lAtTFck+1lhOAinbR+d
-         DbJxbWH71Yeh+tK+NAdtqPfSKZ+e82s/NwcDePp9eDpLIc/v9YP2ZRu2kb8fegT7fiRn
-         VeMcVeP3/h77wfoCD2GBVKfI31kRgDao12owyT9OiVkpGiTkOqSdSRH2w1etP+Px73JW
-         zE4lXANCRtvLOtBdsBJfggahbj+NqmumNDs9NWA3WQ4lSbb4TbaRfFGj1t4BmdZAQCGE
-         IHpA==
-X-Forwarded-Encrypted: i=1; AL+hErE+ocSFEVwQe2Vlz7IX9uEX9xrqXrw+wJGw1aVUbJDnNDEn/wIW7YIoBjZC5N2Ltv/ogmwbfzKy13YRlCiaknvbgg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8/1z8iUdsaRbaIxozJcIrFgHf5gKUM79anCSZpT2SAbGk1XR0I
-	8XuNuL+jEpJScE05ACsHdlyJobY0Ge8Mm/OloLi8RVptbJDWflAoR2sY3PzBk5IGq3k=
-X-Gm-Gg: AYBFou0Wep3J74p4tjGNPHAwSPR64xi04TQtHl2irdlV4grp3OMmPkpgwA4N7xGpFdA
-	jLddp+2aI37qWdGU0spBxQiLV53WbmSFlRdYYZW9PnC6fQGGIpfmOFQIJqL/V8VJ2jd/2Kn3AQL
-	E8nfOISOVS+6wDz7o5xue9zakAOomgjC9EmJJlep2Z/n/gnAdGIhr3OVy2FB8VoKNIZRf05zCUG
-	eJ2rI9OzsLcdvPKeeuegYz5TYhbh+rR1SykRLPmyWRle0SvbiqSDF6ru8qHsVQoFdsmj+C8YvXn
-	94CBtYXFqubw9uinQXayRkjb6g0xuNUCKt13F3dbgh6Em5mqGmYBv17RFF+k672Fi9Y8ja6jkW5
-	k3m5ngiamzAZArkJJheA0jWmKwrMy95Y82o8CWrp/xb0nh9VGQoAHGM7YtJgs1qgc9qSe8gxxqK
-	ZMagyQ7Cn1avwF7/1BPAG46GHiU8txpzLzq4ojSdJ0aqWKnbkm82AuYVUcmYKslplorD8H99uer
-	CkS2ytcTEbHMcN6TkRw2Y6ZQq+VhNgbkhPoN+/KSiDtgAQPjsubsVQgTuMazKqFaGwIfWwbpPOq
-	xN4cTiAG8A/UrM6xvfRbK+pnMsLVq/nqo9ARE5NbgTKaqZTeasWckYf5REb7po9PHYo=
-X-Received: by 2002:a05:6102:80a4:b0:7cc:21cd:9b46 with SMTP id ada2fe7eead31-7d506129ee8mr2021814137.33.1794495029416;
-        Thu, 12 Nov 2026 06:50:29 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99c1fffe12dsm5196503241.5.2026.11.12.06.50.26
+        bh=DeS1JutKTfuhS5q6pNbvmoX+jSrEwDPcQETf0SHwj/c=;
+        b=kYbOAY79OW/eGcROxZnd26mwaH4m1r+SI3/9lNG95n0Tk+zaMS9ukGHHx/L9aLReAo
+         sr8KRSG6JMHYXhQ0mLbMZlYSk3h0emrMlH8gNWcP57Znyqq+uSP7XPar1zaB6FoJPG8l
+         Mp6P3aZKXd4AFsdwNuKzuuFDTqspMEan0BprGNqKkqeclXRGzPoopmeAq6vcJi9JxDH0
+         gM2CS5qmypVxR2Pyou1XH3L/AIwZeLDQdCi/Zp9KTlmZ2KXnR9psTr1FxCOG8kjmVeth
+         TyKA3ZCrgnhRHyJBZIl+mpGhv2fg/ldcS4qs+pCEh8aw3cuHC9ehy5sIcLqmqypgiIc0
+         /uUw==
+X-Forwarded-Encrypted: i=1; AL+hErEfT8+qrzxWAonI2qzPTKTFf3ii2Rv9xKyzYWboSCwIplpfh9FeuHrpACNO9YX0Kbl8ZvnbBm71t9CCDtLfl+Z7YA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9zaF6YYmGcU1XV4uGQxCVYj+Peu6D+Syx6xDsDE0ehq/Iafjdg
+	sdf533L0IaMc9rI7rUwEmo5a+AqGaz5aZfspCHYkeyKy9HdS/OK6silB0XRQ1eBk2ss=
+X-Gm-Gg: AYBFou0cJIdIBQFxg+yLV2lt+X3epaQ7gf/6Zjy7h0X7H1Maha+5hMKZiP1D9kB10Zn
+	485BCsIMsdWH/LqPhUhZhkH0yrOy5alend0D24WxAHkRzD+Ks1HmkBYoPRXc3myWB861Hv2Xzlo
+	VFJ9pPv5Ep6EDP2pDlJ24vb37L61Eb991vk3wSRn11AzmAxjEbXywhNjtA3TotdXGRbhqYvGMmK
+	gzvGl1YjArAb19+6ZjaF1mxEK+h8sYL/U4UGSV2KU5QVlmyrFrlsItdiwlJsqJkX9w6cJ0kTjLF
+	n8CI6LmoirtKGF6nP9kbgJf2m/GAa9vIBq+zSJxKXmK3wZyyVq4zuy9SutH/D0mwEmqodW52m1w
+	Wgmj7rBkwD/kkZ4vsUxK3WZJE882FoxxdCnf+Q1kKY7y30iI1Yc+fFYVgQkHBDXi46fvTSOs7Tk
+	J8Pj14+IKEVNWMPlU3w0iVVzx3+WYP+5W4omiFJc2ep4DhEhwd/c/CkuwiLM2HTHS0cndjxcepd
+	pbIYkBfHRKcDeAelhGQunmaugfaXqr3PaeJsNZgjqPS0T/X80B4w5qv7fquC7533FKG5pSgCaaA
+	XQPjJdng6bnbMmSxx/ld2MVSnARRi2nrtARD8qlRM6sTyT2KkysrCP9/bNjMWXTzc6E=
+X-Received: by 2002:a05:6808:30a4:b0:4e5:c2b4:33a4 with SMTP id 5614622812f47-56b980309bdmr5458331b6e.50.1794495298553;
+        Thu, 12 Nov 2026 06:54:58 -0800 (PST)
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com. [209.85.160.50])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-56e2514a550sm97069b6e.15.2026.11.12.06.54.57
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 06:50:27 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-7777fa8f1ccso1556565137.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 06:50:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEGmUElhpcIIZGKrN0LHh7PKvYfXt7IFww9zA7Ic6gxXKTr2C352i0oLXoD381JDRnI7Ocidj7roxp9BNhCGXH6Ng==@vger.kernel.org
-X-Received: by 2002:a05:6102:2925:b0:7d0:5688:f511 with SMTP id
- ada2fe7eead31-7d4fb2b4baemr1940643137.16.1794495026588; Thu, 12 Nov 2026
- 06:50:26 -0800 (PST)
+        Thu, 12 Nov 2026 06:54:57 -0800 (PST)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-48eee44b908so2422436fac.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 06:54:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEDPaU7hm4LsplMJ1b9gdCkJrcwrY22hW7ezfAG/XCjjfA/ha2G90ByhPOzLHzJnYioJds0omyuk5wmy5sv0eM0VA==@vger.kernel.org
+X-Received: by 2002:a05:6122:398e:b0:5ce:d56f:efac with SMTP id
+ 71dfb90a1353d-5ee1c4995fdmr2096272e0c.21.1794494805148; Thu, 12 Nov 2026
+ 06:46:45 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -81,14 +81,14 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
- <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-4-1b2072e8c37e@ideasonboard.com>
-In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-4-1b2072e8c37e@ideasonboard.com>
+ <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-3-1b2072e8c37e@ideasonboard.com>
+In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-3-1b2072e8c37e@ideasonboard.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Nov 2026 15:50:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWw2O1k44Rn03VOFJ_0RJAFZro-bzmzP2gSD+Hc8UbPaA@mail.gmail.com>
-X-Gm-Features: AclHuK8sy96nMijWIpulMeqo_3YMpISU_WECBzNl3ZKvutsCseDDYG3iuq5rfEs
-Message-ID: <CAMuHMdWw2O1k44Rn03VOFJ_0RJAFZro-bzmzP2gSD+Hc8UbPaA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/13] arm64: renesas: r8a78000: Add VSP[BI] nodes
+Date: Thu, 12 Nov 2026 15:46:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVKr2fGN3k0LYHhoFp3Rp7_=KfTB6tQkGYDof0Em0HVtA@mail.gmail.com>
+X-Gm-Features: AclHuK-vYdrIZUHe9zqdC5qY90reiPN1Oa4nwuum4GsEnnZB7I1s1LzmhCydy1o
+Message-ID: <CAMuHMdVKr2fGN3k0LYHhoFp3Rp7_=KfTB6tQkGYDof0Em0HVtA@mail.gmail.com>
+Subject: Re: [PATCH v4 03/13] arm64: renesas: r8a78000: Add FCPV[BI] nodes
 To: Paul Elder <paul.elder+renesas@ideasonboard.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
 	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -107,9 +107,7 @@ Hi Paul,
 
 On Mon, 9 Nov 2026 at 14:35, Paul Elder
 <paul.elder+renesas@ideasonboard.com> wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> Add DT nodes for the VSPB and VSPI IP cores in the R-Car X5H SoC.
+> Add DT nodes for the FCPVB and FCPVI IP cores in the R-Car X5H SoC.
 >
 > Use the SGD1 clock as it is likely to be the clock used for data flow.
 >
@@ -122,19 +120,22 @@ Thanks for your patch!
 
 > --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
 > +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> @@ -1646,6 +1646,105 @@ fcpvb4: fcp@c503c000 {
->                         resets = <&mdlc_vio 0x106>;
+> @@ -1574,6 +1574,78 @@ mdlc_aon: system-controller@c1338000 {
+>                         bootph-all;
 >                 };
 >
-> +               vspi0: vsp@c5080000 {
+> +               fcpvi0: fcp@c5030000 {
 
-> +               vspb0: vsp@c50c0000 {
+Please preserve sort order:
+  1. Sort by unit address,
+  2. Keep similar nodes together.
 
-Do you want to sort the VSPs within the VSP group by unit address, or by
-label? This matters especially when also considering the next patch...
+> +               fcpvb0: fcp@c5038000 {
 
-For the contents of the nodes (except for the renesas,fcp properties,
-as I couldn't find the VSP<->FCP links in the documentation):
+Do you want to sort the FCPs within the FCP group by unit address,
+or by label?
+
+For the contents of the nodes:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
