@@ -1,106 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.27
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794479562;
-	b=H8Fd2TB/FD4Oz+jJQQ69ksK6qlXlL8n2yMNLl3Db8iGOVm1uwqEOr36pVwWeF+doJCL2
-	 ww4/EfMBVRk/3kgFtV5wY0R0MWMdNAAJJdzV62EWlTwoeOKG8kJwJB6UsQyhGMDdMYfdP
-	 KjcRhkxXo6RCV52AhSewN+S1WRl4bTkVw71BqIlDJ7a+Y95MtbzzZNC0Avxga0xtoSiOV
-	 NbG2dnoK933U/JFXBykKcpMEtwLlPugpQhFUKWsuIB/XqsVtWD9jocMJ73U1kmIHT5bRe
-	 hnzBeemtNn5LEhMjMJf1nPZNqbJ1URLn4jctQGEmaQrLxO3e+NnNuywKMA9FmotIQgw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794479562;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-LD-Processed:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=fH+39H/zKk54sTrjhSoBk1Fl6mLIeFvgf8yLmERk//8=;
-	b=U0Xufn3jp++uE9cWPBPVXPOjG3YM8RAQ93UVNnBwmqKaYAAkOSqj2yBhSpKLqKTb6B2r
-	 LBETCIaCGHpcTE+Qsj0I7Al9St+VzTGoC5tHx/jnyd5S8bu3NuuYThgAwUJVPxrMai7AF
-	 eXCy7yA7KyERPMPs5qIb7OTaGvKX0Yg6DjruYMuIai4PFr1iIzLsCwPJkqX6L1vo0iPyr
-	 tzi0ib7cXc9lM63uhcyUiH0l5GDsrPkAw0WNcNKGsPsOnzy4aW4ag52xHP2bLkkrfQeb9
-	 KUqYRf6w3le0xI5ROamltK2K8wXU066uY0LZ9FRPWk8SbueiBqWvZU+6FgPbtLRtR4A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=sTAjBgzh;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.27
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010027.outbound.protection.outlook.com [52.101.229.27])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794479885;
+	b=AmolCigjykApgIPLbobRrcxIPJDKVeJV23BAV2v06BODI77L+78JKl+SzR+WePowX1dY
+	 zJOZWSGAYfaotfBwLl+SmQljWc+lK8P170442pjK/t5gxjtwdPFWk0rqkQSaTNj1ubtKR
+	 hvISNnWn7OsqMqF/Zgcw33IZKff2vUyTC9RobqD1ZNvNDIO4JzcaYuAhgSs5aSwReEdki
+	 IOpRf3CSyCuloksYgXBs2KSgMhe4/QCu7/2B/z4DxI25TexruMjU/89FGeZS9x/hD9USN
+	 bfjwDaiRkha28fxcJjvKO60fMLeujIVLzoHma7R8+yjdLCYvW6eCW6q7BmVdOVm1t8g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794479885;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=e06tbvs21rVw27ehHokZ6i9Zda3pcWwEavvs9Rfyg4c=;
+	b=zaxRjKFlr+zbcY07OuwYRGVocKVDtLJBnzyw5ddDAmZjmJECHynLSS/vNSAlkeK3Xmbv
+	 INIbN6kjoUP3p1PB83t2w5SFgU8fehECV+mwH306TBr3iwycYLDiFRcw558c8nYrAtS7/
+	 MtxwnnScl3XbLcl1tZmh5dG/0AXQ8bi9maO7EdXyFYkBpf9fBl9DhwlCyXHF2NNRNhA31
+	 g64svb4EGPOiN/EWmTZ5GovN3mR5+3p2DxgO3GfZ65+L3ImLySwPBBOzojkFRYxrAFVE8
+	 imibQkbAHKBGlz7TRICfPSNuiA0weStj6XJn05tMOIdnLxG3gZSvu2igXKejs3Z/nJw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=dbEZiFH6;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99C6606A31C;
-	Thu, 12 Nov 2026 10:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A99C6606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD8A606A31C;
+	Thu, 12 Nov 2026 10:38:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CD8A606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=sTAjBgzh
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ltlMuFiTpGDqh7gHi3V6ctzQlEddYJZMRLvwAqhwRELJpX7vVQnV1NO+ywwutRzkD7OMXshNuW83GN/MQJReW9WVhkip/3STLX+4GN/PdJEtkFcNPvMOthnDZ3VjAfvj6WdSYSh4u3cveBKdATYF3IVrjWeOOLOJ+ktHc4teffuM5RJPFeV8S5eL3zJjEEkJkGXT0N3+ilrQ0e5/VP4W3eQxLwOolkahh9/WP+qKRARCsTKighRgc1y35lf23uM2WjTk1VDmQxu5iizn0TgsG/MT34+vvZrSxG74pbdgsB7nXNyomdcxdI8DMq6597CXx7/fkFvD1h0cacoS5AQ8ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fH+39H/zKk54sTrjhSoBk1Fl6mLIeFvgf8yLmERk//8=;
- b=kw8LtRa+CR7LDHe+gq7WrGAQ5rQIgaJiWrjpDAYGcHzqRYAdaUlYneTeUfWIG94nR/ht1tgjMTI+hRnVOeu31YH8+yCTVAQ9xPq5JCgK97f+/Ac1LOaw4mMf2HVj0mZGtUsM5EJ8Vwr5paDECoulZ44iO6P/zEaqy3XhUF1lVkkqk0Jt29FgIlnJ2mKJ+4KLCENz11Pxy6GsZr2BLBcC6FgGwnG67J5QHjfLE2bbWGoK3uoXj3RMjGLxYHDJtWwfvnZyHL16YrnDaHJ3kfWS4NKwrqNXsy/mivC74TppVYsQdTLUtz7b9vogWzmzQhX9qeWun+8Lw2D1wlt9YXM0kQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fH+39H/zKk54sTrjhSoBk1Fl6mLIeFvgf8yLmERk//8=;
- b=sTAjBgzhHwTtcP4PtZ31No29sJ1NWH+QnENFzPRsNTn1Fm25240FGqX06YXnIGK9F0Lca/q5F4c60AmZZwo79aHFxBOrkcYpl0HXtDD3qWMVbCs3biKzA2TgV+SiN7uiiCgrsvD0QIh3sr4nA68RCDhvjr2R837g5XGfA9robhg=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15) by TYRPR01MB12667.jpnprd01.prod.outlook.com
- (2603:1096:405:1b9::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.10; Thu, 12 Nov
- 2026 10:32:36 +0000
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0615.009; Thu, 12 Nov 2026
- 10:32:36 +0000
-Date: Thu, 12 Nov 2026 11:32:16 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: tomm.merciai@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 02/10] dt-bindings: display: Document Renesas RZ/G3E
- display subsystem
-Message-ID: <avWVsEFmoDWgesqZ@tom-desktop>
-References: <cover.1792770965.git.tommaso.merciai.xr@bp.renesas.com>
- <71044c23cbd6698d495db101527725bd7607197f.1792770965.git.tommaso.merciai.xr@bp.renesas.com>
- <20261104-lurking-griffin-of-tornado-ca7ac8@quoll>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261104-lurking-griffin-of-tornado-ca7ac8@quoll>
-X-ClientProxiedBy: VIVP296CA0099.AUTP296.PROD.OUTLOOK.COM
- (2603:10a6:800:355::16) To OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=dbEZiFH6
+Received: from ideasonboard.com (unknown [93.65.100.155])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC891802;
+	Thu, 12 Nov 2026 11:35:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1794479738;
+	bh=7nQjJuFr0ochBeM1kaQF42ppaetfTxuGaeUnypUe75s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dbEZiFH6K/1x6Yv7CZ4MVM/E8003jhzL74x9U68HGoxvB/rkckqT0xxdQv4oEEq7K
+	 8J8rg21/TlTqboiXDYAgBga5v4b51wgz89eKw+ODAnAWW72w8eOg3fFiUHFlzN+60D
+	 hIWxotXA+btaPiNeNVKElsxcmAwc1zjnarMvOwqI=
+Date: Thu, 12 Nov 2026 11:37:58 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: uapi: videodev2: Add 20-bit Bayer formats
+Message-ID: <avWWbro0mM0kW3vu@zed>
+References: <20260910-v4l2-add-raw-pix-v1-0-80a8e855b41b@ragnatech.se>
+ <20260910-v4l2-add-raw-pix-v1-1-80a8e855b41b@ragnatech.se>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -110,136 +61,183 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|TYRPR01MB12667:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef1088a6-8a2e-4d61-02c6-08df40a84475
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|7416014|376014|52116014|366016|1800799024|38350700014|10067099003|5023799004|11063799006|4143699003|56012099006|261022105027099003|261022075727099003|261028144727099003|261026121527099003|261026140227099003|261021121427099003|261102123227099003|261009223327099003|261009223027099003|261009221727099003|261009221227099003|261009220027099003|18002099003|22082099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	J3lrSkczU1QR1hVsuizQqa/CwSlAsBsrgWN/EL6X6xfvHOWpYXSAsJdJp3MlsoCT0MMDMXerjtdPHn4ehYPHRi4d2vDsLjbCEBt9QtovjEN8osmUWLNSbQvaJucXCfan83sfoTxLCXPYxmQ4RZo7EjnB0/YqYJGXcKEWh+/8YyJ2b3CshAzfh53EHG3k6YOxpnf8qIXAVRFH/IvcShK4HbUBc3gw+UNui1+0jJ3BwRMVjflJiy/cQsAdu2TZ+GxEuYG6IB3ih1uaN+MHxMe/2F3ZMoT1XjUwFGcXV9l06+iG14x2KnFpSZ2N2YxZIZaOPFgNY8F9hniN5UehOVh6evVQPAnRtZUY/78O7ftLDuUz4gYpdJtmpCiehP5DUClMxd0T9Xs3IXWYLP7jRlnam44LnAIg7OIdyhMDfR7g3nPqQvF904VgUh78V23KB2BwIbZsE51KI6yadJzygEXozjjvzr98dC92dnHiwIaQHF6rKiWyqk0P8ihK9FG7hbQNneA3ywdWzEXqN6VqCYUIlPVfhOJzsjFA4deCHxmUgqmZY08wAUBrlWwlMRvh2nqr8Ffttc7fbM0r53Z5SsdO1W/9n5GHpXH6zJkG0/gXxyJUxM2Yn5fzvJqNyB+43kxfGvy1yoY72/84PyWBOqsNpEskGXD6aXXrAb+Z15t/weo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014)(10067099003)(5023799004)(11063799006)(4143699003)(56012099006)(261022105027099003)(261022075727099003)(261028144727099003)(261026121527099003)(261026140227099003)(261021121427099003)(261102123227099003)(261009223327099003)(261009223027099003)(261009221727099003)(261009221227099003)(261009220027099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5q/kkxgziyab2jeB4Eh8fuUiDyxImnE/YVS0fIFeJhE4Guf924StmSgf/Mx0?=
- =?us-ascii?Q?gdhcuAusJwmn5EkmKTx4cexvKppslfHSpl+rlQ8j3U6l6Hdza+/MeVL7ly6v?=
- =?us-ascii?Q?4dNT/PIRe4dXa3fqDSU77HXYu14ioOWjN27tljbUIAQX/RHHFyFcCbodg8nD?=
- =?us-ascii?Q?BchaOxq28YhKAQPOWRv8aPHjOYI0vx7L7Ur85Dm6M7IEBpchKJ9lCJPDzAHg?=
- =?us-ascii?Q?IBIhM+WOAEyIpS1CUxR+3r1JPhXzRCiGRaH/hMvVd3Xuas8j0ZUFnRDiP0ZI?=
- =?us-ascii?Q?ZevZCpZjCHFuryQhvNwjoIyd6hLZIhZxbDNSzy6g3FbXLv5ukce/LhhdY+tM?=
- =?us-ascii?Q?XPCK04wK5IQcjOMFSfrPcajSReDgyAUOUrkX/NZweyI20iAqqCLxqamUKBjO?=
- =?us-ascii?Q?20PskL5OCvGy+q6JIUmkwMHekv7zd+no4azlqE83btijl6mT3NAbD9Dv6L3l?=
- =?us-ascii?Q?71S2runXc5qDMYJjqXLwwRH1OwdVwWL09cO9LIyLZL7MNrs5s1Gv4+VKb+P1?=
- =?us-ascii?Q?HWChukAcGFP6mg/7vy4M7X6hcskUmlp0YP1XLLETjcJn39vy3H6u2KWYwuHU?=
- =?us-ascii?Q?/Q07Ehz6YvyzcswmWpNi4Ln1U1n7zR5XLv805mRL2DusUJbOl9YXp6rZje30?=
- =?us-ascii?Q?BXFiNLISjOhwGVbn2SFCPhfB3Bw4b3O8JX6P64IN+CLsSyw6b6McGeN2JK82?=
- =?us-ascii?Q?6zw0rGZd04LF/slzXlOz39hvYFVT2PEfGcGL6X2LKIix7YqUgWtjBKgtLEDk?=
- =?us-ascii?Q?w/ASWB9Op7iEAbXV1SAiZbv85rPXXfyWUDcCObbXkxGz5ILU+WiyzQlsFwzq?=
- =?us-ascii?Q?8xIqPKTUrQ7wxT0zdLJUij1FQoVBDZr2l4ga+8JhXy7VRtQtz2B/FMmMwDfy?=
- =?us-ascii?Q?ESuHizuB+wmcsg337OnTuh/fZbvCA6pj+736nIi1b+LMY4KCMYX+DEzzvxGq?=
- =?us-ascii?Q?dky6QGTDawAv1neLt5whAaCrHyR3RxhJ88l8CICROOepqGWedWNQmCak7HZY?=
- =?us-ascii?Q?onunUWh5GPSY8deysGtRPyltOwpJJomdxYI1pIvYMuLbvF25ZjLoWfYunLhb?=
- =?us-ascii?Q?iyVQZNEXZIzm8/1Y8GqOLedys4Sn1KGDevkf6fkj078JDepGyPnGJaDGFIEN?=
- =?us-ascii?Q?Y4dIeh8/Xye9gtW6FMGwq8n2PcT2qIgWNo4asi9pmx1DvDpNMW/suk9H85iz?=
- =?us-ascii?Q?emChiEHbCS2BqT7Z0ivqRQvZtxJ5HYGS7op2q15hhfluN4aZSKw5AVDsBYMj?=
- =?us-ascii?Q?/VIaDa2Yif3n8T3/D5hFmLrguzLIKVj8+NONrhUbY/Ypj53J5sCe4ygPd6bf?=
- =?us-ascii?Q?Smxz+XufPCQ9orus+dY7GBBw+HbNz8kqejAlO6XaWfbLmpYx7134qLgQOX+n?=
- =?us-ascii?Q?afUIUEVejWYm+zWKMJFXcRBZQVD5nM8bloaUxOrlPoPKuiJCuqb0VEUawgbU?=
- =?us-ascii?Q?4xaDaOP8qNCweZ5+H8VCJAMyOeWEr5irfuUx0GjE+/TUDPtSECwAldaP8S8I?=
- =?us-ascii?Q?57ZNL1wmv/GBF3IQk4unLPrLdL+9XCuVBSsviHHMKtYI3pQWvrEqeifYG0Ww?=
- =?us-ascii?Q?PJXiUu9rQRW3zA1WRGGRjRzaBszSatPBWyvm1RcbGLhiPeAPrc2uRNJ7EbQo?=
- =?us-ascii?Q?PrKyh9oVVsllcz4NgYX7CNje8Wv3wjL3RoYlQ6NLGPLnUb69kwEQFiVRnCdf?=
- =?us-ascii?Q?pgHK3Q1VjJPfPsZIq+X5M6svnWUWNe0a+PSFh/tnm02tfsFhE8eA6FOJJ4VP?=
- =?us-ascii?Q?eRf1XOOwYdswMRLdu18n7K93wfMPo3XwQvRdbkynew53FtOI+zqS?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef1088a6-8a2e-4d61-02c6-08df40a84475
-X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2026 10:32:36.0484
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0rvPyI7uTGQSw7YTBPtONhq3DogixX3vcc/w7TUmut40azOUJ6RYfz29WpEtgEDmVwUm5p26d8W3+1U+WZacDEIlLpAIqy+rKPHcr8L1Jat29VA5glRK6zgLhEKkmm56
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12667
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260910-v4l2-add-raw-pix-v1-1-80a8e855b41b@ragnatech.se>
 
-Hi Krzysztof,
-Thanks for your review.
+Hi Niklas
 
-On Wed, Nov 04, 2026 at 11:19:47AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Oct 23, 2026 at 06:47:35PM +0200, Tommaso Merciai wrote:
-> > The Renesas RZ/G3E (R9A09G047) SoC has two LCD Controllers, LCDC0 and
-> > LCDC1, each containing a Display Unit (DU). The two DUs are separate
-> > instances of the same IP, with their own registers, interrupt, clocks,
-> > reset and VSP, and are therefore described by two device tree nodes.
-> > 
-> > The DSI encoder and channel 1 of the LVDS encoder can be fed by either
-> > DU, the source being selected at runtime. Driving those outputs from
-> > either DU requires handling both DUs as a single display subsystem.
-> > 
-> > Document the renesas,r9a09g047-display-subsystem node that groups the
-> > two Display Unit instances.
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> > v8->v9:
-> >  - New patch.
-> > 
-> >  .../renesas,r9a09g047-display-subsystem.yaml  | 44 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 45 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/renesas,r9a09g047-display-subsystem.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/renesas,r9a09g047-display-subsystem.yaml b/Documentation/devicetree/bindings/display/renesas,r9a09g047-display-subsystem.yaml
-> > new file mode 100644
-> > index 000000000000..e23cc53a1fea
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/renesas,r9a09g047-display-subsystem.yaml
-> > @@ -0,0 +1,44 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/renesas,r9a09g047-display-subsystem.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Renesas RZ/G3E Display Subsystem
-> > +
-> > +maintainers:
-> > +  - Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > +
-> > +description:
-> > +  The Renesas RZ/G3E display subsystem is a virtual device needed to list the
-> 
-> We do not take bindings for virtual devices, because you do not need
-> them. Instantiate your driver from existing bindings, instead of
-> creating fake device just for Linux drivers.
+On Thu, Sep 10, 2026 at 07:22:31PM +0200, Niklas Söderlund wrote:
+> Add 20-bit Bayer formats and documentation.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  .../userspace-api/media/v4l/pixfmt-bayer.rst       |   1 +
+>  .../userspace-api/media/v4l/pixfmt-srggb20.rst     | 102 +++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |   4 +
+>  include/uapi/linux/videodev2.h                     |   4 +
+>  4 files changed, 111 insertions(+)
+>
+> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst b/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
+> index 8b4e413177f5..b93e66d6a27e 100644
+> --- a/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
+> +++ b/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
+> @@ -33,3 +33,4 @@ orders. See also `the Wikipedia article on Bayer filter
+>      pixfmt-srggb14
+>      pixfmt-srggb14p
+>      pixfmt-srggb16
+> +    pixfmt-srggb20
+> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst b/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst
+> new file mode 100644
+> index 000000000000..cf911e93aa8d
+> --- /dev/null
+> +++ b/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst
+> @@ -0,0 +1,102 @@
+> +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
+> +.. c:namespace:: V4L
+> +
+> +.. _V4L2-PIX-FMT-SRGGB20:
+> +.. _v4l2-pix-fmt-sbggr20:
+> +.. _v4l2-pix-fmt-sgbrg20:
+> +.. _v4l2-pix-fmt-sgrbg20:
+> +
+> +***************************************************************************************************************************
+> +V4L2_PIX_FMT_SBGGR20 ('BG20'), V4L2_PIX_FMT_SGBRG20 ('GB20'), V4L2_PIX_FMT_SGRBG20 ('GR20'), V4L2_PIX_FMT_SRGGB20 ('RG20'),
+> +***************************************************************************************************************************
+> +
+> +
+> +====================
+> +20-bit Bayer formats
+> +====================
+> +
+> +
+> +Description
+> +===========
+> +
+> +These four pixel formats are raw sRGB / Bayer formats with 20 bits per
+> +sample. Each sample is stored in a 32-bit word. Each n-pixel row contains
+> +n/2 green samples and n/2 blue or red samples, with alternating red and blue
+> +rows. Bytes are stored in memory in little endian order. They are
+> +conventionally described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is
+> +an example of one sample.
+> +
+> +.. cssclass: longtable
+> +
+> +.. flat-table:: 20-bit Bayer Formats
+> +    :header-rows:  2
+> +    :stub-columns: 0
+> +
+> +    * -
+> +      - :cspan:`31` Sample organization
+> +    * - Bit
 
-Thanks for sharing.
+One more question, the other RAW formats show a byte-organized table,
+where the R G and B components are shown as line-interleaved
+components (hope this is clear, have a look at the tables at
+Documentation/output/userspace-api/media/v4l/pixfmt-srggb16.html
+and compare it with
+Documentation/output/userspace-api/media/v4l/pixfmt-srggb20.html)
 
-I will drop this patch into the next version, also I will
-instantiate the driver from existing bindings like you suggested.
+Was this intentional ?
 
-Kind regards,
-Tommaso
-
-> 
-> > +  Display Unit instances that comprise the graphics subsystem.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: renesas,r9a09g047-display-subsystem
-> > +
-> > +  ports:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> 
-> Properties have only one type and ports is already defined as object for
-> graph.
-> 
-> Why isn't this a graph?
-> 
-> Best regards,
-> Krzysztof
-> 
+> +      - 31
+> +      - 30
+> +      - 29
+> +      - 28
+> +      - 27
+> +      - 26
+> +      - 25
+> +      - 24
+> +      - 23
+> +      - 22
+> +      - 21
+> +      - 20
+> +      - 19
+> +      - 18
+> +      - 17
+> +      - 16
+> +      - 15
+> +      - 14
+> +      - 13
+> +      - 12
+> +      - 11
+> +      - 10
+> +      - 9
+> +      - 8
+> +      - 7
+> +      - 6
+> +      - 5
+> +      - 4
+> +      - 3
+> +      - 2
+> +      - 1
+> +      - 0
+> +    * -
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - *
+> +      - P\ :sub:`19`
+> +      - P\ :sub:`18`
+> +      - P\ :sub:`17`
+> +      - P\ :sub:`16`
+> +      - P\ :sub:`15`
+> +      - P\ :sub:`14`
+> +      - P\ :sub:`13`
+> +      - P\ :sub:`12`
+> +      - P\ :sub:`11`
+> +      - P\ :sub:`10`
+> +      - P\ :sub:`9`
+> +      - P\ :sub:`8`
+> +      - P\ :sub:`7`
+> +      - P\ :sub:`6`
+> +      - P\ :sub:`5`
+> +      - P\ :sub:`4`
+> +      - P\ :sub:`3`
+> +      - P\ :sub:`2`
+> +      - P\ :sub:`1`
+> +      - P\ :sub:`0`
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 17ba1ae70735..14cb94591ea8 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1434,6 +1434,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
+>  	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
+>  	case V4L2_PIX_FMT_SRGGB16:	descr = "16-bit Bayer RGRG/GBGB"; break;
+> +	case V4L2_PIX_FMT_SBGGR20:	descr = "20-bit Bayer BGBG/GRGR"; break;
+> +	case V4L2_PIX_FMT_SGBRG20:	descr = "20-bit Bayer GBGB/RGRG"; break;
+> +	case V4L2_PIX_FMT_SGRBG20:	descr = "20-bit Bayer GRGR/BGBG"; break;
+> +	case V4L2_PIX_FMT_SRGGB20:	descr = "20-bit Bayer RGRG/GBGB"; break;
+>  	case V4L2_PIX_FMT_RAW_CRU20:	descr = "14-bit Raw CRU Packed"; break;
+>  	case V4L2_PIX_FMT_SN9C20X_I420:	descr = "GSPCA SN9C20X I420"; break;
+>  	case V4L2_PIX_FMT_SPCA501:	descr = "GSPCA SPCA501"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 5373dba640fa..85a32dee4e21 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -744,6 +744,10 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
+>  #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
+>  #define V4L2_PIX_FMT_SRGGB16 v4l2_fourcc('R', 'G', '1', '6') /* 16  RGRG.. GBGB.. */
+> +#define V4L2_PIX_FMT_SBGGR20 v4l2_fourcc('B', 'G', '2', '0') /* 20  BGBG.. GRGR.. */
+> +#define V4L2_PIX_FMT_SGBRG20 v4l2_fourcc('G', 'B', '2', '0') /* 20  GBGB.. RGRG.. */
+> +#define V4L2_PIX_FMT_SGRBG20 v4l2_fourcc('G', 'R', '2', '0') /* 20  GRGR.. BGBG.. */
+> +#define V4L2_PIX_FMT_SRGGB20 v4l2_fourcc('R', 'G', '2', '0') /* 20  RGRG.. GBGB.. */
+>
+>  /* HSV formats */
+>  #define V4L2_PIX_FMT_HSV24 v4l2_fourcc('H', 'S', 'V', '3')
+>
+> --
+> 2.55.0
+>
+>
