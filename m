@@ -1,57 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794479885;
-	b=AmolCigjykApgIPLbobRrcxIPJDKVeJV23BAV2v06BODI77L+78JKl+SzR+WePowX1dY
-	 zJOZWSGAYfaotfBwLl+SmQljWc+lK8P170442pjK/t5gxjtwdPFWk0rqkQSaTNj1ubtKR
-	 hvISNnWn7OsqMqF/Zgcw33IZKff2vUyTC9RobqD1ZNvNDIO4JzcaYuAhgSs5aSwReEdki
-	 IOpRf3CSyCuloksYgXBs2KSgMhe4/QCu7/2B/z4DxI25TexruMjU/89FGeZS9x/hD9USN
-	 bfjwDaiRkha28fxcJjvKO60fMLeujIVLzoHma7R8+yjdLCYvW6eCW6q7BmVdOVm1t8g==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794479885;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=e06tbvs21rVw27ehHokZ6i9Zda3pcWwEavvs9Rfyg4c=;
-	b=zaxRjKFlr+zbcY07OuwYRGVocKVDtLJBnzyw5ddDAmZjmJECHynLSS/vNSAlkeK3Xmbv
-	 INIbN6kjoUP3p1PB83t2w5SFgU8fehECV+mwH306TBr3iwycYLDiFRcw558c8nYrAtS7/
-	 MtxwnnScl3XbLcl1tZmh5dG/0AXQ8bi9maO7EdXyFYkBpf9fBl9DhwlCyXHF2NNRNhA31
-	 g64svb4EGPOiN/EWmTZ5GovN3mR5+3p2DxgO3GfZ65+L3ImLySwPBBOzojkFRYxrAFVE8
-	 imibQkbAHKBGlz7TRICfPSNuiA0weStj6XJn05tMOIdnLxG3gZSvu2igXKejs3Z/nJw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=dbEZiFH6;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794486924;
+	b=L7V/yDIzzLbTY6+oj+C78Whxxd2IAlJXRtKqPM7rP6O7V79h+EgPcIxQ7sQ3a795reSZ
+	 v+8bU+lagCfValpTzmxQNE3DANOALdM1CCzD+856rNENsAbLUYEAgAWnsE+EGXu0ODFpH
+	 QuhvJCFLxZGoaBw4tYwK+Jcvnqae1X7ejD52lGh+4VKD/hlZCCJSr6PfjxrzQ3GsphB6d
+	 ikLH/RCtuAIFVTzbJ7wIwDaTvdkjnuDKUlSGqMwB7vo+1SQcjZAdrA+BYbuXz5U6UkzIM
+	 acC+HO0P/O0PiE2A2U4i0Q7kzm23mz3/e5FCinNwZCqS+c+bI72rQfTfBpV5r7g+GDw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794486924;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=gmfeXtI+tey0F/T6j/hOfxDyERZ2N7Ic5Vbc9BTsdyQ=;
+	b=W9XK29oa7clXO9U/l2VekDhsBbu5hZ+WACzHDY/cnqheo4YvfwfH08qp0w+Jlc08QFIP
+	 jnFBfxjiZL0ay4PTWUnLp8/GdvynxXnbmtHWA4fKRstC0EtvC8MjCTlvIYxazEQ4LJU5i
+	 XAuHdCnmxeXqEfZzEPAMUTIeucmMWhoGaASG59f9OnZa0kwOhQrJSX4+l2Y5qOWJwH/Q9
+	 H/1JpP0FVY4xnCOo+CbVFQeS9iVo9DFoUlUONNBmyeJNWOSvg8G9474qcMwrS3lyeA909
+	 D95AZ1CtovIkFOF47EywHDgZiRRR17ZhelrugbE31Py/HcZY30e8h+7s+6HoBc+Pv6Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ums0J9tX;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD8A606A31C;
-	Thu, 12 Nov 2026 10:38:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CD8A606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0BD606A321
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 12:35:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB0BD606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=dbEZiFH6
-Received: from ideasonboard.com (unknown [93.65.100.155])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC891802;
-	Thu, 12 Nov 2026 11:35:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1794479738;
-	bh=7nQjJuFr0ochBeM1kaQF42ppaetfTxuGaeUnypUe75s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dbEZiFH6K/1x6Yv7CZ4MVM/E8003jhzL74x9U68HGoxvB/rkckqT0xxdQv4oEEq7K
-	 8J8rg21/TlTqboiXDYAgBga5v4b51wgz89eKw+ODAnAWW72w8eOg3fFiUHFlzN+60D
-	 hIWxotXA+btaPiNeNVKElsxcmAwc1zjnarMvOwqI=
-Date: Thu, 12 Nov 2026 11:37:58 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: uapi: videodev2: Add 20-bit Bayer formats
-Message-ID: <avWWbro0mM0kW3vu@zed>
-References: <20260910-v4l2-add-raw-pix-v1-0-80a8e855b41b@ragnatech.se>
- <20260910-v4l2-add-raw-pix-v1-1-80a8e855b41b@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ums0J9tX
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a35ac4475dso29547285e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 04:35:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794486922; cv=none;
+        d=google.com; s=arc-20260327;
+        b=GSblSs+7EjbmlIzarTZp+Z0XSKFGVkvZJ/OkJHW8ltVVJne1KhOI/NUAf1oSLUJ5Hu
+         WDCSGtzkChs5hrfAcg4w/rOWj7tAlW/W1eH7V7t5TxMxGGDX4hqoXg+rckLtVONN/qMt
+         wX0/kX8ibZrb2he7Dm1AcFhyhwnk9ij4KiMde4kzMqxxCFE7PTI9HeE4+JhWEjLk96DQ
+         j13K/M9Dj4g5R9vINfHWQcQJBgLELV71eP15EdAI01QcOZn6ja2hSTgXJD7O8WafRXRl
+         aV1rynuK/NzMvAB/GtvQUcBd4lwjfvUXHVz6FaCrrawgR6pp59JN38p7HXD6cggvTuW/
+         i0QQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=gmfeXtI+tey0F/T6j/hOfxDyERZ2N7Ic5Vbc9BTsdyQ=;
+        fh=uVAifSmvNl68UARLSu/kDCdZ10yYnXc/3HIT6tSbRyY=;
+        b=MhDsPJKV1p3rthmG9N/gVxzdnFG4N95NziD4U64XqDtQpu5Y7OThUcQTGdrZPv1q1c
+         8xaX6uY5LhJMyM2Ob/iomQo30nyF+5oPO7K6aS7dztYkxOCYJ2cBTn0ikVX5nJCbPTWW
+         wDE75YtjWYvXOQixsrvmMMf3lbX11XOv844LTLhPoL2ChgTvphAqxz2um5c/iIaZvfzY
+         Pp64MIMND1EXwHlXYkpYay3iO+ctnrH6Ddp9hVrCujih5mQ3BD0xC+sRtZSJTPzIUQwe
+         O7ZRUjytzZV0qSJt93Nhy+13QODpA6cyiG0NVhHkMa27OCMrHaTYOyQVJXbUauCR7t01
+         UwEQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794486922; x=1795091722; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=gmfeXtI+tey0F/T6j/hOfxDyERZ2N7Ic5Vbc9BTsdyQ=;
+        b=Ums0J9tXeHFKhdP+fol+vzmGnv1+Fue5K3B2lj8LLRXkHXY3JaZgN1a68UZDyVwlr3
+         b+0TXQx6uz2DxdQO9FJRj6XA4Pwp5YiLBfzHunkAP5nZXfa20p8ohSXA/npzC9fTPsof
+         YCI6CV0szHYmKPkXtlYqz3aToZBEJPSZnO3qJny8ZRSWwckefgqbggkEwAI5aEzUA0Vt
+         ks8xjf2GELPaPEaJ0BQpF8FQOm3C6U7vbbVBf6l3M2MbyEnOxikMPL1dXYKfefIFcB7Q
+         NDEggS0PaVnv+7mUAzLQBIW9SgIF2fBI7ZuxfzOOKngGjXrCabf714t5TK6zi46fwp+G
+         FNew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794486922; x=1795091722;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=gmfeXtI+tey0F/T6j/hOfxDyERZ2N7Ic5Vbc9BTsdyQ=;
+        b=RAI5npAhnLvPa9iP40s8eZTi1Evfj+M0Mva+jNsJreA7BQyt6bq0auG2C16P8hnl88
+         ya+N3KijiaCwIbsR/IHiYpOowLfvTXmWxA3j6NpGQ6jB9b7yXB4NdYpPm5/a6a2fgrid
+         oY8uOyJFrXERlm4osLuslU1oLVWPelF6uSPTzBihFLfnHT5QA44D7fKztvTcIVUO6ZVT
+         GWnDMJas2AVvJpm+3JlNVxQ+DHrZRNeYNSk0GmdTijLcBiuKZZ+SHKS+uaMHnNy2GOVU
+         fqSGMovIhlz3uvB2lzgVkzViLJVgSj19DAEZsfPT0o6Pgoc2A1oWoAqCOJhxSZ+nB//y
+         /ePg==
+X-Forwarded-Encrypted: i=1; AL+hErHWpKoNnH7MkKUoQ1Qty6wEhTEYvRcmBYwsA7I4M5y5B+EcMjOGHc75i/c5qHSJrb6HICg9/ZguD459jfgwUSjxhg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/H6eEZUH1CtZrNqdvunyvG34AUX20Woc9CxZDILZ71dvHXHjxY
+	1WpFKSvCq2yLwmXWWeRhYjtgQgmtXALBnJ75RLWZ8L4llfKcVBqIgnBd7Ni7sPkadjoKGscicGq
+	/LJ4BORcjCY9JtY2k2u36kfh5gCYJzEI=
+X-Gm-Gg: AYBFou00S+feRx5x0BDdRNV3f97yp9QjB13zaNACJpCugNvqxPWp2VCNUp9+ruti+9F
+	6vQILUvEc8OJylMuLR4FuE8HDUoIBIV3ig2NSQzeScrGTF3FNhIuxTl+G3LMljGpZOxFB1CFq9J
+	GJtBWUKfBFsyU0o4MlhSUBmq2O+552kxAOZD5Md8EAiFgNXLk96saN+x/TinJ3FpgSCau3HyGJ8
+	qVtd30AfRWDBWkjnIbQm6lGiTy8v/cTPP/d7W8yokn2+8xxDoCklaXPrW36ZKp5eLE0Ry8uDEIP
+	MNhEVdJpT2TbGZOq3bmN6anCU27aexJIKUJk0m4hPMrmmRXxn7tAObI5hCYSKJFBVbJ4WqGgXFu
+	Wi6y1i4yepU/4BqZ0JH/t5xhwzNotLe0C2IwiLG33f+TmuUIPVgHL4cMYyfwiXvGIbJuyPMTPaE
+	ngwgZ3AhLKCukJas6KPROHe+N220LkCLFRr4AFEF5GaimW0Frzxm9QycRGr18OU2QDo9PXu0Y/1
+	h9Qp0U6xWb9l/xO4wUV
+X-Received: by 2002:a05:600d:84ca:20b0:4ba:493b:3401 with SMTP id
+ 5b1f17b1804b1-4ba493b3412mr59282305e9.9.1794486922109; Thu, 12 Nov 2026
+ 04:35:22 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -61,183 +106,114 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260910-v4l2-add-raw-pix-v1-1-80a8e855b41b@ragnatech.se>
+References: <20261104182105.1102555-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261104182105.1102555-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <20261106154454.GA3654918-robh@kernel.org>
+In-Reply-To: <20261106154454.GA3654918-robh@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 12 Nov 2026 12:34:56 +0000
+X-Gm-Features: AclHuK9CRcx1aTAbEKf-B1mAZlFhg1ndxA-uzYSl8n-I7fAtC3zV5PucT1NF8gU
+Message-ID: <CA+V-a8uN1D7CQmKtAizY40NUOXHDLO2VG8JiAiLTyNb6uG=9jA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 05/14] dt-bindings: net: dsa:
+ renesas,rzn1-a5psw: Disallow ports beyond port@4
+To: Rob Herring <robh@kernel.org>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@linux.dev>, 
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Niklas
+Hi Rob,
 
-On Thu, Sep 10, 2026 at 07:22:31PM +0200, Niklas Söderlund wrote:
-> Add 20-bit Bayer formats and documentation.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  .../userspace-api/media/v4l/pixfmt-bayer.rst       |   1 +
->  .../userspace-api/media/v4l/pixfmt-srggb20.rst     | 102 +++++++++++++++++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c               |   4 +
->  include/uapi/linux/videodev2.h                     |   4 +
->  4 files changed, 111 insertions(+)
->
-> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst b/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
-> index 8b4e413177f5..b93e66d6a27e 100644
-> --- a/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
-> +++ b/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
-> @@ -33,3 +33,4 @@ orders. See also `the Wikipedia article on Bayer filter
->      pixfmt-srggb14
->      pixfmt-srggb14p
->      pixfmt-srggb16
-> +    pixfmt-srggb20
-> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst b/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst
-> new file mode 100644
-> index 000000000000..cf911e93aa8d
-> --- /dev/null
-> +++ b/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst
-> @@ -0,0 +1,102 @@
-> +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
-> +.. c:namespace:: V4L
-> +
-> +.. _V4L2-PIX-FMT-SRGGB20:
-> +.. _v4l2-pix-fmt-sbggr20:
-> +.. _v4l2-pix-fmt-sgbrg20:
-> +.. _v4l2-pix-fmt-sgrbg20:
-> +
-> +***************************************************************************************************************************
-> +V4L2_PIX_FMT_SBGGR20 ('BG20'), V4L2_PIX_FMT_SGBRG20 ('GB20'), V4L2_PIX_FMT_SGRBG20 ('GR20'), V4L2_PIX_FMT_SRGGB20 ('RG20'),
-> +***************************************************************************************************************************
-> +
-> +
-> +====================
-> +20-bit Bayer formats
-> +====================
-> +
-> +
-> +Description
-> +===========
-> +
-> +These four pixel formats are raw sRGB / Bayer formats with 20 bits per
-> +sample. Each sample is stored in a 32-bit word. Each n-pixel row contains
-> +n/2 green samples and n/2 blue or red samples, with alternating red and blue
-> +rows. Bytes are stored in memory in little endian order. They are
-> +conventionally described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is
-> +an example of one sample.
-> +
-> +.. cssclass: longtable
-> +
-> +.. flat-table:: 20-bit Bayer Formats
-> +    :header-rows:  2
-> +    :stub-columns: 0
-> +
-> +    * -
-> +      - :cspan:`31` Sample organization
-> +    * - Bit
+Thank you for the review.
 
-One more question, the other RAW formats show a byte-organized table,
-where the R G and B components are shown as line-interleaved
-components (hope this is clear, have a look at the tables at
-Documentation/output/userspace-api/media/v4l/pixfmt-srggb16.html
-and compare it with
-Documentation/output/userspace-api/media/v4l/pixfmt-srggb20.html)
+On Fri, Nov 6, 2026 at 3:44=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Nov 04, 2026 at 06:20:53PM +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Restrict the A5PSW ethernet-ports node to ports 0 through 4, matching t=
+he
+> > hardware configuration of four external ports and one CPU/management po=
+rt.
+> >
+> > Although the schema pattern limits port nodes to port@0 through port@4,
+> > additionalProperties: true allows other port nodes to pass validation.
+> > Set additionalProperties to false and explicitly allow #address-cells
+> > and #size-cells so that ports beyond port@4 are rejected.
+> >
+> > Existing in-tree device trees describe only port@0 through port@4 and
+> > are unaffected by this change.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v3->v4:
+> > - Added reg items validation for ethernet ports
+> >
+> > v2->v3:
+> > - New patch
+> > ---
+> >  .../bindings/net/dsa/renesas,rzn1-a5psw.yaml         | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5p=
+sw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> > index 9c477ceb170b..250c59e58439 100644
+> > --- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> > +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> > @@ -63,12 +63,22 @@ properties:
+> >
+> >    ethernet-ports:
+> >      type: object
+> > -    additionalProperties: true
+> > +    additionalProperties: false
+> > +
+> > +    properties:
+> > +      '#address-cells':
+> > +        const: 1
+> > +      '#size-cells':
+> > +        const: 0
+> > +
+>
+> Drop all this.
+>
+> >      patternProperties:
+> >        "^(ethernet-)?port@[0-4]$":
+>
+> And make this "^(ethernet-)?port@". Then any node will get the 'reg'
+> schema applied. That doesn't check the unit-address, but the way to
+> check that is comparing it to the reg value (not yet implemented except
+> for specific buses in dtc).
+>
+Good point.
 
-Was this intentional ?
+>
+> >          type: object
+> >          additionalProperties: true
+> >          properties:
+> > +          reg:
+> > +            items:
+> > +              - maximum: 4
+Here I can drop items and just have something like below:
 
-> +      - 31
-> +      - 30
-> +      - 29
-> +      - 28
-> +      - 27
-> +      - 26
-> +      - 25
-> +      - 24
-> +      - 23
-> +      - 22
-> +      - 21
-> +      - 20
-> +      - 19
-> +      - 18
-> +      - 17
-> +      - 16
-> +      - 15
-> +      - 14
-> +      - 13
-> +      - 12
-> +      - 11
-> +      - 10
-> +      - 9
-> +      - 8
-> +      - 7
-> +      - 6
-> +      - 5
-> +      - 4
-> +      - 3
-> +      - 2
-> +      - 1
-> +      - 0
-> +    * -
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - *
-> +      - P\ :sub:`19`
-> +      - P\ :sub:`18`
-> +      - P\ :sub:`17`
-> +      - P\ :sub:`16`
-> +      - P\ :sub:`15`
-> +      - P\ :sub:`14`
-> +      - P\ :sub:`13`
-> +      - P\ :sub:`12`
-> +      - P\ :sub:`11`
-> +      - P\ :sub:`10`
-> +      - P\ :sub:`9`
-> +      - P\ :sub:`8`
-> +      - P\ :sub:`7`
-> +      - P\ :sub:`6`
-> +      - P\ :sub:`5`
-> +      - P\ :sub:`4`
-> +      - P\ :sub:`3`
-> +      - P\ :sub:`2`
-> +      - P\ :sub:`1`
-> +      - P\ :sub:`0`
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 17ba1ae70735..14cb94591ea8 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1434,6 +1434,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
->  	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
->  	case V4L2_PIX_FMT_SRGGB16:	descr = "16-bit Bayer RGRG/GBGB"; break;
-> +	case V4L2_PIX_FMT_SBGGR20:	descr = "20-bit Bayer BGBG/GRGR"; break;
-> +	case V4L2_PIX_FMT_SGBRG20:	descr = "20-bit Bayer GBGB/RGRG"; break;
-> +	case V4L2_PIX_FMT_SGRBG20:	descr = "20-bit Bayer GRGR/BGBG"; break;
-> +	case V4L2_PIX_FMT_SRGGB20:	descr = "20-bit Bayer RGRG/GBGB"; break;
->  	case V4L2_PIX_FMT_RAW_CRU20:	descr = "14-bit Raw CRU Packed"; break;
->  	case V4L2_PIX_FMT_SN9C20X_I420:	descr = "GSPCA SN9C20X I420"; break;
->  	case V4L2_PIX_FMT_SPCA501:	descr = "GSPCA SPCA501"; break;
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 5373dba640fa..85a32dee4e21 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -744,6 +744,10 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
->  #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
->  #define V4L2_PIX_FMT_SRGGB16 v4l2_fourcc('R', 'G', '1', '6') /* 16  RGRG.. GBGB.. */
-> +#define V4L2_PIX_FMT_SBGGR20 v4l2_fourcc('B', 'G', '2', '0') /* 20  BGBG.. GRGR.. */
-> +#define V4L2_PIX_FMT_SGBRG20 v4l2_fourcc('G', 'B', '2', '0') /* 20  GBGB.. RGRG.. */
-> +#define V4L2_PIX_FMT_SGRBG20 v4l2_fourcc('G', 'R', '2', '0') /* 20  GRGR.. BGBG.. */
-> +#define V4L2_PIX_FMT_SRGGB20 v4l2_fourcc('R', 'G', '2', '0') /* 20  RGRG.. GBGB.. */
->
->  /* HSV formats */
->  #define V4L2_PIX_FMT_HSV24 v4l2_fourcc('H', 'S', 'V', '3')
->
-> --
-> 2.55.0
->
->
+         properties:
++          reg:
++            maximum: 4
+
+Cheers,
+Prabhakar
+
+> >            pcs-handle:
+> >              maxItems: 1
+> >              description:
+> > --
+> > 2.56.0
+> >
