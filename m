@@ -1,76 +1,152 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794495448;
-	b=Bq1DivSv/aGkySYuEyA/gF+zseeh4zpkazW06UaIkcoA2tZlw5c5Fj0c0KZyL0ETSxD0
-	 ImfhDR7yX5x0UsF9qt3tNOnhbIQdmv4+iq5B4WxcHH+Z3ZT9SRM5xJEUaMBREzYd21LRm
-	 3ds+4G6UqpJ77f8jZYbGoWn1Z60sG+o51oEpTbRga9F7zLLWV6vL0ISuGtSuHuOY3FG1/
-	 8df0Fa/iyupCRvA1dcUIgESf+Dsq9Dnn8Keb/JBcbrcBrB2aOgckI3QdUuPl30Ii/Iu+x
-	 Yz+TaiXvsuK6o392ULdy9aL++gy8qMA+enDeeNBKVs/qZGwZxqPajgD7hKyQ5t6BppQ==
+	t=1794496021;
+	b=LlXpCTStENvP8LChUoKBO/vdRrVyGdd4uGfvIN68wCWvoaJ6tNsZ/PABLEpBW2vixZI0
+	 xnye/HwdGDxMBDbT8sebtz8sN8kj/AH0R8wzIZf4YfcsDhf2jPyJ6bjNFJXoh4ZCy+JbM
+	 p2CGa6WYSCQcFJcFHcBXzmPMPx2YakH0AVc18D7u7UmUwVdPgO+2rXvLLeews6SOeAqN6
+	 BD0+XGH+8+1JCzJBdGJX5Coavp7qF0BCTtH6F9Dr+qyAD4XxjORVf56VcQ3PgdzB35hFN
+	 oidGdFJc8ewi/HsPGubUCUmiCMB2LLd+vS0t9zVgwjkaUDHlhzSCxy7veLu6u8dVMSg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794495448;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=mS1ut25pAkhX06KpI5+b6SzLMFwF8RaPMcofkkPb8+I=;
-	b=5aBLrKinfqB9PMZXK/OUIoJ1Cu1RuQHPix9Iqlt7T08KOwdFdPp8sHPhlsANhtIh7kA5
-	 kVgpppw7xr3P5HoJc742hQj1XFgcHe+kiXj9JgkulXCKJT1rM8vCUP8uRn9bs+RVj7ljO
-	 RQDMScWMVm+du5f2zErxeHJhYLMwrEsnhe0Edn8P41JCbKLws+TthbEzFiyn22JxG9DWU
-	 qusyqQasaRCrSQJNnoyLQ4Hfo4bimIg7TWdxUMo15IjFYymUzSy4bb61UV/pZlp5pau6k
-	 EHTGFVncc2qny76IAgokdEF/qmsiL/7+540Fv3WYrNv4iJ9PsAJO2rw2dQA5WNYNFDw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794496021;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:X-Developer-Signature:
+	 X-Developer-Key:Content-Transfer-Encoding:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=fnFzrMim3PDRjGWuhWaZm46ozSVNqIG/Ol5S91LrZcs=;
+	b=crNh2s08Qed+HFT6hkgE95teUk8lj1Tv4Kwkhr4ljXAAPKxO4tQYIhRSjwAB13aZnJih
+	 PIihc6sC333DHVjAXmPohGKOx4Zp4zQR8erbi1xFL972iWbR5K6RLwYmSYMPrxXmFcrsI
+	 45yB2RHMYLmuuU6oS7iYDuYCdmQM5scz3vhu45X4bCgaf7w4te2vNpW09MkTYzMNh2ti3
+	 9HUDHSyYKpc1wP1hzAEEzzlULKQ9+mSSvwAX4Z2nQ6V7puhZeQ4IDhCzRIWnuEAzv8h5/
+	 90Jg4B4iPr7fKj3x+/mcUDZ4MsDi5HaVSr1cx0a9qNk8R5KKJKFBWrr0+5nC1hNr1LQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.46
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=PvIFPMvY;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=dPaG1LJr;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94B0606A33B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 14:57:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D94B0606A33B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-98fea7e52b7so2238821241.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 06:57:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA9A606A321
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 15:06:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1DA9A606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=PvIFPMvY;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=dPaG1LJr
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ACEJa9G2820038
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 15:06:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=fnFzrMim3PDRjGWuhWaZm46ozSVNqIG/Ol5
+	S91LrZcs=; b=PvIFPMvYjd26rsXy+/7UbGlnQXhFmwDL4Am1KwYdbqrwASYC6YO
+	FcPqngxlSTQ64y5dv7jXoe6GWecHUSvFKDX26HlG5QkXO2LCsTJwP4zjYyRzCrVT
+	9zTivjlzjPP1kaf4EMSlxIWpcS5LT549OPapyF5RSMRoWbj8m3kicaRQD90UebD+
+	lYqOXnsnrl3l+4+gn+PoLloZdF1XAz8TQ4xZnmC1G1emTQFksjE6nGKthQlz+vXH
+	QyPISJK/wU0OJV3SAHj79kYjzQ+26oc92mjn6EiWbyppD3ImxrLx/laY2ryg4rQd
+	Y0CxVoaNK7sCTX1Azc6ko99LzYKVZm55acg==
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hw9e19j7p-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 15:06:58 +0000 (GMT)
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5eabb3a1bd8so4105275e0c.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 07:06:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1794496018; x=1795100818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=fnFzrMim3PDRjGWuhWaZm46ozSVNqIG/Ol5S91LrZcs=;
+        b=dPaG1LJruzrqsYldpZ3gm2mH6ZpBV7+v1Tn5rf5U8A67Av7MiYF2VvAKxKqWzdx8a5
+         i3NWHECHaMG5F2SjZ68/9R+q1iYUrmzTOi3XVvfoBKNm4HJSEz7t7p6mnZ9nxR4N0aGF
+         jK/IYup8B6cIeq2uppcgpkaSmazy2L4pumdgrCxcA43D3qEMWVwE2dI94UBtOBgadIKg
+         TNOuKYTycfsZ0+M4O96HbuYq8H17ckWxDH0e8GuksEv9+SmsR7h1xM9RfWoxbgKj5ybM
+         WX5PS7w3IVmGEDOangJAZibSyqsS9Um3q9+vS0XTuB7AYVenwc2AUKmgqtt9GqiSujhI
+         1fgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794495447; x=1795100247;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=mS1ut25pAkhX06KpI5+b6SzLMFwF8RaPMcofkkPb8+I=;
-        b=XElb/Cmg9UM9SWgGtbrVAv2MpDiCuLc3Pwk+lBDH7VAu1AnSfUMezIbBPvSv7q8u4K
-         e7V7IOpsoOJXJXM9vr/+cGjBSG+dWtiwk6MYNRa+5tsZ/BJTiyqyEu51jfGVnsDAKCwc
-         RrAPvSbtVVfq4bRAQvWqeX1jEEAJ2IzNqRipOmoyNhACYfHhXECAb/a9dil9o6EeK4u9
-         R1G/uqWOiOLwI6YAomAKvhcfwwiWElfaVqOczDK9t9kEvLPod0X2NcFK+MQ3z8vXmq6S
-         OsaY+kvY/9LkbFhPLikEaxJ0rp4D2vG6CO3qQ8LhAcVMN3/So0bRJCU9mT4ME7UfEjTV
-         xquA==
-X-Forwarded-Encrypted: i=1; AL+hErFwmuyGDLI72d3NIh+QYA7/eou7QgeFjoqF+no2SUSFUkohRNRGzzboTa2QiG3IzGxY0vJRE9SyrupeEb1NNt0Zdg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+4by2k0lj7ymlRFYTuah01iBQJR8vUe8U/LLRHQBblA2pOO7Ab
-	XEWlsH+MSbXozSxQ0smobn4rsMWFcWfWT7Iy1gBSXT66FlkUTqs9pKfnIgvvYSF+r8w=
-X-Gm-Gg: AYBFou3PfHNTuOzAQHxnkMAyNqm4xuzMdizdK0BfKC+4rLKAIw/K2J6oawjYG9IzNUs
-	GRzjWQ3oE73oJ7uEXYsOqaO8B0W7KXoCqMTbNQSbODpYUFlUljmYdZTtcT3wEHnm2FO/GOkSEzi
-	gagdhQBAcLupSRnHdFF+qnz342UGgamCTQ1B+n5fyrOsbd37qE8b1klpcgDs+/aQv0wvJbsYxBL
-	VGKBDJUN6aeeh3W4tfbZ5JlGWw5OAi0TLrJg8fVa79nELjIshs4HVQlSSElY/y7whvaXvN+ijG4
-	BlfEjzrn1sGmLtyZWOyh3SqQIlkSsQ48CnB8ldKGT2rk55ZnD8APzWDpT8OoTzPZEy6fEyHuV+L
-	0JHEwmndO/Bt1NLh8ph0RGeB0OLPZxjJBOOSgHaTGZIdM3XhzE95Tu27xz6CLdCKdsfdzlFKHgp
-	wxfNBIz8pm4hy25uesRqD+du9zAE8+5SqEl21X7T7yXoIyX8na22PQvWlBgJAIElm7HPmxB2IS4
-	p+IkBW1HjXoSr0Wmh+3TFy3aSiVMPmntUtVDXVVPhqkmwIxK5uueWwE5oJ3l/PnA2VZ9v29QKUp
-	UtTJQivvg1+WlHdZ3iKvIV34QO+EO93P4lJhpCgs3xZb8SZa0uin2TBXUx8YdBrCnhs=
-X-Received: by 2002:a05:6102:512b:b0:7d2:c786:5a95 with SMTP id ada2fe7eead31-7d4fb2a5924mr2500144137.13.1794495446898;
-        Thu, 12 Nov 2026 06:57:26 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee3245d9bbsm75091e0c.11.2026.11.12.06.57.24
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 06:57:25 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-990703f817fso2115357241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 06:57:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEQ3yDxAEIm+RP73KSDaf701yl+1Eai0MHpVS3celsMi2xPm3atSbjhe2buX1obKRVdx5Qju7cNa7gefXtedAHGAw==@vger.kernel.org
-X-Received: by 2002:a05:6102:f10:b0:7c3:9982:67d7 with SMTP id
- ada2fe7eead31-7d50609c9damr2546296137.16.1794495444511; Thu, 12 Nov 2026
- 06:57:24 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794496018; x=1795100818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fnFzrMim3PDRjGWuhWaZm46ozSVNqIG/Ol5S91LrZcs=;
+        b=oKd3Hp+NEj97jb9VOoSwkPpCLO8sYDA5nwEdyv1B1ISvjATjOcjlKTWa1KfA04SI4I
+         agblwb74clefE+zwQOaRuIa1FijnDno+9POAHrTWtQkD/FAveq4dxAj3dqOMNaSo2ur5
+         oHs79iZ+/TeXFBnnhw4TIlVMlM1Sv90HDvqJ9jEaZJS3oGWlTQA4C4aW4rKx7RO7Vt6u
+         n+K0yCgnAn338kbZZ8zAuNi9dNXY2wFiFHk6WsRouoYuKBb2QRJnveOzR3HpqPdit5O2
+         tdZslUFKjzr4qMpZVyMVbYVFS+n7GOYh/Z3GoJDhUNS1DE//EWwdD99om1o0B/1cY2bA
+         oRWw==
+X-Forwarded-Encrypted: i=1; AL+hErFDDSPf0oHQqsTNywe4xhtqGINgQ4L2bri07flUZNnCfIe0zOCox3P0Vhh/ZhhtjNjEnigBy7u1515SsrdVM/pUsA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/IP+64kvRKot/4cU5sR2tLlLHjpvwae1M0lWUwhDBfXMKCAFTq
+	heCwe/9WqrJVerrHWCLvzVTQ1gGzK+DVjsbsxv0fmrDlWqrhAg9s8V3Q91ak8fHB+fdmKNdOGA4
+	ZLZwF33CTYIrq/iwLonP3IsD/ZLPjacIhOEXDIQI/4ywGLtzRkhFJj8MJBcobBn7pAjDjhXzQoQ
+	==
+X-Gm-Gg: AYBFou0c9q1zqk8GGlPnUDpqUEXixIK+rp5BU+CTONmEx2ufEERpT3TFMIO5YbC02HH
+	drnBSwG4M3lsvTU5tX5u+oV4MaVYpfb9ZM+kTqFHjaIfe10KZKcLCgTxsfDfL5dbFwU8Mo08CXh
+	bH0bjPF61mZiVMioqqzxPgi9g5q8yTY3DXtV2EViWtMi09QzMm3lM66UGAmthu+KWGBLT5tdjXJ
+	fWHRdd3l3lU0RzzwomAUB4b7OjNDT43WKZhk9cvB90NtcDEreWY6lp72zupogPrFxjn32IscKAd
+	6CLoZJJccWDBQ0MIb8xhlxw9DmEmKC45zItnApvWViun5L+ws/SeWhn+pMPVubrOaiDSk04JNsB
+	3pf1fXiTVAkJFykEMUIakPrLFQocRrRIno20yP+2K5oCTNTyuIPwyerUqZh9Emg==
+X-Received: by 2002:a05:6122:ca0:b0:5c9:a60b:e5a6 with SMTP id 71dfb90a1353d-5ee1c476f52mr2711101e0c.17.1794496017776;
+        Thu, 12 Nov 2026 07:06:57 -0800 (PST)
+X-Received: by 2002:a05:6122:ca0:b0:5c9:a60b:e5a6 with SMTP id 71dfb90a1353d-5ee1c476f52mr2711004e0c.17.1794496016979;
+        Thu, 12 Nov 2026 07:06:56 -0800 (PST)
+Received: from quoll ([178.197.218.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-498369a3fd2sm17919272f8f.52.2026.11.12.07.06.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2026 07:06:55 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jesszhan0024@gmail.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Joel Selvaraj <jo@jsfamily.in>,
+        Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Cristian Cozzolino <cristian_ci@protonmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Ryan Brue <ryanbrue.dev@gmail.com>,
+        Nickolay Goppen <setotau@mainlining.org>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Alexander Koskovich <akoskovich@pm.me>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Morgan <macromorgan@hotmail.com>,
+        Barnabas Czeman <barnabas.czeman@mainlining.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Arpit Saini <arpit.saini@oss.qualcomm.com>,
+        Michael Walle <mwalle@kernel.org>,
+        Ritesh Kumar <quic_riteshk@quicinc.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Danila Tikhonov <danila@mainlining.org>,
+        Jens Reidel <adrian@travitia.xyz>,
+        Michael Srba <Michael.Srba@seznam.cz>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Alexandre Mergnat <amergnat@baylibre.com>,
+        Alexander Baransky <sanyapilot496@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Romain TISSERAND <romain.tisserand@gmail.com>
+Subject: [PATCH v2] dt-bindings: display: panel: Make DSI panels port optional
+Date: Thu, 12 Nov 2026 16:06:51 +0100
+Message-ID: <20261112150650.137216-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,113 +156,587 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-0-1b2072e8c37e@ideasonboard.com>
- <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-5-1b2072e8c37e@ideasonboard.com>
-In-Reply-To: <20261109-epaul-v7-3-rc1-x5h-vsp-fcp-v4-5-1b2072e8c37e@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Nov 2026 15:57:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUUvhf=zEmd2tfodo7zf1hh9n8m88Okk7KZpq0n=mDR2A@mail.gmail.com>
-X-Gm-Features: AclHuK_otbzgK2u3WYfd1DmRW9SD98NHgBcVxYwHNEPtms-IkWdgisCPqESp0Ec
-Message-ID: <CAMuHMdUUvhf=zEmd2tfodo7zf1hh9n8m88Okk7KZpq0n=mDR2A@mail.gmail.com>
-Subject: Re: [PATCH v4 05/13] arm64: renesas: r8a78000: Add FCPVD and VSPD nodes
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=22776; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=ZKLb5vyJxJkcc9MHPukILqFjzOnaQcQBF8fgwCbqjMs=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBq9dYKHx2XEjfhh/l23iQT8eE5/woxO54UbShX2
+ 0IM6sScSXiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCavXWCgAKCRDBN2bmhouD
+ 13PxD/9ge/spf3r1E9i1Rm8l7UWuc3lu8uXHpkkqtW7XVBfmjBClbIJZ7zKQmioXPq+eZKAf0uw
+ L+0P9o7rA69s8jmwW8B6BEiMZIjAyFeyzpopL5gYY18Fvym63o6ehIMZLGBWbjH2G6AhFLUyx3v
+ p+r/YPXCXaY1FoSmmmTjeD/KADZgB2q2X9z5wNbI985ltOJOZT5y8bcrSivz10NS8nhl5W/FABb
+ 4YT42vSveKniTg7Zgx6ipMB+TCg+51veG379nokYJnxf37yIxi9yMPp1OXpLBeaDb9jiFueYnnt
+ cWaoxGUpVxdxmaVMYNI9S5CSVP/je/dWwwu4/UMHQqvKcfrulXSnt3nAzzJIqPj3xdzw2QgXkXK
+ G6ldC4/XNvlsemv4QHl3sJqmaMjgFf+h6VAw0caEth6uF+Ugxofa8sBBVeC3DwCXM4JzoZ1m1v+
+ cl5Mn6gvwtL1JqkMrLVGUeFZ06Jz1QPBjbjL5fPmRmrAPUVf0nfN4a5XTZh6tLLAXLUfCGfkvu+
+ 9LnBj77J7+BJwPP6i1stc6h0Kx9uit3h8IxlfLeG3sAtAH/9FjJiR+tKB7e42F/8I3wUkf+Sj0/
+ jXQx0Nzqng83YFzVAbTEJNXlPOGyGzlI0maQ0xh+Blp3HQFGUb8WufFzg7OcVN0N45kfOK172O/ 42/NtXoEztupnkA==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEyMDA2MCBTYWx0ZWRfX4L8t5lE300bZ
+ n/XzMn5t0JpsTt254QzXKVYWYikL+MRC6z8p7n7/bt+sDok3b++JfQbm6duKSpIr2KmlEhag3Vb
+ EpBXigQdLrvhLKrhdr15FghhI6/N9MJxMBTdkizzDVJpjUg5pzvrXn7XCZElcWpDWaA7NxWvQvm
+ E2GoLc/3yXo5aCQBiQIkTxGnknHaHcV9sZ/orsV2K3iR6gTnXkN55rNyWF+EycdvfCWB1+E11n6
+ TVv+FR80hIuajZc8YDkB7vekfP5BZgfMjYZXnHgt1vU9m1y5hG9qFLs9TG2ePZYCaoaTjnp9+J6
+ GYz38v0/F7BhwHqf3lCZDpAMNO6clPVilUembdttWKQ37XfpC9nMx+PBxyVtX4wZiKHmMjMmoi4
+ EJV8oBYH4HqybdkExo1vt/YEMgiMazf98iujJ6BE8g9t1LzoitGOt52oXM8Hz1T8tMOkfiUcHud
+ 5rSwgU5X2IoR3D7s4kQ==
+X-Proofpoint-GUID: Oup7C9KIb4vqwJr-1TOKDJZhrQgVVbZe
+X-Proofpoint-ORIG-GUID: Oup7C9KIb4vqwJr-1TOKDJZhrQgVVbZe
+X-Authority-Analysis: v=2.4 cv=F6fC5ahN c=1 sm=1 tr=0 ts=6af5d612 cx=c_pps
+ a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=uyPgTw0bjBTS2cVxpiNm5w==:17
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=r20e0feN5VoI4vvULvEA:9
+ a=tNoRWFLymzeba-QzToBc:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEyMDA2MCBTYWx0ZWRfX84wYejpQ7P3w
+ 0sgqNTxFfXcO/KbS07BLosEml4ChUpayho2rtgXDRKyUi2LPQDAfDQfyAyG2pq14auw/OQR3WVG
+ immqmgxsTJVbapFRamouZRnikJX1ZFc=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-12_01,2026-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611120060
 
-Hi Paul,
+DSI panels can be placed under DSI bus directly and some of the Linux DRM
+drivers will work fine with it: mipi_dsi_host_register() adds device for
+such panel and DRM driver does not use OF graph to configure lanes.
+Examples are Samsung Exynos and Allwinner DRM drivers.
 
-On Mon, 9 Nov 2026 at 14:35, Paul Elder
-<paul.elder+renesas@ideasonboard.com> wrote:
-> Add DT nodes for the FCPVD and VSPD IP cores in the R-Car X5H SoC.
->
-> Use the SGD1 clock as it is likely to be the clock used for data flow.
->
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The Linux panel drivers affected here do not use OF graph, either.
 
-Thanks for your patch!
+Requiring graph port for such panels is tying the binding to one
+specific implementation of Linux DRM drivers, e.g. Qualcomm DRM which
+requires the port.  That's a mistake, because:
+1. It prevents usage of such panel in DTS for other platforms,
+2. Places the constraint (port requirement) in wrong domain - the DSI
+   host needs the port, not the panel.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a78000.dtsi
-> @@ -1574,6 +1574,196 @@ mdlc_aon: system-controller@c1338000 {
->                         bootph-all;
->                 };
->
-> +               fcpvd0: fcp@c5010000 {
+The port is not needed for the panel hardware to operate thus it should
+be optional.
 
-Please preserve sort order:
-  1. Sort by unit address,
-  2. Keep similar nodes together.
+Suggested-by: Romain TISSERAND <romain.tisserand@gmail.com>
+Reviewed-by: Svyatoslav Ryhel <clamor95@gmail.com> # renesas r61307 and r69328
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-[...]
+---
 
-> +               fcpvd9: fcp@c5019000 {
+Change in v2:
+1. Rephrase commit msg
+2. Tag
 
-> +               vspd0: vsp@c4800000 {
+Remaining one Ilitek is fixed in:
+https://lore.kernel.org/all/20261109160706.2272332-2-romain.tisserand@gmail.com/
+---
+ .../devicetree/bindings/display/panel/anbernic,td4310.yaml       | 1 -
+ Documentation/devicetree/bindings/display/panel/boe,td4320.yaml  | 1 -
+ .../devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml      | 1 -
+ Documentation/devicetree/bindings/display/panel/ebbg,ft8719.yaml | 1 -
+ .../devicetree/bindings/display/panel/elida,kd35t133.yaml        | 1 -
+ .../bindings/display/panel/feiyang,fy07024di26a30d.yaml          | 1 -
+ .../devicetree/bindings/display/panel/himax,hx83112a.yaml        | 1 -
+ .../devicetree/bindings/display/panel/himax,hx83112b.yaml        | 1 -
+ .../devicetree/bindings/display/panel/himax,hx8394.yaml          | 1 -
+ .../devicetree/bindings/display/panel/ilitek,ili7807s.yaml       | 1 -
+ .../devicetree/bindings/display/panel/ilitek,ili9805.yaml        | 1 -
+ .../devicetree/bindings/display/panel/ilitek,ili9806e.yaml       | 1 -
+ Documentation/devicetree/bindings/display/panel/lxd,m9189a.yaml  | 1 -
+ .../devicetree/bindings/display/panel/novatek,nt35532.yaml       | 1 -
+ .../devicetree/bindings/display/panel/novatek,nt36672a.yaml      | 1 -
+ .../devicetree/bindings/display/panel/novatek,nt36672e.yaml      | 1 -
+ .../devicetree/bindings/display/panel/novatek,nt37801.yaml       | 1 -
+ .../devicetree/bindings/display/panel/novatek,nt51021.yaml       | 1 -
+ .../devicetree/bindings/display/panel/raydium,rm67191.yaml       | 1 -
+ .../devicetree/bindings/display/panel/raydium,rm67200.yaml       | 1 -
+ .../devicetree/bindings/display/panel/raydium,rm69220.yaml       | 1 -
+ .../devicetree/bindings/display/panel/raydium,rm692e5.yaml       | 1 -
+ .../devicetree/bindings/display/panel/renesas,r61307.yaml        | 1 -
+ .../devicetree/bindings/display/panel/renesas,r69328.yaml        | 1 -
+ .../devicetree/bindings/display/panel/ronbo,rb070d30.yaml        | 1 -
+ .../devicetree/bindings/display/panel/samsung,ams581vf01.yaml    | 1 -
+ .../devicetree/bindings/display/panel/samsung,ams639rq08.yaml    | 1 -
+ .../bindings/display/panel/samsung,s6e88a0-ams452ef01.yaml       | 1 -
+ .../devicetree/bindings/display/panel/samsung,sofef01-m.yaml     | 1 -
+ .../devicetree/bindings/display/panel/sony,td4353-jdi.yaml       | 1 -
+ .../bindings/display/panel/sony,tulip-truly-nt35521.yaml         | 1 -
+ .../devicetree/bindings/display/panel/startek,kd070fhfid015.yaml | 1 -
+ .../devicetree/bindings/display/panel/synaptics,r63353.yaml      | 1 -
+ .../devicetree/bindings/display/panel/visionox,g2647fb105.yaml   | 1 -
+ .../devicetree/bindings/display/panel/visionox,r66451.yaml       | 1 -
+ .../devicetree/bindings/display/panel/visionox,rm69299.yaml      | 1 -
+ .../devicetree/bindings/display/panel/visionox,rm692e5.yaml      | 1 -
+ .../devicetree/bindings/display/panel/visionox,vtdr6130.yaml     | 1 -
+ .../devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml    | 1 -
+ 39 files changed, 39 deletions(-)
 
-Do you want to sort the VSPs within the VSP group by unit address,
-or by label?
-
-By unit address:
-
-    "vspd0: vsp@c4800000"
-    "vspb0: vsp@c50c0000"
-
-Note that adding the vspd* in a later patch than the vspb*
-means the latter need to be moved in front of the fcp* :-(
-
-By label:
-
-    "vspb0: vsp@c50c0000"
-    "vspd0: vsp@c4800000"
-
-> +               vspd1: vsp@c4808000 {
-
-> +               vspd2: vsp@c4810000 {
-
-> +               vspd3: vsp@c4818000 {
-
-> +               vspd4: vsp@c4820000 {
-
-> +               vspdb0: vsp@c4828000 {
-
-> +               vspdb1: vsp@c4830000 {
-
-> +               vspdb2: vsp@c4838000 {
-
-> +               vspdb3: vsp@c4840000 {
-
-> +               vspdb4: vsp@c4848000 {
-
->                 fcpvi0: fcp@c5030000 {
-
-Shouldn't we keep al FCP nodes together?
-Same for the VSP nodes.
-
->                         compatible = "renesas,fcpv";
->                         reg = <0 0xc5030000 0 0x1000>;
-
-For the contents of the nodes (except for the renesas,fcp properties,
-as I couldn't find the VSP<->FCP links in the documentation):
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/display/panel/anbernic,td4310.yaml b/Documentation/devicetree/bindings/display/panel/anbernic,td4310.yaml
+index f820dc2f732b..1d6bf6da2ca8 100644
+--- a/Documentation/devicetree/bindings/display/panel/anbernic,td4310.yaml
++++ b/Documentation/devicetree/bindings/display/panel/anbernic,td4310.yaml
+@@ -31,7 +31,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - port
+   - reg
+   - reset-gpios
+   - vdd-supply
+diff --git a/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml b/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml
+index c6bff0ece360..90f0d0bbe91e 100644
+--- a/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml
++++ b/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml
+@@ -36,7 +36,6 @@ required:
+   - compatible
+   - reg
+   - reset-gpios
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml
+index dced98e1c69a..45f3205ed952 100644
+--- a/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml
++++ b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml
+@@ -33,7 +33,6 @@ required:
+   - reset-gpios
+   - vsp-supply
+   - vsn-supply
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/ebbg,ft8719.yaml b/Documentation/devicetree/bindings/display/panel/ebbg,ft8719.yaml
+index 80deedc01c7c..9c6a4d5e9f5b 100644
+--- a/Documentation/devicetree/bindings/display/panel/ebbg,ft8719.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ebbg,ft8719.yaml
+@@ -41,7 +41,6 @@ required:
+   - vddpos-supply
+   - vddneg-supply
+   - reset-gpios
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/elida,kd35t133.yaml b/Documentation/devicetree/bindings/display/panel/elida,kd35t133.yaml
+index f4cb825d1e96..d04ffbba359a 100644
+--- a/Documentation/devicetree/bindings/display/panel/elida,kd35t133.yaml
++++ b/Documentation/devicetree/bindings/display/panel/elida,kd35t133.yaml
+@@ -32,7 +32,6 @@ required:
+   - compatible
+   - reg
+   - backlight
+-  - port
+   - iovcc-supply
+   - vdd-supply
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.yaml b/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.yaml
+index f288fa2390c9..f36e866a1325 100644
+--- a/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.yaml
++++ b/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.yaml
+@@ -35,7 +35,6 @@ required:
+   - reg
+   - avdd-supply
+   - dvdd-supply
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx83112a.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx83112a.yaml
+index 2c60d0cd704e..008a94608c42 100644
+--- a/Documentation/devicetree/bindings/display/panel/himax,hx83112a.yaml
++++ b/Documentation/devicetree/bindings/display/panel/himax,hx83112a.yaml
+@@ -40,7 +40,6 @@ required:
+   - vdd1-supply
+   - vsn-supply
+   - vsp-supply
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
+index e58bb3d45331..bc1771efb6e9 100644
+--- a/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
++++ b/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
+@@ -40,7 +40,6 @@ required:
+   - iovcc-supply
+   - vsn-supply
+   - vsp-supply
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml
+index 83c343b02835..41dc3f39f42a 100644
+--- a/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml
++++ b/Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml
+@@ -49,7 +49,6 @@ required:
+   - compatible
+   - reg
+   - backlight
+-  - port
+   - vcc-supply
+   - iovcc-supply
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili7807s.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili7807s.yaml
+index ba8c5bbf8ffc..3bace821bc8e 100644
+--- a/Documentation/devicetree/bindings/display/panel/ilitek,ili7807s.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili7807s.yaml
+@@ -41,7 +41,6 @@ required:
+   - vddi-supply
+   - avdd-supply
+   - avee-supply
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9805.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9805.yaml
+index ff67129c9466..4bd76a411639 100644
+--- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9805.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9805.yaml
+@@ -32,7 +32,6 @@ required:
+   - dvdd-supply
+   - reg
+   - reset-gpios
+-  - port
+   - backlight
+ 
+ unevaluatedProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9806e.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9806e.yaml
+index 2080d9e0ffac..9a2602ddd906 100644
+--- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9806e.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9806e.yaml
+@@ -33,7 +33,6 @@ required:
+   - vdd-supply
+   - reset-gpios
+   - backlight
+-  - port
+ 
+ if:
+   properties:
+diff --git a/Documentation/devicetree/bindings/display/panel/lxd,m9189a.yaml b/Documentation/devicetree/bindings/display/panel/lxd,m9189a.yaml
+index 226974a4077f..70243c087410 100644
+--- a/Documentation/devicetree/bindings/display/panel/lxd,m9189a.yaml
++++ b/Documentation/devicetree/bindings/display/panel/lxd,m9189a.yaml
+@@ -35,7 +35,6 @@ required:
+   - reset-gpios
+   - power-supply
+   - backlight
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/novatek,nt35532.yaml b/Documentation/devicetree/bindings/display/panel/novatek,nt35532.yaml
+index ff6fdad7febf..a00aabc7f583 100644
+--- a/Documentation/devicetree/bindings/display/panel/novatek,nt35532.yaml
++++ b/Documentation/devicetree/bindings/display/panel/novatek,nt35532.yaml
+@@ -47,7 +47,6 @@ required:
+   - reg
+   - reset-gpios
+   - vddi-supply
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml b/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
+index 5d16d8511725..3263e21bf72e 100644
+--- a/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
++++ b/Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml
+@@ -54,7 +54,6 @@ required:
+   - vddpos-supply
+   - vddneg-supply
+   - reset-gpios
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/novatek,nt36672e.yaml b/Documentation/devicetree/bindings/display/panel/novatek,nt36672e.yaml
+index dc4672f3d01d..bb10d62ac2e4 100644
+--- a/Documentation/devicetree/bindings/display/panel/novatek,nt36672e.yaml
++++ b/Documentation/devicetree/bindings/display/panel/novatek,nt36672e.yaml
+@@ -34,7 +34,6 @@ required:
+   - avdd-supply
+   - avee-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/novatek,nt37801.yaml b/Documentation/devicetree/bindings/display/panel/novatek,nt37801.yaml
+index 1b38c1d0af68..ff7afe5467b6 100644
+--- a/Documentation/devicetree/bindings/display/panel/novatek,nt37801.yaml
++++ b/Documentation/devicetree/bindings/display/panel/novatek,nt37801.yaml
+@@ -36,7 +36,6 @@ required:
+   - vci-supply
+   - vdd-supply
+   - vddio-supply
+-  - port
+   - reset-gpios
+ 
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/novatek,nt51021.yaml b/Documentation/devicetree/bindings/display/panel/novatek,nt51021.yaml
+index 7754a8cb1e5c..a50f241e0186 100644
+--- a/Documentation/devicetree/bindings/display/panel/novatek,nt51021.yaml
++++ b/Documentation/devicetree/bindings/display/panel/novatek,nt51021.yaml
+@@ -54,7 +54,6 @@ required:
+   - avdd-supply
+   - havdd-supply
+   - reset-gpios
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm67191.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm67191.yaml
+index 4825792bf712..511cd2b64fe7 100644
+--- a/Documentation/devicetree/bindings/display/panel/raydium,rm67191.yaml
++++ b/Documentation/devicetree/bindings/display/panel/raydium,rm67191.yaml
+@@ -47,7 +47,6 @@ required:
+   - compatible
+   - reg
+   - dsi-lanes
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm67200.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm67200.yaml
+index 97b7fbe05c07..cefb5fdee826 100644
+--- a/Documentation/devicetree/bindings/display/panel/raydium,rm67200.yaml
++++ b/Documentation/devicetree/bindings/display/panel/raydium,rm67200.yaml
+@@ -40,7 +40,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - port
+   - reg
+ 
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm69220.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm69220.yaml
+index 3c94db88f797..44b416260f20 100644
+--- a/Documentation/devicetree/bindings/display/panel/raydium,rm69220.yaml
++++ b/Documentation/devicetree/bindings/display/panel/raydium,rm69220.yaml
+@@ -42,7 +42,6 @@ required:
+   - vci-supply
+   - vddio-supply
+   - reset-gpios
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm692e5.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm692e5.yaml
+index 616a5f3ec9fc..91336e17a059 100644
+--- a/Documentation/devicetree/bindings/display/panel/raydium,rm692e5.yaml
++++ b/Documentation/devicetree/bindings/display/panel/raydium,rm692e5.yaml
+@@ -41,7 +41,6 @@ required:
+   - dvdd-supply
+   - vci-supply
+   - vddio-supply
+-  - port
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/renesas,r61307.yaml b/Documentation/devicetree/bindings/display/panel/renesas,r61307.yaml
+index 3d7761717b74..aff691fdb771 100644
+--- a/Documentation/devicetree/bindings/display/panel/renesas,r61307.yaml
++++ b/Documentation/devicetree/bindings/display/panel/renesas,r61307.yaml
+@@ -55,7 +55,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - port
+   - backlight
+ 
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/renesas,r69328.yaml b/Documentation/devicetree/bindings/display/panel/renesas,r69328.yaml
+index 740185f778a1..c28b671d8721 100644
+--- a/Documentation/devicetree/bindings/display/panel/renesas,r69328.yaml
++++ b/Documentation/devicetree/bindings/display/panel/renesas,r69328.yaml
+@@ -38,7 +38,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - port
+   - backlight
+ 
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+index 694037301583..b17b7ce2b29e 100644
+--- a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+@@ -42,6 +42,5 @@ required:
+   - shlr-gpios
+   - updn-gpios
+   - vcc-lcd-supply
+-  - port
+ 
+ unevaluatedProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
+index 70dff9c0ef2b..5e1fb1edb3e0 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
+@@ -45,7 +45,6 @@ required:
+   - vsn-supply
+   - vsp-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml b/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
+index f5b6ecb96f99..3a68324a2b69 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,ams639rq08.yaml
+@@ -46,7 +46,6 @@ required:
+   - vsn-supply
+   - vsp-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e88a0-ams452ef01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e88a0-ams452ef01.yaml
+index 42634fc3b5b2..25eadff02816 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,s6e88a0-ams452ef01.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e88a0-ams452ef01.yaml
+@@ -29,7 +29,6 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - port
+   - vdd3-supply
+   - vci-supply
+   - reset-gpios
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,sofef01-m.yaml b/Documentation/devicetree/bindings/display/panel/samsung,sofef01-m.yaml
+index bccc667aa072..c0a44e69b37e 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,sofef01-m.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,sofef01-m.yaml
+@@ -47,7 +47,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - port
+   - reg
+   - reset-gpios
+   - vddio-supply
+diff --git a/Documentation/devicetree/bindings/display/panel/sony,td4353-jdi.yaml b/Documentation/devicetree/bindings/display/panel/sony,td4353-jdi.yaml
+index 032a989184ff..ccfc0513eb4a 100644
+--- a/Documentation/devicetree/bindings/display/panel/sony,td4353-jdi.yaml
++++ b/Documentation/devicetree/bindings/display/panel/sony,td4353-jdi.yaml
+@@ -52,7 +52,6 @@ required:
+   - vsn-supply
+   - panel-reset-gpios
+   - touch-reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/sony,tulip-truly-nt35521.yaml b/Documentation/devicetree/bindings/display/panel/sony,tulip-truly-nt35521.yaml
+index 85c5dee65383..85977dfe8b72 100644
+--- a/Documentation/devicetree/bindings/display/panel/sony,tulip-truly-nt35521.yaml
++++ b/Documentation/devicetree/bindings/display/panel/sony,tulip-truly-nt35521.yaml
+@@ -41,7 +41,6 @@ required:
+   - negative5-supply
+   - reset-gpios
+   - enable-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/startek,kd070fhfid015.yaml b/Documentation/devicetree/bindings/display/panel/startek,kd070fhfid015.yaml
+index 7fd9364fa385..4c7677f6b154 100644
+--- a/Documentation/devicetree/bindings/display/panel/startek,kd070fhfid015.yaml
++++ b/Documentation/devicetree/bindings/display/panel/startek,kd070fhfid015.yaml
+@@ -34,7 +34,6 @@ required:
+   - iovcc-supply
+   - reg
+   - reset-gpios
+-  - port
+   - power-supply
+ 
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml b/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
+index 2fd6e0ec3682..6a0c7518531a 100644
+--- a/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
++++ b/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
+@@ -31,7 +31,6 @@ required:
+   - avdd-supply
+   - dvdd-supply
+   - reset-gpios
+-  - port
+   - backlight
+ 
+ unevaluatedProperties: false
+diff --git a/Documentation/devicetree/bindings/display/panel/visionox,g2647fb105.yaml b/Documentation/devicetree/bindings/display/panel/visionox,g2647fb105.yaml
+index 49dcd9b8f670..ea79ea070adc 100644
+--- a/Documentation/devicetree/bindings/display/panel/visionox,g2647fb105.yaml
++++ b/Documentation/devicetree/bindings/display/panel/visionox,g2647fb105.yaml
+@@ -45,7 +45,6 @@ required:
+   - vsn-supply
+   - vsp-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml b/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml
+index 49ef45c03593..281333b781ba 100644
+--- a/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml
++++ b/Documentation/devicetree/bindings/display/panel/visionox,r66451.yaml
+@@ -31,7 +31,6 @@ required:
+   - vddio-supply
+   - vdd-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml b/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml
+index f61a528c0413..bcde74217e1b 100644
+--- a/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml
++++ b/Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml
+@@ -42,7 +42,6 @@ required:
+   - vdda-supply
+   - vdd3p3-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/visionox,rm692e5.yaml b/Documentation/devicetree/bindings/display/panel/visionox,rm692e5.yaml
+index d4b4672815fe..ec393d15423f 100644
+--- a/Documentation/devicetree/bindings/display/panel/visionox,rm692e5.yaml
++++ b/Documentation/devicetree/bindings/display/panel/visionox,rm692e5.yaml
+@@ -44,7 +44,6 @@ required:
+   - reset-gpios
+   - vdd-supply
+   - vddio-supply
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml b/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml
+index 682f30dc9ee4..979c5b95fac9 100644
+--- a/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml
++++ b/Documentation/devicetree/bindings/display/panel/visionox,vtdr6130.yaml
+@@ -37,7 +37,6 @@ required:
+   - vddio-supply
+   - vci-supply
+   - reset-gpios
+-  - port
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml b/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
+index 9c9743a23500..13ff075bd2a6 100644
+--- a/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
++++ b/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
+@@ -31,7 +31,6 @@ required:
+   - compatible
+   - reg
+   - backlight
+-  - port
+   - iovcc-supply
+   - vci-supply
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
