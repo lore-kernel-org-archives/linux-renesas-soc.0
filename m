@@ -1,91 +1,53 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.97.179.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794446954;
-	b=O8t/eEL79t9WHvgTLk1BdZIZ6N+w3xb0+UtTowVxbU0PCZRKl8HYsPmeEs05h1X14UQQ
-	 i23LeABJBdJ9Ql/A5c05+G3i21rL/cavULMoMImaYmqBUPTlGZY8wdNBoa+xsvAQZEJdv
-	 JUf0ipxFRusvuuobCsD82zS2tX+JME+ndh/335ZyY0hPfp2x1f9KhCackKjfr+wrPYAWr
-	 u0jaUNOFwwzUjT+mE8jTSRXGvz/2R2LaTOrBj3tycduUKFFThrw8p7tWIwWuJQOK1HvSz
-	 XFnicHXItqjRf76jlARCjbnqt9b4/VPOxwXDeMqEUz9sDfd0e6AVCZbQQi23acVRAsA==
+	t=1794447169;
+	b=fOh//VXTIN+VCGREg63NXEAPgJbMpyNB2Prt9cTQw27/mrXuoXs1QS/BDy3W6Zz9m2Dg
+	 mjAEDuFKUAdkdF4+9+ND7bMdle7UvCkh5VN8hltpjRFK5zHSEvYmQ/CHBs/UrsMIoQ4up
+	 KUgJHykhI8lj1G7FpPPeT5LvsNX6LNVfl1Tu8RtdVg7QXduEDi3cJoVxodTck5jQSULo2
+	 erH/VS/ob4/o7wJToHKFC03yl+yutWT5IqcJZimwOHjzhcFAtrQV+ysaVE3W1TeFkA7Et
+	 UwRx0MiMzi0+yW+ovYWuMZgZsHWRYgF8pp+aFSLzvybOpEYjvcBTgiNeO4nz6wThzxA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794446954;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=tdquIJI5TFIgyn6qHtFYCE5BS2Ylwfdjlp7GjhPPIPA=;
-	b=Z5CdxTEmNR4expW8VjY/sAuCrMjptIESKwj2Hw988YG+iiljIU5tQQ0H2aX2lsBqu62P
-	 mGGmtfNaQR2A7C7o6w9xvUmPwuH82wbsR1cSpDQIfbO4h1+KV0YJJfg2xHsggTK57LUOK
-	 DRBxQ3cHOXNSsnkRqkkpf21jhZ1D8YNbcaSm6RyFOFlwr1v5s3NmGjtEs6QCynCpLyXTe
-	 R6idFLMg0tr2Q95zfX4PV00Gh+rZBL3UzyxNAAsarh63B93t/omH3Ti7uXb0NdgPSKeqO
-	 ItCGaxFZfrjNVZwAjRC+JLccPlusGogUSvosLOIfhi9HPY4i8RbTmx0cRNgW5yl7OgQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794447169;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=StFp1g4ubx1WuclDmg58dMlRXvni7TqI4/w/yKHNuxg=;
+	b=3l/YCf4ex/pbYg0yz+09mpL2QwwYsxmWG7LwQ0UfjMdmXnfvgyEeMTmhKqs646GcFE7H
+	 TrjA3qe+Xjqys5GDUhbV+rVNvb+N+h5Qr6M4riNm+jx64kn82wI8bzPCD8hRnZB70Dld9
+	 Cz+OBOInxpcAILWCcwzG9eBSzDLJrIf0MZNFCkbEXexPZIzjRJ8XLfUR6kTzfMMNLEMnR
+	 FqSuOlULcKnmOBo7d8wbzmSdfmaaq1tymWGYyqxTVcNgNLZ7X48jOLnyHUmWuRe48Jfqk
+	 i3Ll//02oPbPiXGLG74SAKeRpzxn0foWbNmDevllbNg4uljN2iQJUCHKUfUGYJuYUhA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hkiht4um;
-	arc=none smtp.remote-ip=209.85.167.175
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=Igalia.com;
+	spf=pass smtp.mailfrom=Igalia.com;
+	dkim=pass header.d=igalia.com header.i=@igalia.com header.a=rsa-sha256 header.s=20170329 header.b=s2opkGXr;
+	arc=none smtp.remote-ip=213.97.179.56
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCCC606AD6D
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 01:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3BCCC606AD6D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66123606A327;
+	Thu, 12 Nov 2026 01:32:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66123606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hkiht4um
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-4ed6d69bdfaso2359722b6e.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2026 17:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794446953; x=1795051753; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=tdquIJI5TFIgyn6qHtFYCE5BS2Ylwfdjlp7GjhPPIPA=;
-        b=hkiht4umLB4CyC2Aj57xJZ2myG5WafS1doKajb7jXHKkJVgFb99TKREjnxIa9o7y1y
-         tC3NUJlyguKsoXdAZ7NZnVNxHgHARAeCxiYeL47ft+Zg8bsmmR77w2NPIL83U69PkHJb
-         jyT+1psknnMvScEl2HfU7hr/lEAOvEoocjcSTqFLqDl0AwJWQXvwG6+GKoL9xjTFnxQY
-         ONZp4nbUdQL7j5AzgSpAABbF+FPY4dHS2w05J4kTzlvXKKOBgIVT7UY4Y4TbFIo/Imm2
-         lfrFbEXz35XUIh2dbj7M6ZSZv0RgES/7nD8lcgaxJU+sYJrTJ3CxwklXeDP8+AFz7Fmb
-         +HYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794446953; x=1795051753;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=tdquIJI5TFIgyn6qHtFYCE5BS2Ylwfdjlp7GjhPPIPA=;
-        b=iM3cZtGZf/kk0NbWAeVWnUm3l0jU97E7+Dnp7flz9OZ9ahXqHbtUVYsYiSenRStYlS
-         MSWsahZzNoqWc0E6mqdHzfyYQwnA9Q9xYtgRdVthMlFoEHxZLUzhRIrrXpHncNjibwLQ
-         J4klK7Z0tQA2w1QJhhNPUPgKAK5aqvahikKJdgcsYKYzPWXR6kul5c6LXY3firLLtYWy
-         81PyyZPD3qcHeCGMs9/5kSxbGJIEzTiTd4ykVyj+wKAUH1HMpjVq2hDedtq6xImisbbR
-         21jq8PQLeYdoPrZwMronmbmAlNLbFgMKQlTTML/GFbkF6fh7M89FZWeSP2+LI5ZGHCaR
-         83QQ==
-X-Forwarded-Encrypted: i=1; AL+hErE1fQNMxEMQUCTbhKyZLGGrv0HkZ5/EO3z+EpOBoQfiM+0E4pZ8QPCsZ5+wuEiTqrkw3+LV/Xw5bfDsYYee1SMYIA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Yk6tvjhNdCVa7KyRaqULW+0TyBESye/oUAGcRPToCejspMIuB
-	/n6JSP5nWlfU8yEOnbD7mqIXfJudRtVCZ/LfOgDzEHaEwkQ2u4OptTBS
-X-Gm-Gg: AYBFou3tT8IeT/J+U00f07lmHZNm+Ek+zAQtIOCOllXqZjDCmIpzo0DkMUp99Dhwgrc
-	xrSLM6bpbpJiZIWhVfjEag3/7W7NoDEL1kE1fTikCfHxI19yQ9JCgHXKTdbeIN9d9+euzApw2vh
-	8ej/rnWH2uFQaDg9V0F+eEV/CrTsfIouOvjqcjK/4uNs1Cm/FVgGNiPvDuXfIy27C/tICy96Q/I
-	4IubMCWESqcgWzdbNBxtapNGD7RREWdEzgRu//p28r6j6ylDjbKue6t4wDVM3ByIu6QRhFc2pep
-	gM0LrOq20d6wx+yybtbuwAz99UIImpt5r+yX58+PiYrJtDSl8FeoIIW3BXPc6Nwf5W1Ih13bejA
-	ccwoGBiLoRjkt/YrHxtFYOw+2XPSzr4nbmKfhnkiNdUzUPvBU7yzhLAry+Ri76nGPt5aBZQMkDx
-	klvhbZfl7oIZc2bVdgaeNCQNUAqnwLZoo/xcd9ti/BOQQOmuaVVUGEi3FHdMnnLACxOf/yxwwyI
-	WTsVM/AJzj7NviahOEEjYk0dc4KrMjinFxG09BiJK9pQgej72jkOXGKCeBglwDrhHwi9tVvKc/G
-	U/WgDyQVv4tuRyIKoOqRvo4SfxP+LmcQlEknHUgBj6n6IFvA2ckTIHPG8DaCvK7d+A/VJfnuo1f
-	GPnuVjxhefeehzyMePWLb34aJozuuSBBzCDqUPq9+m/trKzsIC/t5Riwd4LjZN0JfC+ruec8d/K
-	ft4En9o2aVf0fTUGMfquAeqR1of3lAh1JYDNJh2jOBlNliqk2MKdgUvzSd++MPLTOjGCFuXY6I2
-	g==
-X-Received: by 2002:a05:6808:1246:b0:4bb:ac05:9ebf with SMTP id 5614622812f47-56b961950cfmr3423531b6e.14.1794446948425;
-        Wed, 11 Nov 2026 17:29:08 -0800 (PST)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-56905738049sm6823481b6e.10.2026.11.11.17.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2026 17:29:07 -0800 (PST)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Wed, 11 Nov 2026 18:28:15 -0700
-Subject: [PATCH v3 36/58] mtd: rawnand: renesas: retain open-handle state
- on removal
+	dkim=pass (2048-bit key, unprotected) header.d=igalia.com header.i=@igalia.com header.a=rsa-sha256 header.s=20170329 header.b=s2opkGXr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:From:Cc:To:Subject:
+	MIME-Version:Date:Message-ID:From:Reply-To;
+	bh=StFp1g4ubx1WuclDmg58dMlRXvni7TqI4/w/yKHNuxg=; t=1794447167; x=2109807167; 
+	b=s2opkGXr94lW9bexnnxDQQjbuy1cjwunD43MvT59+dt6FfKoYImurtv/ouXw+h9LDX6xZh89523
+	QskCDo8qLYjsMczoDKZNHMpD0FLhqh4eUbt1UBqbCRG6KkGrTstBfJ8QaNpYVKFFUCy1CEmuxZj89
+	bd3Htrgxa1DCoDvrBYRDk+KyMhLXJMO8AHjTcQPGgQkV4YDVNBgLpT/H/o/+AiVX1OdgJ70UvgWNg
+	ABEhNKpV/lbANRyixsfFXa7dgGCjmWuMxDR6G/2PIgbzR7rEOY1/mqI3ObwiNsrtpke9SyueDbaA3
+	lvVgNzEs3DxznRbcou2g89lVZI3dYh/DQWcw==;
+Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1xRJfi-009F3i-Aj; Thu, 12 Nov 2026 02:32:14 +0100
+Message-ID: <ee8a57d3-d290-4a20-a3ca-ac8e17a7561c@Igalia.com>
+Date: Wed, 11 Nov 2026 17:32:05 -0800
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -95,143 +57,144 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 07/10] drm: writeback: don't destroy the shared
+ writeback properties
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Louis Chauvet <louis.chauvet@bootlin.com>,
+ Mihail Atanassov <mihail.atanassov@arm.com>, Eric Anholt <eric@anholt.net>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Brian Starkey <brian.starkey@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20261111-wb-drop-encoder-v8-0-62948ed87d13@oss.qualcomm.com>
+ <20261111-wb-drop-encoder-v8-7-62948ed87d13@oss.qualcomm.com>
+Content-Language: en-GB
+From: John Harrison <John.Harrison@Igalia.com>
+In-Reply-To: <20261111-wb-drop-encoder-v8-7-62948ed87d13@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261111-submit-rawnand-retained-handle-lifetime-v1-v3-36-ce537999741d@gmail.com>
-References: <20261111-submit-rawnand-retained-handle-lifetime-v1-v3-0-ce537999741d@gmail.com>
-In-Reply-To: <20261111-submit-rawnand-retained-handle-lifetime-v1-v3-0-ce537999741d@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- James Hilliard <james.hilliard1@gmail.com>, 
- linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.15.2
 
-Keep chip metadata and controller storage alive until the final MTD
-reference is released. Unregister and disconnect each published chip
-before releasing the resources used by its hardware operations.
+On 11/10/26 16:42, Dmitry Baryshkov wrote:
+> The writeback properties are created once per device and attached to
+> every writeback connector. Nevertheless, a failing
+> __drm_writeback_connector_init() destroys all three of them. If an
+> earlier writeback connector has already been registered (komeda and
+> rcar-du create one per CRTC), it is left holding stale property
+> pointers. The drmm cleanup action likewise destroys them as soon as the
+> first connector goes away.
+>
+> Leave the properties alone. They are on the device's property list, so
+> drm_mode_config_cleanup() destroys them together with all other
+> properties.
+This does appear to be the actual behaviour. More importantly, it is 
+also the intended behaviour according to various comments sprinkled 
+around the property creation functions.
 
-Disconnect all chips before dropping runtime PM and transfer buffers.
+Reviewed-by: John Harrison <John.Harrison@Igalia.com>
 
-Run NAND cleanup during disconnection; the final core-owned put only
-releases retained allocation and layout data.
-
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
----
- drivers/mtd/nand/raw/renesas-nand-controller.c | 35 +++++++++++++++++---------
- 1 file changed, 23 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/renesas-nand-controller.c b/drivers/mtd/nand/raw/renesas-nand-controller.c
-index 135cdb67a472..8a2a55007148 100644
---- a/drivers/mtd/nand/raw/renesas-nand-controller.c
-+++ b/drivers/mtd/nand/raw/renesas-nand-controller.c
-@@ -1217,8 +1217,7 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 	}
- 
- 	/* Alloc the driver's NAND chip structure */
--	rnand = devm_kzalloc(rnandc->dev, struct_size(rnand, sels, nsels),
--			     GFP_KERNEL);
-+	rnand = kzalloc(struct_size(rnand, sels, nsels), GFP_KERNEL);
- 	if (!rnand)
- 		return -ENOMEM;
- 
-@@ -1229,17 +1228,19 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 		ret = of_property_read_u32_index(np, "reg", i, &cs);
- 		if (ret) {
- 			dev_err(rnandc->dev, "Incomplete reg property (%d)\n", ret);
--			return ret;
-+			goto free_chip;
- 		}
- 
- 		if (cs >= RNANDC_CS_NUM) {
- 			dev_err(rnandc->dev, "Invalid reg property (%d)\n", cs);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_chip;
- 		}
- 
- 		if (test_and_set_bit(cs, &rnandc->assigned_cs)) {
- 			dev_err(rnandc->dev, "CS %d already assigned\n", cs);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_chip;
- 		}
- 
- 		/*
-@@ -1257,23 +1258,29 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 	mtd->parent_dev = rnandc->dev;
- 	if (!mtd->name) {
- 		dev_err(rnandc->dev, "Missing MTD label\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto free_chip;
- 	}
- 
- 	ret = nand_scan(chip, rnand->nsels);
- 	if (ret) {
- 		dev_err(rnandc->dev, "Failed to scan the NAND chip (%d)\n", ret);
--		return ret;
-+		goto free_chip;
- 	}
- 
- 	ret = rnandc_alloc_dma_buf(rnandc, mtd);
- 	if (ret)
- 		goto cleanup_nand;
- 
-+	ret = nand_set_lifetime(chip, container_of(chip, struct rnand_chip, chip));
-+	if (ret)
-+		goto cleanup_nand;
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret) {
- 		dev_err(rnandc->dev, "Failed to register MTD device (%d)\n", ret);
--		goto cleanup_nand;
-+		nand_disconnect(chip);
-+		mtd_put_master(mtd);
-+		return ret;
- 	}
- 
- 	list_add_tail(&rnand->node, &rnandc->chips);
-@@ -1282,7 +1289,8 @@ static int rnandc_chip_init(struct rnandc *rnandc, struct device_node *np)
- 
- cleanup_nand:
- 	nand_cleanup(chip);
--
-+free_chip:
-+	kfree(rnand);
- 	return ret;
- }
- 
-@@ -1296,8 +1304,9 @@ static void rnandc_chips_cleanup(struct rnandc *rnandc)
- 		chip = &entry->chip;
- 		ret = mtd_device_unregister(nand_to_mtd(chip));
- 		WARN_ON(ret);
--		nand_cleanup(chip);
-+		nand_disconnect(chip);
- 		list_del(&entry->node);
-+		mtd_put_master(nand_to_mtd(chip));
- 	}
- }
- 
-@@ -1322,12 +1331,14 @@ static int rnandc_probe(struct platform_device *pdev)
- 	struct clk *eclk;
- 	int irq, ret;
- 
--	rnandc = devm_kzalloc(&pdev->dev, sizeof(*rnandc), GFP_KERNEL);
-+	rnandc = kzalloc_obj(*rnandc);
- 	if (!rnandc)
- 		return -ENOMEM;
-+	ret = devm_nand_controller_init(&pdev->dev, &rnandc->controller, rnandc);
-+	if (ret)
-+		return ret;
- 
- 	rnandc->dev = &pdev->dev;
--	nand_controller_init(&rnandc->controller);
- 	rnandc->controller.ops = &rnandc_ops;
- 	INIT_LIST_HEAD(&rnandc->chips);
- 	init_completion(&rnandc->complete);
-
--- 
-2.53.0
+> Fixes: 2f3f4a73631b ("drm: writeback: Add missing cleanup in case of initialization failure")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>   drivers/gpu/drm/drm_writeback.c | 34 ++++++----------------------------
+>   1 file changed, 6 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> index 89c36f1414ce..2f6a7b50336c 100644
+> --- a/drivers/gpu/drm/drm_writeback.c
+> +++ b/drivers/gpu/drm/drm_writeback.c
+> @@ -148,22 +148,6 @@ static int create_writeback_properties(struct drm_device *dev)
+>   	return 0;
+>   }
+>   
+> -static void delete_writeback_properties(struct drm_device *dev)
+> -{
+> -	if (dev->mode_config.writeback_pixel_formats_property) {
+> -		drm_property_destroy(dev, dev->mode_config.writeback_pixel_formats_property);
+> -		dev->mode_config.writeback_pixel_formats_property = NULL;
+> -	}
+> -	if (dev->mode_config.writeback_out_fence_ptr_property) {
+> -		drm_property_destroy(dev, dev->mode_config.writeback_out_fence_ptr_property);
+> -		dev->mode_config.writeback_out_fence_ptr_property = NULL;
+> -	}
+> -	if (dev->mode_config.writeback_fb_id_property) {
+> -		drm_property_destroy(dev, dev->mode_config.writeback_fb_id_property);
+> -		dev->mode_config.writeback_fb_id_property = NULL;
+> -	}
+> -}
+> -
+>   /**
+>    * __drm_writeback_connector_init - Initialize a writeback connector
+>    *
+> @@ -198,20 +182,18 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
+>   	int ret = create_writeback_properties(dev);
+>   
+>   	if (ret != 0)
+> -		goto failed_properties;
+> +		return ret;
+>   
+>   	connector->interlace_allowed = 0;
+>   
+>   	ret = drm_connector_attach_encoder(connector, enc);
+>   	if (ret)
+> -		goto failed_properties;
+> +		return ret;
+>   
+>   	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
+>   					formats);
+> -	if (IS_ERR(blob)) {
+> -		ret = PTR_ERR(blob);
+> -		goto failed_properties;
+> -	}
+> +	if (IS_ERR(blob))
+> +		return PTR_ERR(blob);
+>   
+>   	INIT_LIST_HEAD(&wb_connector->job_queue);
+>   	spin_lock_init(&wb_connector->job_lock);
+> @@ -234,9 +216,6 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
+>   	wb_connector->pixel_formats_blob_ptr = blob;
+>   
+>   	return 0;
+> -failed_properties:
+> -	delete_writeback_properties(dev);
+> -	return ret;
+>   }
+>   
+>   /**
+> @@ -295,8 +274,8 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
+>    * @dev: DRM device
+>    * @data: Pointer to the writeback connector to clean up
+>    *
+> - * This will decrement the reference counter of blobs and destroy properties. It
+> - * will also clean the remaining jobs in this writeback connector. Caution: This helper will not
+> + * This will decrement the reference counter of blobs. It will also clean the
+> + * remaining jobs in this writeback connector. Caution: This helper will not
+>    * clean up the attached encoder and the drm_connector.
+>    */
+>   static void drm_writeback_connector_cleanup(struct drm_device *dev,
+> @@ -306,7 +285,6 @@ static void drm_writeback_connector_cleanup(struct drm_device *dev,
+>   	struct drm_writeback_job *pos, *n;
+>   	struct drm_writeback_connector *wb_connector = data;
+>   
+> -	delete_writeback_properties(dev);
+>   	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
+>   
+>   	spin_lock_irqsave(&wb_connector->job_lock, flags);
+>
 
