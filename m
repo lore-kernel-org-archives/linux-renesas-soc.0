@@ -1,76 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794476021;
-	b=4pjMQTXNbbHcGBHDKd52vXUzE56aaj2RZlboSUg+bHnWgvaO0RWjnfDT6CxO8CLRpc7b
-	 3pzXiibMTl8q9LSnnEP8kcjv4HWS6JyymIxoKCtWNWe63LMB/SnEKQ5wgsxHRyXPovzaY
-	 BihdmBEdiwwKMY/AYPtDFnYMVxVUaB+OKtU+vt4M+b9eKxEURXKdMLuoKvxq9AshHTCJx
-	 CJu+3vVhLOiROHx1Pxp4cX/lswRPbV5eTLXaXU1nKqE6Z2i3aSPhkqxu5wsxcBtSQngEt
-	 OL+w8qUXmdZhHyxw6zoSrVtFuKlwBlokUt2ueGzYUJ3RsLzfgqKrm4xNacc+CWPOiKg==
+	t=1794478575;
+	b=0YMZS1lxgEYv/JSvpe+PMcd2Bz62OLZWvz5nBjB1tMxaocMv64ona3aIkQjuDN9YhygN
+	 pviBJR0SL0X7uDwurx/OPTpYHzSYPDOX3IC90FgyjrQ7bkZmKItYFhbI1vTb2de2QW9o3
+	 Y3COkQBPGvDSM9dYGLvQOTgrxqZ035y9XroonEf3VQlaJQtkmT31KCmZ+S7aPCogLdShG
+	 Th9pETWck/S00alDQFvPi7RpSVe695Ykz2n1eTwrMUsxx49EmIpblyUfY6Yp8z55CyR5N
+	 ioeabY/wmmpdbuts5yHqXXHAWXySPBJs4RsXHyN4dDvmKa7A7JOkwhyf6RwfLJ7R3yA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794476021;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=PvpQNatVTOT2KajcSrAsH8RPa9CV8xCGN1VjSKKPUwY=;
-	b=tvmGn0qJe9D9Dp0RpbNgLjMne1L2S7xlvjXsUgrLhlTi7fdCMTT23dXXp39ZZyB9ZS2p
-	 eUDHOU4PFig+Jb7hA5EiS5Ra5JJul6YMTyeIow2zgtnuZybwmv/faZUQUrUpZVa2ocMtA
-	 MZ67jOY9wr0LN3mYx4WjP/FBQWBZt+2dpemQVPnPmsuE0mS0Si2/x9+4U80aXAsqdSva0
-	 Sbk0lpGKeNeOOSMYFeVmoBbouLiqTFriFFfO+Xp5ps3vr16B26fM+FfnvK1PSnFHE+pw+
-	 Cbq+f2Igi8tLs55UT5HiTA9Z8pfUDWKwV6/MHwfFUF/051yNB89ABE56r9RcEawyoJA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794478575;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=x4o0NtrgqLYVQMgSvh/mpBobAZNZ1/NNpD2zfIRITw0=;
+	b=L0Cbdy8X8Ye4RcXkX1iE0VvoEerIES3UoYwU/sUwnvoLk++jeQ9Ol685a30JxLwFnH6Q
+	 8NXh4dCmLJIKwXnoVfIaEh/pFQXVWfKRhl1D4J0JoFK2Um1fSEt08VXkJni50PHNr10WO
+	 Br0e9QhnXb/9B9vmlQFZCaKSLRRK3ljBGCpUINDhSwAYizW4wXX6Of0m5SG4VawJ/ZuN4
+	 qkoLlVQLufVQpxKtBSWdkaevgeAUP9jGhZlPU4Sc1kAEdZOOYg0gbN4nn6vGjQNYwX5nI
+	 4x2Tst05wDKdTBoYcn4KT7ZkUWwtuvs5KRbqg6Ledr1WTc/C+SLF2ha41BFlWxKMopg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.43
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=PdzYjoJC;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3A5606A321
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 09:33:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CF3A5606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-998749fe872so1962670241.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 01:33:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794476020; x=1795080820;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=PvpQNatVTOT2KajcSrAsH8RPa9CV8xCGN1VjSKKPUwY=;
-        b=CmcSmZdeSjzbGvLLaFGeRCV+blu3BPbQyLOXVej2XzIwykGCmI6J3buDPOWhsJ+HRY
-         REMAUE7WItcrNPrgXhcJUQipm973F81J5lvykAP9ivi/1jgtTzMM/Nie+BEv7uKQgawp
-         1RefwcO8uQFnsw4579zfcOElT3vka1/xTGHK+2RPXlnPo1GX5Yw1/NLC6c8X/DuoDdf6
-         SrOI041DKQXoyn7Q1btzG8oMajviKIbD9eVVEkNIGIZRJdMTF72B6jxffnnDz20XsarV
-         BbHrOT/nlRpw8+0C2UlXIUSTni/UHrkjtVLM9vo1RJclk4gRNOekYEHuyZcHeLauk8aU
-         vTvw==
-X-Forwarded-Encrypted: i=1; AL+hErHCanznucgqNXCVYRhsIlT/Zii+C9s8T77Swf66EUZKrWL/LMp+qzeOqKPCJ5VCszdbNHRci/FK9dVgHaaeHG2q1w==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9doRXgr7TD0/ghEGsvs+biRTgF+rAeeDpNoQNgmczKYfcjPEWT
-	K9jYJxl7gDOxRELZMpF2H972FmJY54A8KQNpJ+F7vDSdTNFzapIdTSUxgzOQYAy/
-X-Gm-Gg: AYBFou1z0xXWfV7sLA5pOd9Q6WYMeFDgVwadlKEdDsZ9PaJ0zB/zzGT9192z996EPBW
-	AyyTPLrTFzrEPY1ClfG+JIkHeV7v7siajGFVWG+ZsNRyyKboRw4NDZmzJUy9SSIgfcCq3I0t3Ui
-	g9Tvm3c1fNGfmwD5akmQIkfW75Wf1sc802VhypEskW6fdWP3x2kM26nQvQhljwW+V2OevbLqoea
-	CIksbLcnenAExLQkB9Z1LxzRAB3oE2Fa2vB8O5cpQh7guNF5SsSinH6oTMaDy7WWIP3rYPjPFt8
-	YMdbqivzr2HdCdts2440d/nRWm6LYzTSpAjsds8FqsGjlVrbUFTaj0ri79HeVR3I7CYJdS+ijl2
-	n5dvFEkRUQoJuqan4NDJH3U5wCjxTBExQLcJx7XIkyYM2hdaknesek0jDfC0vLXDxDJqCzAsz8u
-	tePPN2tmv8vuGgEukYEKvdrFlJdDhaU5xW3acE3w2e2i4GN5nzIM8qjnmxhe97KACW4+GEmBcZP
-	eu3izSJDxjsdsyVzDwQuBdIkwTxCgHplS5sxdnP3kFYEwmzM5A0PAYYupdss+iaXDqaUm+HnEaH
-	gGhNxzp5z9jfZoYOn3d3O9ehkX1APAmQFRcs+RjOlGzeNE+yIFEPR9tnXX9RT34nnXc=
-X-Received: by 2002:a05:6102:2d0e:b0:7cb:bc5e:7d9f with SMTP id ada2fe7eead31-7d4fb2577edmr2166472137.11.1794476019565;
-        Thu, 12 Nov 2026 01:33:39 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99c1fec2818sm5035293241.1.2026.11.12.01.33.39
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 01:33:39 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-99c0c1d07feso1896815241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2026 01:33:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErF4qQ+CoJMSgwAmzQFI+y1Fkuh9ne7wSgczMC6p7+HNcepDScBoFMpvXuB9WiIoC2X+vDcYBuUHat2+XrI4FnmLyA==@vger.kernel.org
-X-Received: by 2002:a67:e7c6:0:b0:7b2:f3ff:6b34 with SMTP id
- ada2fe7eead31-7d4eed5b7damr2202052137.1.1794476019144; Thu, 12 Nov 2026
- 01:33:39 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB11606A88E;
+	Thu, 12 Nov 2026 10:16:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEB11606A88E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=PdzYjoJC
+Received: from ideasonboard.com (unknown [93.65.100.155])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D0E66802;
+	Thu, 12 Nov 2026 11:13:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1794478428;
+	bh=lMaCzCHOGXHusmEfhvJYAWMHewDMJN2QyXn0C1RDXGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PdzYjoJCaDIRLaQXow+rXIQNVWlxIZBZuisEIuiByeeNNREOaDkTybrR2MDQ4A5+e
+	 L3JIPuRMKP7XRrmIaBV5YK5/Jg7tg5N1gc1RZP+6tQ3/9sDF9+kECTAKPodpMemy0u
+	 w3PgZFpZiJvCV1odyVZ4hLDn8ear9Y86t4ZxAozg=
+Date: Thu, 12 Nov 2026 11:16:09 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/3] media: uapi: videodev2: Add 20-, 24- and 28-bit
+ bayer pixel formats
+Message-ID: <avWRlfslqUKfANte@zed>
+References: <20260910-v4l2-add-raw-pix-v1-0-80a8e855b41b@ragnatech.se>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,70 +61,48 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261112021818.1819-1-laixiangwu@cmss.chinamobile.com>
-In-Reply-To: <20261112021818.1819-1-laixiangwu@cmss.chinamobile.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Nov 2026 10:33:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX4YdVWBLKozBVKsk-cqnBjHY-4H=2hZP7g1H_3p2O8cA@mail.gmail.com>
-X-Gm-Features: AclHuK9HKr87_qOdqG_vlcwyWmSNoZdZ0yGoPTgdymMg3LMPadA1Yy3iSiEgPYs
-Message-ID: <CAMuHMdX4YdVWBLKozBVKsk-cqnBjHY-4H=2hZP7g1H_3p2O8cA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rza1: Put fwnode after parsing gpio-ranges
-To: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-Cc: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Jacopo Mondi <jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260910-v4l2-add-raw-pix-v1-0-80a8e855b41b@ragnatech.se>
 
-Hi Xiangwu,
+Hi Niklas,
 
-Thanks for your patch!
-
-You forgot to Cc Andy (and Jacopo, for the original bug).
-
-On Thu, 12 Nov 2026 at 03:18, Xiangwu Lai
-<laixiangwu@cmss.chinamobile.com> wrote:
+On Thu, Sep 10, 2026 at 07:22:30PM +0200, Niklas Söderlund wrote:
+> Hello,
 >
-> rza1_parse_gpiochip() parses the "gpio-ranges" property with
-> fwnode_property_get_reference_args(), which takes a reference on the
-> returned fwnode.  The function only consumes the argument cells and
-> never uses the fwnode itself, but neither the function nor its caller
-> drops the reference, so one reference is leaked for every GPIO port.
+> This series adds the pixel formats and documentation for the 20-, 24-
+> and 28-bit Bayer formats. This is done in preparation of work on the
+> Renesas R-Car video capture pipeline which will support these pixel
+> formats in multiple drivers. For this reason it is posted as a separate
+> series before the driver work.
 >
-> Release the reference right after the property has been parsed.
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+> Niklas Söderlund (3):
+>       media: uapi: videodev2: Add 20-bit Bayer formats
+>       media: uapi: videodev2: Add 24-bit Bayer formats
+>       media: uapi: videodev2: Add 28-bit Bayer formats
 >
-> Fixes: 5e455dd93397 ("pinctrl: renesas: rza1: Switch to use for_each_gpiochip_node() helper")
+>  .../userspace-api/media/v4l/pixfmt-bayer.rst       |   3 +
+>  .../userspace-api/media/v4l/pixfmt-srggb20.rst     | 102 +++++++++++++++++++++
+>  .../userspace-api/media/v4l/pixfmt-srggb24.rst     | 102 +++++++++++++++++++++
+>  .../userspace-api/media/v4l/pixfmt-srggb28.rst     | 102 +++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |  12 +++
+>  include/uapi/linux/videodev2.h                     |  12 +++
 
-I will add
-Fixes: 5a49b644b3075f88 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-as the of_node_put() call was missing before the conversion to fwnode,
-too.
+Have you forgot to add the new formats to the table in
+v4l2_format_info() in drivers/media/v4l2-core/v4l2-common.c ?
 
-> Signed-off-by: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.5.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rza1.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
-> @@ -1183,6 +1183,7 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
->                         list_name);
->                 return ret;
->         }
-> +       fwnode_handle_put(args.fwnode);
+>  6 files changed, 333 insertions(+)
+> ---
+> base-commit: f9536a8065d9eed0d9114878c56ffc4e5a18bdfc
+> change-id: 20260908-v4l2-add-raw-pix-50ca1182ccd2
 >
->         /*
->          * Find out on which port this gpio-chip maps to by inspecting the
+> Best regards,
 > --
-> 2.50.1.windows.1
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>
+>
