@@ -1,23 +1,23 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.128.198.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794553983;
-	b=Xg83X5ivcCjm2N1gMaB4Z4TK3TafcOKQYXhFacjwuvmfUpF2xyNzwWcmIycK98SUQiyu
-	 0iAWFME49t8J4SAtmYP0CETd1+VC48fJ2gJ0q8NzKT3AtoUxgdmSubumADGp75qRFWgtj
-	 wrSRJ4r0J9x3BKE7vNgSeFVuUw3yQFhhDBcOu11kUD6XXj126wadTr2PXoKB+EodxkzO4
-	 UHTgd26435/cvFYBMh1n/0mgeFSTSKZcMOWKUDLzyChLq4HPnh3gEPXO17CvaE7l+m2wW
-	 sh87nAs6+lvsmlP49HN+eGbr4eBKFVt1V4BZJsAd+Y8vMgB7grwzvoPh3kF6IuzpQug==
+	t=1794553988;
+	b=uw2xkD46PIQwyxv3Z0XOKrrLjs8f/cTgbm0h5NiuJTtCsa1grLHLxuwv0/QKyJPdBd0r
+	 te8knAUVZCP76f1KMkeB8G/laJZFQsSkOCYujwHpVM+ApY0vmlLe8kLoY7/DG39t16I77
+	 XzBM8/MdeO9TCQaYqoLsBFpCJa4JEoNIOOf8ptDWECXhmmyxrnq92fzRCWj3CwwZ20U4g
+	 R6db9nlWxTEJ6FGD3/81wjc/8dJl6Gl+6k8yuywKCUnaDyl9Jxd33DYQSzy0UIU09WzNk
+	 B96ewcTR1No/F8Ol5ilXKf5FiXvzuwsSPGG6nSM5E8zL0zJyq2SMWldBtNanEuie5JQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794553983;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794553988;
 	h=DMARC-Filter:Received:Received:Received:From:To:CC:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy:X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL;
-	bh=OBCtFqUMq8lyKwq6C0SlRO4azCv4v9nWsThotF1xxZM=;
-	b=YYoSAtIRkl1UvqerQUO8aZUzsrKnIdV/jzKmJPuxFDC8lJE+um3TWkMDE3QI2tQ/5IlL
-	 +V65/CoACFTdtYNW8I/ot4VvUwYLP69cAaHxaq41w4PjQ3+zqNhZRetDXgwE1WF+5elC1
-	 lddvYSQL0V4OZLex/oafrceVVIW40XXMMHOHKeii8JmhcFjv3ufBSQudXDS7H/6tuja2j
-	 LcJlg0r4n3aG4l8HXUyY2G9Ru2WXrhlZDjUWuhwwBpf0VAtyGMv6tel5OjDtw8nmPePzq
-	 yT4Dm7u3EblnfFwgYcZIRLtZ10UUTjT/QcTO0BWIr2PcdAh5hwc4vciEnDlhUzCnhmQ==
+	bh=e+onakzn4FdMfUu7/pbFKyihuONwQ9R+QDsapZHLtMA=;
+	b=JBmcGjg8GrNYoVgCD/aFHCMVpmXzH+LHjjE+fbt43MPaOjdL2I7v9j/H/oQzckLPD8DZ
+	 jtK1Cu1jntL0zm5gg13vqI77HHmpl7loTeS36mFlvKmhdYAe2Jk0MYPpHYgs1K3VMY3GV
+	 x/hIIcHNvU7dJWBj1yzxd9Jq+TiSmjdDZvLml5l6HhokIxYdSubB/g7IfXFcf0kJeA7v0
+	 5p9RIjfzYkDDDrW2gmuNtcq0KwI3Ef31ncEIl/XopXUU0gdkRIA9dOgPnOHruu1WLincX
+	 5ytOhgAhKqzsgqR6KX7Ks1uk/DL0tVZcnWZEbms6GLOvuImi92H3/dd6mDRfNtuyeVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=andestech.com;
 	spf=pass smtp.mailfrom=andestech.com;
@@ -26,24 +26,24 @@ Received: from Atcsqr.andestech.com (atcsqr.andestech.com [220.128.198.184])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8CE606A327
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 07:13:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AA8CE606A327
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96E3606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 07:13:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A96E3606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (atcpcs55.andestech.com [10.0.1.155])
-	by Atcsqr.andestech.com with ESMTPS id 6AD7CR5L059129
+	by Atcsqr.andestech.com with ESMTPS id 6AD7CR5N059129
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 13 Nov 2026 15:12:29 +0800 (+08)
 	(envelope-from minachou@andestech.com)
 Received: from ATCPCS34.andestech.com (10.0.1.134) by atcpcs55.andestech.com
  (10.0.1.155) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.56; Fri, 13 Nov
- 2026 15:12:28 +0800
+ 2026 15:12:29 +0800
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
  (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Nov
- 2026 15:12:28 +0800
+ 2026 15:12:29 +0800
 From: Mina Hui-Min Chou <minachou@andestech.com>
 To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <alex@ghiti.fr>, <conor@kernel.org>, <jic23@kernel.org>,
@@ -54,9 +54,9 @@ To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <randolph@andestech.com>, <cyyang772@andestech.com>,
         <tim609@andestech.com>, <minachou@andestech.com>, <az70021@gmail.com>
-Subject: [PATCH v2 07/19] cache: andes_llcache: clean up cache inv/wback functions
-Date: Fri, 13 Nov 2026 15:11:31 +0800
-Message-ID: <20261113071143.1446167-8-minachou@andestech.com>
+Subject: [PATCH v2 11/19] cache: andes_llcache: use the hart ID to index the CCTL registers
+Date: Fri, 13 Nov 2026 15:11:35 +0800
+Message-ID: <20261113071143.1446167-12-minachou@andestech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113071143.1446167-1-minachou@andestech.com>
 References: <20261113071143.1446167-1-minachou@andestech.com>
@@ -76,82 +76,56 @@ X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
 X-DKIM-Results: atcpcs55.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 6AD7CR5L059129
+X-MAIL:Atcsqr.andestech.com 6AD7CR5N059129
 
-Replace open-coded cache line alignment with ALIGN_DOWN/ALIGN helpers,
-initialize line_size at declaration site, and use !size instead of
-start == end for the early-out check. Drop redundant blank lines.
+The LLC has a separate set of CCTL registers for each core, selected by
+the hart ID of the core. The driver selects the set with
+smp_processor_id(), which returns the logical CPU number, not the hart
+ID.
 
-Also declare pa in andes_cpu_cache_operation() as phys_addr_t, the type
-virt_to_phys() returns.
+The two numbers differ when some harts are not used by Linux, or when
+Linux boots on a hart other than 0, as the boot hart is always CPU 0.
+A CPU then issues its LLC operations through the registers of another
+hart, which may be in use by that hart at the same time.
 
-No functional change intended.
+RZ/Five has a single core with hart ID 0, so the two numbers always
+match there and the problem never showed up.
+
+Convert the logical CPU number to the hart ID with
+cpuid_to_hartid_map().
 
 Signed-off-by: Mina Hui-Min Chou <minachou@andestech.com>
 ---
- drivers/cache/andes_llcache.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ drivers/cache/andes_llcache.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/cache/andes_llcache.c b/drivers/cache/andes_llcache.c
-index 61730e218afa..3c271e1e49bf 100644
+index 80c55616ab10..9f8fa8964302 100644
 --- a/drivers/cache/andes_llcache.c
 +++ b/drivers/cache/andes_llcache.c
 @@ -65,7 +65,7 @@ static void andes_cpu_cache_operation(unsigned long start, unsigned long end,
+ {
  	unsigned long line_size = andes_priv.andes_cache_line_size;
  	void __iomem *base = andes_priv.llc_base;
- 	int mhartid = smp_processor_id();
--	unsigned long pa;
-+	phys_addr_t pa;
+-	int mhartid = smp_processor_id();
++	unsigned long hartid = cpuid_to_hartid_map(smp_processor_id());
+ 	phys_addr_t pa;
  
  	while (end > start) {
- 		csr_write(CSR_UCCTLBEGINADDR, start);
-@@ -101,21 +101,17 @@ static void andes_dma_cache_inv(phys_addr_t paddr, size_t size)
- {
- 	unsigned long start = (unsigned long)phys_to_virt(paddr);
- 	unsigned long end = start + size;
--	unsigned long line_size;
-+	unsigned long line_size = andes_priv.andes_cache_line_size;
- 	unsigned long flags;
+@@ -74,10 +74,10 @@ static void andes_cpu_cache_operation(unsigned long start, unsigned long end,
  
--	if (unlikely(start == end))
-+	if (unlikely(!size))
- 		return;
+ 		pa = virt_to_phys((void *)start);
+ 		/* The access line register is 64 bits; written lo-hi on RV32 */
+-		writeq(pa, base + ANDES_LLC_REG_CCTL_ACC_OFFSET_BY_CORE(mhartid));
+-		writel(llc_op, base + ANDES_LLC_REG_CCTL_CMD_OFFSET_BY_CORE(mhartid));
++		writeq(pa, base + ANDES_LLC_REG_CCTL_ACC_OFFSET_BY_CORE(hartid));
++		writel(llc_op, base + ANDES_LLC_REG_CCTL_CMD_OFFSET_BY_CORE(hartid));
+ 		while ((andes_cpu_llc_get_cctl_status() &
+-			ANDES_LLC_CCTL_STATUS_MASK_BY_CORE(mhartid)) !=
++			ANDES_LLC_CCTL_STATUS_MASK_BY_CORE(hartid)) !=
+ 			ANDES_LLC_CCTL_STATUS_IDLE)
+ 			;
  
--	line_size = andes_priv.andes_cache_line_size;
--
--	start = start & (~(line_size - 1));
--	end = ((end + line_size - 1) & (~(line_size - 1)));
-+	start = ALIGN_DOWN(start, line_size);
-+	end = ALIGN(end, line_size);
- 
- 	local_irq_save(flags);
--
- 	andes_cpu_dcache_inval_range(start, end);
--
- 	local_irq_restore(flags);
- }
- 
-@@ -123,15 +119,15 @@ static void andes_dma_cache_wback(phys_addr_t paddr, size_t size)
- {
- 	unsigned long start = (unsigned long)phys_to_virt(paddr);
- 	unsigned long end = start + size;
--	unsigned long line_size;
-+	unsigned long line_size = andes_priv.andes_cache_line_size;
- 	unsigned long flags;
- 
--	if (unlikely(start == end))
-+	if (unlikely(!size))
- 		return;
- 
--	line_size = andes_priv.andes_cache_line_size;
--	start = start & (~(line_size - 1));
--	end = ((end + line_size - 1) & (~(line_size - 1)));
-+	start = ALIGN_DOWN(start, line_size);
-+	end = ALIGN(end, line_size);
-+
- 	local_irq_save(flags);
- 	andes_cpu_dcache_wb_range(start, end);
- 	local_irq_restore(flags);
 -- 
 2.34.1
 
