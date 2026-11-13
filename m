@@ -1,60 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794578734;
-	b=lFDpUzAzhw4dqHtYdkhGIhu24Pd2Ztt7v4AkL7rFPp2oio5mEJWGSQI9Kc8VpONtH/l6
-	 uuNZW1Pc1ifwKRils0/lGhXRgUSXkccuhg46LLUAWiye9DJHQwIji8n2WNRcHaEP0/Ulk
-	 /9uYpHQHLK2ZbpsT5yhhBffmvPAhGvBYp15EPTdIWKCXC3biTLSf21T8AgNG99yrfYmhf
-	 G5bFpAEb48Ourb1A1lLZKmrhrXFhrnjA/SzYrB1RkGfqasWukd9JI0Lke0tHkUGGP+urJ
-	 AwnMKBxkDaXrlu+tOLm3tR/vq0REJs+aubTxITKTq8WeSE6IW6sfqFtIpO7dBWUj54Q==
+	t=1794580499;
+	b=l0xXQT6Rogp+pz0NRjd9Ubx6+imUeAMPy3MLVnH/La1oicdhHUqnz9gBI1nqXZ2SDl2C
+	 ikiVXW3URxLyY3M7/AMGYcw3XErRsfcbh1E6c568eR+0eLZNPwRU4kSIZ2zE6rOPyt7Gm
+	 s2fGJn29aqfzSwi8CYGI2Q6k8ZzPQd0svwY7Vi487xnp+BVP2GXCodQhgJnaKz03I+mPe
+	 msr/3JevEGI89YAn9KYx3nMGc3MBitrXOD/9fUOIfR0lSR8Tz5sOgDvdDxeHj8KI+H2ie
+	 9uKk+5oSwsIrUTPhpNRF+u1iWFYeeuY6RahB6alMXGI3plJe/yTtPs3EXI1TMQX4MnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794578734;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=LOjx6oEGbB7XtY97QD54yKBprd/VH9r8uevA8iC/xWA=;
-	b=De7evixVmzsW7iKX4++pK5+YFsUX5Z0iLzZTxcYtGLAOV6krBeCsAM7DErK8z6+436U/
-	 MrkqfMFxbFKcUY0kJv5/9vPsq6haARrmJr6Cj3yhXFVEgtEKrtxm1bnIOEzRAHWclzJV/
-	 1UOVaftTjKTSAE3ZDlhrKJScLVDAgKHsGTwFjCujfjYh4B7KU0bu05i1G9z0PUTXUUAcS
-	 9icLdDJEZnjP+ZQFKI+AEmfEsj0D4FvUnlM3L8oR82gbZa5ahYwMFLLgljlTpj1cbmm0/
-	 ZUUkJuOz/Uk630TJh8I5o0xlh10shtFv1DX4KCDPQbWavJGNVr914UeEFCL58qGH7XQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794580499;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=PF7x+WHFDlFjFzclJMmi7Uvb2yYXpjZa21XSXBNN68Y=;
+	b=0za53MIooKfpn7ifwYJz7ou0y0KdDH3AQeePVy/6cIfPZcDQcZsm/p50PGHLmZXxIv+a
+	 +Unqh/EYExBXXwxRv+6nTV9dgaXskB/ejiTEzDMaKTY6yLqCYB+u7kwEXLKk7er0oz4T+
+	 RWdH4DbcdBRrLoVAusBwDBusrQnhJvkY4edcLiHJSbKBRmUybULdrBqzcDlADajldUQc5
+	 tXYCtUJj17PGSPoytFdl+D9P81C1Di3WDA2+SC1uzmWmIrpmLnnMtSmxOVR0gxvrRMZR1
+	 SLOLPRmtHMT7mbOPA8HhgFegOf20KXeOseD6NmONY7om238L6Cg5nrQOG1ALSRcVZYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LUvzRnQn;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zs+kdfNJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDB4606A323;
-	Fri, 13 Nov 2026 14:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62417606A339
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 14:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LUvzRnQn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22A181F000C6;
-	Fri, 13 Nov 2026 14:05:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zs+kdfNJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCD91F000C8
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 14:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794578734;
-	bh=LOjx6oEGbB7XtY97QD54yKBprd/VH9r8uevA8iC/xWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LUvzRnQn/HOD9r9OOWVR0Msf0kSylQoriehP8qdRnawC0KsgaXAoAg2wK7GVMGkV7
-	 jp/+iFifwM9ctnH2BD/hcfAa2gXIOgmVnMckMonosOtHMxOOByJUZEYs4IeTIuD7gk
-	 yE6y/A0YqFg/5HsZ8dZH94Pno8of9OCfEe5ZrLk/6lTI8lt4LjtNQtY4pn6cUsvcfv
-	 ZFI+g8ZhjLL0U9I6Xu8o9lgWthhCBGKPfnVqJ2tkrDw56ner98piDTkgayIC2Vkkn4
-	 1BxRF2EVL2AJCObith+tOg9hvUeAS2kOhYInxCYdBQnnrwKMOkFIdN/HI/Nwy5mVRm
-	 oBsvzXzK9vR8w==
-Date: Fri, 13 Nov 2026 14:05:29 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Mina Hui-Min Chou <minachou@andestech.com>
-Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	randolph@andestech.com, cyyang772@andestech.com,
-	tim609@andestech.com, az70021@gmail.com
-Subject: Re: [PATCH v2 12/19] dt-bindings: cache: andestech: update schema
- for generic LLC support
-Message-ID: <20261113-emporium-provolone-0e7b0e39c97a@spud>
-References: <20261113071143.1446167-1-minachou@andestech.com>
- <20261113071143.1446167-13-minachou@andestech.com>
+	s=k20260515; t=1794580499;
+	bh=PF7x+WHFDlFjFzclJMmi7Uvb2yYXpjZa21XSXBNN68Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Zs+kdfNJoLMkl/WkGe794yJ/6X4epq2Y0S9osHqwtoywyGWWo5acUIiHSXv04wbm7
+	 jT/Lpt5RBcdJ4H/5KDckMWd11BZlN7NY3J7Kg4iq8zkmjv3UmtVQtTTmcZMdsogjpK
+	 /1Ix/X/H1c1uvRoR9KuN41hX+QgC/q+/2BNBCz7ObiJCI0w4gNTmmxdBrBdzTVUyF7
+	 HnaUrlhe6B3NCHoXhN4Wqcuj0NTPB0p51y5t28+X1h+4dJZJZlYqqyXqKnErGu3tCE
+	 IT+KTIx9lAc5aSvhJMluLkZ+uS5+IzI807cN03nbgP9G38DTbnXDsJDnODPry9L/NQ
+	 3PZRqmJoROLXA==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6de2f213b7aso375775eaf.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 06:34:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErGosLeaM2nCfaxPaRywjAPPH2K+5vFEwcgefAxCQAWdB10esvVGri0jEudImFWxz3AITwyISPocpvrKt2y1TZND0A==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8rvRukmpX3i/MaBThWxRnEAZIbk2CqafTWE0E9PBU2yTK4icTS
+	CFsiedZFwVj4Y3421VZuBJkQRPyonMXi/FvjpoT8B4cJith3nrOPTXo/YczMa47vjWzNY/A0zag
+	byCWUQtEkrjrUQqln0wIL588neR27NpM=
+X-Received: by 2002:a05:6820:238b:b0:6f4:d9d4:3948 with SMTP id
+ 006d021491bc7-71ab50535a7mr1136848eaf.45.1794580497611; Fri, 13 Nov 2026
+ 06:34:57 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -64,206 +59,89 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NvIhCNPRm1ByCO8d"
-Content-Disposition: inline
-In-Reply-To: <20261113071143.1446167-13-minachou@andestech.com>
-
---NvIhCNPRm1ByCO8d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-22-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-22-5e3070a3478f@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 13 Nov 2026 15:34:42 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmME3b35ipG0N9agoe+5P1J6dsDiy3hoT9MJ9vyRwBA7A@mail.gmail.com>
+X-Gm-Features: AclHuK879_MUVY4wh3-oLFktJApN7IrvQSuSi80dujOkyN3zJSTWDVcOyRF70LI
+Message-ID: <CAD++jLmME3b35ipG0N9agoe+5P1J6dsDiy3hoT9MJ9vyRwBA7A@mail.gmail.com>
+Subject: Re: [PATCH 22/35] drm/panel: drop the orientation workaround from get_modes()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>, 
+	Michael Walle <mwalle@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
+	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
+	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 13, 2026 at 03:11:36PM +0800, Mina Hui-Min Chou wrote:
-> The last level cache controller of Andes cores is not specific to
-> AX45MP. Other Andes cores, such as the A27L2, use the same controller
-> with the same register interface, but the binding only accepts
-> andestech,ax45mp-cache. Add andestech,llcache for them, and describe
-> the binding as an Andes last level cache rather than an AX45MP L2
-> cache.
->=20
-> The cache-level, cache-sets and cache-size constraints describe the
-> AX45MP L2 cache, so apply them to andestech,ax45mp-cache only. The LLC
-> of other Andes cores can be level 3 and have other geometries, so
-> allow cache-level 3 and require cache-sets only for AX45MP. Match
-> renesas,r9a07g043f-ax45mp-cache explicitly instead of through the else
-> branch, which would otherwise also apply to andestech,llcache.
->=20
-> Also add an example for andestech,llcache, and add myself as a
-> maintainer of the binding.
->=20
-> Signed-off-by: Mina Hui-Min Chou <minachou@andestech.com>
-> ---
->  .../cache/andestech,ax45mp-cache.yaml         | 71 ++++++++++++++-----
->  1 file changed, 54 insertions(+), 17 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cac=
-he.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.ya=
-ml
-> index b135ffa4ab6b..da9688cc95f7 100644
-> --- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> +++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> @@ -5,14 +5,15 @@
->  $id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> =20
-> -title: Andestech AX45MP L2 Cache Controller
-> +title: Andestech Last Level Cache Controller
-> =20
->  maintainers:
->    - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +  - Mina Hui-Min Chou <minachou@andestech.com>
-> =20
->  description:
-> -  A level-2 cache (L2C) is used to improve the system performance by pro=
-viding
-> -  a large amount of cache line entries and reasonable access delays. The=
- L2C
-> +  A last level cache (LLC) is used to improve the system performance by =
-providing
-> +  a large amount of cache line entries and reasonable access delays. The=
- LLC
->    is shared between cores, and a non-inclusive non-exclusive policy is u=
-sed.
-> =20
->  select:
-> @@ -21,18 +22,23 @@ select:
->        contains:
->          enum:
->            - andestech,ax45mp-cache
-> +          - andestech,llcache
-> =20
->    required:
->      - compatible
-> =20
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - andestech,qilai-ax45mp-cache
-> -          - renesas,r9a07g043f-ax45mp-cache
-> -      - const: andestech,ax45mp-cache
-> -      - const: cache
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - andestech,qilai-ax45mp-cache
-> +              - renesas,r9a07g043f-ax45mp-cache
-> +          - const: andestech,ax45mp-cache
-> +          - const: cache
-> +      - items:
-> +          - const: andestech,llcache
-> +          - const: cache
+On Mon, Oct 26, 2026 at 12:11=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-Device specific compatibles are mandatory. I would accept this patch
-with a
-          - not: {}
-            description: Need a SoC specific compatible
-like the safexcel eip binding.
+> Setting the orientation from get_modes() was a stopgap for the display
+> drivers not calling drm_connector_set_orientation_from_panel(). It is
+> also too late: by then the connector is registered and the property can
+> no longer be attached properly.
+>
+> drm_bridge_connector and the panel bridge set the orientation on their
+> own, and the drivers using a panel directly do it when creating the
+> connector now. The exceptions are sun6i_mipi_dsi, sti_dvo and the Tegra
+> DSI, which get the panel only after the DRM device has been registered.
+> None of the in-tree boards using them has a rotated panel.
+>
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-pw-bot: changes-requested
+Makes sense.
+Acked-by: Linus Walleij <linusw@kernel.org>
 
-Thanks,
-Conor.
-
-
-> =20
->    reg:
->      maxItems: 1
-> @@ -44,13 +50,11 @@ properties:
->      const: 64
-> =20
->    cache-level:
-> -    const: 2
-> +    enum: [2, 3]
-> =20
-> -  cache-sets:
-> -    enum: [1024, 2048]
-> +  cache-sets: true
-> =20
-> -  cache-size:
-> -    enum: [131072, 262144, 524288, 1048576, 2097152]
-> +  cache-size: true
-> =20
->    cache-unified: true
-> =20
-> @@ -64,7 +68,6 @@ required:
->    - interrupts
->    - cache-line-size
->    - cache-level
-> -  - cache-sets
->    - cache-size
->    - cache-unified
-> =20
-> @@ -73,15 +76,36 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: andestech,qilai-ax45mp-cache
-> +            const: andestech,ax45mp-cache
-> +    then:
-> +      properties:
-> +        cache-level:
-> +          const: 2
-> +        cache-sets:
-> +          enum: [1024, 2048]
-> +        cache-size:
-> +          enum: [131072, 262144, 524288, 1048576, 2097152]
-> +      required:
-> +        - cache-sets
-> =20
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: andestech,qilai-ax45mp-cache
->      then:
->        properties:
->          cache-sets:
->            const: 2048
->          cache-size:
->            const: 2097152
-> -    else:
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a07g043f-ax45mp-cache
-> +    then:
->        properties:
->          cache-sets:
->            const: 1024
-> @@ -101,3 +125,16 @@ examples:
->          cache-size =3D <262144>;
->          cache-unified;
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    cache-controller@e0500000 {
-> +        compatible =3D "andestech,llcache", "cache";
-> +        reg =3D <0xe0500000 0x10000>;
-> +        interrupts =3D <16 IRQ_TYPE_LEVEL_HIGH>;
-> +        cache-line-size =3D <64>;
-> +        cache-level =3D <2>;
-> +        cache-size =3D <262144>;
-> +        cache-unified;
-> +    };
-> --=20
-> 2.34.1
->=20
-
---NvIhCNPRm1ByCO8d
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavcZKQAKCRB4tDGHoIJi
-0uHvAQCrXjifTuDDgyGXIkJkqbdHt3X2TEOcQaFieQczO/ZIHAD9HhXAgmRlKGIs
-/KTS4wXNHI6k4xKnBkLYE/RaOg7J3A8=
-=vUL2
------END PGP SIGNATURE-----
-
---NvIhCNPRm1ByCO8d--
+Yours,
+Linus Walleij
