@@ -1,23 +1,23 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.128.198.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794553998;
-	b=WcnyH1LL1GoGoBcSrD47acdZehf1LyB9lJdCoVpSu/asovXT/uXO9PrBwV/q10BrYeKe
-	 ITYTm6l0tcbUdZFgqcmjoAGNLLjoTTweYYz5muuOCYENxn0X5u7rN/VsjsmCr0lb93oNj
-	 Y7vrO/Fy8rLck7pVvLnn4mDibTH5u/YxZf0Zr38s4TTCpu2O0mm3tsIca19AOtcp5xkBP
-	 3QLbpJTkyD6lQlnup3VSvAYAxBnKRBSxii5F5kb8LUtQKtKj3w5sY/O4QJQe3UUJRD9E9
-	 b7GTPUnIs24oS13/6floQO8Egf/Kozm2AQY0CVsAta6PahJzvSXcXkGeHIWsvbN/zMA==
+	t=1794554003;
+	b=BYCczkPaV92ggYEAQb2twQDTnpmFyGU4Sum6JgU6FrSHjMS51qwVJRHmDc+1LWHlRDc3
+	 9GtaJBIFT3+pC1EZ+KQ4Cf0FsQFBh+HCuIwaM9FelRJoFKIxPkZeJWMHl/XLptxKWJbvY
+	 7UcjHAqveW2k4IiQoWF/ukYNJVNyx2L/4nT02kQyUu50SaAg32RbNkzXMjqEa8SQ0ObEi
+	 QVty2DHz75Fzw3twpeficfHo0nlqOYxcIYHb2agpj9l7Ij9sCDM2sxEk+bEFo2efCu3bO
+	 WtZiZr+50fL20F3RpfusNnDNUuB0urM3bekXkNAcY8etk4Xu4Mrg80TWCXlDdHilWmw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794553998;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794554003;
 	h=DMARC-Filter:Received:Received:Received:From:To:CC:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy:X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL;
-	bh=d0FGnKP5MU00KgvFxCQ6ldQgSTkozZU+51d+ZgossLs=;
-	b=ai/lvDk1AHHqTSdNRcKAeU4K7movAzgOJcucn6Nucu+CJ+fKFpUBiv7VkxiGOxgZZWln
-	 6bNCu0Itgbf8F9hiuF2pUZrSC6vCn2gn/smi1dxr2ydNU1vOP3VGY+7wA8duwl2yhTISu
-	 qkPpp+FjMDVSXjccZnQjHaxZgng6kG1CmiPTH2EeTS5ht7xpPbOVILlTTK4d2LJqF5v4N
-	 hYT6UQEck22g2s3WIC/EXFmzZyyKJxOAtIqzfyVQ227+0z251aZM3d19MmfkpQga3d5cG
-	 5gJ1Q40K4NxPuNkq/o2EtU8J9QQ7LwyyI6BUlFVnmSVeU96egIgOzhYPFLZvG5YQuLA==
+	bh=HFVjm0PhKZINqZZ02/+tDqCstCaYaVxdyQMiKOAJ0mc=;
+	b=NGwwPD0tCsLJZa+PMKktkcpXFsNwprhlMamhwxqGBUDsc3KJ9stT/qnpediXM7mP2kEJ
+	 ZfXbtdP8f6f4O/b+hk9oKjoejuvGpB2RQ8CKgBpn7mmyGa51fnAYyX9nGKcxUmnXG8ieg
+	 kPSVTc2wp12mQEloZg4Y8nNQDUxZsZsaY/CvxGBYuazhgTxHcSurLKxFbyvOYMzmouTa9
+	 mv31CTG6/H+ztTkJADiqDFsm7+UGWZppYK0GfvXbnwT/b4NLNnuNaIYtWdIXO8vfvwrdf
+	 V+k89eaA+MvSEyeZPQwgD89NPsZXk4P/EUElrCI8r607PRt/Q7tMxsSJW2+Sh04op9A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=andestech.com;
 	spf=pass smtp.mailfrom=andestech.com;
@@ -26,13 +26,13 @@ Received: from Atcsqr.andestech.com (atcsqr.andestech.com [220.128.198.184])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5A2606A323
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 07:13:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DC5A2606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96169606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 07:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96169606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (atcpcs55.andestech.com [10.0.1.155])
-	by Atcsqr.andestech.com with ESMTPS id 6AD7CR5P059129
+	by Atcsqr.andestech.com with ESMTPS id 6AD7CR5Q059129
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 13 Nov 2026 15:12:29 +0800 (+08)
 	(envelope-from minachou@andestech.com)
@@ -54,9 +54,9 @@ To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <randolph@andestech.com>, <cyyang772@andestech.com>,
         <tim609@andestech.com>, <minachou@andestech.com>, <az70021@gmail.com>
-Subject: [PATCH v2 13/19] dt-bindings: cache: rename andestech,ax45mp-cache to andestech,llcache
-Date: Fri, 13 Nov 2026 15:11:37 +0800
-Message-ID: <20261113071143.1446167-14-minachou@andestech.com>
+Subject: [PATCH v2 14/19] cache: andes_llcache: add generic andestech,llcache compatible
+Date: Fri, 13 Nov 2026 15:11:38 +0800
+Message-ID: <20261113071143.1446167-15-minachou@andestech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113071143.1446167-1-minachou@andestech.com>
 References: <20261113071143.1446167-1-minachou@andestech.com>
@@ -76,34 +76,27 @@ X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
 X-DKIM-Results: atcpcs55.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 6AD7CR5P059129
+X-MAIL:Atcsqr.andestech.com 6AD7CR5Q059129
 
-The binding now covers Andes last level caches beyond AX45MP and uses
-andestech,llcache as the generic compatible. Rename the file to match
-it.
+Add andestech,llcache as a generic fallback compatible string.
 
 Signed-off-by: Mina Hui-Min Chou <minachou@andestech.com>
 ---
- .../{andestech,ax45mp-cache.yaml => andestech,llcache.yaml}     | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/devicetree/bindings/cache/{andestech,ax45mp-cache.yaml => andestech,llcache.yaml} (97%)
+ drivers/cache/andes_llcache.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,llcache.yaml
-similarity index 97%
-rename from Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-rename to Documentation/devicetree/bindings/cache/andestech,llcache.yaml
-index da9688cc95f7..f97038d39b0e 100644
---- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-+++ b/Documentation/devicetree/bindings/cache/andestech,llcache.yaml
-@@ -2,7 +2,7 @@
- # Copyright (C) 2023 Renesas Electronics Corp.
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
-+$id: http://devicetree.org/schemas/cache/andestech,llcache.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/cache/andes_llcache.c b/drivers/cache/andes_llcache.c
+index 9f8fa8964302..17df8b8af9d4 100644
+--- a/drivers/cache/andes_llcache.c
++++ b/drivers/cache/andes_llcache.c
+@@ -168,6 +168,7 @@ static const struct riscv_nonstd_cache_ops andes_cmo_ops __initconst = {
  
- title: Andestech Last Level Cache Controller
+ static const struct of_device_id andes_cache_ids[] = {
+ 	{ .compatible = "andestech,ax45mp-cache" },
++	{ .compatible = "andestech,llcache" },
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
 2.34.1
 
