@@ -1,23 +1,23 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.128.198.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794553988;
-	b=uw2xkD46PIQwyxv3Z0XOKrrLjs8f/cTgbm0h5NiuJTtCsa1grLHLxuwv0/QKyJPdBd0r
-	 te8knAUVZCP76f1KMkeB8G/laJZFQsSkOCYujwHpVM+ApY0vmlLe8kLoY7/DG39t16I77
-	 XzBM8/MdeO9TCQaYqoLsBFpCJa4JEoNIOOf8ptDWECXhmmyxrnq92fzRCWj3CwwZ20U4g
-	 R6db9nlWxTEJ6FGD3/81wjc/8dJl6Gl+6k8yuywKCUnaDyl9Jxd33DYQSzy0UIU09WzNk
-	 B96ewcTR1No/F8Ol5ilXKf5FiXvzuwsSPGG6nSM5E8zL0zJyq2SMWldBtNanEuie5JQ==
+	t=1794553993;
+	b=V5dqZtwi4czOaQ5G09BwKdhZDUrVKRoQ+1s4ArBjYcNCmN89V/xBicApEg6gd9985av8
+	 Hmv6u0iV8WCQDWc8+E6ySRAysvHARNRJ45mOSUrLpbSAwSuAIG+6LzmicqWPVO6LGMHwB
+	 d2mbZFr1e28hUtuOhaqzibu04jIRRJ4hVbrIXqUquqCpJlixPZDhIsITsjcmXZG6cJCj0
+	 Zlx6IXY8xr92uEJ2WNWm+D6b1uc56GIafcnXyHYkoGK2VPHg8sAvoY/Lbis6gAraYoBzD
+	 91h+kTTXXDkQzVEc6/8RqUvKtvHPC4CTPl9qI1e+RZJIPctikYeLbZJLbdotTMb9X3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794553988;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794553993;
 	h=DMARC-Filter:Received:Received:Received:From:To:CC:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy:X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL;
-	bh=e+onakzn4FdMfUu7/pbFKyihuONwQ9R+QDsapZHLtMA=;
-	b=JBmcGjg8GrNYoVgCD/aFHCMVpmXzH+LHjjE+fbt43MPaOjdL2I7v9j/H/oQzckLPD8DZ
-	 jtK1Cu1jntL0zm5gg13vqI77HHmpl7loTeS36mFlvKmhdYAe2Jk0MYPpHYgs1K3VMY3GV
-	 x/hIIcHNvU7dJWBj1yzxd9Jq+TiSmjdDZvLml5l6HhokIxYdSubB/g7IfXFcf0kJeA7v0
-	 5p9RIjfzYkDDDrW2gmuNtcq0KwI3Ef31ncEIl/XopXUU0gdkRIA9dOgPnOHruu1WLincX
-	 5ytOhgAhKqzsgqR6KX7Ks1uk/DL0tVZcnWZEbms6GLOvuImi92H3/dd6mDRfNtuyeVQ==
+	bh=z6gjw1oSZ6klxEuE0p7NNzRy6LyzpuNwDFB9p0DiYE8=;
+	b=mt9RxyTN0fBvOyfAlxq5C9320R3vkOwTz62wIuCwFQv7WF5Jc7aBJdgvIN7uBTxiuKdH
+	 0uSqiLs6b+299qmpDiRP3fY/5fAiLzMrv8oMPLNLUSKXTBKhoyiWZOeqKf3AZ16QZCve0
+	 m45sNmzyP3mGGxjGAb66E6NXkhcBmoZFmBuEQmztt0O6O5sWp+G0zrWKupYKt+dk1eo7+
+	 ybaLy6aczpJNynCCikWwcUOePhQaw5HOm6+jB+0CzAW9cidRYj9y3T0HQj5ynzh18YOtI
+	 JGenAaQZdz9jUy2vGYSgH0nUcoY3RwFOhhjm5cQ2kH0nRvTZGlfhSu2MZi226fPZRow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=andestech.com;
 	spf=pass smtp.mailfrom=andestech.com;
@@ -26,24 +26,24 @@ Received: from Atcsqr.andestech.com (atcsqr.andestech.com [220.128.198.184])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96E3606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 07:13:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A96E3606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1AD606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Nov 2026 07:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C1AD606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (atcpcs55.andestech.com [10.0.1.155])
-	by Atcsqr.andestech.com with ESMTPS id 6AD7CR5N059129
+	by Atcsqr.andestech.com with ESMTPS id 6AD7CR5M059129
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 13 Nov 2026 15:12:29 +0800 (+08)
 	(envelope-from minachou@andestech.com)
 Received: from ATCPCS34.andestech.com (10.0.1.134) by atcpcs55.andestech.com
  (10.0.1.155) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.56; Fri, 13 Nov
- 2026 15:12:29 +0800
+ 2026 15:12:28 +0800
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
  (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Nov
- 2026 15:12:29 +0800
+ 2026 15:12:28 +0800
 From: Mina Hui-Min Chou <minachou@andestech.com>
 To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <alex@ghiti.fr>, <conor@kernel.org>, <jic23@kernel.org>,
@@ -54,9 +54,9 @@ To: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <randolph@andestech.com>, <cyyang772@andestech.com>,
         <tim609@andestech.com>, <minachou@andestech.com>, <az70021@gmail.com>
-Subject: [PATCH v2 11/19] cache: andes_llcache: use the hart ID to index the CCTL registers
-Date: Fri, 13 Nov 2026 15:11:35 +0800
-Message-ID: <20261113071143.1446167-12-minachou@andestech.com>
+Subject: [PATCH v2 08/19] cache: andes_llcache: use u32 and fix the cache-line-size error message
+Date: Fri, 13 Nov 2026 15:11:32 +0800
+Message-ID: <20261113071143.1446167-9-minachou@andestech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113071143.1446167-1-minachou@andestech.com>
 References: <20261113071143.1446167-1-minachou@andestech.com>
@@ -76,55 +76,44 @@ X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
 X-DKIM-Results: atcpcs55.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 6AD7CR5N059129
+X-MAIL:Atcsqr.andestech.com 6AD7CR5M059129
 
-The LLC has a separate set of CCTL registers for each core, selected by
-the hart ID of the core. The driver selects the set with
-smp_processor_id(), which returns the logical CPU number, not the hart
-ID.
+andes_cpu_llc_get_cctl_status() returns uint32_t, while the rest of the
+driver uses u32. Use u32 there as well.
 
-The two numbers differ when some harts are not used by Linux, or when
-Linux boots on a hart other than 0, as the boot hart is always CPU 0.
-A CPU then issues its LLC operations through the registers of another
-hart, which may be in use by that hart at the same time.
+When the cache-line-size property cannot be read, the error message
+says the driver defaults to 64 bytes, but the driver returns the error
+and does not register its cache ops. Drop the misleading part of the
+message.
 
-RZ/Five has a single core with hart ID 0, so the two numbers always
-match there and the problem never showed up.
-
-Convert the logical CPU number to the hart ID with
-cpuid_to_hartid_map().
+No functional change intended.
 
 Signed-off-by: Mina Hui-Min Chou <minachou@andestech.com>
 ---
- drivers/cache/andes_llcache.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/cache/andes_llcache.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/cache/andes_llcache.c b/drivers/cache/andes_llcache.c
-index 80c55616ab10..9f8fa8964302 100644
+index 3c271e1e49bf..0aea1389f291 100644
 --- a/drivers/cache/andes_llcache.c
 +++ b/drivers/cache/andes_llcache.c
-@@ -65,7 +65,7 @@ static void andes_cpu_cache_operation(unsigned long start, unsigned long end,
+@@ -54,7 +54,7 @@ struct andes_priv {
+ static struct andes_priv andes_priv;
+ 
+ /* LLC operations */
+-static inline uint32_t andes_cpu_llc_get_cctl_status(void)
++static inline u32 andes_cpu_llc_get_cctl_status(void)
  {
- 	unsigned long line_size = andes_priv.andes_cache_line_size;
- 	void __iomem *base = andes_priv.llc_base;
--	int mhartid = smp_processor_id();
-+	unsigned long hartid = cpuid_to_hartid_map(smp_processor_id());
- 	phys_addr_t pa;
+ 	return readl(andes_priv.llc_base + ANDES_LLC_REG_CCTL_STATUS_OFFSET_C0);
+ }
+@@ -145,7 +145,7 @@ static int andes_get_llc_line_size(struct device_node *np)
  
- 	while (end > start) {
-@@ -74,10 +74,10 @@ static void andes_cpu_cache_operation(unsigned long start, unsigned long end,
- 
- 		pa = virt_to_phys((void *)start);
- 		/* The access line register is 64 bits; written lo-hi on RV32 */
--		writeq(pa, base + ANDES_LLC_REG_CCTL_ACC_OFFSET_BY_CORE(mhartid));
--		writel(llc_op, base + ANDES_LLC_REG_CCTL_CMD_OFFSET_BY_CORE(mhartid));
-+		writeq(pa, base + ANDES_LLC_REG_CCTL_ACC_OFFSET_BY_CORE(hartid));
-+		writel(llc_op, base + ANDES_LLC_REG_CCTL_CMD_OFFSET_BY_CORE(hartid));
- 		while ((andes_cpu_llc_get_cctl_status() &
--			ANDES_LLC_CCTL_STATUS_MASK_BY_CORE(mhartid)) !=
-+			ANDES_LLC_CCTL_STATUS_MASK_BY_CORE(hartid)) !=
- 			ANDES_LLC_CCTL_STATUS_IDLE)
- 			;
+ 	ret = of_property_read_u32(np, "cache-line-size", &andes_priv.andes_cache_line_size);
+ 	if (ret) {
+-		pr_err("Failed to get cache-line-size, defaulting to 64 bytes\n");
++		pr_err("Failed to get cache-line-size\n");
+ 		return ret;
+ 	}
  
 -- 
 2.34.1
