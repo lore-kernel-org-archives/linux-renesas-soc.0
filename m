@@ -1,129 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.156
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794660951;
-	b=INkEVHX+NfTZyA07P24cjUa+1+NpqnCV54ue2x3AQ5RD97+UB1TWCzEbHfrEhWhKs+kz
-	 emKJRUTIUf4z0o4AqirNeCOIqXjFwQfOMvup+u0Xlp6bthCCD2osCYsu25iL6RHCABS9Y
-	 fc3zl1LM/4J5ifxdqIVJQ90gdoCcp/A4QXhncGGxg75G0gK0cC3Qp1RDzgtwudRLC83Wj
-	 3dEVLwefbXaZoHp5CyIpm5qM+pWtmk3jL3gkt+1SEQMDnzI94TjnEo71R2OOXq9ztD4K1
-	 RfJCxGTCthj0Log/zA3bU05qktjb93ovIT3rfhNCVPHmcecqgBQ6+CN1B36sNM1fyCA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794660951;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=vIuZzjSinRxDY+zCm2U1qFSdh7xsPJf789P0S8sw/Dc=;
-	b=ySX9svDbFdNbKIcHiPDFrZq1srpdA94lNT5MYTfAdxU1m744RJa7ySBGG3TJ9GibEDAn
-	 WLn36VJBGxAK1sAlzJgYvrum9UuvxqQ/AF/IO5/agxI9MpGjV+AYlqHh/nrEIzRHo8R1b
-	 uesIbIo8KugbXuSYbppqKS0cp3bgEj9hoYDFUfO+Qz6WZithKnanPALKYHMT3LHI6cOrA
-	 B4pT8Qag1dtQGPev1pajRA1/8sdtwipV0VqZdAt0qm1NyED/KJIIJWZeYrDfx+RN5iL0U
-	 Hl2uJ8i2uI57cT04DV+ne6CIBmPriR8olfndGtRAc5B0Am4v6g/fqWhJSsNnL6csP0A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=Feqs3f+C;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=57ED2Cub;
-	arc=none smtp.remote-ip=202.12.124.156
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794661041;
+	b=cFkz8Lckg3I/FqdyGebJnJ7Dt4TabCLVi72qvGuTopWUBph0yFSXeoDGij2cla/XmjkZ
+	 V1OrYpJuremWOP+vsqK9uGGlxeZax41z9GeGUuj5DdqA3SQtv2Io9jvScE7sVi7Hq+UdK
+	 +EQvqTo/IX8PFzjIYGl5i1Pt6ae2vga4YFHQlj/xXExwtfQxuUpK+eyYMC70isMbhzctP
+	 33byyRlWXctOXmYqwzr5dLtyqYShnc5q5JjOyBneRvC+E3/jv++cRl9ciMgILxjWJajpN
+	 mVQzhSAZ+LpCpLIKJF8qZHSyvA0Pi1kFlDax8RZpujT6LxattgMP8If3T3LMqebuuEA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794661041;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:From:Subject:
+	 Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=vURHFJpqxdNji4XYAfQR0vnMtn7b/TNM3hv/Ptn0Qv0=;
+	b=oSOJjBC/fCWR5a3c+mp8x7Wi2wGnxRK6DWgg7xsGkvrReiHx9cSgPJwVNyYAaAytdtrr
+	 79IJeMHQXhrDEzI6hP5OjJMSfx8SOGwVHQqXprPtw7dUHvYsfj3SD5t/zaUZqhrHw887l
+	 6t+LXSEn9M4SEEQu2sYoz6Myb14TxtWgmW5B6v7bTqqnL1zks8+R+y9lh9kC5rk1q8tpn
+	 qKHY+wcXMvZZ9lyFt+1Jiu2KkgItI5uOYVLCgiQduHNNVze80/Bb3ThaVAX18dF/9BK5j
+	 b/TAkTdJmAQyMW97vevElym3bA3+Bxshssm0QMaSEtNsQeQka3LcvWfJJ8O2mO9pnCQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=V6pRcREO;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93BC606A32D
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Nov 2026 12:55:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A93BC606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B818E606A331;
+	Sat, 14 Nov 2026 12:57:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B818E606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=Feqs3f+C;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=57ED2Cub
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 018237A0054
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Nov 2026 07:55:49 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sat, 14 Nov 2026 07:55:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1794660947;
-	 x=1794747347; bh=vIuZzjSinRxDY+zCm2U1qFSdh7xsPJf789P0S8sw/Dc=; b=
-	Feqs3f+C+Dt3q3nqYWakkuyPb5Qy1JAUzTCiYu9A9OLc8+IZ+Dfi7x+mO5nRlyET
-	cADh42s+kF7ffuWBMFoHcZnXPcH9lRvgMIgHBv0aC2QG452WrJkvkw2RQRAWDivq
-	WhxxluaytiUVAnw/Y6B/dPvrB1Zb8YG63Sb/joV5fTdCTx/VjqS0ukU92PQKoScr
-	OCkOqIRRH1u8hgxGUBgazNJQNV/Gr0lXevpnNBfpJIaXq5ExxUbCEony0+Zv5mPB
-	iLkK+fbri56uTpRWRrQLVsoY0o1cPCpW6/8mfosWM7uUQBMJ41LS2K1q9PeKQWzp
-	X6vbqoHIKhA+IlTnQsooVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794660947; x=
-	1794747347; bh=vIuZzjSinRxDY+zCm2U1qFSdh7xsPJf789P0S8sw/Dc=; b=5
-	7ED2CubAqBDxg9hCmwM89B2B1ahThDiZYyyx+6+RmeQpxj1a5B1ZX6ADy9SrvWox
-	StIQKc8Ab0G/lwyvwHHa6rHO7t9DXIIPNuQ4f7m7LGXm7Ci3q9QhvLLu7yv+iyIo
-	4jbbmrBmo1xN22DVTd3uTP+faBWFzm++69pH2+cHp3yyDfDULRT0jjTxpw9E9e23
-	9UEmcCDmj42vVP9cY8S0t9eoXZyYI3XCQEni5E65vnn49al87TDwR79lCSgE38ng
-	982hcv5sbdFbE0sbBNXoOv0idByfdRUETire1rnw5uwpAWE69vwmWeIwpKPdWFAQ
-	eGzB/0kyQXr7+GakyNWgg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794660947; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmQrcmVuZXNhc0ByYWduYXRlY2guc2U+;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:nPrvYd1+R+tIfikr/waxrsadr1dUHlTOYQUYlcvlP8NMbjt
-	dL/W2xUg/xFJDwot5CqX6D7Tlk2gqeAUhXbx1DITH8uZpyikm9EbYbpFdVZBNO+M
-	85E4iPZnpi+e3iKhCz0ErZu1TGkmzVUP9+JgN4fdlFwalioaPlq1qRAKAQApWwjy
-	hcOsgBzKSUhtgyHmj+JFWh8s2vw3tV3EnXHl20Ftw9p9SC2Z7C1MB5CJNgE9dxNx
-	/ntG1i7RXjzWk3e6sw5mqmfqj9mn6DFrClX4Un3yYndP9SXm7UHJBoxbWj8WUHtc
-	+9fy7fEuGO2+eCcWI5GWv7lwOStp5GgzaOfMagQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:JX5FzESmgpUsESvHuc2ohLHpTPvUvYazjnwvs00wNko=:ND/8t9BGEC7w5414Fo46okQsCh2BXHBaLKxcjtf7YXk=;
-X-ME-Sender: <xms:U1r4aogwuWRQFo3_KujnXDdOVeGd7Zr5SR0j3JpibiYKxNL64svLnw>
-    <xme:U1r4apx1_I6EXLoYU0OwU_9Ln2kSZHyRzPxK39A5sBgyvBpeMbXfpl7Q59fJIeVGQ
-    33S_7_IXTGEivUIprkNwFfWC61Y4u1QxymFvoJmRZ7MdKTmNb9NFgeo>
-X-ME-Received: <xmr:U1r4auxal7G4bvekc9bGHLMOHLwW4bGBNZ5rkr0LCKlyPwnkHjBZaZfydm7h3hMJPPUw8JWR_bSkVtbQx0ThZoKx3sG2e9s>
-X-ME-Proxy-Cause: dmFkZTEpt7PksyEXwjhHgpW1CBAo73QUZ4yNfyBBluBuK1XXwc+j76jocZP+MKKlueYKIf
-    WE6OnyIWQrowLVdVNPijF9apwvZ751hPGJzEZh/8AQTjRCDPTnFwRZUJ8xKDrLpWGm3JRF
-    40St8hs5B1BMkdR7DSYW2bu7eEJ+BHsHEJsTubk7eGYaCClnZwNkRi19POkodLHMqii07j
-    hLIBvKb+bUaJVaKT+KVSjmtVeR6UiWbQu1gh3KM8h9PjcizbTXyynn4Ztjamveezz2Flbj
-    mi2OSWIdYTYaeLILzSBHNfrTY7encU8uSOFxuOldtj+S0w+Qb0QctNauP2uRyfIloX5yp8
-    2nbNH+fufhZJpJTfvn/3nUqWG6uPHW8lts+RL/sHB33YGFEJHWsLsT2bf9Yk/1ORwIwEFo
-    Ice6rGUHI4deqNHmoxdUl1i6VLgcUsiA/uP9Amaq/diivAxtxQn2LT2098ZZLAUya1oOmY
-    f4pQlLZvEthEoxlZKdh/kHXLuaXG1vfGs7za1+lzWr2fYFpoDZNwYP0vc8ziVklc6Mk1SK
-    kiT5UdCv429viUW+Lc3v4oi4w+l21Y4sNiyJ7qLVK1gt+dQw0EDRAURLREnJY6CmCZjEEI
-    YdQN68no5vHl0r0XrM/23pwYgqClqsfz4SnH1Ttk5IMVDNFOefne9777lPiQ
-X-ME-Proxy: <xmx:U1r4arpVzHQlvAj3P4e_h_6W4hQuyW-PPb3YqPSdY0L4c98mYmHXxA>
-    <xmx:U1r4aplbND9c7GTUhzC9h_LgY6XtGc8n10qbqqXKjkURJ2g7eF5iDw>
-    <xmx:U1r4aswsmRYr4a4mi4BQe6REb-LMc8qCxwhf-EeR4K5RO9zoRRv3tw>
-    <xmx:U1r4am1kLYfKPVQC_kEOCvYgS41lm_gegIIgZmIDEzbI9dHv83rq2A>
-    <xmx:U1r4aqmdNXvfnaR7Mb257UcXqRq196Lx9-o-u4r_qccsEhLZan8c9pSA>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 14 Nov 2026 07:55:46 -0500 (EST)
-Date: Sat, 14 Nov 2026 13:55:45 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: netdev-bot+sashiko@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	richardcochran@gmail.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	sergei.shtylyov@gmail.com, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v8 3/3] arm64: dts: renesas: r8a779g0: Add gPTP
- node
-Message-ID: <20261114125545.GC938627@ragnatech.se>
-References: <20261110080727.2377040-4-niklas.soderlund+renesas@ragnatech.se>
- <179465147165.2199510.7987717328787148087@kernel.org>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=V6pRcREO
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id CC911201CE0;
+	Sat, 14 Nov 2026 13:57:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794661037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vURHFJpqxdNji4XYAfQR0vnMtn7b/TNM3hv/Ptn0Qv0=;
+	b=V6pRcREOcS8DazD7+nUWOzWbx4mrJWgVIZ0rFjXcdVtBBnHMBpU+f/9vA0Q20cMGj8gNPh
+	sId6A1UrHwcN7k1SlknbyERxEkMNi9fJDsMuPG7x6rnmDLv41H6wj72XZI+AyQjGzr5oVY
+	D8cAV9/p7T4iMn9Kfk2Q05tX4LaldCaLT3YGLMZHocvDqU1jjJTxN1K20Cjf92BtWo1ZgY
+	L43OXOUcU1ofPko5/28oB2cJ/df3sAqB/F1bAPILMJRSGokcz4Y4YTww1/VO3yltl/t/NN
+	/5OldG5gHQUJYdfvvgU3iA7ctet0DeiAU7BNII1TyGzO5uAdK5Cgu9a28zhLbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794661037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vURHFJpqxdNji4XYAfQR0vnMtn7b/TNM3hv/Ptn0Qv0=;
+	b=OvoRCl627zMY2S/Yz1ukLl+v8T4j+L0KPaiZHAFavpv5ae8u6OejyPgE/7ndVSY1VeDarc
+	Ls5okLdNAmnHtb3akC9DJ2hqgAQ+EL0pPb9Efxn9MjnNdVTsl2WRbyt7sWJoB6pORazwHR
+	K9zyY0x5m2B92/ViGdQLXrblBm+I3mm08mra5HHZY6X9CgVJ3s0KUmLz/M+uribwnmP6CY
+	84GZ5N0gm9NSgAuHZbxluBCD1ecuBACCWMXAAcijrskHblK26Kywevjck/1zH+SQU1tUEj
+	fNV0HGaO1R1OhjdKN+EsBUCXdK5KoA7/z65SMX4WjVhHbzA0A/kcf8/l/GZ2pA==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794661037; a=rsa-sha256;
+	cv=none;
+	b=YjMGpMMkkie6EmcNdoiNMsbyHeDr5iwrD5Hv2m3OLj9ZJ31BVrWF3JtuPipQI2hzAUUSzV
+	rcw5Lewt3pD1mXXhZjK8F8azBKjJ6BOe6j1PgVgv2eF/OtyKkvPOY1RWfNJKGjK6GWLYYt
+	RiUrv/RL0IiK8AnNIeZKIMu6m980RkaEMezw+HEVcqJ/P9jXvTfNAYfR9Ze/WvGeDp38M7
+	DyMbmcSBr6rPccVzws66HoUW81IFeRUZBD93fYjqZ6FFak77FFHu9DArS7rVLRMmqne/PT
+	wXoEAo6+d5idmizcWzvoaoWEcIa5q11WF/LhA9pzw7WpRSr9UmcF9NVXcZyJWg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1xSDJl-0048pS-2I;
+	Sat, 14 Nov 2026 13:57:17 +0100
+Received: from hardanger.blackshift.org (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 5B4785EB9A7;
+	Sat, 14 Nov 2026 12:56:23 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH can 0/4] can: fix probing and use of
+ device_get_match_data()
+Date: Sat, 14 Nov 2026 13:56:13 +0100
+Message-Id: <20261114-fix-device_get_match_data-v1-0-2d82025e9646@pengutronix.de>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -133,122 +97,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <179465147165.2199510.7987717328787148087@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWM2wrCQAwFf6Xk2QVTWm+/IrLEJLYRXGV3LULpv
+ zfq4xzmzAxFs2mBUzND1smKPZMDbhrgkdKgwcQZ2m27Q8Qu3OwTxEXWOGiND6o8RqFKAVH4yHL
+ olffg/1dWl3/tMzAluPzH8r7eleu3CsuyApeWB7qCAAAA
+X-Change-ID: 20261114-fix-device_get_match_data-11dc9cd85ec7
+To: Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Harini T <harini.t@amd.com>, Michal Simek <michal.simek@amd.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+X-Mailer: b4 0.17-dev-d7211
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1497; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=oxSiDfJJ5FKPdCOEbPDPir49JWXUKfRJ5chn629wb4c=;
+ b=owGbwMvMwCV2xirl17qZay8xnlZLYsj6EVVw55uF9HbLnxmNq65PP8Q05W/ut9tvdIPfJZ84M
+ GnvqsBW5Y5SFgYxLgZZMUWWpT9OKAoEOpT2vkyYBDOHlQlkCAMXpwBMxNCY4X9RRWYr89G6X78v
+ WoikulRLxLBkC1xP8jZK8f/NxBL/qI3hN8uK3ov6ufHJptk7f/yadPKAgur5v2e4tG9XvuB9O/n
+ YGUYA
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
 
-On 2026-11-14 10:17:51 +0000, netdev-bot+sashiko@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue(s) to consider.
-> 
-> Critical: 0 · High: 0 · Medium: 1 · Low: 0
-> 
-> If you believe none of the issues are legitimate, please reply to each
-> issue of Medium severity or higher and explain why the AI is wrong.
-> If any of them are legitimate and you plan to respin, please let patchwork
-> know by including "pw-bot: cr" as a separate line at the end of your reply
-> (one such reply per series is enough).
-> 
-> - [Medium] The new `gptp: ptp@e6449000` node in
->   arch/arm64/boot/dts/renesas/r8a779g0.dtsi uses `reg = <0 0xe6449000 0…
+With patch 5e6c3454b405 ("net: can: Use device_get_match_data()") several
+CAN drivers were converted to device_get_match_data(). The author assumed
+that error checking for matching and match data is not necessary.
 
-That is correct, please read cover letter.
+This misses the fact that that drivers on the platform bus can forcefully
+bound using driver_override and device_get_match_data() will return NULL.
 
-> 
-> --
-> 
-> arm64: dts: renesas: r8a779g0: Add gPTP node
-> 
-> This adds a gptp: ptp@e6449000 node to the R-Car V4H SoC dtsi. The commit
-> message says the gPTP module is shared between the RAVB and RTSN Ethernet
-> devices.
-> 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> > index 5284923b6cef7..f2d6696680db8 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> > @@ -606,6 +606,15 @@ mfis: system-controller@e6260000 {
-> >  			status = "disabled";
-> >  		};
-> >  
-> > +		gptp: ptp@e6449000 {
-> > +			compatible = "renesas,r8a779g0-gptp", "renesas,rcar-gen4-gptp";
-> > +			reg = <0 0xe6449000 0 0x500>;
-> > +			clocks = <&cpg CPG_MOD 2723>;
-> > +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-> > +			resets = <&cpg 2723>;
-> > +			status = "disabled";
-> > +		};
-> > +
-> >  		tsn0: ethernet@e6460000 {
-> >  			compatible = "renesas,r8a779g0-ethertsn", "renesas,rcar-gen4-ethertsn";
-> >  			reg = <0 0xe6460000 0 0x7000>,
-> 
-> [Severity: Medium]
-> Can tsn0 and the new gptp node both be enabled on the same board?
-> 
-> The existing tsn0 node, which this patch does not change, already claims
-> the same window as its second reg entry:
-> 
-> 	tsn0: ethernet@e6460000 {
-> 		reg = <0 0xe6460000 0 0x7000>,
-> 		      <0 0xe6449000 0 0x500>;
-> 		reg-names = "tsnes", "gptp";
-> 		...
-> 		clocks = <&cpg CPG_MOD 2723>;
-> 		resets = <&cpg 2723>;
-> 
-> rtsn_probe() in drivers/net/ethernet/renesas/rtsn.c maps that region
-> exclusively and runs the timer itself:
-> 
-> 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp");
-> 	...
-> 	ptpaddr = devm_ioremap_resource(&pdev->dev, res);
-> 	if (IS_ERR(ptpaddr)) {
-> 		ret = PTR_ERR(ptpaddr);
-> 		goto error_free;
-> 	}
-> 
-> 	priv->ptp_priv = rcar_gen4_ptp_alloc(pdev, ptpaddr);
-> 
-> ptp_rcar_gen4_probe() in drivers/ptp/ptp_rcar_gen4.c claims the same
-> range:
-> 
-> 	priv->base = devm_platform_ioremap_resource(pdev, 0);
-> 	if (IS_ERR(priv->base))
-> 		return PTR_ERR(priv->base);
-> 
-> If a board sets both &tsn0 and &gptp to okay, the device that probes
-> second should get -EBUSY from its request on 0xe6449000-0xe64494ff. When
-> rtsn is the one that fails, the whole TSN Ethernet interface is lost,
-> because a failed gptp mapping takes the error_free path in rtsn_probe().
-> 
-> The commit message says:
-> 
->     The gPTP module is shared between the RAVB and RTSN Ethernet devices on
->     the SoC.
-> 
-> The new renesas,rcar-gen4-gptp.yaml binding also says "On R-Car V4H it is
-> shared between RTSN and RAVB". However, renesas,ethertsn.yaml still
-> requires the gptp reg entry on the TSN node. rtsn also has no ptp-timer
-> phandle path. No DTS under arch/arm64/boot/dts/renesas/ references &gptp
-> yet, so RAVB is not connected to this node either. RAVB uses the timer
-> only through of_parse_phandle(..., "ptp-timer", 0).
-> 
-> Would it make sense to either move RTSN over to the shared node or
-> document that the two nodes are mutually exclusive? Moving RTSN would mean
-> dropping the gptp reg from tsn0 and from the ethertsn binding, and
-> switching rtsn to a ptp-timer phandle.
-> 
-> A shared-node conversion would also need to handle reset 2723. rtsn takes
-> it with the exclusive devm_reset_control_get() and pulses it in
-> rtsn_reset(). That looks like it would wipe the timer setup, which
-> ptp_rcar_gen4_probe() writes only once.
-> 
-> -- 
-> Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261110080727.2377040-1-niklas.soderlund%2Brenesas%40ragnatech.se
+By using device_get_match_data(), this change broke probing for
+m68k/coldfire, which still uses platform devices.
 
--- 
-Kind Regards,
-Niklas Söderlund
+This series adds missing NULL pointer checks and fixes probing for the
+flexcan on m68k/coldfire.
+
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+Marc Kleine-Budde (4):
+      can: c_can: c_can_plat_probe(): reject devices without match data
+      can: flexcan: flexcan_probe(): fix probing for m68k/coldfire and reject devices without match data
+      can: xilinx_can: xcan_probe(): reject devices without match data
+      can: rcar_canfd: rcar_canfd_probe(): reject devices without match data
+
+ drivers/net/can/c_can/c_can_platform.c | 2 ++
+ drivers/net/can/flexcan/flexcan-core.c | 5 +++++
+ drivers/net/can/rcar/rcar_canfd.c      | 2 ++
+ drivers/net/can/xilinx_can.c           | 2 ++
+ 4 files changed, 11 insertions(+)
+---
+base-commit: ead6fa9a0ab194f02a2f36d634b193e9c5f9a1c6
+base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
+change-id: 20261114-fix-device_get_match_data-11dc9cd85ec7
+
+Best regards,
+--  
+Marc Kleine-Budde <mkl@pengutronix.de>
+
