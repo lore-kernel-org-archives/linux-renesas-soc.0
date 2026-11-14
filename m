@@ -1,63 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794651473;
-	b=HoQZr8IlifC1HoX8yDPHB7JMpVZht10sbrc4i8OWNaQsgIoW6FWAPE58RSkrzyyPvAvU
-	 nY0O5Ykd3wh6n0TcZjoxSwQy0F3+NDUkhE1SbH7dJusPIAcg5Y5FPhUlVS6bLzw+ddhmp
-	 5t1jdPr4jUZeGxHM2UKpOGhbxWOReV8g6mQSTn2xZIMcD8fBbMxF1emMHzBZJLhByjUEw
-	 flDuLRM0BZUpAKheRKYOgA77QFttZ6ALkEJAhmTMLHoLlhAAf1d+PQVezjXzQLIG6dP5l
-	 Xgzt6myUvdq1EpyaMr9LSmE//FhOqxT/sWtbhhrF/6L1x6mStXMyZ9h9IlWlzsIL1Tw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794651473;
-	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
-	 In-Reply-To:References:X-sashiko-severity:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version;
-	bh=sE4Cm5Gek3IQkKMKh5CcxTRTj/SWHXCIUtLGgi/uNRQ=;
-	b=nmUXV8Ok3vJtPdK4hCmv/gW6D9K7/B6krGjIHUro0SzkH4O8iCfx9yFBNOAlP+pgmdL1
-	 8e3ppUSiS5vBKP0BBxcDRl2WHxGaKFlINkLL/SnTUdL27/trHcE45F0dcuEtyXbAKszlf
-	 Q9MDgbq+/+9h0vWVtyjmu0KIcYn14Is4UbA+VOGK0KMvx5zD4HlCDX6vXqnYyIwaQsKdX
-	 WoVQ5hALGKXKMQ2KOK495qsH5fA8y4xLtGjoq+V9OgI+vZ5Um20c2jz3qhcnfWX72/tZ5
-	 Px6Hnybwj0cHTgi8iPBksfV6Ox+VqjgIjIRlGZTs8iZLlJ438kuSUFo91fZu+HQCr+g==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=adIHoyIu;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794657374;
+	b=etUtORNW1IM50O8nIdaNyHVMBPRxOiQ184nIYApH7PJi5Vt7pvo1LQfp+9Gn8EtI5HBx
+	 73Bq+eD41/yg6zsfy2wFQwv8nKKZr1EhFBbiHia/vB+AidmZp1IGFRjU+3RP6jLT4mueW
+	 aE1BMjYHYmG6Bc+bcxT6khcVoix9gWe7hqbaIrkhomPW5ek4gewhcvPqgYXqcqrctPTg2
+	 bhlk/arvvCkBxnND1oxG32zh4PF+KfxZCtSHHZp2Xejuf6EpEYGak0lAB9RREvLwQOpfI
+	 DO3qfoQW8m7GkyAvNLIkkFr/BU/1EJ/mAfsxPMFjhx0qo0DbKjC2KywcAz3AdVNhUYA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794657374;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=773JKNN2vNOYbMzmNERDyAma8a9RNQ26ZOx7oBBfnT4=;
+	b=M03EQA1Yop8P1oZOhDXJSvRywXWQOq0rhXjN5Q4HK7YVGzDELeHSeGBUxWBluokYa2mj
+	 /GFFpRJJH/ufPvtEjVeiWqm9i1uB6Hny/+T/AHi7jmNewDEvZF/BSNbj5K+pfrNWIaDr4
+	 3D+VCjIU4su52tFfRAKwJsZPDChX9TScSlIVcf4RUQAfxCJKVSr6iFHubhBKWBgWkKp1K
+	 any0mMriwNPQ0/YZ0PqTmGL9YjtB9y0KtdYQZDQ4cW6d/OQmDVWyshzmVVYIoMnLlPPv4
+	 MfEhvBlaYVLYppehKXVV6Y6AqgK5L+n/DCWtwUO9wa4xaAUcCIhl1eXiFXjH5B/lXBg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bRqz+ung;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57235606A329;
-	Sat, 14 Nov 2026 10:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7972F606A327;
+	Sat, 14 Nov 2026 11:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=adIHoyIu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156B21F000C4;
-	Sat, 14 Nov 2026 10:17:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bRqz+ung
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794657374;
+	b=kjKEasGcdTNh7VSEwAObGNBviP7aRYjYynphthA3+Ker5OujAKRPm30c/j+ThSYWsPar
+	 7TeKFHZCmh0CnyKFvuDnzFbWPfq8dS5WMn4dUIDK5qwmM46N7UDDIwK829YQ8sp1fiUB7
+	 FqOYmokMxzHrZOuWhloKoGX9VQ+ZeRAB7c6fyzFS5qxKRuQ1qgw2cStgYWAKPKU/crBSM
+	 Tv7EWS69fIZ3u9CsVfIfUbJWc9tn05NsSAt7ygoPqJXDeGFl1Atuj3YV4RqlT3IaYmhon
+	 12Fqh6/qM0GVn0nqpDoctoDzE+if+A2GkMgPLzKO2BXX2VGbkuDxccul9N8pDARAqSg==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794657374;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=773JKNN2vNOYbMzmNERDyAma8a9RNQ26ZOx7oBBfnT4=;
+	b=PbFKtAg86rcrwttbfH6qR+VqaEHDN5Mg/wooLqzZm/HhARWTmEG5VK6AkWYimGWRvOV1
+	 V4wmhLC853rs18nOApEVQZ138ce1L29pfpBnEJxpiuSltcxJKPNGag87hjJhlRksL+Vbo
+	 Pc8Mmf5fq572NknvCnIXqAihMeGxSwsHfh/QD/q0+A1IL1KTd2u2ItmSFMrD8Bt87eVxS
+	 6INprpBZfN5m1LGcWx7J9UVLoRc/7MBCpxxcVf7TAwueXsBvlgefAv5rBp9MgnYvdGA6G
+	 atWGvUkLc69ge+I2o80s+XZk9zoy5J6yBiPYxM8hT7/iwNSE+u4E/4spph2KQwUVx1A==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 9CFBB1F000C6;
+	Sat, 14 Nov 2026 11:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794651473;
-	bh=sE4Cm5Gek3IQkKMKh5CcxTRTj/SWHXCIUtLGgi/uNRQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=adIHoyIub1KHXf+vd8VSLOJtpEUTqAQO8BhfhoN6BKp1MiK5679/9CnL/q/Ha8IkW
-	 d9L4xPswoMfkasqOtH54SS0Y7sdgmW2+2R5exg9P/5FVx4ZV4+PTmljbc5l5cz3yXP
-	 LTrJmhQMySlH5AAgeqPEGxOFDREzzh73Er0Anb6MWOudKHtckk/53nvD3IF6+C468J
-	 UvPndpcP+7cErCTiUf0aMc9frQzqQG8MssT4eAGntzf5Vl8sS6dIPPCCMYD2vKkiVF
-	 +hM+iRlV1Totks00bL3pBFcjMp/xItZI2lKFa6fGLATxny9JGyuY1cVBL4NnGMOHjz
-	 JNLYkWcEWTCOw==
-Subject:
- Re: [PATCH net-next v8 3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-From: netdev-bot+sashiko@kernel.org
-To: niklas.soderlund+renesas@ragnatech.se
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, richardcochran@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
- sergei.shtylyov@gmail.com, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Date: Sat, 14 Nov 2026 10:17:51 +0000
-Message-ID: <179465147165.2199510.7987717328787148087@kernel.org>
-In-Reply-To: <20261110080727.2377040-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20261110080727.2377040-4-niklas.soderlund+renesas@ragnatech.se>
-X-sashiko-severity: Medium
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20260515; t=1794657374;
+	bh=773JKNN2vNOYbMzmNERDyAma8a9RNQ26ZOx7oBBfnT4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=bRqz+ung8qG5uXqmbdZGVrXnQ8zzozXnisEWAZGuCSQvddWV2D+P0mrGw93k0PBVa
+	 L6gIS5l9K2+7xOdQBdeb7B1XJeNClCgnUw/5hrwqVYQDNyEg8xXFTwEAdDqJmuqaLM
+	 wjALHILiFyFqsMlEd1go900W6zxedV6E6IPQGMNUj9oa6QMH24DvaE03Ywg4IBB1Ra
+	 Pxu1D7WUCbSOZfMo6WkKrphRC0ZYZBnyh6vvNtfvT+483R8DUtStsLv8O3z6cD38VJ
+	 ILKlsGJBbm+zWZXMM5AOixntUYL0TLS9tczhbuGaon2AZyBTmmMVkpKB8Tp42S2zSO
+	 L72Pe0tg1bCrA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 235A249D6B;
+	Sat, 14 Nov 2026 11:56:13 +0000 (UTC)
+From: Larisa Grigore via B4 Relay <devnull+larisa.grigore.oss.nxp.com@kernel.org>
+Date: Sat, 14 Nov 2026 12:55:34 +0100
+Subject: [PATCH v11 02/14] ufs: dwc: Return a negative error if the link is
+ down
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -67,110 +83,102 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261114-b4-ufs-s32n7-v11-2-dc36e11919d5@oss.nxp.com>
+References: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
+In-Reply-To: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
+To: "Martin K. Petersen" <mkp@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Bart Van Assche <bvanassche@acm.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Cc: devicetree@vger.kernel.org, Ajay Neeli <ajay.neeli@amd.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, linux-arm-msm@vger.kernel.org, 
+ Peter Wang <peter.wang@mediatek.com>, linux-kernel@vger.kernel.org, 
+ NXP S32 Linux Team <s32@nxp.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
+ linux-arm-kernel@lists.infradead.org, Stanley Jhu <stanleyjhu@google.com>, 
+ Frank Li <Frank.Li@nxp.com>, imx@lists.linux.dev, 
+ linux-scsi@vger.kernel.org, Bean Huo <beanhuo@micron.com>, 
+ linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Pedro Sousa <pedrom.sousa@synopsys.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, eballetb@redhat.com, 
+ Peter Griffin <peter.griffin@linaro.org>, echanude@redhat.com, 
+ Chaotian Jing <chaotian.jing@mediatek.com>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, linux-rockchip@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, clizzi@redhat.com, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Heiko Stuebner <heiko@sntech.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Can Guo <can.guo@oss.qualcomm.com>, 
+ Orson Zhai <orsonzhai@gmail.com>, aruizrui@redhat.com, 
+ linux-renesas-soc@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657369; l=1730;
+ i=larisa.grigore@oss.nxp.com; s=20261114; h=from:subject:message-id;
+ bh=3iqhyDqtSmMHTy7iRVwvJKugbIlnKe/5rACzitf/+kM=;
+ b=twhUWaDvF4XRpCAXaEcnsk66UdpAgd8BMuYReTg38acmFePjqlIoEFHfYDYERoCr380D/B/re
+ dBCVArbMAOdBUnwNx3jbF0JhmoSMQiBFpEdHtyv/hTsR0hINYgtGcf0
+X-Developer-Key: i=larisa.grigore@oss.nxp.com; a=ed25519;
+ pk=Jpt52sb6ETKTtvWjUzhz5Sv5FjB9AEg9QKCcbpWFx3w=
+X-Endpoint-Received: by B4 Relay for larisa.grigore@oss.nxp.com/20261114
+ with auth_id=1522
+X-Original-From: Larisa Grigore <larisa.grigore@oss.nxp.com>
+Reply-To: larisa.grigore@oss.nxp.com
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue(s) to consider.
+From: Larisa Grigore <larisa.grigore@oss.nxp.com>
 
-Critical: 0 · High: 0 · Medium: 1 · Low: 0
+ufshcd_dwc_link_is_up() returns 1 when the UniPro link is not up, and it
+ignores the return value of ufshcd_dme_get(), so a failed read of
+VS_POWERSTATE is also reported as "link down" with the value 1.
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
+A subsequent patch exports this helper for use by other DWC glue
+drivers. Before doing so, make it follow the usual kernel convention:
+return -ENOLINK when the link is down, and report a failed
+ufshcd_dme_get() as a negative errno instead of its positive UIC result.
+Declare dme_result as u32 to match the ufshcd_dme_get() parameter type.
 
-- [Medium] The new `gptp: ptp@e6449000` node in
-  arch/arm64/boot/dts/renesas/r8a779g0.dtsi uses `reg = <0 0xe6449000 0…
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Larisa Grigore <larisa.grigore@oss.nxp.com>
+---
+ drivers/ufs/host/ufshcd-dwc.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---
-
-arm64: dts: renesas: r8a779g0: Add gPTP node
-
-This adds a gptp: ptp@e6449000 node to the R-Car V4H SoC dtsi. The commit
-message says the gPTP module is shared between the RAVB and RTSN Ethernet
-devices.
-
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> index 5284923b6cef7..f2d6696680db8 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> @@ -606,6 +606,15 @@ mfis: system-controller@e6260000 {
->  			status = "disabled";
->  		};
->  
-> +		gptp: ptp@e6449000 {
-> +			compatible = "renesas,r8a779g0-gptp", "renesas,rcar-gen4-gptp";
-> +			reg = <0 0xe6449000 0 0x500>;
-> +			clocks = <&cpg CPG_MOD 2723>;
-> +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-> +			resets = <&cpg 2723>;
-> +			status = "disabled";
-> +		};
-> +
->  		tsn0: ethernet@e6460000 {
->  			compatible = "renesas,r8a779g0-ethertsn", "renesas,rcar-gen4-ethertsn";
->  			reg = <0 0xe6460000 0 0x7000>,
-
-[Severity: Medium]
-Can tsn0 and the new gptp node both be enabled on the same board?
-
-The existing tsn0 node, which this patch does not change, already claims
-the same window as its second reg entry:
-
-	tsn0: ethernet@e6460000 {
-		reg = <0 0xe6460000 0 0x7000>,
-		      <0 0xe6449000 0 0x500>;
-		reg-names = "tsnes", "gptp";
-		...
-		clocks = <&cpg CPG_MOD 2723>;
-		resets = <&cpg 2723>;
-
-rtsn_probe() in drivers/net/ethernet/renesas/rtsn.c maps that region
-exclusively and runs the timer itself:
-
-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp");
-	...
-	ptpaddr = devm_ioremap_resource(&pdev->dev, res);
-	if (IS_ERR(ptpaddr)) {
-		ret = PTR_ERR(ptpaddr);
-		goto error_free;
-	}
-
-	priv->ptp_priv = rcar_gen4_ptp_alloc(pdev, ptpaddr);
-
-ptp_rcar_gen4_probe() in drivers/ptp/ptp_rcar_gen4.c claims the same
-range:
-
-	priv->base = devm_platform_ioremap_resource(pdev, 0);
-	if (IS_ERR(priv->base))
-		return PTR_ERR(priv->base);
-
-If a board sets both &tsn0 and &gptp to okay, the device that probes
-second should get -EBUSY from its request on 0xe6449000-0xe64494ff. When
-rtsn is the one that fails, the whole TSN Ethernet interface is lost,
-because a failed gptp mapping takes the error_free path in rtsn_probe().
-
-The commit message says:
-
-    The gPTP module is shared between the RAVB and RTSN Ethernet devices on
-    the SoC.
-
-The new renesas,rcar-gen4-gptp.yaml binding also says "On R-Car V4H it is
-shared between RTSN and RAVB". However, renesas,ethertsn.yaml still
-requires the gptp reg entry on the TSN node. rtsn also has no ptp-timer
-phandle path. No DTS under arch/arm64/boot/dts/renesas/ references &gptp
-yet, so RAVB is not connected to this node either. RAVB uses the timer
-only through of_parse_phandle(..., "ptp-timer", 0).
-
-Would it make sense to either move RTSN over to the shared node or
-document that the two nodes are mutually exclusive? Moving RTSN would mean
-dropping the gptp reg from tsn0 and from the ethertsn binding, and
-switching rtsn to a ptp-timer phandle.
-
-A shared-node conversion would also need to handle reset 2723. rtsn takes
-it with the exclusive devm_reset_control_get() and pulses it in
-rtsn_reset(). That looks like it would wipe the timer setup, which
-ptp_rcar_gen4_probe() writes only once.
+diff --git a/drivers/ufs/host/ufshcd-dwc.c b/drivers/ufs/host/ufshcd-dwc.c
+index 21b1cf912dcc..71433b4d04aa 100644
+--- a/drivers/ufs/host/ufshcd-dwc.c
++++ b/drivers/ufs/host/ufshcd-dwc.c
+@@ -48,20 +48,23 @@ static void ufshcd_dwc_program_clk_div(struct ufs_hba *hba, u32 divider_val)
+  * ufshcd_dwc_link_is_up() - check if link is up.
+  * @hba: private structure pointer
+  *
+- * Return: 0 on success, non-zero value on failure.
++ * Return: 0 on success, a negative errno value on failure.
+  */
+ static int ufshcd_dwc_link_is_up(struct ufs_hba *hba)
+ {
+-	int dme_result = 0;
++	u32 dme_result = 0;
++	int ret;
+ 
+-	ufshcd_dme_get(hba, UIC_ARG_MIB(VS_POWERSTATE), &dme_result);
++	ret = ufshcd_dme_get(hba, UIC_ARG_MIB(VS_POWERSTATE), &dme_result);
++	if (ret)
++		return ret > 0 ? -EIO : ret;
+ 
+ 	if (dme_result == UFSHCD_LINK_IS_UP) {
+ 		ufshcd_set_link_active(hba);
+ 		return 0;
+ 	}
+ 
+-	return 1;
++	return -ENOLINK;
+ }
+ 
+ /**
 
 -- 
-Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261110080727.2377040-1-niklas.soderlund%2Brenesas%40ragnatech.se
+2.43.0
+
+
