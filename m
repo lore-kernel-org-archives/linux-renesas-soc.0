@@ -1,115 +1,115 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.157
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794769868;
-	b=hlLD0xJ9dZr59pGVtfVs6EAGnIf2DBpsb50kBochUDsoiIKiFHJjzKZn2wWDYnSb/sVC
-	 +6lCz7rluGPc3Uv4V4MKmX6HOlOpODw+9vc2oKuQmGtx29F/QsEYlrLNxYYcTTnAbAD3n
-	 IC40Kcn5sFSzz8qLWGzDowzE+miKjXspK65iyT6PAagyZbTgmH5Yxcy+FEPAOHqv6XO+y
-	 VEw28DXu5Xd17cdus30U78urda8V50nX/qJnDUWAp6FBq3/HBsWrjUw8GvwmZTaOAKYSa
-	 zgOM2H/NxLZRjmcnDrk/8CDoGTQSz+ODkwkzYWyiGSm4R1MlEo2+mcoTe9DgRJgA7kQ==
+	t=1794769870;
+	b=SOQkj+xpAtvVDW5W1rioe33iSC0WxpHLvS1azkMsvcSzeqnZWk98W+sjWt1FauGABhpw
+	 Bqb3qiHZuOX7Hr3ghrHIFU4CnqkT5X9r8FesEL6V5ezVVQQmXM9udugvJuYHwkSOyWypp
+	 ymTiqYIxqevz+qzgTQVd1kBEhowyhN9uNerUmuoIlUoD5xYV2RH/syWsUB32zUcndBpis
+	 Xr0j4YWE9IeERUGr5o3AooXc9sp312nIlKJ5CXjCfVPvLkIzr4B6GLIifO7VeP8cH/ZWI
+	 pjYCfVNgTI4iibFHJIZNgCzM3Gm0qvv0IcAf9XUTF0Be5/IugAxK7HB+cs3wK24e1kA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794769868;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794769870;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
 	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
 	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
 	 Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=QLmSZ/NBp3N6h+9oI0F2QCgyrk6btOIBSOGmGKZdMUk=;
-	b=ZezYZHhAaGVqUTKp0cTAZWnkgNCj+E2ZTbDvw7PDhQXngUcS2GIaPznYC70QOVX2KBWq
-	 2m3RV7DEQAvQmtw2xa1UmQR2QycPBexGvorMN218PqhBvkZbSP0fCHt40ukG+S4oVC4ou
-	 qG0MTlcWvfkT7WDWClmdR/FcO/4A7GQXUTYQnsTN9wsGZlZbGWo0GMRTgGWNnlzyCZQFY
-	 mDJ9pPWBi2on1oYOrBXA4bTkmkEQi6yY18O/lqVUqu2hNgGMmU0ooWUwyUYvkRWDQL6A8
-	 NURT+IVhaCM6eTeFNRQv5b7s70c7JEqon6L/v3GSQkLt1/ke2kOYxF3pIlKHhY664Xg==
+	bh=fCLKdeQ2PyYfAON4538X6iQYHQ+oydwKp5GZDAWzg2o=;
+	b=eU+Rnhm+6CDy3TnJxq5C3wdFTq9oIfAnOihhDVxJDFenUUpZStmhvrOXl5pLgi5yFGcf
+	 HD3oZSRJm1RHGOyIq3YL+KnbnJ3qsMkdEYLi9SoF8954iJmqn/F/TEEPbJ9P6QS93Of+S
+	 GeKZLfkj5iakBtKoHBkFrFdiBN32BV63Q89MgzYC9W8daBH1LOJnRsVZjda4XYw/WWdue
+	 VL5n7dRuVw/G1M2DnFOeIrYh166dkyqnkfgTNIL4yjyRpM8TElOD10ZF75PstwpVkU72O
+	 hgF3bEfm8zoADriu4/Lpv1rtKO6xDqtAnykOENo0kBRaQfojiIN4Dc8xJaLqIYr9mHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ragnatech.se;
 	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=RG6ErrJ5;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=GQ+sx78d;
-	arc=none smtp.remote-ip=103.168.172.147
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=H27A9QMk;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WtG7usJd;
+	arc=none smtp.remote-ip=103.168.172.157
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FEE606A32C
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Nov 2026 19:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0FEE606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99899606A33B
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Nov 2026 19:11:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99899606A33B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=RG6ErrJ5;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=GQ+sx78d
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8A236EC007B
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Nov 2026 14:11:06 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sun, 15 Nov 2026 14:11:06 -0500
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=H27A9QMk;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WtG7usJd
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C870A1400046
+	for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Nov 2026 14:11:08 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Sun, 15 Nov 2026 14:11:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1794769866;
-	 x=1794856266; bh=QLmSZ/NBp3N6h+9oI0F2QCgyrk6btOIBSOGmGKZdMUk=; b=
-	RG6ErrJ579YOV++ukRavwcyNYN1S1GC/mBeH/ZuZCcU3JAGakB6DzAIqElz76Xv1
-	ib6RNodt075FoviRGLmg0QuVksDhNGYUsg4vq/gtqx8tDFBBj9hhix9OMezY63ZV
-	4Cgn+PestR4xLLsLrSpJEgwfDVJDfy9paj1QtRMZSAS5G862ntv14qo8kcRxphcZ
-	FY+NB2G2AVx5emUCSIB/XliZotl6oeHza87Kz7ACpXyt7BRGoc2LXE72GhuMgADF
-	05yHdj/rylH6vMDgp0beuQN9P/4wV/Be6W5ys3ZxPCR2NbvqP5CjTDwfvhcbzgJb
-	vxKzW1wrdzhdQR0Bim0zEQ==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1794769868;
+	 x=1794856268; bh=fCLKdeQ2PyYfAON4538X6iQYHQ+oydwKp5GZDAWzg2o=; b=
+	H27A9QMkTfSdd+0scmfG+i/jmsP7rL8FOA+GcgdmG1nQKr4nckih7IgYRTgNaoRD
+	XeX7P+ZngTW/UkTsYnERlOZr5T0bE0ZhmqHTggckq4HEYIWmiUjD8AOqyaFrhinN
+	Q3zm+ZINtUdbn4yxDoOzzIwdrN/oJaN1ibiTCzgUbgAZLItA/zi2rRBlD+4sOug0
+	zITD1cip/30HjQ3fyg7Fv+hJQTtKeVE6jUZxSx0jX8wd7Ks2Lcve5ugzpOQBEQUC
+	zWb5jjf5yHY5LA+q7QO4UxVfo9tlFL/oaGO0Dab8fO2ZbEn2djGceGNXxMn83ANZ
+	NG8/iNxLLXJqKMwPHrenNQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794769866; x=
-	1794856266; bh=QLmSZ/NBp3N6h+9oI0F2QCgyrk6btOIBSOGmGKZdMUk=; b=G
-	Q+sx78drr60qgqC4JO1xa1R/ecnCq3/Y4iOdtoQNzjyFAD779rnR2ixPb9pVaH9N
-	6f06LyHq/ND4p0IReCYy7d7podXsuEWclNdjfUnRYDdmCJPsyKFOKltGaKO/vtOz
-	cUe2XrgT9mpVyGV1CfVvGJJI3azF5Yfotdts2WFrgfRNgwexD975jOLq4e2T4o3A
-	4Xzu3NZQPx+qIrWqvEiFE2/1uBFuCp81apWUBvjk+Amuw19kFd0vHbEJ2qjY6tDd
-	KX62XNQ1IZXm0CGls5PiRMndTsmWNY71Hx5wTOcRi3RrsNqwnTr4yzEwJlkhA1Tt
-	PB8ufMEttjfKnK5GEpAvg==
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794769868; x=
+	1794856268; bh=fCLKdeQ2PyYfAON4538X6iQYHQ+oydwKp5GZDAWzg2o=; b=W
+	tG7usJdRZz5tV+uEv59XMWkxOe1cisujoSM4bwddcVRYi/8nM++lBxOVt2gdR4hI
+	/LWKlFvye706k5vWpGVjQqp6Qtg/09BFBmtO6gc72Fj8+xIthZQoGVZ53h7P7309
+	h3d8GUs28kRib4Z76g9rG3rtf+GbB3Z1nuNYWadE1RvGmZU15KJ8DphiCLysje3K
+	qqGI1TGEM739EOSVJb6W4s8SdT01nWnGHrbWhpW0BjLFf03m6GVagBNXqwTeey/6
+	YTZoUjUWFWhnvQSTodrZIFpgibRV82a00of5NvllJ3R4RQl14G4QiEh+nT1Zx6QM
+	ANcOncoI+SscjYErSTFHQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
 	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
 	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794769866; d=ragnatech.se;
+DKIM2-Signature: i=1; m=1; t=1794769868; d=ragnatech.se;
 	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
 	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:R+PMr/bCetqRHgQoYJpnKI8aj7nrGRAbE/juXeL/SKZ6iih
-	eMiqfX7FuMgCTSsVHxnedhSuHOZhPvS2+MBoH1ru5UcJ21aJ9KCB7+J8DJfTga59
-	b7JkIFicv9hUUkiMDN2jS7fir09L16HL32+agSf9TOntsnnqYUZxVIITDzEqc0z7
-	858Y6kxLvKyjtcyPY1l1xxw0kcVIsYZumsh12qq1IvnGrCS4axrKkFIdJTw4Etnp
-	9Wyyvn6tWZhtf9gT50bJ0BXsNBTc/bStlQqJtpXMOYMjkeK9JJuVLWd8VD9v/RcX
-	kz5cHpxMBlqZM34vQ70Hli9+j1nXkIhZ9qwe2vA==;
+	s=fm2:rsa-sha256:OmWRm5+TdgpNhFuYqi7QTlNjcE+SO2yGUoXw1m36Y97LY1U
+	CgWwoM9J/MViH1/w+5QU6ZhM0btr9YskMxGcZsbv1X+lxhhYVaVVdoWBXxu/uAAO
+	afGWXRNqnLnE6UjUF/ZO4I1DVSkUaiYqGZKxcFUaUJ73kVvUd388COvMk7NGT5uo
+	Tb7BBGllDGGhpWdrrC+t9oUK6RSiaT65DrcFCYFN1LDsQOnVG40OucYnBhFAghSc
+	cd4V9FWdqdIyeRS8jkIAGFukbx4FjZSR06/uAZwvDBFI9abSbfNgAIqK+n2lIdqM
+	NjzQ1D0HzIBA5jPqpryoyw+ptRDq3GJNGcpzpsA==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
 	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
 	action=mi-m=1; hc=12;
 	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
 	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:hPqFwMlvBqH/7hIXulBqDF+C0FKhGySeGD7zDJkS3X0=:N6h1vdIXjhRJZ3vjg22o1wupRJyHZUfutQeMAz5hTDM=;
-X-ME-Sender: <xms:ygP6aodX2hwMSmjcAUAX9uYl8SP_Fa0w7VXW6SB2Gl9fmWNtm4TzfA>
-    <xme:ygP6alKtPsWqR0i6PmiwZPlux54IaKj2BJ0wtdpf2kIzEA0J9rdoVBhn49nQXTYky
-    KfbPqMqPADxRle9fb3voGpd7lPYK2YOfnMIQfrkXw4L9KGNsf_HDLML>
-X-ME-Received: <xmr:ygP6aojuBz1qLp1Y1w8YdS59TxQCFMoqvE4htU_TBGS9oGfleAbiDl7V77wfgTSbRRhBxns_7A1ESFg0u8TNsk0HkyABFqc>
+Message-Instance: m=1; h=sha256:ox5OkxWZwgOtqQK2jDCU6elqSvtLOGgCr0L9HCWkzHU=:V5SdEr6+XYfQCM3ImncJF2LX8mSLhSOoF8TyTFLnn2w=;
+X-ME-Sender: <xms:zAP6ahlfe5OJpCYFnNeXUebk1uztOOuRrtK8jDLxzF06dHBXIoofqg>
+    <xme:zAP6anwSNIsMwHuxaljR_H9HU5H1-4w3jJNVIg7n3-cW-aCqxzThzSAwAPpIDLlm4
+    Gqzm7u_aTEG0HN08bUDCyg3EdsPMPYkkO8BKpB9iUfcwWpaWQS6x7a2>
+X-ME-Received: <xmr:zAP6amq9H643sa2aATB8c6JMv9pa7g7TyOqdukDCHIvaHdk1nSG7Z_agsKqohecimSvXpUgpoUxnHH68LfV6O1STyv-CCy0>
 X-ME-Proxy-Cause: dmFkZTE3dz+IGFmByUhOePs0BnrbAsypzERZLdGwpx+lyTLlONScXIceJOyoOyNvs30n9t
     1bLlpuDPbvEThD43Z4wRJPhUCIZSLX57MdYaBSSVoyCEjJUtUR50OHFSOKEtODLLcaDish
     3tKC37idnlZZNvA9bjjVJTfmsJsO8QWxL/q8K4EyKBUCIxYOmTvWpingbIlbKdOQevPJZx
     Cii1MR72087BvEj2g+PnQs7T80DyKu+t32tmPgnCeOOT3QsIUUwSPwaMHjd7653acNeZjj
-    d6uVRLEFE0DZ7RXYbHyTMas4gAxNInQJAswfMVDc9No+i3THLF9B8o6TxTpSq7YNzTPYNm
-    HcMmpYDwA8/nMOEI7x7STvPO5chsDAXFHFIrPayTAQI/8tk9veZbRTJCzSVXPLGeUZrS7U
-    5vdOAU5FMZc5N55hY+4nsXlzmWIbUtPNJb1JYbTlJhGsbGvmrugFZQSD32vNbRS6DNoKFw
-    wCMP3X2wbXxCixtb9sRm7mBMW080uo4zKEwT8QsWueVVM/FH4TFVMq9Nm8u8WGkfA/sU3Q
-    zc5dtIWxAUUFn2QnJAgYegiL+iuUmYgwuo7/cDm65iLYX1KgwDznPV2WyFgkIzS2mQsIQE
-    Pdtb12Rr0O/ICrVKwA7OUQrYTIhP8YZ6OUlsOBkl6I86CHHKHpyjAAAS3LRw
-X-ME-Proxy: <xmx:ygP6ajTE3PAeYeMvLkYOeYXlY1d6Z4pvsJqnIkwB3_67PrZqEu-zHw>
-    <xmx:ygP6aiUeesnSNpduMJnwJ3EMggEwvxE4Trf0hUDfPRNWclpWNxljnQ>
-    <xmx:ygP6avSB3-4Qh3Gp3G6O4MEN1SL70dH3pymTDbeTlWTh7nMKiD85Ng>
-    <xmx:ygP6aklhkDCFUob6JoKq1VjDkiroUP1YE0EYAFTfbv4oj-IRqlyYUA>
-    <xmx:ygP6aliHBoDXdaGpBEutdUfotA83FCKZNqViz98zJ_P3fssf_SytiGZo>
+    d6uVRLEFE0DZ7RXYbHyTMas4gAxNInQJAswfMVDc9No+i3THLF9B8o6TxTpSq7YNzTPYof
+    OtUSAlIFlPy8aNY8NWfvUg1BNUgefy6oghm5YwuDF+bE1btNSImczI/4fCwgh+r/u06AsI
+    XZYxNOKUTTO4RJ2tjIbE8cbzbjCEK16yAjqyJ2Btk2sU8NQHLE7acJxr+t+HL/Dx6rYmH3
+    CsVdlM4p6Vcg7GyjCR1QxOr2wUfFJuoLq5bVNBKr3zmJVj/AEzkSIxDo6s2TVi7Ek7591I
+    Es+VmszMosopGrwZkscqsfxlAN6/syNW+uok21e47IeJGwYAANBjnyj+n/3bPoIz9wKcjv
+    uk9jRyKhSWWwgAaxkYGWDBfnFTZ+osRbTtvEYXiD7/CeVhGI8Al70MjN47pQ
+X-ME-Proxy: <xmx:zAP6am7mNjD3blpUh6tMpOkmdrGQJeVdqOIGcPiOPqCYK_Y4fcYJmw>
+    <xmx:zAP6atfMEpffidJtNReDDBm23MMqAyoEk7p1IqFH9uMYqQNAWIUN9w>
+    <xmx:zAP6ar7P7Q33GHmpHZwxGcvBLiSML_ZBHgExl8TMQ52IhyrnB9tIlw>
+    <xmx:zAP6akv8wiV_Okv98Z6N_YHpgPzX3YpkdOL6pq-nKXd0O21hJVp1Og>
+    <xmx:zAP6asrbasFHPOWq9lqJ4kWnhA0arEV8rh-9IPnEjQYaVQ99cBsKaJMU>
 Feedback-ID: i80c9496c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 15 Nov 2026 14:11:05 -0500 (EST)
+ 15 Nov 2026 14:11:08 -0500 (EST)
 From: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date: Sun, 15 Nov 2026 20:10:05 +0100
-Subject: [PATCH v2 1/3] media: uapi: videodev2: Add 20-bit Bayer formats
+Date: Sun, 15 Nov 2026 20:10:06 +0100
+Subject: [PATCH v2 2/3] media: uapi: videodev2: Add 24-bit Bayer formats
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -121,7 +121,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20261115-v4l2-add-raw-pix-v2-1-f66dd83e5f85@ragnatech.se>
+Message-Id: <20261115-v4l2-add-raw-pix-v2-2-f66dd83e5f85@ragnatech.se>
 References: <20261115-v4l2-add-raw-pix-v2-0-f66dd83e5f85@ragnatech.se>
 In-Reply-To: <20261115-v4l2-add-raw-pix-v2-0-f66dd83e5f85@ragnatech.se>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -132,23 +132,23 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.16.0
 X-Developer-Signature: v=1; a=openpgp-sha256; l=7385;
  i=niklas.soderlund+renesas@ragnatech.se; h=from:subject:message-id;
- bh=N6h1vdIXjhRJZ3vjg22o1wupRJyHZUfutQeMAz5hTDM=;
- b=owEBbQKS/ZANAwAKAQm0/3kE+U0kAcsmYgBq+gPE8rxjpZhVFSC4wCGKYZbSSgXITefk7F0Fh
- eNrws9wE1mJAjMEAAEKAB0WIQRwy9J0OLNPX3a0+3gJtP95BPlNJAUCavoDxAAKCRAJtP95BPlN
- JN2uD/9mAzBd2W431zexofayzLBviJoxWkA4G7NIesaD9LabonQKGIA4hj+oMeTV6Pk1TIdkMKO
- knF0M3fnmWX8OMvGQc/2eG3xVthkAcnZuCfjxII5qoqvUQuBucVjrgQgJ87AqHAGjeEOZs/YimK
- KLAwfw6MSjj/qCtZR318r0dZj3BbYwZj4iPJqHIJnkC+QF7mjqf6KNc0lhTQfq+cdD78k8YuBZI
- ptvUXlUjWNO0Aj39QKUYGwvlnXw3a5gZXToMOw8xvQyWL6/fsEGlShgDeQR2yYYm6nWuSgjk1yh
- LCpLc/1K2u/0povlW53sVAzU1dpkSKjb/CjMDmlu4nRO01YTXj0oxN6DOyETXpSi3AtYer8NB/Y
- i6Tlx9W2w3vkBj08ERb880Ugm3o/1rR8XyqK9gOk6cue+n6PiNW1hU0lbcFY/O01/3g5nhEEyAj
- exmDQKWKIQ8BVDjhRhGY1lt9SkY9Rdva0HxJ4pHm2mxxjUERzcMWXUAIsI/BHtbH+MTkeUzHfxT
- C6hvQhDh9X0kfFB97wWApw/2VfhRug5mJWpQCNknxhXRuTmbNVJA2oTWNPeMvTvj7oGzzdJUuoW
- ggmQFAjn51oHihK2QVniGh70QZo27fUKu3szIqXVMponkxGqetK5OSdr4gPpcIPVcIK9izHG5jM
- lYvFSOSc6wjtUJw==
+ bh=V5SdEr6+XYfQCM3ImncJF2LX8mSLhSOoF8TyTFLnn2w=;
+ b=owEBbQKS/ZANAwAKAQm0/3kE+U0kAcsmYgBq+gPERJ/omL+jB/8fflQr1THgrG3qTGTZo3IQn
+ vUV65PWOUWJAjMEAAEKAB0WIQRwy9J0OLNPX3a0+3gJtP95BPlNJAUCavoDxAAKCRAJtP95BPlN
+ JIbBD/44gQHdfcAf/cEf9q2d8vNALgIzZF7t5nBIgpBLJTxxpDtv2GR1syyN3duzVMPHQN09RRQ
+ r5ZOkFenk0TMfAkPjv3217mpV8zQRnJ7VbSOIbMpB/V7e7Fg7vaiFi7z8RQ0GCZGiYppkYtvPiN
+ TqffjiGCbuLAElLnoMZ0kZBF0fi+CODa4Vtl/JzUf3bwbjDZCsbg1p+yDo8x9PtJDvMOt6Cog1V
+ BqTwNNc6iwKoQenGYEoqjiB8ugmLG1vQ97dHohuIf+cfnVJInx0HIN9U0uEjX+svGsJO6jBZ00e
+ EtFoJ+YLqUpRkrULahRBnoT+XwwDKCsak6+7YuK404q+XLSoMbRqzeyLOWNUJg9YAfCRrYGbYf+
+ zt5Z6hF3Bm3U1+AK54yRj1XUO2V6H8uLV+IifhbSd6sZU8OH190RBV/QA4VFczC9yk03zhJFjhT
+ gHPcEf6ZeW/h5t/cyLW5mFNmYOLQ4ahexklSyzIZIVKHC5WovMDigJh0h8lzAqTZ8JXm+lSqba7
+ n259sKKJ9+VS1r9LGeXv57XeyHRrMMKtmpGWOcDLJrnyUqqGJCec8TgW7ZscXJ3LQSaISMc2bjc
+ 5BKso7eqqZyX26+o2NfEKnLP/A9UrE090xcM/4DV1QmajVWJhCU5q/rudI2C3x4g77bU4EbmU1g
+ vFuP99cuDIGcjRQ==
 X-Developer-Key: i=niklas.soderlund+renesas@ragnatech.se; a=openpgp;
  fpr=9976695FE98693307BF360A2F1591ABD9588DA5F
 
-Add 20-bit Bayer formats and documentation.
+Add 24-bit Bayer formats and documentation.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
@@ -157,54 +157,54 @@ Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 - Add format to v4l2_format_info()
 ---
  .../userspace-api/media/v4l/pixfmt-bayer.rst       |   1 +
- .../userspace-api/media/v4l/pixfmt-srggb20.rst     | 103 +++++++++++++++++++++
+ .../userspace-api/media/v4l/pixfmt-srggb24.rst     | 103 +++++++++++++++++++++
  drivers/media/v4l2-core/v4l2-common.c              |   1 +
  drivers/media/v4l2-core/v4l2-ioctl.c               |   4 +
  include/uapi/linux/videodev2.h                     |   4 +
  5 files changed, 113 insertions(+)
 
 diff --git a/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst b/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
-index 8b4e413177f5..b93e66d6a27e 100644
+index b93e66d6a27e..9d76def66648 100644
 --- a/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
 +++ b/Documentation/userspace-api/media/v4l/pixfmt-bayer.rst
-@@ -33,3 +33,4 @@ orders. See also `the Wikipedia article on Bayer filter
-     pixfmt-srggb14
+@@ -34,3 +34,4 @@ orders. See also `the Wikipedia article on Bayer filter
      pixfmt-srggb14p
      pixfmt-srggb16
-+    pixfmt-srggb20
-diff --git a/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst b/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst
+     pixfmt-srggb20
++    pixfmt-srggb24
+diff --git a/Documentation/userspace-api/media/v4l/pixfmt-srggb24.rst b/Documentation/userspace-api/media/v4l/pixfmt-srggb24.rst
 new file mode 100644
-index 000000000000..915700a5af93
+index 000000000000..7f397dd4a8aa
 --- /dev/null
-+++ b/Documentation/userspace-api/media/v4l/pixfmt-srggb20.rst
++++ b/Documentation/userspace-api/media/v4l/pixfmt-srggb24.rst
 @@ -0,0 +1,103 @@
 +.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
 +.. c:namespace:: V4L
 +
-+.. _V4L2-PIX-FMT-SRGGB20:
-+.. _v4l2-pix-fmt-sbggr20:
-+.. _v4l2-pix-fmt-sgbrg20:
-+.. _v4l2-pix-fmt-sgrbg20:
++.. _V4L2-PIX-FMT-SRGGB24:
++.. _v4l2-pix-fmt-sbggr24:
++.. _v4l2-pix-fmt-sgbrg24:
++.. _v4l2-pix-fmt-sgrbg24:
 +
 +***************************************************************************************************************************
-+V4L2_PIX_FMT_SBGGR20 ('BG20'), V4L2_PIX_FMT_SGBRG20 ('GB20'), V4L2_PIX_FMT_SGRBG20 ('GR20'), V4L2_PIX_FMT_SRGGB20 ('RG20'),
++V4L2_PIX_FMT_SBGGR24 ('BG24'), V4L2_PIX_FMT_SGBRG24 ('GB24'), V4L2_PIX_FMT_SGRBG24 ('GR24'), V4L2_PIX_FMT_SRGGB24 ('RG24'),
 +***************************************************************************************************************************
 +
 +
 +====================
-+20-bit Bayer formats
++24-bit Bayer formats
 +====================
 +
 +
 +Description
 +===========
 +
-+These four pixel formats are raw sRGB / Bayer formats with 20 bits per
++These four pixel formats are raw sRGB / Bayer formats with 24 bits per
 +sample. Each sample is stored in a 32-bit word. Each n-pixel row contains
 +n/2 green samples and n/2 blue or red samples, with alternating red and blue
 +rows. Bytes are stored in memory in little endian order. They are
 +conventionally described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is
-+an example of a small V4L2_PIX_FMT_SBGGR20 image:
++an example of a small V4L2_PIX_FMT_SBGGR24 image:
 +
 +**Byte Order.**
 +Each cell is one byte.
@@ -282,44 +282,44 @@ index 000000000000..915700a5af93
 +      - R\ :sub:`33`
 +      - R\ :sub:`33`
 diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
-index 11ab684024c5..009721cd2527 100644
+index 009721cd2527..e6a37b3ec3d7 100644
 --- a/drivers/media/v4l2-core/v4l2-common.c
 +++ b/drivers/media/v4l2-core/v4l2-common.c
-@@ -402,6 +402,7 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
- 		{ .format = V4L2_PIX_FMT_SGBRG16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
+@@ -403,6 +403,7 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
  		{ .format = V4L2_PIX_FMT_SGRBG16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
  		{ .format = V4L2_PIX_FMT_SRGGB16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-+		{ .format = V4L2_PIX_FMT_SRGGB20,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
+ 		{ .format = V4L2_PIX_FMT_SRGGB20,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
++		{ .format = V4L2_PIX_FMT_SRGGB24,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
  
  		/* Renesas Camera Data Receiver Unit formats, bayer order agnostic */
  		{ .format = V4L2_PIX_FMT_RAW_CRU10,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 8, 0, 0, 0 }, .bpp_div = { 6, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
 diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 17ba1ae70735..14cb94591ea8 100644
+index 14cb94591ea8..cf2831cbdbc8 100644
 --- a/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1434,6 +1434,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
- 	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
- 	case V4L2_PIX_FMT_SRGGB16:	descr = "16-bit Bayer RGRG/GBGB"; break;
-+	case V4L2_PIX_FMT_SBGGR20:	descr = "20-bit Bayer BGBG/GRGR"; break;
-+	case V4L2_PIX_FMT_SGBRG20:	descr = "20-bit Bayer GBGB/RGRG"; break;
-+	case V4L2_PIX_FMT_SGRBG20:	descr = "20-bit Bayer GRGR/BGBG"; break;
-+	case V4L2_PIX_FMT_SRGGB20:	descr = "20-bit Bayer RGRG/GBGB"; break;
+@@ -1438,6 +1438,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_PIX_FMT_SGBRG20:	descr = "20-bit Bayer GBGB/RGRG"; break;
+ 	case V4L2_PIX_FMT_SGRBG20:	descr = "20-bit Bayer GRGR/BGBG"; break;
+ 	case V4L2_PIX_FMT_SRGGB20:	descr = "20-bit Bayer RGRG/GBGB"; break;
++	case V4L2_PIX_FMT_SBGGR24:	descr = "24-bit Bayer BGBG/GRGR"; break;
++	case V4L2_PIX_FMT_SGBRG24:	descr = "24-bit Bayer GBGB/RGRG"; break;
++	case V4L2_PIX_FMT_SGRBG24:	descr = "24-bit Bayer GRGR/BGBG"; break;
++	case V4L2_PIX_FMT_SRGGB24:	descr = "24-bit Bayer RGRG/GBGB"; break;
  	case V4L2_PIX_FMT_RAW_CRU20:	descr = "14-bit Raw CRU Packed"; break;
  	case V4L2_PIX_FMT_SN9C20X_I420:	descr = "GSPCA SN9C20X I420"; break;
  	case V4L2_PIX_FMT_SPCA501:	descr = "GSPCA SPCA501"; break;
 diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 5373dba640fa..85a32dee4e21 100644
+index 85a32dee4e21..027c7c7a352c 100644
 --- a/include/uapi/linux/videodev2.h
 +++ b/include/uapi/linux/videodev2.h
-@@ -744,6 +744,10 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
- #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
- #define V4L2_PIX_FMT_SRGGB16 v4l2_fourcc('R', 'G', '1', '6') /* 16  RGRG.. GBGB.. */
-+#define V4L2_PIX_FMT_SBGGR20 v4l2_fourcc('B', 'G', '2', '0') /* 20  BGBG.. GRGR.. */
-+#define V4L2_PIX_FMT_SGBRG20 v4l2_fourcc('G', 'B', '2', '0') /* 20  GBGB.. RGRG.. */
-+#define V4L2_PIX_FMT_SGRBG20 v4l2_fourcc('G', 'R', '2', '0') /* 20  GRGR.. BGBG.. */
-+#define V4L2_PIX_FMT_SRGGB20 v4l2_fourcc('R', 'G', '2', '0') /* 20  RGRG.. GBGB.. */
+@@ -748,6 +748,10 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_SGBRG20 v4l2_fourcc('G', 'B', '2', '0') /* 20  GBGB.. RGRG.. */
+ #define V4L2_PIX_FMT_SGRBG20 v4l2_fourcc('G', 'R', '2', '0') /* 20  GRGR.. BGBG.. */
+ #define V4L2_PIX_FMT_SRGGB20 v4l2_fourcc('R', 'G', '2', '0') /* 20  RGRG.. GBGB.. */
++#define V4L2_PIX_FMT_SBGGR24 v4l2_fourcc('B', 'G', '2', '4') /* 24  BGBG.. GRGR.. */
++#define V4L2_PIX_FMT_SGBRG24 v4l2_fourcc('G', 'B', '2', '4') /* 24  GBGB.. RGRG.. */
++#define V4L2_PIX_FMT_SGRBG24 v4l2_fourcc('G', 'R', '2', '4') /* 24  GRGR.. BGBG.. */
++#define V4L2_PIX_FMT_SRGGB24 v4l2_fourcc('R', 'G', '2', '4') /* 24  RGRG.. GBGB.. */
  
  /* HSV formats */
  #define V4L2_PIX_FMT_HSV24 v4l2_fourcc('H', 'S', 'V', '3')
