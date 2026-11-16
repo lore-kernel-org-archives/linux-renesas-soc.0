@@ -1,63 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794831690;
-	b=lkwpTLuehvMuXST15eSnxEcdVOJ6scH3HFMpAPcd6RDqvlnB2H2nkzz1kbVX4Z9eqUH5
-	 RLvUJ74EY4E0CyJh9WveMpJLB30aE64cYUK267gPSjD4kj1ywWdsxVZ0pgQf+dzCdEZQ9
-	 dh9H4w5KN6IEC0KNmezsG87X+hUnH8khvFtzMHr42LA6RAP/y/UcI0DrI42OK4gFf1Vla
-	 wgI4sPh/m4hvezF1U+WLKGxxvEBKqqoAb4j6tnH8yKUH7Lon3fW5PtagbYUkk3dGAmqOR
-	 u95Or8E4zg2PMXNMa7QTh94e1zjjNlUNL0Qxx9fTvtWFVef/aeFahiOOAbgNNlj3Zow==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794831690;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=vxKMxVz4RTUXEWLAe5atYGQv2NleEVOnfsqKpIZG1EU=;
-	b=qeLhf1Uut/BqD9RZM4OtIHeSTMYbuPNLNbcmiJPggXXqP35i2WNkXZvtfLZho94ZhZXR
-	 lTuVOuJEYLSI6y2wNC4trUb9R+aLH8BxqLQDlZ+kdPXOndN3NrzrtTkZT6jZaCNmrmhV1
-	 8laxeORgiG8tA0LgyNsR0IzifajwOOEX2ywt4VGAX0hmuwhuJPBFW7AZBeZXGF5d9Es3b
-	 Sf7mjXqdS7lUDXU6v+gToBpnLZy5a1zPp0t2e9Y0ULtajilmtj5qTBzwSxk+FU+blukXf
-	 g1X975lV5oipUayhepDtGERJHTojwNbghJ7FygGCeIPPzbmxnLh82P/tAm+ZQAKpa8A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rMauBFg4;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.180
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794832383;
+	b=WjGkV72F0FyOiOWMzexkp8/TJweBAYSJ6PRkafmKGTvLp3Cmr05XZqe67i3H+1MCHsTc
+	 X5gnym9jAQxWSP57R0mpS8sdyl8V45r9mGBrsdqnaiUkwGW/t8KZC3m9Ras0KjiUJ0l2J
+	 2IKI58ur0ob78dHwNuHphX3weXI4LkqwAgZ3hl+FmY0D3jt4gISknmjtAAKjCx5tTZYDa
+	 EOtif08bqn3wDkw7xEPFEfqBpdcSxl4VdQB9PxMkOS0H9nlSwDaHCRuTEqiPaNWFucZ4O
+	 Sw+HEMadm1HPN58tVTKq1gzJR39U6m4loz6wKX83BKemFpmZ1IMWFaxX0Ko9aWGJzzg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794832383;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=WM4OfNSQop42FqaSuvQj4VY5i6qnj1lHHTtJWd2n1+8=;
+	b=xohHsR+9ANvhNoOOZqSMsirV3qNb+a+hgDk+w9uLULjoJJQmMFNea7w24i1LzC5H8OOG
+	 CUaYv6gI2G2CvgXvT3iUR0PMcJqQRLCFmVutOtuc31x9NYBw3RIq62SeElsrobdlYpnu/
+	 Lt+24bryvAeMsccDVEoYBFNm9VNnrT1MNy6ibH5y9tmULrhekBU52CJzJqOhYd1Ms6AF3
+	 7Xhm6kTdDMpaZHH4PFGApZ9LKBDhtZH1BcVRbOZxxDSjOugw10ZiQ/SSYxCu9bbhuseOz
+	 96+rlVJVRc0kdHGYGyLyJbRkiZ2Xe5iIgVQFqM/pJE/qX14SQUJh95pqH9A83yyf0EA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IcOk15Cu;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.180
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110CD606A31C;
-	Mon, 16 Nov 2026 12:21:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 110CD606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19016606A332
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 12:33:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 19016606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rMauBFg4
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BF45B175;
-	Mon, 16 Nov 2026 13:19:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1794831540;
-	bh=fsw/hAXRRGs6HflXWSb6KSaOYqdKWbKQ4ODUu8fHjbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rMauBFg4xBEnavMZC09+ywXPvnAcJPTwqA08kpkjYVE+S9/yhqesF/hF3psWs4Vjd
-	 Ps27b2ZqufIDAFckespscrhW4DPayDQ/d47bBvKuzNLI3Xe/dscvGzS7foiA6eRFhh
-	 0R9eaqxgEtruXZup7cCRYTdGP4kqBXEnST1SXU0o=
-Date: Mon, 16 Nov 2026 13:21:24 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
-	Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>, Yusuke Goda <yusuke.goda.sx@renesas.com>, 
-	Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] media: rcar-isp: ispcore: Update image data flush
- settings
-Message-ID: <avrtuJWtbEdnoQqu@zed>
-References: <20261114-v4l2-add-nv12-v2-0-a3f5ecfd48d6@ragnatech.se>
- <20261114-v4l2-add-nv12-v2-2-a3f5ecfd48d6@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IcOk15Cu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5365d26ccbdso17760831cf.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 04:33:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794832382; cv=none;
+        d=google.com; s=arc-20260327;
+        b=PBWFO63Du8SlFBUw/rfdruk2cN50qttsr11Kcgp4UMJtqF7ZeP+QWRECEKLQxs2vBi
+         pAGfaeQ06oxxi5WE3Im9lhCfDp3N+0u0tz68tSit95Sueafd9YLWOY8RZYzS9Vsfg+67
+         HJo9DN54819DPhauKQJShg8USRYln6TWPZNosZnDay/b+JO0wj6ZfS+nIcc8opqALbcm
+         7VPXqdb3Me9OkZ/uXMINOt5refhy33+Xq7Zbrv7wMAqivC1Zx4km5f7z3GKOz3iOYvHm
+         wRYut+AM42vs7TUJO1mNjbTlRW0OZL7tLz8XRA5v87ajtiZ+D4T9cpum7suS1gOgBtAT
+         qbFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WM4OfNSQop42FqaSuvQj4VY5i6qnj1lHHTtJWd2n1+8=;
+        fh=rbYh+ri+Trbj1QgSvlkFDRbAb+sl4ELrmIXHD809TKQ=;
+        b=Ru8F0abELm4C0uLZprvHblOE18Fx5Hl+lURzxcstBeXhPfk9a2vRARWSCVoAxxJw54
+         hUp2nJ05DXjqF44lNoH0z6zj/oISxfJi9v6dIl3ku32sHB5DRnFW+qb4Fz8FDcg0p62v
+         zaSxDD02fPuDJtKZ/IetIfe/pqQlD36A8qpEFjdv+YUyGmS0NmmkfyzIMtopjVqSrf4n
+         HenHrYma0ivLHUr/1rqdQAIoYF0iG4RLe7MH7lvjvkKRkJDe27YcX6ElE9MKxsh4sHea
+         cvpBW/cwUAkcyMIHIA6HdHBSHl8CqDDFnEE+XSBAFILAxIrVM9kqi6oIwyX4BBr5p81D
+         IytA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794832382; x=1795437182; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WM4OfNSQop42FqaSuvQj4VY5i6qnj1lHHTtJWd2n1+8=;
+        b=IcOk15CuKATcVulxoHCp14kUuevTmYgHZKB7n60bcx5rkNy964Gyxc3ag1bxUQeRFs
+         VLtgFbhYRHmF96ImNpOvCZp4gKFHDXqiCoyiCOTOrMA5WEnlzS/ts9d0wOmN6hK34Jl2
+         sYWjkzvDBYN4qkKHdQrqY0VmcqBNRVwH31Te466BVkQRV6Jnd1Zk1443AkIonYPDjk0D
+         XYiNbnxfunyelBoUKSPKQa51IphLnYjRi+17NVscWOpEjxltSMGLtHb3IbXsSEwh3WjR
+         VKUYX3Y3i3HA7hqXJdNzWzaCNYhY7Y9mXi/QSgUBxny3RTG7RAUI6+WObJjy5A9PeHmm
+         ci1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794832382; x=1795437182;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WM4OfNSQop42FqaSuvQj4VY5i6qnj1lHHTtJWd2n1+8=;
+        b=CBIrfGrbjOCSnXrP0D1Tu9aLczL957T9X/4Wc18GMEDbN5B7gH2feF+q3gPwTOdP0I
+         +6xC0HN57Opf8kOsvA4nEIxhvbp8b6x0BsrUafPBjAtc+0nNvWBccWPn7/nnvH/onRZi
+         mIL2Cerys3gIc8tW0UBtnKoudQgXNwu+kd4JHp63OS6+OA0ShQvZA5Uhfn9qJJXfr1nr
+         HxIIm2lvrzsOFOo+FaYi8k4G2VPHqnJ2803MHrtVnaj29Bh2ivP4zonjzAUcfk3ZikpI
+         1N2iH/F8HYrYXGub4qktSZ9jznZJa9MSlg5HJrKxUryybq9gAQDAZpSrfopvlOvTxeUe
+         po1g==
+X-Forwarded-Encrypted: i=1; AL+hErF9RC1rMX7CGfuIN0Mq8fKhP9H+MuLkiRUTIXpPjxCZodVyPZ5ySl0c8q1vmObGowtflDHxs2CDGSl+upKiZYdoKg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8JpaZ6UmuPWjwuiJkzWOgQks0uPAZ8KKh7xo2Tqq+gy697yqil
+	TU3GXdQ3URj2z03Bn36tBT4BOje1xYkyOG5z+AmrPP0keEx+E22NeaXzQDkNxG+6zyDo02FNgk1
+	FV+pkW5xEp+RiZPy4vLgfd1SSmBtr6tHrUQ==
+X-Gm-Gg: AYBFou3mLx/EXEdBhXAAn7190oIb86fjyC8LT5qLLPLXItSVB1SRKfzfHxzZUyijwXw
+	CWOMaK2YhWmIF0kh0oUlBWnqKNJF9LNBxpF/M4387tMyRBj8wTrG12TV/oiHRancUHyP9Ktmdj0
+	za7QGlOPAolKOWBt7urf0NIX665IiqKh6v6tfFdSyoTS3Ue6Qp692OlL0x+pYQIslFTa/mEhBhv
+	yh00sJYe2WjD1Y3oTGSUPGvlXqml8iSTZk5fiILr0ntta3vMsCgMmZTAnlfsbWrtvrf6z0ppfRw
+	g1mbUpiTU/YCCXHqUFlj3CCPFy/HzOHdQnIJpfRtlsMKuySPoUxKXxPTSGIrKDoYmkWGa9JgcuP
+	J88xPUc4WQWl3+nYXmcT2WJx2Xrms8rcn7xOxpJJdmahu93JryUxkzlXRH8FTvIjooYSW5a4=
+X-Received: by 2002:ac8:5d08:0:b0:535:bb7a:884a with SMTP id
+ d75a77b69052e-55ac706b54cmr161105011cf.19.1794832382051; Mon, 16 Nov 2026
+ 04:33:02 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -67,151 +104,56 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261114-v4l2-add-nv12-v2-2-a3f5ecfd48d6@ragnatech.se>
+References: <20261116-sdhi_hs400-v1-0-c5bedd312408@bp.renesas.com>
+ <20261116-sdhi_hs400-v1-1-c5bedd312408@bp.renesas.com> <sashiko-outbox-217001@kernel.org>
+In-Reply-To: <sashiko-outbox-217001@kernel.org>
+From: Biju Das <biju.das.au@gmail.com>
+Date: Mon, 16 Nov 2026 12:32:49 +0000
+X-Gm-Features: AclHuK9oq5_INK73sxz0yKmI8hWmO1dhokNEi0IIopn97AvOdbkyI5N8-h0lU5A
+Message-ID: <CADT+UeCde9kNvK5Qroh-iLp9VHq+E5rvOOFKcc+PnY4uMBo3sA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
+To: sashiko-reviews@lists.linux.dev
+Cc: wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Sat, Nov 14, 2026 at 08:55:17PM +0100, Niklas Söderlund wrote:
-> Later versions of the datasheet have an updated chapter on how the image
-
-I'm looking at revision R19UH0259EJ0040 Rev.0.40
-Are we on the same page ?
-
-> out flush settings depends on proper stride settings. Update the bytes
-> per line calculation and flush out settings to match the datasheet
-> clarification.
+On Mon, Nov 16, 2026 at 12:17=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
 >
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
-> * Changes since v1
-> - Fix spelling of capture.
-> ---
->  drivers/media/platform/renesas/rcar-isp/core-io.c | 32 +++++++++++++++++++----
->  drivers/media/platform/renesas/rcar-isp/core.c    |  2 +-
->  2 files changed, 28 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> index cc538e984aa1..1c63194f6455 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> @@ -727,12 +727,34 @@ static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
->  	.num_planes = 1,
->  	.plane_fmt = {
->  		[0] = {
-> -			.bytesperline = ALIGN(1920 * 4, 256),
-> -			.sizeimage = ALIGN(1920 * 4, 256) * 1080,
-> +			.bytesperline = 15872, /* See risp_io_capture_bytesperline() */
-
-not looking into the calculations yet, I just wonder if this value
-can't be calculated (by calling risp_io_capture_bytesperline())
-instead of hard-coded ?
-
-> +			.sizeimage = 15872 * 1080,
->  		},
->  	},
->  };
->
-> +static unsigned int risp_io_capture_bytesperline(unsigned int width, unsigned int bpp)
-> +{
-> +	/*
-> +	 * The datasheet specifies strict alignment and padding rules to be able
-> +	 * to flush out all the pixels. Each line must be 256 byte aligned and
-
-Interestingly I read:
-
-"When using flush out setting"
-
-do you know if flush out has to be used unconditionally ?
-
-> +	 * at the end of the frame at least one extra line of space must be
-> +	 * available.
-> +	 *
-> +	 * As we can't extend the buffer with one extra line we need to work
-> +	 * with stride setting to satisfy both constraints. Fortunately the
-> +	 * datasheet gives us a calculation for this.
-> +	 *
-> +	 *   FLUSH[pixels] = ALIGN(WIDTH[pixels], 256)
-> +	 *
-> +	 *   PADDING[bytes] = ALIGN(BPP[bytes] * WIDTH[pixels], 256) - BPP[bytes] * WIDTH[pixels] + BPP[bytes] * FLUSH[pixels]
-> +	 */
-> +	unsigned int data = bpp * width;
-> +	unsigned int padding = ALIGN(data, 256) - data + bpp * ALIGN(width, 256);
-
-isn't this the additional space for a whole line where flush data
-end up being written to ?
-
-Assume 'data' is already 256-aligned, then we can remove
-`ALIGN(data, 256) - data` from the calculation of padding.
-
-What's left is
-
-        padding = bpp * ALIGN(width, 256)
-
-which is a full line length in bytes aligned to 256 pixels
-
-> +
-> +	return ALIGN(data + padding, 256);
-
-Then here you add to the line length in bytes (`data`) the padding
-(which is a full line itself).
-
-As I presume this works when tested, where did I get lost ?
-
-... a few minutes later ...
-
-And now I've read Barnabas' comment on v1. We're here basically
-doubling the line length then ?
-
-I think the comment here is a bit mis-leading as I thought the idea
-was to add to each line stride enough space to accommodate an additional
-line at the end of the full frame.
-
-And to get back to your reply to Barnabas in v1, I'm not sure I
-understand why the additional padding lines (if unconditionally
-needed) can't be added to sizeimage ?
-
-> +}
-> +
->  static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
->  				       struct v4l2_pix_format_mplane *pix)
->  {
-> @@ -749,16 +771,16 @@ static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
->  	case V4L2_PIX_FMT_NV16M:
->  		pix->quantization = V4L2_QUANTIZATION_LIM_RANGE;
->  		pix->num_planes = 2;
-> -		pix->plane_fmt[0].bytesperline = ALIGN(pix->width, 256);
-> +		pix->plane_fmt[0].bytesperline = risp_io_capture_bytesperline(pix->width, 1);
->  		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
-> -		pix->plane_fmt[1].bytesperline = ALIGN(pix->width, 256);
-> +		pix->plane_fmt[1].bytesperline = pix->plane_fmt[0].bytesperline;
->  		pix->plane_fmt[1].sizeimage = pix->plane_fmt[1].bytesperline * pix->height;
->  		break;
->  	default:
->  		pix->pixelformat = V4L2_PIX_FMT_XBGR32;
->  		pix->quantization = V4L2_QUANTIZATION_FULL_RANGE;
->  		pix->num_planes = 1;
-> -		pix->plane_fmt[0].bytesperline = ALIGN(pix->width * 4, 256);
-> +		pix->plane_fmt[0].bytesperline = risp_io_capture_bytesperline(pix->width, 4);
->  		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
->  		break;
->  	}
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-> index 586a5adbedfa..8908496c734e 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
-> @@ -398,7 +398,7 @@ static int risp_core_config_output(struct rcar_isp_core *core,
->
->  	/* Set image out flush EOF. */
->  	risp_core_write(core, ISPCORE_DMA_IMAGE_FLUSH_OUT_REG(index),
-> -			pix->plane_fmt[0].bytesperline <<
-> +			ALIGN(pix->width, 256) <<
->  			ISPCORE_DMA_IMAGE_FLUSH_OUT_PADDING_PIXEL_EOF_SHIFT);
->
->  	/* Enable DMA and set burst length. */
->
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue to consider:
+> - [Low] mmc: renesas_sdhi: missing Fixes trailer for suspend/resume IOVS
+>   fix
 > --
-> 2.55.0
 >
+> commit 2573360487a180f719dfea67f2b66adb00db6390
+> Author: Biju Das <biju.das.jz@bp.renesas.com>
 >
+> > mmc: renesas_sdhi: Save and restore IOVS across suspend/resume
+> >
+> > The SD_STATUS register, specifically the IOVS (I/O Voltage Switch) bit,=
+ is
+> > not automatically restored after a suspend/resume cycle, causing the
+> > regulator to report an incorrect voltage on resume.
+> >
+> > Fix this by caching the CTL_SD_STATUS register value in the renesas_sdh=
+i
+> > private struct at suspend time and writing it back during resume. The
+> > whole register is saved and restored, as IOVS shares it with other bits=
+.
+> > The save/restore is only performed when a regulator device (rdev) is
+> > present, as the IOVS bit is only relevant in that context.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> [Severity: Low]
+> renesas_sdhi_suspend() and renesas_sdhi_resume() were added without
+> preserving CTL_SD_STATUS across hardware reset when priv->rdev is present=
+.
+> Should this commit include a Fixes tag?
+>
+>   Fixes: dcbce328d3a2 ("mmc: renesas_sdhi: Add suspend/resume hooks")
+
+Will add fixes tag
+
+Cheers,
+Biju
