@@ -1,64 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794830412;
-	b=UOtgEm1ZZelK4syY8QYisXXZgfJa/uAdwkm2Zx9rt/9f/DkLV4s6Hh3a/tojFgyWPvza
-	 mM4sZgIq5ig0nU5hwiMmTN6+PV0JMWPAHfpe1j0djQ6SdIaWorbzHKwcF8eJR2kmyCt0i
-	 O6pSfebZJ9+f2A7CJGSnLyuqNJxX/MBspx8hVYTUmWKQ23LGDxLIvyMN+6AgJDQRcsc6n
-	 Yo/P5DvYC0liZkAX7rlN/LuWXrPAjM6H9zHaKDgpIlcA/zJluiBTzb3baHGVa6GKWt6Mf
-	 57/DRUH+gpzQefgHLvfpC56GZuvQktgJ2+vxbsLrIgKXlEZUKnbhjKXNAAt1qU0Sswg==
+	t=1794830507;
+	b=Fg3+Q5lifBvNI38xrNhP3ygfsCTuucwHfp0fTRg1RiHW1NoquTBH/J86046T8a/xA4Eu
+	 rltIfVJhDfLSjQYf1lLjJpYdQ2PCjU4iMCY3nbCMBK147HCE+iCaut2l6nfIVDcZJy2M1
+	 LGjVLIJOwMiGdCsvFueQLp22a2wrUhqJ2gzsouEuWCCJ/a3fQ1Ppjt1EWdg608xq6iGwi
+	 BzfRis+Jn+vc7uJM/izgMv4xoSaWAMjwn+5WtHNS7tq4MU4+8cuZCyVXzzT9ZzG4uPEeX
+	 max5Cnli2/ObTJ+OHLNqkcHjASI0j3z/HCi6pkTyyp2GP80kdDErvB69BGbmcp2Xs4w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794830412;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=YX9FBeJhdF2yIOAZUujuinCPpS1WalQ+zwpREND6wuQ=;
-	b=g/TtomGhJMUbRW6VUlutRaFO2leSufoXVyKWF4CYCrDxpqrH4Jb3HBWxbXf4Prh+Yhen
-	 IZzwJr+8T5/MNml/5XtYuhOhmAiUMjYpfN24UqBp3EweCrp6BB8o4PbeWMpIxHNmQOGtV
-	 UczZwMJuKv5ONylEb81cA3xlmPCGpUIwObADFGXi2CJXKOhIXjCeM1iqdq2tdgC1Tsx6y
-	 2t1P8Tsk6ukEEC6HcERNk9kb4kPFQPlMYH8RckKAH4M9XURsrFZuUlbq/wiAImHPNo0nz
-	 kp78Ge2rb78yYlTn/JAX4y0jIF/l8lf8zbphDEinLPGNYQ0DxPOYvdoCHWM/7cdiCdQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794830507;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=qeFPCLy9FkRqwFrmv1PRC8oZpfkhe5BgMOQRIthVTYg=;
+	b=jgPx52OVInvBzAsoX5h1+FhiQzj9nR3bXlQAJtDLUAU4KD04a9685EkJAi0kF5wHb8n7
+	 0myJBVnG7J1H75/pIWWTtcMszVDqPbRuz42QQm0mK/ifSpNBVuoX22FfR8yH1ADHoOypX
+	 gRslDXTN2mf68hcJlR1vUIjzTj0eOhAj4ou6S3KuufLj9XoLxhbr4jh8kA0jNaQTRPbNr
+	 wXNR+WmDSfx6mKt0tmBmm2SnJIe1hNtIFq25XmpZ0gabbhsL1vXMi2T5c8xQQe0au2thu
+	 vKR5zGHqJ9qaEUOQznzHuSS8Q1wrLx1Cn+epub4G3SUrMQUzIGsQsgvvekY0iwcTZFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=DevN2MCk;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F6t7bW8c;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00D2606A32A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 12:00:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B00D2606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4946E606A31C;
+	Mon, 16 Nov 2026 12:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=DevN2MCk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=YX9FBeJhdF2yIO
-	AZUujuinCPpS1WalQ+zwpREND6wuQ=; b=DevN2MCknXa4YIYL3gu+B63l7kMknv
-	AQ7Fv1s72gzb4qHVkw//DYBXskeVMFja7Ee9JXCalPjb262ONUm/QGklFcsXFtmi
-	28kqSpe3BqkFXEHAN8+tf1QcwEJqypbnt03IuMYL3JwTuTEpGGulnzG+Uf9pTym9
-	s3XUnIULVn2qBOTMxp1cdEqKcx/XD+08iu41yLo37WKh3/Z20oV9CluI0WIoP9nx
-	1JHhuPhhD4ex4MH7ZmIgimgx4zF4OiTJF3GfmNevvrWMlYysDKAueExF7HLtKjtE
-	gzbCGINW397TaLIYJGhW0dzCOKeFmgEr5hwd2P66cibDm4qDds+SHq9A==
-Received: (qmail 1271540 invoked from network); 16 Nov 2026 13:00:02 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Nov 2026 13:00:02 +0100
-X-UD-Smtp-Session: l3s3148p1@sC2QhGNgeusujnv5
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Adam Ford <aford173@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: renesas: beacon: Increase sdhi2 speed
-Date: Mon, 16 Nov 2026 12:59:24 +0100
-Message-ID: <20261116115958.175376-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F6t7bW8c
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104F11F000C5;
+	Mon, 16 Nov 2026 12:01:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794830506;
+	bh=qeFPCLy9FkRqwFrmv1PRC8oZpfkhe5BgMOQRIthVTYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=F6t7bW8c7r5RIcsepWJBIgP7SkeVG6VMdwcRRMjEKOH9EG9EwOkT8SSoQABLeHnwJ
+	 33qgxfwpjPkUDG61iTeiEZR1bQZ6jdgRHthOOT2j1WBIB+AQAIW+qwT+FlvwxI2YWw
+	 YYch3YSeTe5L8+4P+gzPh1l2Qdn3tPpZK9rIWotUVXHON8WWbbjcetSDBpg+z2c2gB
+	 eT6okVPwSw7drEJ2kLPIIvnv35S6JUnSX9oCTXGEPbICi4eRAwrZZRzK7VlMrq7+kv
+	 cakp32dzGBuHbVWv6CGe4e4CZyRmc/c5NEAR41Gw3INyFLTvxiI8ZAxGN8OhbAaQRU
+	 tUmj8WxBZN73g==
+Date: Mon, 16 Nov 2026 13:01:41 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mina Hui-Min Chou <minachou@andestech.com>
+Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, conor@kernel.org, jic23@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, randolph@andestech.com, cyyang772@andestech.com, 
+	tim609@andestech.com, az70021@gmail.com
+Subject: Re: [PATCH v2 13/19] dt-bindings: cache: rename
+ andestech,ax45mp-cache to andestech,llcache
+Message-ID: <20261116-victorious-mutant-grebe-aefaae@quoll>
+References: <20261113071143.1446167-1-minachou@andestech.com>
+ <20261113071143.1446167-14-minachou@andestech.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -68,48 +63,19 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261113071143.1446167-14-minachou@andestech.com>
 
-From: Adam Ford <aford173@gmail.com>
+On Fri, Nov 13, 2026 at 03:11:37PM +0800, Mina Hui-Min Chou wrote:
+> The binding now covers Andes last level caches beyond AX45MP and uses
+> andestech,llcache as the generic compatible. Rename the file to match
+> it.
 
-The WiFi chip can run at sdr104. Set the respective flags to push the
-sdhi faster.
+No, it doesn't. At least not in next. Anyway not reason to rename the
+file.
+> 
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-[wsa: rebased]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Change since v1:
-* drop HS400 hunk because of unclear SoC-ES dependencies
-
- arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 882513149042..873ffb106333 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -288,8 +288,9 @@ &scif2 {
- };
- 
- &sdhi2 {
--	pinctrl-names = "default";
- 	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins>;
-+	pinctrl-names = "default", "state_uhs";
- 	bus-width = <4>;
- 	vmmc-supply = <&reg_3p3v>;
- 	vqmmc-supply = <&reg_1p8v>;
-@@ -297,6 +298,8 @@ &sdhi2 {
- 	cap-power-off-card;
- 	keep-power-in-suspend;
- 	mmc-pwrseq = <&wlan_pwrseq>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--- 
-2.53.0
+Best regards,
+Krzysztof
 
