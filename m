@@ -1,100 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.172
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794824747;
-	b=OLbZVfsfYO/Ehe/6Yv76guYU5n6lPBbUpIrWKuclFnLBiDd94ucK5jnFE/ZLlCkcn19H
-	 XVOmLuYdwGM7r0yQR7YGK0VhkJm86xSPJWWW86PZUTzqjzAkQ7PU0yqOCTtMeiJCIgID2
-	 ZDnXVOA+1kpOqvZs9WII0RR45zHsgOzX4L7Ur8TG9gsdEDLrXXRtaVoGi/4LRMPF0isxF
-	 Lvm6vR+Tj0/oSF2n02vDeaUfuORDXxnLRK8tjvSbELe69oEAdN3hASyx9JurAZ8wI1tZQ
-	 PYgHkPbl0/ZGHKMQMmMxZ+dxNOLlZLP4B4TuDytuQMHijVpzL+HYlyS8/HyDKY/p/zQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794824747;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=0XDjbp+Hr2IX5Ge48cV7KKYqG+NcCpQTMYHRwi2dGjw=;
-	b=XsnHZrkEUno1wmY5eDU9hvB75HS8DSAG74YQpQuz6EgPF39RX8WaTE60pcwOC3Hyhc3I
-	 RoSobX1vG+95XEBlhN51DMhMseqZSDRLlMXGxGRZBZG+32ZNLtdOrD1c631fU8asYekTN
-	 bDXpNAym9kAf2MlJ+y4s+KxbKkCZ7Sr2FWiU5Z1sLfCzZw734XWNvj7c4e8zKPOIzoKwT
-	 n8ip2GeJsRZmcBFDLG4PY8SzvQlMjyPjf8wOHTQ6sr+0re5GIEDkVN3i0FtHnEwkZUS5a
-	 z0v43ZC5BTd/vhOAkmSvbRaHniTqKIl0VYWoG8ye8BaByceAf6OER4SFwigWxWcyv/A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AEyGhZUM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.172
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794825057;
+	b=GpBgwfE7NWdQAUZ3z4omQ9OE+B1GV6CUf3nqWND9K+CaRBNf/QgVSnDXzr7UgZm3F/kP
+	 uIfzUNYsO/LXM9qBN5QMCKPhQTHV/lYL0aY+1hZFSIkoGI+Kqm7xBW/gMsKe+wBE2mzmX
+	 0oVVsRXscoqdrnV7RZZDRQ7TSAIlCRC18aAIgK3BVJmzl25r4b/oZI2h8FlFsTi2431qH
+	 7ZdijuBqWE+ktE9Z4gww2Dzhhfp+5D4Bd1tuDcMfR07vw91j7uRoyMPUSUPdinGseemli
+	 PP7+uUq5PKLAzo+0Ymk9OzNjKScMvktg0lGbgGmMZi1+xc6QhHEw7jsX7ioLTwsU7fQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794825057;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=hNoOLAkKTtSxiJZHPRFlIqEnER1Prl4GCQs18G25yPc=;
+	b=I1KsrRqXY68dIRpIluIoX3ayZ6fPeNF8TBxkh6sdFpu3lmuqSe7cYjrIgC0ITGHZBDvm
+	 hWrePxRFROMWJbEKx1mbW8k7m/Zrx3IyK9AUi+PI+pJIlokKV8sBai8LgHuvd9WAU0wOK
+	 Q5VIB3JApTOYZQGQvkqco49mdWZHOSbeLVyzMyhWWAtiCqI2ohTTqbOTmcFblnJiwyuwq
+	 Bp7Yw2U+wq9HtRbnuocJo8mchxAO0RuhVNXd6TXAALc2xv1UPmWfuFcv66+gtouui9L2f
+	 g65rlJOd1cUkrLdYj2qWGY+/JI636TwufPS1nboQSizravmpykIziP6pvrt/b5/Qjhw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eZAQjQAj;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7E0606A323
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 10:25:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DF7E0606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C691606A31C;
+	Mon, 16 Nov 2026 10:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AEyGhZUM
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-5430f70c827so46898831cf.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 02:25:46 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794824746; cv=none;
-        d=google.com; s=arc-20260327;
-        b=KbTYX6iTuJxld9WItujXcux5UD2mJH/y67bAeFN2DF4g4Kfl0d1M9wgDU4bVKqBzzp
-         7cajRs50fVunvKVoA0rZFXJ/7AaU/5GwRT0KPBgL+m3j0Gfm8B8S/8uu/NwNs/HLCJS+
-         tmzHzv7XkQCRZGEvHUMuzS1RbKsSe3b3h+9p2tg00Y6SkWLL1qGXOwEfqoDHfGyNLje+
-         Xg9z0TD2xnFLn8OaC5RQL2dK0cvFvHwsn9CbkodAHaLJYWGbprQoHrs4U1vKrdWNwQMY
-         mInRBzQ9gmRV3YhTKjuX8vezVL59iF+PXFhKB1iRU7wxJy22wwFEp2w6PxCg1jscw/gN
-         dppQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=0XDjbp+Hr2IX5Ge48cV7KKYqG+NcCpQTMYHRwi2dGjw=;
-        fh=1XPg2EjB3w7KXEno+gNxCcbo1jMVTsNmp8Oe7SgBdGI=;
-        b=Xwroi4Vx8XXwjp1MRefO9ZrioE1puFcqVYjWDW2f2vRU+gSIv1V2kH7tKwS/wJ9HEi
-         3mpJWT5XVHONJ54lEgMYz/RUQwfggtLy/n5CNajbmqvWAK7iTMNVc2666PaCjQ4EuOfa
-         nni0sIjsrYguN4Bz+aJ2AICvVr2FFRMa+AelWtaN/xPRx9fyhE3sdSH0P5W3bqbU2/mU
-         u+zPrY+P0IiX0Z5SkQK+8HVzYIHp+adOMKEnGKhX8r4KDKXt7m7RL6rajTnTlPRvwcpm
-         YpQFvy9GX2KLkpMEd3dEcyiW+BpqL23aJYwnq5sL7TZrILaZycJLVS7g1/7xG7W6Wuef
-         DFbQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794824746; x=1795429546; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0XDjbp+Hr2IX5Ge48cV7KKYqG+NcCpQTMYHRwi2dGjw=;
-        b=AEyGhZUMcZpQqrBmVqU+z3dbybjq9z3X7LqRfbcpCs2wZ4H0kPBk2rwN44Kks6Y9Pq
-         mWWOq+koVEKme0JQ9Nstwpcx/Da5o6Jr9HKz+886fv8g5BL3wlXVAgcBI0rfybLnkA0o
-         dUa4X9WkGf2UeN0ZVQAp4eRoYzrAp1Gt8dcGf7BE5AwMcUvTVzS7Mp84bOuckXsjmbeC
-         a2QXePZ/MYabP00/DYAma0iDfcnmGoK0MXc6qxVfwVCOc0nFqT5TRhsjMwHlSb7ZT5LR
-         VcNP7NyrV5RHheMg6M6QnPZgmYECgWOCSPdmdHPZySb6CDBKQMTDBwuM2g4Ex9Bs1WEu
-         w0Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794824746; x=1795429546;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0XDjbp+Hr2IX5Ge48cV7KKYqG+NcCpQTMYHRwi2dGjw=;
-        b=gAF57uxRWSQUbWdrdULh6N5pnWslhpPv/WtNGEm7w76Du9u8lawaJ8N25FiiLLcyLR
-         jD4jeRgllFSejbyeCYT9Rs01Pdjcb8LqcYCJgrK0tl763K8SZULyFdbiNFFY4Hgk3Lql
-         NAJ6ZuPrlGxQheHsKLA22vzG7HX1Ltl9Eax6K5g1BLPTp+GSOne2pi5o8sxRk0mRc0BU
-         E7Jsw7EP9muonEX+f/L5Y63PvoQUsuMCJn5kFJdERo8QyKKnHjpDTTvXR/LSHQ+E+JEv
-         tDRDVOKjv2eyIXaX0apqjXtyCtX0S6faR793s3JSmVzRmcmzHZ5o+k4Uc6C4vFNNKB7W
-         6HpA==
-X-Forwarded-Encrypted: i=1; AL+hErHAao5Sscno9Rd8C61TR0a3jR2hEEo4bZsTP8GzvsHy+LbXKlYkS34tmL/UklPKDWwb3Lq1Rg/yJm0HtQJR9PBeYg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+muE7j22hlyMdT83MURjU8pubmtUL95/XXMnuFAkMvssa/HMif
-	2DyU/YIJzEnISk3JOBrPZjayhflNDfCRKrkMlk/NKXr6eMcCkSMFxAzrQn/aEF1Nz5IiYs07bUV
-	oxXiW5GjTzTp8Wpwobs3ab7G8AVuC1uLFFQ==
-X-Gm-Gg: AYBFou11XpiAM0T7s0InCQAQTM+shno8tSw5w67leGHwIedxRBbygvPF3/qnnYrhdKU
-	m0N/6HxB8lX6cuR1UfUmF/aorFlu1/ODWY6+3T43qbt37otjL9t8qLsiDB+/fkKeyKhOIvlsCcP
-	tzWbagi5IbfLHjpb1gvjdc5j2zkPp3xvxVp96TZuUzP+mXplaOPnf4pmGJUcozBGp3No+58eyC1
-	RZPcC7FjvG/ZD9nqQh+SjmVGeqjCNHco9OjjtCLRTwdvtW0MaCKARlNnCHr+V9yy0/arMAYW82p
-	e2mldUJIFQf+P+bZlIjnAaXl+yy4zvzbZDziNUUkVJ1+toiqxcnpczIRbAFVg88fywbCgvbAKcP
-	HshqBgfMin5t5e51H4fVN0pCpimcWZmtKkKEpOVNsUq12LSVGaV7zgGKVq2CkRqd55UMZXg==
-X-Received: by 2002:ac8:5e4f:0:b0:55d:2c49:c258 with SMTP id
- d75a77b69052e-55d2c49c456mr86126021cf.42.1794824745567; Mon, 16 Nov 2026
- 02:25:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eZAQjQAj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0581E1F000C4;
+	Mon, 16 Nov 2026 10:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794825057;
+	bh=hNoOLAkKTtSxiJZHPRFlIqEnER1Prl4GCQs18G25yPc=;
+	h=From:Subject:Date:To:Cc;
+	b=eZAQjQAjpGYV7/Eiek+/CM3GGGJ7mjOU0aI2Pqqy/lVi1PtK6N21dH4ReeD0yKxqR
+	 GA1WugARvXRRPA6PeNht/rYimME1ClZwx1fSDoFfrh5kea5FQkRCxCEQoFpyHLo3IF
+	 zC++9JOkXFllW30ghcP3a7eJozKLkpENKLLCTfRnFEmvFEI25C5pZ3pc/azcAIQaLB
+	 NMO/PzMqEmOjhtcDp6mEbUeo1FXq+UAR6AvqupyYKTcJOEDrEkmMMx2+fhfVZ/pO+S
+	 6SfUpl6vvQdsNnk69fbG3tG3yCQR+I5DMRpaolHqjO7QkZf9xYrBswRl65X0R1nVLO
+	 EsaYuU4/pW6xQ==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v2 00/64] drm: Switch drivers to
+ drm_mode_config_create_initial_state
+Date: Mon, 16 Nov 2026 11:30:16 +0100
+Message-Id: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -104,366 +54,271 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261112-sdhi_rzg3l-v1-0-ca30b209615d@bp.renesas.com>
- <20261112-sdhi_rzg3l-v1-1-ca30b209615d@bp.renesas.com> <sashiko-outbox-211760@kernel.org>
- <CADT+UeBxUecV10oAzTDn+rPas43iGLgpuHKHYZUKd_o=gN9Znw@mail.gmail.com>
-In-Reply-To: <CADT+UeBxUecV10oAzTDn+rPas43iGLgpuHKHYZUKd_o=gN9Znw@mail.gmail.com>
-From: Biju Das <biju.das.au@gmail.com>
-Date: Mon, 16 Nov 2026 10:25:34 +0000
-X-Gm-Features: AclHuK9WOpwmKEvnuzRSoHFtqQDCb060zuujnEK9IFM5WFLehV8teLCU3Q8BJ28
-Message-ID: <CADT+UeA_5Xpq1AEyOcPtOJ13soqXXb=NdmLP0NGvJ1P_KMApCA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: r9a08g046: Add SDHI nodes for
- RZ/G3L SoC and SDHI1 pincontrol on SMARC EVK
-To: sashiko-reviews@lists.linux.dev, linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
-	wsa+renesas@sang-engineering.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAA/3XNQQ6CMBBA0as0s2ZMW0IRVt7DsCBlChOlNVPSa
+ Ah3N7J3+xfv75BJmDL0agehwplThF7ZSoFfxjgT8gS9Aqut062xOMmKMeGahNCnGHhGoUwbGhq
+ vXWic6+oJKgUvocDvk74PlYKF85bkc56K+dUTNUY3/9FiUGPr6sZpb72vw+1BEul5STLDcBzHF
+ w7mkJrBAAAA
+X-Change-ID: 20260712-drm-no-more-config-reset-1ea89f56693d
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Janne Grunau <j@jannau.net>, Sasha Finkelstein <k@chaosmail.tech>, 
+ asahi@lists.linux.dev, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+ sashiko-bot@kernel.org, Liviu Dudau <liviu.dudau@arm.com>, 
+ Russell King <linux@armlinux.org.uk>, Dave Airlie <airlied@redhat.com>, 
+ Jocelyn Falempe <jfalempe@redhat.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Alison Wang <alison.wang@nxp.com>, Stefan Agner <stefan@agner.ch>, 
+ Tian Tao <tiantao6@hisilicon.com>, 
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+ Yongbang Shi <shiyongbang@huawei.com>, Dexuan Cui <decui@microsoft.com>, 
+ Long Li <longli@microsoft.com>, 
+ Saurabh Sengar <ssengar@linux.microsoft.com>, linux-hyperv@vger.kernel.org, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Huacai Chen <chenhuacai@kernel.org>, 
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jianmin Lv <lvjianmin@loongson.cn>, 
+ Mingcong Bai <jeffbai@aosc.io>, Qianhai Wu <wuqianhai@loongson.cn>, 
+ Xi Ruoyao <xry111@xry111.site>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+ nouveau@lists.freedesktop.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Gerd Hoffmann <kraxel@redhat.com>, spice-devel@lists.freedesktop.org, 
+ virtualization@lists.linux.dev, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ David Lechner <david@lechnology.com>, Iker Pedrosa <ikerpedrosam@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+ Jyri Sarha <jyri.sarha@iki.fi>, Alexey Brodkin <abrodkin@synopsys.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>, 
+ Alex Lanzano <lanzano.alex@gmail.com>, LiangCheng Wang <zaq14760@gmail.com>, 
+ Chia-I Wu <olvaffe@gmail.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Zack Rusin <zack.rusin@broadcom.com>, 
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, 
+ Michal Simek <michal.simek@amd.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10588; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=UnO0MjpeeK9krxZGNzUbW4Y98HkRuMvk6bepjPVE67A=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm/bjtoSp5cbau8nO/fFo9nZ3JyVwYp7+OL+35/yiTLj
+ 8w57O6rO6ayMAhzMsiKKbI8kQk7vbx9cZWD/cofMHNYmUCGMHBxCsBELOoYG97r7D+c8fKXCs+H
+ V+zz97t4P63mf7xgZkOXUP6qJIaq9nfS1kVzNb7H6/ffELF9qLf2CGPD5+wrem7q7TGnXggsSF2
+ lK1P0cGKITLburVPeF8KE889ce3pjvWDAm+I7u+YFRSqyTtoHAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-+linux-renesas-soc@vger.kernel.org
+drm_mode_config_reset() has a dual role: it creates the initial KMS
+state at probe time, and resets hardware and software state during
+suspend/resume cycles. However, the two roles need different
+behaviors, notably for objects like drm_private_obj that must persist
+across suspend/resume and are excluded from drm_mode_config_reset()
+by design.
 
-On Mon, Nov 16, 2026 at 10:25=E2=80=AFAM Biju Das <biju.das.au@gmail.com> w=
-rote:
->
-> Hi,
->
-> On Thu, Nov 12, 2026 at 7:25=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
-> >
-> > Thank you for your contribution! Sashiko AI review found 4 potential
-> > issues to consider:
-> > - [High] arm64: dts: renesas: r9a08g046: undocumented SDHI compatible,
-> >   clocks, and resets
-> > - [Medium] arm64: dts: renesas: r9a08g046l48-smarc: sdhi1 left enabled
-> >   when RZ_BOOT_MODE3=3D0
-> > - [Medium] arm64: dts: renesas: r9a08g046l48-smarc: missing pull-up and
-> >   no-op UHS pinconf
-> > - [Medium] arm64: dts: renesas: r9a08g046: SDHI power-source not wired
-> >   in pinctrl-rzg2l
-> > --
-> >
-> > commit c182c80f2e51018770e032cd10fb901dca56ea0e
-> > Author: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > arm64: dts: renesas: r9a08g046: Add SDHI nodes for RZ/G3L SoC and SDHI1=
- pincontrol on SMARC EVK
-> >
-> > This commit adds device tree nodes for the three SDHI controllers on th=
-e
-> > RZ/G3L SoC (r9a08g046) and configures SDHI1 pinmux and voltage regulato=
-r
-> > nodes on the RZ/G3L SMARC EVK board.
-> >
-> > > diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/=
-boot/dts/renesas/r9a08g046.dtsi
-> > > index c63a857f0e5b0..3665ccbdd91be 100644
-> > > --- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-> > > @@ -762,9 +762,80 @@ dmac: dma-controller@11820000 {
-> > >                       dma-channels =3D <16>;
-> > >               };
-> > >
-> > > +             sdhi0: mmc@11c00000 {
-> > > +                     compatible =3D "renesas,sdhi-r9a08g046";
-> > > +                     reg =3D <0x0 0x11c00000 0 0x10000>;
-> > > +                     interrupts =3D <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH=
->,
-> > > +                                  <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-> > > +                     clocks =3D <&cpg CPG_MOD R9A08G046_SDHI0_IMCLK>=
-,
-> > > +                              <&cpg CPG_MOD R9A08G046_SDHI0_CLK_HS>,
-> > > +                              <&cpg CPG_MOD R9A08G046_SDHI0_IMCLK2>,
-> > > +                              <&cpg CPG_MOD R9A08G046_SDHI0_IACLKM>,
-> > > +                              <&cpg CPG_MOD R9A08G046_SDHI0_IACLKS>;
-> > > +                     clock-names =3D "core", "clkh", "cd", "aclkm", =
-"aclks";
-> > > +                     max-frequency =3D <150000000>;
-> > > +                     resets =3D <&cpg R9A08G046_SDHI0_IXRST>,
-> > > +                              <&cpg R9A08G046_SDHI0_IXRSTAXIM>,
-> > > +                              <&cpg R9A08G046_SDHI0_IXRSTAXIS>;
-> > > +                     reset-names =3D "rst", "axim", "axis";
-> > > +                     power-domains =3D <&cpg>;
-> > > +                     status =3D "disabled";
-> > > +             };
-> >
-> > [Severity: High]
-> > Can sdhi0, sdhi1, and sdhi2 bind to the Renesas SDHI driver or pass
-> > dtbs_check with these properties?
->
-> The dtbs checks are passing.
->
-> >
-> > "renesas,sdhi-r9a08g046" has no fallback compatible string and is not p=
-resent
-> > in renesas_sdhi_internal_dmac_of_match or
-> > Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml.
->
-> That is correct.
->
->
-> >The binding schema
-> > also restricts clocks and clock-names to at most 4 entries, restricts r=
-esets
-> > to 1 entry without reset-names, and only permits the vqmmc-regulator ch=
-ild
-> > node (added under sdhi1 and sdhi2 below) for "renesas,sdhi-r9a09g057".
->
-> Binding clearly specifies 5 clocks/clock-names, 3 resets/reset-names
-> and optional internal regulators.
->
->
-> > In
-> > addition, renesas_sdhi_probe() only requests a single unnamed reset via
-> > devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev, NULL),
-> > leaving the axim and axis resets unmanaged.
->
-> These resets are managed. see below
->
-> priv->rstc =3D devm_reset_control_get_optional_exclusive_deasserted(&pdev=
-->dev,
-> NULL);
-> if (IS_ERR(priv->rstc))
-> return PTR_ERR(priv->rstc);
->
-> priv->rstc_axim =3D
-> devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev,
-> "axim");
-> if (IS_ERR(priv->rstc_axim))
-> return PTR_ERR(priv->rstc_axim);
->
-> priv->rstc_axis =3D
-> devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev,
-> "axis");
-> if (IS_ERR(priv->rstc_axis))
-> return PTR_ERR(priv->rstc_axis);
->
-> >
-> > > diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arc=
-h/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-> > > index 5289efd1a430a..0b6b7e109200f 100644
-> > > --- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-> > > @@ -14,6 +14,7 @@
-> > >  #define SW_GPIO4             1
-> > >  #define SW_I3C_EN            0
-> > >  #define SW_SER0_PMOD         1
-> > > +#define SW_SDIO_M2E          0
-> > >
-> > >  #define PMOD_GPIO4           0
-> > >  #define PMOD_GPIO6           0
-> > > @@ -38,6 +39,7 @@ / {
-> > >       aliases {
-> > >               i2c2 =3D &i2c2;
-> > >               i2c3 =3D &i2c3;
-> > > +             mmc1 =3D &sdhi1;
-> > >               serial0 =3D &rsci2;
-> > >               serial1 =3D &rsci3;
-> > >               serial2 =3D &rsci1;
-> >
-> > [ ... ]
-> >
-> > > @@ -175,6 +190,68 @@ scif0_pins: scif0 {
-> > >               power-source =3D <1800>;
-> > >       };
-> > >
-> > > +#if RZ_BOOT_MODE3
-> > > +     sd1-pwr-en-hog {
-> > > +             gpio-hog;
-> > > +             gpios =3D <RZG3L_GPIO(J, 2) GPIO_ACTIVE_HIGH>;
-> > > +             output-high;
-> > > +             line-name =3D "sd1_pwr_en";
-> > > +     };
-> > > +#endif
-> > > +
-> > > +     sdhi1_pins: sd1 {
-> > > +             sd1-cd {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(J, 0, 8)>; /* SD1=
-_CD */
-> > > +             };
-> > > +
-> > > +             sd1-clk {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(G, 0, 1)>; /* SD1=
-_CLK */
-> > > +                     power-source =3D <3300>;
-> > > +             };
-> > > +
-> > > +             sd1-cmd {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(G, 1, 1)>; /* SD1=
-_CMD */
-> > > +                     input-enable;
-> > > +                     power-source =3D <3300>;
-> > > +                     bias-pull-up;
-> > > +             };
-> > > +
-> > > +             sd1-data {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(G, 2, 1)>, /* SD1=
-_DAT0 */
-> > > +                              <RZG3L_PORT_PINMUX(G, 3, 1)>, /* SD1_D=
-AT1 */
-> > > +                              <RZG3L_PORT_PINMUX(G, 4, 1)>, /* SD1_D=
-AT2 */
-> > > +                              <RZG3L_PORT_PINMUX(G, 5, 1)>; /* SD1_D=
-AT3 */
-> > > +                     input-enable;
-> > > +                     power-source =3D <3300>;
-> > > +             };
-> > > +     };
-> > > +
-> > > +     sdhi1_uhs_pins: sd1-uhs {
-> > > +             sd1-cd {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(J, 0, 8)>; /* SD1=
-_CD */
-> > > +             };
-> > > +
-> > > +             sd1-clk {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(G, 0, 1)>; /* SD1=
-_CLK */
-> > > +                     power-source =3D <1800>;
-> > > +             };
-> > > +
-> > > +             sd1-cmd {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(G, 1, 1)>; /* SD1=
-_CMD */
-> > > +                     input-enable;
-> > > +                     power-source =3D <1800>;
-> > > +             };
-> >
-> > [Severity: Medium]
-> > Should sd1-cmd in sdhi1_uhs_pins also keep bias-pull-up like sd1-cmd in
-> > sdhi1_pins?  Also, neither sdhi1_pins nor sdhi1_uhs_pins specifies
-> > drive-strength-microamp on the PG0..PG5 pins, where PIN_CFG_SOFT_PS onl=
-y
-> > uses power-source to select the drive-strength table.
->
-> These all are uses reset values as it is sufficient.
->
-> >
-> > > +
-> > > +             sd1-data {
-> > > +                     pinmux =3D <RZG3L_PORT_PINMUX(G, 2, 1)>, /* SD1=
-_DAT0 */
-> > > +                              <RZG3L_PORT_PINMUX(G, 3, 1)>, /* SD1_D=
-AT1 */
-> > > +                              <RZG3L_PORT_PINMUX(G, 4, 1)>, /* SD1_D=
-AT2 */
-> > > +                              <RZG3L_PORT_PINMUX(G, 5, 1)>; /* SD1_D=
-AT3 */
-> > > +                     input-enable;
-> > > +                     power-source =3D <1800>;
-> > > +             };
-> > > +     };
-> >
-> > [Severity: Medium]
-> > Does setting power-source on PG0..PG5 in sdhi1_pins and sdhi1_uhs_pins
-> > actually program the SD_CH1_POC register during signal voltage switchin=
-g?
->
-> yes, it programs  SD_CH1_POC.
->
->  RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 0, RZG2L_MPXED_COMMON_PIN_FUNCS(B)=
- |
->    PIN_CFG_IO_VMC_SD1),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 1, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 2, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 3,
-> RZG2L_MPXED_COMMON_PIN_FUNCS(B) | PIN_CFG_IEN |
->    PIN_CFG_IO_VMC_SD1),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 4, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 5, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
->
->
->  RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 0, RZG2L_MPXED_COMMON_PIN_FUNCS(B)=
- |
->    PIN_CFG_IO_VMC_SD2),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 1, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 2, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 3, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 4, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
-> RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 5, RZG2L_MPXED_COMMON_PIN_FUNCS(B) =
-|
->    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
->
-> >
-> > In drivers/pinctrl/renesas/pinctrl-rzg2l.c, r9a08g046_variable_pin_cfg
-> > configures RZG3L_PG pins 0..5 (and RZG3L_PH pins 0..5 for SD2) with
-> > RZG3L_MPXED_PIN_FUNCS(B), which sets PIN_CFG_SOFT_PS rather than
-> > PIN_CFG_IO_VMC_SD1:
->
-> See above definitions.
-> >
-> > drivers/pinctrl/renesas/pinctrl-rzg2l.c:rzg2l_set_power_source() {
-> >     ...
-> >         if (caps & PIN_CFG_SOFT_PS) {
-> >                 pctrl->settings[pin].power_source =3D ps;
-> >                 return 0;
-> >         }
-> >     ...
-> > }
-> >
-> > Because rzg2l_set_power_source() returns early when PIN_CFG_SOFT_PS is =
-set,
-> > switching between sdhi1_pins and sdhi1_uhs_pins never writes to the SD_=
-CH
-> > register at .sd_ch =3D 0x3004.  Similarly, rzg3l_dedicated_pins defines=
- the
-> > SD0_* pins with neither PIN_CFG_IO_VMC_SD0 nor PIN_CFG_SOFT_PS, so appl=
-ying
-> > power-source on SD0 pins in commit "arm64: dts: renesas: rzg3l-smarc-so=
-m:
-> > Enable SD/eMMC on SDHI0" fails with -EINVAL in rzg2l_caps_to_pwr_reg().
-> >
-> > [ ... ]
-> >
-> > > @@ -230,6 +307,17 @@ &scif0 {
-> > >       pinctrl-names =3D "default";
-> > >  };
-> > >
-> > > +#if RZ_BOOT_MODE3
-> > > +&sdhi1 {
-> > > +     pinctrl-0 =3D <&sdhi1_pins>;
-> > > +     pinctrl-1 =3D <&sdhi1_uhs_pins>;
-> > > +     pinctrl-names =3D "default", "state_uhs";
-> > > +
-> > > +     vmmc-supply =3D <&reg_3p3v>;
-> > > +     vqmmc-supply =3D <&vqmmc_sd1_pvdd>;
-> > > +};
-> > > +#endif
-> >
-> > [Severity: Medium]
-> > Does &sdhi1 remain enabled without pinctrl or regulators when RZ_BOOT_M=
-ODE3
-> > is 0?
->
-> Yes, this needs to be fixed. on the else case status should be disabled.
->
-> >
-> > renesas-smarc2.dtsi unconditionally sets status =3D "okay" on &sdhi1, a=
-nd mmc1
-> > =3D &sdhi1 in /aliases above is also outside #if RZ_BOOT_MODE3.  When
-> > RZ_BOOT_MODE3 is set to 0 (routing PJ0..PJ3 to JTAG instead of SD1 CD, =
-IOVS,
-> > and PWEN), &sdhi1 lacks an #else branch setting status =3D "disabled" a=
-nd will
-> > probe without pinctrl, sd1-pwr-en-hog, vmmc-supply, or vqmmc-supply.  A=
-lso,
-> > SW_SDIO_M2E is defined at the top of the file but never used.
->
-> yes, it corresponds to default switch setting.
->
-> Cheers,
-> Biju
+Previous series introduced drm_mode_config_create_initial_state() to
+handle only the initial state creation at probe time, including
+drm_private_obj. Unlike drm_mode_config_reset(), it returns an error
+code, allowing drivers to properly handle allocation failures.
+
+This series switches all drivers calling drm_mode_config_reset() at
+probe time to drm_mode_config_create_initial_state(). The conversion
+was done using a Coccinelle semantic patch.
+
+This is part, and the final piece, of a larger transition to remove the
+overloaded reset semantics from the KMS subsystem, following similar
+series for planes, CRTCs, connectors, and bridges.
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v2:
+- Fix some sashiko issues
+- Link to v1: https://lore.kernel.org/r/20261105-drm-no-more-config-reset-v1-0-763560c2cc3f@kernel.org
+
+---
+Maxime Ripard (64):
+      drm/adp: Switch to drm_mode_config_create_initial_state
+      drm/amdgpu: Switch to drm_mode_config_create_initial_state
+      drm/hdlcd: Fix drm_atomic_helper_shutdown() on the probe error path
+      drm/hdlcd: Switch to drm_mode_config_create_initial_state
+      drm/armada: Switch to drm_mode_config_create_initial_state
+      drm/ast: Switch to drm_mode_config_create_initial_state
+      drm/exynos: Switch to drm_mode_config_create_initial_state
+      drm/fsl-dcu: Switch to drm_mode_config_create_initial_state
+      drm/hisilicon/hibmc: Remove hibmc_unload() from the load error path
+      drm/hisilicon/hibmc: Switch to drm_mode_config_create_initial_state
+      drm/hyperv: Switch to drm_mode_config_create_initial_state
+      drm/imx/ipuv3: Switch to drm_mode_config_create_initial_state
+      drm/ingenic: Move the private object creation before the reset
+      drm/ingenic: Switch to drm_mode_config_create_initial_state
+      drm/kmb: Switch to drm_mode_config_create_initial_state
+      drm/logicvc: Switch to drm_mode_config_create_initial_state
+      drm/loongson: Switch to drm_mode_config_create_initial_state
+      drm/mediatek: Switch to drm_mode_config_create_initial_state
+      drm/mgag200: Switch to drm_mode_config_create_initial_state
+      drm/msm: Switch to drm_mode_config_create_initial_state
+      drm/nouveau: Switch to drm_mode_config_create_initial_state
+      drm/omap: Switch to drm_mode_config_create_initial_state
+      drm/qxl: Destroy the monitors object on the modeset init error path
+      drm/qxl: Switch to drm_mode_config_create_initial_state
+      drm/rcar-du: Switch to drm_mode_config_create_initial_state
+      drm/rz-du: Switch to drm_mode_config_create_initial_state
+      drm/shmobile: Switch to drm_mode_config_create_initial_state
+      drm/st7571: Switch to drm_mode_config_create_initial_state
+      drm/st7586: Switch to drm_mode_config_create_initial_state
+      drm/st7735r: Switch to drm_mode_config_create_initial_state
+      drm/st7920: Switch to drm_mode_config_create_initial_state
+      drm/sprd: Switch to drm_mode_config_create_initial_state
+      drm/sti: Fix drm_atomic_helper_shutdown() on the bind error paths
+      drm/sti: Move drm_mode_config_create_initial_state() before drm_dev_register()
+      drm/stm: Switch to drm_mode_config_create_initial_state
+      drm/sun4i: Switch to drm_mode_config_create_initial_state
+      drm/tegra: Switch to drm_mode_config_create_initial_state
+      drm/tests: drm_atomic_state_test: Switch to drm_mode_config_create_initial_state
+      drm/tests: drm_atomic_test: Switch to drm_mode_config_create_initial_state
+      drm/tests: drm_bridge_test: Switch to drm_mode_config_create_initial_state
+      drm/tests: drm_hdmi_state_helper_test: Switch to drm_mode_config_create_initial_state
+      drm/tidss: Switch to drm_mode_config_create_initial_state
+      drm/tilcdc: Switch to drm_mode_config_create_initial_state
+      drm/arcpgu: Switch to drm_mode_config_create_initial_state
+      drm/bochs: Switch to drm_mode_config_create_initial_state
+      drm/cirrus-qemu: Switch to drm_mode_config_create_initial_state
+      drm/gm12u320: Switch to drm_mode_config_create_initial_state
+      drm/hx8357d: Switch to drm_mode_config_create_initial_state
+      drm/ili9163: Switch to drm_mode_config_create_initial_state
+      drm/ili9225: Switch to drm_mode_config_create_initial_state
+      drm/ili9341: Switch to drm_mode_config_create_initial_state
+      drm/ili9486: Switch to drm_mode_config_create_initial_state
+      drm/mi0283qt: Switch to drm_mode_config_create_initial_state
+      drm/panel-mipi-dbi: Switch to drm_mode_config_create_initial_state
+      drm/pixpaper: Switch to drm_mode_config_create_initial_state
+      drm/repaper: Switch to drm_mode_config_create_initial_state
+      drm/sharp-memory: Switch to drm_mode_config_create_initial_state
+      drm/udl: Switch to drm_mode_config_create_initial_state
+      drm/vboxvideo: Switch to drm_mode_config_create_initial_state
+      drm/verisilicon: Switch to drm_mode_config_create_initial_state
+      drm/virtio: Switch to drm_mode_config_create_initial_state
+      drm/vmwgfx: Switch to drm_mode_config_create_initial_state
+      drm/xen: Switch to drm_mode_config_create_initial_state
+      drm/xlnx: Switch to drm_mode_config_create_initial_state
+
+ drivers/gpu/drm/adp/adp_drv.c                      |  4 +---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |  4 +++-
+ .../amdgpu_dm/tests/amdgpu_dm_connector_test.c     |  3 ++-
+ .../amdgpu_dm/tests/amdgpu_dm_mst_types_test.c     |  4 +++-
+ drivers/gpu/drm/arm/hdlcd_drv.c                    |  9 +++++----
+ drivers/gpu/drm/armada/armada_drv.c                |  4 +++-
+ drivers/gpu/drm/ast/ast_mode.c                     |  4 +++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |  4 +++-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_kms.c          |  4 +++-
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  7 ++++---
+ drivers/gpu/drm/hyperv/hyperv_drm_modeset.c        |  4 +---
+ drivers/gpu/drm/imx/ipuv3/imx-drm-core.c           |  4 +++-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          | 22 +++++++++++++---------
+ drivers/gpu/drm/kmb/kmb_drv.c                      |  3 +--
+ drivers/gpu/drm/logicvc/logicvc_mode.c             |  4 +++-
+ drivers/gpu/drm/loongson/lsdc_drv.c                |  4 +++-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  8 +++++++-
+ drivers/gpu/drm/mgag200/mgag200_g200.c             |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200eh.c           |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200eh3.c          |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200eh5.c          |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200er.c           |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200ev.c           |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200ew3.c          |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200se.c           |  4 +++-
+ drivers/gpu/drm/mgag200/mgag200_g200wb.c           |  4 +++-
+ drivers/gpu/drm/msm/msm_kms.c                      |  4 +++-
+ drivers/gpu/drm/nouveau/nouveau_display.c          |  4 +++-
+ drivers/gpu/drm/omapdrm/omap_drv.c                 |  4 +++-
+ drivers/gpu/drm/qxl/qxl_display.c                  | 11 +++++++++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c      |  4 +++-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c       |  4 +++-
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c   |  4 +++-
+ drivers/gpu/drm/sitronix/st7571.c                  |  4 +++-
+ drivers/gpu/drm/sitronix/st7586.c                  |  4 +++-
+ drivers/gpu/drm/sitronix/st7735r.c                 |  4 +++-
+ drivers/gpu/drm/sitronix/st7920.c                  |  4 +---
+ drivers/gpu/drm/sprd/sprd_drm.c                    |  6 ++++--
+ drivers/gpu/drm/sti/sti_drv.c                      | 10 ++++------
+ drivers/gpu/drm/stm/drv.c                          |  6 +++++-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  4 +++-
+ drivers/gpu/drm/sun4i/sun4i_framebuffer.c          |  6 +++---
+ drivers/gpu/drm/sun4i/sun4i_framebuffer.h          |  2 +-
+ drivers/gpu/drm/tegra/drm.c                        |  4 +++-
+ drivers/gpu/drm/tests/drm_atomic_commit_test.c     |  3 ++-
+ drivers/gpu/drm/tests/drm_atomic_test.c            |  4 +++-
+ drivers/gpu/drm/tests/drm_bridge_test.c            | 12 +++++++++---
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  3 ++-
+ drivers/gpu/drm/tidss/tidss_drv.c                  |  6 +++++-
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c                |  4 +++-
+ drivers/gpu/drm/tiny/arcpgu.c                      |  4 +++-
+ drivers/gpu/drm/tiny/bochs.c                       |  4 +---
+ drivers/gpu/drm/tiny/cirrus-qemu.c                 |  4 +++-
+ drivers/gpu/drm/tiny/gm12u320.c                    |  4 +++-
+ drivers/gpu/drm/tiny/hx8357d.c                     |  4 +++-
+ drivers/gpu/drm/tiny/ili9163.c                     |  4 +++-
+ drivers/gpu/drm/tiny/ili9225.c                     |  4 +++-
+ drivers/gpu/drm/tiny/ili9341.c                     |  4 +++-
+ drivers/gpu/drm/tiny/ili9486.c                     |  4 +++-
+ drivers/gpu/drm/tiny/mi0283qt.c                    |  4 +++-
+ drivers/gpu/drm/tiny/panel-mipi-dbi.c              |  4 +++-
+ drivers/gpu/drm/tiny/pixpaper.c                    |  4 +++-
+ drivers/gpu/drm/tiny/repaper.c                     |  4 +++-
+ drivers/gpu/drm/tiny/sharp-memory.c                |  4 +++-
+ drivers/gpu/drm/udl/udl_modeset.c                  |  4 +++-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c              |  5 ++++-
+ drivers/gpu/drm/verisilicon/vs_drm.c               |  4 +++-
+ drivers/gpu/drm/virtio/virtgpu_display.c           |  3 +--
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                | 14 +++++++++++++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  3 ---
+ drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  3 ---
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  3 ---
+ drivers/gpu/drm/xen/xen_drm_front_kms.c            |  4 +++-
+ drivers/gpu/drm/xlnx/zynqmp_kms.c                  |  6 ++++--
+ 74 files changed, 243 insertions(+), 115 deletions(-)
+---
+base-commit: a8670a2ab1a81dc3fc30093e47c23b83244ca4d0
+change-id: 20260712-drm-no-more-config-reset-1ea89f56693d
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
