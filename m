@@ -1,88 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794843190;
-	b=OyX2ATdPVScAAaZA+xFccOSuBGZocfpWsb5UgohAJ+t29GSqkIYMQi2agyVUpjmww14+
-	 zsBLZdM9vh6k/AgCm71hr5CnxZ/jiTn/6rn/Vs3hvX0XzMuWdL+QtUFSXplKyq4OxztdS
-	 u/y7EtyeymOw4CH9rSDWpmGtE5yWlXpon3YQaw0XwG4B0ZlP7BN6XL901mAfSLH4zokMR
-	 NaAB8vc2y20dVSFpYE2Xjllkx0zTgEfQ7F2tJJjBkNUWn95e28x3vhHFVqubGL+xAk3jv
-	 dzFjWZrQgHd7/ytiAYJTA08NI6lx/u5a47VwshZnOCSVvSBWhAIgtOvN+JoKMivEpXA==
+	t=1794852050;
+	b=kPp8B5KDD3DGpobmoxtd/XkBvyo6ZiA5cxsYVxfdOSdgA6R0Xr8wqEG/RRzu1eIShYTO
+	 GHsArt7402wGZ+Qhk1+P+769I9HTuBw42tTKLZDbCz3xKAi5oU16oE1TPgZOTf27pVbpm
+	 7fqqr2Lz8E1TVDuUjOuOBwwGP2Iu9E52kHABsPXbfjfUxvKvTGuYk2dkjnyVudYhqCbuN
+	 Azh3BeXc9pPSUck+i/85XdEK43EPsM24FgHmEeCbDABxzaGfpbdSSCI5PwuQongvScFo2
+	 Fruh7WqMmKy9S50N7ZO1ipsFej29PZd1elB368Oqia/Ycs7Kg5E1RsM8PeN5itC2gcw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794843190;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
-	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=e/ThZEAwDdMnIObWDz3GVS4c78zlGkgBTeVD6XHYglY=;
-	b=S+xSjNW7ooP5sCRm/Qbjm2m19Lf04sKZKklJm7ZJIn0XiclH2uO2KIKIRyqM4FM4+xjh
-	 rYuKu33loDesJQ54GeWyv5GF9wWxmBWcPpgaqjLdGts0jiPrEta9BCubUpPp0NL5DaBVd
-	 P000rutubxOK4ZA8FR/aqYUoH8B1atufdsUPY3heIA3xWGDaD+UUVzw5gHwvcR8byIw5m
-	 3AKJDH8qwAIga+6rBMvm4eHajFS3fVzgnJ1t0f7B1NUC25F2lhJrgwLzMdkLvTyOZNFPQ
-	 ddUyM/d3VsRTS4n6kkQOlqPzwZgjTDVrftvZowQ9+4Mf1gu5dF+93MjwIIzA2l46HnA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794852050;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=/zjGa4vftK22+4ZgrHy8l4SQJaqBEhraQH3lTrIqopY=;
+	b=qHMZgUzQFygSC7ujAc++PD9dLQdPr0tYBw3yeV79e81NtK5qfwjkfgZ3Ksvk7YWsno6a
+	 82dQZ/6d/babAv1hxY1tbCZCmxBJBpm+78gr1EtwmjMWrV7YrCIvbLBr4tZ/6PEv2QL+L
+	 Z8ND2tkHD0Xeha8c8QSpFIp4rGdlsQUGVysgDMWiBKhsdY+E3emSN8NfAOo/fo+JwaKd9
+	 NCl+2fv5EpNU+/+f6InF7UbKMans41FMahWv8zw4xeuHfrYtJmx+IzAmPCfBeYe4QxI8h
+	 IbA9SyQElYb6tUMRlpnCp+DdfpVzCaeBmpVic32eVsNNetCZ/H/h6djgALoYgalMVHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oUYELq1S;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VQZXYBNC;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5641C606A891
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 15:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5641C606A891
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39D1606A33E;
+	Mon, 16 Nov 2026 18:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oUYELq1S
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so38304635e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 07:33:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794843189; x=1795447989; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=e/ThZEAwDdMnIObWDz3GVS4c78zlGkgBTeVD6XHYglY=;
-        b=oUYELq1SPtFfNTxWfBeeumYdjCkNzVj1iSWVVpu9Uc8hStEZTU9yVTMC0rEvBGhp0z
-         oqISG4ts1WI2TMzmV/IzCrfohGqLnTOE1t8hGEAXOQC3QMvPtADUtIuEDu1LS9c9NuIH
-         P7A6Tg5cn4YMb7tCOaJ+yqdpFjDdHCqlV06maRe/TiYdhXZOltisdio5ng1r2d6WvGPc
-         WlaKCAl/YtWeyLHyI7s5sNjvudIgxLqhnCFo+bpPHSjBUbTyy6xr8poN+MQI4f1Zk54h
-         VS8FLdpGFg8LP64gnw/m1IJ3LMK0WiOpWvnL/nXS1arotJwqARJs8NSQ0yhZMcgAh8zu
-         kIxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794843189; x=1795447989;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=e/ThZEAwDdMnIObWDz3GVS4c78zlGkgBTeVD6XHYglY=;
-        b=bdpjM0P5ybJRozJ3s6d25FO/w/Fia8ELaaLpA47HPJP5Yikb1A2jzDf4ADubGKI8Ur
-         a4JrsS2CKeQ7ygMNu9DBEji+zlI3mI8Lw80NGzDN/ZmRVCKB3nnVAlZuugjz1Ukzzfe0
-         yZvS2M64ZN1YNURCBuLfpNjFpZgKsgSLObdFeCYdhV/dZnYZutrF0JWIswChgE2c0B7p
-         o+wQ7cscipPaQkNOws8Ri4Rt2zyQ6vUB7G2V2yVqsIJsxyyvfSM5mkHgCC92Uac1xLqU
-         fB0UmYwV97XgSr2INKFIq/xLB3MUrD0eNGRhLSFbeEwZRvJVZBZxJVYHOvAct7/Jz31d
-         WSVA==
-X-Gm-Message-State: APuU4Z9nIO574hEsATrneOT209szLkBeSuUepqcAcPU4PJ5aUhSU3usC
-	Rn9TPv2TEHFllW+2Bva3ArzJ0VxeIickTuXhrw3KRWEWNiQz7YLOmEPp
-X-Gm-Gg: AYBFou33nY72IcHrZp2hndCbQdZz1j5iRpo97gwt3K7Id5r0jlHs8mysDrEfFt+JzZb
-	aKE+UHaUw0jKPdFl8xBWd3N1kllwVDqD52N08Ali4wkRksKfrzYEUzpzT3cP0TQnrimJxMTO0aL
-	+SfhLjZ/jTm5i5e86LHXz8IityARdd9DeZoDINgKZ0gA87bMVMAyvNyVFSeNL8a7DOSdlG1pUP2
-	otj5Qz2FlA8yEc/lNuKxkUsa8rOaJ5rXuB+Dcvk3nqleXHSKa4QOhizwJ4MyP5lu7EHsYwqbrRs
-	18y71XmsiZeBdcmqlQAJI52K/ugu4o2md+jnDG9J9n0kkRn8GgAP1cD/mJ33fbte9TNgS7D2hEB
-	Ei/JdCUzhUk7mublksSqh2hRBotXhBw7G9J9iqEObM9PShFkS4YpAXW/Cly+QTSwmNgMQjt7Uda
-	8rZiMH3GUVntldhtSHRGVjtOSRYchN2W4+mwOdz/ImnRp0Z0fiOuijbP8EbANdB3O4itwD5Y6I3
-	KteVxJMSHjaIO16Wvm/dFu0uV+uXtJ6Os11+hJx25VJBhGzEZ2tBcxabHy2LVywd2BhNfI3y6QK
-	yU3P/CPsxYKpAolBCZidLUhLAMsNhOprct0c+k6BapLKSj9RolGgFFOx864vJfuAsA==
-X-Received: by 2002:a05:600c:8483:b0:4bb:605d:8e92 with SMTP id 5b1f17b1804b1-4bb605d90f1mr167039245e9.32.1794843188567;
-        Mon, 16 Nov 2026 07:33:08 -0800 (PST)
-Received: from [127.0.1.1] ([2a00:23c4:a702:d301:6889:eb24:5e57:83b1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb55ae5299sm315407665e9.11.2026.11.16.07.33.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 07:33:08 -0800 (PST)
-From: Biju Das <biju.das.au@gmail.com>
-Date: Mon, 16 Nov 2026 15:33:06 +0000
-Subject: [PATCH v2 2/2] arm64: dts: renesas: r9a08g046l48-smarc: Enable
- CANFD
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VQZXYBNC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37751F000CC;
+	Mon, 16 Nov 2026 18:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794852049;
+	bh=/zjGa4vftK22+4ZgrHy8l4SQJaqBEhraQH3lTrIqopY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VQZXYBNCgDxZbME4v+OnHbx25Z8RhlKG494y+pte8zX6Dm1SiTZEfzITRRljf0Ovo
+	 3j3vqbw9ZhWSbSKQMg+2jTc0h94/5qeeXAq8B0Du4RqASjJoleorgylrO0YSRnXlQ1
+	 aO61v804YcbLMM7uAQ1xDBdxJ2jTNxY0n1WAMNdHPfBy6Xd1O/Of2iaJ6p8LOiq3JG
+	 0uUMDxsRVwjqkHgOS0XiQDUx1PoofEnD4gfSz+YobhcFLLqA7EsDNQhhdDbA0fs7lx
+	 R5gA3LcnJRjO13+KidknV6u1qbgZTNrW4hAopnoPh/mKHuAJ53GS1cr5ZV0ZMVMcQj
+	 lhqHXIRIU50Kg==
+Date: Mon, 16 Nov 2026 18:00:43 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mina Hui-Min Chou <minachou@andestech.com>, pjw@kernel.org,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	randolph@andestech.com, cyyang772@andestech.com,
+	tim609@andestech.com, az70021@gmail.com
+Subject: Re: [PATCH v2 12/19] dt-bindings: cache: andestech: update schema
+ for generic LLC support
+Message-ID: <20261116-deduct-emphasize-b2482186cfcb@spud>
+References: <20261113071143.1446167-1-minachou@andestech.com>
+ <20261113071143.1446167-13-minachou@andestech.com>
+ <20261113-emporium-provolone-0e7b0e39c97a@spud>
+ <20261116-crazy-adventurous-cockatrice-61c62b@quoll>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -92,117 +67,176 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-canfd_rzg3l-v2-2-89e06c46f40b@bp.renesas.com>
-References: <20261116-canfd_rzg3l-v2-0-89e06c46f40b@bp.renesas.com>
-In-Reply-To: <20261116-canfd_rzg3l-v2-0-89e06c46f40b@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794843186; l=2488;
- i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
- bh=SlQdp/xtduEIxx0pMtkmUmj3788ItH7g8oWcHzROuzM=;
- b=paDL9ELG/I0ILOtSq6Lzvim+LgrEo7oa2/YsoCu9xRpFVnS1XLHyJcgKQcs0Mvbw9tfAqlFK0
- IjdxH+ShC+ABMnu6goPP7c8ajGkU1wBUGGYqJL+NHWSYJ8aj759wjfz
-X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
- pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZgC/w/fRk9AwVDqJ"
+Content-Disposition: inline
+In-Reply-To: <20261116-crazy-adventurous-cockatrice-61c62b@quoll>
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+--ZgC/w/fRk9AwVDqJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Enable CANFD channel0 and channel1 on the SMARC carrier board.
+On Mon, Nov 16, 2026 at 01:05:52PM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Nov 13, 2026 at 02:05:29PM +0000, Conor Dooley wrote:
+> > On Fri, Nov 13, 2026 at 03:11:36PM +0800, Mina Hui-Min Chou wrote:
+> > > The last level cache controller of Andes cores is not specific to
+> > > AX45MP. Other Andes cores, such as the A27L2, use the same controller
+> > > with the same register interface, but the binding only accepts
+> > > andestech,ax45mp-cache. Add andestech,llcache for them, and describe
+> > > the binding as an Andes last level cache rather than an AX45MP L2
+> > > cache.
+> > >=20
+> > > The cache-level, cache-sets and cache-size constraints describe the
+> > > AX45MP L2 cache, so apply them to andestech,ax45mp-cache only. The LLC
+> > > of other Andes cores can be level 3 and have other geometries, so
+> > > allow cache-level 3 and require cache-sets only for AX45MP. Match
+> > > renesas,r9a07g043f-ax45mp-cache explicitly instead of through the else
+> > > branch, which would otherwise also apply to andestech,llcache.
+> > >=20
+> > > Also add an example for andestech,llcache, and add myself as a
+> > > maintainer of the binding.
+> > >=20
+> > > Signed-off-by: Mina Hui-Min Chou <minachou@andestech.com>
+> > > ---
+> > >  .../cache/andestech,ax45mp-cache.yaml         | 71 ++++++++++++++---=
+--
+> > >  1 file changed, 54 insertions(+), 17 deletions(-)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp=
+-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cach=
+e.yaml
+> > > index b135ffa4ab6b..da9688cc95f7 100644
+> > > --- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.=
+yaml
+> > > +++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.=
+yaml
+> > > @@ -5,14 +5,15 @@
+> > >  $id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
+> > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > =20
+> > > -title: Andestech AX45MP L2 Cache Controller
+> > > +title: Andestech Last Level Cache Controller
+> > > =20
+> > >  maintainers:
+> > >    - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > +  - Mina Hui-Min Chou <minachou@andestech.com>
+> > > =20
+> > >  description:
+> > > -  A level-2 cache (L2C) is used to improve the system performance by=
+ providing
+> > > -  a large amount of cache line entries and reasonable access delays.=
+ The L2C
+> > > +  A last level cache (LLC) is used to improve the system performance=
+ by providing
+> > > +  a large amount of cache line entries and reasonable access delays.=
+ The LLC
+> > >    is shared between cores, and a non-inclusive non-exclusive policy =
+is used.
+> > > =20
+> > >  select:
+> > > @@ -21,18 +22,23 @@ select:
+> > >        contains:
+> > >          enum:
+> > >            - andestech,ax45mp-cache
+> > > +          - andestech,llcache
+> > > =20
+> > >    required:
+> > >      - compatible
+> > > =20
+> > >  properties:
+> > >    compatible:
+> > > -    items:
+> > > -      - enum:
+> > > -          - andestech,qilai-ax45mp-cache
+> > > -          - renesas,r9a07g043f-ax45mp-cache
+> > > -      - const: andestech,ax45mp-cache
+> > > -      - const: cache
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - andestech,qilai-ax45mp-cache
+> > > +              - renesas,r9a07g043f-ax45mp-cache
+> > > +          - const: andestech,ax45mp-cache
+> > > +          - const: cache
+>=20
+> Illogical split of patches. If this was to stay, then THIS commit is the
+> reason to rename so rename would happen here, not in some time in the
+> future. Same for everything you do.
+>=20
+> Organize your patches correctly, not doing things half-baked... but
+> anyway do not rename files just because you added one compatible.
+>=20
+>=20
+> > > +      - items:
+> > > +          - const: andestech,llcache
+> > > +          - const: cache
+> >=20
+> > Device specific compatibles are mandatory. I would accept this patch
+> > with a
+> >           - not: {}
+> >             description: Need a SoC specific compatible
+> > like the safexcel eip binding.
+>=20
+> But why all others cannot use ax45mp as fallback? Is this really a
+> generic block among multiple generations of SoCs?
 
-Channel0 is always enabled, while channel1 is guarded by SW_DPI_EN
-since it shares pins with the DPI interface. The CAN transceiver's
-standby GPIOs are conditionally wired up based on the carrier-board
-switch settings (SW_GPIO8_CAN0_STB, SW_GPIO9_CAN1_STB).
+I think it's fairly likely that it is.
+I do like having constraints that restrict cache-sets etc to what the
+device can actually do, but using ax45mp as a fallback doesn't prevent
+that, since the constraints are really set by the soc.
+>=20
+> What sort of arguments from contributors are to support that?
+>=20
+>=20
+> >=20
+> > pw-bot: changes-requested
+> >=20
+> > Thanks,
+> > Conor.
+> >=20
+> >=20
+> > > =20
+> > >    reg:
+> > >      maxItems: 1
+> > > @@ -44,13 +50,11 @@ properties:
+> > >      const: 64
+> > > =20
+> > >    cache-level:
+> > > -    const: 2
+> > > +    enum: [2, 3]
+> > > =20
+> > > -  cache-sets:
+> > > -    enum: [1024, 2048]
+> > > +  cache-sets: true
+> > > =20
+> > > -  cache-size:
+> > > -    enum: [131072, 262144, 524288, 1048576, 2097152]
+> > > +  cache-size: true
+>=20
+>=20
+> See writing bindings. Widest constraints stay here.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Reverted the order of the SW_DPI_EN and SW_SD2_EN, to match the
-   signal flow order.
- * Added missing check for !SW_DPI_EN in standby-gpios.
----
- arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+I think how this should be done probably depends on just how much
+variance there is intended to be. How many more configurations do you
+envisage here Mina, and do they follow a similar scheme of being
+multiples of 128 KiB?
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-index 5f5441c47335..7804a903244b 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
-@@ -13,6 +13,8 @@
- #define SW_SD2_EN		0
- #define SW_DPI_EN		0
- #define SW_GPIO4		1
-+#define SW_GPIO8_CAN0_STB	0
-+#define SW_GPIO9_CAN1_STB	0
- #define SW_I3C_EN		0
- #define SW_SER0_PMOD		1
- #define SW_SDIO_M2E		0
-@@ -87,6 +89,38 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
- #endif
- };
- 
-+&canfd {
-+	pinctrl-0 = <&canfd_pins>;
-+	pinctrl-names = "default";
-+
-+	channel0 {
-+		phys = <&can_transceiver 0>;
-+		status = "okay";
-+	};
-+
-+#if (!SW_DPI_EN)
-+	channel1 {
-+		phys = <&can_transceiver 1>;
-+		status = "okay";
-+	};
-+#endif
-+};
-+
-+&can_transceiver {
-+	standby-gpios =
-+#if (!SW_SD2_EN) && (!SW_DPI_EN) && (SW_GPIO8_CAN0_STB)
-+			<&pinctrl RZG3L_GPIO(K, 0) GPIO_ACTIVE_HIGH>,
-+#else
-+			<0>,
-+#endif
-+#if (!SW_SD2_EN) && (!SW_DPI_EN) && (SW_GPIO9_CAN1_STB)
-+			<&pinctrl RZG3L_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
-+#else
-+			<0>;
-+#endif
-+	status = "okay";
-+};
-+
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
-@@ -153,6 +187,18 @@ audio_clk_pins: audio-clock {
- 			 <RZG3L_PORT_PINMUX(H, 5, 6)>; /* AUDIO_CLK_C */
- 	};
- 
-+	canfd_pins: canfd {
-+		can0_pins: can0 {
-+			pinmux = <RZG3L_PORT_PINMUX(3, 2, 3)>, /* CAN_RX0 */
-+				 <RZG3L_PORT_PINMUX(3, 3, 3)>; /* CAN_TX0 */
-+		};
-+
-+		can1_pins: can1 {
-+			pinmux = <RZG3L_PORT_PINMUX(5, 2, 3)>, /* CAN_RX1 */
-+				 <RZG3L_PORT_PINMUX(5, 3, 3)>; /* CAN_TX1 */
-+		};
-+	};
-+
- 	i2c2_pins: i2c2 {
- 		pinmux = <RZG3L_PORT_PINMUX(A, 4, 4)>, /* RIIC2_SCL */
- 			 <RZG3L_PORT_PINMUX(A, 5, 4)>; /* RIIC2_SDA */
 
--- 
-2.43.0
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
+--ZgC/w/fRk9AwVDqJ
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavtEywAKCRB4tDGHoIJi
+0gsoAP9cJXD82VhaI9dfpcUpcm/x197IG+YoD5kkHOlZoagMmAEArDNq7L49yZ7v
+jRBGmhrDCdVo05rVz+7tQnUfm4nQugk=
+=GWzB
+-----END PGP SIGNATURE-----
+
+--ZgC/w/fRk9AwVDqJ--
