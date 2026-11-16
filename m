@@ -1,105 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794820822;
-	b=bev1AaC9NIEqKt3dqVe4qc+U4LKgwY/BsVv8KRdLjjwGq0uGnst2vzF6wjNHc7jI/qKF
-	 GVpwXIryFFAwbS/LhiFtQoXh1BtIPOooU0MoGDcH+f0haOuvG1DzUdCFMpCZolL38FB3a
-	 6uLQFDFiy/iURvCttRDfTE/+g+BPvh5sq3HYm9Tu1iQZS9Z0OQ3/SRnK84Jbq+GrtS1VD
-	 3+vC2SRICujm9PVn/YnGrV9iitB5Me88Ec8KQrHd8Pya3zHHyjsS+/PTMkRsQhmQ7+lno
-	 qhS7nbCHbH45ywv1QKtjBwfNh+xXRFffkNjCBrBWDj7581jFFkc5HK3pls2xZPbLx5A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794820822;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=qasYIWxkmoq5mRF2ENr+HXhZWEX0pISvU4gUa+W+zyw=;
-	b=mzU8Mwdhe4eKFM7t7rqxREUfzauNTNk/gZBrAFGNd0BIQBuynvraPYhTEqzGlG9+QYak
-	 DYswXVFbx7u/8CF/AHv1b8FfW4JuMXxSfLRYd0UXjYa3xcmr3EiPp72y2fKPNCK9sDsKZ
-	 ebHcj0FYOU3QnzjpUdm7/sxB2KUgJfkMQqArAQnx7r+CNrGGXYwZRuzPcgJp1XvSe5IwX
-	 jNlr4wqNxQ/PbA0NaVOWC6N2zWUvvaHoVdhAJ3afv5XSR87FxmGroGMfp9gNMP7/+rGaR
-	 aEWpM6+bWu92jyX1/+6opvORZ256xH6LW5A7faSqxm8AzsPLm2d6jJjBWTAUl8K8S2Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=gYGbfRuA;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.152
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794821032;
+	b=Uz3ZoAkNwkjPmZLozOyuiyOPomslVE8H0Enp5GQnj8MGwzAqwxLP90YtslIfBJWBgBjg
+	 5YQ5DzAtqnnd+F1pSLU0TCDFJ0aWDfP+80aSC30EHxldzxCaMuPnwnF4151NkNHZGG44U
+	 eYGdBaMYCJiBdDYAQeE3Aba2Oj3LKgvytoZD7X6AraVJheMBKpm3fimrIYUIgWrOvY5GY
+	 7x/6bXz48BD96KcYVJratueyzJv4fUQ55NFrt5S4D8dy0+B4SFvBnReG2D5WcuI7iylDR
+	 UXf2xzMfKzTJLUOBe4NwxtRsB+vqSij/tQdriVdYMd5Vggb8UdRRByBHJqiyNbmD6aA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794821032;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:From:To:Cc:References:Content-Language:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-ID:X-MBO-RS-META;
+	bh=6JF4UOJMPZGFw1tD8cF7gQzIg19LtWWgj1ffpuYUt0g=;
+	b=aOjJ4ocYanzasH/8RzqDk1ZUu3YmI26OBwhzViROsRPouwd66/nGSSRr7hjFqHG6l3SW
+	 f1WH+Gc9uHN6cjeTUn+ObeaUstNUEUIYvxgb2/+eX0DFdC0WgL2riCmC754RFHOCBisRM
+	 +yJCEirJ03vXRdljm3bH3ws3iumUXZln9qZFvjr4veDZgzeCFcf2qLG6AQI2ysK45jov5
+	 tCid6CeVzQCqUl5FYA33gH8jmMPTokF0QTYkUCe/vc+GbWKFPcR9nppm0VZbjEWb8NK/e
+	 v9HQqSucIxb9qgzMfCcjGMzbYeMMOitNBnEGrkElCjLhSgBfVYKXGwpkqtRPzGKglOQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=vOONwTR4;
+	arc=none smtp.remote-ip=80.241.56.152
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A1D606A334;
-	Mon, 16 Nov 2026 09:20:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09A1D606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F29606A32A;
+	Mon, 16 Nov 2026 09:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14F29606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=gYGbfRuA
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 9B604201578;
-	Mon, 16 Nov 2026 10:20:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794820818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qasYIWxkmoq5mRF2ENr+HXhZWEX0pISvU4gUa+W+zyw=;
-	b=gYGbfRuAqF69PBMw7kwNBh5WSABiONyvAt9Ws/rCU/ITvprXFhoaetjGIJjcj/jCMMSS+q
-	3VF2DKro3L2d/A+UyvttnTR/YJGhNBU94Gqqlb4sih6DJrhu8REG4tBLmJ5AJG3/3l9+q+
-	O4W1qkbvMxjr3XCqYjSa2yJYvzq6XmoFKFmRDF5ZkKcwLeJKpMhZbA8eGIvVQz0dGBYmnt
-	Mfu9RYVSyQZIFjCXCnS2n08Kncc7z8GIKv+QT7sxbLnPB6m7a96xjh3UgUeyF4KYedFmTc
-	63CVJBRyMi1/NAJI9fzVEa4HUt5egBpHstBHiaFO7Vn0q4NLxy0Y3hvscWubnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794820818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qasYIWxkmoq5mRF2ENr+HXhZWEX0pISvU4gUa+W+zyw=;
-	b=U/C98LT0LRbp/f6w3leKXIvfSv2rjagmhq5nywzUTlYVI5vQU/sm0c17Chl5hOz7zP75ty
-	heuJCZHGDURmt9cQsb5CDfKlrDhQyPAThlDm9yS38/DOjta+17JEUBdJbC41x1M4Jy3gs8
-	d/5NDA7tYZHibCOidKVykludHLYJzs24N11iI0wJb3fcLzsp9Vp3x2tK7SxIIjSdnfs2Ip
-	cU8/Ha/XqP1vhw1x/VOZ0VJSXRYZYk2BZNxE+PfFF1lOQVaegtOUVxttTqP02jYGNMYCJ8
-	VbzfYQccKYK5Qzeg4raGaWdVYCNtD+pI/bxSaJsEVZ72Estr5bdBhnAdKNDWyw==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794820818; a=rsa-sha256;
-	cv=none;
-	b=c6rRiCNxc9OCconJd8jd48OoBjIDRycdSqFfLcJzdM1OfGx47kexJvdna2+7v7SaPs1alg
-	cWGWU4F2xbabaCR3QcfNG1J4EQqHvXuScWhAmXXRjHeZ3Ezbc5/UcLKxEmexRsH3VvlRiC
-	K+WdErBdLe+j1rjKc1OT4x/ySHUYF89hXDLV43BJgyets2Rc3+h2LT5iEirKGKD8PDJRBH
-	iplRl8XRFee8HUL6WD722uMaKC7LU7I+aqAEzSLWKAwJPHp2zEVx+2hLkYOb6x36zqsrrI
-	y/6Uj6xwcIOxvw5FOq1wINcgiBnvsr8jSg7Ir0m4XSDI4DgkrBsAHpIbeATfPg==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1xSsss-00013E-04;
-	Mon, 16 Nov 2026 10:20:18 +0100
-Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=vOONwTR4
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D62095ED13C;
-	Mon, 16 Nov 2026 09:20:17 +0000 (UTC)
-Date: Mon, 16 Nov 2026 10:20:17 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Harini T <harini.t@amd.com>, Michal Simek <michal.simek@amd.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, "magnus.damm" <magnus.damm@gmail.com>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: RE: RE: [PATCH can 4/4] can: rcar_canfd: rcar_canfd_probe():
- reject devices without match data
-Message-ID: <20261116-passionate-vulture-of-potency-331d64-mkl@pengutronix.de>
-References: <20261114-fix-device_get_match_data-v1-0-2d82025e9646@pengutronix.de>
- <20261114-fix-device_get_match_data-v1-4-2d82025e9646@pengutronix.de>
- <TYYPR01MB660340F5E219C29045BF61F9867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
- <20261116-cream-hornet-from-lemuria-703c6b-mkl@pengutronix.de>
- <TYYPR01MB660333DE58031D8231CD1B3B867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4jSj8z4Zx4zKnCY;
+	Mon, 16 Nov 2026 10:23:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1794821027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6JF4UOJMPZGFw1tD8cF7gQzIg19LtWWgj1ffpuYUt0g=;
+	b=vOONwTR4nIilD3gyoBNXuBYvhgcVSk6snE3qR5waIgJhzzVyXNfkaCafrdPgJPNLKOpKwW
+	/rL1iIjuGpUjiLpgEWgZC7t8mnWS9bo2N3VEGzdsHnQ9pa3QbWvN8NPefMp3pwQ7opcETe
+	NNd1SIjDED5zI4wH/C1BUQ1O7if4EJCyIYwuxXIdwp8uKMoOfdCTsvk194rgOq6mM9QTvb
+	5Ifg79w8qEBEZGodjy6wAbVo0dX6RLqKJFlQ9L8jajuTccZTQU9mpuFKuRAvVHT6tRSknC
+	5NWDIwr62L0Db+559SbuRKb/Pyx75FiivpJ/A2AbMyGXKMk58mVtG3vQCKBWow==
+Message-ID: <5032c246-d0e4-4c2f-a2b4-17b28c76c1f6@mailbox.org>
+Date: Mon, 16 Nov 2026 10:23:45 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -109,62 +62,68 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oayapvf2wmwdvepi"
-Content-Disposition: inline
-In-Reply-To: <TYYPR01MB660333DE58031D8231CD1B3B867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/2] usb: dwc3: dwc3-generic-plat: Add Renesas R-Car
+ Gen5 DWC3 xHCI USB controller glue
+From: Marek Vasut <marek.vasut@mailbox.org>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Thanh Quan <thanh.quan.xn@renesas.com>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+References: <20260903213031.314473-1-marek.vasut+renesas@mailbox.org>
+ <20260903213031.314473-2-marek.vasut+renesas@mailbox.org>
+ <aptP39nVZPFLgekY@vbox> <be205518-ba8d-486f-b603-1d52321edc1a@mailbox.org>
+Content-Language: en-US
+In-Reply-To: <be205518-ba8d-486f-b603-1d52321edc1a@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 8ff5d6a3bc2bc829ece
+X-MBO-RS-META: ixp6qbz454jy3jzq3hkohwp3wz98nfm4
 
+On 10/26/26 1:21 AM, Marek Vasut wrote:
+> On 9/5/26 1:10 AM, Thinh Nguyen wrote:
+>> On Thu, Sep 03, 2026, Marek Vasut wrote:
+>>> From: Thanh Quan <thanh.quan.xn@renesas.com>
+>>>
+>>> The Renesas R-Car Gen5 SoC contains multiple instances of DWC3 USB
+>>> controller with glue logic wrapper around them. Extend the generic
+>>> DWC3 platform driver with Renesas R-Car Gen5 glue logic specifics.
+>>>
+>>> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
+>>> Co-developed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> 
+> [...]
+> 
+>>>   static const struct of_device_id dwc3_generic_of_match[] = {
+>>>       { .compatible = "spacemit,k1-dwc3", &spacemit_k1_dwc3},
+>>>       { .compatible = "spacemit,k3-dwc3", },
+>>>       { .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
+>>>       { .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
+>>> +    { .compatible = "renesas,rcar-gen5-dwc3", &renesas_rcar_gen5_dwc3},
+>>>       { .compatible = "starfive,jhb100-dwc3", },
+>>>       { /* sentinel */ }
+>>>   };
+>>> -- 
+>>> 2.53.0
+>>>
+>>
+>> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> Hello everyone,
+> 
+> could these two patches possibly be picked up ? They should have all the 
+> necessary RB tags for about a month now.
+> 
+> Thank you !
+> 
+> (yes, I know everyone is flooded by emails recently, I apologize for 
+> making this worse for you)
 
---oayapvf2wmwdvepi
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: RE: RE: [PATCH can 4/4] can: rcar_canfd: rcar_canfd_probe():
- reject devices without match data
-MIME-Version: 1.0
+Shall I maybe resubmit these patches ?
 
-On 16.11.2026 09:12:13, Biju Das wrote:
-> > Thanks, I wasn't aware of this series. I tested the driver_override on =
-the flexcan driver with latest
-> > net/main, fixed it, and applied the fix to all affected CAN drivers.
-> >
-> > Should I drop the driver_override related null pointer checks from this=
- series?
->
-> I think so, currently only few drivers are using driver_override feature =
-and
-> majority don't. There is a work in progress to disable this feature by
-> default. The driver needs driver_override will adjust the probe() to make=
- it
-> functional, so it won't fail at all in probe().
->
-> But here we are making probe to fail,
-
-Without my patch, using driver_override the info pointer is NULL and it
-will crash 5 lines later with a NULL pointer dereference.
-
-> in case someone wants to
-> test the driver using bus_override.
-                        ^^^^^^^^^^^^
-What's bus_override?
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---oayapvf2wmwdvepi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCavrKzwAKCRDMOmT6rpmt
-0rovAQCEIJAMETd7tNyk2R/k715jbympLZH7eJQMURDgqksApQD/a5uzKGahBuW5
-XA8bORFBLc4olbS/6V89C8PXQPoDjQM=
-=Bz3f
------END PGP SIGNATURE-----
-
---oayapvf2wmwdvepi--
+Thank you for your help !
