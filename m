@@ -1,11 +1,11 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794843190;
-	b=UezAIPVUJDqUUXefpSKn5L8wh6UUz+vtWclblmLPO/DQ9coVBP8aw13AmexCvzhh8EPD
-	 qhBZiT3o1uZSH+hm6AP29Qxo3/V3PaTjSw0NJiEfTW7y2CM8QpZ7v6mxvqr8fOZwWCvgN
-	 TFw+jJgEiTT/XdHSU6FKOE++YiPWbeHSQEGW8Sg3ODcOF+NjRx9I+pQ6RL67RZqZHZ+FZ
-	 LGMWrdAlaKq/MmCNoevqwmaxSVNJC7l0Q7YoIey03sGM7I3nIoKFI03tuNtknDEiGRZRu
-	 Dmj4qLGK8ks6JAcyWKSnKOgCWzd4036RBhXmskK5W0g+Kr9uvekWj9kzTU5EgLvb1UQ==
+	b=OyX2ATdPVScAAaZA+xFccOSuBGZocfpWsb5UgohAJ+t29GSqkIYMQi2agyVUpjmww14+
+	 zsBLZdM9vh6k/AgCm71hr5CnxZ/jiTn/6rn/Vs3hvX0XzMuWdL+QtUFSXplKyq4OxztdS
+	 u/y7EtyeymOw4CH9rSDWpmGtE5yWlXpon3YQaw0XwG4B0ZlP7BN6XL901mAfSLH4zokMR
+	 NaAB8vc2y20dVSFpYE2Xjllkx0zTgEfQ7F2tJJjBkNUWn95e28x3vhHFVqubGL+xAk3jv
+	 dzFjWZrQgHd7/ytiAYJTA08NI6lx/u5a47VwshZnOCSVvSBWhAIgtOvN+JoKMivEpXA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794843190;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
@@ -13,75 +13,76 @@ ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
 	 X-Developer-Key;
-	bh=oazTUCb6XryWH2lSX3ROjmozPJ6oCTinVy4m1XQHFCU=;
-	b=QUYQjISgULJ6VS44ePLA8ILpwqZtTQUSY0XqR+l08awqB+y49LrPx9Ii53t0/RbHXdqU
-	 oyb2PynbwQEN1Souz7EwF1X16xT2a8R//Sagn/Mh9J79S5RfXO21mCsNj5tm8x/QRP1dv
-	 XIYcDBWHQaS516YnUwPFYXVO5Vr4f78lS3VCjuWlwXM4Sm2oe6sO1WgimaFzzSDrYtzcK
-	 avmyNx7dflmUqw/yC2zsP0LER8vs/nvVGFTsmMYLsB8Vkk3rdWm+AWbJNk4GV1TiFPW9j
-	 5GnmEEvG5J1k5gcWXCgxfqtB5c3BBuQct6ATaRPxl87txRkbiLC2eRQlL2pYYxsY3Dw==
+	bh=e/ThZEAwDdMnIObWDz3GVS4c78zlGkgBTeVD6XHYglY=;
+	b=S+xSjNW7ooP5sCRm/Qbjm2m19Lf04sKZKklJm7ZJIn0XiclH2uO2KIKIRyqM4FM4+xjh
+	 rYuKu33loDesJQ54GeWyv5GF9wWxmBWcPpgaqjLdGts0jiPrEta9BCubUpPp0NL5DaBVd
+	 P000rutubxOK4ZA8FR/aqYUoH8B1atufdsUPY3heIA3xWGDaD+UUVzw5gHwvcR8byIw5m
+	 3AKJDH8qwAIga+6rBMvm4eHajFS3fVzgnJ1t0f7B1NUC25F2lhJrgwLzMdkLvTyOZNFPQ
+	 ddUyM/d3VsRTS4n6kkQOlqPzwZgjTDVrftvZowQ9+4Mf1gu5dF+93MjwIIzA2l46HnA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ryIdEDyF;
-	arc=none smtp.remote-ip=209.85.128.46
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oUYELq1S;
+	arc=none smtp.remote-ip=209.85.128.52
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A887606A884
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 15:33:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5A887606A884
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5641C606A891
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 15:33:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5641C606A891
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ryIdEDyF
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a9a8d6cea8so38100155e9.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 07:33:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oUYELq1S
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so38304635e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 07:33:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794843188; x=1795447988; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794843189; x=1795447989; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=oazTUCb6XryWH2lSX3ROjmozPJ6oCTinVy4m1XQHFCU=;
-        b=ryIdEDyFDs5cHYpLuMt5wkrw9A55eaiObVkG7jWQS7AOYHuon/3ahte/hkeWkqB/Z/
-         5xUOor+mw5oHsJPQgA/cPHc0MaQKj8uX3UG99cOJZyrUxWSLUhDWBe8w0I8HcPIunlLn
-         O1PTBNZgQHOhr20Mt8kzup2NI/eQcnpotPKQwHjdsjr0f5hlZJAF8wjT2flA+ZBJDDHJ
-         KNIoTIRkyCdrhyRhnfO3DnV2AAVROOM3puPyDStbZRqtOxvLdkXwUEBBuiK4Tvcfi28n
-         7fN57D4pBkojzYVveSZ+Zn2/mqJiD3rgVrTrta2o2vOSt7ozYzUD6Z5/65U7aMVI5gXF
-         4IcA==
+        bh=e/ThZEAwDdMnIObWDz3GVS4c78zlGkgBTeVD6XHYglY=;
+        b=oUYELq1SPtFfNTxWfBeeumYdjCkNzVj1iSWVVpu9Uc8hStEZTU9yVTMC0rEvBGhp0z
+         oqISG4ts1WI2TMzmV/IzCrfohGqLnTOE1t8hGEAXOQC3QMvPtADUtIuEDu1LS9c9NuIH
+         P7A6Tg5cn4YMb7tCOaJ+yqdpFjDdHCqlV06maRe/TiYdhXZOltisdio5ng1r2d6WvGPc
+         WlaKCAl/YtWeyLHyI7s5sNjvudIgxLqhnCFo+bpPHSjBUbTyy6xr8poN+MQI4f1Zk54h
+         VS8FLdpGFg8LP64gnw/m1IJ3LMK0WiOpWvnL/nXS1arotJwqARJs8NSQ0yhZMcgAh8zu
+         kIxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794843188; x=1795447988;
+        d=1e100.net; s=20260707; t=1794843189; x=1795447989;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=oazTUCb6XryWH2lSX3ROjmozPJ6oCTinVy4m1XQHFCU=;
-        b=JiBtmtuM6ljOFWmevCOi9Us7FKHuG7s0uE7W0v+ArK02m8moqOn0Cr5kXIxtiq9G/0
-         NzM3nfmdMvElaN/brOLoCaInzUs02wChJ1GjuxXbXol/1Iqogy0YNj8/CKAcw/2G73AV
-         vb8xAuwE9CP0rZAqQNh3mx/Q616MaTcBdPWGRDArQ258lhGjfmDgJ8SW0we6H6eat03X
-         IopiQmoTw3n890P30kfNKfNazjtr7EjAF2CdYZiDlJHiUAeuhLt9lXAWPcH8oAaxsArY
-         mjHjom3c/XwCDMJTsLlAawYjP/xwVg4nZinjU+FLauSemUrFZWkZHD03ciwbOVjdpvBg
-         Qn9g==
-X-Gm-Message-State: APuU4Z9M7fDAiqYkgDIIft5hdXMhHnLPisNJIR5sAHXbXMMfxprZxJsE
-	KaVRVFRqjaM/PwbOiqw/VeKR98F3EAjo9SpCsI99NCBt0KjBxoCVGyeu
-X-Gm-Gg: AYBFou1OIn4Apq9CrsTCirsWc7GjV5EWYeflsAOgqPUJoz7LJJS1HlnKeg8gGd+cASq
-	8E+Kx0uvUihK2V6/xhEJkQCwWN7FXfU9tkqqf6Ib2RAoo6iKFE44hm4U5PvNAhf0uTtGWl3AcNe
-	XACKq/GTD8XIAqcvw4MKshhyMWzCX2pAvqDcvA6OokYs+Mtv+5JUvMuzWTKaVd2qmRX4uf5lk+O
-	+e1X+HEbSk9z9AyJnTGft30+zWrg1QLsWZ1oszC/87A+eG5t+Vj/t7fTI6lbje3dB+xfYZx7T8B
-	UjsOa7pS2YdF0fCDqxgAoauVDRRJ1HujYxJ+rygQCELBRKHNR3ZqehOMS3MQotufW6+kzS0KBaB
-	nxscTWVKBCH++F4KpFJibIgWU8uVuEmkX8JT7GD22LRpjktfPgf0Yht1aI8swkHd+gMxz6zTX8i
-	xOEJXit+5uPGliypG4YRcQzJhpTzu/MN9Z12OPBT9litWcXZrNrukEAoANBjsLCRZ/mHvuGHQuT
-	8AAlOS0hxUYt5SJSbxlS/dZtnIMFXAgz2ssk/aifCTbrUBmHncbZO+g6zy5T57uBhhXteA7pgKl
-	KXuMhb54yO7EtfJZQ9foxY34sjoZMSm8V2Ks5qCEXjDyBYqLlgfI1DuQlJZuNj/mFQ==
-X-Received: by 2002:a05:600c:6206:b0:4bb:687c:4fbe with SMTP id 5b1f17b1804b1-4bb687c5079mr121080955e9.8.1794843187787;
-        Mon, 16 Nov 2026 07:33:07 -0800 (PST)
+        bh=e/ThZEAwDdMnIObWDz3GVS4c78zlGkgBTeVD6XHYglY=;
+        b=bdpjM0P5ybJRozJ3s6d25FO/w/Fia8ELaaLpA47HPJP5Yikb1A2jzDf4ADubGKI8Ur
+         a4JrsS2CKeQ7ygMNu9DBEji+zlI3mI8Lw80NGzDN/ZmRVCKB3nnVAlZuugjz1Ukzzfe0
+         yZvS2M64ZN1YNURCBuLfpNjFpZgKsgSLObdFeCYdhV/dZnYZutrF0JWIswChgE2c0B7p
+         o+wQ7cscipPaQkNOws8Ri4Rt2zyQ6vUB7G2V2yVqsIJsxyyvfSM5mkHgCC92Uac1xLqU
+         fB0UmYwV97XgSr2INKFIq/xLB3MUrD0eNGRhLSFbeEwZRvJVZBZxJVYHOvAct7/Jz31d
+         WSVA==
+X-Gm-Message-State: APuU4Z9nIO574hEsATrneOT209szLkBeSuUepqcAcPU4PJ5aUhSU3usC
+	Rn9TPv2TEHFllW+2Bva3ArzJ0VxeIickTuXhrw3KRWEWNiQz7YLOmEPp
+X-Gm-Gg: AYBFou33nY72IcHrZp2hndCbQdZz1j5iRpo97gwt3K7Id5r0jlHs8mysDrEfFt+JzZb
+	aKE+UHaUw0jKPdFl8xBWd3N1kllwVDqD52N08Ali4wkRksKfrzYEUzpzT3cP0TQnrimJxMTO0aL
+	+SfhLjZ/jTm5i5e86LHXz8IityARdd9DeZoDINgKZ0gA87bMVMAyvNyVFSeNL8a7DOSdlG1pUP2
+	otj5Qz2FlA8yEc/lNuKxkUsa8rOaJ5rXuB+Dcvk3nqleXHSKa4QOhizwJ4MyP5lu7EHsYwqbrRs
+	18y71XmsiZeBdcmqlQAJI52K/ugu4o2md+jnDG9J9n0kkRn8GgAP1cD/mJ33fbte9TNgS7D2hEB
+	Ei/JdCUzhUk7mublksSqh2hRBotXhBw7G9J9iqEObM9PShFkS4YpAXW/Cly+QTSwmNgMQjt7Uda
+	8rZiMH3GUVntldhtSHRGVjtOSRYchN2W4+mwOdz/ImnRp0Z0fiOuijbP8EbANdB3O4itwD5Y6I3
+	KteVxJMSHjaIO16Wvm/dFu0uV+uXtJ6Os11+hJx25VJBhGzEZ2tBcxabHy2LVywd2BhNfI3y6QK
+	yU3P/CPsxYKpAolBCZidLUhLAMsNhOprct0c+k6BapLKSj9RolGgFFOx864vJfuAsA==
+X-Received: by 2002:a05:600c:8483:b0:4bb:605d:8e92 with SMTP id 5b1f17b1804b1-4bb605d90f1mr167039245e9.32.1794843188567;
+        Mon, 16 Nov 2026 07:33:08 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:23c4:a702:d301:6889:eb24:5e57:83b1])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb55ae5299sm315407665e9.11.2026.11.16.07.33.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 07:33:07 -0800 (PST)
+        Mon, 16 Nov 2026 07:33:08 -0800 (PST)
 From: Biju Das <biju.das.au@gmail.com>
-Date: Mon, 16 Nov 2026 15:33:05 +0000
-Subject: [PATCH v2 1/2] arm64: dts: renesas: r9a08g046: Add CANFD node
+Date: Mon, 16 Nov 2026 15:33:06 +0000
+Subject: [PATCH v2 2/2] arm64: dts: renesas: r9a08g046l48-smarc: Enable
+ CANFD
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -93,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-canfd_rzg3l-v2-1-89e06c46f40b@bp.renesas.com>
+Message-Id: <20261116-canfd_rzg3l-v2-2-89e06c46f40b@bp.renesas.com>
 References: <20261116-canfd_rzg3l-v2-0-89e06c46f40b@bp.renesas.com>
 In-Reply-To: <20261116-canfd_rzg3l-v2-0-89e06c46f40b@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -103,92 +104,104 @@ To: Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794843186; l=2530;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794843186; l=2488;
  i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
- bh=MBMsJHEXlBjneZEz7hzvDUbXcDmUBxSqtdCD9gjGz4k=;
- b=zDYN1fO7M8tHthmxufJNI9PxwB7bog1Ay6y4sHKkXoZIwTBKVUZa9R5eltdv2AL4y89qgaeoK
- KxgGzMka33qCDASrpTEWzsPJK6mKA97m/KPNATdTzzSEqsxUC3JlIGe
+ bh=SlQdp/xtduEIxx0pMtkmUmj3788ItH7g8oWcHzROuzM=;
+ b=paDL9ELG/I0ILOtSq6Lzvim+LgrEo7oa2/YsoCu9xRpFVnS1XLHyJcgKQcs0Mvbw9tfAqlFK0
+ IjdxH+ShC+ABMnu6goPP7c8ajGkU1wBUGGYqJL+NHWSYJ8aj759wjfz
 X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
  pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Replace the CANFD placeholder with the full node description:
-interrupts, clocks (fck, ram_clk, can_clk), resets, power-domain,
-and three disabled channel sub-nodes.
+Enable CANFD channel0 and channel1 on the SMARC carrier board.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Channel0 is always enabled, while channel1 is guarded by SW_DPI_EN
+since it shares pins with the DPI interface. The CAN transceiver's
+standby GPIOs are conditionally wired up based on the carrier-board
+switch settings (SW_GPIO8_CAN0_STB, SW_GPIO9_CAN1_STB).
+
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * Dropped fallback compatible based on bindings.
- * Retained the tag as the change is trivial.
+ * Reverted the order of the SW_DPI_EN and SW_SD2_EN, to match the
+   signal flow order.
+ * Added missing check for !SW_DPI_EN in standby-gpios.
 ---
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 43 +++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index 29ce1ab2a57f..682301a38a71 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -28,6 +28,13 @@ audio_clk2: audio2-clk {
- 		clock-frequency = <0>;
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+index 5f5441c47335..7804a903244b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+@@ -13,6 +13,8 @@
+ #define SW_SD2_EN		0
+ #define SW_DPI_EN		0
+ #define SW_GPIO4		1
++#define SW_GPIO8_CAN0_STB	0
++#define SW_GPIO9_CAN1_STB	0
+ #define SW_I3C_EN		0
+ #define SW_SER0_PMOD		1
+ #define SW_SDIO_M2E		0
+@@ -87,6 +89,38 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
+ #endif
+ };
  
-+	can_clk: can-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by boards that provide it. */
-+		clock-frequency = <0>;
++&canfd {
++	pinctrl-0 = <&canfd_pins>;
++	pinctrl-names = "default";
++
++	channel0 {
++		phys = <&can_transceiver 0>;
++		status = "okay";
 +	};
 +
- 	cluster0_opp: opp-table-0 {
- 		compatible = "operating-points-v2";
- 
-@@ -651,8 +658,42 @@ rsci3: serial@100f3000 {
- 		};
- 
- 		canfd: can@100c0000 {
-+			compatible = "renesas,r9a08g046-canfd";
- 			reg = <0 0x100c0000 0 0x20000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "g_err", "g_recc",
-+					  "ch0_err", "ch0_rec", "ch0_trx",
-+					  "ch1_err", "ch1_rec", "ch1_trx",
-+					  "ch2_err", "ch2_rec", "ch2_trx";
-+			clocks = <&cpg CPG_MOD R9A08G046_CANFD_PCLK>,
-+				 <&cpg CPG_MOD R9A08G046_CANFD_CLK_RAM>,
-+				 <&can_clk>;
-+			clock-names = "fck", "ram_clk", "can_clk";
-+			resets = <&cpg R9A08G046_CANFD_RSTP_N>,
-+				 <&cpg R9A08G046_CANFD_RSTC_N>;
-+			reset-names = "rstp_n", "rstc_n";
-+			power-domains = <&cpg>;
-+			status = "disabled";
++#if (!SW_DPI_EN)
++	channel1 {
++		phys = <&can_transceiver 1>;
++		status = "okay";
++	};
++#endif
++};
 +
-+			channel0 {
-+				status = "disabled";
-+			};
-+			channel1 {
-+				status = "disabled";
-+			};
-+			channel2 {
-+				status = "disabled";
-+			};
- 		};
++&can_transceiver {
++	standby-gpios =
++#if (!SW_SD2_EN) && (!SW_DPI_EN) && (SW_GPIO8_CAN0_STB)
++			<&pinctrl RZG3L_GPIO(K, 0) GPIO_ACTIVE_HIGH>,
++#else
++			<0>,
++#endif
++#if (!SW_SD2_EN) && (!SW_DPI_EN) && (SW_GPIO9_CAN1_STB)
++			<&pinctrl RZG3L_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
++#else
++			<0>;
++#endif
++	status = "okay";
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+@@ -153,6 +187,18 @@ audio_clk_pins: audio-clock {
+ 			 <RZG3L_PORT_PINMUX(H, 5, 6)>; /* AUDIO_CLK_C */
+ 	};
  
- 		ssi0: ssi@100e4000 {
++	canfd_pins: canfd {
++		can0_pins: can0 {
++			pinmux = <RZG3L_PORT_PINMUX(3, 2, 3)>, /* CAN_RX0 */
++				 <RZG3L_PORT_PINMUX(3, 3, 3)>; /* CAN_TX0 */
++		};
++
++		can1_pins: can1 {
++			pinmux = <RZG3L_PORT_PINMUX(5, 2, 3)>, /* CAN_RX1 */
++				 <RZG3L_PORT_PINMUX(5, 3, 3)>; /* CAN_TX1 */
++		};
++	};
++
+ 	i2c2_pins: i2c2 {
+ 		pinmux = <RZG3L_PORT_PINMUX(A, 4, 4)>, /* RIIC2_SCL */
+ 			 <RZG3L_PORT_PINMUX(A, 5, 4)>; /* RIIC2_SDA */
 
 -- 
 2.43.0
