@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794836834;
-	b=3S/ovggI8XWgn27FNf9H8pDlBa7MIrLmpx+dWy39jCFCtSMYeVN7CpGsjdN61juAhZAt
-	 MHKx78OGiXuoGmMHFVjzJscJkhhLi4CPP0dnj1Erk62t1vm7f1eCun8DFmV9UP0nm+BDb
-	 Zaszrd0bXIAP/feuOtHhSj8AYStxCiYDOEWdfFgo1mgSchIapY/Vk2NIb7f9IYU7KfTQK
-	 MEhCaKxMF9fkzZ+51In9lZWvRe8RQwwWFnI+qSe+OL2a5RSKmDOTK5wShcVsxyqOqau+D
-	 8053krr4pIVEY717CJSyLKkXI/Ks5JodSIyQVrbYqsB+FEVE4DCx7X50KQ0SECS38yw==
+	t=1794836926;
+	b=o4FVtK5QEoE7etJ6ZAAELZ8hjfujId6k89897o5V6gFww+UwZ26MfXAaSsRXzvwXi3JX
+	 /Bv8lTHVLi94kX9OFAb6hxR2r4ynq7dxEsRFeshCDBUR1nTZWYKUSvj83OktztloVgegJ
+	 j1QwMUAFxRWbfikbl9mizMdY93jjJ2/SvifgSuijnlw/NITHAv/4uhHsnnYols7U8ZlLS
+	 xcpWBW8IHMNqeD+UuGMHbboYkUdjFJk17brVuQ38BadteGocE+ZKQu208eT1mWUewyoK4
+	 ECtFU/fGz32a+mAjBzBd7nD8Tb5sq2nMS6khS4qbcoHBe8GhEYxSTgZscqFshfTXIag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794836834;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794836926;
 	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
 	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
 	 Content-Transfer-Encoding:In-Reply-To;
-	bh=4M9X7ZMKc+crR7RXVoL0kUS1iucDAznmyXwytIMwEXM=;
-	b=njChNQ3/nyevvSXuabFHHl2k4hgh2fyerquHInYZcoPqYMwcUQF//DUnXXqqCKqlT9Eq
-	 o5jDwP3bY5YPwaLSWyp8chfNVnClFyWcZw/NGOhJshaAbylsz4KgonWYkemYmSROyQZqC
-	 Guzo/wxd6xDRmWleX9yYhUPRk4zW8YagFvKW0J9mIqNo05Xl1y2fzFxJm6+d+vBMOezmD
-	 q1NylDMyVy8hEaikKzk67Qo50W1trGA71L2PXsQ9ZdB2GJ5nEqZ3RzHF3BMk19UjxLbgg
-	 dkv+ZZY1GconYGDVmVGutaTjmEFopiRONROO180OR50L9W5iPAFaDd9pQPw+qNuiqTA==
+	bh=nxVt4YyYRxxKVNc+KMYqDb9BIPbjIdUmTlL/o4vo9eY=;
+	b=tSsx4DcnE9TjzEN2zDUGx2TmccLaJIgmKuNiHvfc9q4e/Hwsbu2hh9tbMnNXRKMgAG41
+	 1Yl3BxbXDiOJm+r9ZcNsyhbOTyXfHMx8PffHiHwVraMV/W46lGO951efAm6DBQxSolDPx
+	 jWLnwc5yIMks7eeo21qZX4GFM1rCxW+2lg+qkw4dClg9bDJw226OC1fH7SER6C1B55OMl
+	 RsqR8OTRdI4RemsqilO+Hx1Ih/XS9hCcOl9a769SjViEsSb61hT+ChesCoyGmNj2bbFuW
+	 e6regToAm5ROmkid+2UOQAw5R9J/lCKGJ1qBv9ewSwWLvJWW00tLQGC0EgJXdugERwg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ideasonboard.com;
 	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ETEbqsui;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b="Rav/UBnw";
 	arc=none smtp.remote-ip=213.167.242.64
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7FF606A323;
-	Mon, 16 Nov 2026 13:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F7FF606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3A0606A336;
+	Mon, 16 Nov 2026 13:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0D3A0606A336
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=ETEbqsui
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=Rav/UBnw
 Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5EE7802;
-	Mon, 16 Nov 2026 14:44:45 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B59ABD0;
+	Mon, 16 Nov 2026 14:46:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1794836685;
-	bh=pqvBjMuc8VwyoehexkRCJbI1K/hILuzDifjyM7ADBF0=;
+	s=mail; t=1794836777;
+	bh=7bYXZzTBQNuR8BqpISs+lRfsacB2VyLzCJFILaXKlUY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ETEbqsuiRfQJCgkGUykt1TcqIPR/en+0x+KXgXgGovBzWMuYz6T4/n6K1zkNMErDt
-	 hdKd0dEJ5T9HCosHh56N4VfvyIrFF3G5rq6mP23qXNNCazAZ86PYdNBOOekz8Yw0N9
-	 xclDsajqpI3G8Sjh40E0Aw1pDDfJIvR8FomgG/Z8=
-Date: Mon, 16 Nov 2026 14:47:09 +0100
+	b=Rav/UBnwMDNeBWcZW5tIhhZC1Rl/wLFnI3plMwfZRhaExE6iEiP228eRIKp/0zxoi
+	 A17inCbba7oFntLkXSwOvFlA14gUeqm7rHR8QTPxFXxiN0NAUCTgKkV9nt9soavCFK
+	 OwAWcNJ/24+bDnomxqGvoqwV2yGKQsNZVF95GFkw=
+Date: Mon, 16 Nov 2026 14:48:42 +0100
 From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
 	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: uapi: Add 28-bit bayer media bus formats
-Message-ID: <avsIll-czY7dqVuh@zed>
+Subject: Re: [PATCH 2/3] media: uapi: Add 24-bit bayer media bus formats
+Message-ID: <avsJizTNF2Z-R1fr@zed>
 References: <20260908-v4l2-add-raw-mbus-v1-0-6973bffa5b80@ragnatech.se>
- <20260908-v4l2-add-raw-mbus-v1-3-6973bffa5b80@ragnatech.se>
+ <20260908-v4l2-add-raw-mbus-v1-2-6973bffa5b80@ragnatech.se>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -64,13 +64,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260908-v4l2-add-raw-mbus-v1-3-6973bffa5b80@ragnatech.se>
+In-Reply-To: <20260908-v4l2-add-raw-mbus-v1-2-6973bffa5b80@ragnatech.se>
 
-Hi Niklas
-
-On Tue, Sep 08, 2026 at 10:02:58PM +0200, Niklas Söderlund wrote:
+On Tue, Sep 08, 2026 at 10:02:57PM +0200, Niklas Söderlund wrote:
 > Prepare for adding Renesas R-Car Gen5 video capture drivers which will
-> support 28-bit bayer formats.
+> support 24-bit bayer formats.
 >
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > ---
@@ -79,38 +77,22 @@ On Tue, Sep 08, 2026 at 10:02:58PM +0200, Niklas Söderlund wrote:
 >  2 files changed, 137 insertions(+), 1 deletion(-)
 >
 > diff --git a/Documentation/userspace-api/media/v4l/subdev-formats.rst b/Documentation/userspace-api/media/v4l/subdev-formats.rst
-> index 39396931e726..d4f35f6236db 100644
+> index 892562ab48de..39396931e726 100644
 > --- a/Documentation/userspace-api/media/v4l/subdev-formats.rst
 > +++ b/Documentation/userspace-api/media/v4l/subdev-formats.rst
-> @@ -4310,6 +4310,138 @@ organization is given as an example for the first pixel only.
+> @@ -4178,6 +4178,138 @@ organization is given as an example for the first pixel only.
 >        - r\ :sub:`2`
 >        - r\ :sub:`1`
 >        - r\ :sub:`0`
-> +    * .. _MEDIA-BUS-FMT-SBGGR28-1X28:
+> +    * .. _MEDIA-BUS-FMT-SBGGR24-1X24:
 > +
-
-I wonder what the usefulness of these tables is. Not for this patch,
-in general for all Bayer formats listed in subdev-formats.rst.
-
-Data will be sent on the bus with a different organization, listing
-here that a 28 bits format uses 28 bits of data doesn't tell anything
-useful.
-
-But yes, we would have to copy in the CSI-2 specs if the actuall data
-organization on the bus had to be reported.
-
-This general complaint apart, the patch itself is in line with the
-existing formats documentation
-
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-> +      - MEDIA_BUS_FMT_SBGGR28_1X28
-> +      - 0x3029
+> +      - MEDIA_BUS_FMT_SBGGR24_1X24
+> +      - 0x3025
 > +      -
-> +      - b\ :sub:`27`
-> +      - b\ :sub:`26`
-> +      - b\ :sub:`25`
-> +      - b\ :sub:`24`
+> +      -
+> +      -
+> +      -
+> +      -
 > +      - b\ :sub:`23`
 > +      - b\ :sub:`22`
 > +      - b\ :sub:`21`
@@ -135,15 +117,15 @@ Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 > +      - b\ :sub:`2`
 > +      - b\ :sub:`1`
 > +      - b\ :sub:`0`
-> +    * .. _MEDIA-BUS-FMT-SGBRG28-1X28:
+> +    * .. _MEDIA-BUS-FMT-SGBRG24-1X24:
 > +
-> +      - MEDIA_BUS_FMT_SGBRG28_1X28
-> +      - 0x302a
+> +      - MEDIA_BUS_FMT_SGBRG24_1X24
+> +      - 0x3026
 > +      -
-> +      - g\ :sub:`27`
-> +      - g\ :sub:`26`
-> +      - g\ :sub:`25`
-> +      - g\ :sub:`24`
+> +      -
+> +      -
+> +      -
+> +      -
 > +      - g\ :sub:`23`
 > +      - g\ :sub:`22`
 > +      - g\ :sub:`21`
@@ -168,15 +150,15 @@ Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 > +      - g\ :sub:`2`
 > +      - g\ :sub:`1`
 > +      - g\ :sub:`0`
-> +    * .. _MEDIA-BUS-FMT-SGRBG28-1X28:
+> +    * .. _MEDIA-BUS-FMT-SGRBG24-1X24:
 > +
-> +      - MEDIA_BUS_FMT_SGRBG28_1X28
-> +      - 0x302b
+> +      - MEDIA_BUS_FMT_SGRBG24_1X24
+> +      - 0x3027
 > +      -
-> +      - g\ :sub:`27`
-> +      - g\ :sub:`26`
-> +      - g\ :sub:`25`
-> +      - g\ :sub:`24`
+> +      -
+> +      -
+> +      -
+> +      -
 > +      - g\ :sub:`23`
 > +      - g\ :sub:`22`
 > +      - g\ :sub:`21`
@@ -201,15 +183,15 @@ Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 > +      - g\ :sub:`2`
 > +      - g\ :sub:`1`
 > +      - g\ :sub:`0`
-> +    * .. _MEDIA-BUS-FMT-SRGGB28-1X28:
+> +    * .. _MEDIA-BUS-FMT-SRGGB24-1X24:
 > +
-> +      - MEDIA_BUS_FMT_SRGGB28_1X28
-> +      - 0x302c
+> +      - MEDIA_BUS_FMT_SRGGB24_1X24
+> +      - 0x3028
 > +      -
-> +      - r\ :sub:`27`
-> +      - r\ :sub:`26`
-> +      - r\ :sub:`25`
-> +      - r\ :sub:`24`
+> +      -
+> +      -
+> +      -
+> +      -
 > +      - r\ :sub:`23`
 > +      - r\ :sub:`22`
 > +      - r\ :sub:`21`
@@ -238,26 +220,29 @@ Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 >  .. raw:: latex
 >
 > diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-> index 892b8c0a945e..2b8438d936ad 100644
+> index 6005f033e62c..892b8c0a945e 100644
 > --- a/include/uapi/linux/media-bus-format.h
 > +++ b/include/uapi/linux/media-bus-format.h
 > @@ -124,7 +124,7 @@
 >  #define MEDIA_BUS_FMT_YUV16_1X48		0x202a
 >  #define MEDIA_BUS_FMT_UYYVYY16_0_5X48		0x202b
 >
-> -/* Bayer - next is	0x3029 */
-> +/* Bayer - next is	0x302d */
+> -/* Bayer - next is	0x3025 */
+> +/* Bayer - next is	0x3029 */
 >  #define MEDIA_BUS_FMT_SBGGR8_1X8		0x3001
 >  #define MEDIA_BUS_FMT_SGBRG8_1X8		0x3013
 >  #define MEDIA_BUS_FMT_SGRBG8_1X8		0x3002
-> @@ -165,6 +165,10 @@
->  #define MEDIA_BUS_FMT_SGBRG24_1X24		0x3026
->  #define MEDIA_BUS_FMT_SGRBG24_1X24		0x3027
->  #define MEDIA_BUS_FMT_SRGGB24_1X24		0x3028
-> +#define MEDIA_BUS_FMT_SBGGR28_1X28		0x3029
-> +#define MEDIA_BUS_FMT_SGBRG28_1X28		0x302a
-> +#define MEDIA_BUS_FMT_SGRBG28_1X28		0x302b
-> +#define MEDIA_BUS_FMT_SRGGB28_1X28		0x302c
+> @@ -161,6 +161,10 @@
+>  #define MEDIA_BUS_FMT_SGBRG20_1X20		0x3022
+>  #define MEDIA_BUS_FMT_SGRBG20_1X20		0x3023
+>  #define MEDIA_BUS_FMT_SRGGB20_1X20		0x3024
+> +#define MEDIA_BUS_FMT_SBGGR24_1X24		0x3025
+> +#define MEDIA_BUS_FMT_SGBRG24_1X24		0x3026
+> +#define MEDIA_BUS_FMT_SGRBG24_1X24		0x3027
+> +#define MEDIA_BUS_FMT_SRGGB24_1X24		0x3028
+
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
 >
 >  /* JPEG compressed formats - next is	0x4002 */
 >  #define MEDIA_BUS_FMT_JPEG_1X8			0x4001
