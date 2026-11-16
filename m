@@ -1,96 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794820727;
-	b=PoU6AXtffZZeHI7rQpsxKbGNAC+WhHPjx4ikrytnh1kaPJZ7zSXnt5gC+VQ2iIx6x+Zr
-	 q5ImstMFFX6W3ghD7SXlDlEq0SNwNaqCfZIwkTZ+ZZZbQoEAh5tUZ75iW7ULdtKs2MfQW
-	 ENU8X0sjqvzkCTJuc3jTO1SG0xIKaL/ZZ7K0qK6uqz1EJPtcws5PLMTkvNymq7hp12hOj
-	 6StzPdVKVOsJlsHGa8MMJI2nVYAnteQgI3L1dq+E3w5w6achcoomwPmlQSRkCB+b8L0Va
-	 2suF+JjmMyc1kKcioJij3HZ5MUcHDxso/q4Rg8RHAxzVRiclL71ronCVHOtCYVD3Gmg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794820727;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=10u893rXAEpcFiupZuZpxx17JcoZ4ukJ5pGVXipeKIc=;
-	b=QxW8Era6w64wdS0+w/pn7ghykwF5r6n5Ek8y2y2vy1G+dlp6EdS0D0Vc22qaQSyxmgD5
-	 WomSH+Nj8LgnhQ6nshLJiY/ZVMMFD0pfXQ4/vQE78Wo1ZQ+od9Am7xwKRQAGe34XkR20Z
-	 9iPai13oAmwOrLxvmBMWcxA+GcoBYkmLq49P4pFYatrFHMZ0R+0VhvrhE+GVgd3MWoFWO
-	 LW3ReKvoEQeccFIFWDzXipZtofnxGT7qo4aRmx8n9o+Ej9DT3sbQ/Vwj9ofqYuDRrrpP1
-	 4cGEZOnfJyNRMrcI/4rts1UTMGgRpeuQ8UTA7jjSCpjlN7LhThLwCt7iRcNExlquOUw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="0qzup1U/";
-	arc=none smtp.remote-ip=209.85.210.172
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794820822;
+	b=bev1AaC9NIEqKt3dqVe4qc+U4LKgwY/BsVv8KRdLjjwGq0uGnst2vzF6wjNHc7jI/qKF
+	 GVpwXIryFFAwbS/LhiFtQoXh1BtIPOooU0MoGDcH+f0haOuvG1DzUdCFMpCZolL38FB3a
+	 6uLQFDFiy/iURvCttRDfTE/+g+BPvh5sq3HYm9Tu1iQZS9Z0OQ3/SRnK84Jbq+GrtS1VD
+	 3+vC2SRICujm9PVn/YnGrV9iitB5Me88Ec8KQrHd8Pya3zHHyjsS+/PTMkRsQhmQ7+lno
+	 qhS7nbCHbH45ywv1QKtjBwfNh+xXRFffkNjCBrBWDj7581jFFkc5HK3pls2xZPbLx5A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794820822;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=qasYIWxkmoq5mRF2ENr+HXhZWEX0pISvU4gUa+W+zyw=;
+	b=mzU8Mwdhe4eKFM7t7rqxREUfzauNTNk/gZBrAFGNd0BIQBuynvraPYhTEqzGlG9+QYak
+	 DYswXVFbx7u/8CF/AHv1b8FfW4JuMXxSfLRYd0UXjYa3xcmr3EiPp72y2fKPNCK9sDsKZ
+	 ebHcj0FYOU3QnzjpUdm7/sxB2KUgJfkMQqArAQnx7r+CNrGGXYwZRuzPcgJp1XvSe5IwX
+	 jNlr4wqNxQ/PbA0NaVOWC6N2zWUvvaHoVdhAJ3afv5XSR87FxmGroGMfp9gNMP7/+rGaR
+	 aEWpM6+bWu92jyX1/+6opvORZ256xH6LW5A7faSqxm8AzsPLm2d6jJjBWTAUl8K8S2Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=gYGbfRuA;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A96606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 09:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 02A96606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A1D606A334;
+	Mon, 16 Nov 2026 09:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09A1D606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0qzup1U/
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-8b5c3288e6cso1346831b3a.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 01:18:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794820726; x=1795425526; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=10u893rXAEpcFiupZuZpxx17JcoZ4ukJ5pGVXipeKIc=;
-        b=0qzup1U/bvdpamdUfesp3EzGohjqD6ufcdkxabru/+P1e2lLmEhTqvPFxhiQUJLOuy
-         75ZaKlgkGDXWyEh0O7LTEEKNc5q+1cotzhdC0E5B5IjSRuna1VXMOyouKiqLsg6zUVWQ
-         kKN19bGG5PO+g4HH7bMNQ3kABDLLxW9cPxDnZYdNKQeJbfcKoyaQ3a/l1F21SD81YImE
-         qVhuxwwNl3a38fu49yIa4TcsmyRsn+P0J2KPmZCNL/x1uXeIyzA4yamOwAuAxvioSA5L
-         xbF9n061Z+WyXWv0kHGZhiWW8KpSOv0SpLn65dw+0PdYFSQFo7MzfGLaDgXXEMTpFU/+
-         H9Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794820726; x=1795425526;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=10u893rXAEpcFiupZuZpxx17JcoZ4ukJ5pGVXipeKIc=;
-        b=DvoJ/C8zPsNPAxfqFtrw/LJuCbVfObfON/eWuKe9ycSdKmnUGkSjyvL4wx778gPYv3
-         kVFNpV6v+/MNi5mxWj3hakTKvFPEoMly+/odMgdJkStPMBqCdHv06NHRL0vkGP2AseXW
-         Q5NNZKKL5zDIXGzZqr8PfibIzTpqKB/jFR1uEQKlRD7G2WfI0Ykqb4BVrUwhOPomnpNK
-         4olG6gpsXhZ1HEfzmVQrrNsOSTMKifLzby7cReS3lbYM+BMuJUL5KlFtrE+LwahsUeya
-         Fne4iErjUqF3q+o23mKx7CGn26Lfc0zLp1ikRHFKZgthFDiMEENGS0Gb2kO+a3eRoJpX
-         7JAg==
-X-Forwarded-Encrypted: i=1; AL+hErE6paiINQlKghySbaNmKDI7i+npEMYzDBhc0OJxpG46kVjoWTUkXPNeMZFGIcrmv0XOIsdjxAYq4PCDJqmbL2jleA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+8ijE+dI4JG3BUXtM9sHNZf6FMlE7CVdRo2lUauKdN3u4f+jJb
-	eyIxyhkl5fyt4MIBGPCihrbuEx9X4/oUTFqUmNmA+W0G/TDMg5jx+ZhJRJmaP2Jp
-X-Gm-Gg: AYBFou2OHrGZApwLR6G2KNbO2JchVe1/iv6c9dS1fgu65zevPspdzBTF0I1qclqyYvN
-	OvoU4y799H0K27w+LnyfC4Qgo53F/VtLJB70J7G+vxY7beZNpSBmCJuTwrL1K34CpDyBVifK6vC
-	1uRw2VfQqdJrqGBcDOyP6R/40u1quiqcuOQgSrA+SSiAsIVgCn8bfJZXsLYb3odQYEefsnT+/1F
-	yB7akScJB5umAOXviL2l91GsDYIn5PWcbfqHK6KHeqq45snoBZLcgOnuqIqlXqWznqBfz/qR7UG
-	zHLbYQ/ZIxnckK+0KG/HyA10iJitKgrwCNIfizR9uQX6hR8gfyszn04DkJWy7Fnicsb9ZR4fcOB
-	lyE+ztgRPaxqx+tHM/RP47JxS/JnqnEWqHz4lSldMKDIlUdOt1WPUhQI/xeCpMKMjfNn+1LNjC/
-	oriKpqwk4gkRFc04jzh87mr3OG23liSa9y6U0EdNTnFSkSPmdqFxnQbkUDRQTLxiPNIg9VbjlIa
-	kHAit0s42p2w0RyGv9kv9NimRYdk8oVD2EXJ19Zqlryyrg+4ncLiISaDl0XkJgXxLTOwpc2s9L3
-	h4YP6Tv007ukEI9vBXm59pk430DTFTZevb1ejKA74r/OpS/CnivSUwnY4ZsOBAM+ry6B3b2egdg
-	Eww3tXJywXJGr8g==
-X-Received: by 2002:a05:6a00:4087:b0:874:706d:962a with SMTP id d2e1a72fcca58-8beb619e287mr9631280b3a.28.1794820726299;
-        Mon, 16 Nov 2026 01:18:46 -0800 (PST)
-Received: from linux.internal.banvien.com ([119.82.142.58])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed12a8024sm3286470b3a.11.2026.11.16.01.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 01:18:46 -0800 (PST)
-From: Nhat Tran <nhat.tranminhk2@gmail.com>
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=gYGbfRuA
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 9B604201578;
+	Mon, 16 Nov 2026 10:20:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794820818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qasYIWxkmoq5mRF2ENr+HXhZWEX0pISvU4gUa+W+zyw=;
+	b=gYGbfRuAqF69PBMw7kwNBh5WSABiONyvAt9Ws/rCU/ITvprXFhoaetjGIJjcj/jCMMSS+q
+	3VF2DKro3L2d/A+UyvttnTR/YJGhNBU94Gqqlb4sih6DJrhu8REG4tBLmJ5AJG3/3l9+q+
+	O4W1qkbvMxjr3XCqYjSa2yJYvzq6XmoFKFmRDF5ZkKcwLeJKpMhZbA8eGIvVQz0dGBYmnt
+	Mfu9RYVSyQZIFjCXCnS2n08Kncc7z8GIKv+QT7sxbLnPB6m7a96xjh3UgUeyF4KYedFmTc
+	63CVJBRyMi1/NAJI9fzVEa4HUt5egBpHstBHiaFO7Vn0q4NLxy0Y3hvscWubnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1794820818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qasYIWxkmoq5mRF2ENr+HXhZWEX0pISvU4gUa+W+zyw=;
+	b=U/C98LT0LRbp/f6w3leKXIvfSv2rjagmhq5nywzUTlYVI5vQU/sm0c17Chl5hOz7zP75ty
+	heuJCZHGDURmt9cQsb5CDfKlrDhQyPAThlDm9yS38/DOjta+17JEUBdJbC41x1M4Jy3gs8
+	d/5NDA7tYZHibCOidKVykludHLYJzs24N11iI0wJb3fcLzsp9Vp3x2tK7SxIIjSdnfs2Ip
+	cU8/Ha/XqP1vhw1x/VOZ0VJSXRYZYk2BZNxE+PfFF1lOQVaegtOUVxttTqP02jYGNMYCJ8
+	VbzfYQccKYK5Qzeg4raGaWdVYCNtD+pI/bxSaJsEVZ72Estr5bdBhnAdKNDWyw==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794820818; a=rsa-sha256;
+	cv=none;
+	b=c6rRiCNxc9OCconJd8jd48OoBjIDRycdSqFfLcJzdM1OfGx47kexJvdna2+7v7SaPs1alg
+	cWGWU4F2xbabaCR3QcfNG1J4EQqHvXuScWhAmXXRjHeZ3Ezbc5/UcLKxEmexRsH3VvlRiC
+	K+WdErBdLe+j1rjKc1OT4x/ySHUYF89hXDLV43BJgyets2Rc3+h2LT5iEirKGKD8PDJRBH
+	iplRl8XRFee8HUL6WD722uMaKC7LU7I+aqAEzSLWKAwJPHp2zEVx+2hLkYOb6x36zqsrrI
+	y/6Uj6xwcIOxvw5FOq1wINcgiBnvsr8jSg7Ir0m4XSDI4DgkrBsAHpIbeATfPg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=mkl@pengutronix.de
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1xSsss-00013E-04;
+	Mon, 16 Nov 2026 10:20:18 +0100
+Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D62095ED13C;
+	Mon, 16 Nov 2026 09:20:17 +0000 (UTC)
+Date: Mon, 16 Nov 2026 10:20:17 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: renesas-usb-vbus-regulator: Fix module autoloading
-Date: Mon, 16 Nov 2026 16:17:20 +0700
-Message-Id: <20261116091720.112637-1-nhat.tranminhk2@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <TYYPR01MB66035439726639C9F4C2A5B9867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-References: <TYYPR01MB66035439726639C9F4C2A5B9867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
+Cc: Vincent Mailhol <mailhol@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Harini T <harini.t@amd.com>, Michal Simek <michal.simek@amd.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, "magnus.damm" <magnus.damm@gmail.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: RE: RE: [PATCH can 4/4] can: rcar_canfd: rcar_canfd_probe():
+ reject devices without match data
+Message-ID: <20261116-passionate-vulture-of-potency-331d64-mkl@pengutronix.de>
+References: <20261114-fix-device_get_match_data-v1-0-2d82025e9646@pengutronix.de>
+ <20261114-fix-device_get_match_data-v1-4-2d82025e9646@pengutronix.de>
+ <TYYPR01MB660340F5E219C29045BF61F9867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
+ <20261116-cream-hornet-from-lemuria-703c6b-mkl@pengutronix.de>
+ <TYYPR01MB660333DE58031D8231CD1B3B867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -100,35 +109,62 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oayapvf2wmwdvepi"
+Content-Disposition: inline
+In-Reply-To: <TYYPR01MB660333DE58031D8231CD1B3B867C2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
 
-Hi Biju,
 
-On Mon, Nov 16, 2026 at 09:00 UTC, Biju Das wrote:
-> A patch is already mainlined [1] with these changes as part of RZ/G3L
-> regulator support.
+--oayapvf2wmwdvepi
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: RE: RE: [PATCH can 4/4] can: rcar_canfd: rcar_canfd_probe():
+ reject devices without match data
+MIME-Version: 1.0
 
-Sorry, I missed that series. Please drop this patch.
-
-On Mon, Nov 16, 2026 at 09:06 UTC, Biju Das wrote:
->> +static const struct platform_device_id rzg2l_usb_vbus_regulator_ids[] = {
->> +	{ .name = "rzg2l-usb-vbus-regulator" },
+On 16.11.2026 09:12:13, Biju Das wrote:
+> > Thanks, I wasn't aware of this series. I tested the driver_override on =
+the flexcan driver with latest
+> > net/main, fixed it, and applied the fix to all affected CAN drivers.
+> >
+> > Should I drop the driver_override related null pointer checks from this=
+ series?
 >
-> Have you tested this patch properly?
+> I think so, currently only few drivers are using driver_override feature =
+and
+> majority don't. There is a work in progress to disable this feature by
+> default. The driver needs driver_override will adjust the probe() to make=
+ it
+> functional, so it won't fail at all in probe().
 >
-> I had an issue in probing the device related to id_table match due to
-> string length restriction in [2]
+> But here we are making probe to fail,
 
-You are right. "rzg2l-usb-vbus-regulator" is 24 characters long, so it
-does not fit in name[PLATFORM_NAME_SIZE] together with its terminating
-NUL.
+Without my patch, using driver_override the info pointer is NULL and it
+will crash 5 lines later with a NULL pointer dereference.
 
-I tested it on an RZ/G2L SMARC EVK with the driver built as a module:
-the module was loaded automatically and USB0 probed. But that only
-worked by luck: driver_data is 0 and directly follows name[], so
-strcmp() stops there. With a non-zero driver_data, as in your RZ/G3L
-patch, the match fails. Renaming the device, as you did, is the right
-fix.
+> in case someone wants to
+> test the driver using bus_override.
+                        ^^^^^^^^^^^^
+What's bus_override?
 
-Thanks for the review,
-Nhat
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--oayapvf2wmwdvepi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCavrKzwAKCRDMOmT6rpmt
+0rovAQCEIJAMETd7tNyk2R/k715jbympLZH7eJQMURDgqksApQD/a5uzKGahBuW5
+XA8bORFBLc4olbS/6V89C8PXQPoDjQM=
+=Bz3f
+-----END PGP SIGNATURE-----
+
+--oayapvf2wmwdvepi--
