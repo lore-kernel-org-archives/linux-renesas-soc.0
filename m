@@ -1,65 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794823075;
-	b=M2liM+zJAEdOEBDI32rFKdEKVasLCxR7IMrIkBiImeXuanRs4c637Rpj/HQyjiAQriKc
-	 EDcosrq+3P7oZ2z1VnFWp++4WzoHASONbA8UXKFv4EUTcNqeQc1xBP1qfiWP0XJI2rxHB
-	 R82sSF+kfgIGdli6D0jwp4STDMy7MpbQSDKAz3afY3tthDbEjXWoEccgGed2ONIv++KfU
-	 0tPIhPClXtdezZIkq+MY1VdQauI+rDvFCzSbA0u8ycPSfu/v9EXea7aqR84W+bvBNdcTE
-	 6X55qi3DiUCC7ZwRhwbPm/F1i5tFdyGVc2Jj7xge0gwRM8kmh8QHMnJ/pQFOGFP9byQ==
+	t=1794823516;
+	b=yX/IDRvYur+9Bcx1vt2mBb+SlQKBYLgy/iGiPQcbUQOiVek30B2Mo4wRfsQBT4WJuNNL
+	 mZBLiSDOG8mXQ9jQCg/y3xy0x+OMKcqXYoJMfs5FFF5GDl7UAbcKZjazvBfZGslFNkS9n
+	 sPZ+fuK5bOKeCrw1NQTR4kStnbjZEIGY9KEwJnc8U6gOnIGpLeERz7mZcjsddqas2xyJy
+	 daf+sgkM+c+rUhcPd5XoMuPRPnA5RsykOewxwWbXkBdJ4dg/tcGT01VmEqw2Wnsjr8M0f
+	 J+3SfbKhc105VEew0VjmFW7J4qPJ6uVx1zYR/YOiKAzH9IprqiIzmibr+8zF/7Q/Pdw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794823075;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 In-Reply-To:References:Auto-Submitted:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version;
-	bh=Uwqp7Bz8a5D3/B2xkBHbhP2Bh4hQYQFs0RxyAqY1Gn8=;
-	b=0vo7w6mZWkmXhGJxEnhLOttHOFqfj14Gy4DBnKHimI3Zgv+6PdcOSLTPI/AZ63tsZaK9
-	 p/vYPbxAsAaKw+YWFMFmiY4CgGSwVtCUB/4ZD2uaAno+aaosq/MqWyx1VakppnCKo/1rw
-	 6fNJ4wX8mTN4NaONDiOs2SYVRe8mzH55tLZHJQUmnu7Eu3OWYqbMat96H4v/2ky0C3pkZ
-	 jCuNGHt1PfGZUpc+AEUiXIjak9QfdDGo5iXwaWeXWBtW2j8QYTGUgZDpwgMG8HAmAwDBl
-	 2lQMx+2IbxkzRrPCt9zbk6q1x08WFNjaMWJEKbCFkt2DQW4QXHI7kTURqzpcc3TTphA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794823516;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=Q0y5H38M5nkBLyMAj5L3la0odTbAYzxV1gPXEVWBmgI=;
+	b=BuoTUdS59cfMqihbwRb72MyZGpUyNsoIP7XN/HSgJ0frtpr0/XXC5HxlYd480tsIkqVR
+	 gfypBYk3++WZ+ZmClY09c7CxEdG29Mjlvw58njzA+EoIkILYw1/LatLHhkwPZjvsuKtnG
+	 PBusGmL8E9smBaBTr0GzTBuAkvwi2FqIbds9yHHgV1X2DSa+A+kcHp6LXNHV8NSzWh+L7
+	 fXRle7UmiKulnb5tP9FaDyJ1lPcY49Fj64xsa7OoMkGCvxNU3CoDKbQaka/PLDxbdywkX
+	 wzSfJFe70/zS96frkZN7dWPa4DWc8DOFaekRHjvIZtGuCoWnpbDAiPihftC48zpyvkg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Dtrr7gO0;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=iRKYcqG1;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F1B606A323;
-	Mon, 16 Nov 2026 09:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B1D606A329
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 10:05:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1B1D606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Dtrr7gO0
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124181F000C4;
-	Mon, 16 Nov 2026 09:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794823075;
-	bh=Uwqp7Bz8a5D3/B2xkBHbhP2Bh4hQYQFs0RxyAqY1Gn8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Dtrr7gO0sedVdRES1cOcZqUPJJmPoNWt5retd61kAK/f3VXeb2DjCr0v3U+5xnFPU
-	 B7cAYcAPMcRX13oAF3QKLb2FrocpE6zR5oooLe9VLZOYEPZyYTBrLJ3NVH4K3ex98w
-	 PwrQsj2rc0Jl7Jl8gKx2W4USKQPLDcMXS6vWs3L1Ikv4NQ2ht1f+C01kmJrBzLtmNq
-	 ewE0n4+aH5CpN7wXOwYFVSAfGouJzzDPeOCTlBRP1eja1jCL/WA9ieLkRtvUpZOEPR
-	 ztjDCMc6jkfb77iTDRaZsR6Usb3dGF5u6goilC7G/RvBro4dl1BGFZgph0NkKOUpTF
-	 n3v9SYrJFredA==
-From: netdev-bot+sinfo@kernel.org
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
- tomm.merciai@gmail.com, dinghui@lixiang.com, dinghui1111@163.com
-Subject: Re: [PATCH net] net: stmmac: stop Tx NAPI before disabling the queues
-Date: Mon, 16 Nov 2026 09:57:53 +0000
-Message-ID: <179482307356.3291.12672863901613657171@kernel.org>
-In-Reply-To: <20261116-tm-stmmac-eth-s2idle-v1-1-bbe165b743b5@bp.renesas.com>
-References: <20261116-tm-stmmac-eth-s2idle-v1-1-bbe165b743b5@bp.renesas.com>
-Auto-Submitted: auto-generated
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=iRKYcqG1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Q0y5
+	H38M5nkBLyMAj5L3la0odTbAYzxV1gPXEVWBmgI=; b=iRKYcqG1SS2KcXxrrF5j
+	fdvIcwijAgcOj+9Anw2xRozHzU9BjDjq1jQr6okctFHrl1FTAL0YH8NZQVIY1jQx
+	EQSepAvMlvxh3LPcvM3TGkxVOGxjAQMaPEiJsn1qYgrXQe3zFTB7OVE7/3ZyOBFs
+	ul66znsd3UuoX4sOa/06AdCi8X+qnDMvHpDg0Gh1Vd4EfPg6D9bQuT3yiAClLdik
+	Oo3y9A1P6kykF0ly8IiuZJLStjP/xHAbUcqOHku5bMKkOJJMDXqqinXmJ+3hE/n0
+	ET7U7e3meqzO7DiH+40hF2RPu700BSTuWHu3In4VenI/CKzoUJlpXJfAWZvR3OPy
+	jw==
+Received: (qmail 1228596 invoked from network); 16 Nov 2026 11:05:11 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Nov 2026 11:05:11 +0100
+X-UD-Smtp-Session: l3s3148p1@1FfS6WFgduIujnv5
+Date: Mon, 16 Nov 2026 11:05:10 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Biju Das <biju.das.au@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 0/3] Enable RZ/G3L SDHI
+Message-ID: <avrVVjHY4Pp1hFvt@ninjato>
+References: <20261112-sdhi_rzg3l-v1-0-ca30b209615d@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -69,22 +67,52 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Os7FRzFaW1+KPzvM"
+Content-Disposition: inline
+In-Reply-To: <20261112-sdhi_rzg3l-v1-0-ca30b209615d@bp.renesas.com>
 
-Hi!
+--Os7FRzFaW1+KPzvM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is an automated message. This series looks like a fix, but its
-commit messages seem to be missing some information:
+Hi Biju,
 
- - What hardware the change was tested on. For driver fixes please
-   mention the device (and if relevant firmware version) used for
-   testing, or say that the change was not tested on real hardware.
+On Thu, Nov 12, 2026 at 06:48:49PM +0000, Biju Das wrote:
+> This patch series enable eMMC on SDHI0 and SDHI1 on SDHI2
+>=20
+> This patch series is depend upon [1]
+> [1] https://lore.kernel.org/all/20261104-usb_rzg3l-v8-0-ab109c4bd108@bp.r=
+enesas.com/
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Please do not repost the series just to address the above. Instead,
-reply to this email with the missing information, so that reviewers
-can take it into account.
+could you comment shortly on the Sashiko reports, please?
 
-*IMPORTANT*: If you do repost (for other reasons) - please include
-the relevant info in the cover letter or commit messages.
--- 
-The evaluation is done by an LLM so it may be wrong, if you think
-that is the case please reply and explain.
+Thanks and happy hacking,
+
+   Wolfram
+
+
+--Os7FRzFaW1+KPzvM
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmr61VYACgkQFA3kzBSg
+Kbb9pRAAkhhvuzm8LJTOGcAaYkQMywCB7s5UrGrbnqtQTIZMpytxJM94zzLrZ7pG
+6JOUE6Hdgrc7fgK0yfjcURJyTGQ97wwDvifgolBp31W8vWMG5WwLlr8WA/5aTQx0
+uzWgJ8FxMA2xb/qt6l6VGlSaIv/8VYLIuW5wbAlvSRMHIaUiAmyqIiCAjzvrEZPG
+D5LT1ayZUvLZU+eYYokx40cqv3ZIJ3BX9ilCHGCVTOVDTuUZkIjKvUkCR9/SWkQV
+PUspnlwO/O9Oxb1WPFlsLNoIea9fstLAC9Dn0xA/GsdGgin3zCRUXdlmoqBRHeNP
+SRdf9w4u+31sP+VFCzd14KXEfKmxXBZ50AjuGPV6WbPDes9ch38RhDMrVl27t7aq
+RE5YDzrjZVkuTB/1kNqz4J1tcOdXTOuRDJM5jWEgBaKZhaSKMYGKzU5ouRHqiH06
+r+91UaAUQgA8WFer1aKp8ir2Q0Eo2aQ6EPq751Abq8Y9z0ItVhuZHUCw4vhFn38U
+4HOTDnD40vOKN4DVUXCKV7sX05xISJlhNvY86aGK3u14srTBoQSSQg4idXNJd6lQ
+7ifuCP2DabF3RoPJtEWWFalK9VuSYBXcIR0XJHdgXSAw6nqTPaOqnzCcN/TxcwFT
+r5D4C3jAucm1opunG0CMGw6+ZwtJD/J2Z9clCqD3LMQ0pS3b0NQ=
+=5Vh5
+-----END PGP SIGNATURE-----
+
+--Os7FRzFaW1+KPzvM--
