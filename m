@@ -1,60 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794830762;
-	b=Th1iB1njTjKf752YUkU3RQF0a3/UuVoA3eOGIvCwOZWepDkvpLF/7vnZyu8MTVCPvHuo
-	 hiMA0mBrR5VfH0YzCvfaJCh7bFXBy/9Qn10V1H3SKJtjiH34sUXPrMPHGNlV8IsJT8WKK
-	 sSXtVI0lLPZwcbghADMLllZQwj6bNV5hiTMyXKIWwqqW/10Bu8Wt4b325AXkh00mpf1/N
-	 IsoVygMmum/D4aP3CbdVTXRt8up28ogoXXgNcH1FVtuLixxb2Y2OKCmISUgw5QcEwFQ8g
-	 dJOuCJIUiVKsGTPr6iMVmrElQcYB5Ta3FlgCkawd+cm8amnKHhrknqwlQ/OUsPy85QQ==
+	t=1794831690;
+	b=lkwpTLuehvMuXST15eSnxEcdVOJ6scH3HFMpAPcd6RDqvlnB2H2nkzz1kbVX4Z9eqUH5
+	 RLvUJ74EY4E0CyJh9WveMpJLB30aE64cYUK267gPSjD4kj1ywWdsxVZ0pgQf+dzCdEZQ9
+	 dh9H4w5KN6IEC0KNmezsG87X+hUnH8khvFtzMHr42LA6RAP/y/UcI0DrI42OK4gFf1Vla
+	 wgI4sPh/m4hvezF1U+WLKGxxvEBKqqoAb4j6tnH8yKUH7Lon3fW5PtagbYUkk3dGAmqOR
+	 u95Or8E4zg2PMXNMa7QTh94e1zjjNlUNL0Qxx9fTvtWFVef/aeFahiOOAbgNNlj3Zow==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794830762;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=NvzKt0ABqG9czfX7CCvo3D1asfWGOA5KuXZFSV0WPCo=;
-	b=CGtXDuceUaU114gbAwmJHm9TT0U+8UAxtX/TT0bsuy3nEyO21JiCuv+H7dMltHlKHL7w
-	 /D+O/XoqqMK3+aWVq0SGaqm8btiNC2JAmkzDvu2yOowUERQloVRpCSeX7Yj/2ccTWfwTc
-	 wQf3pvXEtszP8tePAYhrG3bJJZSE5pcl9/1Dj9b5uyrlOiuoZecTphrESQeGuNEX1TFzh
-	 NRnLPIm8CgFzamIhfWTVGhPRMnPVaUpLjOIS4VRDwlfBSYxDQMq5fLFzOdaNDq9Gh5XdE
-	 iZvCFOcmQ3/HtN43NVIRlD1hvbKT8Uq5keJDs1VB7MN4EWfFtjS9T41ZkaXow3hK58A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794831690;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=vxKMxVz4RTUXEWLAe5atYGQv2NleEVOnfsqKpIZG1EU=;
+	b=qeLhf1Uut/BqD9RZM4OtIHeSTMYbuPNLNbcmiJPggXXqP35i2WNkXZvtfLZho94ZhZXR
+	 lTuVOuJEYLSI6y2wNC4trUb9R+aLH8BxqLQDlZ+kdPXOndN3NrzrtTkZT6jZaCNmrmhV1
+	 8laxeORgiG8tA0LgyNsR0IzifajwOOEX2ywt4VGAX0hmuwhuJPBFW7AZBeZXGF5d9Es3b
+	 Sf7mjXqdS7lUDXU6v+gToBpnLZy5a1zPp0t2e9Y0ULtajilmtj5qTBzwSxk+FU+blukXf
+	 g1X975lV5oipUayhepDtGERJHTojwNbghJ7FygGCeIPPzbmxnLh82P/tAm+ZQAKpa8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gq0ZgjZX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rMauBFg4;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56052606A323;
-	Mon, 16 Nov 2026 12:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110CD606A31C;
+	Mon, 16 Nov 2026 12:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 110CD606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gq0ZgjZX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D8FE1F000C4;
-	Mon, 16 Nov 2026 12:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794830761;
-	bh=NvzKt0ABqG9czfX7CCvo3D1asfWGOA5KuXZFSV0WPCo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gq0ZgjZXMXmWGTeDHa0/IfFWDr/tAYv2vQqhdEtIDdXLzXi58xq+03HRF5FAg8B5p
-	 E2kjKiRHq4NJ6dA4P9UKTUyvgvM4wv7bWq61jsziLfpSiWz3fJ0i2iTZzQIqUE2dNa
-	 0kZDs9luJvX66qVN6GCgLtjs7usFZGeQFXzWvNZRiZHIpIxERre0BSr7+fb7eSG3BT
-	 Rr8cXP3yGJeCJ/RBumUbI45Lw8bNfysejg619nd7Y+rN6EuqBOTQxLRJY2jkEN4JqN
-	 0YEWi8JutYVa8yughDBF/O5svzGj76oeDUgU08BNXCx5hVCYrZWjlVUkRPbXcWNnZO
-	 yQ5UFfjmt5nPQ==
-Date: Mon, 16 Nov 2026 13:05:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Mina Hui-Min Chou <minachou@andestech.com>, pjw@kernel.org, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, randolph@andestech.com, cyyang772@andestech.com, 
-	tim609@andestech.com, az70021@gmail.com
-Subject: Re: [PATCH v2 12/19] dt-bindings: cache: andestech: update schema
- for generic LLC support
-Message-ID: <20261116-crazy-adventurous-cockatrice-61c62b@quoll>
-References: <20261113071143.1446167-1-minachou@andestech.com>
- <20261113071143.1446167-13-minachou@andestech.com>
- <20261113-emporium-provolone-0e7b0e39c97a@spud>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=rMauBFg4
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BF45B175;
+	Mon, 16 Nov 2026 13:19:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1794831540;
+	bh=fsw/hAXRRGs6HflXWSb6KSaOYqdKWbKQ4ODUu8fHjbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rMauBFg4xBEnavMZC09+ywXPvnAcJPTwqA08kpkjYVE+S9/yhqesF/hF3psWs4Vjd
+	 Ps27b2ZqufIDAFckespscrhW4DPayDQ/d47bBvKuzNLI3Xe/dscvGzS7foiA6eRFhh
+	 0R9eaqxgEtruXZup7cCRYTdGP4kqBXEnST1SXU0o=
+Date: Mon, 16 Nov 2026 13:21:24 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+	Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>, Yusuke Goda <yusuke.goda.sx@renesas.com>, 
+	Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] media: rcar-isp: ispcore: Update image data flush
+ settings
+Message-ID: <avrtuJWtbEdnoQqu@zed>
+References: <20261114-v4l2-add-nv12-v2-0-a3f5ecfd48d6@ragnatech.se>
+ <20261114-v4l2-add-nv12-v2-2-a3f5ecfd48d6@ragnatech.se>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,132 +69,149 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261113-emporium-provolone-0e7b0e39c97a@spud>
-
-On Fri, Nov 13, 2026 at 02:05:29PM +0000, Conor Dooley wrote:
-> On Fri, Nov 13, 2026 at 03:11:36PM +0800, Mina Hui-Min Chou wrote:
-> > The last level cache controller of Andes cores is not specific to
-> > AX45MP. Other Andes cores, such as the A27L2, use the same controller
-> > with the same register interface, but the binding only accepts
-> > andestech,ax45mp-cache. Add andestech,llcache for them, and describe
-> > the binding as an Andes last level cache rather than an AX45MP L2
-> > cache.
-> > 
-> > The cache-level, cache-sets and cache-size constraints describe the
-> > AX45MP L2 cache, so apply them to andestech,ax45mp-cache only. The LLC
-> > of other Andes cores can be level 3 and have other geometries, so
-> > allow cache-level 3 and require cache-sets only for AX45MP. Match
-> > renesas,r9a07g043f-ax45mp-cache explicitly instead of through the else
-> > branch, which would otherwise also apply to andestech,llcache.
-> > 
-> > Also add an example for andestech,llcache, and add myself as a
-> > maintainer of the binding.
-> > 
-> > Signed-off-by: Mina Hui-Min Chou <minachou@andestech.com>
-> > ---
-> >  .../cache/andestech,ax45mp-cache.yaml         | 71 ++++++++++++++-----
-> >  1 file changed, 54 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> > index b135ffa4ab6b..da9688cc95f7 100644
-> > --- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> > +++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-> > @@ -5,14 +5,15 @@
-> >  $id: http://devicetree.org/schemas/cache/andestech,ax45mp-cache.yaml#
-> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  
-> > -title: Andestech AX45MP L2 Cache Controller
-> > +title: Andestech Last Level Cache Controller
-> >  
-> >  maintainers:
-> >    - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > +  - Mina Hui-Min Chou <minachou@andestech.com>
-> >  
-> >  description:
-> > -  A level-2 cache (L2C) is used to improve the system performance by providing
-> > -  a large amount of cache line entries and reasonable access delays. The L2C
-> > +  A last level cache (LLC) is used to improve the system performance by providing
-> > +  a large amount of cache line entries and reasonable access delays. The LLC
-> >    is shared between cores, and a non-inclusive non-exclusive policy is used.
-> >  
-> >  select:
-> > @@ -21,18 +22,23 @@ select:
-> >        contains:
-> >          enum:
-> >            - andestech,ax45mp-cache
-> > +          - andestech,llcache
-> >  
-> >    required:
-> >      - compatible
-> >  
-> >  properties:
-> >    compatible:
-> > -    items:
-> > -      - enum:
-> > -          - andestech,qilai-ax45mp-cache
-> > -          - renesas,r9a07g043f-ax45mp-cache
-> > -      - const: andestech,ax45mp-cache
-> > -      - const: cache
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - andestech,qilai-ax45mp-cache
-> > +              - renesas,r9a07g043f-ax45mp-cache
-> > +          - const: andestech,ax45mp-cache
-> > +          - const: cache
-
-Illogical split of patches. If this was to stay, then THIS commit is the
-reason to rename so rename would happen here, not in some time in the
-future. Same for everything you do.
-
-Organize your patches correctly, not doing things half-baked... but
-anyway do not rename files just because you added one compatible.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261114-v4l2-add-nv12-v2-2-a3f5ecfd48d6@ragnatech.se>
 
 
-> > +      - items:
-> > +          - const: andestech,llcache
-> > +          - const: cache
-> 
-> Device specific compatibles are mandatory. I would accept this patch
-> with a
->           - not: {}
->             description: Need a SoC specific compatible
-> like the safexcel eip binding.
+On Sat, Nov 14, 2026 at 08:55:17PM +0100, Niklas Söderlund wrote:
+> Later versions of the datasheet have an updated chapter on how the image
 
-But why all others cannot use ax45mp as fallback? Is this really a
-generic block among multiple generations of SoCs?
+I'm looking at revision R19UH0259EJ0040 Rev.0.40
+Are we on the same page ?
 
-What sort of arguments from contributors are to support that?
+> out flush settings depends on proper stride settings. Update the bytes
+> per line calculation and flush out settings to match the datasheet
+> clarification.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+> * Changes since v1
+> - Fix spelling of capture.
+> ---
+>  drivers/media/platform/renesas/rcar-isp/core-io.c | 32 +++++++++++++++++++----
+>  drivers/media/platform/renesas/rcar-isp/core.c    |  2 +-
+>  2 files changed, 28 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
+> index cc538e984aa1..1c63194f6455 100644
+> --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
+> +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
+> @@ -727,12 +727,34 @@ static const struct v4l2_pix_format_mplane risp_io_capture_default_format = {
+>  	.num_planes = 1,
+>  	.plane_fmt = {
+>  		[0] = {
+> -			.bytesperline = ALIGN(1920 * 4, 256),
+> -			.sizeimage = ALIGN(1920 * 4, 256) * 1080,
+> +			.bytesperline = 15872, /* See risp_io_capture_bytesperline() */
 
+not looking into the calculations yet, I just wonder if this value
+can't be calculated (by calling risp_io_capture_bytesperline())
+instead of hard-coded ?
 
-> 
-> pw-bot: changes-requested
-> 
-> Thanks,
-> Conor.
-> 
-> 
-> >  
-> >    reg:
-> >      maxItems: 1
-> > @@ -44,13 +50,11 @@ properties:
-> >      const: 64
-> >  
-> >    cache-level:
-> > -    const: 2
-> > +    enum: [2, 3]
-> >  
-> > -  cache-sets:
-> > -    enum: [1024, 2048]
-> > +  cache-sets: true
-> >  
-> > -  cache-size:
-> > -    enum: [131072, 262144, 524288, 1048576, 2097152]
-> > +  cache-size: true
+> +			.sizeimage = 15872 * 1080,
+>  		},
+>  	},
+>  };
+>
+> +static unsigned int risp_io_capture_bytesperline(unsigned int width, unsigned int bpp)
+> +{
+> +	/*
+> +	 * The datasheet specifies strict alignment and padding rules to be able
+> +	 * to flush out all the pixels. Each line must be 256 byte aligned and
 
+Interestingly I read:
 
-See writing bindings. Widest constraints stay here.
+"When using flush out setting"
 
-Best regards,
-Krzysztof
+do you know if flush out has to be used unconditionally ?
 
+> +	 * at the end of the frame at least one extra line of space must be
+> +	 * available.
+> +	 *
+> +	 * As we can't extend the buffer with one extra line we need to work
+> +	 * with stride setting to satisfy both constraints. Fortunately the
+> +	 * datasheet gives us a calculation for this.
+> +	 *
+> +	 *   FLUSH[pixels] = ALIGN(WIDTH[pixels], 256)
+> +	 *
+> +	 *   PADDING[bytes] = ALIGN(BPP[bytes] * WIDTH[pixels], 256) - BPP[bytes] * WIDTH[pixels] + BPP[bytes] * FLUSH[pixels]
+> +	 */
+> +	unsigned int data = bpp * width;
+> +	unsigned int padding = ALIGN(data, 256) - data + bpp * ALIGN(width, 256);
+
+isn't this the additional space for a whole line where flush data
+end up being written to ?
+
+Assume 'data' is already 256-aligned, then we can remove
+`ALIGN(data, 256) - data` from the calculation of padding.
+
+What's left is
+
+        padding = bpp * ALIGN(width, 256)
+
+which is a full line length in bytes aligned to 256 pixels
+
+> +
+> +	return ALIGN(data + padding, 256);
+
+Then here you add to the line length in bytes (`data`) the padding
+(which is a full line itself).
+
+As I presume this works when tested, where did I get lost ?
+
+... a few minutes later ...
+
+And now I've read Barnabas' comment on v1. We're here basically
+doubling the line length then ?
+
+I think the comment here is a bit mis-leading as I thought the idea
+was to add to each line stride enough space to accommodate an additional
+line at the end of the full frame.
+
+And to get back to your reply to Barnabas in v1, I'm not sure I
+understand why the additional padding lines (if unconditionally
+needed) can't be added to sizeimage ?
+
+> +}
+> +
+>  static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
+>  				       struct v4l2_pix_format_mplane *pix)
+>  {
+> @@ -749,16 +771,16 @@ static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
+>  	case V4L2_PIX_FMT_NV16M:
+>  		pix->quantization = V4L2_QUANTIZATION_LIM_RANGE;
+>  		pix->num_planes = 2;
+> -		pix->plane_fmt[0].bytesperline = ALIGN(pix->width, 256);
+> +		pix->plane_fmt[0].bytesperline = risp_io_capture_bytesperline(pix->width, 1);
+>  		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
+> -		pix->plane_fmt[1].bytesperline = ALIGN(pix->width, 256);
+> +		pix->plane_fmt[1].bytesperline = pix->plane_fmt[0].bytesperline;
+>  		pix->plane_fmt[1].sizeimage = pix->plane_fmt[1].bytesperline * pix->height;
+>  		break;
+>  	default:
+>  		pix->pixelformat = V4L2_PIX_FMT_XBGR32;
+>  		pix->quantization = V4L2_QUANTIZATION_FULL_RANGE;
+>  		pix->num_planes = 1;
+> -		pix->plane_fmt[0].bytesperline = ALIGN(pix->width * 4, 256);
+> +		pix->plane_fmt[0].bytesperline = risp_io_capture_bytesperline(pix->width, 4);
+>  		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
+>  		break;
+>  	}
+> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
+> index 586a5adbedfa..8908496c734e 100644
+> --- a/drivers/media/platform/renesas/rcar-isp/core.c
+> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
+> @@ -398,7 +398,7 @@ static int risp_core_config_output(struct rcar_isp_core *core,
+>
+>  	/* Set image out flush EOF. */
+>  	risp_core_write(core, ISPCORE_DMA_IMAGE_FLUSH_OUT_REG(index),
+> -			pix->plane_fmt[0].bytesperline <<
+> +			ALIGN(pix->width, 256) <<
+>  			ISPCORE_DMA_IMAGE_FLUSH_OUT_PADDING_PIXEL_EOF_SHIFT);
+>
+>  	/* Enable DMA and set burst length. */
+>
+> --
+> 2.55.0
+>
+>
