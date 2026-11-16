@@ -1,100 +1,121 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.177
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794838166;
-	b=rop/cOC6d61k4syVetuz0vjw43F+XcBqIx/qDTr5364ZKpP3dv1EAiYGe3uNmsQr36sN
-	 9+IxTx1BWTWdNCmwX0mkY6lcQuvrAyzSFsrXeJZZ9ufpwmByTBjLMTau22QfAcPrvKSD6
-	 7tFVCj/+ox7A2WLGB6Q5dX1YkVS0vUNvTrsr/SJqWPUrplxlAw2hjffytCADtOdJx8Zio
-	 h25niKa1tBSeXDCHZnuTuUgLw0Lt/og7cKHiha9zGlUsaZ1WnamIYm6A/YvzjClRjId3x
-	 6dF18CI8PugkP/RHLqRR6SqPJnvva/nyUDz+vW6YuwBiCL+9LlfyRv2sJimdD6WTu3A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794838166;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=oAJHKsJwQHmkCNrAnto0w4Yt2QcPc3iiUtlr1glYIIM=;
-	b=V18H3C5xsc7pknBk5cjItrABoXiQsnR0cdfQDXbFRMO2rxE34+xSFW7piykhROYb7JJ5
-	 LzITjJ++MrTuQ0gdY0Ouj0yQ7CG64UBO5Ec6Y4k4QuI1WODkCYxr/7sv4iHCX7RwPCT2U
-	 +izbN9Rd2ClovkY+HayDF50bYlUHRKKTSJuxyETREBaVCkF9AtpHrpQOdCtaGY1SiZPOi
-	 21PM58KycERqZ4POusZ23OVmZu5DWr/JzoKp7GdsyPxb5z9cX8zLzT3g17YAIcdnXNjMT
-	 gyEDPxdIKKcAwCEFQ52VJt/3AcLb8wUENIHQ3Sa2qTi3KzqKg2KpI+jhQLpRMIJ7ZMg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="W89p/PRS";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.177
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794843015;
+	b=3WdWc32ENRro4l0wbZc4cbZ9H3mniepaILY06/DBN9TqhjrbOHVBn/nTtJQNPjj49N8U
+	 rhB38Pi2HPJ81zz2rv4Ql8yuy0ZnA5t5yuQ+KKJidsLvz+DLg2T/tx2ktZJcaYuXz0T/F
+	 kZnKcfce4oNQ0hAlfpLwnULOSFz10rWY+4Saz4FJjmfS9bvSRFUaDtSqo+88y/FYICGnY
+	 EQNd+lpc3scpnybF3GywXyMZA6nZR0h59qxWdK49AZvLsRegXT4T1L6Od61sB/Th+NVm2
+	 9qohIGOgCtZ/JXNTy5D23Wbk5cjCo7BSml6re335JXVTXkL2d3fZg5oCFuUMylcp+mA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794843015;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
+	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Last-TLS-Session-Version;
+	bh=h+kLUNdCVLVssx+7skYztl21dk3oQP7DPiS0iqoevoM=;
+	b=cRFq43mXAk88apk2WHUDXriPbTNZoF1aXHIQkTBXrZbSsoQICzT7CDuhNN4k70RBK6e5
+	 w2Rb6D7XHrjibN5iB9UimKpTwZ+yCOzg5SYaatXNnT0FvySmu2bmNoEEF6iTKBn+6BL3o
+	 VL/idR5m5GMUfprwrTxZenB53Br8+ZQOweKM9sAOjIR3xQA6gHF8AZkHM5nMQNVWtEMr7
+	 PPNEa6jG0FY7Tdidnspk31V+r8IfWd+jsYArjbKEULXtl5TeEaNNI0Ni0vSUUSFvVbdt6
+	 ltoee1C7VEyjjZr5WNANm3Hrh6a9JOiu7Hdtt9+0PyDvCi/NwmU67D+usxiy19Tsfhw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=iH9TBdIq;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7004606A336
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 14:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A7004606A336
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD432606A31C;
+	Mon, 16 Nov 2026 15:30:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD432606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=W89p/PRS
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-55ade1de0b4so47411261cf.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 06:09:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794838165; cv=none;
-        d=google.com; s=arc-20260327;
-        b=EqFCB+ASN2abMq/02lcPldsCk5fC3e+WYGc4rXIYuASivAypDGsfQS2YAVCH1A0ADo
-         pNLkVpa4I0y55IJtOLvklKyDvhV3teDg1pjQ53ShZwhi5Vq21hvDZpFcb+gqkvTQrOJL
-         MzXlW9VZhC2DTLwngYvdCxt8OyuW7zGKUgOAmfNoXNzlyxfZEANmMYRFnIh/4eKTbAW+
-         EZue2NAfa7eCvRENaYqQJXJuJQEC/3pyqz2aZzToMVsVcVQRht3CGBacJIzmbcL+vyrS
-         hf2GgGsfz8uV11HsgukK7dhTC7nY1J/TYMB47pWOfQPxvtziS4TIda4tT0KbFcBtRsK0
-         8loA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=oAJHKsJwQHmkCNrAnto0w4Yt2QcPc3iiUtlr1glYIIM=;
-        fh=vFx8vOcZKpY+jTg0U9mpKNWxtxJOB2CK7suxY3sai4k=;
-        b=sUz61kjXzoOCjnxrcy5ypb3/UYByvj9+GGbIjm+FMSEQrQUelqZDlbn6Ug5Y31WwYA
-         3hSNrZhYrRTTgxVYAipfzYrbiew9doWKexvtal7NqCC9S7mAhpmFEe15KWLLjFy0ICu2
-         1nfH9GpXMEXnW1pDiBiZY2PPwcWv4GwOHh8FJNx0Y+GlbAaKLhXukgLlQgmheWrhm7fs
-         M5BH4cz5n5AC8F0Uux+juvCd3B8Nvl2K4TC6o4LPITihXzjt5X7p+Nn81dSyOwKLgAg1
-         QZEIes23YgsTIpzTtmApKO0Zvl95JfuvhD2hq+H/mwkELjox+O1yaU5+rg7m8OIdpp0+
-         1rAg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794838165; x=1795442965; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=oAJHKsJwQHmkCNrAnto0w4Yt2QcPc3iiUtlr1glYIIM=;
-        b=W89p/PRSR0qg82Fxw3PBVoasH+tDDGQrrevzp556puHQYlBQCFrlfvsji+Wni7nPiZ
-         zoaL3MKZKzelq9e5JmbQtc70npRJ043+luhv79e8QlEbPxQNniRzsoUBjclAcq/I6qFm
-         jtYvpO1yc+MYmoQQ+QToiicdcRNd8+X8EV/LtelvWh1da0gTyYe4tt8WIEalSdHd8usz
-         pSvVKvvmFLmGqu6hp4ubppR0sxVQPBo/x4elUBuH4Z3QDMY14yHeUN9X9ShqhnOTu9D0
-         PQtT5pDM7DsX2vQ+0VXaR1lnrwBjmcEpOgq1EmEEkK1QTO+AZiq03B3ExYGMeRQkIcwj
-         I85A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794838165; x=1795442965;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oAJHKsJwQHmkCNrAnto0w4Yt2QcPc3iiUtlr1glYIIM=;
-        b=H2LtkeFdAsf7B4nDqivstMpFEHH3MqQKciDy+6bZXGC4ep0xIQlXo4Z52RC4v9C1U1
-         Od3rm1rd1krhQb4jZY3B3jxYXaVQ3M7TKGeMBcMdZmn/4sFjWm6u0nw4okpaXA23EI2z
-         7FqO8iBM7+ecZgSuBKpqhPHgQH88A7Lbfd1OVrle7xQ8zQ8mNHG2qrQEPe4AUsacsQFY
-         S0U/pqbUQI2QwLublZmQgZnHYbogW1aTLFW/FnSYvUG0Eqw861hqrTh73hHJOWXorCau
-         /7rLWfYMBN3N23Q0faKIK5qo2P+HX39hkbHl2XWY9Q3zTNICwUEsAKUqpbPGeABFvhpV
-         WO4w==
-X-Forwarded-Encrypted: i=1; AL+hErFmQfWvdDdIp3AnRqZgPK6nsOGBl8TS+q7jspLU41Euk0gCSwoDYefT2FMju29NJNNYIboAXA+HXZAnD3I+L5VSgg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/HpQtAr4FxNwqxMsLzXnjXC9Zxz5OKzW4tmdsC2S8Pj8/z4QCI
-	HOER4rBYXqOhsL+GuZ0yZJDlNveMfmAnymX8dGp8L/2AIGPeewhZeQCpI2s4YLMSJwREh/oBsrG
-	+rrkGvDQx3Q2DEIxqhoY/5UaA54lJnFY=
-X-Gm-Gg: AYBFou0TGqCV8E+PS39erAE8PhP8T/ZwvZ+U23uOSuo9+tP4opqt6dlENlcdFQeR0Xx
-	Jnvb8LWUhs/J5WDVcUJeZyFxnyrmSvn9KRRv4aDmrRgzh7oMUku4dxMBixSsDgA2aWMedx7g9B1
-	8kMM6R69aOVzwvS8EUwjcTVTs0/XhVLd0pcJcgZrCjuTLm8pUVUvzf2ujsIkBP4SHF5KIQpjrGC
-	UgV1dJsOKq/1mWf0WhsRLFtGNpL61WFwUOpKZ7hawYnKCibCzvtq06n4xUw/IM4QridsN6JO9e0
-	xHd5vnLwHwQB1EjF95PZ/nsDYQ8wDajCM02/ndOs4FGNTQ9fTEaAqdG1xTGBUEJgP+ABrXFyts3
-	N4gfjFV42XxqCjV7wCFwc20Krh8ahyOtBqa3kcwAAtHIwVjh4s1VgRQG8D6PFmTvc5SjHrzc=
-X-Received: by 2002:a05:622a:514d:b0:55d:3350:d262 with SMTP id
- d75a77b69052e-55d3350d4eemr64503751cf.52.1794838164440; Mon, 16 Nov 2026
- 06:09:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=iH9TBdIq
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5577E4E41605;
+	Mon, 16 Nov 2026 15:30:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 08A37603BF;
+	Mon, 16 Nov 2026 15:30:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3EDA11BC05B3;
+	Mon, 16 Nov 2026 16:29:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1794843007; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=h+kLUNdCVLVssx+7skYztl21dk3oQP7DPiS0iqoevoM=;
+	b=iH9TBdIqZlSkdOYhgLebc/ahFWvE4iAmulAHMvpFdDxGMv8OkptqUI9FVtZpvBEpkElEex
+	Ern90RxHw+cVIwSmaIgaLC0r0M7LudT9KXEFwVYbc76TpRPm+lStS9eN/2INACzOnWoEGp
+	65S1D4BQhb0Mb4OI8rPfyy3VNYqlvPTimEXsumHvb8nWUqgNSHfMp4oTAEqTZDGd9Sf9bV
+	URyQdsaMATsPrL7CYYXidboFHSDpmc/yQIGXlT+Po+8ybxMcMMZRHpvEootxn9RNnwxzxI
+	pFom6uPxX134uBBQXodODAOQyyHNxz0wtEaoEbQ8bOUnLIJ8GfPY5IR5yn0PNw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: James Hilliard <james.hilliard1@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Srinivas Kandagatla <srini@kernel.org>,
+  Tze Yee Ng <tze.yee.ng@altera.com>,  Richard Cochran
+ <richardcochran@gmail.com>,  Jonathan Lemon <jonathan.lemon@gmail.com>,
+  Vadim Fedorenko <vadim.fedorenko@linux.dev>,  Yuqiang Sun
+ <izaiahsun@gmail.com>,  Amit Kumar Mahapatra
+ <amit.kumar-mahapatra@amd.com>,  Luca Ceresoli
+ <luca.ceresoli@bootlin.com>,  Bernhard Frauendienst
+ <kernel@nospam.obeliks.de>,  "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>,  Kees Cook <kees@kernel.org>,
+  linux-hardening@vger.kernel.org,  Arseniy Krasnov
+ <AVKrasnov@sberdevices.ru>,  Boris Brezillon <bbrezillon@kernel.org>,
+  Brian Norris <computersforpeace@gmail.com>,  Jernej Skrabec
+ <jernej.skrabec@gmail.com>,  linux-arm-kernel@lists.infradead.org,
+  linux-sunxi@lists.linux.dev,  Samuel Holland <samuel@sholland.org>,
+  Chen-Yu Tsai <wens@kernel.org>,  David Woodhouse <dwmw2@infradead.org>,
+  Thomas Gleixner <tglx@kernel.org>,  Vitaly Wool <vitalywool@gmail.com>,
+  David Woodhouse <David.Woodhouse@intel.com>,  Russell King
+ <rmk+kernel@arm.linux.org.uk>,  Mike Rapoport <rppt@kernel.org>,
+  Alexandre Torgue <alexandre.torgue@foss.st.com>,  Christophe Kerello
+ <christophe.kerello@st.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+  Jason Roberts <jason.e.roberts@intel.com>,  Boris Brezillon
+ <boris.brezillon@collabora.com>,  Michal Simek <michal.simek@amd.com>,
+  Mason Yang <masonccyang@mxic.com.tw>,  Ramuthevar Vadivel Murugan
+ <vadivel.muruganx.ramuthevar@linux.intel.com>,  Lucas Stach
+ <dev@lynxeye.de>,  Dmitry Osipenko <digetx@gmail.com>,  Jonathan Hunter
+ <jonathanh@nvidia.com>,  linux-tegra@vger.kernel.org,  Stefan Agner
+ <stefan@agner.ch>,  Thierry Reding <thierry.reding@kernel.org>,
+  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+  Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+  linux-mediatek@lists.infradead.org,  Matthias Brugger
+ <matthias.bgg@gmail.com>,  Heiko Stuebner <heiko@sntech.de>,
+  linux-rockchip@lists.infradead.org,  Yifeng Zhao
+ <yifeng.zhao@rock-chips.com>,  Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Nicolas Ferre <nicolas.ferre@microchip.com>,
+  Keguang Zhang <keguang.zhang@gmail.com>,  linux-mips@vger.kernel.org,
+  Shan-Chun Hung <schung@nuvoton.com>,  Jacky Huang <ychuang3@nuvoton.com>,
+  Fabio Estevam <festevam@gmail.com>,  Frank Li <Frank.Li@nxp.com>,
+  imx@lists.linux.dev,  Pengutronix Kernel Team <kernel@pengutronix.de>,
+  Sascha Hauer <s.hauer@pengutronix.de>,  Han Xu <han.xu@nxp.com>,
+  linux-renesas-soc@vger.kernel.org,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Jerome Brunet <jbrunet@baylibre.com>,
+  Kevin Hilman <khilman@baylibre.com>,  Liang Yang
+ <liang.yang@amlogic.com>,  linux-amlogic@lists.infradead.org,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  linux-arm-msm@vger.kernel.org,  Manivannan
+ Sadhasivam <mani@kernel.org>,  Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,  Kamal Dasu
+ <kamal.dasu@broadcom.com>,  Piotr Wojtaszczyk
+ <piotr.wojtaszczyk@timesys.com>,  Vladimir Zapolskiy <vz@mleia.com>,
+  Harvey Hunt <harveyhuntnexus@gmail.com>,  Paul Cercueil
+ <paul@crapouillou.net>,  Maxim Levitsky <maximlevitsky@gmail.com>
+Subject: Re: [PATCH v5 00/58] mtd: rawnand: retain chip and controller state
+ across removal
+In-Reply-To: <20261115-submit-rawnand-retained-handle-lifetime-v1-v5-0-cbc49c5c5e74@gmail.com>
+	(James Hilliard's message of "Sun, 15 Nov 2026 23:29:15 -0700")
+References: <20261115-submit-rawnand-retained-handle-lifetime-v1-v5-0-cbc49c5c5e74@gmail.com>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Mon, 16 Nov 2026 16:29:38 +0100
+Message-ID: <87fqx0rdzx.fsf@bootlin.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -104,209 +125,390 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261116-sdhi_hs400-v1-0-c5bedd312408@bp.renesas.com>
- <20261116-sdhi_hs400-v1-3-c5bedd312408@bp.renesas.com> <sashiko-outbox-217008@kernel.org>
-In-Reply-To: <sashiko-outbox-217008@kernel.org>
-From: Biju Das <biju.das.au@gmail.com>
-Date: Mon, 16 Nov 2026 14:08:59 +0000
-X-Gm-Features: AclHuK9ZvygS4VW44O8Tz7cTK4R7bVPaN0SY-46xoL5MqjI10i2BuLdn1oOZx-M
-Message-ID: <CADT+UeBPa=C77QY55gHZ8jkMn174=hWH-Eip4ZCQB-MTWuJf3w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mmc: renesas_sdhi: Add RZ/G3L HS400 support
-To: sashiko-reviews@lists.linux.dev
-Cc: wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Nov 16, 2026 at 12:24=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
+James,
+
+If I may, I already told you how hard, difficult and painful it was to
+review your 100% LLM generated patches.
+
+The past 2 weeks, while I was off, you litteraly bombed me with not less
+than 379 patches.
+
+Please, stop.
+
+Thanks,
+Miqu=C3=A8l
+
+On 15/11/2026 at 23:29:15 -07, James Hilliard <james.hilliard1@gmail.com> w=
+rote:
+
+> An MTD handle can outlive controller unbind. Its metadata and NAND locks
+> must remain valid, including when a writable file closes and calls sync,
+> while further hardware access must be rejected after disconnection.
 >
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue to consider:
-> - [High] mmc: renesas_sdhi: broken clock and divider state in
->   mmc_hs400_to_hs200()
-> --
+> This builds on earlier MTD removal-lifetime work. Commit 19bfa9ebebb5
+> ("mtd: use refcount to prevent corruption") added MTD reference counting
+> [0], but retaining an MTD reference does not by itself retain the
+> driver-owned allocation containing the master. The read/unbind discussion
+> also covered raw NAND [1] and draining active operations [2]. Tze Yee Ng's
+> SPI-NOR series addresses the corresponding SPI-NOR paths [3].
 >
-> commit e37da0a9061ca81415249820ba8b669566811e04
-> Author: Biju Das <biju.das.jz@bp.renesas.com>
+> Following Greg's review [7], separate class-device data from the MTD
+> backing allocation. Delete the device's interfaces and drain NVMEM and
+> class PM callbacks before releasing backing data. Bare device references
+> retain an independently allocated device, whose type, PM dispatch and
+> final release are built in even when MTD is modular. NVMEM similarly
+> disconnects and drains provider and layout callbacks before unregister
+> returns; retained consumers keep core-owned metadata and receive -ENODEV
+> on subsequent access.
 >
-> mmc: renesas_sdhi: Add RZ/G3L HS400 support
+> Introduce opt-in backing-object ownership for MTD masters. Registered
+> nodes and acquired MTD handles retain the chip, while nested partitions
+> also retain their parent metadata. Unregister first so removal notifiers
+> can finish I/O, then disconnect raw NAND and drain admitted operations.
+> Hardware resources can be released without waiting for open files to clos=
+e.
 >
-> This commit adds HS400 support for RZ/G3L by introducing the
-> TMIO_MMC_HS400MODE2 flag, programming the RZG3L_SDHI_SCC_HS400MODE2
-> register, and skipping the internal /2 divider and non-zero clock divider=
-s
-> when in HS400 timing.
+> Virtual concatenations serialize publication and removal across physical
+> controllers. Disconnect and drain a published concatenation before any
+> component can disappear, then release its component references. An old
+> handle keeps the disconnected virtual device, independently of a later
+> replacement.
 >
-> > diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/re=
-nesas_sdhi_core.c
-> > index 7dfcf7f970aae..f15f766b7666d 100644
-> > --- a/drivers/mmc/host/renesas_sdhi_core.c
-> > +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> > @@ -135,7 +135,8 @@ static unsigned int renesas_sdhi_clk_get_rate(struc=
-t tmio_mmc_host *host,
-> >  {
-> >       unsigned int freq =3D clk_get_rate(clk);
-> >
-> > -     if (host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER)
-> > +     if ((host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER) &&
-> > +         host->mmc->ios.timing !=3D MMC_TIMING_MMC_HS400)
-> >               freq /=3D 2;
-> >
-> >       return freq;
-> > @@ -259,6 +260,14 @@ static void renesas_sdhi_set_clock(struct tmio_mmc=
-_host *host,
-> >                       clk &=3D ~SDHI_SD_CLK_CTL_DIV1;
-> >       }
-> >
-> > +     /*
-> > +      * RZ/G3L SoC HS400 mode has only 1 divider value.
-> > +      * Other divider values are prohibited
-> > +      */
-> > +     if ((host->pdata->flags & TMIO_MMC_HS400MODE2) &&
-> > +         host->mmc->ios.timing =3D=3D MMC_TIMING_MMC_HS400)
-> > +             clk =3D 0;
-> > +
-> >       clock =3D clk & host->pdata->clk_div_mask;
-> >       if (clock !=3D SDHI_SD_CLK_CTL_DIV1)
-> >               host->mmc->actual_clock /=3D (1 << (ffs(clock) + 1));
+> Run NAND and controller-specific cleanup during disconnection, while
+> the controller driver is still bound. Snapshot the OOB layout in core-own=
+ed
+> data before publication so metadata queries remain valid without driver
+> callbacks. The NAND core frees retained chip and controller allocations;
+> the final MTD put never calls back into the controller module. Ordinary
+> MTD and NVMEM handles retain the NAND core that implements their
+> operations, rather than the hardware driver.
 >
-> [Severity: High]
-> Does checking host->mmc->ios.timing =3D=3D MMC_TIMING_MMC_HS400 here and =
-in
-> renesas_sdhi_clk_get_rate() break clock and divider programming during
-> mmc_hs400_to_hs200()?
+> Share allocation ownership across the raw-NAND drivers, including
+> partially published probes. Shared controllers remain allocated until
+> their last retained chip is released. R852 allocates a new chip for each
+> card, and NDFC allocates controller state per binding.
 >
-> When mmc_retune() calls mmc_hs400_to_hs200(), it first lowers the clock t=
-o
-> <=3D 52 MHz while ios.timing is still MMC_TIMING_MMC_HS400.  Because
-> mmc_doing_tune() is true, renesas_sdhi_clk_update() does not lower the CP=
-G
-> clock, and forcing clk =3D 0 keeps CTL_SD_CARD_CLK_CTL at 0, so the bus
-> clock stays at 200 MHz when CMD6 switches the card to High Speed timing.
+> Based on NAND next at 30daaf3e7897, with Tze Yee Ng's module-reference
+> ordering fix [4], Karl Mehltretter's OTP cleanup fix [6], and the separat=
+ely
+> posted registration, operation-locking and controller probe/teardown fixes
+> identified by the prerequisite metadata. TLA+ models and their assumptions
+> and coverage limits are available in [5].
 >
-> Conversely, mmc_hs400_to_hs200() then changes ios.timing through DDR52, H=
-S
-> and HS200 before calling prepare_hs400_tuning()
-> (renesas_sdhi_reset_hs400_mode()).  During those intermediate steps, HS40=
-0
-> mode is still enabled in CTL_SDIF_MODE, SH_MOBILE_SDHI_SCC_TMPPORT2 and
-> RZG3L_SDHI_SCC_HS400MODE2, but ios.timing is no longer
-> MMC_TIMING_MMC_HS400, so renesas_sdhi_clk_get_rate() assumes the internal
-> /2 divider is active and renesas_sdhi_set_clock() writes prohibited
-> non-zero dividers to CTL_SD_CARD_CLK_CTL while hardware HS400 mode is
-> still active.
+> [0] https://lore.kernel.org/r/20230620131905.648089-2-alexander.usyskin@i=
+ntel.com
+> [1] https://lore.kernel.org/r/CAND4H7dz94Gsi_tXSQmLNme9uROnouOUwuCX9BW_+R=
+Cc2ZFDqA@mail.gmail.com
+> [2] https://lore.kernel.org/r/mafs0bjs73tbq.fsf@kernel.org
+> [3] https://lore.kernel.org/r/20261022035352.52129-1-tze.yee.ng@altera.com
+> [4] https://lore.kernel.org/r/20261022035352.52129-2-tze.yee.ng@altera.com
+> [5] https://github.com/jameshilliard/linux-h616-nand-tla
+> [6] https://lore.kernel.org/r/20260816163027.10044-1-kmehltretter@gmail.c=
+om
+> [7] https://lore.kernel.org/r/2026111037-stir-hermit-cb21@gregkh
 >
-
-
-Will integrate the below diff to fix the above issue.
-
-
- drivers/mmc/host/renesas_sdhi.h      |  2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 33 ++++++++++++++++++++++++----
- 2 files changed, 31 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdh=
-i.h
-index 8ae2ec04bd1f..d14cfd873bb9 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -94,6 +94,8 @@ struct renesas_sdhi {
-  const u8 *adjust_hs400_calib_table;
-  bool needs_adjust_hs400;
-  bool card_is_sdio;
-+ bool hs400_active; /* HS400 enabled in hardware */
-+ bool hs400_clk; /* divider bypassed for HS400 clock */
-
-  /* Tuning values: 1 for success, 0 for failure */
-  DECLARE_BITMAP(taps, BITS_PER_LONG);
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c
-b/drivers/mmc/host/renesas_sdhi_core.c
-index f15f766b7666..66da2d1e9370 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -133,10 +133,10 @@ static int renesas_sdhi_clk_enable(struct
-tmio_mmc_host *host)
- static unsigned int renesas_sdhi_clk_get_rate(struct tmio_mmc_host *host,
-       struct clk *clk)
- {
-+ struct renesas_sdhi *priv =3D host_to_priv(host);
-  unsigned int freq =3D clk_get_rate(clk);
-
-- if ((host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER) &&
--    host->mmc->ios.timing !=3D MMC_TIMING_MMC_HS400)
-+ if ((host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER) && !priv->hs400_clk)
-  freq /=3D 2;
-
-  return freq;
-@@ -227,12 +227,33 @@ static void renesas_sdhi_sclken(struct
-tmio_mmc_host *host, bool enable)
-  }
- }
-
-+static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
-+  struct renesas_sdhi *priv);
-+
- static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
-    unsigned int new_clock)
- {
-+ struct renesas_sdhi *priv =3D host_to_priv(host);
-  unsigned int clk_margin;
-  u64 clk =3D 0, clock;
-
-+ if (host->pdata->flags & TMIO_MMC_HS400MODE2) {
-+ /*
-+ * While HS400 is enabled in hardware only divider 0 is allowed.
-+ * Leaving HS400 (e.g. mmc_hs400_to_hs200()) lowers the clock
-+ * before the core calls prepare_hs400_tuning(), so disable
-+ * HS400 here once a non-HS400 clock is requested.
-+ */
-+ if (priv->hs400_active && new_clock &&
-+    new_clock <=3D MMC_HIGH_52_MAX_DTR)
-+ renesas_sdhi_reset_hs400_mode(host, priv);
-+
-+ if (new_clock)
-+ priv->hs400_clk =3D priv->hs400_active ||
-+ (host->mmc->ios.timing =3D=3D MMC_TIMING_MMC_HS400 &&
-+ new_clock > MMC_HIGH_52_MAX_DTR);
-+ }
-+
-  renesas_sdhi_sclken(host, false);
-
-  if (new_clock =3D=3D 0) {
-@@ -264,8 +285,7 @@ static void renesas_sdhi_set_clock(struct
-tmio_mmc_host *host,
-  * RZ/G3L SoC HS400 mode has only 1 divider value.
-  * Other divider values are prohibited
-  */
-- if ((host->pdata->flags & TMIO_MMC_HS400MODE2) &&
--    host->mmc->ios.timing =3D=3D MMC_TIMING_MMC_HS400)
-+ if ((host->pdata->flags & TMIO_MMC_HS400MODE2) && priv->hs400_clk)
-  clk =3D 0;
-
-  clock =3D clk & host->pdata->clk_div_mask;
-@@ -515,6 +535,8 @@ static void renesas_sdhi_hs400_complete(struct
-mmc_host *mmc)
-  sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2,
-        RZG3L_SDHI_SCC_HS400MODE2_HS400EN2);
-
-+ priv->hs400_active =3D true;
-+
-  sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
-        SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN |
-        sd_scc_read32(host, priv,
-@@ -655,6 +677,9 @@ static void renesas_sdhi_reset_hs400_mode(struct
-tmio_mmc_host *host,
-  if (host->pdata->flags & TMIO_MMC_HS400MODE2)
-  sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2, 0x0);
-
-+ priv->hs400_active =3D false;
-+ priv->hs400_clk =3D false;
-+
-  if (sdhi_has_quirk(priv, hs400_calib_table) || sdhi_has_quirk(priv,
-hs400_bad_taps))
-  renesas_sdhi_adjust_hs400_mode_disable(host);
-
---=20
-2.43.0
-
-Cheers,
-Biju
+> Assisted-by: Codex:gpt-6-astra
+> Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+> ---
+> Changes in v5:
+> - Use logical MTD registration state during unregister and failed
+>   registration cleanup, independently of retained class devices.
+> - Pass the master to provider get hooks, matching the put hooks.
+> - Preserve sibling partitions when a child is removed during parsing,
+>   and limit subpartition rollback to its parent.
+> - Add the introducing Fixes tag for the Technologic node ownership
+>   correction and collect Wolfram's Renesas Acked-by.
+> - Link to v4: https://patch.msgid.link/20261113-submit-rawnand-retained-h=
+andle-lifetime-v1-v4-0-556b1d7c6221@gmail.com
+>
+> Changes in v4:
+> - Keep MTD subdirectories behind CONFIG_MTD so boolean child options
+>   do not become built-in users of a modular MTD core.
+> - Serialize partition publication with deletion and retain a handle
+>   while parsing subpartitions. Reject children of removed partitions.
+> - Distinguish explicit NULL NVMEM owners from the parent-module
+>   fallback, including OTP providers backed by built-in NAND code.
+> - Register layout-owned cells explicitly, preserving provider cells
+>   added before or after a layout binds.
+> - Rebuild cell attributes across layout bind/unbind, free partial
+>   allocations on failure and remove attributes before device deletion.
+> - Pair NVMEM_REMOVE notifications only with successful NVMEM_ADD
+>   notifications and remove the redundant disconnected-device check.
+> - Resolve concatenation OOB layouts through the first component's
+>   master, including partition-backed components.
+> - Link to v3: https://patch.msgid.link/20261111-submit-rawnand-retained-h=
+andle-lifetime-v1-v3-0-ce537999741d@gmail.com
+>
+> Changes in v3:
+> - Finish NAND and driver cleanup during disconnection, leaving final
+>   allocation release in the NAND core, following Greg's networking exampl=
+e.
+> - Snapshot OOB layouts before publication and drain complete BBM/BBT
+>   updates before releasing their working state.
+> - Separate MTD class-device allocation and final release from backing-obj=
+ect
+>   ownership, following Greg's review.
+> - Drain class PM callbacks under the device lock before detaching backing
+>   data; keep device-type and PM dispatch storage with the built-in device.
+> - Drain NVMEM provider and layout callbacks during unregister, retaining
+>   core-owned metadata for old consumers and retiring cells across rebind.
+> - Keep NVMEM consumer-owner references, with converted raw NAND
+>   providers naming the NAND core instead of the controller module.
+>   Release write-protect GPIOs once provider callbacks are drained.
+> - Acquire an MTD handle for PTP OCP firmware updates through a class devi=
+ce.
+> - Drain concatenation operations before releasing components, including
+>   concurrent removal of masters without opt-in lifetime ownership.
+> - Use scoped cleanup consistently in Tegra probe and add the introducing
+>   commits for Socrates and FSL UPM, following Sashiko's review.
+> - Link to v2: https://patch.msgid.link/20261110-submit-rawnand-retained-h=
+andle-lifetime-v1-v2-0-9137d08f05df@gmail.com
+>
+> Changes in v2:
+> - Keep the MTD device callback owner pinned through callback return,
+>   with the final module put performed by the device core.
+> - Retain virtual-concat components across removal and rebind, serialize
+>   staging/publication and unwind incomplete partition registrations.
+> - Balance Tegra's probe-time child-node reference separately from the
+>   reference retained for the chip lifetime.
+> - Refresh the prerequisite stack to the separately posted fixes, using
+>   the latest QCOM child-probe revision.
+> - Keep the lifetime changes on top of those fixes: preserve QCOM scan
+>   before publication, R852 per-card initialization and Intel probe
+>   hardware shutdown.
+> - Fold Macronix disconnection handling into the NAND disconnect patch;
+>   its operation locking is supplied by the posted prerequisite.
+> - Use Karl Mehltretter's posted OTP cleanup fix as a prerequisite in
+>   place of the duplicate preparatory patch.
+> - Keep the NVMEM context callback module pinned until its final callback
+>   returns, independently of the provider's consumer owner.
+> - Use the posted fixes for dynamic partition publication and partition-no=
+de
+>   ownership. Keep master get/put accounting independent of
+>   later master registration in the MTD ownership patch.
+> - Propagate disconnection through BBT error recovery without marking
+>   the eraseblock bad.
+> - Make suspend of a disconnected, retained NAND device a no-op.
+> - Handle R852 card events during removal while preventing new work from
+>   being queued.
+> - Initialize Denali and Atmel cleanup variables at allocation and add
+>   the introducing-commit trailers for Orion and MPC5121.
+> - Link to v1: https://patch.msgid.link/20261107-submit-rawnand-retained-h=
+andle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com
+>
+> To: Miquel Raynal <miquel.raynal@bootlin.com>
+> To: Richard Weinberger <richard@nod.at>
+> To: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+>
+> ---
+> James Hilliard (58):
+>       nvmem: disconnect provider callbacks before unregister returns
+>       mtd: acquire an MTD handle from a referenced class device
+>       mtd: separate class devices from retained backing objects
+>       mtd: retain virtual concatenations across component removal
+>       mtd: rawnand: separate hardware disconnection from cleanup
+>       mtd: rawnand: share retained chip and controller ownership
+>       mtd: rawnand: sunxi: retain chip state until the final MTD put
+>       mtd: rawnand: plat_nand: retain open-handle state on removal
+>       mtd: rawnand: gpio: retain open-handle state on removal
+>       mtd: rawnand: stm32_fmc2: retain open-handle state on removal
+>       mtd: rawnand: denali: retain chips across controller removal
+>       mtd: rawnand: arasan: retain chips across controller removal
+>       mtd: rawnand: mxic: retain open-handle state on removal
+>       mtd: rawnand: intel: retain open-handle state on removal
+>       mtd: rawnand: tegra: retain open-handle state on removal
+>       mtd: rawnand: mtk: retain chips across controller removal
+>       mtd: rawnand: rockchip: retain chips across controller removal
+>       mtd: rawnand: atmel: retain chips across controller removal
+>       mtd: rawnand: orion: retain open-handle state on removal
+>       mtd: rawnand: socrates: retain open-handle state on removal
+>       mtd: rawnand: fsl_upm: retain open-handle state on removal
+>       mtd: rawnand: pasemi: retain open-handle state on removal
+>       mtd: rawnand: ams-delta: retain open-handle state on removal
+>       mtd: rawnand: xway: retain open-handle state on removal
+>       mtd: rawnand: hisi504: retain open-handle state on removal
+>       mtd: rawnand: vf610: retain open-handle state on removal
+>       mtd: rawnand: technologic: retain open-handle state on removal
+>       mtd: rawnand: loongson: retain open-handle state on removal
+>       mtd: rawnand: ma35d1: retain open-handle state on removal
+>       mtd: rawnand: pl35x: retain open-handle state on removal
+>       mtd: rawnand: mxc: retain open-handle state on removal
+>       mtd: rawnand: fsmc: retain open-handle state on removal
+>       mtd: rawnand: gpmi: retain open-handle state on removal
+>       mtd: rawnand: omap2: retain open-handle state on removal
+>       mtd: rawnand: marvell: retain open-handle state on removal
+>       mtd: rawnand: renesas: retain open-handle state on removal
+>       mtd: rawnand: meson: retain open-handle state on removal
+>       mtd: rawnand: cadence: retain open-handle state on removal
+>       mtd: rawnand: qcom: retain open-handle state on removal
+>       mtd: rawnand: cafe: retain open-handle state on removal
+>       mtd: rawnand: brcmnand: retain open-handle state on removal
+>       mtd: rawnand: au1550nd: retain chip state across removal
+>       mtd: rawnand: sharpsl: retain chip state across removal
+>       mtd: rawnand: davinci: retain chip state across removal
+>       mtd: rawnand: sh_flctl: retain chip state across removal
+>       mtd: rawnand: lpc32xx_slc: retain chip state across removal
+>       mtd: rawnand: lpc32xx_mlc: retain chip state across removal
+>       mtd: rawnand: ndfc: retain chip state across removal
+>       mtd: rawnand: txx9ndfmc: retain chip state across removal
+>       mtd: rawnand: ingenic: retain chip state across removal
+>       mtd: rawnand: mpc5121: retain chip state across removal
+>       mtd: rawnand: bcm47xxnflash: retain chip state across removal
+>       mtd: rawnand: fsl_elbc: retain chip state across removal
+>       mtd: rawnand: fsl_ifc: retain chip state across removal
+>       mtd: rawnand: r852: retain chip state across removal
+>       mtd: rawnand: nandsim: retain chip state across removal
+>       mtd: rawnand: cs553x: retain chip state across removal
+>       mtd: rawnand: diskonchip: retain chip state across removal
+>
+>  drivers/Makefile                                   |   2 +-
+>  drivers/media/pci/cobalt/cobalt-flash.c            |   2 +-
+>  drivers/mtd/Kconfig                                |   5 +
+>  drivers/mtd/Makefile                               |   5 +-
+>  drivers/mtd/devices/bcm47xxsflash.c                |   2 +-
+>  drivers/mtd/devices/docg3.c                        |   4 +-
+>  drivers/mtd/devices/mchp23k256.c                   |   2 +-
+>  drivers/mtd/devices/mchp48l640.c                   |   2 +-
+>  drivers/mtd/devices/mtd_dataflash.c                |   2 +-
+>  drivers/mtd/devices/mtd_intel_dg.c                 |  30 +-
+>  drivers/mtd/devices/powernv_flash.c                |   4 +-
+>  drivers/mtd/devices/spear_smi.c                    |   2 +-
+>  drivers/mtd/devices/sst25l.c                       |   2 +-
+>  drivers/mtd/devices/st_spi_fsm.c                   |   8 +-
+>  drivers/mtd/hyperbus/hyperbus-core.c               |   2 +-
+>  drivers/mtd/lpddr/lpddr2_nvm.c                     |   2 +-
+>  drivers/mtd/maps/lantiq-flash.c                    |   2 +-
+>  drivers/mtd/maps/physmap-core.c                    |   2 +-
+>  drivers/mtd/maps/plat-ram.c                        |   2 +-
+>  drivers/mtd/maps/pxa2xx-flash.c                    |   2 +-
+>  drivers/mtd/maps/sa1100-flash.c                    |   2 +-
+>  drivers/mtd/maps/vmu-flash.c                       |   2 +-
+>  drivers/mtd/mtd_blkdevs.c                          |   2 +-
+>  drivers/mtd/mtd_virt_concat.c                      | 526 +++++++++++----=
+------
+>  drivers/mtd/mtdconcat.c                            | 103 +++-
+>  drivers/mtd/mtdcore.c                              | 308 +++++++-----
+>  drivers/mtd/mtdcore.h                              |   5 +
+>  drivers/mtd/mtddevice.c                            |  59 +++
+>  drivers/mtd/mtddevice.h                            |  12 +
+>  drivers/mtd/mtdpart.c                              |  68 ++-
+>  drivers/mtd/mtdpstore.c                            |  50 +-
+>  drivers/mtd/nand/ecc.c                             |   3 +-
+>  drivers/mtd/nand/onenand/generic.c                 |   2 +-
+>  drivers/mtd/nand/onenand/onenand_omap2.c           |   2 +-
+>  drivers/mtd/nand/onenand/onenand_samsung.c         |   2 +-
+>  drivers/mtd/nand/raw/Makefile                      |   1 +
+>  drivers/mtd/nand/raw/ams-delta.c                   |  28 +-
+>  drivers/mtd/nand/raw/arasan-nand-controller.c      |  49 +-
+>  drivers/mtd/nand/raw/atmel/nand-controller.c       |  44 +-
+>  drivers/mtd/nand/raw/au1550nd.c                    |  23 +-
+>  drivers/mtd/nand/raw/bcm47xxnflash/main.c          |  18 +-
+>  drivers/mtd/nand/raw/brcmnand/brcmnand.c           |  65 ++-
+>  drivers/mtd/nand/raw/cadence-nand-controller.c     |  51 +-
+>  drivers/mtd/nand/raw/cafe_nand.c                   |  27 +-
+>  drivers/mtd/nand/raw/cs553x_nand.c                 |  44 +-
+>  drivers/mtd/nand/raw/davinci_nand.c                |  26 +-
+>  drivers/mtd/nand/raw/denali.c                      |  28 +-
+>  drivers/mtd/nand/raw/denali_dt.c                   |  13 +-
+>  drivers/mtd/nand/raw/denali_pci.c                  |   9 +-
+>  drivers/mtd/nand/raw/diskonchip.c                  |  17 +-
+>  drivers/mtd/nand/raw/fsl_elbc_nand.c               |  56 ++-
+>  drivers/mtd/nand/raw/fsl_ifc_nand.c                |  48 +-
+>  drivers/mtd/nand/raw/fsl_upm.c                     |  20 +-
+>  drivers/mtd/nand/raw/fsmc_nand.c                   |  19 +-
+>  drivers/mtd/nand/raw/gpio.c                        |  18 +-
+>  drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c         |  19 +-
+>  drivers/mtd/nand/raw/hisi504_nand.c                |  20 +-
+>  drivers/mtd/nand/raw/ingenic/ingenic_nand_drv.c    |  41 +-
+>  drivers/mtd/nand/raw/intel-nand-controller.c       |  20 +-
+>  drivers/mtd/nand/raw/internals.h                   |   2 +-
+>  drivers/mtd/nand/raw/loongson-nand-controller.c    |  21 +-
+>  drivers/mtd/nand/raw/lpc32xx_mlc.c                 |  38 +-
+>  drivers/mtd/nand/raw/lpc32xx_slc.c                 |  40 +-
+>  drivers/mtd/nand/raw/marvell_nand.c                |  46 +-
+>  drivers/mtd/nand/raw/meson_nand.c                  |  49 +-
+>  drivers/mtd/nand/raw/mpc5121_nfc.c                 |  26 +-
+>  drivers/mtd/nand/raw/mtk_nand.c                    |  40 +-
+>  drivers/mtd/nand/raw/mxc_nand.c                    |  23 +-
+>  drivers/mtd/nand/raw/mxic_nand.c                   |  23 +-
+>  drivers/mtd/nand/raw/nand_base.c                   | 103 +++-
+>  drivers/mtd/nand/raw/nand_bbt.c                    |  24 +-
+>  drivers/mtd/nand/raw/nand_lifetime.c               | 246 ++++++++++
+>  drivers/mtd/nand/raw/nand_macronix.c               |   8 +-
+>  drivers/mtd/nand/raw/nand_onfi.c                   |   4 +-
+>  drivers/mtd/nand/raw/nandsim.c                     |  21 +-
+>  drivers/mtd/nand/raw/ndfc.c                        |  34 +-
+>  .../mtd/nand/raw/nuvoton-ma35d1-nand-controller.c  |  42 +-
+>  drivers/mtd/nand/raw/omap2.c                       |  27 +-
+>  drivers/mtd/nand/raw/orion_nand.c                  |  24 +-
+>  drivers/mtd/nand/raw/pasemi_nand.c                 |  22 +-
+>  drivers/mtd/nand/raw/pl35x-nand-controller.c       |  38 +-
+>  drivers/mtd/nand/raw/plat_nand.c                   |  20 +-
+>  drivers/mtd/nand/raw/qcom_nandc.c                  |  39 +-
+>  drivers/mtd/nand/raw/r852.c                        | 111 +++--
+>  drivers/mtd/nand/raw/r852.h                        |   1 +
+>  drivers/mtd/nand/raw/renesas-nand-controller.c     |  37 +-
+>  drivers/mtd/nand/raw/rockchip-nand-controller.c    |  45 +-
+>  drivers/mtd/nand/raw/sh_flctl.c                    |  22 +-
+>  drivers/mtd/nand/raw/sharpsl.c                     |  22 +-
+>  drivers/mtd/nand/raw/sm_common.c                   |  15 +-
+>  drivers/mtd/nand/raw/sm_common.h                   |   2 +-
+>  drivers/mtd/nand/raw/socrates_nand.c               |  19 +-
+>  drivers/mtd/nand/raw/stm32_fmc2_nand.c             |  19 +-
+>  drivers/mtd/nand/raw/sunxi_nand.c                  |  46 +-
+>  drivers/mtd/nand/raw/technologic-nand-controller.c |  22 +-
+>  drivers/mtd/nand/raw/tegra_nand.c                  |  27 +-
+>  drivers/mtd/nand/raw/txx9ndfmc.c                   |  41 +-
+>  drivers/mtd/nand/raw/vf610_nfc.c                   |  20 +-
+>  drivers/mtd/nand/raw/xway_nand.c                   |  24 +-
+>  drivers/mtd/nand/spi/core.c                        |   2 +-
+>  drivers/mtd/nand/spi/esmt.c                        |   2 +-
+>  drivers/mtd/nand/spi/micron.c                      |   4 +-
+>  drivers/mtd/nand/spi/otp.c                         |   2 +-
+>  drivers/mtd/spi-nor/core.c                         |   2 +-
+>  drivers/mtd/ubi/build.c                            |   2 +-
+>  drivers/nvmem/Kconfig                              |   1 +
+>  drivers/nvmem/core.c                               | 463 ++++++++++++---=
+---
+>  drivers/nvmem/internals.h                          |  16 +-
+>  drivers/nvmem/layouts.c                            |   2 +
+>  drivers/nvmem/layouts/fixed-layout.c               |   2 +-
+>  drivers/nvmem/layouts/onie-tlv.c                   |  20 +-
+>  drivers/nvmem/layouts/sl28vpd.c                    |   3 +-
+>  drivers/nvmem/layouts/u-boot-env.c                 |  25 +-
+>  drivers/ptp/ptp_ocp.c                              |   7 +-
+>  include/linux/mtd/concat.h                         |  22 +-
+>  include/linux/mtd/mtd.h                            |  21 +-
+>  include/linux/mtd/rawnand.h                        |  37 +-
+>  include/linux/nvmem-provider.h                     |  16 +-
+>  118 files changed, 2751 insertions(+), 1265 deletions(-)
+> ---
+> base-commit: 30daaf3e7897b4a8d9b72e5b0c86dd6e2a4d7d85
+> base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git na=
+nd/next
+> change-id: 20261104-submit-rawnand-retained-handle-lifetime-v1-0b4225e5ce=
+0b
+> prerequisite-patch-id: a51b9cb4077105499133c413d58c7ad21d973b38
+> prerequisite-patch-id: b3679cda4dcb45ce7712bffe2dd0576b254df44d
+> prerequisite-patch-id: 07b5c70e44ad951d20eea9478c98fda35ec765c0
+> prerequisite-patch-id: abea50275922fe359d72ca4de5cbc211b04bbd57
+> prerequisite-patch-id: 57776b214ffb0331319f024412f21d35e4ca9056
+> prerequisite-patch-id: 09be2baaffe1f053704263cc4b0d39f2faa4f49c
+> prerequisite-patch-id: c3ad85600dc897ac310be450d8daa2275fb91ee6
+> prerequisite-patch-id: 4a85600553ddcc7db5a9537efd905a71cd623f65
+> prerequisite-patch-id: 579990ee4a49297efc5a593b00efb9cd73fa15e8
+> prerequisite-patch-id: 2ee61a8a32fd147d52e0f9d03758634912d8bfef
+> prerequisite-patch-id: 1487df8ce8e6c48471fd77c7470ce9de582dfe3c
+> prerequisite-patch-id: 5ecbe86f928d9c5c0bf2cb6065c5672708511fc4
+> prerequisite-patch-id: ac68e9b65d3aa5661bd7ac0f2e77dcf5c75fcfe0
+> prerequisite-patch-id: e70f0f0c4d430d416a3ad848b37ffad16bd7df07
+> prerequisite-patch-id: 05adcddbc50f745ee2640b8c21f3bf76a217f249
+> prerequisite-patch-id: 0b60b7ab6196076f327c919be5e7b8bb2051ee12
+>
+> Best regards,
