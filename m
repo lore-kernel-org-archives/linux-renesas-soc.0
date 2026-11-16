@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794817320;
-	b=UCnE/aibVkDkAxB+AYbrWd7MRiEjr0wH+R0eV3kg0jRuXMy9Cj3liUwBhtjmc1jLB0Sy
-	 SJYteigos+esAd/bTh8OGJu8hpjK6lNpg9w8hovyTmATYG5NtemoCV1f8W7PylmpCHmcf
-	 zMopcDg5mT59O2XzCQaDlxhXf3v7iPDtJErkivmnmIXwWnkQcaV8IXkRaflMQACTY67ty
-	 UrxsuAtDh33D8IX49WUXYKkh3R2r4wy+mWkfY3+qYWoAdRwg649OG0f41qEnQyLi8Jd+C
-	 DOcpO5vTwW1HpKgPcvToOQCyM5KyYj4snWPz/Im0vwoh+F9CZMWLcd1r6HZJkiT9T7A==
+	t=1794817329;
+	b=0rbLADOFSXWP2/fE3qeD0fmwvlX21Cm0y0fVeegpFsqYIXZ7YSL2RVKnlK52Wkxh6Ku7
+	 LVRB9YBCb0f1NJCSiS1JFGeo+G5xNfJlutXY/hrQlPUawJWYtcdsnkpd3vodBzqxRbM3V
+	 8zOuE5gHShSGF12ciZnbJPpnFK+2bypZTGQOYe8h8/jpYf+EMqPwdjP3XqZyvueRadHTY
+	 4L3dOkrCnDjTwDysJ/DLO/leBTOhB+1rHkpNa4pxd8JhDN7AgI3tyVo+2bJXopFpICylj
+	 O32L9EmshKBFNJ34z6pmdfHIPplVhbZa8UQIjE2P1KLXdcnXUqI3KFWilBP6DoQPKBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794817320;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794817329;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=hFHwL0dJHfEmg6WJ1ZYqq2RC1KHegZZ+9GEzz7lTf8g=;
-	b=Ud6S+pVhD88WQqelyD+sbf/ch3Cth1hUWfaz6TVpMJsnaTITN4BOCYhmxQls8W6uur2f
-	 fi55Z0mFpm+VXrMxHRttMVdtw0EnTMBDT5IDTfyNX+l/s+RDQpM8IgA3iH20XHJbegwOR
-	 YRxOGo3zg2R+JImn3rQy86R2WldDQ3nDWBL1SYpSn3OYkctyerf5li2kstSvqEH/M0Pg1
-	 5WU0LqL4t3HufFsM5TOzVSnfPjec4EvFzK9/0AhELgP8QxG9ZZ3GL9dLQuZ6R5YStnDPf
-	 rJXWP+7KSUl1tFijOdFyHTdOvQFHxh3F9/62Wf2Tbb4AFcpFNBI6ZEEaYEZcgpIp7/g==
+	bh=kntaO+oUTbJCXBEo8v7uvyycdeEcUVRAgtKFDNoUDNk=;
+	b=bN6tWfx9CRjBI5ElNWE68f+5uHG/lqAcvY01mJ52Xp6R5xYnh0iaEM0xrGAlSo3QeqJp
+	 WpyB5vVPxwlPIMsHYL1B7chQQjJBwNULVQT+pNqs0Jrw6FsztvzYoFPUbx/d8ec+BVXjN
+	 NNujy7VQ8UBPQHcHg6LqiXQ/hKQCtpAN4unY8mqTHyWZY/ahnuYZEfAdzqnj0CFicrx9a
+	 2CFRt4L+XeelIQQZyVH+Ypxbp/RIi7LlhAseydpgdQIEqtA0DEeR1DqAygl7YmZmWRvTA
+	 Dv/uKtCthzvDe7ZuNlbv6bMVPHvO0NnubrjWWgqXXD5lW+cDcoYfLRHSxKAxVzytrew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=a6f7XXeI;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=TDueOfo5;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA85606A32F
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 08:21:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EEA85606A32F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB142606A33B
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Nov 2026 08:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB142606A33B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=a6f7XXeI
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=TDueOfo5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=hFHw
-	L0dJHfEmg6WJ1ZYqq2RC1KHegZZ+9GEzz7lTf8g=; b=a6f7XXeI4EbsDhCBF8mg
-	EX6BluFyS6AAEdff0oZDzmNir0+tHKQfuoo9Ud2sFZnXmUqkaDEenLfPyMLoVwQt
-	q9jxxpbDOp7Fe6Ie4a+IRFfewMG9IHTvnGVAgG0YFvkYVD02XuYl7bbFjToGH6VZ
-	MC1T308y/oIwXKHChAX8Hvpo573ARyScH8pNA9GE+OEH433phKGPavS0PSlR2oCR
-	lzl0YfbXf3+oV4J0oPwBp3EhjPWHkkfhATrc9Td5LkXy4YuegozzUle2gKLAaK9g
-	aUD5estbCHMNCuTAydnLrBZb6ldUjle5Q+dYJ3771VHcZHXVtbO78xnP+5kAewtD
-	kQ==
-Received: (qmail 1194292 invoked from network); 16 Nov 2026 09:21:56 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Nov 2026 09:21:56 +0100
-X-UD-Smtp-Session: l3s3148p1@dYeTeGBgHroujnv5
-Date: Mon, 16 Nov 2026 09:21:56 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=knta
+	O+oUTbJCXBEo8v7uvyycdeEcUVRAgtKFDNoUDNk=; b=TDueOfo5XDcMHyVszCQE
+	h86anmmtL5Z3LjGcR8v/IdK2pKSPs02woMZvQQqXEnKTFQQxi3h+p4vbzOjlBh3R
+	/oJZqbCkaSOqUWgkk1NfuNsHg/JQyGNQX/f/rMY19mkY3W1itw1I3IrdnYY3vH5b
+	qq6Iy9Kqe1KlQjAivQan3SfgW5BTrEAbDRJLpn3LqFC6rmQy08N3Bm+mJp0umWLb
+	DI1sqTXE+BovYvsfJf3eIwfMMC7tBOimUI3+FV4uruJQft4D7FYocNRVWgalQYC1
+	QgaWPvtRZwiaKy7WMRQ2oKmE+OF1mCJIFMZ0MXbw6wnc/d6SNs/vNaiBSA8FZgSa
+	fw==
+Received: (qmail 1194441 invoked from network); 16 Nov 2026 09:22:05 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Nov 2026 09:22:05 +0100
+X-UD-Smtp-Session: l3s3148p1@+LkceWBgDoMujnv5
+Date: Mon, 16 Nov 2026 09:22:05 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,9 +68,10 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 0/8] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
-Message-ID: <avq9JH17YzYlO3Hk@shikoro>
+Subject: Re: [PATCH v4 1/8] clk: renesas: r8a78000: Add clk_hw to clk_map
+Message-ID: <avq9LcNeaugpmkgh@shikoro>
 References: <cover.1792163045.git.geert+renesas@glider.be>
+ <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -82,12 +83,16 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1792163045.git.geert+renesas@glider.be>
+In-Reply-To: <1d7da50cfb58232c6dd4c4afefb938fd7e62fdcd.1792163045.git.geert+renesas@glider.be>
 
+On Fri, Oct 16, 2026 at 05:55:40PM +0200, Geert Uytterhoeven wrote:
+> Prepare for mapping to other than fixed-rate clocks by adding a clk_hw
+> pointer to the clk_map structure, and populating it up-front.
+> 
+> Move r8a78000_cpg_priv.fixed_hws into fill_clk_map(), as it is no longer
+> needed afterwards, and drop NUM_FIXED_CLKS.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->     Describe hardware in DT, and perform mapping to abstractions offered
->     by SCMI in Linux.
-
-I used this series in multiple branches as a base to enable further IP
-cores on the X5H SoC. Worked fine, so tags for testing are coming now.
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
