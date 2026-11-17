@@ -1,49 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.128.198.184
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794883210;
-	b=tTudhQlrTscC49cnt68hkDma661QXXv/KVkDPF6wVOyuv98M6f5Mngutl89e1s6mYY25
-	 XIz5clpTz9hqy2TI0c63EiiM2JfvuNICq0gfrwPjMSBgu4m3R1qZTZvQxsPfTDVxEi9/o
-	 UIacni/FegHxsjIeoWTnTMfRiQoBJ2V2Ggs24B++2zWwDshS8ENNX1+b+SxwUS3RibHTR
-	 VgQ7+3SrVtN9M0nLKsQeQN+CDwzzgOE0L7a1sl+bJ1nC+7fBwmEnA/anh6Hg6SxpGblyV
-	 tmOAKqelrluJwUN4oag6oPRvew7KMSXtSXpXofNx9ETyzBrpcMnR8IK0gT6TVMfdApA==
+	t=1794885633;
+	b=eu1tza65fZkvYD9zWl4Q4/xwqbUDEg+Q0EvywN6B6W+EqXg5VjW9cdsF4aLKqhT58scu
+	 7VLKDhNxsb1if/myW0OY8FkEOxGvGj9NWwuyvbeN9hYRdAjh9y5c2qDpcatoHdqqRu6i2
+	 fZfgr3VXWe7csOmkfO8YkXKYbGj06a3M1UW1DMUetK2AUf4j15sp5Ekrb71RAEn17JFWT
+	 qZNmyynZdFd3ugoEiHlJCoM9j8NQOX4zVh/9YsPRChtZByKpb2bZ6v/Zic/TMpN4G01IB
+	 gHWecBQvAMi8cWKOphJIyRJNeL2hZNncV+pHGyAs3N7DueKmaYmQUSgK+sA/JjyY9+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794883210;
-	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
-	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc;
-	bh=X8I1zifAqnwMmcW4vAwYqXWI5tPDh39vSBjGAY6Y2a0=;
-	b=SMKt3+LMAgxQwgkoC2n/Jh7OiiMWAHvy7sQMInRnPDzF304Gw1lXgVJqIYUJomxfPmaN
-	 weeDJwtBJFTIRg0rOdOGauTn/uGyBn0X0O3PkSyJx6u25txJOs5UN1GmgTIDU3fPTKK26
-	 /nLryG62whVg0kNqJ2F+FpwTfqy76JDzCADItvCfs9WlBKrv4Yoa0A2zqfn3b97xZe63f
-	 /2iQioxPypaoenkDg5e5RU/uoM57o+NVBLpQ93JCjOLsjsXncBucwjaZrRpFRcJF8vx1e
-	 Ixh1GI+0a46vyVPDas/uhkhUr6EGFQ5ASRXaQcqnmLsRQFsgs3+lr8wLtl0hmE9m9JA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794885633;
+	h=DMARC-Filter:Received:Received:Received:Date:From:To:CC:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To:User-Agent:X-Originating-IP:X-ClientProxiedBy:
+	 X-DKIM-Results:X-DNSRBL:X-SPAM-SOURCE-CHECK:X-MAIL;
+	bh=VcgQojYjPCpv8sowER02XbhBZtVIazUlrZK6d+JWOcQ=;
+	b=0Wyn7xotSwviHeGjOe0fUI/4wpi1gGpes8bQnIJ4ui6jNvC7Gh1MwuZcOhqmSb9oAJWb
+	 h7WugrRvyqpUSF6lU1lgHqcNtfMR6VTSIkbdqC5E0b7nquaAK6hOYH7uQ1xMWei8nw0wy
+	 kR55sNjERpRCgkdbOUbZcZi5Fj9/3zOTvPX6Q0jKYXSXWVP/higg8tZTrI21P3ZbVjBdn
+	 P+RdFmV45GqsdxWvwTwVXHweDC6+oacSKM1NmJg2ce90slsXR2wXUP1LbKf8E8QLo04j6
+	 JKykM47tvZpOdQmMG4z3OkWGP+Wj14/OYLSLRpZjgl/xepULYJ9J1Z0mwzvuY9JAZpw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E1n8E6EK;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=andestech.com;
+	spf=pass smtp.mailfrom=andestech.com;
+	arc=none smtp.remote-ip=220.128.198.184
+Received: from Atcsqr.andestech.com (atcsqr.andestech.com [220.128.198.184])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0729E606A31C;
-	Tue, 17 Nov 2026 02:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E1n8E6EK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDFD1F000C4;
-	Tue, 17 Nov 2026 02:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794883209;
-	bh=X8I1zifAqnwMmcW4vAwYqXWI5tPDh39vSBjGAY6Y2a0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=E1n8E6EK2t+0wusvUhTe65yXVkODUYt535VwQBVbCPOg0jtlJ4cy1DjBny4f8bThj
-	 HrWaAA5gyiifesNvnSlpZLBDYFZjJlasNuTGhJp3fsXBLlUjuTy4D/AUX3ghQIRuWO
-	 iEu8Ap45zEhg3brM07FDjWC2D4RTu5KpTvOmKlBXJOyT8+FRazVrxrEO2FB3KMAcbg
-	 0/efxPHEIfPMrra5U+O176Gm2JQ/+1hDJVeTSjb6+EDEYr1P5Nqa5YGJyUNvVfEAn1
-	 U33C7l+abTNRpt3toz1tV8pjRYQlY5Xvt5xITLsuPwz1+5urOoaKnjcNDF0M2ViZw4
-	 H4V6L+RieDFSA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B4436391B088;
-	Tue, 17 Nov 2026 02:40:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592C9606A323
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 03:20:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 592C9606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (atcpcs54.andestech.com [10.0.1.154])
+	by Atcsqr.andestech.com with ESMTPS id 6AH3KEFm021723
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 17 Nov 2026 11:20:14 +0800 (+08)
+	(envelope-from minachou@andestech.com)
+Received: from ATCPCS34.andestech.com (10.0.1.134) by atcpcs54.andestech.com
+ (10.0.1.154) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.56; Tue, 17 Nov
+ 2026 11:20:14 +0800
+Received: from atcsi01.andestech.com (10.0.15.32) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 17 Nov
+ 2026 11:20:14 +0800
+Date: Tue, 17 Nov 2026 11:20:10 +0800
+From: Mina Chou <minachou@andestech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+        <alex@ghiti.fr>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <geert+renesas@glider.be>,
+        <magnus.damm@gmail.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <randolph@andestech.com>, <cyyang772@andestech.com>,
+        <tim609@andestech.com>, <az70021@gmail.com>
+Subject: Re: [PATCH v2 19/19] dt-bindings: riscv: add Andes A27L2 CPU
+ compatible
+Message-ID: <avvH6t8NHrya+hz6@atcsi01.andestech.com>
+References: <20261116003937.1776888-1-minachou@andestech.com>
+ <20261116-dreamless-matador-3163d4abbf0b@spud>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -53,55 +69,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v8 0/3] ptp: Add driver for R-Car Gen4
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <179488320853.300516.15277553314484783931.git-patchwork-notify@kernel.org>
-Date: Tue, 17 Nov 2026 02:40:08 +0000
-References: <20261110080727.2377040-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20261110080727.2377040-1-niklas.soderlund+renesas@ragnatech.se>
-To: =?utf-8?q?Niklas_S=C3=B6derlund_=3Cniklas=2Esoderlund+renesas=40ragnatech=2E?=@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
-	=?utf-8?q?se=3E?=@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, richardcochran@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
- sergei.shtylyov@gmail.com, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20261116-dreamless-matador-3163d4abbf0b@spud>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs54.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 6AH3KEFm021723
 
-Hello:
+On Mon, Nov 16, 2026 at 06:26:33PM +0000, Conor Dooley wrote:
+> [EXTERNAL MAIL]
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 10 Nov 2026 09:07:24 +0100 you wrote:
-> Hello,
+> Date: Mon, 16 Nov 2026 18:26:33 +0000
+> From: Conor Dooley <conor@kernel.org>
+> To: Mina Hui-Min Chou <minachou@andestech.com>
+> Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+>  alex@ghiti.fr, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+>  conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+>  prabhakar.mahadev-lad.rj@bp.renesas.com, linux-riscv@lists.infradead.org,
+>  devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+>  linux-kernel@vger.kernel.org, randolph@andestech.com,
+>  cyyang772@andestech.com, tim609@andestech.com, az70021@gmail.com
+> Subject: Re: [PATCH v2 19/19] dt-bindings: riscv: add Andes A27L2 CPU
+>  compatible
 > 
-> This series is the first part cleaning up how PTP timer support is
-> implemented on R-Car Gen4. Currently there is partial support for it in
-> some of the Ethernet devices that can use it, but not all.
+> On Mon, Nov 16, 2026 at 08:39:37AM +0800, Mina Hui-Min Chou wrote:
+> > Add the compatible string for the Andes A27L2 CPU core, which is used
+> > in the Allwinner V821 sun300i SoC. The V821 devicetree will be submitted
+> > separately by Allwinner.
 > 
-> The partial support have been implemented by hacking the gPTP module
-> directly into the first Ethernet device driver that used it, RTSN for
-> V4H and RSWITCH for S4. This is understandable as earlier R-Car
-> generations had a dedicated gPTP timer for each Ethernet device, but on
-> Gen4 there is a single system-wide PTP timer shared by all.
+> I'm going to apply this, on the basis that it will be used elsewhere.
+> Ordinarily, it should come with the allwinner series.
 > 
-> [...]
 
-Here is the summary with links:
-  - [net-next,v8,1/3] dt-bindings: ptp: renesas,rcar-gen4-gptp: Add R-Car Gen4
-    https://git.kernel.org/netdev/net-next/c/4b981dcfe5a9
-  - [net-next,v8,2/3] ptp: Add driver for R-Car Gen4
-    https://git.kernel.org/netdev/net-next/c/dbdfe25af31d
-  - [net-next,v8,3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-    (no matching commit)
+Hi Conor,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Got it, thanks for applying it~
+
+Thanks,
+Mina
 
 
