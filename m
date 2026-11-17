@@ -1,90 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794914174;
-	b=pWEYg/y40IvZ1L/4T70z4w9CA4h7r3lGHL+qtPuLzGIbZpWMhtbnt8ZmDm5sz7V/pzCM
-	 IbwOFm21v74P6eIczmhcszfCnjMskfTCe9thOaF9TmCMJ0xICrBq918Ox7wEIfxiiMG46
-	 e+aRS7juNtoNAykzgdNXl5RR0FWRS7qae+hlf6lWeY6qw1Wu/dl1FCLTaJUmUUZNnTTtA
-	 l4ebeMwsqWY06PhM5cxa3M+qkVr4B5VTUW59TRAFAJWvXFB0+565xkkEiIFrCO1wxVjss
-	 JmwO2Bpf3g8Ivry9JXioCtTQv8w6ssUBSV9AoF63wChTuxy08yuv9CpkXwVp5HPsxCA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794914174;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=XQnFS6mscVdKFv/wz+t4a1SX3rV0MI1PwhYts/rkw90=;
-	b=4T4ns/gf04MRHGXJOZBZDhTgLAfv2rmTdjOkob2OewagFN6N2WjS1VKRZ8M9Ow4DlySd
-	 s2F2qU/Y8LPz9CJDSSSazUUs/ZEbEBAkc2YkUgxhapOyyISRln01F1pZH67vBlfLr8jEw
-	 ssH2utc+/mm0scocAAYnXvNBcfIk+C8GIy2X398QjGaTUpmehP0eo91zXCQZf+m5D6mLC
-	 ra0W5Ta8SFks6LZbMQiW3dfzIuDQvI5Hu/aMWzrlUA1WvuUI55rsSLGkgS9KyyKIu+7vD
-	 XNY/wZ2JvhsBC7XdwIF8ipcI5Czgn3avaZrFZuhGx+vgabJRUA6HGC54YNuHa6FuEug==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=CdKUAUSm;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.41
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794914519;
+	b=n439Pv97nXn+6GDBKTRsGC3uOHhM7qnoCTtAySkvG4XlySAK2prqgfNtMo5q9JisjX/a
+	 0rqh8tGYlWOurhwlJJ7LVZjP+n+Yn3QiT4ajS0eEmBHzuUOCPgkZ7wwPUwb5beI/iQ9+t
+	 rWhHUuFHofZYw7m5AEUJqMioUEydQKWBgLSh+o8kYCsuKlo62k6fI3vjdGTCMhOEOrJsV
+	 fxdXs/ERxm2GQ+Wta3KJtChMQul2P412MQsZ+PoMnPazqqtATHirTFVTIcohx6ja8mCR1
+	 PEywsk9yhe0uklbkytlUv3rVeUNsQMH8XcsdyzswbUqY5Yxp6gMeBAATbWrfrenFH3Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794914519;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=cvFYVydmQCNuG61XmmYr+sAquJ4kRd4CpcFPkVmXEeM=;
+	b=0NSXC/xW1UN3V1/TxxqnJA+VXDfGtHqdBeg/gWXAxEaIP7o0ygyPER3Zmqe3XQdCKaT8
+	 XUpCCbOhQwXAMG0HykQG7k8Cf8GYpK2A++zqHW4f8fgqiso9cvSZ87rftLedVOhpaxum/
+	 3NO22xl0D8Ka4ygbY0H4ie5uQdtIzMwipozXDg4dNDaN4TOMiVi0whW4PhuD0+XvJEf4z
+	 txZ8Hlg1w8YL4/7O86U62EHRwIovVn4CcQLWhvMdv9KDbRcj6mEUDG4QBWD91kXgNIMB7
+	 SltpSQWUBRRFfpViA1RzK3WVFtc7ZszGliA80wiCdkdPPH9H5yLVO2xQi9HByl9rpMg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.161.41
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE86606A329;
-	Tue, 17 Nov 2026 11:16:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2DE86606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=CdKUAUSm
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 5541B205A36;
-	Tue, 17 Nov 2026 12:16:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794914171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XQnFS6mscVdKFv/wz+t4a1SX3rV0MI1PwhYts/rkw90=;
-	b=CdKUAUSmNxTOw1IaS8HkYsFHYApXR2MbTnN9CaWpMge98xW7Xhk4tRWUoIe809vCH8W/vA
-	lhOFxWoHaDqWxbIwyIUR9JXBZEIi6RmOyMP7GND3ri9nn3pjfZF/ExEgwTa/cUanOqofsi
-	DMSFVMJ1NsgVrk3CQdNtnuHYgzuuzBPSdiSXW7RixhEhjwYg77XHUzCLI7AuGRTqkfGBqJ
-	M3of13q14F/HsaY4dHT/CYY0l8mshMs8hhsHyfob0f9r8/EOdHwX8WyIvz51CzIKTTGRkr
-	3aUlO6V+SPzt5G1X2ibXMsDLgL8DhTz6zJ6D+uefCpa147sDfDXboYKHLW1SPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1794914171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XQnFS6mscVdKFv/wz+t4a1SX3rV0MI1PwhYts/rkw90=;
-	b=VuoCdtiWHF/TVQTK5bFCPkgt0usZdQQIy4NeWIAim68vBtdim/GftcIVzuqi0aM5G4Xne9
-	FH6F2G7PONlPSiDHwx68TSN1vhGusZ8NGWUFS1FuJmitVyhI8C2LYiqPk2+7MUlTcXwwSx
-	H8GtLV98Fz4xXwmLglatykTBdGBPzbw5PZDkAnhNf7UlkRpf8tee4RiwNLdH5xWrA0s5vz
-	gaISL1ltvnvi+bDk7LOkOiOEOd7PYsmcIB86FE0Bv44P46AZ0IIdzByx5cm0pP4v7GUc1D
-	M0rrCuJw+CGQtH+SnSz0aRfP/ihQw7NRksLL0vhE6KzTjhnhkK4cUIeZi61x7g==
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1794914171; a=rsa-sha256;
-	cv=none;
-	b=ShLCdOaaDAHp9Ny3fQv46zv7amkzhGI0d/7pDk+yUCi7wu1uYScHzRSO2NFhbjudbZBC9x
-	/LMRpu0moBV3OjV7WCpIsTyPsjvDFQrB6gHbASBbmVS9XxVLbZhU/EJBXX/qNL30Ua7dsm
-	IzA30O4rYMOslvgOKepb/dVHKIenRUlh93eu8uhffLR/NNKOSuQ1hQMCuInnqsxsIfsg1G
-	lfCq7Vbp0PNXBPBmUAQJm/cCnFWseJ+5Whtn8yAnaSjOMMPDOjw6gDSQY9g9aiacbu8ss0
-	WZQO6VgQgCxSukM5M2SeR6v0AWl4Tyh7w92CmCl9l1O+s8Ij5Ket9EZZs+W8+Q==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <33d3c07740e4702da3a1831415de906e940a0ae6.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: rzg2l-usbphy-ctrl: Permit disabling
- POWER_SEQUENCING again
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann
- <arnd@arndb.de>,  Biju Das <biju.das.jz@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 17 Nov 2026 12:16:11 +0100
-In-Reply-To: <0b1c87b3173a789f6227f13658e4befdac8e47e0.1794913893.git.geert+renesas@glider.be>
-References: 
-	<0b1c87b3173a789f6227f13658e4befdac8e47e0.1794913893.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C59606A323
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 11:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77C59606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-702fd86d674so3626470eaf.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 03:21:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794914518; x=1795519318;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cvFYVydmQCNuG61XmmYr+sAquJ4kRd4CpcFPkVmXEeM=;
+        b=SRmPArwOl7l3hl65Rg+A0KNowEEbKtH2CNmigSZ2YKqos9DCfPRN+LCdo7Aj2Uwc1k
+         LMDgIp1puwVP/kG0mX0G0PbZy6MVHAlETwFUJYNictfjhJOVaHj1YrUA8/Gz09hUTgt4
+         7yHvVu2WiIoY5lI7tM9Shp0xEwWn4nPWXB0arlRWC5JFMtr32HQQR37mi/sHr5Bf/OXj
+         hyn+pqGtvNFYP+WPuWvH6B9DEC0JgxE53+RRx5NqT7MzsPlwXxZvmUt/OiN0ni9KkM+t
+         gA3bq6KrkETKMnOp4VJQTUvagjZVkcKQSSP+DJR4lxBn6ZEHhYMxhu8puLEzTCfl1JFN
+         KQWQ==
+X-Forwarded-Encrypted: i=1; AL+hErFCy/n+FeRdYZBZNU+VjH0BCYl8i/re/DeYVvwTOGdgj+o4suyRiRuJ7VoHgVVMXreB6tcfbnvrvVMMOOoaMRUsjg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9vNq2ejHf30N9cUQb12F6Ug426Vd60Eg7kkkMbqL/mT4f78NVb
+	tKclHgcVZFp2WSmqlwLrxnOEpfE9f8LkZegpknv9p22V/XhKdDFZNQS58FmaEkVv
+X-Gm-Gg: AYBFou1DZtNd2L/td74sAlt8kbbzF4soL+ABKV7wNvhqHMsAmJ5INylgqUG/bLT13Hc
+	HFs+TYmWEYWrdl937Y2Q1RA3KB5AGGSNj4lTKVOP4o5z+75KDI4VILvT7GUcLuEc4IYwbMCdR46
+	/1447z6Ov8gIrAZ8+0ocFg5vMiJOur1m32cGzA4CtyT1Xh6AMCAPotvrf+Vg25MaZF0FN/LeMtZ
+	xoVcYlAOZRS7ubJF5MwlyYPn8VKMKdoWjrJgFy3gBxN+3Y2OvW9ooQDpRK7S+4n/dITKKxQXGuo
+	tBjCBHkIFBPahUlOHQCQ8J0lTSt/oMvs26xIucoix2sCNzIYkxlcX6WQdz10Ao+K9a4CGsI17Qv
+	75WMFMT6B0aVuaVUrgEsIE6Ufxrakc7tvQ5N1XqN0IxDW0CMf3+Mf7klY9MQC8pPI9UXWkjVBv5
+	5+EQz5G5lUMRpox4mYSkydrhyokN8/Dbz84pas2BUYRWIFUwatouFne0zys0B7906NEvs+nmMzu
+	MNmOhV+FPpFerE9EPeVlPaGtc8Ab6V0OP82LCKlndSP2TCMn092YLJ+0SEg/VJ+1Jcb7mpnvwzs
+	Lgx6H1y5hEj6hr2aOPhdJDau59vxOUufus+RQpE0FL1aQT9yzcZcTVUPJuMiKGu8Tqor0nQ=
+X-Received: by 2002:a05:6820:c2c5:20b0:71a:fdba:b5c with SMTP id 006d021491bc7-71afdba1028mr1814524eaf.53.1794914518324;
+        Tue, 17 Nov 2026 03:21:58 -0800 (PST)
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com. [209.85.167.170])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71ab4335912sm10468952eaf.13.2026.11.17.03.21.57
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Nov 2026 03:21:58 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-53dda625f63so3766806b6e.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 03:21:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHK3Swfxr3M/QLMe17kt+4t8wDg+3BUXJFIhMjJqFdMlFqxBPgjjpGlb0jaffAsdMvgHm17QF7LXTmRyv28BFIzDQ==@vger.kernel.org
+X-Received: by 2002:a67:e112:0:b0:7cc:2cef:b341 with SMTP id
+ ada2fe7eead31-7d64d482ff3mr2913593137.4.1794914018867; Tue, 17 Nov 2026
+ 03:13:38 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -94,18 +80,89 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+References: <20261112133210.3004176-1-arnd@kernel.org>
+In-Reply-To: <20261112133210.3004176-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Nov 2026 12:13:27 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUL1X9ZsXNiqCew40hCT4c5GyvG3CkOzt+jidZvVAUoQQ@mail.gmail.com>
+X-Gm-Features: Aa3M54pZEi7hoEPcYj_x7DNHC7Dh3oAPfO1LjOxVJlXMmy5auKREB8le1SS7INw
+Message-ID: <CAMuHMdUL1X9ZsXNiqCew40hCT4c5GyvG3CkOzt+jidZvVAUoQQ@mail.gmail.com>
+Subject: Re: [PATCH] reset: rzg2l-usbphy-ctrl: add power sequencing dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney@redhat.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Xuyang Dong <dongxuyang@eswincomputing.com>, Drew Fustini <fustini@kernel.org>, 
+	Junhui Liu <junhui.liu@pigmoral.tech>, Guodong Xu <guodong.xu@linux.dev>, 
+	Joakim Zhang <joakim.zhang@cixtech.com>, 
+	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, Sven Peter <sven@kernel.org>, 
+	=?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+	Robert Marko <robert.marko@sartura.hr>, linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Di, 2026-11-17 at 12:13 +0100, Geert Uytterhoeven wrote:
-> The power sequencing part is optional, and only needed on RZ/G3L
-> (SYSC_R9A08G046 selects POWER_SEQUENCING).  Users of other members in
-> the RZ/G2L family may want to enable this driver built-in, while keeping
-> POWER_SEQUENCING disabled.
->=20
-> Fixes: eac3b292a26e2210 ("reset: rzg2l-usbphy-ctrl: add power sequencing =
-dependency")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Arnd,
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Thu, 12 Nov 2026 at 15:14, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The dependency on CONFIG_POWER_SEQUENCING is ignored when
+> ARCH_RZG2L is enabled, and this can lead to a build failure
+> when power sequencing is in a loadable module but the
+> reset driver is built-in:
+>
+> drivers/reset/reset-rzg2l-usbphy-ctrl.o: in function `rzg2l_usbphy_ctrl_suspend':
+> reset-rzg2l-usbphy-ctrl.c:(.text+0x21c): undefined reference to `pwrseq_disable'
+>
+> Change the dependency to always depend on the power sequencing
+> interface.
+>
+> Fixes: 5ca65d048910 ("reset: rzg2l-usbphy-ctrl: Add RZ/G3L support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-regards
-Philipp
+Thanks for your patch, which is now commit eac3b292a26e2210
+("reset: rzg2l-usbphy-ctrl: add power sequencing dependency") in
+reset/reset/next.
+
+This breaks USB on e.g. RZ/Five when POWER_SEQUENCING is not
+enabled (e.g. rzfive_defconfig in renesas-devel), as supplier
+/soc/usbphy-ctrl@11c40000/regulator-vbus no longer has a driver.
+I guess the same issue can be seen on other RZ/G2L variants.
+
+Reverting this commit fixes the issue.
+
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -279,7 +279,8 @@ config RESET_RASPBERRYPI
+>
+>  config RESET_RZG2L_USBPHY_CTRL
+>         tristate "Renesas RZ/G2L USBPHY control driver"
+> -       depends on ARCH_RZG2L || (COMPILE_TEST && POWER_SEQUENCING)
+
+AFAIU, the power sequencing part is optional, and only needed on
+RZ/G3L (SYSC_R9A08G046 selects POWER_SEQUENCING).
+The fact that compile-testing required POWER_SEQUENCING before was
+already a red flag...
+
+> +       depends on ARCH_RZG2L || COMPILE_TEST
+> +       depends on POWER_SEQUENCING
+
+"depends on POWER_SEQUENCING || !POWER_SEQUENCING"?
+
+I have sent a fix
+https://lore.kernel.org/0b1c87b3173a789f6227f13658e4befdac8e47e0.1794913893.git.geert+renesas@glider.be
+
+>         select MFD_SYSCON
+>         help
+>           Support for USBPHY Control found on RZ/G2L family. It mainly
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
