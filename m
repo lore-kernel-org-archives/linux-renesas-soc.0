@@ -1,62 +1,147 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794926402;
-	b=INaMAxil41At7Eq+JyA6OQebbZU8sYtR4JTGvvnQeQ5d5W1WRQKhhjMhgx6IusqRUTwT
-	 8NYE7PwJ6w98Xp2G4l4jqO9HEwSDRrFzCLFmjLXHEo5NkGRltoDvJ7SrargZGzo8Es7dG
-	 Zetsb9VL2tSQfMreVFlB8ggNsiGWMb+wMr5/5TGhZnPcXklcOIqMK7HgilpLjiu/Ij7NZ
-	 j1HFFLd/tA84h1W/QDU/OywiBTlPqMhER+5KEgTpQEvDIltFV4lng3A/Y7UdXlBhVoTjC
-	 3ZUaU1FQrKmIC7C9d7Ae4e/nVAHqs7BB0RxDf/vsbMS6l2U1LMpcmd/ZRJQHoqek6ug==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794926402;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=/UuYqJQTWXtax5s5JvNf+z4bPEvQ+y4lOxlg7yjU+r8=;
-	b=eVNVq1JGSLBxBg/JzunmjAPGPHc1YSUgQn2WkI6RTTT4Rb+WRzB4FG5F5OBiyZ1kCdUH
-	 FtyjHWimHuC/6kc+zpHqwOPsWjtnBy9L6J7V9QXhlrY8QpT4gkedwMmJzhNaYTAlXj8bX
-	 UkWx3mA+wwRV3Uew/Hk7m0pTP0+/xRW66E+WxRIOQvEm/FI3NneN6j8FXvHOkcW2YwIFF
-	 pUpmWJZXghs1yX7R0qpzLn9rR5EhC+V4IZVL9+TxJhdOo2P+rnpDrfFFc4ApqYR9JciQv
-	 Z5SLaSwrCOMEYizi1aItuwXQJm091H8D6YyNlnEU3zEjuVNAXimBmxxSK600Q3L3uwg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=L6jRNYGW;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.38
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794926565;
+	b=qBi1xGN4nS9Q0bS7dKZCFbTzaRZllNDYbCz6+/B1oHmVk6pCdDJCq4WkkJGEE0Lm4Keb
+	 bO6uc1Su1+XEjQHtsvaetFO3XhVKcDMp2yEER/DCPEjZDOGGD1w2y9tLQUv/6qXPSiCvI
+	 xZSESOld9YUI1rs5NSEheqLE8wv+hBxTEGxxxNJU4XGwHXjWaaduBNn6S0fScke4Rh5vk
+	 4WZ4L8LxbyGusCbSLZMGyx8llbXFyEVEn662IlMYWmlky/7HxSOxHSrE/QBM6Q6AaMVL4
+	 HuQ4LZVcWiQZT75bEozyaAJpwHMFdWe5ukyEIyTuVCfS+LcHIq1w2DeP22RGd7NAH3g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794926565;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
+	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
+	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
+	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
+	 x-ms-office365-filtering-correlation-id:x-ms-exchange-senderadcheck:
+	 x-ms-exchange-antispam-relay:x-microsoft-antispam:
+	 x-microsoft-antispam-message-info:x-forefront-antispam-report:
+	 x-ms-exchange-antispam-messagedata-chunkcount:
+	 x-ms-exchange-antispam-messagedata-0:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-originalarrivaltime:
+	 X-MS-Exchange-CrossTenant-fromentityheader:
+	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+	 X-MS-Exchange-CrossTenant-userprincipalname:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=tKShF1xVuuYP04qc7eFONC8aq66+yValdUf96L75JdI=;
+	b=l8fmDn/Auw6C3CCo2v89sFAOrZGdQJyVaGpwg8wTlWN6JpcAPfn4n3+WDTs17ffeYPmq
+	 FFkiW+9bcf4IYBlXlWpQgD8mCDVSzbcJhSK86jyMUKtT/0rledYYtBMM5vcv/oAzaaSfA
+	 wgBRFm6dLVAvRGx8Y6H75T1clcBolqWCz0AQ1SqAbJ4axYf/cYMS2UWRthQHR3CmliQ4v
+	 eCvM5WRCNe3X6fHx27J2Z9Ph0n33UsgXkvP+Vz8CyifZ330KAXL2Zs/5clj42ND3jdL8S
+	 YYVv8FEApoVyQARfkVbY7Qy1LOpPhwQ/FHhquowr60uHPfk6g0K6xdi7iWs+hn00XpQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=renesas.com;
+	spf=pass smtp.mailfrom=renesas.com;
+	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=B7K+zlVK;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.38
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010038.outbound.protection.outlook.com [52.101.228.38])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5807E606A323;
-	Tue, 17 Nov 2026 14:40:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5807E606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB66606A31C;
+	Tue, 17 Nov 2026 14:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2AB66606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=L6jRNYGW
-Received: from ideasonboard.com (unknown [93.65.100.155])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6AD0C929;
-	Tue, 17 Nov 2026 15:37:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1794926252;
-	bh=A3oLprRtXxoeEahjSFhcJ7ARIhfuR3XNRwciLjvDSkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L6jRNYGWCzfPnRfYMsgWIhoiG9EXIhrOwUX532ZjXktZvBSGpKksiVkVCZFi1781E
-	 qOF1GhOVRU0T6qgjKvX3kw3Lxtx2jshW0njGb0TSdNCDbAIOFjkMVShP7jrpHwdtQX
-	 0CFDH6kmxMlQrB2J2RwejTpoPTU2dyvfl00CjTIM=
-Date: Tue, 17 Nov 2026 15:39:57 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
-	Jai Luthra <jai.luthra+renesas@ideasonboard.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <barnabas.pocze+renesas@ideasonboard.com>, Yusuke Goda <yusuke.goda.sx@renesas.com>, 
-	Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] media: rcar-isp: ispcore: Add NV12M support
-Message-ID: <avxfncW0vkr01pWp@zed>
-References: <20261114-v4l2-add-nv12-v2-0-a3f5ecfd48d6@ragnatech.se>
- <20261114-v4l2-add-nv12-v2-4-a3f5ecfd48d6@ragnatech.se>
+	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=B7K+zlVK
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=idhArgH141ZIvKon6KNQ6laLVjS0iz/rXS6CfKR59mJZRnutEgBLRXgLD4WBLTtMq2XYtYMHYPwyfRt+xSgGZzmjlnfrA0Hhvt98By4i//7gudEH4/RWctQ1Feisuljc/lLTMpwEy4ewEiXX395dyhcv653PGo/taT0mUUD0voROTgcUnvJGt8bRyywcoREQhsvw+zF83o5eK0Tk+Ecu+Zb0QZVSrejB7ylTwld2rH+I8sAy10ydshYZpNL7csL06qUjlKnu1SQg6mvLDKoIlfdm5J+/3bRMVsFHbKR3WoOSa5pFgNp8c+2e/CP19oYdwWnCaOHwZIvHJiRSSBe//w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tKShF1xVuuYP04qc7eFONC8aq66+yValdUf96L75JdI=;
+ b=t8Oq+tKnn8GiMTx2lwj2OdB+tywcmLeHgfPjLaXzzTHwYq84e5HagxnG65DkHdnrYdAFSypA0RYLOkWwCq8E00x1WVeYF3jFpJDyuD70aWm/FKrgaRLEXILeMH0BbgL2sq7t0zs9FHituZ0XEvFXJL3+zeZV8gTEud4P6QzCM4FXkFWUc5puhDm8NPNmSpwkBLEszv1ZIgmGHIQRyXdJ/OK7ICUa7LMJ523i7/jBj1hSe8uRY0ypp2sJ8SyzC0ozvgrN2dIWO+bVRrjJblVUxDcc20nDiXWJIul8fQ2bW0d/8Yb6N3Q4C4R64h0S8LA3QrkxRaI58ecvGPDH/nYfvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tKShF1xVuuYP04qc7eFONC8aq66+yValdUf96L75JdI=;
+ b=B7K+zlVKnbURiCcglPvdQHlxmsgSBtHma6I/lK8WkOVpz3q2Q5ka0Z40V+tjdMHCnTJBINdPREO/ta5D9RLSxUWi6Vaoh6VUaLi+TQrtv+lMJfTZiFhvZIXsXDhZnh58m6nyb8JhC8qSrpdJtbklOVNGQa5QsA8M4pLPXwrThe0=
+Received: from OS3PR01MB8667.jpnprd01.prod.outlook.com (2603:1096:604:19b::10)
+ by TYCPR01MB11269.jpnprd01.prod.outlook.com (2603:1096:400:3c0::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Tue, 17 Nov
+ 2026 14:42:42 +0000
+Received: from OS3PR01MB8667.jpnprd01.prod.outlook.com
+ ([fe80::a7ca:1a29:beab:1921]) by OS3PR01MB8667.jpnprd01.prod.outlook.com
+ ([fe80::a7ca:1a29:beab:1921%6]) with mapi id 15.21.0615.013; Tue, 17 Nov 2026
+ 14:42:37 +0000
+From: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>, William Breathitt Gray
+	<wbg@kernel.org>
+CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 12/14] counter: rz-mtu3-cnt: keep cascade_counts_enable
+ in sync with usage
+Thread-Topic: [PATCH v3 12/14] counter: rz-mtu3-cnt: keep
+ cascade_counts_enable in sync with usage
+Thread-Index: AQHddn5N90mT1xj6H0WlMorvKvY7bbcyUrQAgAAAx3A=
+Date: Tue, 17 Nov 2026 14:42:37 +0000
+Message-ID:
+ <OS3PR01MB86672C1B41ED3C798046043F857B2@OS3PR01MB8667.jpnprd01.prod.outlook.com>
+References: <20261117102607.2504551-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20261117102607.2504551-13-cosmin-gabriel.tanislav.xa@renesas.com>
+ <TYYPR01MB6603AC9AD34C12A598166EC8867B2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
+In-Reply-To:
+ <TYYPR01MB6603AC9AD34C12A598166EC8867B2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB8667:EE_|TYCPR01MB11269:EE_
+x-ms-office365-filtering-correlation-id: 3c70263a-ee18-490d-c9fa-08df44b9067d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|23010399003|376014|1800799024|18002099003|6133799003|22082099003|261009223027099003|11063799006|56012099006|10067099003|4143699003|261102123227099003|261021123027099003|261028144727099003|261026140227099003|261026121527099003|261022075727099003|38070700021|261021121427099003|261022105027099003;
+x-microsoft-antispam-message-info:
+ eqjnYMJkWKI8hkNsqFf9Cq2clx2nOtvTxKMem0yOBKokb8I4v0unMBfxA+RhfJTmPxRyQzy4WRuyhJ815QGYejdPeMzWFEpZBJ0CkVrvCYvXMLDdCt6K4oMBgV9IiS3gXUtDqp7ddEtGkYm9aI+210v6tD5uCC+u0t3blNHIUxQ97g1l1M4k8nanv3hw2+WVpdBa0oAKudUAAdtGBkaqkHGxklsOhpxkjQaXdzVvRxUjYNi39KNqbhGgMNw1QVuPiRvO73GHzubrZxNNS7mt3aMehX4mcQiVkdGHsJeio4EIh9HKiF8iS1xndD4w5L/7qecFzzRN4iIZ7HixGi8We5eDlYy/BXTP0BGyOfkp7n8SK0WReoOKf/eqo+At/eYaqWchaVQ+iaoKz1zMZPP/J7W6Cp6EwxPR/Tm4JUZyaQCDepCpnqOwxXE6eCQkepAaISDo8LlQLeaFzRJ4lsxsyMNNoOoHuJT3xbUrNziWm5/8hc5ocT38gFzPptjDl0OouaYo5/+iu2mQ+bCkGEMQOKGqTajXMy/N0nrl/v+nGyItrvCIBWzS/kLxdDWAmzA4pigqkoaBOYVJdT/QUKkZpEArvhSlr66Qy6VSgJRo/czzLnilD6NcJwkaM1JaeZlSQx6tLB/wgsel+IBUbth4qYK5dwti6XhwIIBc2y/H80fx4UON1mntpteZGqqqwQds9OTVBzA9duO4Ld5K0yBhrMMBhFRm3fhnCLC5xp3tPKo=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8667.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(18002099003)(6133799003)(22082099003)(261009223027099003)(11063799006)(56012099006)(10067099003)(4143699003)(261102123227099003)(261021123027099003)(261028144727099003)(261026140227099003)(261026121527099003)(261022075727099003)(38070700021)(261021121427099003)(261022105027099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?c3tz0L2VkHg1gCwgnFdLxDfelGME96PieFEfrt4y77pKIvzlnTqs8/MOgC?=
+ =?iso-8859-1?Q?FuFGR06ZHtDgoerVmXipHMeYqCDol6yqIvM3ceHgdLJLfUCr7sXUG+OwuI?=
+ =?iso-8859-1?Q?14K3SAOkzKTs+VZTkAqZFm2/PoVXWk7zHhDKJbNxCxQ1U78cxA3jnFNRsL?=
+ =?iso-8859-1?Q?h1RQbqgT202oMtNW7XSB6z7DFaca8hZyaw2v/Lg8YlM2Y6CUIBpNvSTUwq?=
+ =?iso-8859-1?Q?IUYwHYQPQMgPHZjcO6GRGNeufc/iyJb9ZIgjfsXTtXkeiHImeHU4zm8sZb?=
+ =?iso-8859-1?Q?1tO+1itTljqW5XI395N3MfIjvcpUYH00hCU1eCgA/EN0B9TUdwMl99vRJp?=
+ =?iso-8859-1?Q?vy6+Qzb/qbVuLkDP9eFh8v3ur6MCe8A2RR15dTUG1S6qXS7AFR7JiBOrBR?=
+ =?iso-8859-1?Q?OamoHVMosjBaxOm0WB/hkZi/0EjGZrDj9fYl3fdceb2BfACE5OhjEv9sco?=
+ =?iso-8859-1?Q?S0w9m2/ICxoucffdQyJ2lD8dgYiIq8aHR5bsRFFNCFsHABmnKJrIjhkR9O?=
+ =?iso-8859-1?Q?wDlsuuH1+I/M7YpA+jQG2QIVr1nIKgyll/v6UBCnaRhCEQklpIo1zkN/5U?=
+ =?iso-8859-1?Q?1VJg5q4No4c8qeAy+8+k0U8H6hXK2dsSPV6I+rXVN1xE3K3Vc1Qa66oNLy?=
+ =?iso-8859-1?Q?UdC8EtWs1GMVcHdEzh1RzAyJrqRJLxPuCstTyarSUJIhk553xpld4vFnpz?=
+ =?iso-8859-1?Q?V05VmDZLNNJ5QaPt/RmPd76H2CujAza3Ry6OUkIL4Va8Fb1BgNlzS4f3fT?=
+ =?iso-8859-1?Q?yu9wIWGqIMi8llXRi5eaza4C/0qyN4mmgeLp5TV/nwwEKZ+uJvCbMdTObs?=
+ =?iso-8859-1?Q?qcfvYW0KvxF4qRxkpeQWNqXcTsxzOOIWVgxU9SoXqm6sruBs6RC3/7c7nb?=
+ =?iso-8859-1?Q?GR40wMFlYzitRLZmoHA73C6rJSBMQwOeGA7SLycPxO6gg5xW42ZllBzd1V?=
+ =?iso-8859-1?Q?n3bsqRN3lGwgP5P66ywUCfswdyXQqHmt/xi3Fbwp5uL2km4e8RH8+TTWhi?=
+ =?iso-8859-1?Q?/5dCsClEYZ/d+xKyMIJ0/lFxQe+nddZX32aAD0+YnoRPH2/ilgkFa1PGOr?=
+ =?iso-8859-1?Q?Q8OBnTOjXNZyK+foYQNJVFStZ0q9RxCCYt11rUXd7C8dxVH3Xy4JszmBGv?=
+ =?iso-8859-1?Q?9k9VYI/JbGde1dMbwe0XDmnTRHnwN39OKB4OcU/vQNLTb5usCQcbZr9Wag?=
+ =?iso-8859-1?Q?In0bXMAmZcUn/O48cZtBZ3xBQgK9CflSw/EbVnnzx/9c5/n6NNfoefSVax?=
+ =?iso-8859-1?Q?2jmb/0rzbYX//ZSYdgmqVCRRNV/59H9HeOWd6vTwv0MtXBdQdvIU+5fvGq?=
+ =?iso-8859-1?Q?kyFOTfXUWFmqXN6rRd6CEo9vLmarYH+2GaYH9+rvfreeu6QA3PcmHNyVKm?=
+ =?iso-8859-1?Q?HU0O5I8u9BTjzbWnIw8ODuLlNt9uh0VPKFNyw8iZorhSp8W3YfUUcub3XI?=
+ =?iso-8859-1?Q?S7ob8e+gj2VF/U90EBazEwrJLAEkil9XI7roRyO/8jEu+E5jCSdNpROhJf?=
+ =?iso-8859-1?Q?eD6TAtJ2lp3GusVWIsEO5Q9mPP1vQGpASn0Rin3/z94hiv7vlWcgwBbJro?=
+ =?iso-8859-1?Q?gs1jel9m85RusH892K46ZJetDcJd4iamsVqkgda/45yeCJu9AcI/IrAdRL?=
+ =?iso-8859-1?Q?d2gtSYDL9JcusxsTTbLl6SaBDmcA2toeoZNHEw0iMJ0fGO/33NVkxzBUIF?=
+ =?iso-8859-1?Q?4eo1vldCVWgQ8y9huR7gBRe5iD0tTwn1DtDIv+kC1TBvecfCDhrWG1VT4S?=
+ =?iso-8859-1?Q?bNeuHNbLjwX+54K6qvsZwBxK4ufYjM/wgzcNQuEgL12YUElIKLtcQubWkv?=
+ =?iso-8859-1?Q?rwvoTMBXeNYfZ8IDWhTOAIaIZVm9XxOlAAf3vMzJxvceEpX6YpOZ?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,218 +151,321 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261114-v4l2-add-nv12-v2-4-a3f5ecfd48d6@ragnatech.se>
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8667.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c70263a-ee18-490d-c9fa-08df44b9067d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2026 14:42:37.7311
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bVQluwvfQ6KEgR+U/+y7W5KNykDJ1UZiKLPfgeFwLQy3bAk8mRJF8UvOn37BGeBwpTc1wduvCD39SfdmQid5QyUAF1LSEhk85+fhcnLDYaui7O4E5fq5UDPWrjxeu17o
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11269
 
-Hi Niklas
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> Sent: Tuesday, November 17, 2026 4:28 PM
+>=20
+> Hi Cosmin,
+>=20
+> Thanks for the patch.
+>=20
+> > -----Original Message-----
+> > From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> > Sent: 17 November 2026 10:26
+> > Subject: [PATCH v3 12/14] counter: rz-mtu3-cnt: keep cascade_counts_ena=
+ble in sync with usage
+> >
+> > LWA is enabled/disabled by writing 1/0 to the cascade_counts_enable sys=
+fs entry.
+> >
+> > The 32-bit channel cannot function without LWA being enabled, and the 1=
+6-bit channels cannot
+> function
+> > with LWA enabled.
+> >
+> > PWM mode cannot function with LWA enabled.
+> >
+> > It is possible to accidentally leave LWA enabled while trying to use PW=
+M mode, leading to unintended
+> > access to the TGRA or TGRB registers of
+> > MTU1 and MTU2, which should not be accessed while LWA is enabled.
+> >
+> > It is also possible to toggle LWA while PWM is enabled on MTU2, as the =
+checks inside
+> > rz_mtu3_lock_if_ch0_is_enabled() do not check if MTU2 is busy, even if =
+this setting affects MTU2.
+> >
+> > To handle this, write 1 to the LWA bit when enabling the 32-bit channel=
+, and automatically write 0
+> to
+> > it when disabling the 32-bit channel, to ensure that LWA is always in t=
+he correct state for any
+> > possible usage.
+> >
+> > Remove rz_mtu3_is_counter_invalid() checks as it is now guaranteed that=
+ LWA has the proper value if
+> a
+> > count is enabled.
+> >
+> > This also drops the busy check that rz_mtu3_lock_if_counter_is_valid()
+> > carried. A count cannot be enabled without the underlying MTU channel b=
+eing claimed as busy by the
+> > count driver itself, so the check is redundant.
+> >
+> > Keep the cascade_counts_enable sysfs entry for ABI compatibility.
+> >
+> > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> > ---
+> >
+> > V3:
+> >  * no changes
+> >
+> > V2:
+> >  * add struct rz_mtu3_cnt::cascade_counts_enable documentation
+> >  * move rz_mtu3_set_lwa() call after rz_mtu3_disable()
+> >  * mention the removed busy check in the message
+> >
+> >  drivers/counter/rz-mtu3-cnt.c | 95 +++++++----------------------------
+> >  1 file changed, 18 insertions(+), 77 deletions(-)
+> >
+> > diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cn=
+t.c index
+> > e3578850f024..07dd7f588911 100644
+> > --- a/drivers/counter/rz-mtu3-cnt.c
+> > +++ b/drivers/counter/rz-mtu3-cnt.c
+> > @@ -71,6 +71,7 @@
+> >   * @timer_mode: Cache for timer mode values
+> >   * @mtclkc_mtclkd: Cache for external input phase clock select value
+> >   * @direction: Cache for direction values
+> > + * @cascade_enable: Cache for cascade_counts_enable value
+> >   */
+> >  struct rz_mtu3_cnt {
+> >  	struct mutex lock;
+> > @@ -81,6 +82,7 @@ struct rz_mtu3_cnt {
+> >  	bool count_is_enabled[RZ_MTU3_MAX_LOGICAL_CNTR_CHANNELS];
+> >  	bool direction[RZ_MTU3_MAX_LOGICAL_CNTR_CHANNELS];
+> >  	bool mtclkc_mtclkd;
+> > +	bool cascade_enable;
+> >  };
+> >
+> >  static const enum counter_function rz_mtu3_count_functions[] =3D { @@ =
+-102,44 +104,6 @@ static inline
+> > struct rz_mtu3_channel *rz_mtu3_get_ch(struct counter_device *coun
+> >  	return &priv->ch[ch_id];
+> >  }
+> >
+> > -static bool rz_mtu3_is_counter_invalid(struct counter_device *counter,=
+ int id) -{
+> > -	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > -	unsigned long tmdr;
+> > -
+> > -	pm_runtime_get_sync(counter->parent);
+> > -	tmdr =3D rz_mtu3_shared_reg_read(priv->ch, RZ_MTU3_TMDR3);
+> > -	pm_runtime_put(counter->parent);
+> > -
+> > -	if (id =3D=3D RZ_MTU3_32_BIT_CH && test_bit(RZ_MTU3_TMDR3_LWA, &tmdr)=
+)
+> > -		return false;
+> > -
+> > -	if (id !=3D RZ_MTU3_32_BIT_CH && !test_bit(RZ_MTU3_TMDR3_LWA, &tmdr))
+> > -		return false;
+> > -
+> > -	return true;
+> > -}
+> > -
+> > -static int rz_mtu3_lock_if_counter_is_valid(struct counter_device *cou=
+nter,
+> > -					    struct rz_mtu3_channel *const ch,
+> > -					    struct rz_mtu3_cnt *const priv,
+> > -					    int id)
+> > -{
+> > -	mutex_lock(&priv->lock);
+> > -
+> > -	if (ch->is_busy && !priv->count_is_enabled[id]) {
+> > -		mutex_unlock(&priv->lock);
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	if (rz_mtu3_is_counter_invalid(counter, id)) {
+> > -		mutex_unlock(&priv->lock);
+> > -		return -EBUSY;
+> > -	}
+> > -
+> > -	return 0;
+> > -}
+> > -
+> >  static int rz_mtu3_lock_if_count_is_enabled(struct rz_mtu3_channel *co=
+nst ch,
+> >  					    struct rz_mtu3_cnt *const priv,
+> >  					    int id)
+> > @@ -195,17 +159,19 @@ static bool rz_mtu3_get_direction(struct rz_mtu3_=
+channel *const ch)
+> >  	return !!(tsr & RZ_MTU3_TSR_TCFD);
+> >  }
+> >
+> > +static void rz_mtu3_set_lwa(struct rz_mtu3_channel *const ch, bool
+> > +enable) {
+> > +	rz_mtu3_shared_reg_update_bit(ch, RZ_MTU3_TMDR3, RZ_MTU3_TMDR3_LWA,
+> > +				      enable);
+> > +}
+> > +
+> >  static int rz_mtu3_count_read(struct counter_device *counter,
+> >  			      struct counter_count *count, u64 *val)  {
+> >  	struct rz_mtu3_channel *const ch =3D rz_mtu3_get_ch(counter, count->i=
+d);
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > -	int ret;
+> > -
+> > -	ret =3D rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id=
+);
+> > -	if (ret)
+> > -		return ret;
+> >
+> > +	mutex_lock(&priv->lock);
+> >  	if (priv->count_is_enabled[count->id])
+> >  		priv->count[count->id] =3D rz_mtu3_get_count(ch, count->id);
+> >  	*val =3D priv->count[count->id];
+> > @@ -220,15 +186,11 @@ static int rz_mtu3_count_write(struct counter_dev=
+ice *counter,
+> >  	struct rz_mtu3_channel *const ch =3D rz_mtu3_get_ch(counter, count->i=
+d);
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> >  	u32 count_val =3D val;
+> > -	int ret;
+> >
+> >  	if (count->id !=3D RZ_MTU3_32_BIT_CH)
+> >  		count_val &=3D U16_MAX;
+> >
+> > -	ret =3D rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id=
+);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > +	mutex_lock(&priv->lock);
+> >  	if (priv->count_is_enabled[count->id])
+> >  		rz_mtu3_set_count(ch, count->id, count_val);
+> >  	priv->count[count->id] =3D count_val;
+> > @@ -347,14 +309,9 @@ static int rz_mtu3_count_ceiling_read(struct count=
+er_device *counter,
+> >  				      struct counter_count *count,
+> >  				      u64 *ceiling)
+> >  {
+> > -	struct rz_mtu3_channel *const ch =3D rz_mtu3_get_ch(counter, count->i=
+d);
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > -	int ret;
+> > -
+> > -	ret =3D rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id=
+);
+> > -	if (ret)
+> > -		return ret;
+> >
+> > +	mutex_lock(&priv->lock);
+> >  	*ceiling =3D priv->ceiling[count->id];
+> >  	mutex_unlock(&priv->lock);
+> >  	return 0;
+> > @@ -366,11 +323,8 @@ static int rz_mtu3_count_ceiling_write(struct coun=
+ter_device *counter,  {
+> >  	struct rz_mtu3_channel *const ch =3D rz_mtu3_get_ch(counter, count->i=
+d);
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > -	int ret;
+> >
+> > -	ret =3D rz_mtu3_lock_if_counter_is_valid(counter, ch, priv, count->id=
+);
+> > -	if (ret)
+> > -		return ret;
+> > +	mutex_lock(&priv->lock);
+> >
+> >  	switch (count->id) {
+> >  	case RZ_MTU3_16_BIT_MTU1_CH:
+> > @@ -407,6 +361,7 @@ static void rz_mtu3_32bit_cnt_setting(struct counte=
+r_device *counter)
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> >
+> >  	rz_mtu3_set_phcksel(priv->ch, priv->mtclkc_mtclkd);
+> > +	rz_mtu3_set_lwa(ch1, true);
+> >
+> >  	rz_mtu3_8bit_ch_write(ch1, RZ_MTU3_TMDR1,
+> >  			      priv->timer_mode[RZ_MTU3_32_BIT_CH]);
+> > @@ -485,6 +440,7 @@ static void rz_mtu3_terminate_counter(struct counte=
+r_device *counter, int id)
+> >  	if (id =3D=3D RZ_MTU3_32_BIT_CH) {
+> >  		rz_mtu3_disable(ch2);
+> >  		rz_mtu3_disable(ch1);
+> > +		rz_mtu3_set_lwa(ch1, false);
+> >  		rz_mtu3_release_channel(ch2);
+> >  		rz_mtu3_release_channel(ch1);
+> >  	} else {
+> > @@ -552,17 +508,9 @@ static int rz_mtu3_cascade_counts_enable_get(struc=
+t counter_device *counter,
+> >  					     u8 *cascade_enable)
+> >  {
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > -	unsigned long tmdr;
+> > -	int ret;
+> >
+> > -	ret =3D rz_mtu3_lock_if_ch0_is_enabled(priv);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	pm_runtime_get_sync(counter->parent);
+> > -	tmdr =3D rz_mtu3_shared_reg_read(priv->ch, RZ_MTU3_TMDR3);
+> > -	pm_runtime_put(counter->parent);
+> > -	*cascade_enable =3D test_bit(RZ_MTU3_TMDR3_LWA, &tmdr);
+> > +	mutex_lock(&priv->lock);
+> > +	*cascade_enable =3D priv->cascade_enable;
+>=20
+>=20
+> priv->cascade_enable=A0is never consumed, so setting this value to 0 and =
+32-bit count enabling
+> still set LWA=3D1 may be return error value for this scenario.
+>=20
 
-On Sat, Nov 14, 2026 at 08:55:19PM +0100, Niklas Söderlund wrote:
-> It is possible to support NV12M output by only outputting the CbCr plane
-> from even or odd lines. Enabling support for it is straightforward but
-> one snag around how the DMA-engine works.
->
-> When the DMA-engine is configured to only output CbCr data from odd or
-> even lines it still outputs blanks pixels to the buffer for the line
-> where no data is taken.
->
-> To work around this and still produce valid NV12 frames the device needs
-> to be configured so all blank pixels written to the buffer are part of
-> the line padding. In addition to also keeping the same number of padding
-> bytes as the Y plane.
+We only keep priv->cascade_enable so that the user-visible file reports
+a stable value, to preserve ABI compatibility. This patch merely allows
+usage of the 32-bit counter whatever the cascade_enable value may be.
 
-To confirm my understanding:
+Existing user scenarios keep working, unless they relied on specifically
+writing 0 to cascade_enable and then trying to use the 32-bit counter,
+expecting to get errors.
 
-The Y and CbCr planes have the same strides because:
+Please keep in mind that before this series the error wouldn't appear
+on enable either, just when accessing the ceiling or count values.
 
-1) in 2/4 the line stride gets doubled for the Y plane and the stride
-is copied to the CbCr plane
-2) the CbCr plane needs a doubled line stride  because empty data will
-end up being written to the second half of each line
+This does not seem like a real use-case to me as it does not make sense
+for users to depend on an error being generated.
 
-Is this correct ?
+The benefit is that new users will not have to touch the cascade_enable
+at all and the logic gets much simpler.
 
->
-> The DMA-engine is able to do this as we can set different strides for
-> the two planes and haw two DMA-engine lines (one with data + some
-> padding and one with only padding) make up a single correctly formatted
-> NV12 CbCr line.
->
-> For readers comparing the DMA configuration with the datasheet this
-> driver takes the CbCr data from even lines, compared to odd lines in the
-> datasheet example. The reason for this is that if odd lines are used the
-> first even line adds half a NV12 line of padding at the start of the
-> CbCr plane. To counter this the CbCr plane would need a padding line at
-> the start of the plane which is not supported, or we would need to set
-> the plane start address half a line before the buffer actually starts
-> and potentially corrupt memory as we write blank bytes outside our
-> buffer.
-
-Have you considered the following section of the chip TRM:
-
-(3). Memory image on external memory in YUV420/LUV420 format.
-
-Reading it suggests that the DENSE_LINE_MODE bit of register
-DMA_IMAGE_AXI_CONFIG can be used to avoid outputing empty lines when
-using YUV420 subsampling.
-
-The documentation says the STRIDE value is halved from what is written
-into the register when DENSE mode is used. So you would probably need
-to write a 2*stride in the register but you don't actually need
-to report a doubled bytesperline in 'struct v4l2_pix_format_mplane`
-from risp_io_input_try_format() ?
-
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/renesas/rcar-isp/core-io.c | 39 +++++++++++++++++++++-
->  drivers/media/platform/renesas/rcar-isp/core.c    | 40 +++++++++++++++++++++++
->  2 files changed, 78 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core-io.c b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> index 1c63194f6455..d3b302c5b66e 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core-io.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core-io.c
-> @@ -768,6 +768,39 @@ static void risp_io_capture_try_format(struct rcar_isp_core_io *io,
->  	pix->xfer_func = V4L2_XFER_FUNC_SRGB;
->
->  	switch (pix->pixelformat) {
-> +	case V4L2_PIX_FMT_NV12M:
-> +		pix->quantization = V4L2_QUANTIZATION_LIM_RANGE;
-> +		pix->num_planes = 2;
-> +		/*
-> +		 * The DMA-engine still outputs pixels for the height lines of
-> +		 * the CrCb plane. To produce a NV12 frame we must ensure all
-> +		 * these blank pixels are in the padding area of the frame.
-> +		 *
-> +		 * To do this the stride of the CrCb plane need to be half that
-> +		 * of the Y plane. The first "DMA-engine line" will write the
-> +		 * CrCb data + some blank padding, while the second "DMA-engine
-> +		 * line" will only write blank padding bytes. Two "DMA-engine
-> +		 * lines" will then create one correct NV12 line in the CrCb
-> +		 * plane.
-> +		 *
-> +		 * All frame data also needs to fits in the first half of the
-> +		 * line. The strict DMA flush settings used already ensures
-> +		 * this is always the case.
-> +		 *
-> +		 * Finally the NV12 stride of the Y and CrCb plane must be the
-> +		 * same and the R-Car ISP needs the hardware stride to be 256
-> +		 * byte aligned. By align the Y plane lines to 512 bytes the
-> +		 * CrCb planes hardware stride is always aligned with 256 when
-> +		 * cut in half.
-> +		 */
-> +		pix->plane_fmt[0].bytesperline =
-> +			ALIGN(risp_io_capture_bytesperline(pix->width, 1), 512);
-> +		pix->plane_fmt[0].sizeimage = pix->plane_fmt[0].bytesperline * pix->height;
-> +		/* Both planes must have the same length. */
-> +		pix->plane_fmt[1].bytesperline = pix->plane_fmt[0].bytesperline;
-> +		/* The CrCb plane is half height of the Y plane. */
-> +		pix->plane_fmt[1].sizeimage = pix->plane_fmt[1].bytesperline * pix->height / 2;
-> +		break;
->  	case V4L2_PIX_FMT_NV16M:
->  		pix->quantization = V4L2_QUANTIZATION_LIM_RANGE;
->  		pix->num_planes = 2;
-> @@ -794,9 +827,12 @@ static int risp_io_capture_enum_fmt(struct file *file, void *priv,
->
->  	switch (f->index) {
->  	case 0:
-> -		f->pixelformat = V4L2_PIX_FMT_NV16M;
-> +		f->pixelformat = V4L2_PIX_FMT_NV12M;
->  		break;
->  	case 1:
-> +		f->pixelformat = V4L2_PIX_FMT_NV16M;
-> +		break;
-> +	case 2:
->  		f->pixelformat = V4L2_PIX_FMT_XBGR32;
->  		break;
->  	default:
-> @@ -854,6 +890,7 @@ static int risp_io_capture_enum_framesizes(struct file *file, void *fh,
->  		return -EINVAL;
->
->  	switch (fsize->pixel_format) {
-> +	case V4L2_PIX_FMT_NV12M:
->  	case V4L2_PIX_FMT_NV16M:
->  	case V4L2_PIX_FMT_XBGR32:
->  		break;
-> diff --git a/drivers/media/platform/renesas/rcar-isp/core.c b/drivers/media/platform/renesas/rcar-isp/core.c
-> index 5cd21134a2d7..76be90e78420 100644
-> --- a/drivers/media/platform/renesas/rcar-isp/core.c
-> +++ b/drivers/media/platform/renesas/rcar-isp/core.c
-> @@ -341,6 +341,45 @@ static int risp_core_config_output(struct rcar_isp_core *core,
->  	/* For all frame capture slots. */
->  	for (unsigned int frame = 0; frame < 4; frame++) {
->  		switch (pix->pixelformat) {
-> +		case V4L2_PIX_FMT_NV12M:
-> +			risp_core_write(core,
-> +					ISPCORE_DMA_IMAGE_FRAME_MODE(index, frame),
-> +					1);
-> +			risp_core_write(core,
-> +					ISPCORE_DMA_IMAGE_FRAME_PIXEL_POSITION(index, frame),
-> +					0 << 24 | 0 << 16 | 4 << 8 | 16 << 0);
-> +			risp_core_write(core,
-> +					ISPCORE_DMA_IMAGE_FRAME_PIXEL_BITWIDTH_MINUS1(index, frame),
-> +					0 << 24 | 0 << 16 | 7 << 8 | 7 << 0);
-> +			/*
-> +			 * Pick CrCb data from even lines.
-> +			 *
-> +			 * The datasheet suggest taking the odd lines but that
-> +			 * would require padding at the start of the buffer to
-> +			 * create valid NV12 frame, or start writing outside the
-> +			 * buffer potentially corrupting memory.
-> +			 */
-> +			risp_core_write(core,
-> +					ISPCORE_DMA_IMAGE_FRAME_PIXEL_BPP(index, frame),
-> +					0 << 28 | 0 << 24 |
-> +					0 << 20 | 0 << 16 |
-> +					1 << 12 | 0 << 8 |
-> +					3 << 4  | 0 << 0);
-> +
-> +			risp_core_write(core,
-> +					ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP0(index, frame),
-> +					pix->plane_fmt[0].bytesperline);
-> +			/*
-> +			 * Stride of CrCb plane needs be cut in half as the
-> +			 * DMA-engine writes blank pixels for the lines not
-> +			 * processed.
-> +			 *
-> +			 * See risp_io_capture_try_format() for details.
-> +			 */
-> +			risp_core_write(core,
-> +					ISPCORE_DMA_IMAGE_FRAME_STRIDE_COMP1(index, frame),
-> +					pix->plane_fmt[1].bytesperline / 2);
-
-Ah here it is halved!
-
-We double the Y and CbCr planes stride (in 2/4) to accommodate the
-blank pixels (when using !DENSE mode), and here we halve it ? Is this
-because with 420 subsampling the CbCr plane is half the height of the
-Y plane ? So why doubling the value of pix->plane_fmt[1].bytesperline
-and then halve it when writing it to registers ? To over-allocate
-half a plane and fill it with blank lines ?
-
-I'm a bit surprised that !DENSE is the default mode, as it effecively
-requires to allocate 2 identically-sized planes for Y and CbCr,
-effectivelly filling half of the CbCr plane with non valid data.
-
-Do you end up with interleaved valid/non-valid lines in the CbCr plane ?
-How do these get discarded when the image is interpreted by userspace ?
-
-> +			break;
->  		case V4L2_PIX_FMT_NV16M:
->  			risp_core_write(core,
->  					ISPCORE_DMA_IMAGE_FRAME_MODE(index, frame),
-> @@ -436,6 +475,7 @@ static u32 risp_core_pix2bus(const struct rcar_isp_core_io *io)
->  		return MEDIA_BUS_FMT_SRGGB12_1X12;
->  	case V4L2_PIX_FMT_XBGR32:
->  		return MEDIA_BUS_FMT_RGB888_1X24;
-> +	case V4L2_PIX_FMT_NV12M:
->  	case V4L2_PIX_FMT_NV16M:
->  		return MEDIA_BUS_FMT_YUYV12_1X24;
->  	default:
->
-> --
-> 2.55.0
->
->
+> Cheers,
+> Biju
+>=20
+>=20
+> >  	mutex_unlock(&priv->lock);
+> >
+> >  	return 0;
+> > @@ -572,16 +520,9 @@ static int rz_mtu3_cascade_counts_enable_set(struc=
+t counter_device *counter,
+> >  					     u8 cascade_enable)
+> >  {
+> >  	struct rz_mtu3_cnt *const priv =3D counter_priv(counter);
+> > -	int ret;
+> >
+> > -	ret =3D rz_mtu3_lock_if_ch0_is_enabled(priv);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	pm_runtime_get_sync(counter->parent);
+> > -	rz_mtu3_shared_reg_update_bit(priv->ch, RZ_MTU3_TMDR3,
+> > -				      RZ_MTU3_TMDR3_LWA, cascade_enable);
+> > -	pm_runtime_put(counter->parent);
+> > +	mutex_lock(&priv->lock);
+> > +	priv->cascade_enable =3D cascade_enable;
+> >  	mutex_unlock(&priv->lock);
+> >
+> >  	return 0;
+> > --
+> > 2.56.0
