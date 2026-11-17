@@ -1,11 +1,11 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794933292;
-	b=Tmahrtl/jTmQiM8ByAxnaVnSIm+kT59RhfMWXkcOsYsNL1Di7iyQjU37GVLPqFRQPwNj
-	 GIEtxGZIkH0ROd8IGVkvtQuVJ34kVgJN6XS1eHqNYY/zg74PZ2rkvxLUvSSM7mnBAkoMw
-	 dcQAwntKSWLlJebiImbP7PSS4a6ooDXGvNrSUfWFpW9JpD9bZkHpI8jnShuVRG/ntt8QZ
-	 RtWlQTw+zPHtdfLHK7W/6x4EkDHMUecTQxVdGPievMcoq+biLuiEHQpA/7Hz+hd5/aVV1
-	 4xYCi8xVvyk8fzSo8q72c7f2jJuqt/oSbx+DMo+ee2SyXZIzitEaeJbfGPkP/ZOATzw==
+	b=ef3lL6VV2J1Bjav5OVQsh3AH5szK1/4633g6GNi+sjxn9+9ye7rxabZEU3de93sBSk1l
+	 LwbUu2TMoXM4ZJyj7oWcSGPeMqAs4Y7xpbn6mlOLuaj7y/HwBOp8032j9Y8QNfXLlZhB3
+	 Et4cK2HU7wXPIMFOCfKMEi7LosuNoRmgqnq/3b9HEE7I6IMa+bKvk+a7r6DpLaRT0lvIj
+	 nd2jxXeVoaTi6gFqY7wNu5D3SLRAeXnPMZJ8k79EGikzDvKgVj07qYXu+c1vJlgYMVQWo
+	 otIjBJ1im9MZYyd4LtIjLhy0XnKY2QXXm3DJsE9nOB5P5eCVfv3lvTxCxYe6ph7uilw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794933292;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
@@ -13,78 +13,77 @@ ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=G4VqzAzyHFDWVHFLx84TvM4z7hRkGfZ+L7UI3ozJ8uk=;
-	b=KHkpNXiH2PR2vQUjYI5yUt1u3hMfaTxqEY6DoNdjmQPywr7Awe4eZRab9TA37Q00drwQ
-	 NDx6HQpU3VMGdcgBcZHPjtwYolvGRefRYKoUghDogLFfHWM+2kA9L3fbj8y59fU+6phfo
-	 V9e1zHUm5VPfuYUD68zYj2PTAiKhWKaGiyKgGDahFLCfzIlEpaETBWgzMTHExJ3tPqcIT
-	 zCb5rp5XgslyJqiincVT234SvRrMVATwLtwr6BtjIZjomZEknA6W1NPJt5OJ2ZUVXrh/Y
-	 rAE43D8TZ4LDN6jBKCFtqMIAcPMXs8mprcjOlA/+Pl7m9KOf+ZsISnRwfmegvCam1Mg==
+	bh=eLlVDnZH+MZxPpX0IQdtxg+/0rKConPaWJSzdjopMGs=;
+	b=edtxy8/00R63oFqA5JFqlVnZ905vkWaF3CIcy5xVKMsl3HEN/hqvx2TU6q4jxvvkYalz
+	 Gw7NjsblFDdr3OL/Q7BceX95F3PTp9CjjospoAIRqZvBJKnhG62hRA2Laeiez4uMSN229
+	 4VsAA7hjaU9q+1NoVlfydXQAoloRX2St3nincA3UOkzQE6EbCwzFrnczj/dOYZRjQHLqe
+	 bRr0W25r9kSKM12DsRInXmfVN4qF6aQAZGYNk/UUBV+XndZ8EhitxmTN4eXU5ZupzgKoU
+	 WpX2Zt+pJDVOISExTvTPMY1UYP6JKMkETXhTgcvd2A3uqblzMfvwGjHOu3J/yY4p9CQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rwiyFm5J;
-	arc=none smtp.remote-ip=209.85.221.49
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LrQHqXXQ;
+	arc=none smtp.remote-ip=209.85.221.53
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9A6606A33F
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:34:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9F9A6606A33F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73781606A33B
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:34:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 73781606A33B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rwiyFm5J
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48dfc0421d9so4364670f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 08:34:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LrQHqXXQ
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-490d59c3edaso849170f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 08:34:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794933290; x=1795538090; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794933291; x=1795538091; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=G4VqzAzyHFDWVHFLx84TvM4z7hRkGfZ+L7UI3ozJ8uk=;
-        b=rwiyFm5J5KcFTQQE+S1XsoqkqIrP4yBvmZ+PbLMSBCw6Q7uFf8dpnzdG/VD/2FkR7W
-         iefd41L+YA8QWbSbBBc3PP13B3+9D7+UE8XFpfcHCAUInRS7H3BD/oLsjSTjPEpt04ty
-         Vz6+WNsHsrhdDqOOd+D+iA0K4ZhgjHhGmWR4qLRC1oyADzjXFx6IEfT2intMfxEseJ+V
-         XwPYY5+SlqS4It+XLva8w6zS/ymQdCF6Q6+wQjPZaLUDwTmwl2NzUbFkHpwArz7GeJO9
-         3nKwmndaRUKxaSQqR7AZxDqn5+8S7Xoq1PIK/6jaEPbEXq3vM3MdQSY+45Nutp5Cbe5w
-         sn1g==
+        bh=eLlVDnZH+MZxPpX0IQdtxg+/0rKConPaWJSzdjopMGs=;
+        b=LrQHqXXQvkJTHN3N3CK+2U/NdL+LZVL7ZW7ZSKTKwSa5XIOhQVQXymVXL7q2Tl6eXD
+         +E2oSakLXWf8MRouXJFHiua9c9xVtI1UXssvhy5bvNCHDTLCBzN4qYcYvlihly+ajM66
+         FHFQODXhjYMzKU8nL6Uf3h+OVOmRSsCJoq4Moo4q8HzS5aDiIWrUYIXW2OMd2BVRjrxG
+         elSGVKqd2Wy/KszuU1LVxLvpvzW+mFHJM0dpKSPu7Kz8uUpfBQKNrOazQykusnpDGCpi
+         mhovwiTpr8IVpVc6GfexRpVXCL3ksfho0VtNB62YIZ05IFwLpNQK2/eSRG+SegHTSrIs
+         4G0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794933290; x=1795538090;
+        d=1e100.net; s=20260707; t=1794933291; x=1795538091;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=G4VqzAzyHFDWVHFLx84TvM4z7hRkGfZ+L7UI3ozJ8uk=;
-        b=qrzHA2JjDALmr1AnQGc/FI/bPWppiJdjwV4uWrrIQkF28HiLQTTEsnG+2Mia7HdX95
-         uHrAHzTJpifOO6HdTpm5sMogyCdWpPVipxkcZ4h2qZ3ZjzbIN/RXxYk46t2VeYTXA4WF
-         mVeT3+UDL3yLF7FxWtvSJ0A0LrwdSPhdTNpq30/hYirGwqxDwijLUm4FqKY0x6VYkrC7
-         r/qAKL2lcreujABPhcwykpyusvNNsAAiZiFGk0224sC/zkjUa3caQ1OQgc/nQiivyft0
-         9Lnqarf1/vxOGkGA6hutpzAKeD2oeSWMRLp/gdMWndkKc4TYkAlRlhsteg2EUt8ymS6M
-         WIJg==
-X-Forwarded-Encrypted: i=1; AL+hErE9fOvBdsf8uFEWEpF5mCqsBEmXZdmOVSPf9l3WiZhoDl3HGMv173K24FlFxmI1MtfTR5Ww10zIXy+VUq+19+rcpA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8+LzykEJoY9OGhUEpFgnw2NkjJIWxwF0AZ5eHQgSkSbaJ43EUC
-	qteneDl7cXoFKNdc+G5oFovZy8rLyqAguDkSf1wZgPPYTopzMtP6TPYguo7AFg==
-X-Gm-Gg: AZFdTZeRy79pJ+vxLDdTJyZkezYXu9uaA/R4Rqgr2YMaL7BopNCzGuHwsD14u0WO+eT
-	Rz7e3jC77RZ5qkaPLyYEw93fDJeXZUqXpGVuW14SUPSZznD316uaDUYbNadkNV0BgN2fLAcZPU8
-	0VaGsnGyXf7h4UL6i1yLhJJJMlr1YrJAkESzCfyMRrQFjlaCFh2TUCi9VO7MDX7XxM2wXWhFFDM
-	ml6ZOj4ls5RwTANf6B9j83r/6JyU2y/svLK4gVA+BB9ArBlZ98h+zEw5xM9qUdCvtvgMeKY6Sz5
-	1ohFD2IDhPa/IacklXpvTARXV/JIJ2UtjgGkxr2MsL3jdLSCQVAmkrg2eBnLjxwfSJOW5vD7/rv
-	b2sIwpyDN8m0V6u/5mf/b0vQgpuA/TLVvdZBiioGB2aVRjini/sZcPWcVeQ5f8qzb97UYvlsCMV
-	NSRFFag5yj1IYh/R62xec8D6NnOnRLBpZWmdww3Suu4IDtdS+1SviLSmhcLjBn0TbgIQWDZjPhT
-	eL6fY7HE53OrF/EWlSImAfptBnyNWWWjqtbEqi2JCdEHw3V5TrW1yh2GX9xWVx3AyAVZzZeLbW5
-	0rZrbls+UNrKTeJXefKtqXMrkea2PKupSUiCgfI/Qs1+MiPkpFE7DbMiZDTJiJUDY6icRBz+4QG
-	NQ6EAWrG91HM=
-X-Received: by 2002:a05:6000:2dc9:b0:48d:f460:2c62 with SMTP id ffacd0b85a97d-49c71785323mr33874048f8f.33.1794933289986;
-        Tue, 17 Nov 2026 08:34:49 -0800 (PST)
+        bh=eLlVDnZH+MZxPpX0IQdtxg+/0rKConPaWJSzdjopMGs=;
+        b=ANRVGJ5XZ1Vuy9CbtzKmPQBWa9rxemJB1EprLTqMZ6nUlcooqWaU1YcIVpNQDySyvi
+         nCKJbCbDAzd29miPS3H2WmRkK6ztSP6G/cO0blODa7x2H1HEf57fhwuAkL/1t8PrWnpG
+         JMtQGv6Eyel2W7K5VBxAKyZwaOYIRIaqcm9zdZF+ZyweemiQNv4cyhZmsgY4C1trHAeX
+         tiXjue/ImRmOHQOjrzBUtXpf9zXNKohswOfnFKXIIKt9IvNSL1N3Hki7QZjNl6zWwb7E
+         Aqp/8Pb9fjgZXGHaelSiquQ9V58wiPiFWUfBDjUZ0iyv/leFmWNZqwfBNRqmUEbvcl5Y
+         YhmA==
+X-Forwarded-Encrypted: i=1; AL+hErERkpC9uLKu48TBXS5VFxA7Hf+/bD6nbiWfjg5H1iDUnVvdmS911MVD1GF7wi5gOXlt07emHOtBA0BLStdsetqprw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/CcEAxqi8wv/kj6mes7Nv/aalCMCdB3uCGRJHibebxVQsUW1Oi
+	oVNTrrQ50IYtRS8Kbzqq0nvBrJWknUHVVgTcoA5c3h/IluZKmmevEwpeFWpcrA==
+X-Gm-Gg: AZFdTZfpOVQUUlfPVlz8VHHH5MXt25FaE/3LWfSkyJUrVWE7Po+0wjeSm9zAGpS/Vzs
+	sItJnxv6LVVlkrLsYRs1/XfI4GhKZnqWDCMG+nnqWvjcTRmwuYSyhG2hnBh4bOicVk/vgqV91da
+	ZWx/R8XPIoHqIVmfsEOZJqKfYlNlsK0z078xK5lfSQjP44JexXQuALT+yjOYRsGLoDQnpCvD4du
+	x4NoMWcELAinWy2vrZ7pZmPy4pcYH9wPv6tIDidNVM5FkTYnUEsfKfeh6gQNQpKRw4D0g0W/yRy
+	yc4Ph08WnfUaYr6fKqCx9plgJEveBP+zi98NPHQGqZX5UCUuwBG81bgLYhxMZgF7lrqdPPrlDFB
+	fdchqCRGCsMY9lh+SNjcEYO/VR7gDlvKOVz/s4dt7gTSQpUvDmB1Alye3v/zaQt6wjUaQQoYlyT
+	459lVPClh60UNNxo1wF/UPrd4RW9AqtDvaQMze2lLgJNs9fDUTNg/USvRcFDeF/sKo5ahaYY/Fs
+	grWFdXxv6nz+cq/fAhe+LZHg5mT0+BS5Hoa6GfTUZY0qyYJHO7aIcozreajobPmSvPdPvBjM9XP
+	ggzgUMghhiZtmpZdhZjGC0/KVeSQgAxMylg1BIeGRt2WFC/ZUi/5mCZXSndUlhvHTXC5klPVZ33
+	oK3SWxZQREc0=
+X-Received: by 2002:a5d:6f17:0:b0:4a3:c963:c1c3 with SMTP id ffacd0b85a97d-4a3c963c1f3mr5812653f8f.15.1794933290685;
+        Tue, 17 Nov 2026 08:34:50 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:23c4:a702:d301:9260:9c28:f0f5:e091])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c6d079a2asm26672248f8f.16.2026.11.17.08.34.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c6d079a2asm26672248f8f.16.2026.11.17.08.34.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 08:34:49 -0800 (PST)
+        Tue, 17 Nov 2026 08:34:50 -0800 (PST)
 From: Biju Das <biju.das.au@gmail.com>
-Date: Tue, 17 Nov 2026 16:34:47 +0000
-Subject: [PATCH v3 2/3] mmc: renesas_sdhi: Make HS400 OSEL bit configurable
- per SoC
+Date: Tue, 17 Nov 2026 16:34:48 +0000
+Subject: [PATCH v3 3/3] mmc: renesas_sdhi: Add RZ/G3L HS400 support
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -96,7 +95,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261117-sdhi_hs400-v3-2-b4659189db69@bp.renesas.com>
+Message-Id: <20261117-sdhi_hs400-v3-3-b4659189db69@bp.renesas.com>
 References: <20261117-sdhi_hs400-v3-0-b4659189db69@bp.renesas.com>
 In-Reply-To: <20261117-sdhi_hs400-v3-0-b4659189db69@bp.renesas.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
@@ -104,116 +103,275 @@ To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794933288; l=4117;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794933288; l=10431;
  i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
- bh=SYAfKvjWLRvmc21t371OTT6TgUwITNpCe9K/LsMWWmY=;
- b=pMXLHb46a/LS8oP3axfxPDPS+u+Wt6ygFOeiojPu8970sOZsOMNQM4qKK0lPrTkojh2FbGEwf
- QYo2hvyotaIC6kRABLxNCMDuudh/7gTsPksstD+VzD8D83djD7228eH
+ bh=lc2Wyr3UNmntywnmSTgfuVajjcPVDlJulK6otSVC7X4=;
+ b=g6vpne12h4JqvrvfBlqI6iieQh4EzsbmcMtfRk6Ais/f5z5R6LZSmP+QLz6GkkyT8m7dNn6Ra
+ cgg6P445VVQA7Tn6sHkW4jund16Ba1QdYlrvXb2YrNV1YWOaVncquFS
 X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
  pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-RZ/G3L and R-Car both use SH_MOBILE_SDHI_SCC_TMPPORT2 but interpret
-its bitfields differently. R-Car uses BIT(4) (HS400OSEL) to control
-HS400 data output timing, while RZ/G3L uses the lower 16 bits for tuning
-delay and does not require the OSEL bit.
+Add HS400 support for the RZ/G3L SoC.
+
+RZ/G3L needs a second HS400 enable register, SDm_SCC_HS400MODE2
+(offset 0x020), alongside the existing TMPPORT2 path. Add a
+TMIO_MMC_HS400MODE2 flag (bit 16) for controllers that need it.
+
+RZ/G3L HS400 mode does not use internal divider and supports
+only one divider value "0" in the SD_CLK_CTRL register.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v2->v3:
-- No change.
+- Clear hs400_active/hs400_clk in renesas_sdhi_reset() after a HW reset.
+- Disable SCLKEN before leaving HS400 in renesas_sdhi_set_clock() to
+  avoid transiently enabling the clock with stale divider settings.
+- Drop the ios.timing check, which bypassed the divider before HS400
+  was enabled in hardware and halved the clock; hs400_clk now follows
+  hs400_active and the clock is reprogrammed in hs400_complete().
 v1->v2:
-- No change.
+- Using ios.timing to decide whether the HS400 divider restriction applies
+  is wrong: mmc_hs400_to_hs200() lowers the clock while ios.timing is still
+  HS400 and then walks through DDR52/HS/HS200 before prepare_hs400_tuning()
+  clears the HS400 bits, so the divider could stay at 200 MHz or prohibited
+  non-zero dividers could be programmed while HS400 is still enabled. So
+  tracking HS400 hardware state for RZ/G3L clock programming using 2
+  variables hs400_active and hs400_clk in struct renesas_sdhi.
 ---
- drivers/mmc/host/renesas_sdhi.h               | 1 +
- drivers/mmc/host/renesas_sdhi_core.c          | 6 +++---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 2 ++
- include/linux/platform_data/tmio.h            | 1 +
- 4 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/mmc/host/renesas_sdhi.h               |  2 +
+ drivers/mmc/host/renesas_sdhi_core.c          | 79 ++++++++++++++++++++++++---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 +-
+ include/linux/platform_data/tmio.h            |  3 +
+ 4 files changed, 79 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index a93e613e9821..8ae2ec04bd1f 100644
+index 8ae2ec04bd1f..d14cfd873bb9 100644
 --- a/drivers/mmc/host/renesas_sdhi.h
 +++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -42,6 +42,7 @@ struct renesas_sdhi_of_data {
- 	unsigned long sdhi_flags;
- 	u64 clk_mask;
- 	unsigned int max_divider;
-+	u32 osel_tmpout;
- 	u16 clk_div_mask;
- };
+@@ -94,6 +94,8 @@ struct renesas_sdhi {
+ 	const u8 *adjust_hs400_calib_table;
+ 	bool needs_adjust_hs400;
+ 	bool card_is_sdio;
++	bool hs400_active;	/* HS400 enabled in hardware */
++	bool hs400_clk;		/* divider bypassed for HS400 clock */
  
+ 	/* Tuning values: 1 for success, 0 for failure */
+ 	DECLARE_BITMAP(taps, BITS_PER_LONG);
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 56286431fd2c..7dfcf7f970aa 100644
+index 7dfcf7f970aa..f7888c4b13ee 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -333,7 +333,6 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
- #define SH_MOBILE_SDHI_SCC_SMPCMP_CMD_REQUP	BIT(24)
- #define SH_MOBILE_SDHI_SCC_SMPCMP_CMD_ERR	(BIT(8) | BIT(24))
+@@ -133,9 +133,10 @@ static int renesas_sdhi_clk_enable(struct tmio_mmc_host *host)
+ static unsigned int renesas_sdhi_clk_get_rate(struct tmio_mmc_host *host,
+ 					      struct clk *clk)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
+ 	unsigned int freq = clk_get_rate(clk);
  
--#define SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL	BIT(4)
- #define SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN	BIT(31)
+-	if (host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER)
++	if ((host->pdata->flags & TMIO_MMC_INTERNAL_DIVIDER) && !priv->hs400_clk)
+ 		freq /= 2;
  
- #define RZG3L_SDHI_SCC_HWADJ2_1_8V	0xff
-@@ -484,7 +483,7 @@ static void renesas_sdhi_hs400_complete(struct mmc_host *mmc)
+ 	return freq;
+@@ -226,14 +227,33 @@ static void renesas_sdhi_sclken(struct tmio_mmc_host *host, bool enable)
+ 	}
+ }
  
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
- 		       (SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
--			SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) |
-+			host->pdata->osel_tmpout) |
++static void __renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
++					    struct renesas_sdhi *priv);
++
+ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock)
+ {
++	struct renesas_sdhi *priv = host_to_priv(host);
+ 	unsigned int clk_margin;
+ 	u64 clk = 0, clock;
+ 
+ 	renesas_sdhi_sclken(host, false);
+ 
++	if (host->pdata->flags & TMIO_MMC_HS400MODE2) {
++		/*
++		 * While HS400 is enabled in hardware only divider 0 is allowed.
++		 * Leaving HS400 (e.g. mmc_hs400_to_hs200()) lowers the clock
++		 * before the core calls prepare_hs400_tuning(), so disable
++		 * HS400 here once a non-HS400 clock is requested.
++		 */
++		if (priv->hs400_active && new_clock &&
++		    new_clock <= MMC_HIGH_52_MAX_DTR)
++			__renesas_sdhi_reset_hs400_mode(host, priv);
++
++		if (new_clock)
++			priv->hs400_clk = priv->hs400_active;
++	}
++
+ 	if (new_clock == 0) {
+ 		host->mmc->actual_clock = 0;
+ 		goto out;
+@@ -259,6 +279,13 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 			clk &= ~SDHI_SD_CLK_CTL_DIV1;
+ 	}
+ 
++	/*
++	 * RZ/G3L SoC HS400 mode has only 1 divider value.
++	 * Other divider values are prohibited
++	 */
++	if ((host->pdata->flags & TMIO_MMC_HS400MODE2) && priv->hs400_clk)
++		clk = 0;
++
+ 	clock = clk & host->pdata->clk_div_mask;
+ 	if (clock != SDHI_SD_CLK_CTL_DIV1)
+ 		host->mmc->actual_clock /= (1 << (ffs(clock) + 1));
+@@ -315,6 +342,7 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
+ #define SH_MOBILE_SDHI_SCC_TMPPORT5	0x018
+ #define SH_MOBILE_SDHI_SCC_TMPPORT6	0x01A
+ #define SH_MOBILE_SDHI_SCC_TMPPORT7	0x01C
++#define RZG3L_SDHI_SCC_HS400MODE2	0x020
+ #define RZG3L_SDHI_SCC_HWADJ4		0x022
+ 
+ #define SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN		BIT(0)
+@@ -350,6 +378,9 @@ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
+ #define SH_MOBILE_SDHI_SCC_TMPPORT_DISABLE_WP_CODE	0xa5000000
+ #define SH_MOBILE_SDHI_SCC_TMPPORT_CALIB_CODE_MASK	0x1f
+ #define SH_MOBILE_SDHI_SCC_TMPPORT_MANUAL_MODE		BIT(7)
++#define RZG3L_SDHI_SCC_HS400MODE2_HS400EN2		BIT(0)
++
++#define RZG2L_SDHI_SCC_TMPPORT2_TMPOUT		GENMASK(15, 0)
+ 
+ static inline u32 sd_scc_read32(struct tmio_mmc_host *host,
+ 				struct renesas_sdhi *priv, int addr)
+@@ -364,6 +395,18 @@ static inline void sd_scc_write32(struct tmio_mmc_host *host,
+ 	writel(val, priv->scc_ctl + (addr << host->bus_shift));
+ }
+ 
++static void renesas_sdhi_set_tmpport(struct tmio_mmc_host *host, u32 tmpport)
++{
++	struct renesas_sdhi *priv = host_to_priv(host);
++	u32 val = tmpport;
++
++	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
++		val |= sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2) &
++		       ~RZG2L_SDHI_SCC_TMPPORT2_TMPOUT;
++
++	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, val);
++}
++
+ static void renesas_sdhi_set_hw_adjustment_delay(struct tmio_mmc_host *host,
+ 						 bool force_clear)
+ {
+@@ -374,12 +417,12 @@ static void renesas_sdhi_set_hw_adjustment_delay(struct tmio_mmc_host *host,
+ 		return;
+ 
+ 	if (host->mmc->ios.signal_voltage == MMC_SIGNAL_VOLTAGE_330 || force_clear) {
+-		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x0);
++		renesas_sdhi_set_tmpport(host, 0x0);
+ 		if (hwadj2)
+ 			sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HWADJ2,
+ 				       RZG3L_SDHI_SCC_HWADJ2_3_3V);
+ 	} else {
+-		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2, 0x1);
++		renesas_sdhi_set_tmpport(host, 0x1);
+ 		if (hwadj2)
+ 			sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HWADJ2,
+ 				       RZG3L_SDHI_SCC_HWADJ2_1_8V);
+@@ -486,6 +529,12 @@ static void renesas_sdhi_hs400_complete(struct mmc_host *mmc)
+ 			host->pdata->osel_tmpout) |
  			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
  
++	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
++		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2,
++			       RZG3L_SDHI_SCC_HS400MODE2_HS400EN2);
++
++	priv->hs400_active = true;
++
  	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
-@@ -621,7 +620,7 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
+ 		       SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN |
+ 		       sd_scc_read32(host, priv,
+@@ -515,6 +564,10 @@ static void renesas_sdhi_hs400_complete(struct mmc_host *mmc)
  
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
- 		       ~(SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
--			 SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) &
-+			 host->pdata->osel_tmpout) &
+ 	renesas_sdhi_sclken(host, true);
+ 
++	/* Reprogram the clock now that the HS400 divider bypass is active */
++	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
++		renesas_sdhi_set_clock(host, host->mmc->ios.clock);
++
+ 	if (priv->adjust_hs400_calib_table)
+ 		priv->needs_adjust_hs400 = true;
+ }
+@@ -607,11 +660,9 @@ static void renesas_sdhi_adjust_hs400_mode_disable(struct tmio_mmc_host *host)
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT3, 0);
+ }
+ 
+-static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
+-					  struct renesas_sdhi *priv)
++static void __renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
++					    struct renesas_sdhi *priv)
+ {
+-	renesas_sdhi_sclken(host, false);
+-
+ 	/* Reset HS400 mode */
+ 	sd_ctrl_write16(host, CTL_SDIF_MODE, ~SDIF_MODE_HS400 &
+ 			sd_ctrl_read16(host, CTL_SDIF_MODE));
+@@ -623,9 +674,21 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
+ 			 host->pdata->osel_tmpout) &
  			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
  
++	if (host->pdata->flags & TMIO_MMC_HS400MODE2)
++		sd_scc_write32(host, priv, RZG3L_SDHI_SCC_HS400MODE2, 0x0);
++
++	priv->hs400_active = false;
++	priv->hs400_clk = false;
++
  	if (sdhi_has_quirk(priv, hs400_calib_table) || sdhi_has_quirk(priv, hs400_bad_taps))
-@@ -1233,6 +1232,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		mmc_data->clk_mask = of_data->clk_mask;
- 		mmc_data->max_divider = of_data->max_divider;
- 		mmc_data->clk_div_mask = of_data->clk_div_mask;
-+		mmc_data->osel_tmpout = of_data->osel_tmpout;
- 		dma_priv->dma_buswidth = of_data->dma_buswidth;
- 		host->bus_shift = of_data->bus_shift;
- 		/* Fallback for old DTs */
+ 		renesas_sdhi_adjust_hs400_mode_disable(host);
++}
+ 
++static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
++					  struct renesas_sdhi *priv)
++{
++	renesas_sdhi_sclken(host, false);
++	__renesas_sdhi_reset_hs400_mode(host, priv);
+ 	renesas_sdhi_sclken(host, true);
+ }
+ 
+@@ -678,6 +741,8 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
+ 				sd_ctrl_write32(host, CTL_SD_STATUS, sd_status);
+ 
+ 			priv->needs_adjust_hs400 = false;
++			priv->hs400_active = false;
++			priv->hs400_clk = false;
+ 			renesas_sdhi_set_clock(host, host->clk_cache);
+ 
+ 			/* Ensure default value for this driver. */
 diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index eaf21f93f5d3..37eeaa52f011 100644
+index 37eeaa52f011..d9b9f9663386 100644
 --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
 +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -124,6 +124,7 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3 = {
- 	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
- 	.max_segs	= 1,
- 	.sdhi_flags	= SDHI_FLAG_NEED_CLKH_FALLBACK,
-+	.osel_tmpout	= BIT(4),
- };
- 
- static const struct renesas_sdhi_of_data of_data_rcar_gen3_no_sdh_fallback = {
-@@ -140,6 +141,7 @@ static const struct renesas_sdhi_of_data of_data_rcar_gen3_no_sdh_fallback = {
- 	/* DMAC can handle 32bit blk count but only 1 segment */
- 	.max_blk_count	= UINT_MAX / TMIO_MAX_BLK_SIZE,
- 	.max_segs	= 1,
-+	.osel_tmpout	= BIT(4),
- };
- 
- static const struct renesas_sdhi_of_data of_data_rz_g2l = {
+@@ -165,7 +165,8 @@ static const struct renesas_sdhi_of_data of_data_rzg3l = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+ 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
+ 			  TMIO_MMC_64BIT_DATA_PORT | TMIO_MMC_TUNING_DELAY |
+-			  TMIO_MMC_INTERNAL_DIVIDER | TMIO_MMC_HWADJ,
++			  TMIO_MMC_INTERNAL_DIVIDER | TMIO_MMC_HWADJ |
++			  TMIO_MMC_HS400MODE2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+ 			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
+ 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
 diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_data/tmio.h
-index 99b05c8c840a..501ca4355c34 100644
+index 501ca4355c34..81a37d6baefc 100644
 --- a/include/linux/platform_data/tmio.h
 +++ b/include/linux/platform_data/tmio.h
-@@ -72,6 +72,7 @@ struct tmio_mmc_data {
- 	unsigned short			max_segs;
- 	u64				clk_mask;
- 	unsigned int			max_divider;
-+	u32				osel_tmpout;
- 	u16				clk_div_mask;
- };
- #endif
+@@ -59,6 +59,9 @@
+ /* Some controllers have hw adjustment delay */
+ #define TMIO_MMC_HWADJ			BIT(15)
+ 
++/* Some controllers have HS400MODE2 */
++#define TMIO_MMC_HS400MODE2		BIT(16)
++
+ struct tmio_mmc_data {
+ 	void				*chan_priv_tx;
+ 	void				*chan_priv_rx;
 
 -- 
 2.43.0
