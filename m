@@ -1,61 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794937661;
-	b=yY3ib0C+zHiPjxJ8/uaThAZKUdv1dSrSyqT2EZobdzQaBtJ4HyCP1EF3Qg0bMM/deejB
-	 EUHeFxpcBCyfGL/hc3zNNkJjuvk58f5jiezJ6hJF5oTSYrMq72rBZNxpNEbdv6VDvq9qS
-	 au/WJtARCNXElmKbQghlYB+xdaPVe708Av7gAnTTloAUfVf4wCjdAL2weyEFXvyGs38MQ
-	 ahNrGnzW9dI2G8NlbWwc6m37Q9q7Kln6jsuBLbf+IL4GNxFO7qlCBDngTm3erB9y7libq
-	 3MdRF/wXKlZ4d790n1qxDLptUL6BDpXcSxUvb/0SqbJMiSLL/QE0T/BWNLEVMNAzgCg==
+	t=1794949755;
+	b=hfahf04EM5CCMia78zE2UmvXePGRwi/fxB2qX4lyNERaRzSAfr3kmG02W8HMl5kuov0K
+	 JTgEkGFws4sFp/go03n+D9JuGoZZDYWE5G3jhfLL3suL/LapYvmmCZWallS5aiVpXu+rG
+	 OG0BsqSfT8dnMw/XFrJvNy+QHwoRd+UCo7Mqn4JXJNER7lKZyVd85j6py4Uqtn9Cwuztb
+	 859RaUnolJlmgs0mP+1M7VaApBv0A6lHdMzf78OCfnvYNk5AvqLTZiOp2W4U5se0hUqxN
+	 /0cmWAvQb5oPYtIotZWSvbLPf3l7zwiVjPPFvtUgebYm68qSiyHlHwyGMAHCnwSJBcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794937661;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=cR2AOpEGYiKzlikyUl8O8YBDqVn1oEriwrxHwFqrRDc=;
-	b=oSCo3jrwxXU9UR+EQIf/NiznVD62nk8i4ChKWWt+asbij0UtbDxjPSPX5Ebv7JqJddoQ
-	 gmkCsEg742bycPFRAxX76RpPFcglpMXCN4hL2K2qv5Jyq6wyOO/yuJ8v0ktkd+m6qbI1x
-	 /MnLMt68d9+EVTPKWM4+Dgh6/6iH+kjozQ8ONGbVjTxhDogkgLCnzoTWSJt3Jq/YxM7fL
-	 RWiQ+3mFArUU4KOerTVdVH7hpWRT2ylNgh3IK35vJswVa7lS1RLLyr68nfSehYrSXa3wf
-	 EoDQ5c5hZs7p0iuKxCIPDp34OyaGMNs/UlTOkrrUTksSsA4BlbO4TcckSt2ToOCvpNw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794949755;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=2oPgIN/mPZ3AOqDwxPALpj+QOaOVLwizFzm9YmrV9tI=;
+	b=EhkYwN0pwRvGAHxT0uLGoIXF7t3vqsHSGMB45CmGtxeQRR6KX9C4/EmDuFDifqpTEeFP
+	 dd27zceNVqiArKCjOEc4osRpr+r42Mx/OfSirNTsE27w7TZXzWdKj5pNcz2QXfOHO5UEL
+	 saYzqZae9niT2lkCVAzUichaFmpLe/CakxhbcS6nwWntOfSVkEA1SL1io2XGHfutJGKhV
+	 7LO1gRa5sEf8nhu/zULUPLwE2czmnmgfIJeMBBE8GvOrCt5QBrjzzvnyK4e4qziXcnHms
+	 oNryN2KPGangCrFW+cFkAZfryHRdNdYKPA9GnsfPGUgIit8XXzTkmb50U1M5FHpbztQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZEmtPG3s;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b="ky5F/SLz";
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFEE606A31C;
-	Tue, 17 Nov 2026 17:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2C7606A32C
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 21:09:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C2C7606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZEmtPG3s
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E5B21F000C4;
-	Tue, 17 Nov 2026 17:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794937660;
-	bh=cR2AOpEGYiKzlikyUl8O8YBDqVn1oEriwrxHwFqrRDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZEmtPG3s6pzK3McY+POU0Zq2TtX9e07Rj1YqBffwbPVGP8TkDyQJCNbdPeg2omzxW
-	 faO2+XQKzaVmTsVMjy4bEJ9cWc0xGyqjv92fhd0DO2LTt3egZtGCtK7DzJMeS501eq
-	 mOzVO6yAQHf8dxcm57tesdPrPpt1U1REoMWk//2mNIlHiAmixSEY1FCMGteYEB+Tpk
-	 XBEEneUOaZCy5JVsvirYZWR/hreA139SsdaICnhvMAExt0Ey4XACSXIYgDooRh+qjd
-	 exUltOpX4iTIn8XI04WZwuCbRjG50FeYqJ5lv4u2+v5YgoGDyo/TrfO/aNiWXGugaq
-	 UGOcPA2xwfI0w==
-Date: Tue, 17 Nov 2026 17:47:35 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Mina Chou <minachou@andestech.com>
-Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	randolph@andestech.com, cyyang772@andestech.com,
-	tim609@andestech.com, az70021@gmail.com
-Subject: Re: [PATCH v2 19/19] dt-bindings: riscv: add Andes A27L2 CPU
- compatible
-Message-ID: <20261117-yippee-blissful-76204cadd922@spud>
-References: <20261116003937.1776888-1-minachou@andestech.com>
- <20261116-dreamless-matador-3163d4abbf0b@spud>
- <avvH6t8NHrya+hz6@atcsi01.andestech.com>
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=ky5F/SLz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=2oPg
+	IN/mPZ3AOqDwxPALpj+QOaOVLwizFzm9YmrV9tI=; b=ky5F/SLzK3uOmY5b6Reb
+	fcyhNxspRrRc2N+jn6HG7ljeKluaGCWCm7D7CFUalh1ziL22uZLxuRuvtmFwApPB
+	xoSnEFeW3RsbHiNyueOTOQiwlURG4r81jEIWS9AAcQ4+Au5xbGtRGKmfeZiyCHVy
+	hP5fwBzaQYA9XiNH9xwKqb6gkqUzA2uTpluH0FUq13nO89uLd5HIB9A39GPHpVLM
+	PlGI+SCW7ekZ5+seUSKNrDq35Htu9ZURJzFPhmy8fE8av2xeWKUWznZBD16g43Vt
+	9E9126jHsQW/am1pDFhu7AbKUsOc+JDfwBk8q5OZWmCu8I6I7IxMjykB+eUDstO0
+	3Q==
+Received: (qmail 394249 invoked from network); 17 Nov 2026 22:09:09 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Nov 2026 22:09:09 +0100
+X-UD-Smtp-Session: l3s3148p1@Js4tTn9ghNEujntI
+Date: Tue, 17 Nov 2026 22:09:06 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Paul Louvel <paul.louvel@bootlin.com>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v7 3/3] ARM: dts: renesas: r9a06g032: add EDAC node
+Message-ID: <avzCbuXANntvBPDz@shikoro>
+References: <20261019-paul-v7-3-rc1-edac-v7-0-84c76c6d7595@bootlin.com>
+ <20261019-paul-v7-3-rc1-edac-v7-3-84c76c6d7595@bootlin.com>
+ <avxR5VZESPLklIuG@ninjato>
+ <DMXJ5VMIPGL9.1917ON486UJRD@bootlin.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -66,64 +76,58 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yL4HbPHY7ZmtVyGZ"
+	protocol="application/pgp-signature"; boundary="RObSsmBJ3diXCTFe"
 Content-Disposition: inline
-In-Reply-To: <avvH6t8NHrya+hz6@atcsi01.andestech.com>
+In-Reply-To: <DMXJ5VMIPGL9.1917ON486UJRD@bootlin.com>
 
---yL4HbPHY7ZmtVyGZ
+--RObSsmBJ3diXCTFe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 17, 2026 at 11:20:10AM +0800, Mina Chou wrote:
-> On Mon, Nov 16, 2026 at 06:26:33PM +0000, Conor Dooley wrote:
-> > [EXTERNAL MAIL]
->=20
-> > Date: Mon, 16 Nov 2026 18:26:33 +0000
-> > From: Conor Dooley <conor@kernel.org>
-> > To: Mina Hui-Min Chou <minachou@andestech.com>
-> > Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-> >  alex@ghiti.fr, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-> >  conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-> >  prabhakar.mahadev-lad.rj@bp.renesas.com, linux-riscv@lists.infradead.o=
-rg,
-> >  devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-> >  linux-kernel@vger.kernel.org, randolph@andestech.com,
-> >  cyyang772@andestech.com, tim609@andestech.com, az70021@gmail.com
-> > Subject: Re: [PATCH v2 19/19] dt-bindings: riscv: add Andes A27L2 CPU
-> >  compatible
-> >=20
-> > On Mon, Nov 16, 2026 at 08:39:37AM +0800, Mina Hui-Min Chou wrote:
-> > > Add the compatible string for the Andes A27L2 CPU core, which is used
-> > > in the Allwinner V821 sun300i SoC. The V821 devicetree will be submit=
-ted
-> > > separately by Allwinner.
-> >=20
-> > I'm going to apply this, on the basis that it will be used elsewhere.
-> > Ordinarily, it should come with the allwinner series.
-> >=20
->=20
-> Hi Conor,
->=20
-> Got it, thanks for applying it~
+Hi Paul,
 
-Just to note, because this patch was separated, sashiko did not review the
-driver changes. They looked fine at a quick glance, but I would like to
-see another revision (with this patch excluded obviously and the things
-that have been commented on so far solved) so that it can take a look.
+> > On second thought, any reason we don't want this enabled by default?
+>=20
+> Please see my answer to Geert [1].
+> After reconsideration, maybe it is advisable to enable it by default. Ena=
+bling
+> ECC is done by the bootloader, and it might be better if no further actio=
+ns are
+> required to enable it kernel side.
+> If ECC is disabled, no errors will be generated, and the capabilties will=
+ just be
+> set to EDAC_CAP_NONE.
 
-Thanks,
-Conor.
+I agree that enabling ECC belongs to the bootloader. With the current DT
+bindings, the Linux driver continues to work on whatever it has been set
+up before (which may be nothing), or? From that point of view, I think
+it makes sense to enable it by default. But again, my knowledge is
+limited here...
 
---yL4HbPHY7ZmtVyGZ
+Thanks and happy hacking,
+
+   Wolfram
+
+
+--RObSsmBJ3diXCTFe
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCavyTNwAKCRB4tDGHoIJi
-0nDfAPwKHrmXEY408835g7LwKKUsD3y2VAZE1B3oMkjVyjOigQD+NM5PZ2WItqP6
-lGZX8OLP+0WQqR6FozKNWS1q0T38KAg=
-=oYqq
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmr8wm8ACgkQFA3kzBSg
+KbbyQxAAhqTncheIIBloVN0i8DH6skkYHWpdayV73dhPDxuKNsqVWO1CV+uIlVoN
+m5YUEEmhr/xzi1Sk27Xh7q4wo+2rC9cPI6i3nhVoLzxRlkyPyW07AFcGGM85zq7G
+D0Ixct84lWt/OIC5mLh6qiHhIssOE48csR9xSfYVscjh96PEaoIGz6Lom/KQsr/6
+rmHCJAd9ElfGlzMaMYDczeSH4SY1N/AM3yin/zhtNQeJc2ZdzAmcR9uP7YvGbTVm
+jHISuu1oucYnQ+yN6Fs5fazEcvnV216SkxmwnDYV/L3K4QM09UwJt9WpIOIm2cVm
+TYF9hpwYEssFoH8RTbH2yPfI9D+sgrpg/kHbKbz9cV/PPrzszZHMhkpO4M5MyeJY
+DvWn4d+2voIrtodvTaFuTmi3O7GBC83YSItkRKGMJEcktqg7FRcs1/wBwnjyjl5B
+8yRkfHtOfiFnc+FRUaSpBZF8Oj6FPKLaJjyDbgbdDk8ZgyFOFxfzyidRZE0ncTjX
+UZDk6NmW28nSrMvA2GKrk5vN6ZFj0RyEAcxPlzNmEthkM/8b6AM78pqp/1N/6dH2
+jXTAg8M08plsKkGAoJ4UFDGD0izzbUjVSxpA8B9uGKS5wijQFH9mUJt/hKtHSbvp
+c53WDnzX0g1zwqu6qMnhWYC5pqNAEKIo/fOssMSW6CK41bf5E/8=
+=yE3h
 -----END PGP SIGNATURE-----
 
---yL4HbPHY7ZmtVyGZ--
+--RObSsmBJ3diXCTFe--
