@@ -1,101 +1,37 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.7
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794930248;
-	b=P3CNDRpceOC+GSWDf2os8AJzEk0EBmK7/9WT5dQZoaNW3ppjUxtZPhdlVfsUw7SKUw/o
-	 FAnZxYtTepGOoDcCxqd8GnvRY5cKY/Y8eEGhBKvO9nQp89/F2mrK0oFEiouZpeAp6VglA
-	 rBNt5vcoOGldH8YU9hOxoWh3ui+PVn1o4jYEox8RXsqzyZyAVYsclOkjreKXKFp7yAGv3
-	 5fxFg6HDnWMiOPjz7k84idHAGDIlM52KEsEj2ZcnIrum780zG9q9p6USgb4P59QNFZq0T
-	 qUgQ/In2S3AXL2ucJHfoMJHo4Fw1s/TT039/MbJ3sSIFmZtKVBZjaZwf+LCmgGspLlw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794930248;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=HYeSJ94KZonv4FSrskKFWYXKdu1uRN5+F2cYORjRoMs=;
-	b=yeUMeGsan2utRM0MFoLr+WmOQSlYuPo55S4afbgweTxmn2UNaKG7WNC3xNJy9NLeQsE6
-	 Is9PR5lAO+Yl1/uLnbQo3hBPDHaCuk4iYu9A0lukR1OLUDGXuwv17ZOj96dYBYAHrKTdC
-	 CWBWp6RMud7vUd4+cSYqdcX0uoAB+9ni06wKtvUJ1NuCnoh0TaTk325WY9KB1A+Gf2ngT
-	 h0UntwqQZjdSWx4JXLodhvcu5Sa/Dye2YP+7DZ9We1i/rQyTj7w/TmVuETF5iohhEvqqS
-	 J0sh18sdEA4H61bBHFHfcyKOVfRyjPVLI6Rf50vL+oWmPAgmmaCz5pSnpZkArLJmfAA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=PSp5EgU2;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.229.7
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010007.outbound.protection.outlook.com [52.101.229.7])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794932275;
+	b=fLiF6BJGR72JVFhuSCq1EwTbxUzC5RdbhnEshiFcNdf3nbU+KZT64IceOCplnqRskn3V
+	 5iGtfdZ9CflFn5ajXo6lLD5pXS+z/ffP0CieSexdUCLptdtyIzippZHuAJS9UKqU0i3tL
+	 HlNBAKJfnneQlNXJEntWDr/C/sTlXl4I/BkIuFYoUK4tIwrbsGKRrTBM+Ko5Ew8q1FNji
+	 152+jC6OhcHRkAjoz8H75/UXnk+TlhH9+dRtzNQEHlmCA7jkyfbGl8h2qpxwESy84kydu
+	 4VK0+CpvbVALm30OFGzXVaQDeYrvIt0R0D86+mccQluv/F6bKE3xI1cj3cRbLMWUzsA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794932275;
+	h=Received:From:To:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=WAywrraS4i17rOZeLqpUAuFnbUPy4twSzO0Gch6eeao=;
+	b=ax0DTM1lKDwBna8NmjB4vw0Fi1/aW6N9h/KRa+i1CbehE0J9BGXXsB4GrD9jG30VbJHX
+	 QbLAo8nzwtE6qsYHTOCnMhEUeln74Syhp7XZ5TcS6fi5oEdU1ad9tSYNM7xnaO0UMHcPY
+	 iSdlrD/h91GgnipNUbw4c/L5Hcqmz+144ZxfaIm9j0K7uKeBSROiRJhZRCwgtQcI+7RRE
+	 MJlomd9wbduqWrYndl6KvI5pPysL+S3502oGSjvx4ybelSpqaoWBt1J7MByQytX4LAc7N
+	 h6g/oZRmIBLWNHU5rF2pvQz7dGm44/G28NHaUBgjod1eYVmCXXE8bjEr8E2RIy79aTQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A510606A31C;
-	Tue, 17 Nov 2026 15:44:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A510606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=PSp5EgU2
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=en0pMwL4jOSyK1LEDWqn92fXjOIbAubs5XRanYF2JDU2I9iWON5/I24pjIVSWetjVI9JeGuLGBtB4Hfs2FmnoaPDcAVNH6/ud6Khoy9yrmopiWUHGq8pMpZKfi1VnAMCb+TxgC33OS2QOydiRZdx0NooQOZ75d2wruYZep1QLqgxOsNXWI6EtIOjjS6oNeEjupL7daX4uOiuBYHn2bRBvJz6QZx6WemdvI36HVCIEkEf4gpd1dAQPRstB0rdLFIrm0DgsnoKWJ/WN0di5dCpOtujJ+5REGU2VPk/LW9MVKcSfUkoCUDNl48NAo5iiuT1MD4SLgE7BACEuwPFs115BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HYeSJ94KZonv4FSrskKFWYXKdu1uRN5+F2cYORjRoMs=;
- b=hA0nVa0X7hBtlBdB8AJ4JXLbBp1QmXpckkuRbJQIDKcWoBQrdAGIeJT6M7goYWxo6hvUoilHtS+69D/f4dQIJi0q2HVEAPjG3BxMoCp+D53QmcUjtb2B8T1QwEjuSzzUxgei49K/Yhku7oSXHzP9ArjUlRVkwSHmMrI8+7M0Oq39TgB/rKOo0bXxbMgVElAPs9ePy0Lz+xyZEZpT0ympxsNCgCWtbMfd+aiSZDhcmJfa8cXDOWa/Mc+DTWTE0p7ZT3cfXimpl1MP8CAPKRSvdhXCq4fgn7gNYS+l8tw0KKlOzw+VudCOJNXCwLyysHBsIkyKkzZU58fd9wMXyeNOLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HYeSJ94KZonv4FSrskKFWYXKdu1uRN5+F2cYORjRoMs=;
- b=PSp5EgU2Zu5GHP2P50UyeE3cNsqCk+CL26cIczh5D2SgJO5s5aK+vKbW+zsH+cc7fLQ0wHqYsCpO158DibnPOoLXPFnwqYIx7eSeta0kw2f/neg5bXLoXdqN3i3aQeK+VSNoEKaxem14GTD+5fVWnhXO7UjI5TwzWATdJLn0wck=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15) by OSCPR01MB14437.jpnprd01.prod.outlook.com
- (2603:1096:604:3a6::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Tue, 17 Nov
- 2026 15:44:05 +0000
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0615.013; Tue, 17 Nov 2026
- 15:44:04 +0000
-Date: Tue, 17 Nov 2026 16:43:42 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tomm.merciai@gmail.com
-Subject: Re: [PATCH] drm: renesas: rz-du: Add suspend/resume support
-Message-ID: <avx2LlqTDpI7ZjRV@tom-desktop>
-References: <20261112-b4-tm-pm-du-v1-1-507474331137@bp.renesas.com>
- <CAMuHMdXQjm9rqmKn35G9-CqGSuMO9nirDw2GmFfF2PBfsCvH_Q@mail.gmail.com>
- <avxy_u864ZT7vsLx@tom-desktop>
- <CAMuHMdWLw4zYGCg5isy8Mdxfgub39CXbCNgFmNsv3XMj40U7dg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWLw4zYGCg5isy8Mdxfgub39CXbCNgFmNsv3XMj40U7dg@mail.gmail.com>
-X-ClientProxiedBy: FR3P281CA0022.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1c::10) To OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE012606D800
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:17:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C661F000C4
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:17:55 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2026-11-17-v7.4-rc3
+Date: Tue, 17 Nov 2026 17:17:53 +0100
+Message-ID: <20261117161753.1321310-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,134 +41,96 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|OSCPR01MB14437:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbb5beab-e19a-4695-3035-08df44c19bf4
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|7416014|52116014|376014|1800799024|18002099003|22082099003|261009223027099003|38350700014|11063799006|260925021311599003|260925021911599003|56012099006|260925022911599003|10067099003|4143699003|261028144727099003|261026140227099003|261021135927099003|261022075727099003|261022105027099003;
-X-Microsoft-Antispam-Message-Info:
-	gzF172emfqMYu7YaQjBnWH8c8ENqRdtr4GeLFjXpCu7iYkb4VOuCRhbSxhjcELu/HmXzGouW2ywM/M/ZPfkDXj5xa5vL4lLQSLkn0vxtwjNJdmtecjhQ3xETmGHemazpgicfGtWrb1jj9zEequUkQAj1nbQZwHeBAP7dy5ubPyvIqyMTFLts0yJOhvavAlLq4co9vjpJdECtBPllG/PHNrnBHM6b+aTqZO1EPKsLCpdP3pyedCCfFLXk12zWgOSByknKRckOwgW7p7qYMofPB20tXx/bHmHPN5nDM6EumJr0SO7AboRw5E+nqK5LQWuLiD4rWXy/bSwnaJH0/AQsAfFgtnEF6VkoFamh2CJsI/0y9U5DJNPzZnfQHlOV1Z9Cl7nbttJdz04x1nw7FShWjuQOsaO9iEHeOZ/xIG04r5IrVYa1+wzyuuMw0FLyo9N+pT4VCXNI2L6F2BuxSRD/G1O+oeJcfPGMpGfrxoR01xEVD0K0OA0hgVl/dAmrv0U1MqOIoV/+bzbQaGkoDz5dWZOrBRrYF1v2WiEgwRyU3vs6w+ZYkfK3+6kdAZ4A5WCgSpjPbjLiCA0OoSC/YfBI6ewjaf/MYeSo84qt8AQI2hHmv7gczeZ9NkfcU7Gm6Q2/Nlfiwlig0LJx9xL4gYXYhL4wXckoKbdLE7XlqDQQsOo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(7416014)(52116014)(376014)(1800799024)(18002099003)(22082099003)(261009223027099003)(38350700014)(11063799006)(260925021311599003)(260925021911599003)(56012099006)(260925022911599003)(10067099003)(4143699003)(261028144727099003)(261026140227099003)(261021135927099003)(261022075727099003)(261022105027099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UWFaLzVQOGFaNzVMYjhybkJXQU5EMnZIUTZVSVc4TXFDMVFkZ1RhQTR5eGtm?=
- =?utf-8?B?WkJVR3dhcEFuQjRZUXUwU0Y4SUVjTHVLeW5KREptK2E5TWdValpTRU9ESmV5?=
- =?utf-8?B?SDZDYWdvZjU0cW1GR1pJaG1KeHdON1A4ZWNjcURyeWtKM0JlMThsUHd1VFdJ?=
- =?utf-8?B?YmcxLzF6dE14N0ZmUFh1bWRxWWJDRFF5L3A1MS9CMTR1b2RYWXVmMGo5Qm5L?=
- =?utf-8?B?cGVISklXMmZzdWtlaWRvYmt6T2szejZqYmNHbUtYTndEWHFHR2tzMzUydHlj?=
- =?utf-8?B?M0ZteTJ4THNZS0V5MHU4SVFpSUVraHV0L0pVRnR5WUo3aVpxalFMZWp2cjRh?=
- =?utf-8?B?d0N6RnpaZE55VS9KNGNQUXhDMCs5VUpsOEhRSThwRFFkbFlBUWVNUXNkdTJu?=
- =?utf-8?B?aWZxdm1hbzIyUHM2WUl6cUVNdmxvTFJ0TDBMc1dhelZQSmdvRFV6Wm1QOUhR?=
- =?utf-8?B?aU5FV1NPNHJBTEMrWVZSYy9pMUlJdWJJQ1ZzKzZlZHV3NjBnbjhwekQyOW9u?=
- =?utf-8?B?emxwUnd5S09MM09BSFNBdktlc0VGeWc1TXRtcS81RHZyYUQwOU1BajlrU1ov?=
- =?utf-8?B?dVdreWUwWWY2MERUR0J1T2lrSWYrb2xZT0prZmRNWC85QjUxZWczV3pDdCtv?=
- =?utf-8?B?RWNGUFpLdVRpUzNrSVllcmMwN2k0ZXBCWWR4TC8xdWh4STFCTnlKTGVUZXJ5?=
- =?utf-8?B?Z1F6TGRQZ3NSQjE0NEt4VkI3NUhpWWUrQ05pV3pNUklMLzdvSXdUWkJvSDhS?=
- =?utf-8?B?TzFleHhsS29ESlc4VytmOXdBdG9UcENITG4zeVJ4aUQ0TG9mUlFCVEY0T3RG?=
- =?utf-8?B?UkhyV1FGNUFkNzhsV3d1ZGNhSm9NaEtjWjRJNzdGQytuSzRHNU85akZQSVcw?=
- =?utf-8?B?UUJZNUFFVlJXTGFDSldYelBFRVBkaThwMFZTdWZzNDdXdjZFWkd0bEVTMG5i?=
- =?utf-8?B?U01rdWZZYkczMkI1czZPL3hKM2cwS0I3WmU1QUxRQ0xzc1dkWVBCNVU5elZ5?=
- =?utf-8?B?N1pHaWhjQjJZR1c5OEtlZ004ZGRjY1RZZFRwb0hVWHB1U0V4bWphQ2ZUTHpW?=
- =?utf-8?B?Tk9XSE9za3ZWWHdXQUZETWh1dDZQczZmdC8zNEVPcUIrZXZOT01hbHZOcDR4?=
- =?utf-8?B?ZCtUQ1BVVktIMGZGVWxSOGxvdmtjOU9KQnc4RldRZEc1cEFiV0NFRE1OZFht?=
- =?utf-8?B?WnFJS0JXL1duTTJuZXlEVG1RTzA1TWppT0hrOVl3TCtqL0hsd2JrMzlkbWF5?=
- =?utf-8?B?STJ3RUdHdzUzWmd2STUzNEt0OEVjOWVFMXVYQUdWSzZteGV5UGZlTUd5RFYv?=
- =?utf-8?B?dzRkdnU5VTZLQ3R2eDIzcGtqUGtqempMM2JpVnBWVVovamtNREZsbUJtVkNw?=
- =?utf-8?B?YkJPY0lnbThicWcwNjdQSkxZQkZlTy9NQ3RJNk9qVUFQOU12QVQrTWJvbFox?=
- =?utf-8?B?OXlSR0QxL1VCWElDK093MzBHdHhLelJuYmo2ZkJzSVVTd1A1V1JJdVBiOWZZ?=
- =?utf-8?B?L2dkcjRKTWhYWm1LSk5ZTHRZdkxkYUhob2lsbVVMQ29oWHNra1Bnb1hNdDV6?=
- =?utf-8?B?TmV1UE1CMzZHTVZPZHhOU0kzeHllSW14Q3Q3NGFHQ3VPMHRaQkNyM1IxSzVJ?=
- =?utf-8?B?bTVmTEMzNnFBem15M0JKSTNOYkFDU3ovU21Vci9VQzJtcUMvMndCL0NFU3A1?=
- =?utf-8?B?c3lsK0hGb1NNOXhaMXZIWFM0L2FyNE90bWFCenRuY2NuZ0U5aXBaZVpHYlNR?=
- =?utf-8?B?Nk9ScDIxTFhseEswYlhCRklwcFliYUV3RG5IKzJkUTlmd1k1MWVQaWZZS09X?=
- =?utf-8?B?TXBEdzE0TVorUGxGN0dNazE3WkxJbllBK1VDVHBtNkVvcTJ3NWNMRWwxdXgy?=
- =?utf-8?B?bDcyNGhWM2h1a1VucTEzMElvQjRJSExGVXZoRy9WTXhpUjliWDhIdG81MkU1?=
- =?utf-8?B?WVQyZ0VsYzFiWmNubW1ZRTZtOWEyZUMwWkY2SVBndjZJbnV3VnVJV3NsNmZF?=
- =?utf-8?B?ZTkvUERHNkZ0aDRBNGJGMEdCTjRhVGpQOG1QeWJBOUQ1SkZYZlZpR000b0p4?=
- =?utf-8?B?L2UxMWlLbUt6VWhLSkVJYTZQT1RmQ0VVbW1WcXM1dmcvU0NPcnBEVDdVc2Ft?=
- =?utf-8?B?REZnRjA5bmdvSVcyTURXYXNzcmJSeFNjb1BGQit3M0toa2pSUU5oY04xbXF4?=
- =?utf-8?B?WHZYRjlkQk9hS3JIMENzVWlCMzJiYkYxVWRzNmhlWDd5RlpRWmVmM3V5RmdS?=
- =?utf-8?B?d09zcDVxaUd5ZWYzTWJVRnpoeURyR1BpMjZSSi9BaHJROGswd2o0N1hSVTc1?=
- =?utf-8?B?QVpHSDErZVNvZlZCQlZlSE5ianV4M1BaUUFqWUVJR1NvVEtUM1pFcktjcmZy?=
- =?utf-8?Q?Qv+W7fvQ8NJz/UW1MuHv/fnHlMXbFchYNDem2?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbb5beab-e19a-4695-3035-08df44c19bf4
-X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 15:44:04.6437
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VZ6c1uzm+elMqeOCsTeAjr1TO1ZCMryIUrYHj0/ayEBOC1XXWZhBQRI+an7E5whh+Br5A8J2A1n3OK3y6d+83i/HVpp6qk48+7CFoCyB8OhWdS8Q9l/ZK7JhSK8r6eeO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14437
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+I have pushed renesas-drivers-2026-11-17-v7.4-rc3 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-On Tue, Nov 17, 2026 at 04:37:34PM +0100, Geert Uytterhoeven wrote:
-> Hi Tommaso,
-> 
-> On Tue, 17 Nov 2026 at 16:30, Tommaso Merciai
-> <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > On Tue, Nov 17, 2026 at 04:12:43PM +0100, Geert Uytterhoeven wrote:
-> > > On Thu, 12 Nov 2026 at 09:31, Tommaso Merciai
-> > > <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > > > Add suspend/resume support to the RZ/G2L DU driver.
-> > > >
-> > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> > > > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> > > > @@ -140,6 +140,27 @@ static const struct drm_driver rzg2l_du_driver = {
-> > > >         .minor                  = 0,
-> > > >  };
-> > > >
-> > > > +/* -----------------------------------------------------------------------------
-> > > > + * Power management
-> > > > + */
-> > > > +
-> > > > +static int rzg2l_du_pm_suspend(struct device *dev)
-> > > > +{
-> > > > +       struct rzg2l_du_device *rcdu = dev_get_drvdata(dev);
-> > > > +
-> > > > +       return drm_mode_config_helper_suspend(&rcdu->ddev);
-> > >
-> > > error: passing argument 1 of ‘drm_mode_config_helper_suspend’ from
-> > > incompatible pointer type [-Werror=incompatible-pointer-types]
-> > >
-> > > The "&" should be dropped...
-> >
-> > Sorry are you apply this patch on top of some other series?
-> > On top of next-20261116 I'm not seeing this issue.
-> >
-> > Maybe I'm missing somenthing?
-> 
-> Ah, I have your "[PATCH v9 04/10] drm: renesas: rz-du: Reference the
-> DRM device by pointer" applied, too...
-> https://patch.msgid.link/d5a97ddb346c5cb959b39fda45277afb1fa2ae16.1792770965.git.tommaso.merciai.xr@bp.renesas.com
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
+for-next branches of various subsystem trees and (b) branches with
+driver code submitted or planned for submission to maintainers into the
+master branch of my renesas-devel.git tree.
 
-Ah, thanks for sharing.
-Just FYI I posted v10 [1] this apply on top of this patch.
+Today's version is based on renesas-devel-2026-11-17-v7.4-rc3.
 
-[1] https://lore.kernel.org/all/cover.1794502191.git.tommaso.merciai.xr@bp.renesas.com/
+Included branches with driver code:
+  - renesas-clk-for-v7.5
+  - renesas-pinctrl-for-v7.5
+  - topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v4-rebased
 
-Kind regards,
-Tommaso
+Included fixes:
+  - reset: rzg2l-usbphy-ctrl: Permit disabling POWER_SEQUENCING again
+  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
+  - ARM: shmobile: defconfig: Update for renesas-drivers
+  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
+  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git#i3c/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git#watchdog-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/pza/linux.git#reset/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
+  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git#kbuild-for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
