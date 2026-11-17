@@ -1,54 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794872980;
-	b=cFNsV425T3kAES01uneoe2TXqG6GTQ7K9hXfRoIFwhpK4knBCAQjwspbqEgmrHVsat/P
-	 Py8MVUbINq7AS5AEYHett2KZyAHefIuF6b5tw8sB4re67WI7ChogbZQY+HlCJcrPZzDa4
-	 yWRlflpc0oHeb1MXbJf6TLcEM2YnFYBB91QvSQsthG0jslCb6c/VXL87Ul49jxo6G087y
-	 W3ac2xS5X7dgPOS6xDaxESI5VCPyyfPURisIwAf+Bvh7NXVqiXhsDfN8PPX2g9xBEgNh5
-	 I8Mb+fzcWjlezURBd1VL1040CK5SwtlH6UbabHng94hT6ZiPm6E4yFyTJ0FgKaTl78g==
+	t=1794883210;
+	b=tTudhQlrTscC49cnt68hkDma661QXXv/KVkDPF6wVOyuv98M6f5Mngutl89e1s6mYY25
+	 XIz5clpTz9hqy2TI0c63EiiM2JfvuNICq0gfrwPjMSBgu4m3R1qZTZvQxsPfTDVxEi9/o
+	 UIacni/FegHxsjIeoWTnTMfRiQoBJ2V2Ggs24B++2zWwDshS8ENNX1+b+SxwUS3RibHTR
+	 VgQ7+3SrVtN9M0nLKsQeQN+CDwzzgOE0L7a1sl+bJ1nC+7fBwmEnA/anh6Hg6SxpGblyV
+	 tmOAKqelrluJwUN4oag6oPRvew7KMSXtSXpXofNx9ETyzBrpcMnR8IK0gT6TVMfdApA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794872980;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=oCqWdQIGQCOZzitmtkFA20dx2a1EGHx/cd5A2O/wl08=;
-	b=m6HN4RyIQZueyLniqfpkaw3z0XUBT7aBVQH+SaUXqqiJe65BmkEEitkntj9NyOMLnKOf
-	 EkAHMPaUzcvbsBgPC906ipfU8suwIk/PNvj14qyDPmjH1gg/5SfFy2Jy2AcOuQiDwwLrn
-	 OpqBCz/lQ10Q/y0MGCGdGU0YLuxYys3lodUq/5qpvWLkthJDR2sVXiyTfwz7c/7tQgZc7
-	 nriV7WB/2g7PvJ075yNbFhBriaZcRQ7dUul0vl2+YkqBF3KtQlMysufCH27HSlslz0V3J
-	 O9U68+hrPMdA1c7ikRlac6nO6vBMx38gEv20ozpyDP78m8lLoZ9uNA+Fv0KnngQ+FKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794883210;
+	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc;
+	bh=X8I1zifAqnwMmcW4vAwYqXWI5tPDh39vSBjGAY6Y2a0=;
+	b=SMKt3+LMAgxQwgkoC2n/Jh7OiiMWAHvy7sQMInRnPDzF304Gw1lXgVJqIYUJomxfPmaN
+	 weeDJwtBJFTIRg0rOdOGauTn/uGyBn0X0O3PkSyJx6u25txJOs5UN1GmgTIDU3fPTKK26
+	 /nLryG62whVg0kNqJ2F+FpwTfqy76JDzCADItvCfs9WlBKrv4Yoa0A2zqfn3b97xZe63f
+	 /2iQioxPypaoenkDg5e5RU/uoM57o+NVBLpQ93JCjOLsjsXncBucwjaZrRpFRcJF8vx1e
+	 Ixh1GI+0a46vyVPDas/uhkhUr6EGFQ5ASRXaQcqnmLsRQFsgs3+lr8wLtl0hmE9m9JA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=Igalia.com;
-	spf=pass smtp.mailfrom=Igalia.com;
-	dkim=pass header.d=igalia.com header.i=@igalia.com header.a=rsa-sha256 header.s=20170329 header.b=b+mGsmFk;
-	arc=none smtp.remote-ip=213.97.179.56
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E1n8E6EK;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F83606A31C;
-	Mon, 16 Nov 2026 23:49:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27F83606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Igalia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0729E606A31C;
+	Tue, 17 Nov 2026 02:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.a=rsa-sha256 header.s=20170329 header.b=b+mGsmFk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:From:Cc:To:Subject:
-	MIME-Version:Date:Message-ID:From:Reply-To;
-	bh=oCqWdQIGQCOZzitmtkFA20dx2a1EGHx/cd5A2O/wl08=; t=1794872978; x=2110232978; 
-	b=b+mGsmFkzmcZDrBDwVPTKQLSMkC0c30hQ4HQtvmq9lywKcWXjVDrVkR4pbS/nZGu1cDxWtb1r3y
-	m3rUrobWra6MCWHVJZ6aNDx/CQkXIv3900/oYO32BJCmJQiIW5ZrfoOZInJ4RXFNdGRH2/ISZoN7c
-	W0f3D6U4XfPuezsmMEFqB89p21ZQm+iiMr+BI3qdvNoI3DE10VxIq+GFhZ7ttHeq9+Eb8vaTiVhw9
-	YNfPWvmBJrFsa8NtYeGhVrtQL3sWmoGo8gMlxoW11KgqOet09f8lgPxrAPXHJplVynnuKCjWGZBfH
-	t1Gu4yDNYsFJI1vKApC3zg/7GcNEUox8mQvA==;
-Received: from c-73-157-168-91.hsd1.or.comcast.net ([73.157.168.91] helo=[192.168.1.133])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1xT6Rx-00000000OPS-0jp6;
-	Tue, 17 Nov 2026 00:49:25 +0100
-Message-ID: <57bcef5c-363a-4269-a38d-474e331e37c0@Igalia.com>
-Date: Mon, 16 Nov 2026 15:49:16 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E1n8E6EK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDFD1F000C4;
+	Tue, 17 Nov 2026 02:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794883209;
+	bh=X8I1zifAqnwMmcW4vAwYqXWI5tPDh39vSBjGAY6Y2a0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=E1n8E6EK2t+0wusvUhTe65yXVkODUYt535VwQBVbCPOg0jtlJ4cy1DjBny4f8bThj
+	 HrWaAA5gyiifesNvnSlpZLBDYFZjJlasNuTGhJp3fsXBLlUjuTy4D/AUX3ghQIRuWO
+	 iEu8Ap45zEhg3brM07FDjWC2D4RTu5KpTvOmKlBXJOyT8+FRazVrxrEO2FB3KMAcbg
+	 0/efxPHEIfPMrra5U+O176Gm2JQ/+1hDJVeTSjb6+EDEYr1P5Nqa5YGJyUNvVfEAn1
+	 U33C7l+abTNRpt3toz1tV8pjRYQlY5Xvt5xITLsuPwz1+5urOoaKnjcNDF0M2ViZw4
+	 H4V6L+RieDFSA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B4436391B088;
+	Tue, 17 Nov 2026 02:40:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -58,131 +53,55 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/10] drm: renesas: rcar-du: embed the writeback
- encoder in rcar_du_crtc
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Louis Chauvet <louis.chauvet@bootlin.com>,
- Mihail Atanassov <mihail.atanassov@arm.com>, Eric Anholt <eric@anholt.net>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Brian Starkey <brian.starkey@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20261111-wb-drop-encoder-v8-0-62948ed87d13@oss.qualcomm.com>
- <20261111-wb-drop-encoder-v8-4-62948ed87d13@oss.qualcomm.com>
-Content-Language: en-GB
-From: John Harrison <John.Harrison@Igalia.com>
-In-Reply-To: <20261111-wb-drop-encoder-v8-4-62948ed87d13@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v8 0/3] ptp: Add driver for R-Car Gen4
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <179488320853.300516.15277553314484783931.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Nov 2026 02:40:08 +0000
+References: <20261110080727.2377040-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20261110080727.2377040-1-niklas.soderlund+renesas@ragnatech.se>
+To: =?utf-8?q?Niklas_S=C3=B6derlund_=3Cniklas=2Esoderlund+renesas=40ragnatech=2E?=@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
+	=?utf-8?q?se=3E?=@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, richardcochran@gmail.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
+ sergei.shtylyov@gmail.com, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-On 11/10/26 16:42, Dmitry Baryshkov wrote:
-> drm_writeback_connector_init() hides the encoder inside struct
-> drm_writeback_connector, which is the only reason that structure carries
-> an encoder at all. Every other writeback user already owns its encoder.
->
-> Embed the encoder in the driver's own structure and register the
-> connector with drm_writeback_connector_init_with_encoder(), so that the
-> encoder can be dropped from drm_writeback_connector.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-It would be good to at least get an ack from someone at Renesas, but the 
-patch looks good to me. The changes align with the equivalent changes to 
-other drivers and the overall aim of the patch set.
+Hello:
 
-Reviewed-by: John Harrison <John.Harrison@Igalia.com>
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> ---
->   drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h     |  2 ++
->   .../gpu/drm/renesas/rcar-du/rcar_du_writeback.c    | 29 +++++++++++++++++-----
->   2 files changed, 25 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-> index 8857926e109a..d8b1dcab8dea 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-> @@ -44,6 +44,7 @@ struct rcar_du_vsp;
->    * @vsp: VSP feeding video to this CRTC
->    * @vsp_pipe: index of the VSP pipeline feeding video to this CRTC
->    * @writeback: the writeback connector
-> + * @encoder: the writeback encoder
->    */
->   struct rcar_du_crtc {
->   	struct drm_crtc crtc;
-> @@ -74,6 +75,7 @@ struct rcar_du_crtc {
->   	unsigned int sources_count;
->   
->   	struct drm_writeback_connector writeback;
-> +	struct drm_encoder encoder;
->   };
->   
->   #define to_rcar_crtc(c)		container_of(c, struct rcar_du_crtc, crtc)
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-> index 0a3108965591..a1271fec9874 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-> @@ -172,6 +172,10 @@ static int rcar_du_wb_enc_atomic_check(struct drm_encoder *encoder,
->   	return 0;
->   }
->   
-> +static const struct drm_encoder_funcs rcar_du_wb_enc_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->   static const struct drm_encoder_helper_funcs rcar_du_wb_enc_helper_funcs = {
->   	.atomic_check = rcar_du_wb_enc_atomic_check,
->   };
-> @@ -199,16 +203,29 @@ int rcar_du_writeback_init(struct rcar_du_device *rcdu,
->   			   struct rcar_du_crtc *rcrtc)
->   {
->   	struct drm_writeback_connector *wb_conn = &rcrtc->writeback;
-> +	struct drm_encoder *encoder = &rcrtc->encoder;
-> +	int ret;
-> +
-> +	drm_encoder_helper_add(encoder, &rcar_du_wb_enc_helper_funcs);
-> +	encoder->possible_crtcs = drm_crtc_mask(&rcrtc->crtc);
-> +
-> +	ret = drm_encoder_init(&rcdu->ddev, encoder, &rcar_du_wb_enc_funcs,
-> +			       DRM_MODE_ENCODER_VIRTUAL, NULL);
-> +	if (ret)
-> +		return ret;
->   
->   	drm_connector_helper_add(&wb_conn->base,
->   				 &rcar_du_wb_conn_helper_funcs);
->   
-> -	return drm_writeback_connector_init(&rcdu->ddev, wb_conn,
-> -					    &rcar_du_wb_conn_funcs,
-> -					    &rcar_du_wb_enc_helper_funcs,
-> -					    writeback_formats,
-> -					    ARRAY_SIZE(writeback_formats),
-> -					    1 << drm_crtc_index(&rcrtc->crtc));
-> +	ret = drm_writeback_connector_init_with_encoder(&rcdu->ddev, wb_conn,
-> +							encoder,
-> +							&rcar_du_wb_conn_funcs,
-> +							writeback_formats,
-> +							ARRAY_SIZE(writeback_formats));
-> +	if (ret)
-> +		drm_encoder_cleanup(encoder);
-> +
-> +	return ret;
->   }
->   
->   void rcar_du_writeback_setup(struct rcar_du_crtc *rcrtc,
->
+On Tue, 10 Nov 2026 09:07:24 +0100 you wrote:
+> Hello,
+> 
+> This series is the first part cleaning up how PTP timer support is
+> implemented on R-Car Gen4. Currently there is partial support for it in
+> some of the Ethernet devices that can use it, but not all.
+> 
+> The partial support have been implemented by hacking the gPTP module
+> directly into the first Ethernet device driver that used it, RTSN for
+> V4H and RSWITCH for S4. This is understandable as earlier R-Car
+> generations had a dedicated gPTP timer for each Ethernet device, but on
+> Gen4 there is a single system-wide PTP timer shared by all.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v8,1/3] dt-bindings: ptp: renesas,rcar-gen4-gptp: Add R-Car Gen4
+    https://git.kernel.org/netdev/net-next/c/4b981dcfe5a9
+  - [net-next,v8,2/3] ptp: Add driver for R-Car Gen4
+    https://git.kernel.org/netdev/net-next/c/dbdfe25af31d
+  - [net-next,v8,3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
