@@ -1,37 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.104
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794932275;
-	b=fLiF6BJGR72JVFhuSCq1EwTbxUzC5RdbhnEshiFcNdf3nbU+KZT64IceOCplnqRskn3V
-	 5iGtfdZ9CflFn5ajXo6lLD5pXS+z/ffP0CieSexdUCLptdtyIzippZHuAJS9UKqU0i3tL
-	 HlNBAKJfnneQlNXJEntWDr/C/sTlXl4I/BkIuFYoUK4tIwrbsGKRrTBM+Ko5Ew8q1FNji
-	 152+jC6OhcHRkAjoz8H75/UXnk+TlhH9+dRtzNQEHlmCA7jkyfbGl8h2qpxwESy84kydu
-	 4VK0+CpvbVALm30OFGzXVaQDeYrvIt0R0D86+mccQluv/F6bKE3xI1cj3cRbLMWUzsA==
+	t=1794932995;
+	b=Rsc5XNAVHHDRw/YymvuoD8017b2xPnC7HP97w+RP75T1xqW0BTy8HoaoYnGgWs4WRPc/
+	 05rjoEs4lbd2TjVOWmFCMt3ILgPGibcLHaLzcgS8r12UMLBwLZH7USyidDFEQpJ2Q5C58
+	 Fp0eBxOHkH/iQGxoZDjgxc3TPV2SuUP/fJf2vFWdPAvvPLupqbtjQmFcDrEEQjWRQZTl9
+	 esBy8TG3Q86f040sezbC8ooQ7EngsGR92UARVhzhylEg2qc7O9GgRi4MFB7Zy+Sit+lyA
+	 41UBFXxV+c2+USrV1AHtE35W2EKWOb4FVBbYOt1B1t6zqR+MFbctoYN1X7cqslBNkhw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794932275;
-	h=Received:From:To:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=WAywrraS4i17rOZeLqpUAuFnbUPy4twSzO0Gch6eeao=;
-	b=ax0DTM1lKDwBna8NmjB4vw0Fi1/aW6N9h/KRa+i1CbehE0J9BGXXsB4GrD9jG30VbJHX
-	 QbLAo8nzwtE6qsYHTOCnMhEUeln74Syhp7XZ5TcS6fi5oEdU1ad9tSYNM7xnaO0UMHcPY
-	 iSdlrD/h91GgnipNUbw4c/L5Hcqmz+144ZxfaIm9j0K7uKeBSROiRJhZRCwgtQcI+7RRE
-	 MJlomd9wbduqWrYndl6KvI5pPysL+S3502oGSjvx4ybelSpqaoWBt1J7MByQytX4LAc7N
-	 h6g/oZRmIBLWNHU5rF2pvQz7dGm44/G28NHaUBgjod1eYVmCXXE8bjEr8E2RIy79aTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794932995;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:CC:Subject:In-Reply-To:
+	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=Xah6kH3NsJjHjsSaD0EvODIXJgcLgPXtuKW/zjmxYTw=;
+	b=QSQxUBnzf5J9oVcOZjw94ObSAW1euFZo8CXvGmVdrhd49QKJoWukz5HGHysEPAD5caro
+	 B9P983LyB7LrqorYnkF/UEXleUTdRVDAtd2GXY9l1Fa4NNkRJggS0ijmxlm2iLMmVpSts
+	 yEoaU8bEFD0TAnsKCEv3axKoz4mZxCsRErYaunFVpFuQLHHcUaP/AUTa5b5+Ionf+pns4
+	 o1Cx/wkincj0/8daH8yri8/JpATGiUODuR453QNzrl1SqoJovuEhnv5srJhz5n+aTgqP2
+	 Ju4wWpOG1EYyLhC7kK4skBSa2eWjzeWLNxb5ty1uq+dthAJvN+akVnCffj7TaJuHccw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=g77SUc29;
+	arc=none smtp.remote-ip=91.218.175.104
+Received: from mta0.migadu.com (out-104.mta0.migadu.com [91.218.175.104])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE012606D800
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:17:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C661F000C4
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:17:55 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2026-11-17-v7.4-rc3
-Date: Tue, 17 Nov 2026 17:17:53 +0100
-Message-ID: <20261117161753.1321310-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795D7606A32C
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:29:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 795D7606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=g77SUc29
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=L5r87W+vvYhaC4SQ0Zx2qEfNiZ7OppygpT1qNDZLbu4=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1794932991; v=1; x=1795537791;
+ b=g77SUc29ucT/305eXQyOO/RdLLnTiApw0sYGzoEYg9tr7a9qf2N6jCchSzK9gEuD6vlCP8gg
+ ZtGYFskQqf4gkxIzRo5iyfvUmBn+b7M0xzh/kV6fJ1MyltaOSZYObdCp2OsO++bGXGNFNmgQxUB
+ XuKC7ddVWcLSayz+JbP6QyJA=
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id ec8f52277812aa2e;
+	Tue, 17 Nov 2026 16:29:51 +0000
+X-Mizu-Trace-ID: ec8f52277812aa2e
+X-Migadu-Flow: FLOW_OUT
+Date: Tue, 17 Nov 2026 16:29:47 +0000
+From: Bradley Morgan <bradley.morgan@linux.dev>
+To: marek.vasut+renesas@mailbox.org
+CC: akpm@linux-foundation.org, arm-scmi@vger.kernel.org, cristian.marussi@arm.com,
+ eadavis@sina.com, geert+renesas@glider.be, kees+treewide@kernel.org,
+ leitao@debian.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ marco.crivellari@suse.com, michal.simek@amd.com, oleg@redhat.com,
+ panchuang@vivo.com, petr.pavlu@suse.com, pmladek@suse.com,
+ ptikhomirov@virtuozzo.com, ptsm@linux.microsoft.com, sudeep.holla@kernel.org,
+ systemd-devel@lists.freedesktop.org, willy@infradead.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_=5BRFC=5D_kernel/reboot=3A_Add_orderly?=
+ =?US-ASCII?Q?=5Fsuspend=28=29_via_/sbin/suspend_user_mode_helper?=
+In-Reply-To: <20261117084523.50711-1-marek.vasut+renesas@mailbox.org>
+Message-ID: <03D974DA-29CF-404A-99BD-545D199E0A6B@linux.dev>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -41,96 +70,231 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 8bit
 
-I have pushed renesas-drivers-2026-11-17-v7.4-rc3 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On 17 November 2026 08:44:19 GMT, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+>Currently, Linux responds to firmware-issued poweroff and reboot requests
+>by invoking user mode helpers /sbin/poweroff and /sbin/reboot, which give
+>userspace the ability to perform orderly poweroff and reboot according to
+>policy set by userspace.
+>
+>This is not the case for firmware-issued suspend request, which directly
+>invokes pm_suspend(PM_SUSPEND_MEM), without giving userspace any way to
+>determine the suspend policy. This is problematic, because the userspace
+>might not be quite ready to suspend right the instant when the suspend
+>request from firmware arrives, e.g. because the user is interacting with
+>the device and the userspace knows that interaction will end in the near
+>future, at which point the system can be suspended perfectly well.
+>
+>Introduce a user mode helper, /sbin/suspend, which acts the same way as
+>the other user mode helpers, and which is invoked when firmware-issued
+>suspend request arrives. Userspace can use the helper to apply suspend
+>policy, most likely by invoking init system suspend target. In case the
+>helper is not present, retain current behavior and suspend immediately.
+>
+>Note that /sbin/suspend is non-standard. I also considered registering
+>an input device and sending KEY_SUSPEND via such a device, but that does
+>not seems nice. I also had a look at wake locks, but I don't think this
+>is the right tool either. I am sending this as an RFC, because I would
+>like to get input on this. I am including change for two platforms, SCMI
+>and ZynqMP, which could benefit from this. Thank you for your input !
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM and RISC-V SoCs.  It is created by merging (a) the
-for-next branches of various subsystem trees and (b) branches with
-driver code submitted or planned for submission to maintainers into the
-master branch of my renesas-devel.git tree.
+Hmm. let me use my thinking glasses.
 
-Today's version is based on renesas-devel-2026-11-17-v7.4-rc3.
+>
+>Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>---
+>Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>Cc: Andrew Morton <akpm@linux-foundation.org>
+>Cc: Breno Leitao <leitao@debian.org>
+>Cc: Cristian Marussi <cristian.marussi@arm.com>
+>Cc: Edward Adam Davis <eadavis@sina.com>
+>Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>Cc: Kees Cook <kees+treewide@kernel.org>
+>Cc: Marco Crivellari <marco.crivellari@suse.com>
+>Cc: Michal Simek <michal.simek@amd.com>
+>Cc: Oleg Nesterov <oleg@redhat.com>
+>Cc: Pan Chuang <panchuang@vivo.com>
+>Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+>Cc: Petr Mladek <pmladek@suse.com>
+>Cc: Petr Pavlu <petr.pavlu@suse.com>
+>Cc: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+>Cc: Sudeep Holla <sudeep.holla@kernel.org>
+>Cc: arm-scmi@vger.kernel.org
+>Cc: linux-arm-kernel@lists.infradead.org
+>Cc: linux-renesas-soc@vger.kernel.org
+>Cc: linux-kernel@vger.kernel.org
+>Cc: systemd-devel@lists.freedesktop.org
+>---
+> .../firmware/arm/scmi/scmi_power_control.c    | 11 +-----
+> drivers/soc/xilinx/zynqmp_power.c             |  4 +--
+> include/linux/reboot.h                        |  1 +
+> kernel/reboot.c                               | 34 +++++++++++++++++++
+> 4 files changed, 38 insertions(+), 12 deletions(-)
+>
+>diff --git a/drivers/firmware/arm/scmi/scmi_power_control.c b/drivers/firmware/arm/scmi/scmi_power_control.c
+>index e791a206768c2..b61afb46ca7ef 100644
+>--- a/drivers/firmware/arm/scmi/scmi_power_control.c
+>+++ b/drivers/firmware/arm/scmi/scmi_power_control.c
+>@@ -80,7 +80,6 @@ enum scmi_syspower_state {
+>  * @reboot_nb: A notifier_block optionally used to track reboot progress
+>  * @forceful_work: A worker used to trigger a forceful transition once a
+>  *		   graceful has timed out.
+>- * @suspend_work: A worker used to trigger system suspend
+>  */
+> struct scmi_syspower_conf {
+> 	struct device *dev;
+>@@ -93,7 +92,6 @@ struct scmi_syspower_conf {
+> 	struct notifier_block reboot_nb;
+> 
+> 	struct delayed_work forceful_work;
+>-	struct work_struct suspend_work;
+> };
+> 
+> #define userspace_nb_to_sconf(x)	\
+>@@ -254,7 +252,7 @@ static void scmi_request_graceful_transition(struct scmi_syspower_conf *sc,
+> 		orderly_reboot();
+> 		break;
+> 	case SCMI_SYSTEM_SUSPEND:
+>-		schedule_work(&sc->suspend_work);
+>+		orderly_suspend();
+> 		break;
+> 	default:
+> 		break;
+>@@ -323,11 +321,6 @@ static int scmi_userspace_notifier(struct notifier_block *nb,
+> 	return NOTIFY_OK;
+> }
+> 
+>-static void scmi_suspend_work_func(struct work_struct *work)
+>-{
+>-	pm_suspend(PM_SUSPEND_MEM);
+>-}
+>-
+> static int scmi_syspower_probe(struct scmi_device *sdev)
+> {
+> 	int ret;
+>@@ -352,8 +345,6 @@ static int scmi_syspower_probe(struct scmi_device *sdev)
+> 	sc->dev = &sdev->dev;
+> 	dev_set_drvdata(&sdev->dev, sc);
+> 
+>-	INIT_WORK(&sc->suspend_work, scmi_suspend_work_func);
+>-
+> 	return handle->notify_ops->devm_event_notifier_register(sdev,
+> 							   SCMI_PROTOCOL_SYSTEM,
+> 					 SCMI_EVENT_SYSTEM_POWER_STATE_NOTIFIER,
+>diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+>index ce75bc5ca9633..cd1cab58e84ca 100644
+>--- a/drivers/soc/xilinx/zynqmp_power.c
+>+++ b/drivers/soc/xilinx/zynqmp_power.c
+>@@ -112,7 +112,7 @@ static irqreturn_t zynqmp_pm_isr(int irq, void *data)
+> 			orderly_poweroff(true);
+> 			break;
+> 		case SUSPEND_POWER_REQUEST:
+>-			pm_suspend(PM_SUSPEND_MEM);
+>+			orderly_suspend();
+> 			break;
+> 		default:
+> 			pr_err("%s Unsupported InitSuspendCb reason code %d\n",
+>@@ -196,7 +196,7 @@ static void zynqmp_pm_init_suspend_work_fn(struct work_struct *work)
+> 	if (pm_work->args[0] == SUSPEND_SYSTEM_SHUTDOWN) {
+> 		orderly_poweroff(true);
+> 	} else if (pm_work->args[0] == SUSPEND_POWER_REQUEST) {
+>-		pm_suspend(PM_SUSPEND_MEM);
+>+		orderly_suspend();
+> 	} else {
+> 		pr_err("%s Unsupported InitSuspendCb reason code %d.\n",
+> 		       __func__, pm_work->args[0]);
+>diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+>index aa08c3bbbf59a..c009deb3eb2b6 100644
+>--- a/include/linux/reboot.h
+>+++ b/include/linux/reboot.h
+>@@ -177,6 +177,7 @@ void ctrl_alt_del(void);
+> 
+> extern void orderly_poweroff(bool force);
+> extern void orderly_reboot(void);
+>+extern void orderly_suspend(void);
+> 
+> /**
+>  * enum hw_protection_action - Hardware protection action
+>diff --git a/kernel/reboot.c b/kernel/reboot.c
+>index bc71183d4ad87..1d830051dc920 100644
+>--- a/kernel/reboot.c
+>+++ b/kernel/reboot.c
+>@@ -851,6 +851,7 @@ void ctrl_alt_del(void)
+> #define POWEROFF_CMD_PATH_LEN  256
+> static char poweroff_cmd[POWEROFF_CMD_PATH_LEN] = "/sbin/poweroff";
+> static const char reboot_cmd[] = "/sbin/reboot";
+>+static const char suspend_cmd[] = "/sbin/suspend";
+> 
+> static int run_cmd(const char *cmd)
+> {
+>@@ -872,6 +873,20 @@ static int run_cmd(const char *cmd)
+> 	return ret;
+> }
+> 
+>+static int __orderly_suspend(void)
+>+{
+>+	int ret;
+>+
+>+	ret = run_cmd(suspend_cmd);
+>+
+>+	if (ret) {
+>+		pr_info("Failed to start orderly suspend: fall back to suspend-to-mem\n");
+>+		pm_suspend(PM_SUSPEND_MEM);
+>+	}
+>+
+>+	return ret;
+>+}
+>+
+> static int __orderly_reboot(void)
+> {
+> 	int ret;
+>@@ -951,6 +966,25 @@ void orderly_reboot(void)
+> }
+> EXPORT_SYMBOL_GPL(orderly_reboot);
+> 
+>+static void suspend_work_func(struct work_struct *work)
+>+{
+>+	__orderly_suspend();
+>+}
+>+
+>+static DECLARE_WORK(suspend_work, suspend_work_func);
+>+
+>+/**
+>+ * orderly_suspend - Trigger an orderly system suspend
+>+ *
+>+ * This may be called from any context to trigger a system suspend.
+>+ * If the orderly suspend fails, it will force an immediate suspend.
+>+ */
+>+void orderly_suspend(void)
+>+{
+>+	schedule_work(&suspend_work);
+>+}
+>+EXPORT_SYMBOL_GPL(orderly_suspend);
+>+
+> static const char *hw_protection_action_str(enum hw_protection_action
+> action)
+> {
+> 	switch (action) {
+>
 
-Included branches with driver code:
-  - renesas-clk-for-v7.5
-  - renesas-pinctrl-for-v7.5
-  - topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v4-rebased
 
-Included fixes:
-  - reset: rzg2l-usbphy-ctrl: Permit disabling POWER_SEQUENCING again
-  - [TEST] soc: renesas: rcar-rst: Enable WDT reset on early R-Car V4M
-  - ARM: shmobile: defconfig: Update for renesas-drivers
-  - [LOCAL] arm64: renesas: defconfig: Update for renesas-drivers
-  - [LOCAL] riscv: rzfive: defconfig: Update for renesas-drivers
+Right, I had a look, this doesn't "hurt" to merge, like for example
+nothing will break, and this looks simple enough, but again, as you said,
+/sbin/suspend isn't standard, so that's a crux. I'm thinking using PM may
+be a "lightbulb" idea for me here. But I may be going crazy.
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#main
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git#i2c/i2c-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git#i3c/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - https://gitlab.freedesktop.org/drm/kernel.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git#pwm/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.git#timers/drivers/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rmk/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git#watchdog-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git#driver-core-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/pza/linux.git#reset/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#fixes
-  - git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git#char-misc-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git#togreg
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git#kbuild-for-next
+hmm, if I had to say tag or no, I'd give the tag:
 
-Gr{oetje,eeting}s,
+Reviewed-by: Bradley Morgan <bradley.morgan@linux.dev>
 
-						Geert
+Since
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1: this doesn't hurt to merge
+2: this looks very very simple and quite cool tbh.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+
+--- Thanks!
