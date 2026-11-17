@@ -1,66 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.104
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794932995;
-	b=Rsc5XNAVHHDRw/YymvuoD8017b2xPnC7HP97w+RP75T1xqW0BTy8HoaoYnGgWs4WRPc/
-	 05rjoEs4lbd2TjVOWmFCMt3ILgPGibcLHaLzcgS8r12UMLBwLZH7USyidDFEQpJ2Q5C58
-	 Fp0eBxOHkH/iQGxoZDjgxc3TPV2SuUP/fJf2vFWdPAvvPLupqbtjQmFcDrEEQjWRQZTl9
-	 esBy8TG3Q86f040sezbC8ooQ7EngsGR92UARVhzhylEg2qc7O9GgRi4MFB7Zy+Sit+lyA
-	 41UBFXxV+c2+USrV1AHtE35W2EKWOb4FVBbYOt1B1t6zqR+MFbctoYN1X7cqslBNkhw==
+	t=1794933291;
+	b=b3X2RXrarBkOOZsQ8T464W1ZoWFmBGSemztIl1aYOpng+FQgvxksNBha69jA5v+JO92V
+	 VBDEuTuy7Mh+5P7X4KLMhLxpKzTI/hYOnCeXbr3Iln5reoiiWD9OqyimdhdBMa+KXskDS
+	 YWINNgj/qce6xZYqlQOrK6dc+xHTH7009uX0qFqfypjJB9mRVzWgTCl1dt21LIhF32EfS
+	 g5QBqoxdxgf98Q+jkwvsxTK/XnTnqjCIpX1WK4TH1BbMW0ELg420ggjPM+6djWlD9Z4y3
+	 DH7J1dRQrfsNRiBLMbHqcCCjk8GXR0p+m5x3Dy0o33ktgyZiuwCGmaKy+yiuGLEH9Dw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794932995;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:CC:Subject:In-Reply-To:
-	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=Xah6kH3NsJjHjsSaD0EvODIXJgcLgPXtuKW/zjmxYTw=;
-	b=QSQxUBnzf5J9oVcOZjw94ObSAW1euFZo8CXvGmVdrhd49QKJoWukz5HGHysEPAD5caro
-	 B9P983LyB7LrqorYnkF/UEXleUTdRVDAtd2GXY9l1Fa4NNkRJggS0ijmxlm2iLMmVpSts
-	 yEoaU8bEFD0TAnsKCEv3axKoz4mZxCsRErYaunFVpFuQLHHcUaP/AUTa5b5+Ionf+pns4
-	 o1Cx/wkincj0/8daH8yri8/JpATGiUODuR453QNzrl1SqoJovuEhnv5srJhz5n+aTgqP2
-	 Ju4wWpOG1EYyLhC7kK4skBSa2eWjzeWLNxb5ty1uq+dthAJvN+akVnCffj7TaJuHccw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794933291;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=ZBaSreAQQFD38eDt5XDYtncmNV8/eCgCLVjMti31nAc=;
+	b=wM7BByHkaZ9IFksZ+3rEWCqCZO8LNmsXqnFX1Xw6VqEBhzScxhFudqxu3fGOiqA4ZaWF
+	 SWuSD9i4fufg6vl1Yl3iID/6h+fYf8FDg5NytRYLIFvCuFSpCtpsJn538XPk5lHOniGhR
+	 e7nF04Jf8SP4EFw+VhmaYQrCRiVNGqUxje2b4gXcS1b2Qo1FnHcitQEfdYpbbWH/TgpIY
+	 uIranh3h3L2TancGhKUcLR9+BVyDTZ1o4VqQRyPAys2iiYF2KvXSON8ONbpj+dR0wBshE
+	 yWrxSFDzwHRwox7zHTI0OViNRAdi+WUMwDZkJ+PBLj0sOYxHgpJEGsU0e7OPp9/eLjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.dev;
-	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=g77SUc29;
-	arc=none smtp.remote-ip=91.218.175.104
-Received: from mta0.migadu.com (out-104.mta0.migadu.com [91.218.175.104])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vaUlETB+;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795D7606A32C
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:29:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 795D7606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F98A606A32F
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 16:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F98A606A32F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=g77SUc29
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=L5r87W+vvYhaC4SQ0Zx2qEfNiZ7OppygpT1qNDZLbu4=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794932991; v=1; x=1795537791;
- b=g77SUc29ucT/305eXQyOO/RdLLnTiApw0sYGzoEYg9tr7a9qf2N6jCchSzK9gEuD6vlCP8gg
- ZtGYFskQqf4gkxIzRo5iyfvUmBn+b7M0xzh/kV6fJ1MyltaOSZYObdCp2OsO++bGXGNFNmgQxUB
- XuKC7ddVWcLSayz+JbP6QyJA=
-X-Envelope-To: linux-renesas-soc@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id ec8f52277812aa2e;
-	Tue, 17 Nov 2026 16:29:51 +0000
-X-Mizu-Trace-ID: ec8f52277812aa2e
-X-Migadu-Flow: FLOW_OUT
-Date: Tue, 17 Nov 2026 16:29:47 +0000
-From: Bradley Morgan <bradley.morgan@linux.dev>
-To: marek.vasut+renesas@mailbox.org
-CC: akpm@linux-foundation.org, arm-scmi@vger.kernel.org, cristian.marussi@arm.com,
- eadavis@sina.com, geert+renesas@glider.be, kees+treewide@kernel.org,
- leitao@debian.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- marco.crivellari@suse.com, michal.simek@amd.com, oleg@redhat.com,
- panchuang@vivo.com, petr.pavlu@suse.com, pmladek@suse.com,
- ptikhomirov@virtuozzo.com, ptsm@linux.microsoft.com, sudeep.holla@kernel.org,
- systemd-devel@lists.freedesktop.org, willy@infradead.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_=5BRFC=5D_kernel/reboot=3A_Add_orderly?=
- =?US-ASCII?Q?=5Fsuspend=28=29_via_/sbin/suspend_user_mode_helper?=
-In-Reply-To: <20261117084523.50711-1-marek.vasut+renesas@mailbox.org>
-Message-ID: <03D974DA-29CF-404A-99BD-545D199E0A6B@linux.dev>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vaUlETB+
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-498f5fa5103so2287558f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 08:34:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794933289; x=1795538089; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ZBaSreAQQFD38eDt5XDYtncmNV8/eCgCLVjMti31nAc=;
+        b=vaUlETB+vOEJri81xxcqpDV7o1gmBwNoKIll1yEKbUzDZfcOE4GFtlHnxjJkxluxuX
+         rIMqVyrNZzIsZeQbSVmQ+ATuofnYLJGbmAWHndWqcfdFPGqRKqtg4qUYgGQ6LP38WQ4U
+         AYEBXj3AI0/jRwz/6QLQoQmMFH1jS18CfpQHa/pc7CFNNbfoEQyaRi6sx/RjJsUSv/sg
+         DqoQf2/oasIQWrZzBs+0OGZHw9Lg05ckzP9MbdoFjTbe06lczKWzMScHYTD1cduf45Yj
+         L7Kxz1Se3NVZta9XMbDKbFazmiKsS3wZAC2bfi0KYyWlkFWBc2YAJn1EhTA5KtPoWMgY
+         MkLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794933289; x=1795538089;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ZBaSreAQQFD38eDt5XDYtncmNV8/eCgCLVjMti31nAc=;
+        b=SVXqipTNGxqGWECvG+l91nRcXThoY2As6OVHeKjJEyGiGDK3un94Pt11KB61t9cOUh
+         Sm3sraiDPjxU5EhzdD++2V3jyCmdXlTvSXwhw02aQ/ERd9a1t+5Pq8oYRuG2gZBTsxhI
+         2jPxAlAtaVmpxjxAqyV2YNJlKy6+16KNEe7Sx0IafuztKYQIrH20FiAqxcfBBStYgS1/
+         LoRkxX2LrgwyCvv5x7LQXbbP0s3sw7PGXdQBuZJ2+llamNEhQqhc4Wf4hp27TvnNl7S3
+         ck+uQhfHhMF/Gao+GMNhcU6iLF/kDhFoVroer1Ztv4m+vbNFY0sOKYwFbUGoV1CrnHAE
+         Wa3Q==
+X-Forwarded-Encrypted: i=1; AL+hErElfCk4DRPCY1VmfeK9+BcWOf6Mct3eZ43ZE4pkz77HpSQZsrRiH6rUrSqM14FGIqLZiplZBuPx0MfcaEuFyMEokw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8mpNbtoLKFYwFjp/1Don8FqoQqqtKLeUiJ/dfqOD9VfDe8eJmI
+	EquR6pKX4Y12p8rt1J1w7dGceflmFFiAW8H1QZCh3OA8dGEW0b39JM4PLOyryQ==
+X-Gm-Gg: AZFdTZdFl4Ar83MyclvV3t2c8y+n/3U0eyXYxUw3I+z5N2/vhEc7wR7J+vulcdCO1sA
+	S5UIKMs9hU5NFAcUBChsoL2loUQOqQTb9fln708ZzuedjbN8lXtGQbGZJNf3NBWaUvRVv0M25CR
+	mRo7v6flZlVlNoJLBhc8ZwRvqji+kup3MKH1tW2bHTWupqLTua0thPEgahBM95iZdI2uBHQyVU5
+	2m7Gy5FUQ4iI49AMxgiIqVFbbQGFHXFtXxzSRLbD0M5cbUawz7Y5O7WUOLljpV+IX3C1Dste5wm
+	B+KBwa+9wfGcvf9pDpJb6JKa7asN0JjoIOC41Xa4VTMqIcEhxNl3+rHPqh9rAxGMicZ82hxTa8T
+	kOHMcmUq7TiEIRbGDBnhgKDIfXdH4EqVEK0GcDSEVmKIwy9x0ObEU0EoCbKPm7n78ucaCzm4L0m
+	HZVbwMyK8eZPpViGrN8muyFLYdZrSlGqkfYJFo3CJnfmp49nyoCnf6a9fyBNCLt+uKcosqdtM3h
+	QXw12JPCx4S5XuYdX80axnktzPrN0CB52YpXmhuDlHc9Mc56WJfWbaoGOUbOwqkGlFBck/KbYEy
+	Pg4GjdbAVb+D5RwCRhxK5tV3nIWU5GPtwr92enEE3jEyrfTtIkn00h730EzqDSNazw==
+X-Received: by 2002:a05:6000:26c9:b0:497:bd30:8df5 with SMTP id ffacd0b85a97d-49c6dbfff6amr32598597f8f.2.1794933289343;
+        Tue, 17 Nov 2026 08:34:49 -0800 (PST)
+Received: from [127.0.1.1] ([2a00:23c4:a702:d301:9260:9c28:f0f5:e091])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c6d079a2asm26672248f8f.16.2026.11.17.08.34.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2026 08:34:49 -0800 (PST)
+From: Biju Das <biju.das.au@gmail.com>
+Date: Tue, 17 Nov 2026 16:34:46 +0000
+Subject: [PATCH v3 1/3] mmc: renesas_sdhi: Save and restore IOVS across
+ suspend/resume
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -70,231 +93,107 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261117-sdhi_hs400-v3-1-b4659189db69@bp.renesas.com>
+References: <20261117-sdhi_hs400-v3-0-b4659189db69@bp.renesas.com>
+In-Reply-To: <20261117-sdhi_hs400-v3-0-b4659189db69@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794933288; l=2532;
+ i=biju.das.jz@bp.renesas.com; s=20261020; h=from:subject:message-id;
+ bh=7LlFxU+mY+aa3FL65wAmN2QrH54fIPpf65zJ5XplIvw=;
+ b=5yeqRCbIbTitgunEBm3UNWIii168HroDOpVc20vDDV2VAgNMfsum2AMbBy4Ep4qKGIISbBd7t
+ aLTf7kPvpLDCpheJinJ9+9EYrkx0eMV018cY1wgONeRUYs9ZFVwjbAp
+X-Developer-Key: i=biju.das.jz@bp.renesas.com; a=ed25519;
+ pk=yzD2T1OLS3lEYflbk64xhLlxhk75lZ+NoOtkTOqrlVw=
 
-On 17 November 2026 08:44:19 GMT, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
->Currently, Linux responds to firmware-issued poweroff and reboot requests
->by invoking user mode helpers /sbin/poweroff and /sbin/reboot, which give
->userspace the ability to perform orderly poweroff and reboot according to
->policy set by userspace.
->
->This is not the case for firmware-issued suspend request, which directly
->invokes pm_suspend(PM_SUSPEND_MEM), without giving userspace any way to
->determine the suspend policy. This is problematic, because the userspace
->might not be quite ready to suspend right the instant when the suspend
->request from firmware arrives, e.g. because the user is interacting with
->the device and the userspace knows that interaction will end in the near
->future, at which point the system can be suspended perfectly well.
->
->Introduce a user mode helper, /sbin/suspend, which acts the same way as
->the other user mode helpers, and which is invoked when firmware-issued
->suspend request arrives. Userspace can use the helper to apply suspend
->policy, most likely by invoking init system suspend target. In case the
->helper is not present, retain current behavior and suspend immediately.
->
->Note that /sbin/suspend is non-standard. I also considered registering
->an input device and sending KEY_SUSPEND via such a device, but that does
->not seems nice. I also had a look at wake locks, but I don't think this
->is the right tool either. I am sending this as an RFC, because I would
->like to get input on this. I am including change for two platforms, SCMI
->and ZynqMP, which could benefit from this. Thank you for your input !
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hmm. let me use my thinking glasses.
+The SD_STATUS register, specifically the IOVS (I/O Voltage Switch) bit, is
+not automatically restored after a suspend/resume cycle, causing the
+regulator to report an incorrect voltage on resume.
 
->
->Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
->---
->Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Breno Leitao <leitao@debian.org>
->Cc: Cristian Marussi <cristian.marussi@arm.com>
->Cc: Edward Adam Davis <eadavis@sina.com>
->Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->Cc: Kees Cook <kees+treewide@kernel.org>
->Cc: Marco Crivellari <marco.crivellari@suse.com>
->Cc: Michal Simek <michal.simek@amd.com>
->Cc: Oleg Nesterov <oleg@redhat.com>
->Cc: Pan Chuang <panchuang@vivo.com>
->Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
->Cc: Petr Mladek <pmladek@suse.com>
->Cc: Petr Pavlu <petr.pavlu@suse.com>
->Cc: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
->Cc: Sudeep Holla <sudeep.holla@kernel.org>
->Cc: arm-scmi@vger.kernel.org
->Cc: linux-arm-kernel@lists.infradead.org
->Cc: linux-renesas-soc@vger.kernel.org
->Cc: linux-kernel@vger.kernel.org
->Cc: systemd-devel@lists.freedesktop.org
->---
-> .../firmware/arm/scmi/scmi_power_control.c    | 11 +-----
-> drivers/soc/xilinx/zynqmp_power.c             |  4 +--
-> include/linux/reboot.h                        |  1 +
-> kernel/reboot.c                               | 34 +++++++++++++++++++
-> 4 files changed, 38 insertions(+), 12 deletions(-)
->
->diff --git a/drivers/firmware/arm/scmi/scmi_power_control.c b/drivers/firmware/arm/scmi/scmi_power_control.c
->index e791a206768c2..b61afb46ca7ef 100644
->--- a/drivers/firmware/arm/scmi/scmi_power_control.c
->+++ b/drivers/firmware/arm/scmi/scmi_power_control.c
->@@ -80,7 +80,6 @@ enum scmi_syspower_state {
->  * @reboot_nb: A notifier_block optionally used to track reboot progress
->  * @forceful_work: A worker used to trigger a forceful transition once a
->  *		   graceful has timed out.
->- * @suspend_work: A worker used to trigger system suspend
->  */
-> struct scmi_syspower_conf {
-> 	struct device *dev;
->@@ -93,7 +92,6 @@ struct scmi_syspower_conf {
-> 	struct notifier_block reboot_nb;
-> 
-> 	struct delayed_work forceful_work;
->-	struct work_struct suspend_work;
-> };
-> 
-> #define userspace_nb_to_sconf(x)	\
->@@ -254,7 +252,7 @@ static void scmi_request_graceful_transition(struct scmi_syspower_conf *sc,
-> 		orderly_reboot();
-> 		break;
-> 	case SCMI_SYSTEM_SUSPEND:
->-		schedule_work(&sc->suspend_work);
->+		orderly_suspend();
-> 		break;
-> 	default:
-> 		break;
->@@ -323,11 +321,6 @@ static int scmi_userspace_notifier(struct notifier_block *nb,
-> 	return NOTIFY_OK;
-> }
-> 
->-static void scmi_suspend_work_func(struct work_struct *work)
->-{
->-	pm_suspend(PM_SUSPEND_MEM);
->-}
->-
-> static int scmi_syspower_probe(struct scmi_device *sdev)
-> {
-> 	int ret;
->@@ -352,8 +345,6 @@ static int scmi_syspower_probe(struct scmi_device *sdev)
-> 	sc->dev = &sdev->dev;
-> 	dev_set_drvdata(&sdev->dev, sc);
-> 
->-	INIT_WORK(&sc->suspend_work, scmi_suspend_work_func);
->-
-> 	return handle->notify_ops->devm_event_notifier_register(sdev,
-> 							   SCMI_PROTOCOL_SYSTEM,
-> 					 SCMI_EVENT_SYSTEM_POWER_STATE_NOTIFIER,
->diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
->index ce75bc5ca9633..cd1cab58e84ca 100644
->--- a/drivers/soc/xilinx/zynqmp_power.c
->+++ b/drivers/soc/xilinx/zynqmp_power.c
->@@ -112,7 +112,7 @@ static irqreturn_t zynqmp_pm_isr(int irq, void *data)
-> 			orderly_poweroff(true);
-> 			break;
-> 		case SUSPEND_POWER_REQUEST:
->-			pm_suspend(PM_SUSPEND_MEM);
->+			orderly_suspend();
-> 			break;
-> 		default:
-> 			pr_err("%s Unsupported InitSuspendCb reason code %d\n",
->@@ -196,7 +196,7 @@ static void zynqmp_pm_init_suspend_work_fn(struct work_struct *work)
-> 	if (pm_work->args[0] == SUSPEND_SYSTEM_SHUTDOWN) {
-> 		orderly_poweroff(true);
-> 	} else if (pm_work->args[0] == SUSPEND_POWER_REQUEST) {
->-		pm_suspend(PM_SUSPEND_MEM);
->+		orderly_suspend();
-> 	} else {
-> 		pr_err("%s Unsupported InitSuspendCb reason code %d.\n",
-> 		       __func__, pm_work->args[0]);
->diff --git a/include/linux/reboot.h b/include/linux/reboot.h
->index aa08c3bbbf59a..c009deb3eb2b6 100644
->--- a/include/linux/reboot.h
->+++ b/include/linux/reboot.h
->@@ -177,6 +177,7 @@ void ctrl_alt_del(void);
-> 
-> extern void orderly_poweroff(bool force);
-> extern void orderly_reboot(void);
->+extern void orderly_suspend(void);
-> 
-> /**
->  * enum hw_protection_action - Hardware protection action
->diff --git a/kernel/reboot.c b/kernel/reboot.c
->index bc71183d4ad87..1d830051dc920 100644
->--- a/kernel/reboot.c
->+++ b/kernel/reboot.c
->@@ -851,6 +851,7 @@ void ctrl_alt_del(void)
-> #define POWEROFF_CMD_PATH_LEN  256
-> static char poweroff_cmd[POWEROFF_CMD_PATH_LEN] = "/sbin/poweroff";
-> static const char reboot_cmd[] = "/sbin/reboot";
->+static const char suspend_cmd[] = "/sbin/suspend";
-> 
-> static int run_cmd(const char *cmd)
-> {
->@@ -872,6 +873,20 @@ static int run_cmd(const char *cmd)
-> 	return ret;
-> }
-> 
->+static int __orderly_suspend(void)
->+{
->+	int ret;
->+
->+	ret = run_cmd(suspend_cmd);
->+
->+	if (ret) {
->+		pr_info("Failed to start orderly suspend: fall back to suspend-to-mem\n");
->+		pm_suspend(PM_SUSPEND_MEM);
->+	}
->+
->+	return ret;
->+}
->+
-> static int __orderly_reboot(void)
-> {
-> 	int ret;
->@@ -951,6 +966,25 @@ void orderly_reboot(void)
-> }
-> EXPORT_SYMBOL_GPL(orderly_reboot);
-> 
->+static void suspend_work_func(struct work_struct *work)
->+{
->+	__orderly_suspend();
->+}
->+
->+static DECLARE_WORK(suspend_work, suspend_work_func);
->+
->+/**
->+ * orderly_suspend - Trigger an orderly system suspend
->+ *
->+ * This may be called from any context to trigger a system suspend.
->+ * If the orderly suspend fails, it will force an immediate suspend.
->+ */
->+void orderly_suspend(void)
->+{
->+	schedule_work(&suspend_work);
->+}
->+EXPORT_SYMBOL_GPL(orderly_suspend);
->+
-> static const char *hw_protection_action_str(enum hw_protection_action
-> action)
-> {
-> 	switch (action) {
->
+Fix this by caching the CTL_SD_STATUS register value in the renesas_sdhi
+private struct at suspend time and writing it back during resume. The
+whole register is saved and restored, as IOVS shares it with other bits.
+The save/restore is only performed when a regulator device (rdev) is
+present, as the IOVS bit is only relevant in that context.
 
+Fixes: dcbce328d3a2 ("mmc: renesas_sdhi: Add suspend/resume hooks")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+- No change.
+v1->v2:
+- Added fixes tag
+---
+ drivers/mmc/host/renesas_sdhi.h      |  2 ++
+ drivers/mmc/host/renesas_sdhi_core.c | 26 +++++++++++++++++++++++++-
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
-Right, I had a look, this doesn't "hurt" to merge, like for example
-nothing will break, and this looks simple enough, but again, as you said,
-/sbin/suspend isn't standard, so that's a crux. I'm thinking using PM may
-be a "lightbulb" idea for me here. But I may be going crazy.
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index 4f8ed1d8efee..a93e613e9821 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -106,6 +106,8 @@ struct renesas_sdhi {
+ 	struct reset_control *rstc_axim;
+ 	struct tmio_mmc_host *host;
+ 	struct regulator_dev *rdev;
++
++	u32 cache_sd_status;
+ };
+ 
+ #define host_to_priv(host) \
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 5e649ef20990..56286431fd2c 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -1465,6 +1465,15 @@ int renesas_sdhi_suspend(struct device *dev)
+ 	};
+ 	int ret;
+ 
++	if (priv->rdev) {
++		PM_RUNTIME_ACQUIRE_IF_ENABLED(dev, pm);
++		ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
++		if (ret < 0)
++			return ret;
++
++		priv->cache_sd_status = sd_ctrl_read32(host, CTL_SD_STATUS);
++	}
++
+ 	ret = pm_runtime_force_suspend(dev);
+ 	if (ret)
+ 		return ret;
+@@ -1494,8 +1503,23 @@ int renesas_sdhi_resume(struct device *dev)
+ 
+ 	ret = pm_runtime_force_resume(dev);
+ 	if (ret)
+-		reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
++		goto err_assert;
++
++	if (priv->rdev) {
++		PM_RUNTIME_ACQUIRE_IF_ENABLED(dev, pm);
++		ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
++		if (ret < 0)
++			goto err_pm;
++
++		sd_ctrl_write32(host, CTL_SD_STATUS, priv->cache_sd_status);
++	}
++
++	return 0;
+ 
++err_pm:
++	pm_runtime_force_suspend(dev);
++err_assert:
++	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(renesas_sdhi_resume);
 
-hmm, if I had to say tag or no, I'd give the tag:
+-- 
+2.43.0
 
-Reviewed-by: Bradley Morgan <bradley.morgan@linux.dev>
-
-Since
-
-1: this doesn't hurt to merge
-2: this looks very very simple and quite cool tbh.
-
-
---- Thanks!
