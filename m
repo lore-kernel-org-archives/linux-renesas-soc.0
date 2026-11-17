@@ -1,76 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.161
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794894896;
-	b=lu6pE3StzRxReDnI1hbLW6pSLh4jlnRhxtdVYC2LCiik2vw6w04RC8Ky+7m7yR8Whflc
-	 NAjlheCxRUx6AmB2NILDs8IfjyELyMBz0dkjT/tRolaMSZvMqUtot8VafrSLRejY/3QQK
-	 iZKuH2OtAXC8jzKu5NdXsEBGU3mNfz+0D56XUP/TO0Vpahwl0sTkWKNyFkwU4w51DBOHg
-	 aOqMkM/SHvUjENhgVhs6FnfKRNOy8pjVZqPzJK/mNyKMp+DipG0Bkmk0ht/VGABthi+hU
-	 objglGenRITEQZ4OraxPA14D2WouQQf1OtMZkZBTJ1D8hhcopZY/9QX4XqleO0ANWjg==
+	t=1794905140;
+	b=b8XOIqUZV5jKpTWOIHJ4LHDW8zNqdHQWQMuIKvcZ9rELaJTMe5cfPIhMo6RclxQXoZye
+	 /LG5PBj+9r6IEypyn33N9nvDjjHaKccYodckQXKo6I2SzNw8a6Mpt2rZFH+7XCeA31f7X
+	 vGa++wLisa+lro3D7xb/fJBBiWRdb2ApagXdYuYBjk3flEKsDVCBJra7ucA9xkyKDx72i
+	 aQaRdfsJRUJzbcsifnahFRceV8SJxloNQtbRRU8Uljf5TGs65l1NmjyvDR6BIU/V7SBtr
+	 blj3G9XVkrK8OAeC4N+HN/ixhjuFcr1lak1MH1tV8c4I8Hl3LHZYR9kbmOp1Vw+j5Jw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794894896;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:User-Agent;
-	bh=+6OeVK/kYsGMvM65T3GndgRfVKrwjHECVUtfhEql0nE=;
-	b=pKxmqMSYBAgxhxMS4MvXz7cXcqguEqJInsPAfWEUi0c8LhzVPE34NNbDpiv9c/XQSPag
-	 tzU0BymeP8JAcfAuYaX0jKdpNfs09NHuOO38s4SGlTJoUHSx3LF1V+CuByT7BROzqMuIm
-	 KQfGGA7rzYt4r7uyfou0G0Epo71XoKew5KMvEeZpTCw+qmTLeJNHGYXhQVqEY+qKleJ4J
-	 EOf1W3x0QPUcf2n/btr2QqAyiAlT9AWAmwwaUWHEMe315coHdUTSZ/xyLEObJVOwqKfC+
-	 U8vpoG2JEQVgdxTdZlUye89RaGINZPw8aaf8zb7xV3asWJhs71WosmfRtQyV112UVtQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794905140;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-MBO-RS-ID:X-MBO-RS-META;
+	bh=DezbHtCd3hypT1eHDNwCunwup1tFxqb9i/BJNZQvL3k=;
+	b=wal432cXKDL9eW9DyDAXBA7Z/CN/ieYh7NIozFrWtbi0ogYHhVCITeY6cMlrjZIphfDQ
+	 LtydONEKg3CaBqxhEdKtbwSFZEjyVZpBMnY4XgmL2gUOC6+31XbCovZ1Elxhnjg8lMvqz
+	 gyvL+qINacazfqz5WCds/X9XoKQsKoM3JziBuHLMYn8feMD81kAXpS9ysFgIiDpb2lA8l
+	 OQCGqRAV5jOeR/rnTdXVjMtF97pKHVgGxoXlAV8CsKCBTuShMmHA9O6gl9KInZQrwXI2W
+	 OoT0cB/er0lKFBufMyBsdYr6NJdVgJLMjWGZPMwo5vLND9ajSaPQoWBoBqX0MOCn2bg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=H1lC2JKE;
-	arc=none smtp.remote-ip=192.198.163.19
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b="GO50dc6/";
+	arc=none smtp.remote-ip=80.241.56.161
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAA4606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2026 05:54:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3EAA4606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5DD606A337;
+	Tue, 17 Nov 2026 08:45:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C5DD606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=H1lC2JKE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794894895; x=1826430895;
-  h=date:from:to:cc:subject:message-id;
-  bh=IYhUdi3BYcd87BrpPi4nM2P1prd0259oxAS7YNxuRJ8=;
-  b=H1lC2JKE0no473OxOkwij3dR0emfc/TEaBWVqaQnkyfy6O+Cc2/zZoEW
-   xkQjL3uKwzmsbF5GySb5iiLXUBR6kQWgYRxV+szaUQCHDxJxW//5y0iNo
-   XP4RmwRIvdI9OjKUFEtB7neRt1nz+0VyTQyeqx3/eC+3VDNiv6fuNmeRM
-   ECcyXAsGuCyitVZ96UGuJpzk75W6Yq78QswL7R6HqPpLXtGdLrEYpoShF
-   qD/mRaK1o/5xo6EJTjymUC5/PIbOpQEBQB4KhBzm/TxZm4KVMErEmLgX6
-   Gihi8PzDVDZ0+D5ErLI0+tCTljPrs0hi9Og5nrM9Y6pWGt0Je4U6GAJ7Z
-   g==;
-X-CSE-ConnectionGUID: bEF2IMQETVCEfc5LB3k3tA==
-X-CSE-MsgGUID: et652+FlTZ2AM+WRFANOBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11968"; a="3759001"
-X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
-   d="scan'208";a="3759001"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 21:54:54 -0800
-X-CSE-ConnectionGUID: IXT6+QJtTAe884umVcRtEw==
-X-CSE-MsgGUID: QzkimxHjT4moi9izPHasSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
-   d="scan'208";a="11475859"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa012.fm.intel.com with ESMTP; 16 Nov 2026 21:54:54 -0800
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xTC9a-00000001A7y-3suT;
-	Tue, 17 Nov 2026 05:54:50 +0000
-Date: Tue, 17 Nov 2026 13:53:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-dts-for-v7.5] BUILD SUCCESS
- c9dd8caa61f229365fa9fc08f2dcf66103182afa
-Message-ID: <20261117135350.P5cO0R7q-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=GO50dc6/
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4jTJGK3mhYzKnh3;
+	Tue, 17 Nov 2026 09:45:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1794905129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DezbHtCd3hypT1eHDNwCunwup1tFxqb9i/BJNZQvL3k=;
+	b=GO50dc6/HVjeV41229FKdWwES4NpxJJhDlDZigkZ3+vM29imYgmk90hxAjJeH93i73BSH+
+	8y7RPFasxVbOKg5+zYF1b3WPdOZIQ30nU/JRGxHW3qXGsWEbh6mPjfBR2lxoLN9A53snN5
+	Kmx24gb08ySNfOtBnwMS3gqUMGgbptePByNUwnmZPGhRwCjmKLtsUh3J4UoOu0C9NMKFR4
+	gBq74VDdGpfHSExtPn9UaTTnUfBYOnseqMNMY8tGOKkIpdril77Xpyg10cunUnF9YkKn+e
+	Uux1WarCFtKCiqIWbos5DwfFOBWYdNgji+sfA2u7tp9ewbCicQQ9o8PHcoIvwA==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Breno Leitao <leitao@debian.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Edward Adam Davis <eadavis@sina.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kees Cook <kees+treewide@kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Pan Chuang <panchuang@vivo.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	arm-scmi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	systemd-devel@lists.freedesktop.org
+Subject: [PATCH] [RFC] kernel/reboot: Add orderly_suspend() via /sbin/suspend user mode helper
+Date: Tue, 17 Nov 2026 09:44:19 +0100
+Message-ID: <20261117084523.50711-1-marek.vasut+renesas@mailbox.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -79,215 +85,210 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: f8999e5d1c94626d345
+X-MBO-RS-META: rnnwiz1qpbuo1m538wigdx8oazjoq1un
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dts-for-v7.5
-branch HEAD: c9dd8caa61f229365fa9fc08f2dcf66103182afa  arm64: dts: renesas: spider: Add overlay for PCIe ch0 endpoint mode
+Currently, Linux responds to firmware-issued poweroff and reboot requests
+by invoking user mode helpers /sbin/poweroff and /sbin/reboot, which give
+userspace the ability to perform orderly poweroff and reboot according to
+policy set by userspace.
 
-elapsed time: 901m
+This is not the case for firmware-issued suspend request, which directly
+invokes pm_suspend(PM_SUSPEND_MEM), without giving userspace any way to
+determine the suspend policy. This is problematic, because the userspace
+might not be quite ready to suspend right the instant when the suspend
+request from firmware arrives, e.g. because the user is interacting with
+the device and the userspace knows that interaction will end in the near
+future, at which point the system can be suspended perfectly well.
 
-configs tested: 195
-configs skipped: 127
+Introduce a user mode helper, /sbin/suspend, which acts the same way as
+the other user mode helpers, and which is invoked when firmware-issued
+suspend request arrives. Userspace can use the helper to apply suspend
+policy, most likely by invoking init system suspend target. In case the
+helper is not present, retain current behavior and suspend immediately.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Note that /sbin/suspend is non-standard. I also considered registering
+an input device and sending KEY_SUSPEND via such a device, but that does
+not seems nice. I also had a look at wake locks, but I don't think this
+is the right tool either. I am sending this as an RFC, because I would
+like to get input on this. I am including change for two platforms, SCMI
+and ZynqMP, which could benefit from this. Thank you for your input !
 
-tested configs:
-alpha                              allnoconfig    gcc-16.2.0
-alpha                             allyesconfig    gcc-16.2.0
-alpha                                defconfig    clang-24
-alpha                                defconfig    gcc-16.2.0
-arc                               allmodconfig    clang-24
-arc                                allnoconfig    gcc-16.2.0
-arc                               allyesconfig    clang-24
-arc                                  defconfig    gcc-16.2.0
-arc                          haps_hs_defconfig    gcc-16.2.0
-arc                   randconfig-1000-20261117    gcc-13.5.0
-arc                   randconfig-1001-20261117    gcc-13.5.0
-arm                                allnoconfig    gcc-16.2.0
-arm                               allyesconfig    clang-24
-arm                          axm55xx_defconfig    clang-24
-arm                                  defconfig    gcc-16.2.0
-arm                       footbridge_defconfig    gcc-16.2.0
-arm                         neponset_defconfig    gcc-16.2.0
-arm                          nhk8815_defconfig    clang-24
-arm                          orion5x_defconfig    gcc-16.2.0
-arm                   randconfig-1000-20261117    gcc-13.5.0
-arm                   randconfig-1001-20261117    gcc-13.5.0
-arm                   randconfig-1002-20261117    gcc-13.5.0
-arm                   randconfig-1003-20261117    gcc-13.5.0
-arm                            spitz_defconfig    clang-24
-arm64                             allmodconfig    clang-24
-arm64                              allnoconfig    gcc-16.2.0
-arm64                                defconfig    gcc-16.2.0
-arm64                 randconfig-1000-20261117    gcc-16.2.0
-arm64                 randconfig-1001-20261117    gcc-16.2.0
-arm64                 randconfig-1002-20261117    gcc-16.2.0
-arm64                 randconfig-1003-20261117    gcc-16.2.0
-csky                              alldefconfig    clang-24
-csky                              allmodconfig    gcc-16.2.0
-csky                               allnoconfig    gcc-16.2.0
-csky                                 defconfig    gcc-16.2.0
-csky                  randconfig-1000-20261117    gcc-16.2.0
-csky                  randconfig-1001-20261117    gcc-16.2.0
-hexagon                           allmodconfig    gcc-16.2.0
-hexagon                            allnoconfig    gcc-16.2.0
-hexagon                              defconfig    gcc-16.2.0
-hexagon               randconfig-1000-20261117    clang-17
-hexagon               randconfig-1001-20261117    clang-17
-i386                               allnoconfig    gcc-16.2.0
-i386        buildonly-randconfig-1000-20261117    clang-22
-i386        buildonly-randconfig-1001-20261117    clang-22
-i386        buildonly-randconfig-1002-20261117    clang-22
-i386        buildonly-randconfig-1003-20261117    clang-22
-i386        buildonly-randconfig-1004-20261117    clang-22
-i386        buildonly-randconfig-1005-20261117    clang-22
-i386                                 defconfig    gcc-16.2.0
-i386                  randconfig-1000-20261117    gcc-14
-i386                  randconfig-1001-20261117    gcc-14
-i386                  randconfig-1002-20261117    gcc-14
-i386                  randconfig-1003-20261117    gcc-14
-i386                  randconfig-1004-20261117    gcc-14
-i386                  randconfig-1005-20261117    gcc-14
-i386                  randconfig-1006-20261117    gcc-14
-i386                  randconfig-1007-20261117    clang-22
-i386                  randconfig-1008-20261117    clang-22
-i386                  randconfig-1009-20261117    clang-22
-i386                  randconfig-1010-20261117    clang-22
-i386                  randconfig-1011-20261117    clang-22
-i386                  randconfig-1012-20261117    clang-22
-i386                  randconfig-1013-20261117    clang-22
-loongarch                         allmodconfig    clang-24
-loongarch                          allnoconfig    gcc-16.2.0
-loongarch                            defconfig    clang-24
-loongarch                 loongson32_defconfig    clang-24
-loongarch             randconfig-1000-20261117    clang-17
-loongarch             randconfig-1001-20261117    clang-17
-m68k                              allmodconfig    gcc-16.2.0
-m68k                               allnoconfig    gcc-16.2.0
-m68k                              allyesconfig    clang-24
-m68k                           amiga_defconfig    gcc-16.2.0
-m68k                                 defconfig    clang-24
-microblaze                         allnoconfig    gcc-16.2.0
-microblaze                        allyesconfig    gcc-16.2.0
-microblaze                           defconfig    clang-24
-mips                              allmodconfig    gcc-16.2.0
-mips                               allnoconfig    gcc-16.2.0
-mips                              allyesconfig    gcc-16.2.0
-mips                           eyeq6_defconfig    clang-24
-mips                      loongson2k_defconfig    gcc-16.2.0
-mips                       maltaaprp_defconfig    clang-24
-mips                          rt305x_defconfig    clang-24
-mips                            xway_defconfig    gcc-16.2.0
-nios2                             allmodconfig    clang-20
-nios2                              allnoconfig    clang-24
-nios2                                defconfig    clang-24
-nios2                 randconfig-1000-20261117    clang-17
-nios2                 randconfig-1001-20261117    clang-17
-openrisc                          allmodconfig    clang-20
-openrisc                           allnoconfig    clang-24
-openrisc                             defconfig    gcc-16.2.0
-parisc                            allmodconfig    gcc-16.2.0
-parisc                             allnoconfig    clang-24
-parisc                            allyesconfig    clang-17
-parisc                               defconfig    gcc-16.2.0
-parisc                 generic-64bit_defconfig    clang-24
-parisc                randconfig-1000-20261117    gcc-9.5.0
-parisc                randconfig-1001-20261117    gcc-9.5.0
-parisc64                             defconfig    clang-24
-powerpc                     adder875_defconfig    clang-24
-powerpc                           allmodconfig    gcc-16.2.0
-powerpc                            allnoconfig    clang-24
-powerpc                       bamboo_defconfig    clang-24
-powerpc                  canyonlands_defconfig    clang-24
-powerpc                       cm5200_defconfig    clang-24
-powerpc                       ep88xc_defconfig    clang-24
-powerpc                        holly_defconfig    clang-24
-powerpc                  mpc8313_rdb_defconfig    gcc-16.2.0
-powerpc                mpc834x_itxgp_defconfig    clang-24
-powerpc                  mpc836x_rdk_defconfig    clang-24
-powerpc                      mpc83xx_defconfig    gcc-16.2.0
-powerpc                       pcm030_defconfig    clang-24
-powerpc                       pmac32_defconfig    clang-24
-powerpc                        ppc64_defconfig    gcc-16.2.0
-powerpc               randconfig-1000-20261117    gcc-9.5.0
-powerpc               randconfig-1001-20261117    gcc-9.5.0
-powerpc64             randconfig-1000-20261117    gcc-9.5.0
-powerpc64             randconfig-1001-20261117    gcc-9.5.0
-riscv                             allmodconfig    clang-24
-riscv                              allnoconfig    clang-24
-riscv                             allyesconfig    clang-24
-riscv                                defconfig    gcc-16.2.0
-riscv                 randconfig-1000-20261117    clang-24
-riscv                 randconfig-1001-20261117    clang-24
-s390                              allmodconfig    clang-17
-s390                               allnoconfig    clang-24
-s390                              allyesconfig    gcc-16.2.0
-s390                                 defconfig    gcc-16.2.0
-s390                  randconfig-1000-20261117    clang-24
-s390                  randconfig-1001-20261117    clang-24
-s390                        zfcpdump_defconfig    gcc-16.2.0
-sh                                allmodconfig    gcc-16.2.0
-sh                                 allnoconfig    clang-24
-sh                                allyesconfig    clang-17
-sh                                   defconfig    gcc-14
-sh                    randconfig-1000-20261117    clang-24
-sh                    randconfig-1001-20261117    clang-24
-sh                           sdk7780_defconfig    gcc-16.2.0
-sh                            sh2007_defconfig    clang-24
-sh                      sh7710voipgw_defconfig    gcc-16.2.0
-sparc                              allnoconfig    clang-24
-sparc                                defconfig    gcc-16.2.0
-sparc                 randconfig-1000-20261117    gcc-15.3.0
-sparc                 randconfig-1001-20261117    gcc-15.3.0
-sparc                        sparc32_defconfig    gcc-16.2.0
-sparc64                           allmodconfig    clang-20
-sparc64                              defconfig    gcc-14
-sparc64               randconfig-1000-20261117    gcc-15.3.0
-sparc64               randconfig-1001-20261117    gcc-15.3.0
-um                                alldefconfig    clang-24
-um                                allmodconfig    clang-17
-um                                 allnoconfig    clang-24
-um                                allyesconfig    gcc-16.2.0
-um                                   defconfig    gcc-14
-um                              i386_defconfig    clang-24
-um                              i386_defconfig    gcc-14
-um                    randconfig-1000-20261117    gcc-15.3.0
-um                    randconfig-1001-20261117    gcc-15.3.0
-um                            x86_64_defconfig    gcc-14
-x86_64                             allnoconfig    clang-24
-x86_64                               defconfig    gcc-14
-x86_64                                   kexec    clang-22
-x86_64                randconfig-1000-20261117    clang-22
-x86_64                randconfig-1001-20261117    clang-22
-x86_64                randconfig-1002-20261117    clang-22
-x86_64                randconfig-1003-20261117    clang-22
-x86_64                randconfig-1004-20261117    clang-22
-x86_64                randconfig-1005-20261117    clang-22
-x86_64                randconfig-1006-20261117    gcc-14
-x86_64                randconfig-1007-20261117    gcc-14
-x86_64                randconfig-1008-20261117    gcc-14
-x86_64                randconfig-1009-20261117    gcc-14
-x86_64                randconfig-1010-20261117    gcc-14
-x86_64                randconfig-1011-20261117    gcc-14
-x86_64                randconfig-1012-20261117    gcc-14
-x86_64                randconfig-1013-20261117    gcc-14
-x86_64                randconfig-1014-20261117    gcc-14
-x86_64                randconfig-1015-20261117    gcc-14
-x86_64                randconfig-1016-20261117    gcc-14
-x86_64                randconfig-1017-20261117    gcc-14
-x86_64                                rhel-9.4    clang-22
-x86_64                            rhel-9.4-bpf    gcc-14
-x86_64                           rhel-9.4-func    clang-22
-x86_64                     rhel-9.4-kselftests    clang-22
-x86_64                          rhel-9.4-kunit    gcc-14
-x86_64                            rhel-9.4-ltp    gcc-14
-xtensa                             allnoconfig    clang-24
-xtensa                            allyesconfig    clang-20
-xtensa                randconfig-1000-20261117    gcc-15.3.0
-xtensa                randconfig-1001-20261117    gcc-15.3.0
-xtensa                          virt_defconfig    gcc-16.2.0
-xtensa                     xip_kc705_defconfig    gcc-16.2.0
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Breno Leitao <leitao@debian.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Edward Adam Davis <eadavis@sina.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kees Cook <kees+treewide@kernel.org>
+Cc: Marco Crivellari <marco.crivellari@suse.com>
+Cc: Michal Simek <michal.simek@amd.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Pan Chuang <panchuang@vivo.com>
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>
+Cc: arm-scmi@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: systemd-devel@lists.freedesktop.org
+---
+ .../firmware/arm/scmi/scmi_power_control.c    | 11 +-----
+ drivers/soc/xilinx/zynqmp_power.c             |  4 +--
+ include/linux/reboot.h                        |  1 +
+ kernel/reboot.c                               | 34 +++++++++++++++++++
+ 4 files changed, 38 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/firmware/arm/scmi/scmi_power_control.c b/drivers/firmware/arm/scmi/scmi_power_control.c
+index e791a206768c2..b61afb46ca7ef 100644
+--- a/drivers/firmware/arm/scmi/scmi_power_control.c
++++ b/drivers/firmware/arm/scmi/scmi_power_control.c
+@@ -80,7 +80,6 @@ enum scmi_syspower_state {
+  * @reboot_nb: A notifier_block optionally used to track reboot progress
+  * @forceful_work: A worker used to trigger a forceful transition once a
+  *		   graceful has timed out.
+- * @suspend_work: A worker used to trigger system suspend
+  */
+ struct scmi_syspower_conf {
+ 	struct device *dev;
+@@ -93,7 +92,6 @@ struct scmi_syspower_conf {
+ 	struct notifier_block reboot_nb;
+ 
+ 	struct delayed_work forceful_work;
+-	struct work_struct suspend_work;
+ };
+ 
+ #define userspace_nb_to_sconf(x)	\
+@@ -254,7 +252,7 @@ static void scmi_request_graceful_transition(struct scmi_syspower_conf *sc,
+ 		orderly_reboot();
+ 		break;
+ 	case SCMI_SYSTEM_SUSPEND:
+-		schedule_work(&sc->suspend_work);
++		orderly_suspend();
+ 		break;
+ 	default:
+ 		break;
+@@ -323,11 +321,6 @@ static int scmi_userspace_notifier(struct notifier_block *nb,
+ 	return NOTIFY_OK;
+ }
+ 
+-static void scmi_suspend_work_func(struct work_struct *work)
+-{
+-	pm_suspend(PM_SUSPEND_MEM);
+-}
+-
+ static int scmi_syspower_probe(struct scmi_device *sdev)
+ {
+ 	int ret;
+@@ -352,8 +345,6 @@ static int scmi_syspower_probe(struct scmi_device *sdev)
+ 	sc->dev = &sdev->dev;
+ 	dev_set_drvdata(&sdev->dev, sc);
+ 
+-	INIT_WORK(&sc->suspend_work, scmi_suspend_work_func);
+-
+ 	return handle->notify_ops->devm_event_notifier_register(sdev,
+ 							   SCMI_PROTOCOL_SYSTEM,
+ 					 SCMI_EVENT_SYSTEM_POWER_STATE_NOTIFIER,
+diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+index ce75bc5ca9633..cd1cab58e84ca 100644
+--- a/drivers/soc/xilinx/zynqmp_power.c
++++ b/drivers/soc/xilinx/zynqmp_power.c
+@@ -112,7 +112,7 @@ static irqreturn_t zynqmp_pm_isr(int irq, void *data)
+ 			orderly_poweroff(true);
+ 			break;
+ 		case SUSPEND_POWER_REQUEST:
+-			pm_suspend(PM_SUSPEND_MEM);
++			orderly_suspend();
+ 			break;
+ 		default:
+ 			pr_err("%s Unsupported InitSuspendCb reason code %d\n",
+@@ -196,7 +196,7 @@ static void zynqmp_pm_init_suspend_work_fn(struct work_struct *work)
+ 	if (pm_work->args[0] == SUSPEND_SYSTEM_SHUTDOWN) {
+ 		orderly_poweroff(true);
+ 	} else if (pm_work->args[0] == SUSPEND_POWER_REQUEST) {
+-		pm_suspend(PM_SUSPEND_MEM);
++		orderly_suspend();
+ 	} else {
+ 		pr_err("%s Unsupported InitSuspendCb reason code %d.\n",
+ 		       __func__, pm_work->args[0]);
+diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+index aa08c3bbbf59a..c009deb3eb2b6 100644
+--- a/include/linux/reboot.h
++++ b/include/linux/reboot.h
+@@ -177,6 +177,7 @@ void ctrl_alt_del(void);
+ 
+ extern void orderly_poweroff(bool force);
+ extern void orderly_reboot(void);
++extern void orderly_suspend(void);
+ 
+ /**
+  * enum hw_protection_action - Hardware protection action
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index bc71183d4ad87..1d830051dc920 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -851,6 +851,7 @@ void ctrl_alt_del(void)
+ #define POWEROFF_CMD_PATH_LEN  256
+ static char poweroff_cmd[POWEROFF_CMD_PATH_LEN] = "/sbin/poweroff";
+ static const char reboot_cmd[] = "/sbin/reboot";
++static const char suspend_cmd[] = "/sbin/suspend";
+ 
+ static int run_cmd(const char *cmd)
+ {
+@@ -872,6 +873,20 @@ static int run_cmd(const char *cmd)
+ 	return ret;
+ }
+ 
++static int __orderly_suspend(void)
++{
++	int ret;
++
++	ret = run_cmd(suspend_cmd);
++
++	if (ret) {
++		pr_info("Failed to start orderly suspend: fall back to suspend-to-mem\n");
++		pm_suspend(PM_SUSPEND_MEM);
++	}
++
++	return ret;
++}
++
+ static int __orderly_reboot(void)
+ {
+ 	int ret;
+@@ -951,6 +966,25 @@ void orderly_reboot(void)
+ }
+ EXPORT_SYMBOL_GPL(orderly_reboot);
+ 
++static void suspend_work_func(struct work_struct *work)
++{
++	__orderly_suspend();
++}
++
++static DECLARE_WORK(suspend_work, suspend_work_func);
++
++/**
++ * orderly_suspend - Trigger an orderly system suspend
++ *
++ * This may be called from any context to trigger a system suspend.
++ * If the orderly suspend fails, it will force an immediate suspend.
++ */
++void orderly_suspend(void)
++{
++	schedule_work(&suspend_work);
++}
++EXPORT_SYMBOL_GPL(orderly_suspend);
++
+ static const char *hw_protection_action_str(enum hw_protection_action action)
+ {
+ 	switch (action) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.53.0
+
