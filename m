@@ -1,124 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794994270;
-	b=PqSaEmqzP39RKZ64qGTMnbYra73gJRU5KMi/HDr+EUiSDoCEidK3jtnJEMBlJCj526UN
-	 KukLjHVxlCuCqPUly3ec5aVijcbtVF6sDubUk7efv30C7A+rKVgZdpdYF/4DFopiviRlD
-	 jt9tKKZvzaGpDNGi9PmAzl/9m5NJOhSOJWTwt1ToUwwkvOIaAR3QRr1TC5DHBSrR9Xrec
-	 c2aHRWekeJnEGL8ANMDRWA/HVlgrIK2eny8se3W16L7BQQ/GNFCEAY3YiDJmMlZkfRov0
-	 f7XETXq88dLHoie9qqq53mZ/jc45anMmu4+ojlpwHl7eG+SXUCkc39BcH17ozWRmSkg==
+	t=1794994786;
+	b=AG1r1pmg7Lu8uyMJBt+dnBhmemO8V2qmsH//6L2kQgolVkIOVpn7Lv3MyC3MtQ/Gaibn
+	 dtaU1Hwx3OOR/JA4jY2okxSVHV0V2nAmUnAm9pnizCZ65SNLSN3J7oNLrBL6dO4Jpgluu
+	 l5sMV/ITpf46BO7qnnKEoNuK0WRwfYp7nvv6iCMis9Sz8V2SrjpVqVXda8C1KKgwjanFm
+	 eahNNSWlZeHbv1jrxVGoQkznRm1VVA8iBigAyGt7n/KaukEYy9sCMfhcwOmjFpLhJ2KM0
+	 NMcq2fv9OKtiz1/MlgcO4DTUIiaYGL9efp5LzZSTvTiPCijLmjHHSCNxLx+CmrerX6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794994270;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=FYEMQL7D8ekblNOegLonV+3XnFkGP5/QdJvz54jKYXw=;
-	b=XzkH+yzePmcX0tDWd/QOy6Qx2rE3a5YYO2MCSNLkF2+TtlfLAqREr+F3xwqDXQ75jAkL
-	 WKaeEPhrEoy4V4yzOOaxpKAlBRn2i7clC+IIOAVUfXiCEWdSAnt1NY+hAKUR7+jfHxbSg
-	 ANHy2jqV9mHCY5/GBVspMM3Zb+2bg8BQ5/6/9mswXPQWhiIVeZW9+GwlM1dmCsZfR9d0T
-	 +Moq4t/vn5DQtQ3LwP8EwyKHz2RgpRiIswygDcYsG73U+Tciivu5dZp8xyMTr7eBONLTD
-	 CS+LupkNkrC3g3mD+qON6+YBzvJfc50rn2n6tdGr5CHSXodua9nLbgYgbpcHro79HZw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794994786;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Mime-Version:
+	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:Cc:Subject:
+	 From:To:X-Mailer:References:In-Reply-To:X-Last-TLS-Session-Version;
+	bh=+KrsHl34xJ4ftFSv/7lL7KykdHlw2pIpbgJEgLLYEHc=;
+	b=sN0XM9E8OsTnCQyRHlZXXp8sCpPOFI9OYWecaSMTKr9y8MadQkzcbCR4NnZd+uw4i5j9
+	 qP15k0HDJ/i5Le+O400RgUomddvCOs6skyda1VXueLUOve1t1k7EpMtppr0qCuS+5jB4c
+	 TLaJJO5cqzjzgAXsvUw20fd34Uhwvg7z8zb8sNvAwxPO9faksoRWraDuviXKPAJHwkB07
+	 f67JIhAQWKUVisMdJNxJx4IRpJrWABA8qC2w+3x70L0raO+6m+44pPKMQhVgsepZyvPK1
+	 MbdtD6720aAMiCo5QsFnOVJKfuYjz0QnSpbdTXVMxhNRd1pu4bwnDSwfezEcdRGeIng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=QZrKC83z;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=cVndpGNf;
-	arc=none smtp.remote-ip=103.168.172.149
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=gNF7OGQa;
+	arc=none smtp.remote-ip=185.171.202.116
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C0B606A32C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 09:31:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 44C0B606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FD1606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 09:39:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E2FD1606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=QZrKC83z;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=cVndpGNf
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 89159EC086A
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 04:31:08 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 18 Nov 2026 04:31:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1794994268;
-	 x=1795080668; bh=FYEMQL7D8ekblNOegLonV+3XnFkGP5/QdJvz54jKYXw=; b=
-	QZrKC83z2FpDVnSp9EjKacNXubNDWu/JA67DtL66tFql9QwJoQb3ttL7QkE3qyeA
-	UZPG04Fw0ryUWUfciC27jtzj95hFM0PivZ0pBdqkinPFk7BknvjDgDLStL0GpQdL
-	bfXUf1tXnw7cmGU7HFrQlIHm1UipI0mEq3c19TH8MuQcHg8+daLdZNywgCHIZETU
-	E9hnhFynHILmV+yNCw+R4bakNshnwMiL+Vf6x3KgDEEGFUd932f3iiBbWoDOf/ZO
-	G6BP31pfb/PbcLLpwZ0C7pT08J6tY/TZhOQ0bMrUp0pDDy48+RMGcKGjo7w3pKmI
-	TNo1kCryCpvSrnOsg0PsPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794994268; x=
-	1795080668; bh=FYEMQL7D8ekblNOegLonV+3XnFkGP5/QdJvz54jKYXw=; b=c
-	VndpGNfIEs4ansqOxdPm/EA22hHz4yEB93BQhcK39kLA8y6bMJkkHgRtcRUsaLbD
-	U6Ty9XCWEO+1/fFeXqU9zYa5qsnb83eKONIymb7RCMFOcG9JY/YSufuqQdBLpg20
-	fdVAGW5d5pahFvEqKywFVA3yagD1CiVBKPR++JD9uDTq84c9gef7ZglnQiLdDFlb
-	iY/Sn9Q5T9G4dOiR32ARXnDKGi1qNNAPJXj11rpT04KrD1zfw4s2+uTKJdqFWiWp
-	AceMyMabG/KQBzXLDXBq5nWDdHlcIVY7GO9sr4/jYuZjoqYsZMisyVVpB+5IHi9n
-	kwfymmC3bVPHZw4MHnP8Q==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794994268; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:OYND1ZULKLo2xmftFh0QAYz3hxHETgqaI2BVHKgxt+cZQ5+
-	+xBcwEPEk/9RE7hmit7BEeghbo/GUslzTyNzC+tX8zvmDx31Xvhzaoljcy8/nCmk
-	xuuPePAlk3kFX7nlJACFX65O/dPgkTmkyUbUBUZmt5mzlLIfrkUcqRC4J9hn6fIM
-	7nDb/0upeCITP3LTOmr0Q/V2C7xY+AXmuz2VYTlNCDH8Kke1PUAwdp727nkguirn
-	Z/ZCUmiyhBmCwub8Ak98PDUxMrp9Mu1ZZcoytEv95hwptoLELVojNI3c0C22a3gM
-	p2FPqXgu5DNh33t3/HV7EhOUANkAoSEZ3LX8VKQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:7NTa3zNk24Dn5DDudjdq6sX3jIAvJDBGhOy+LMZpnPg=:hpm+LCmifHtf1PHuC4LPNLY/W1wuc2v/aTBiusw+BFE=;
-X-ME-Sender: <xms:XHD9alLLhG03lRu7r5_a0axdf-xgjp9czVnRnWrJ6q56WhGu1NE1wQ>
-    <xme:XHD9auimjg_7RcE0e7iSsg2OdUw2B14dgR8CUaaB5jJu8dOucBeE-7ZPhQZlR0Q3B
-    -Sym5aHZInKzcARQA18rqUGuiBLhvqKj_YcLmRXJwRkDcfCdvx74n7xhA>
-X-ME-Received: <xmr:XHD9anORA5r6Z6OQPeMsra98IyLBY06w1JhqRrY5upPVGo3R9MqSabEJOPxteaKPLTXsK8mGqLQOz1yWAmMumiehyxq8EIo>
-X-ME-Proxy-Cause: dmFkZTEF2qGdxk7mJg4/ZMq8GPpSmYQEk3ceRSu6WvK5sPCzYYTmpIsMkynA90lJJ3Hh/M
-    TjTk9wNG4sUQmRmxJ+cd2Ntso6liWsdywsLdhU6KDk2tEqsYHoAlqYhnjCBwv+HDA1xOz7
-    eq+EfvaJIOBFKb4B0S70fybXlTeoNDRjg8ZK/DYm0EqmNdQRoeNZ3kKp3FmCy9qMIlJ8++
-    4in42Bj/MAONqgwG0c/3niOu/v2nrBEjEnPhCcVixd/HgrfJtIGZZGIJdrasmI79EBVBYt
-    07O8xQjPKhxEfjSPg5coYbfT3xmpQGjhNJu4VbWV9qVPax3tz0U+mJIrxW8etL0Kykokof
-    b6lXCHUDY2J/pmhvsddOjzTeB3fw/oFQThWVBem0zsauSxP3Ogm/w86OGxLOkspTLdxE0B
-    kFBcir9mbs1PAGNhBsiq0T7/P74BbHD7YUvtOqxlIL3SAPrVO+2SfxupU6iPUhPGe+R8FN
-    AVV9VU5hNffwRhl9NxPFez39nsW7Xa67Ja8u0Z9NDRp6WZew23Ed2R171IzHchdpUwIjaE
-    XwnHLZJO5iOW97t1kEuJTuM9JwaOUE5KR6cGE0Wyb6F6eB1UbzZYkupcXPS0u1wJtELyjU
-    CyzbbfzraHvyirxN0MrtACGExvKAhZWfSsRT7IgFoPSicQi0uMlwOB++r3OA
-X-ME-Proxy: <xmx:XHD9ahoCsSHlQec7RXdpsjf3amZbViWdbWCM2Qaq84tiI8ngOiO0Kg>
-    <xmx:XHD9ah7HsT77umj1lScvIdbT7RhDRUIXj9A1UsntXjXwZ8jWAa-5hg>
-    <xmx:XHD9anj_jPX8IOQvQcstDOf-YWsjhcIZvfyoDHixYkkf6WbtjOOO-A>
-    <xmx:XHD9av5oE8RS84TmtToVE9PEyNMRyT9N0JHUledaKRikJ8QJMT1vGw>
-    <xmx:XHD9avRDpZVYy3dJ3L6U4C9WpP4ez3t99e8JdZX9JxqRo_KVLqXEPkVZ>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Nov 2026 04:31:07 -0500 (EST)
-Date: Wed, 18 Nov 2026 10:31:04 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: rafael@kernel.org, daniel.lezcano@kernel.org, rui.zhang@intel.com,
-	lukasz.luba@arm.com, geert+renesas@glider.be, magnus.damm@gmail.com,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: rcar_gen3: quiesce the interrupt source before
- releasing it
-Message-ID: <20261118093104.GA2548353@ragnatech.se>
-References: <20261117145348.1092528-1-shunsheng1218@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=gNF7OGQa
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D30E0C4CBDB;
+	Wed, 18 Nov 2026 09:39:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1049B5FE9B;
+	Wed, 18 Nov 2026 09:39:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4396A11BC0C99;
+	Wed, 18 Nov 2026 10:39:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1794994783; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=+KrsHl34xJ4ftFSv/7lL7KykdHlw2pIpbgJEgLLYEHc=;
+	b=gNF7OGQar5n85yZ9W8CgOBOMsPJ/OfYjOFUvxa7twze7oRzfdbx4piGWEJfsVqO2MqWeny
+	SEU0q4b9XThs0O06K2A8P0zQHuMBf8GeWgRAo+i3D3yXzX5D330ycMEdWboEqh6z06AZEj
+	r+6QxCOXrN21G09/vBO6lm6p48TC2m9f5W4hpyYFqY2zx8kSuQcVBUr8FLODOJmYkbFJAN
+	8Yvo/n9yNbYt5nJHAS994Y4J5K2glUkxqdEj+7gWorXJyBQ7AldY/oORykZoMeEux1afvq
+	x1xCtujGLMPJtwpy/quJrZ+pu2YV4Pqw/m+YWDLmNptosVgk0dAgR2eUfsvpnA==
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -127,131 +58,78 @@ List-Subscribe: <mailto:linux-renesas-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261117145348.1092528-1-shunsheng1218@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 18 Nov 2026 10:39:37 +0100
+Message-Id: <DMY8JKQSCVRK.2ZLAAS9PECBV0@bootlin.com>
+Cc: "Borislav Petkov" <bp@alien8.de>, "Tony Luck" <tony.luck@intel.com>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, "Magnus Damm"
+ <magnus.damm@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Herve Codina" <herve.codina@bootlin.com>
+Subject: Re: [PATCH v7 3/3] ARM: dts: renesas: r9a06g032: add EDAC node
+From: "Paul Louvel" <paul.louvel@bootlin.com>
+To: "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Paul Louvel"
+ <paul.louvel@bootlin.com>
+X-Mailer: aerc 0.22.0-0-gc2f86b7abde3
+References: <20261019-paul-v7-3-rc1-edac-v7-0-84c76c6d7595@bootlin.com>
+ <20261019-paul-v7-3-rc1-edac-v7-3-84c76c6d7595@bootlin.com>
+ <avxR5VZESPLklIuG@ninjato> <DMXJ5VMIPGL9.1917ON486UJRD@bootlin.com>
+ <avzCbuXANntvBPDz@shikoro>
+In-Reply-To: <avzCbuXANntvBPDz@shikoro>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Yaohan,
+Hello,
 
-Thanks for your work.
+On Tue Nov 17, 2026 at 10:09 PM CET, Wolfram Sang wrote:
+> Hi Paul,
+>
+>> > On second thought, any reason we don't want this enabled by default?
+>>=20
+>> Please see my answer to Geert [1].
+>> After reconsideration, maybe it is advisable to enable it by default. En=
+abling
+>> ECC is done by the bootloader, and it might be better if no further acti=
+ons are
+>> required to enable it kernel side.
+>> If ECC is disabled, no errors will be generated, and the capabilties wil=
+l just be
+>> set to EDAC_CAP_NONE.
+>
+> I agree that enabling ECC belongs to the bootloader. With the current DT
+> bindings, the Linux driver continues to work on whatever it has been set
+> up before (which may be nothing), or? From that point of view, I think
+> it makes sense to enable it by default. But again, my knowledge is
+> limited here...
 
-On 2026-11-17 22:53:48 +0800, Yaohan Li wrote:
-> rcar_gen3_thermal_remove() only drops the runtime PM reference.  The two
-> threaded interrupts are left to devres, which releases them after the
-> TSC objects and the thermal zones have already been freed, and the
-> device keeps raising interrupts because nothing clears REG_GEN3_IRQEN.
-> 
-> rcar_gen3_thermal_irq() walks priv->tscs[i], reads REG_GEN3_IRQSTR
-> through tsc->base and calls thermal_zone_device_update(tsc->zone), so a
-> handler that the hardirq has already woken can run after those objects
-> are gone.
-> 
-> Disable the interrupt source for every TSC first, then release the
-> interrupt handlers, and only then drop the runtime PM reference.
-> REG_GEN3_IRQEN is only ever written by rcar_gen3_thermal_init(); a
-> concurrent set_trips() writes REG_GEN3_IRQMSK alone, so it cannot undo
-> the disable.
-> 
-> Remember the interrupt numbers that were successfully requested, so that
-> the partial-probe path, which also ends in .remove(), only releases what
-> was actually registered.
+The EDAC_CAP_NONE reported in the struct mem_ctl_info structure if ECC is
+disabled is just used once in the EDAC subsystem [1] and is purely
+informational. If ECC is disabled, no interrupts will be generated in case =
+of an
+error and cdns_mc_err_handler().
 
-Could this be re-written by a human to describe they "why" and not the 
-"how"?
+So there is no risk of any side effects if the driver is enabled and ECC is
+disabled by the bootloader.
 
-> 
-> Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
-> ---
-> Prepared against v7.4-rc1-1969-g666539eecdf4.
-> 
-> AI assistance: the analysis, the change and its review notes were
-> prepared with Claude (Anthropic) as a coding assistant.  The author
-> reviewed the reasoning and takes responsibility for the content.
-> 
-> This revision also clears REG_GEN3_IRQEN for every TSC before the
-> handlers are released.  rcar_gen3_thermal_init() is the only writer of
-> IRQEN; set_trips() writes IRQMSK only, so a concurrent trip update
-> cannot re-enable the interrupt source.
-> 
-> Testing: compile tested only (arm64, gcc 11.4).  No R-Car hardware was
-> available.  The partial-probe path that also ends in .remove() was not
-> exercised.
-> ---
->  drivers/thermal/renesas/rcar_gen3_thermal.c | 25 +++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
-> index 9c64cbc2ee67..35bb49915a75 100644
-> --- a/drivers/thermal/renesas/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
-> @@ -110,6 +110,8 @@ struct rcar_gen3_thermal_priv {
->  	int ptat[3];
->  	int tj_t;
->  	const struct rcar_thermal_info *info;
-> +	int irqs[2];
-> +	unsigned int num_irqs;
->  };
->  
->  static inline u32 rcar_gen3_thermal_read(struct rcar_gen3_thermal_tsc *tsc,
-> @@ -468,7 +470,28 @@ MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
->  
->  static void rcar_gen3_thermal_remove(struct platform_device *pdev)
->  {
-> +	struct rcar_gen3_thermal_priv *priv = platform_get_drvdata(pdev);
->  	struct device *dev = &pdev->dev;
-> +	unsigned int i;
-> +
-> +	/*
-> +	 * Disable the interrupt source while the device is still runtime
-> +	 * resumed.  REG_GEN3_IRQEN is only ever written by
-> +	 * rcar_gen3_thermal_init(); a concurrent set_trips() writes
-> +	 * REG_GEN3_IRQMSK alone, so it cannot re-enable the source here.
-> +	 */
-> +	for (i = 0; i < priv->num_tscs; i++) {
+I will set it to enabled by default on the next iteration.
 
-Move the loop variable declaration here.
+[1]: https://elixir.bootlin.com/linux/v7.3.1/source/drivers/edac/edac_mc.c#=
+L125
 
-> +		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQEN, 0);
-> +		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK, 0);
-> +	}
-> +
-> +	/*
-> +	 * Release the interrupts before the TSCs and zones are freed:
-> +	 * free_irq() waits for an executing threaded handler, and the handler
-> +	 * dereferences both priv->tscs[i] and priv->tscs[i]->zone.
-> +	 */
-> +	for (i = 0; i < priv->num_irqs; i++)
+>
+> Thanks and happy hacking,
+>
+>    Wolfram
 
-Can't you store a negative error code in riv->irqs[] to indicate no IRQ 
-and avoid adding the booking variable num_irqs? One variable can never 
-go out of sync.
+Thanks.
+Best regards,
+--=20
+Paul Louvel, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-While at it you could create a new define for the maximum number of 
-IRQ's and replace the loop limit in rcar_gen3_thermal_request_irqs() and 
-the number of elements in irqs[].
-
-> +		devm_free_irq(dev, priv->irqs[i], priv);
-
-Why free it and just not sync the interrupt?
-
->  
->  	pm_runtime_put(dev);
->  	pm_runtime_disable(dev);
-> @@ -504,6 +527,8 @@ static int rcar_gen3_thermal_request_irqs(struct rcar_gen3_thermal_priv *priv,
->  						IRQF_ONESHOT, irqname, priv);
->  		if (ret)
->  			return ret;
-> +
-> +		priv->irqs[priv->num_irqs++] = irq;
->  	}
->  
->  	return 0;
-> -- 
-> 2.34.1
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
