@@ -1,110 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=40.107.74.43
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1795025353;
-	b=aAxxkJxKbsU8sN31vkN2tbS9srHxTeEcgcEG6J0Ih/EmlYI0hnFKU8rtEINKPj7d6pg+
-	 P8ZrCpVuxbKUd+/+f2mbvaAKiiEzrxtEUDTT/JpsVtkHy/d9WrQbj6IUZflwF01zdYtgX
-	 VGhHr+QBKjXlX2tFLmVHxf9cOO/MdbZu9cEqixTFetae5c2F4asm9uZQnW5Zf60v2RaLQ
-	 DgseIWNvAGvz3vzRy61bG286nJwgyS4RvXYh2pOPzgEEdpnx8w+o2CzFN9T3mymH6cFUg
-	 qtFkInRHAqMbla2vgswa+Cro92Ilismwq/+ecNsKL9OH3zl/5dPXNUq0oGuVktI5OyA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795025353;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=xKghG9dhT29XWtHTyP1Q0IOjEKhGB9TK38QWf5PCdvM=;
-	b=BQsssafMZ4pEMqXJWBSQu8HmcHCOSKfw6bZE6/pFCitXTyUj14Jd6GKI/UVkgV1K52GL
-	 mTpDxbwyYXt/a2xbqLVOJ+uJU8jZokdL/ZtENP6hLi4Su3lGR3EQh9ksVsFWrQUaiqGiU
-	 jfwOxHRlGeOYM1imsE3+WcnvyIvg6C+DuOiUguVJRq4Yf2wFOt7c87EnuqRwkLX+skgiU
-	 aPPw+KCm9eB7kj6Yesa5eoJWJauuVTgdoTPSaGCv1AjTnCl4u0B9prpH9WnlaiL60Sxsz
-	 vbsKkx3Nsq5//OfZaexvfXxkdrGJ5DBMvBHPD+n2tmIoNvSMxedvCnodKKlz1qJaR7Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=fail reason="signature verification failed" header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=fCLiAGuy;
-	arc=fail smtp.remote-ip=40.107.74.43
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011043.outbound.protection.outlook.com [40.107.74.43])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795031119;
+	b=Lsk2u6io0IMIMpTCxM2SIK/nEnJRGL4OaNWaqeMIU1rN49NObUmjS4MtuGRYdFP6UEyQ
+	 kumy8aS8wRokU8ZZxGVzy9MnLakTzHbj91mdetLo/6zhf8SnA5N+k3H7+ZNrR4YeiykE2
+	 5oLiV0pWqnIr2dOq5VvezHQGH2XPyck91DvBLfmvKJ8VZAc5X5XWUsR7NNMiO5fQanri6
+	 nzgY+7caIduERnFvDn77SuaUP5GaXw3fk/LcG8hjeuPzbipEeDjSKbpNCUkuh3h6mX6ka
+	 x8wbH8QPsHy1hbYuu22mK+eUybH5qyPoZMs7GO7wgONIfGzDZo0I2GaLEo7TMGZFjRA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795031119;
+	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=p9CtWJ1llXkfSxeydu2PxD8PbEyD/MFZAc9Vi8A/kTo=;
+	b=2EP03/f7zl+tTF4a+ImP0gppuAFIL7chlrDWppc2TmJiK5kmgiiRCA1aS2ImNjPqvLPP
+	 JGYHYf5ejoHQW2t+qp3oC+OptaXtvW3r7gP/55b89zV8AsSbdM7h3r2tKAwzrV+lIaOhj
+	 2AT70tzAT052aWKD6RLn/dMfgkTLs7eyV55gcA/lKGph1RbZ7cAcEEZNuCBM4cmwkbOEs
+	 BXlTYCFuNX9fvaPaNunHZGi9X4s4tJpKvauI+0rWkCCaXjMz4Pm+jCBdQuRRx12edeXX/
+	 HIoMZQtYh8IumguV4BML0Vmfrn9LN+pRFDHkYLpt7ztTLM4cA4iH04SPJm44ZxMeXbw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3154F606A32A;
-	Wed, 18 Nov 2026 18:09:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3154F606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=fCLiAGuy
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e0RyIZZoMhfuOZ1arP123x9gopcaoR4pFKI5VzvLmpb8BqdLj17i/zU/wOxs6sADAqpuxzaIDEaXBxX7gc6zoklhQQqiKET1qKlk/W25tttUdis6sou1mPDZrlYNtQJZVqGzMOL9n7Ambs7Nf0pzsA4C/vN79jAVpLvZR0cvWGVYw3JiEDS7grxI2dwGOXWF0U+rZKpnuuW9GDIaJzYumJrJZOh6D7x5B8JrYAD9r0gwnfrsCGy7hZniCWrk1/dSI8Dpw8gfRp9TZdGF3iSc7TLgJIk1FCqNjkzJ3dUoSfH36P9qG54X09E4i2JlDsVg3fOKbx4MV0fkdR3bhjBV/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I4mjS6swHLil1koYiGg+E8dqAAlup9uFy1Jm33fP1rI=;
- b=t6gffs+6DsDygaoJNmcpWtz68L1NLOd3XY//my+So8WrgImwAtFS28IwmC3HyeG51tz1ShIJcHe2BKKieaTZUNXky+hOyKUSAmyIKZOdRwDqIQjmuou7aCR5e4fh0yH4OXT7PQ8nu0Jy8CvQVLYxRnLPM174MFA389qQHBwQ2q69noaXMZ7LxMjy3T+pg9HHdX7yh6OjWUPXCZ5eW7XYr1v7G5cP4rYPjq9M3iUr2QAnAL/QQOqsbkeJYR/wXYS9RUKMqASS2gfeA4vGAVP+ARjdfpD89bLgjlgEZgSvpFiCrKAe7j2c5oB9DvJY8eawnS0gxMgoVrVV8Ry3m6M4/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I4mjS6swHLil1koYiGg+E8dqAAlup9uFy1Jm33fP1rI=;
- b=fCLiAGuylwi2TU6rB+2az9iz70Mf4V9eCITV1NU3JBufDzhn+G1lWOBGuoQpi51/9tdXrgtLnpBdEPEnSuyds+ZFJtLe7LCfZPn8DjcsYZwtLMGZTHq3uRIImFphYvDHHC1la0Yv3DoD3XyrLM5EEX+euPcT6pTnt5hbUawvwdM=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15) by TYKPR01MB236482.jpnprd01.prod.outlook.com
- (2603:1096:403:900::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Wed, 18 Nov
- 2026 18:09:09 +0000
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0615.013; Wed, 18 Nov 2026
- 18:09:09 +0000
-Date: Wed, 18 Nov 2026 19:08:50 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB9D606A33B;
+	Wed, 18 Nov 2026 19:45:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64BDF1F000C4;
+	Wed, 18 Nov 2026 19:45:14 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 02/12] drm: renesas: rz-du: vsp: Keep the planes in
- the VSP
-Message-ID: <av3psmZ6rK8td1yx@tom-desktop>
-References: <cover.1794502191.git.tommaso.merciai.xr@bp.renesas.com>
- <6e420483129b494a4522c952de593b8082b9510a.1794502191.git.tommaso.merciai.xr@bp.renesas.com>
- <TYYPR01MB66036E5E97AD52E68DE078AE867A2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYYPR01MB66036E5E97AD52E68DE078AE867A2@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-X-ClientProxiedBy: FR0P281CA0163.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b3::17) To OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15)
+	Paul Elder <paul.elder+renesas@ideasonboard.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clegoffic@baylibre.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>
+Cc: arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
+Date: Wed, 18 Nov 2026 20:44:48 +0100
+Message-ID: <cover.1795029012.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -114,232 +68,304 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|TYKPR01MB236482:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05c96d9e-3417-49ef-7d94-08df459f0af3
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|52116014|1800799024|7416014|376014|18002099003|22082099003|261009223027099003|4143699003|11063799006|261026121527099003|56012099006|261026140227099003|261102123227099003|261028144727099003|261021121427099003|261021123027099003|261022075727099003|261022105027099003|38350700014|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	mIr/DWJsZhZkpUNFwiMS8VTz1rOSjgBOLPHEAk16DeqcBD8IeRSTU3QQP8sWcid7mrQji8NyRvbUGuszSumDiSrSOTtgbkVOPFTmO/nQJfyA90C973UrZMKPiNBU6PXv3oR9tk30a3F5okJeUBxEcXds+R3CbA/wmo3lhreAyPXxZ8oRm2BJKh4hCzsn/OMwBky1vzw6/NT8qRX4iOiqVYPqK7vfiiKnTsjZSB76qUcTakPGv5QvN6jmwx4ANHsxTINFEPAVjqr2XKYyckCsa6fxD2fLgbvCf5IuLuWy5OzshI58/DRqLjpsEEznF0XPWuywjWST/OvZsY/8E51NXxQaLvKXPFX1dqV2kPtetQGCLSFwyhF/a5J6WX+ucdZ52YlZxPaTRouU9+fj5IjRgoPJYfM4Mf9usGveaeoEMErJL3w4FT88kwXrcWkvyWaFIZ4uTN/tXLGjqqIlEnh9oWDVo4U7NX1bnHF2JRKRpZdkSCnkLx1DE/hMSgGyL7hhdYBVxgWfGMzKefkvqA+WXOYFLH0IjbF5wTAKRWM6mX9QrlRfRYntY0JkA3R6WwxYT8b96GumbFw1Oes+krmdDyRRdeXfceHHLWKi8eC52ogrAerF7JXuyoWUMWsksq+HPOPDylkuu2UusOIycWMxinUBGZnwI9xiSKkb44DTg0cyuTT25yF5/NlUosMUsaHJrAlNK6+9AdA/198SgfiBsg==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(52116014)(1800799024)(7416014)(376014)(18002099003)(22082099003)(261009223027099003)(4143699003)(11063799006)(261026121527099003)(56012099006)(261026140227099003)(261102123227099003)(261028144727099003)(261021121427099003)(261021123027099003)(261022075727099003)(261022105027099003)(38350700014)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?m2+wlCvlzow8KM03VOt1Q1dL/kCoPkQLf8gfBslfIsk3CXIFLYbJjRE8gz?=
- =?iso-8859-1?Q?4MCvNahZMb9+IEZ50edH2zmoYsmPvfEmdiexI4RflPUrsIzHfCiK3b8ywq?=
- =?iso-8859-1?Q?SHRUvKx4fpCQ5CkgK2Z3HCPgw6TcCbSl2nQDvNRMxCYkEMoZeErsnu1Tel?=
- =?iso-8859-1?Q?q/amOFBZWhPt3KqW0S3aAdgQlimqO0DzFqknVzIEXm8FqSUgN9hCrcDvUo?=
- =?iso-8859-1?Q?uDBMlrIZyudD3E+Ps3M+JdEGMlTFD6YWaV8k9QYg8+q0KdJhMwene3YOqk?=
- =?iso-8859-1?Q?OyjFGdY6PG+CGuWZClNeDTBZvbhHN/BeXPSofKNd+2ZuOku7yVaVfVQSvu?=
- =?iso-8859-1?Q?hUBmL2SCPbe2MnmECi7Gp0RIbLse2wrXluPLk2DuHSr9yKjB7rLEn/oeLG?=
- =?iso-8859-1?Q?nt2nWW62c1TfaiL7S7F0yt9NKI59PTALeOQWqYp7IDVqF/sVIrAfAkEgnU?=
- =?iso-8859-1?Q?m/BEx11n2w6yjCI4hvRFOxkYPinOFz32FJqgi7xWh+/ADqvGElfx6zQZjq?=
- =?iso-8859-1?Q?4L0fF9DXUJhdHE2VmRcE0pQ8X0w4nolHLLXeSOdaBZ0D+kOmJ46nEfETFY?=
- =?iso-8859-1?Q?+MEHgCfh7pl3w1k7NVHp3OeVWtn2sTxHSUy6lUJYl/oAUCMomlIKjgkYBP?=
- =?iso-8859-1?Q?f5Ju0faiY5QEoKlURq1ImYzY2ajJvXfscbzUwZvIeE1qmPL7kpVbZ1SuZO?=
- =?iso-8859-1?Q?9UmknDD0/CZ+IT/baYBIMfpNjZhcSCrB7lVP2vekIYUuWOzUOymgihPoiS?=
- =?iso-8859-1?Q?Ka7004R9GeJaY2i2/puGYFeQmTtzyxQ/UkHDNvOamQw0WEDJjOeA3E+YOL?=
- =?iso-8859-1?Q?hqOFzI1db62koMnAEXQcAeds+RRJXu3v2fgOpqAVhE4vcrV9OvUjIQkbdd?=
- =?iso-8859-1?Q?DnRkAJw7giTqfTI19JqeN5+ePL2VaY3cjoMWdEnxDr5JIUO6kcO5xPllBA?=
- =?iso-8859-1?Q?9p5PfeP9nGKWZVTKNeqfUNLGta16LWVKn6kMNd/CIkui3mWWGRYJdbMDmA?=
- =?iso-8859-1?Q?HXfF3yzSLRMRgRvaq8LmZ4BcwUuUkBeQi0PB/G0VeOlIQia7Y0deH3T4Pz?=
- =?iso-8859-1?Q?l5qCswnOOhdfkNdqJc7AsgPO+QKfyulpYUC4qTHOsgqClU9pxo/sSPFVNx?=
- =?iso-8859-1?Q?lsKR6waf3AY1bMBmp/P33vl9BkC++PmGIPo0+DNIo6ZtxvginiqPFEaogb?=
- =?iso-8859-1?Q?ovHn5vlUE+mkcz2R0vHmgjkSB62HtfMUqTR6IdbILTPANKy/2xqK7t6/l2?=
- =?iso-8859-1?Q?njgaZv6scFRGfHk0qI4lsCEzwJXd3h7CXoQyeQ+UFSOnOtHdqwm1mEeFG7?=
- =?iso-8859-1?Q?rj0NT0/40W2TU4paQTx0JgPzvVzyzGLiQP3dMz8XaOFXP/CvfOtCOnStVY?=
- =?iso-8859-1?Q?KpW5pu6k7lqaYW91LgObXLEiXuQXG6iTq/D1O0auIgk/NK2F8jStblynrJ?=
- =?iso-8859-1?Q?+veX1w2fROd9yNP4uOObVfvaUSr1zZqh/KrCmh6W1EAdsksDXLIx4Wt0u0?=
- =?iso-8859-1?Q?YxE5mkIZ8hs+IlBiCpEGpnZYhTBf9ohrPjv1n32QVCnCNVvPTVjhSbzjBs?=
- =?iso-8859-1?Q?hEXMarRJl0VT84zLA21RaWJU0ivKHJcBy//sok9nIC4K3nYv5XIwrCEq4l?=
- =?iso-8859-1?Q?XLFsrcn7woy5lkCjuV+SJUDCv2wBqkPOedFUcgR4U4W6zlQ9r7emTiNTsW?=
- =?iso-8859-1?Q?zxPHyh7YQgvafyShoBO7Rm7YRS6xF4KitWacCin9IYxf7ULrnMSlja/mN7?=
- =?iso-8859-1?Q?dKNDWeDdTbbOTGxdzkOCY06uI43/f6h7KrNzep79t0SJZ6tjX/hBRPfci0?=
- =?iso-8859-1?Q?stEaKR+bHAvPZx98DYSP/1+eHhYrMUS4L49yUp/2YUANPfARRsjS?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05c96d9e-3417-49ef-7d94-08df459f0af3
-X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2026 18:09:09.8706
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mk7H2gjN9ZGKH+J6oeuUZpRpr51LAuVa2e0acABAiUStN3ETBGjPq+0Vt/52i/OOGwrGLftLnSpORJy/prkHtFStz+yuBmpX+wI5zHoMOimdZhbcur+MdJhplJGgPN+G
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYKPR01MB236482
+Content-Transfer-Encoding: 8bit
 
-Hi Biju,
-Thanks for your review.
+	Hi all,
 
-On Wed, Nov 18, 2026 at 02:09:38PM +0000, Biju Das wrote:
-> Hi Tommaso,
-> 
-> Thanks for the patch.
-> 
-> > -----Original Message-----
-> > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > Sent: 13 November 2026 12:20
-> > Subject: [PATCH v10 02/12] drm: renesas: rz-du: vsp: Keep the planes in the VSP
-> > 
-> > Each VSP numbers its planes from zero, so the device-wide search in
-> > rzg2l_du_vsp_get_drm_plane() picks the wrong plane as soon as a SoC has more than one VSP: the primary
-> > plane of the second CRTC is looked up on the first VSP, whose possible_crtcs mask does not cover that
-> > CRTC.
-> > 
-> > In preparation for supporting RZ/G3E, store the planes in the VSP that owns them and index the per-VSP
-> > array directly from rzg2l_du_crtc_create(), as the R-Car DU driver does, and drop the now unused
-> > search helper.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> > v9->v10:
-> >  - No changes.
-> > 
-> > v8->v9:
-> >  - Dropped the vsp_pipe bounds check in rzg2l_du_crtc_create() and the
-> >    now unused num_planes field, aligning with rcar_du_crtc_create().
-> >  - Updated commit message accordingly.
-> > 
-> > v7->v8:
-> >  - New patch.
-> > 
-> >  drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |  4 +---  drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-> > | 19 ++-----------------  drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h  | 10 +++-------
-> >  3 files changed, 6 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-
-> > du/rzg2l_du_crtc.c
-> > index ab2f24cc7683..c57884ab5b9b 100644
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-> > @@ -409,9 +409,7 @@ int rzg2l_du_crtc_create(struct rzg2l_du_device *rcdu)
-> >  	init_waitqueue_head(&rcrtc->flip_wait);
-> >  	rcrtc->dev = rcdu;
-> > 
-> > -	primary = rzg2l_du_vsp_get_drm_plane(rcrtc, rcrtc->vsp_pipe);
-> > -	if (IS_ERR(primary))
-> > -		return PTR_ERR(primary);
-> > +	primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe]->plane;
-> 
-> The bounds check on vsp_pipe  is dropped.  planes[vsp_pipe] is now indexed directly into a 2-entry array,
-> so a bad DT value oopses.
-> 
-> > 
-> >  	ret = drmm_crtc_init_with_planes(&rcdu->ddev, crtc, primary, NULL,
-> >  					 &crtc_funcs_rz, NULL);
-> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c b/drivers/gpu/drm/renesas/rz-
-> > du/rzg2l_du_vsp.c
-> > index 944bc9ac9589..12fe35740c62 100644
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-> > @@ -71,22 +71,6 @@ void rzg2l_du_vsp_atomic_flush(struct rzg2l_du_crtc *crtc)
-> >  	vsp1_du_atomic_flush(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);  }
-> > 
-> > -struct drm_plane *rzg2l_du_vsp_get_drm_plane(struct rzg2l_du_crtc *crtc,
-> > -					     unsigned int pipe_index)
-> > -{
-> > -	struct rzg2l_du_device *rcdu = crtc->vsp->dev;
-> > -	struct drm_plane *plane = NULL;
-> > -
-> > -	drm_for_each_plane(plane, &rcdu->ddev) {
-> > -		struct rzg2l_du_vsp_plane *vsp_plane = to_rzg2l_vsp_plane(plane);
-> > -
-> > -		if (vsp_plane->index == pipe_index)
-> > -			break;
-> 
-> Do you need to remove this function? 
-> as plane has vsp and index information.
-> 
-> plane->vsp = vsp; 
-> plane->index = i;
+TL;DR:
 
-I think we can keep this function adding vsp_plane->index check:
-	
-	if (vsp_plane->vsp == crtc->vsp &&
-	    vsp_plane->index == pipe_index)
-	
-While at it I notice that rzg2l_du_vsp_get_drm_plane() 
-never return ERR_PTR(-EINVAL) because plane == NULL can't happens.
+    Describe hardware in DT, and perform mapping to abstractions offered
+    by SCMI in Linux.
 
-Will address also this into the next iteration.
+The Renesas R-Car X5H-based Ironhide board is the first Renesas
+SoC/board combination that implements the ARM System Control and
+Management Interface (SCMI).
 
-Kind regards,
-Tommaso
+This means Linux can no longer perform various system operations (e.g.
+clock, power domain, and reset control) by accessing the hardware
+directly.  Instead, these operations are abstracted according to various
+SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
+firmware running on a System Control Processor (SCP).
+More specifically, the R-Car X5H SCP FW SCMI controls access to:
+  1. Core clocks and module clocks,
+  2. Module resets,
+  3. Power domains,
+  4. System power.
+The latter is not relevant for this discussion.
 
-> 
-> Cheers,
-> Biju
-> 
-> > -	}
-> > -
-> > -	return plane ? plane : ERR_PTR(-EINVAL);
-> > -}
-> > -
-> >  static const u32 rzg2l_du_vsp_formats[] = {
-> >  	DRM_FORMAT_RGB332,
-> >  	DRM_FORMAT_ARGB4444,
-> > @@ -303,7 +287,7 @@ int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
-> >  	struct rzg2l_du_device *rcdu = vsp->dev;
-> >  	struct platform_device *pdev;
-> >  	unsigned int num_crtcs = hweight32(crtcs);
-> > -	unsigned int num_planes = 2;
-> > +	unsigned int num_planes = RZG2L_DU_VSP_MAX_PLANES;
-> >  	unsigned int i;
-> >  	int ret;
-> > 
-> > @@ -350,6 +334,7 @@ int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
-> > 
-> >  		plane->vsp = vsp;
-> >  		plane->index = i;
-> > +		vsp->planes[i] = plane;
-> > 
-> >  		drm_plane_helper_add(&plane->plane,
-> >  				     &rzg2l_du_vsp_plane_helper_funcs);
-> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h b/drivers/gpu/drm/renesas/rz-
-> > du/rzg2l_du_vsp.h
-> > index a22aaf0843ed..acb41d343297 100644
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h
-> > @@ -27,11 +27,14 @@ struct rzg2l_du_vsp_plane {
-> >  	unsigned int index;
-> >  };
-> > 
-> > +#define RZG2L_DU_VSP_MAX_PLANES		2
-> > +
-> >  struct rzg2l_du_vsp {
-> >  	unsigned int index;
-> >  	struct device *vsp;
-> >  	struct device_link *link;
-> >  	struct rzg2l_du_device *dev;
-> > +	struct rzg2l_du_vsp_plane *planes[RZG2L_DU_VSP_MAX_PLANES];
-> >  };
-> > 
-> >  static inline struct rzg2l_du_vsp_plane *to_rzg2l_vsp_plane(struct drm_plane *p) @@ -62,8 +65,6 @@
-> > int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,  void
-> > rzg2l_du_vsp_enable(struct rzg2l_du_crtc *crtc);  void rzg2l_du_vsp_disable(struct rzg2l_du_crtc
-> > *crtc);  void rzg2l_du_vsp_atomic_flush(struct rzg2l_du_crtc *crtc); -struct drm_plane
-> > *rzg2l_du_vsp_get_drm_plane(struct rzg2l_du_crtc *crtc,
-> > -					     unsigned int pipe_index);
-> >  #else
-> >  static inline int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
-> >  				    unsigned int crtcs)
-> > @@ -74,11 +75,6 @@ static inline int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node
-> > static inline void rzg2l_du_vsp_enable(struct rzg2l_du_crtc *crtc) { };  static inline void
-> > rzg2l_du_vsp_disable(struct rzg2l_du_crtc *crtc) { };  static inline void
-> > rzg2l_du_vsp_atomic_flush(struct rzg2l_du_crtc *crtc) { }; -static inline struct drm_plane
-> > *rzg2l_du_vsp_get_drm_plane(struct rzg2l_du_crtc *crtc,
-> > -							   unsigned int pipe_index)
-> > -{
-> > -	return ERR_PTR(-ENXIO);
-> > -}
-> >  #endif
-> > 
-> >  #endif /* __RZG2L_DU_VSP_H__ */
-> > --
-> > 2.54.0
-> 
+Using SCMI also has an impact on the board DTS: besides the addition of
+a firmware/scmi node with protocol-specific subnodes, devices using
+SCMI-abstracted system resources now have to refer to these resources
+using resource specifiers containing phandles to the SCMI protocol
+subnodes, and firmware-specific object IDs[1].
+
+Unfortunately we encountered several issues with this:
+  - The clock, reset, and power domain IDs are not stable by design,
+    causing DT incompatibilities.
+    SCMI requires that the ID space exposed to an agent (i.e. Linux)
+    starts at zero and is contiguous.  Hence any change in system
+    partitioning (Application CPU core vs. Realtime CPU core,
+    virtualization, ...) may mean a renumbering of all SCMI IDs,
+    implying a massive change to the DT.
+  - There may be different SCP firmware lineages, e.g. proprietary and
+    certified variants, and FLOSS variants,
+  - SCMI features may differ across firmware versions,
+  - SCMI may abstract the hardware in a different way, requiring changes
+    in (possibly existing) DT bindings and drivers to support the same
+    hardware with and without SCMI:
+      - E.g. the number of SCMI clocks inputs to a hardware block may
+	differ from the actual hardware,
+      - E.g. hardware clock inputs may be abstracted as SCMI power
+	domains (or vice versa), like on Qualcomm SA8255P[2].
+    Experience has taught that not describing the hardware in DT may
+    lead to major issues later.
+  - SCMI does not support the concept of a clock domain, so existing
+    drivers can no longer rely on Runtime PM, but need to be changed to
+    manage functional clocks explicitly,
+  - U-Boot IPL (Initial Program Loader) needs a proper hardware
+    description in DT, not using SCMI.
+
+This list deliberately ignores ID instability and the need for SCMI
+quirks during development of the SCMI firmware.  While upstream Linux
+must only support sufficiently mature firmware versions, vendor trees
+(e.g. renesas-lts) may still want to support development firmware
+versions.
+
+During last OSSJ+LPC, Marek Vasut pondered if we could keep our own ID
+lists stable, and perform a mapping to the IDs used by the actual SCMI
+implementation running on the system.  This was also briefly discussed
+at LPC[3].  After some refining of the initial idea, this series takes a
+slightly different approach, by:
+  1. Describing the actual hardware components in DT, plus a minimum
+     SCMI glue,
+  2. Mapping DT hardware descriptions to SCMI-backed objects and
+     abstractions (or replacements, in case they are unusable,
+     unavailable, or too different), in Linux drivers, based on the
+     detected firmware version.
+
+This has the following advantages:
+  1. The DT ABI is stable,
+  2. DT bindings and drivers for existing hardware blocks do not need to
+     be modified,
+  2. Current and future firmware can be handled in driver code,
+  3. U-Boot IPL can use almost the same DT; it just needs stripping of
+     the SCMI node and subnodes,
+  4. If ever needed, the Clock Pulse Generator (CPG) and Module
+     Controller (MDLC) drivers can be extended to program the hardware
+     directly if SCMI is not present,
+
+Last month I gave a presentation about the issues and our solution at
+ELCE2026 in Prague[4].
+
+This series consists of four parts:
+  A. Patches 1-5 prepare and add SCMI remapping support to the R-Car X5H
+     CPG clock driver,
+  B. Patches 6-10 fix and add new interfaces needed for remapping in the
+     R-Car X5H MDLC pmdomain driver,
+  C. Patches 11-14 prepare and add SCMI remapping support to the R-Car
+     X5H MDLC pmdomain driver,
+  D. Patch 15 enables more SCMI protocols on R-Car X5H Ironhide.
+
+Dependencies and merge strategy:
+  - A targets the renesas-clk tree,
+  - C depends on B, so both target the pmdomain tree,
+  - D depends on A, B, C, and out-of-tree SCMI quirks, so needs to be
+    postponed.
+
+Changes compared to v4[5]:
+  - New patches:
+      - "[01/15] clk: renesas: r8a78000: Merge debug prints in
+	 r8a78000_clk_get()",
+      - "[02/15] clk: renesas: r8a78000: Replace sentinel by explicit ID
+	 map size",
+      - "[03/15] clk: renesas: r8a78000: Shrink IDs to 16 bits",
+      - "[08/15] pmdomain: Make genpd_get_from_provider() always",
+      - "[11/15] pmdomain: renesas: r8a78000: Drop MDLC name comment",
+      - "[12/15] pmdomain: renesas: r8a78000: Replace sentinel by",
+      - "[13/15] pmdomain: renesas: r8a78000: Shrink IDs to 16 bits",
+  - Add Tested-by (I retained Wolfram's tag, as the inner workings
+    haven't changed),
+  - Add Reviewed-by,
+  - Rebase,
+  - Shrink DT, hardware, and firmware IDs to 16 bits,
+  - Rework mapping data structures, keeping the original ID maps and
+    adding separate arrays of clk_hw, genpd, and reset pointers,
+  - Use kzalloc_objs() and __free() for the temporary array of fixed
+    clocks,
+  - Use new *alloc_obj*() allocators,
+  - Add missing clk_put() after of_clk_get_from_provider() in get_hws(),
+  - Move of_node_get() after for-loop that may fail to fix device node
+    reference leak on failure,
+  - Add support for missing SCMI firmware IDs indicated by -1,
+  - Fix double clk_put() in pm_clk_add_clk() error handling,
+  - Fix reset control leaks in fill_mod_map() error path,
+  - Fix scmi_clk_np reference leak by marking it __free(), and
+    retaining it explicitly on probe success.
+  - Drop unneeded mdlc name comments,
+  - More details can be found in the individual patches.
+
+Changes compared to v3[6]:
+  - Remove dependencies by making assumptions and dropping disputed
+    items, to move this series forward:
+      - Assume all SCMI IDs are stable.
+        This let us drop the addition of scmi_get_base_info(), and
+	support for handling different ID spaces.
+      - Drop the "renesas,scmi-firmware" DT property, and find a device
+        node compatible with "arm,scmi" instead.
+        This let us drop the addition of fw_devlink support for this
+	property, too, but required a new probe deferral fix in the
+	pmdomain code: "pmdomain: Make genpd_get_from_provider() return
+	-EPROBE_DEFER".
+	This will have to be revisited when systems with multiple SCMI
+	providers appear.
+  - Drop unneeded IS_ERR() check after __clk_get_hw(),
+  - Mark scmi_{clk,reset,power}_np __free(device_node),
+  - Include initial mapping tables for R-Car X5H SCP FW SDKv4.31.0 and
+    later, supporting clocks, power domains, and resets used by serial,
+    I2C, and SPI devices.
+  - Try SCMI clocks first, and fall back to the default fixed-frequency
+    clocks when not available, as recent firmware versions no longer
+    restrict access to some bus clocks,
+  - Fall back to the non-SCMI defaults when SCMI provider support is
+    disabled,
+  - Keep RESET_CONTROL_FLAGS_BIT_OPTIONAL clearing in
+    __fwnode_reset_control_get(),
+  - Return directly in __reset_control_get_from_provider(), instead of
+    assigning to a local variable, letting us drop the latter and
+    simplify scoped_guard() to plain guard(),
+  - Add Reviewed-by,
+  - Check for overflow when converting (u64) fwnode args to (uint32_t)
+    OF args,
+  - Document that reset_control_get_from_provider_exclusive() must not
+    be given a reference to a GPIO provider,
+  - Let the dummy return ERR_PTR(-ENOTSUPP) instead of NULL,
+  - Improve patch description,
+  - Let r8a78000_mdlc_attach_dev() return success when the MDLC instance
+    is not found, to avoid breaking users referring in DT to an SCMI
+    power-domain directly,
+  - Extract scmi_get_clk(),
+  - Add support for gateable functional clock parents,
+  - Propagate all reset failures, as SCP FW SDKv4.28.0 which restricted
+    HSCIF0 reset is no longer supported.
+
+Changes compared to v2[7]:
+  - New patches:
+    "[PATCH v3 06/12] reset: Extract __reset_control_get_from_provider()",
+    "[PATCH v3 08/12] clk: renesas: r8a78000: Add clk_hw to clk_map",
+  - Move DT binding patches forward in series,
+  - Add "renesas" vendor prefix and "scmi-" function prefix to the
+    "firmware" property (I still think the vendor property should be
+    dropped, or replaced by "arm"),
+  - Add "of_" prefix to genpd_get_from_provider(),
+  - Replace reset_controller_get_provider() by
+    reset_control_get_from_provider_exclusive(),
+  - Add kerneldoc,
+  - Rebase,
+  - Consistently use /* sentinel */ for zero sentinels,
+  - Call reset_control_*() APIs instead of internal reset_control_ops
+    methods,
+  - Rename struct mod_map to struct mod_map_in,
+  - Add struct mod_map, which also contains a reset_control pointer,
+  - Add fill_mod_map() to obtain all SCMI reset_control structures
+    up-front, as one can no longer use lazy look-up,
+  - Prefix DEFINE_MDLC_RESET_WRAPPER() parameters with underscores.
+
+Changes compared to v1[8]:
+  - Drop SCMI quirks and SCMI mapping tables,
+  - Move CPG/MDLC DT bindings and minimal base drivers to a separate
+    series,
+  - Add that SCMI may provide different abstractions,
+  - Add missing asterisk to blank kerneldoc line,
+  - Let scmi_get_base_info() return -EPROBE_DEFER or -EOPNOTSUPP instead
+    of -ENOENT, and propagate these errors in callers,
+  - Fall back to the default support when SCMI support or firmware is
+    not available, or when the detected SCMI firmware version is not
+    supported by the driver,
+  - Improve error message on scmi_get_base_info() failure,
+  - Check if SCMI firmware node is available,
+  - Use reverse xmas ordering in r8a78000_cpg_probe(),
+  - Replace the scmi_*_np members of struct r8a78000_*_priv by local
+    variables in the probe functions, and pass them to the fill_*_map()
+    functions,
+  - Join split short lines,
+  - Move check for supported firmware version up,
+  - Fix DT misindentations,
+  - Add scmi_clk node, as it is no longer added in earlier commits.
+
+Notes:
+  - In reponse of feedback on v1, I did try to use SCMI IDs in DT, and
+    handle most issues in Linux SCMI drivers and SCMI quirks[9].  While
+    the result worked, it did not solve everything in the issues list
+    above.
+  - This series does not include actual SCMI quirks; the SCMI firmware
+    for R-Car X5H is still under development.
+
+For testing, I have pushed this series plus additional work to[10].
+This has been tested on the Ironhide board with R-Car X5H SCP FW
+SDKv4.36.0 and SDKv4.39.0.
+
+Thanks for your comments!
+
+ [1] Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+ [2] "[PATCH net-next v11 1/7] dt-bindings: phy: document the serdes PHY on sa8255p"
+     https://lore.kernel.org/20260629-qcom-sa8255p-emac-v11-1-1b7fb95b51f9@oss.qualcomm.com
+ [3] "Firmware ABI stability" at Linux Plumbers Conference 2025
+     https://lpc.events/event/19/contributions/2153/
+ [4] "Marrying Device Tree and SCMI"
+     https://osselceu2026.sched.com/event/2RaWR
+     https://www.youtube.com/watch?v=z6Apgkm3fD4
+ [5] "[PATCH v4 0/8] R-Car X5H Ironhide CPG/MDLC SCMI remapping support"
+     https://lore.kernel.org/cover.1792163045.git.geert+renesas@glider.be
+ [6] "[PATCH v3 00/12] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+      support"
+     https://lore.kernel.org/cover.1788338320.git.geert+renesas@glider.be
+ [7] "[PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+      support"
+     https://lore.kernel.org/cover.1783505329.git.geert+renesas@glider.be
+ [8] "[PATCH/RFC 00/14] R-Car X5H Ironhide SCMI CPG/MDLC remapping"
+     https://lore.kernel.org/cover.1776793163.git.geert+renesas@glider.be
+ [9] "[PATCH/RFC 0/9] R-Car X5H Ironhide pure SCMI proof-of-concept"
+     https://lore.kernel.org/cover.1781171705.git.geert+renesas@glider.be
+[10] topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v5 branch of
+     https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+Geert Uytterhoeven (15):
+  clk: renesas: r8a78000: Merge debug prints in r8a78000_clk_get()
+  clk: renesas: r8a78000: Replace sentinel by explicit ID map size
+  clk: renesas: r8a78000: Shrink IDs to 16 bits
+  clk: renesas: r8a78000: Add clk_hw to clk_map
+  clk: renesas: r8a78000: Add SCMI remapping support
+  reset: Extract __reset_control_get_from_provider()
+  reset: Add reset_control_get_from_provider_exclusive()
+  pmdomain: Make genpd_get_from_provider() always return on first match
+  pmdomain: Make genpd_get_from_provider() return -EPROBE_DEFER
+  pmdomain: Make genpd_get_from_provider() public
+  pmdomain: renesas: r8a78000: Drop MDLC name comment
+  pmdomain: renesas: r8a78000: Replace sentinel by explicit ID map size
+  pmdomain: renesas: r8a78000: Shrink IDs to 16 bits
+  pmdomain: renesas: r8a78000: Add SCMI remapping support
+  arm64: dts: renesas: ironhide: Enable SCMI devpd, sys, clock, and
+    reset
+
+ .../boot/dts/renesas/r8a78000-ironhide.dts    |  19 +
+ drivers/clk/renesas/r8a78000-cpg.c            | 237 +++++++--
+ drivers/pmdomain/core.c                       |  30 +-
+ drivers/pmdomain/renesas/r8a78000-mdlc.c      | 461 ++++++++++++++++--
+ drivers/reset/core.c                          | 115 +++--
+ include/linux/pm_domain.h                     |   7 +
+ include/linux/reset.h                         |   8 +
+ 7 files changed, 728 insertions(+), 149 deletions(-)
+
+-- 
+2.43.0
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
