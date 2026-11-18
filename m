@@ -1,80 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795038429;
-	b=lILQy8muJQRsnW4RrDuz3rlRR74N4nSoD63iy59xDi2TS7PxEsvk+HN7ZAwkWMx1zwcU
-	 xTgPMuqbHoVu89hbZDt04/MEa8t4nzUODIq3dVQNbZSpEYWn0jUsWqvyIgrgp/hkWDI/J
-	 UR1YVc609TmGGUOoooHuFpZMhwhlyYQTFn6YNNNAqEa/CUSdTVBJItewXzJaJ9LhYOvTu
-	 IHZLMnzDfRY90UOt5lEwgAzzsG/YcJ5iigMyMDVZIkLjipSW/J5DM3J+cASMQlbvFsYDZ
-	 BUDX26Z60B9Q9q7URE3s+ILjcPUtbq860vwC7y7pBMI/1Jez+l86Wdz5tq/WtiIxs+A==
+	t=1795039879;
+	b=CyBFFqz/sfBHGuI8MUO29+m9VmHyBiH64qblf4OFok7ua2w0pLasKUbtgqNt8N/ulaGZ
+	 ZrfkJnKlOLP0fLTbaZoKKr0NcBSsXTK9tdPnEgJtWKTiFQ/v06/knpLCvtiPQF9FSjmDU
+	 dvUdlYPxH4WtjkbkRcMdMbLMWrJrYv7zcbp8mJU5VRXgIICfynip1s7GpAnbFXcDXRfw8
+	 i0i4Q3OYtmt1lGi457hFWzcTUdx9SGEViomGZFHWIZiKrhx2LuSLmNNZ2ZF22Pwoi4kPW
+	 G4ZCAEAWDiGvH5jS08gLRJAcc8WtVdRtSDcyAMcV1CS22wIFjDSVdqUwOywkQahUzkQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795038429;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Type:Organization:Content-Transfer-Encoding;
-	bh=pRYMWLi8Ryx7ULuay95kcoiFY2SObkN9QN+kkR5g6so=;
-	b=a4fAlwK+IMziLXNcGfzFeq1MpY37+oQiTyHKQc7Ul3Io+Fn/1HOKTjEiMx2kTX6PdnfS
-	 fZRiDk/fLWx4fHd8rmoSNXN9i/pIH0eYZoMwEnNYy7zjZIBXj2kVc75Aqtlx2+FMCqiS/
-	 9BE9qnXk8LmmVVohrphcGT59tC2CBIjXv0hozJWidJC5GVy+tKc559G8hDxSa8PbIT8qO
-	 h4h/5G1SeobXLSNjQwYL46bRV7mTKttm3kJxSg2bOAUq7MY33s/9tY/WDmCgn000nd7n5
-	 3c6PdMvpV3Wn5oapp8OC7uB/MqYHnp0dF1TJbpRYCgqppEzDe3EZud1XshBm7GhGMrQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795039879;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=vXBeJvdU9KK6L1jYKoZZBXVpEjFUGaiQGPRX5ub+RWY=;
+	b=doJy7EBCiDM6Pyx/5ei0myFf5fAP6WGYQRfrkbPvLRD6TP0RMrRLlpkpCc/I0d+AJlJ0
+	 DPVCtvl2IOk/26G8vIHraOMXFm1C4hYoz5K+dqzEn2HZHb1VJ3YsyE1w+h0iiLrMzaIwj
+	 ScYY61qthj7PD3NnpWlE1b9TDJrgb8eXTjMsFBoKOzUuHH3B/EgZ9XCM08Vey6oYtLj5c
+	 ctpqCG0B/z4OuKx84cEsV6sY4FWsB6Fihf/Juuz+Hu0LOe6oCs//u+t2qvtUvYZGEBny5
+	 0edRXm0dslwDdMxOjMLe82zkM813HIrBhDdKMD7IRx6S3Q2uAGuxgw4BDaHwnj1QTsQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Ev3De79Z;
-	arc=none smtp.remote-ip=198.175.65.11
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=GvFhe4m1;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66426606A325
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 21:47:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66426606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D12606A339
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 22:11:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 19D12606A339
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Ev3De79Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795038430; x=1826574430;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=92wBFKxoEBsVppYwDkeMq089FqzVB+htTNUJjvh+OsA=;
-  b=Ev3De79Z2RrzDbs6PVgCTwZdxl38txOQ1UplEDKdYmbeIUlA0K6TfXLQ
-   Ptf9rwQd2JhglgStt7P6jpRCov/hKsekFwB/paEDBuoxOWRMlTXmgBfKF
-   UHWiAN5ItT9wVtxWsixgTP6WdkBjFj8ZY0ELpIlwR9kzZO95twWVUkz/i
-   EKJ9XtHD0K7iyaKlMbt/JvWT5tp868Jo41pGWM8polmeZ2+He+H+kcgCA
-   zzlMZBhvvob0zNirfn4VWZz/fBjk1rTj9ZlHGX31i7E/LhXkAcePjpy5G
-   AiDGZyRZmr2JKmOPFmoeSnGNgwqgnZjCjLM2INGMnRrqIy6bIwt6JiuTK
-   g==;
-X-CSE-ConnectionGUID: NGoPDdVrSRmHEclbFohB0g==
-X-CSE-MsgGUID: qvqH0Pm/QAG+re+O5q2ZnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3763830"
-X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
-   d="scan'208";a="3763830"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 13:47:09 -0800
-X-CSE-ConnectionGUID: iIYF2PdyToyRzvPP/gbi6A==
-X-CSE-MsgGUID: 7KGfucU8SUafr/3x8NrfDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
-   d="scan'208";a="10142877"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.16])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 13:47:07 -0800
-From: Ville Syrjala <ville.syrjala@linux.intel.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=GvFhe4m1
+Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D6AF8D0;
+	Wed, 18 Nov 2026 23:08:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1795039728;
+	bh=mL134ZZgaKNlrGxhoD6JBl2EJLsu/XxLvDh2/+CCBk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GvFhe4m142rWoM1kDm8uUHvQi6QaZfJpsHRquNXkiSjomHWrinsrXNTSaZr6+G437
+	 nck8bXwb2/CDjz9oDP/iDqrVdcdKTwvT7zVtN4IVbmsldVRHGu2n4bH/Oq9pLd9zHk
+	 gn2D8X6Ti/DghDBGJpAXwxd52TSc6m6Voj7uD6BI=
+Date: Thu, 19 Nov 2026 00:11:14 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org,
 	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 20/20] drm/rcar-du: Allow VSP and writeback build with COMPILE_TEST=y
-Date: Wed, 18 Nov 2026 23:45:17 +0200
-Message-ID: <20261118214518.29317-21-ville.syrjala@linux.intel.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261118214518.29317-1-ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v4 20/20] drm/rcar-du: Allow VSP and writeback build with
+ COMPILE_TEST=y
+Message-ID: <20261118221114.GI1923307@killaraus.ideasonboard.com>
 References: <20261118214518.29317-1-ville.syrjala@linux.intel.com>
+ <20261118214518.29317-21-ville.syrjala@linux.intel.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -84,48 +66,61 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261118214518.29317-21-ville.syrjala@linux.intel.com>
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+On Wed, Nov 18, 2026 at 11:45:17PM +0200, Ville Syrjala wrote:
+> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> 
+> Make DRM_RCAR_VSP selectable with COMPILE_TEST=y, and enable the hidden
+> DRM_RCAR_WRITEBACK option by default, so the VSP and writeback code gets
+> built for greater coverage. Builds fine on x86, x86_64, arm and arm64 at
+> least.
 
-Make DRM_RCAR_VSP selectable with COMPILE_TEST=y, and enable the hidden
-DRM_RCAR_WRITEBACK option by default, so the VSP and writeback code gets
-built for greater coverage. Builds fine on x86, x86_64, arm and arm64 at
-least.
+Let's see what build bots will report on more exotic architectures. I
+may volunteer you to send a fix if I'm too busy when the builders start
+yelling :-)
 
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/renesas/rcar-du/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> ---
+>  drivers/gpu/drm/renesas/rcar-du/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/Kconfig b/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> index 80bd770ae0f6..5394f131c58f 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> +++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> @@ -76,7 +76,7 @@ config DRM_RCAR_MIPI_DSI
+>  	select RESET_CONTROLLER
+>  
+>  config DRM_RCAR_VSP
+> -	bool "R-Car DU VSP Compositor Support" if ARM
+> +	bool "R-Car DU VSP Compositor Support" if ARM || COMPILE_TEST
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/Kconfig b/drivers/gpu/drm/renesas/rcar-du/Kconfig
-index 80bd770ae0f6..5394f131c58f 100644
---- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
-@@ -76,7 +76,7 @@ config DRM_RCAR_MIPI_DSI
- 	select RESET_CONTROLLER
- 
- config DRM_RCAR_VSP
--	bool "R-Car DU VSP Compositor Support" if ARM
-+	bool "R-Car DU VSP Compositor Support" if ARM || COMPILE_TEST
- 	default y if ARM64
- 	depends on DRM_RCAR_DU
- 	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
-@@ -85,5 +85,5 @@ config DRM_RCAR_VSP
- 
- config DRM_RCAR_WRITEBACK
- 	bool
--	default y if ARM64
-+	default y if ARM64 || COMPILE_TEST
- 	depends on DRM_RCAR_DU
+This will make it possible to disable the option when ARM64 &&
+COMPILE_TEST, which will break operation on Gen3 and up. It would be
+best to avoid that.
+
+>  	default y if ARM64
+>  	depends on DRM_RCAR_DU
+>  	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
+> @@ -85,5 +85,5 @@ config DRM_RCAR_VSP
+>  
+>  config DRM_RCAR_WRITEBACK
+>  	bool
+> -	default y if ARM64
+> +	default y if ARM64 || COMPILE_TEST
+>  	depends on DRM_RCAR_DU
+
 -- 
-2.56.0
+Regards,
 
+Laurent Pinchart
