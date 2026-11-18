@@ -1,95 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795038329;
-	b=btl9DWLIdeUJDtkjU0Q2IphtZjaIU+LivShbjIK7aU+AZutUsZYNINB4VMVttlZ4YrJB
-	 mF61xHaVZ6GnOpyey1ZPjveaBOVHB0VLdEhgpJebw/60xTCwDhUrC39Q2O6rqZ79hixHr
-	 0J0Js7l+CIMVInIwMeySi0duWME/8vkA40/MFmJ8WxEXDTXPtdX1EP4mKJreUDvVBnSTn
-	 zXhWC+DfrbCf4S15A1W3h5gyK/zT70UXsvxTP52lOGxK0tWNHQ77Vf3pNTYXMYxVnnuRO
-	 GeLq+10Cktk2Wrcf/dUdGWBki5kKeHnDUEN2wsuRXxS1GRRdzWg5i7/IURFNoG5O3mQ==
+	t=1795038429;
+	b=lILQy8muJQRsnW4RrDuz3rlRR74N4nSoD63iy59xDi2TS7PxEsvk+HN7ZAwkWMx1zwcU
+	 xTgPMuqbHoVu89hbZDt04/MEa8t4nzUODIq3dVQNbZSpEYWn0jUsWqvyIgrgp/hkWDI/J
+	 UR1YVc609TmGGUOoooHuFpZMhwhlyYQTFn6YNNNAqEa/CUSdTVBJItewXzJaJ9LhYOvTu
+	 IHZLMnzDfRY90UOt5lEwgAzzsG/YcJ5iigMyMDVZIkLjipSW/J5DM3J+cASMQlbvFsYDZ
+	 BUDX26Z60B9Q9q7URE3s+ILjcPUtbq860vwC7y7pBMI/1Jez+l86Wdz5tq/WtiIxs+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795038329;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795038429;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Type:Organization:
-	 Content-Transfer-Encoding;
-	bh=O9sP8o2+H5Ta33ZN1ksryRdsWFwtsjdH10Szd6V1FAU=;
-	b=tIl853pwpBwjyTHOppSSyFGQrMOhQYGlqLXNJWFF8PqhcsG6foGApG//7PVti/DqDhcK
-	 gLfibIu/9hrvt/kd3hzjlcqmD+Iugi66lUEUVLIIkiB6nmLRTYVQLLapOBif5Y8Tqnl5j
-	 mIHMg+jVPTAOBQug/eMtbibkaCfUZkqOa5dfJVf8mOebBcLeGrhrzVqJ6rpFcjcMjaUFT
-	 tYKSYqF3Juj23t/n8l1om3uaTT/D28rw9Y956pBoucuFKoGEyoLq4YJagOr6YaTvA/Vng
-	 ZuTlUcmsuGymFVqURzC/N0CYVcGDSgbNvWD5I8WQD+j3uEgPnXNUsJaKN+lJkzYK/UQ==
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:Organization:Content-Transfer-Encoding;
+	bh=pRYMWLi8Ryx7ULuay95kcoiFY2SObkN9QN+kkR5g6so=;
+	b=a4fAlwK+IMziLXNcGfzFeq1MpY37+oQiTyHKQc7Ul3Io+Fn/1HOKTjEiMx2kTX6PdnfS
+	 fZRiDk/fLWx4fHd8rmoSNXN9i/pIH0eYZoMwEnNYy7zjZIBXj2kVc75Aqtlx2+FMCqiS/
+	 9BE9qnXk8LmmVVohrphcGT59tC2CBIjXv0hozJWidJC5GVy+tKc559G8hDxSa8PbIT8qO
+	 h4h/5G1SeobXLSNjQwYL46bRV7mTKttm3kJxSg2bOAUq7MY33s/9tY/WDmCgn000nd7n5
+	 3c6PdMvpV3Wn5oapp8OC7uB/MqYHnp0dF1TJbpRYCgqppEzDe3EZud1XshBm7GhGMrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Y76Q4IPO;
-	arc=none smtp.remote-ip=198.175.65.16
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Ev3De79Z;
+	arc=none smtp.remote-ip=198.175.65.11
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE94606A332;
-	Wed, 18 Nov 2026 21:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EAE94606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66426606A325
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 21:47:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66426606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Y76Q4IPO
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Ev3De79Z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795038329; x=1826574329;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=E8Mi5GwSGcSZlzHnI46hbjXPMPdMhOLYxYEXR8H1SGA=;
-  b=Y76Q4IPO+q73eS/usnXkSvAMj9rzKw081uhrfdAMZ7vVeSLflj+YYa3r
-   I2FfsKa1fJqzaVx0rF237m7l0Kjg7NMIx0EgcLyYwDCIuZ5bGTtjJuREW
-   0Pj5WowP+5/Qw12z+PT/USpaXWPNO7tO1UCGdmFxpMUWqDA7xOZ62IHk9
-   iLyNo6cVBDVI5NaTGpKRgnZP7A25+BheY6Vg9Fyyo2ipuBwQjS2Pxx+yD
-   ze9AHaigMe1/ia1QaBptdLehnIw7XBotf8GcaTeVQcWmronz+ZvUkfmz3
-   F5vQt/yEBvRy/a6mdAgfpBOU3Ng1nNZjGGYonfgN/0zCSJx3IDIiIGavy
-   Q==;
-X-CSE-ConnectionGUID: P7CkxlBbQMih49D8ZRPoIA==
-X-CSE-MsgGUID: 3v+X7EthSa+KSjozsc5xpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3862525"
+  t=1795038430; x=1826574430;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=92wBFKxoEBsVppYwDkeMq089FqzVB+htTNUJjvh+OsA=;
+  b=Ev3De79Z2RrzDbs6PVgCTwZdxl38txOQ1UplEDKdYmbeIUlA0K6TfXLQ
+   Ptf9rwQd2JhglgStt7P6jpRCov/hKsekFwB/paEDBuoxOWRMlTXmgBfKF
+   UHWiAN5ItT9wVtxWsixgTP6WdkBjFj8ZY0ELpIlwR9kzZO95twWVUkz/i
+   EKJ9XtHD0K7iyaKlMbt/JvWT5tp868Jo41pGWM8polmeZ2+He+H+kcgCA
+   zzlMZBhvvob0zNirfn4VWZz/fBjk1rTj9ZlHGX31i7E/LhXkAcePjpy5G
+   AiDGZyRZmr2JKmOPFmoeSnGNgwqgnZjCjLM2INGMnRrqIy6bIwt6JiuTK
+   g==;
+X-CSE-ConnectionGUID: NGoPDdVrSRmHEclbFohB0g==
+X-CSE-MsgGUID: qvqH0Pm/QAG+re+O5q2ZnQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3763830"
 X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
-   d="scan'208";a="3862525"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 13:45:28 -0800
-X-CSE-ConnectionGUID: 8ARsq6GQRFi7BBoNvbfCfQ==
-X-CSE-MsgGUID: 5Dh0BXP9QGu7NcXtqx61Mg==
+   d="scan'208";a="3763830"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 13:47:09 -0800
+X-CSE-ConnectionGUID: iIYF2PdyToyRzvPP/gbi6A==
+X-CSE-MsgGUID: 7KGfucU8SUafr/3x8NrfDQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
-   d="scan'208";a="10390641"
+   d="scan'208";a="10142877"
 Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.16])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 13:45:21 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 13:47:07 -0800
 From: Ville Syrjala <ville.syrjala@linux.intel.com>
 To: dri-devel@lists.freedesktop.org
-Cc: Alessio Belle <alessio.belle@imgtec.com>,
-	Alison Wang <alison.wang@nxp.com>,
-	asahi@lists.linux.dev,
-	Danilo Krummrich <dakr@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	imagination@lists.freedesktop.org,
-	Janne Grunau <j@jannau.net>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Luigi Santivetti <luigi.santivetti@imgtec.com>,
-	Lyude Paul <lyude@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	nouveau@lists.freedesktop.org,
-	Paul Cercueil <paul@crapouillou.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Sasha Finkelstein <k@chaosmail.tech>,
-	Stefan Agner <stefan@agner.ch>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: [PATCH v4 00/20] drm: Increase COMPILE_TEST=y coverage
-Date: Wed, 18 Nov 2026 23:44:57 +0200
-Message-ID: <20261118214518.29317-1-ville.syrjala@linux.intel.com>
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 20/20] drm/rcar-du: Allow VSP and writeback build with COMPILE_TEST=y
+Date: Wed, 18 Nov 2026 23:45:17 +0200
+Message-ID: <20261118214518.29317-21-ville.syrjala@linux.intel.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261118214518.29317-1-ville.syrjala@linux.intel.com>
+References: <20261118214518.29317-1-ville.syrjala@linux.intel.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,89 +90,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-This series contains a few of my earlier COMPILE_TEST=y coverage
-patches that are still not applied. I've also included whole new
-set of patches based a more recent excursion with Claude. It
-managed to identify some additional drivers we can target.
+Make DRM_RCAR_VSP selectable with COMPILE_TEST=y, and enable the hidden
+DRM_RCAR_WRITEBACK option by default, so the VSP and writeback code gets
+built for greater coverage. Builds fine on x86, x86_64, arm and arm64 at
+least.
 
-Compile tested on x86-32, x86-64, arm, and arm64, and I've also 
-tried to silence all the resulting new compiler and sparse warnings.
-Also a few kernel-doc warnings crept up in pvr so also tried to
-clear those out.
-
-The tilcdc DT change is the only one that I think might have
-any functional impact. And since I have zero idea about DT
-treat it with suspicion!
-
-Assisted by Claude Sonnet 5.5
-
-Cc: Alessio Belle <alessio.belle@imgtec.com>
-Cc: Alison Wang <alison.wang@nxp.com>
-Cc: asahi@lists.linux.dev
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: imagination@lists.freedesktop.org
-Cc: Janne Grunau <j@jannau.net>
-Cc: Jyri Sarha <jyri.sarha@iki.fi>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Kory Maincent <kory.maincent@bootlin.com>
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: Luigi Santivetti <luigi.santivetti@imgtec.com>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: nouveau@lists.freedesktop.org
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Sasha Finkelstein <k@chaosmail.tech>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+---
+ drivers/gpu/drm/renesas/rcar-du/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ville Syrjälä (20):
-  drm/tilcdc: Allow build without __iowmb()
-  drm/tilcdc: Drop volatile from the mmio pointer in tilcdc_write64()
-  drm/tilcdc: Use __le64 for the fallback 64bit write
-  drm/tilcdc: Fix endpoint node names in the legacy panel overlay
-  drm/tilcdc: Allow build with COMPILE_TEST=y
-  drm/armada: Fix printk arguments
-  drm/armada: Fix armada_debugfs_crtc_reg_write() return type
-  drm/armada: Fix sparse __iomem address space warnings
-  drm/armada: Allow build with COMPILE_TEST=y
-  drm/fsl-dcu: Allow build with COMPILE_TEST=y
-  drm/adp: Include linux/bitfield.h
-  drm/adp: Allow build with COMPILE_TEST=y
-  drm/imagination: Include io-64-nonatomic-lo-hi.h
-  drm/imagination: Use rcu_access_pointer() for dma_fence::ops
-  drm/imagination: Allow build with COMPILE_TEST=y
-  drm/imagination: Drop stale kernel-doc for
-    pvr_mmu_backing_page.pvr_dev
-  drm/imagination: Fix kernel-doc for pvr_mmu_op_context anonymous
-    structs
-  drm/ingenic: Allow ingenic-dw-hdmi build with COMPILE_TEST=y
-  drm/nouveau: Allow platform driver build with COMPILE_TEST=y
-  drm/rcar-du: Allow VSP and writeback build with COMPILE_TEST=y
-
- drivers/gpu/drm/adp/Kconfig                     |  2 +-
- drivers/gpu/drm/adp/adp_drv.c                   |  1 +
- drivers/gpu/drm/armada/Kconfig                  |  2 +-
- drivers/gpu/drm/armada/armada_debugfs.c         |  2 +-
- drivers/gpu/drm/armada/armada_fbdev.c           |  2 +-
- drivers/gpu/drm/armada/armada_gem.c             |  7 ++++---
- drivers/gpu/drm/fsl-dcu/Kconfig                 |  2 +-
- drivers/gpu/drm/imagination/Kconfig             |  3 ++-
- drivers/gpu/drm/imagination/pvr_ccb.c           |  5 +++--
- drivers/gpu/drm/imagination/pvr_device.h        |  1 +
- drivers/gpu/drm/imagination/pvr_mmu.c           | 14 ++++++--------
- drivers/gpu/drm/imagination/pvr_queue.c         | 17 +++++++++--------
- drivers/gpu/drm/ingenic/Kconfig                 |  2 +-
- drivers/gpu/drm/nouveau/Kconfig                 |  2 +-
- drivers/gpu/drm/renesas/rcar-du/Kconfig         |  4 ++--
- drivers/gpu/drm/tilcdc/Kconfig                  |  2 +-
- drivers/gpu/drm/tilcdc/tilcdc_panel_legacy.dtso |  4 ++--
- drivers/gpu/drm/tilcdc/tilcdc_regs.h            |  7 +++++--
- 18 files changed, 43 insertions(+), 36 deletions(-)
-
+diff --git a/drivers/gpu/drm/renesas/rcar-du/Kconfig b/drivers/gpu/drm/renesas/rcar-du/Kconfig
+index 80bd770ae0f6..5394f131c58f 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
++++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
+@@ -76,7 +76,7 @@ config DRM_RCAR_MIPI_DSI
+ 	select RESET_CONTROLLER
+ 
+ config DRM_RCAR_VSP
+-	bool "R-Car DU VSP Compositor Support" if ARM
++	bool "R-Car DU VSP Compositor Support" if ARM || COMPILE_TEST
+ 	default y if ARM64
+ 	depends on DRM_RCAR_DU
+ 	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
+@@ -85,5 +85,5 @@ config DRM_RCAR_VSP
+ 
+ config DRM_RCAR_WRITEBACK
+ 	bool
+-	default y if ARM64
++	default y if ARM64 || COMPILE_TEST
+ 	depends on DRM_RCAR_DU
 -- 
 2.56.0
+
