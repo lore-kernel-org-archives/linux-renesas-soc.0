@@ -1,88 +1,131 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.146
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795099640;
-	b=1C/zLjWYROb5AgrhyYERHuitWpxmverttLxVMWGAIwboqTGDwk3Y6fSIHU1cAsrdcfz8
-	 mq8Oru3xXuFYOWD0S+MZymDecPeLzeE/IUh7hFS+b0Hq09t6GKA9dxGJfI1StOaUt2FH+
-	 ibQhDXtTbgqIsAiZAlwcKWBO2lZJ+Q8IgtbI4F0zz7kKL8506oihkKRyURlmyj/I2PfK8
-	 k5oY0+e6OaG3XfSa6fzrArKe/jTM9yOlsciV6dErvi+FVj8vvsq9GVlCjri/WI5VPTdK8
-	 NxAKHE2jrDa5WSsINsqcGFYk178jcZ5+F8iseRC76BfnWyRQwadeHmx7ZdoAKzA0wmA==
+	t=1795105522;
+	b=A/dy8KnkaZdMcc0Dg201JepYJOqULQZvoYnOAMCwloVV85U4m0uo4aIS6j++OsmT2tRC
+	 vFtCoY7Xq1Es42AkeBYCT0NkE7ePsmKJTM2f28/axV0wAHaOBYgZ9jYV2nJpHYdLCTTF7
+	 Me61Vb1ZJctUTfRgDrF+D7uN07QO5/JMpb0MQesU+e+9TD2jUyJtt8kjzOlJMnn5QPxIS
+	 mPs6wL3BdOFbZqU6DgzbH9ULF6RPs2+42nhz4kJeTgcezNUpH/BLPyUegxzF7P212YyXp
+	 UXRD4RJR1ySEeKH1wdn1doBmM41W/nTiqw3nEURTXiyG+2crNCJQKd+YgxxnoFh0MCg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795099640;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=vITMaRYl8N/4FX6Ub/CtOdFIyxibL9pIfaPhRC74PEQ=;
-	b=VYHl6LeGH2Z4VYpIbYTAo/h39fXCMj/umXgcrPGEaoFEQZgsisXCwrEbdvj3Rnnkj31w
-	 zoryZHRij0xlAsPQn0WnW84hduvE2V/kISfBtPO+7A0dBshtjMe0DQBT8TItNAVuTXCjw
-	 tF/Bx+imhUIVxray5JldAgqlidV9GT+/hxFea/7G9wth/no+DI8uzAUe2IQbHfIA9dBdo
-	 Xo7COBDjFlGiWAT4U1TVxsOrf8oTiYsmXy1JRIszJTZ3hpD/YylkUKikAepmafyclvZPB
-	 y6322htKL8vXRNLHNrbJwk4e8K9DXBMVrckyzSzGQUdhmQ+uEGSRjEzrS7R06MHW7Gw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795105522;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=gfp4rLgPDU9xrXi30in7XLHuCQXVvs2qLK4OaDXqTDg=;
+	b=0NCjNxPNih1X3GAVv7HaxCIgTCzUam6oJoKJXa8FcxIVdfSA7kIY3tx238yuap7rfJNA
+	 111oe0tMdC3w/JkFAf7J0EsIpa+MN+2ejMBHEeGe2wCo/zsbF16B8PISerFRj4Xx/BWQK
+	 t5WXVIljDw4VxD0KjI3XymMKFAXLMtc8UoMROwuY03CaLPNGm7gPMnrXD1yJd9id0nhqs
+	 EgAQtkEDEg3Qgudr9dkMhrd/l7WhhMi3nKDhskxaAubOEmhJez7boFdS+bhrHbXRHo1Lm
+	 I3M/NZZKVWhFTjthIz4ovPf+lkaKB9D+0zrRbjpS0dsYFwhhI9r8guztLqG3P0Iex7g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=TrJluSdU;
-	arc=none smtp.remote-ip=209.85.208.50
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=ragnatech.se;
+	spf=pass smtp.mailfrom=ragnatech.se;
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=H+AUFgBw;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=PUOYyAoH;
+	arc=none smtp.remote-ip=103.168.172.146
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED34B606A324
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 14:47:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED34B606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128EF606CA29
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 16:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 128EF606CA29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=TrJluSdU
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6b8b20b2538so2078088a12.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 06:47:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795099637; x=1795704437; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vITMaRYl8N/4FX6Ub/CtOdFIyxibL9pIfaPhRC74PEQ=;
-        b=TrJluSdUX+LCPAOrAOhA6LjHqBXkXzXdZYzjMx55+3fdDm8qXlIDbcwPLeFn5iEV8L
-         81q7PJ6vKUHawD3zzMlIVK3s0qlUxABF9nlbI1HhyjHFLneVa4qFHXHBTQ30Wd2+GFaT
-         N5U8a7+EgH75s8BGxVtnefpvkPJZTUdEf4siNc2UfCxyTzsphHLg2wBwxKJih/LDuApL
-         eWknL1aAzPN20X8Bum1bME8KDVnaD0j71ulUclw9QS9pjmPRMYD1rEO0Cg7cEQJUz7M2
-         /E2vbBN1hhBaN1oikSCwHN6vsJoji+hAK43fX4HYQaXsr2i5I4wC+SL3M+HaQAYn82fy
-         hy+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795099637; x=1795704437;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=vITMaRYl8N/4FX6Ub/CtOdFIyxibL9pIfaPhRC74PEQ=;
-        b=rqToWYzrL1c0pxV84uOvBkqo3thGnb6+vpgXVv7qpZTl+/6MXQmchB6KcZxHuNsBHm
-         BzsjIG+UzKOt74CJGO0fPr5w74+jsbjVpl6S0v+RC+dYp/z2BNfgSHbTCKmk/g1TZnsc
-         n4pnFHBW8EQwoEhPDNf/YeB+Ic6/vgcDPtt3CjR9/482+ijbu6yS8UTmGlf/PQVACMcO
-         VkuyXRaI2nPIWB0FeDxsyFxdpHolhVo4BgNki+oY310z8rTxwcE+G34hTTnRPj5AnKhf
-         PAfsch2r6HIJvtJ7GNb7qDBQjyYpLMHeOAvzlio2EHyAswjjbMa9Uy9sbu4MtLsqxvjZ
-         jBEw==
-X-Forwarded-Encrypted: i=1; AL+hErG5k0uRupGGrvK2AQv33BOjVsYnG/Hlp7phVLx3xJu10sj4WKQ9GSFRn0ZLW9aJUrl1v0jNUlcFmdcV5X79jAEqiQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+LRQgKanDCmiuKH7U05Kfp9e3ETsxtkoGnwkdqInplrHRibVu9
-	PrtFDagm4o+LJvhZdTbYFpudiA25E7qfOq4/RgwAR4vT9fkIfTOWH2B5fdSmU7N2RuA=
-X-Gm-Gg: AYBFou1veTtiD+5vPLKSj9G4vZjdPvzjVb7Xn/TpuHz9PLTw3Z1olb/WM1PoCDbg2Po
-	bH/ZCsSWQHrOlw35/nI7GSFpNe+AsKjEJU87LXAy69zSkxsOON21wMoPbGnmXTRPq6fzGLJ2r6l
-	b+LWCSQWMKk3tOn1TLmihmdOqxcc+dMnNiJRhLCCnRt5tgvr+TgzA4OIuyBMfVebHJnoYO6gBAq
-	J9DXKOGtA/DWLnDnhFg9VoWjbWZBzSTxZCGXP4nkeMroZvaySnU3RbQUCJBMTmlepCub2Dm2Ouq
-	u8NxiHYuyucHxqlUwWySdZDQKtZlszLSHDmJsP6cemk2CAmp1++YDtuQB5LoCR9kDXCQXV/VKHz
-	WUgFFgVbCNTJRuDYm7kb7j+1sv1K5bhDJDlRKU+4VFHr4WzPBYBcorf3A0DFygQy3m3t2LMSqgI
-	4UG+QLQ3R5SPB4jTOC4TzNQ6dQ+Jft3xk8wqX6j9FJg65DKUmsCsNREcVHL+odLhb70ZS/DNBfU
-	wl4D5VnscAjFz/Uvr2/jW8W0pOiQ9Gn+49ca1bHeehQw1Sf95zgNjLtOo42nIE7QZ6uGoeZsi7R
-	BOFG6lvcCn4QAkgI+1TKldwefv4tVAVsndlJoM5fkl5zb2IlkWeVn+lMhw==
-X-Received: by 2002:aa7:c7d5:0:b0:6b6:ea98:2539 with SMTP id 4fb4d7f45d1cf-6b9095b57admr2564430a12.6.1795099637250;
-        Thu, 19 Nov 2026 06:47:17 -0800 (PST)
-Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b88993e08csm2579854a12.6.2026.11.19.06.47.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Nov 2026 06:47:16 -0800 (PST)
-Message-ID: <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
-Date: Thu, 19 Nov 2026 15:47:15 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=H+AUFgBw;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=PUOYyAoH
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id F3047EC094F
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 11:25:20 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Thu, 19 Nov 2026 11:25:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1795105520;
+	 x=1795191920; bh=gfp4rLgPDU9xrXi30in7XLHuCQXVvs2qLK4OaDXqTDg=; b=
+	H+AUFgBwSH3S7IdLDX0FTp/AgngSAlROS+5TED1eiau0K65RnV344LZFZ52yayb5
+	fqo5AcXsJ2adTT6YFt1iO3CDSVkQrYYyrOiG71JH/Jtynyf/srMFCdD8f5ildlgQ
+	eywLJsD3fHa7mv/gUOy/RnfQHMcaQPQ1TBo7cAcoliiTtB0TddCPHvtwQ+jvNokm
+	lMPdvSaeXaJt4+71YSzO2Nl0IIHpcVVVQHey/3Cah7X9jzvu54K7vWHDqkyFMpNi
+	kRxkWrM0nyJiMS0zHPW3DxydoVHoC8ePVSwzpIGJsEeRKtmObhs7dTwJNIgs/xix
+	k1TM2tgViReuTSH3L1m6fQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795105520; x=
+	1795191920; bh=gfp4rLgPDU9xrXi30in7XLHuCQXVvs2qLK4OaDXqTDg=; b=P
+	UOYyAoHB+7PLo/0CqQkBy9ehi3Xn8hK5Bcc1o56YshKAaWCgDGjOBXIPwv3PuS3L
+	C7EFC8MRa4KRmeMzhLyRi8pZgY9Y0kN0rklGowor8KWIKCLkhz56SdLkhnYgdSe8
+	n63ko2zdlBVW9pK4MsN2QaKMhMEZErWq48LsZK0JeCFXBWaaWvjelg0hs9ztQNBp
+	xHKZ7RNf9kwAnAkBxOHc8wTi0kod38jMs0CKtbG4ml/vHA+98oYpUjm1JU/2Xgln
+	fJC//RfUvaHNN0021wJwzs/N/kznu01/3rfDmj3RHoVO7WoebAtTtltTaLGzpuuV
+	0UyTTZzTD7EWnbnrkDAGQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795105520; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm2:rsa-sha256:bPVXb8G60IsBDUxi6KRHrtlo3E9kFH3JHBTDuNFbti0EAyU
+	QxIRDdqoYhdnD3D342eemVwY0lImUkQVoZ5rZ4xWMR45LA5fTycNdDUySplym5HO
+	ANDtZMXn12Uax6FkyHXQ/nvH7tx/fdVF0pSQWKbRffJsmK0pKH6nd5NzWEIeOiUa
+	jFDt3E3umW8Z9Q2JjkOHT+chgfFEmMuBcrodbNVfpGJxq5Zg4yKpomsxoJvO9mO4
+	GBlMUGLA+TsSkyBPrlwXGmSNMs+Gl9l+U+Z9AVz9gC3FjqP25ZSub02bGFV5f7jE
+	GOsGXdcU1c7Sr1ewgkP6JcyMJHVVB6jRfd2FYIg==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=13;
+	hn=cc,content-disposition,content-transfer-encoding,
+	content-type,date,feedback-id,from,in-reply-to,message-id,
+	mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:wh65AxyCEGfJisw04BahunQyCMB7dnGs+wbCI8VGSow=:KhNqVQSDEXtcBHbf2f5TkuW2U2Bm5jlK6EqTiYoBN+Q=;
+X-ME-Sender: <xms:8CL_aglUKmfbzezA4HyGB8mx1Xr8zHXCAz8iKHwvpwuH9VCHijcBTg>
+    <xme:8CL_aruwtjF265fwI0wMedNP2dWzV50TkkT8zCK0xkGvjMLY00FV-MvEzq7DnIkFm
+    sZszUEqTVZpvNhjwwLjFpA22gWjWOKFxJM6_GBg5eY2qWOlQ3vbz7xW>
+X-ME-Received: <xmr:8CL_arpcwDMql4cpvQxG3Nea2eLCExtOiQKzueEel4XsngUesqWXXNAMie0w_TJgrNHkKAUTm-VXTutrTm0reWPXXD4BNXU>
+X-ME-Proxy-Cause: dmFkZTGleqIvb3Ms7+F/oKhrfcU0ejd0oWtxpIQbVHQmcSDjYmbghqUUzoIptLr5MoGJ+/
+    vlvXr5VimGZ7E2QQex9UB3w3s4YeQ879Dc+9Pw8TG+P5ZwZwqNC02KJ/jrIp1CkVSKUM4S
+    X0frEs1/jpJ6ttBj4RzsHQf6ouGQzt3zni3opSPXmKlCdO58RQfTW3r10zRxq7l3HRQQvS
+    fJdY10r8THaDvrZ/JtB3BCKROEGbZvw97P1ncERFPlOBtBbPE1Rf1XBlY979Vdk2XGrK0D
+    jYeAIhuk1QwFCM/PLFZ6NgzpuV09VKeqzUl7hcNPhN2Z7Oq/Zt4932i8zySDdm9Nu1JppX
+    77EE9JYQ/q96+nxkB6ISI6haCZJXzdMKYpbo42h9CZUD9a0Huvm8LNFxennc/oxDNzy+pD
+    b/xgilwoC/iyZ4ELZwY6VzrXwfwg05TUGFFPnSyZMsV8b4Ue7Eh2LpmapTkq0bQRJbFi6d
+    pgIQmRgZ8u0+OM9+SQBbQJD/IswdThTZQPxp5NRO30dB1SmmgWI0ygs1sTX926sxa3b+Za
+    gdRHRGuHjbnBzteORWy8OP5mgu/Sdvu8teNkQIwjtRXSoqDb6l010qX3RVbyS5Jhzk8mEI
+    Fs2iaWV7yIY5UrfQA96zTUklRfmROGKRcOTzhA6oWni8OMK2QPSakh+ASM/A
+X-ME-Proxy: <xmx:8CL_ahcC4GCBaLc4nqu4Zs39YnRh7iFnXFo67fUAgsIaOUfSoDqN1g>
+    <xmx:8CL_ajnHxihxNI4I4LHyAgbowpBo-FWfsRudykNqid7H96lnaMUHwA>
+    <xmx:8CL_aoZG2jxypn8pgCP1Bfasuhj6bCOo_zBmgiikVynRh_nu3iAAXA>
+    <xmx:8CL_ao4BX4Ib64Qghfr9K8Wk4usSp4lfxJ5a5XD3frQ1RsFxA9fopQ>
+    <xmx:8CL_aiIuVFZ1FQVZcsibMq2v1ZcDmfbfXDmB8qpKo77M6vuPiwYuiMiJ>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Nov 2026 11:25:19 -0500 (EST)
+Date: Thu, 19 Nov 2026 17:25:17 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Yaohan Li <shunsheng1218@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2] thermal/drivers/rcar_thermal: disable the work before
+ masking the interrupt
+Message-ID: <20261119162517.GD2300348@ragnatech.se>
+References: <20261118072321.1259639-1-shunsheng1218@gmail.com>
+ <20261119022903.1493494-1-shunsheng1218@gmail.com>
+ <20261119062203.GC2300348@ragnatech.se>
+ <179508711555.3615492.10674834361832600268@gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -92,85 +135,57 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Paul Elder <paul.elder+renesas@ideasonboard.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cover.1795029012.git.geert+renesas@glider.be>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Autocrypt: addr=clegoffic@baylibre.com; keydata=
- xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
- K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
- BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
- AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
- B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
- 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
- LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
- vLfPDQ==
-In-Reply-To: <cover.1795029012.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <179508711555.3615492.10674834361832600268@gmail.com>
 
-Hi Geert,
+Hi Yaohan,
 
-On 11/18/26 8:44 PM, Geert Uytterhoeven wrote:
-> 	Hi all,
+Thanks for your explanation.
+
+On 2026-11-19 19:18:35 +0800, Yaohan Li wrote:
+> Hi Niklas,
 > 
-> TL;DR:
+> thanks for the review.  The code changes you asked for are in my tree, and I
+> would like to check the testing question with you before posting a v3.
 > 
->     Describe hardware in DT, and perform mapping to abstractions offered
->     by SCMI in Linux.
+> The delayed work is now disabled before the interrupt source is masked, so
+> the handler cannot queue new work after the cancellation, and a work that is
+> already running cannot re-enable the source behind the mask.  The shared
+> interrupt is unregistered with devm_free_irq() rather than waited for with
+> synchronize_irq(): the line stays registered for its other users, and they
+> can raise it again after synchronize_irq() returns.  The RCAR_THERMAL_MAX_IRQ
+> comment, the loop variable and the two comments in rcar_thermal_remove() are
+> as you suggested, and the shutdown flag is gone.
+> 
+> On testing: there is no R-Car hardware here, so what I have is a controlled
+> ordering test on a KASAN kernel, 17 checks, all passing.
 
-A question on the approach
-An SCMI variant DT could mark the CPG and MDLC status = "reserved" and point the consumers at arm,scmi, while the U-Boot IPL keeps the hardware DT.
-Since v4, the series assumes the SCMI ids are stable:
+Is it possible to share the test-cases? And are they relatively simple 
+to run? I do have hardware to test on, and I would be happy to run some 
+test and see stuff fail without this patch and that this work solves it.
 
->   - Remove dependencies by making assumptions and dropping disputed
->     items, to move this series forward:
->       - Assume all SCMI IDs are stable.
-If they are, why not using them in the DT directly?
+> It uses the real
+> delayed work, workqueue, wait and signal machinery and a simulated interrupt
+> line shared by two handlers.  It shows that a work queued after
+> cancel_delayed_work_sync() still runs while the same queue attempt after
+> disable_delayed_work_sync() is rejected, that a running work undoes a mask
+> written before the cancellation, and that after synchronize_irq() another
+> user of the line can invoke our handler again while devm_free_irq() ends
+> that.
+> 
+> What the test does not do is run rcar_thermal's own ->remove().  It
+> re-implements the removal ordering, because exercising the driver would need
+> a real platform device, MMIO and a thermal zone, so the behaviour of the
+> interrupt status registers on real hardware remains unverified.
+> 
+> I can send the v3 with these changes if that is useful; if you would rather
+> see a different shape for the removal sequence, I will rework that first.
+> 
+> Thanks,
+> Yaohan
 
-On partitioning, the cover letter says:
-
->   - The clock, reset, and power domain IDs are not stable by design,
->     causing DT incompatibilities.
->     SCMI requires that the ID space exposed to an agent (i.e. Linux)
->     starts at zero and is contiguous.  Hence any change in system
->     partitioning (Application CPU core vs. Realtime CPU core,
->     virtualization, ...) may mean a renumbering of all SCMI IDs,
->     implying a massive change to the DT.
-
-SCMI do not mandate that renumbering. The ids start at zero and are sequential, but nothing requires them to cover only the resources of one agent.
-The firmware can keep a single id space for all agents and restrict per agent what each one may use, the rest returning DENIED (SCMI 4.0, section 3.2.1).
-For virtualization, the spec has the hypervisor grant each VM its resources this way. A new VM then changes permissions, not ids.
-
-With a single id space, a software configuration only changes which nodes are enabled, so one DT per software configuration, a base DT plus an overlay, is enough.
-If managing many configurations ever becomes a nightmare, tools exist for it, such as Lopper from devicetree-org [1], which generate one DT per execution domain from a single system DT.
-
-That leaves the missing clock domain, which is a gap in SCMI itself.
-
-[1] https://github.com/devicetree-org/lopper
-
-Best regards,
-Clément
+-- 
+Kind Regards,
+Niklas Söderlund
