@@ -1,125 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795069328;
-	b=f74mq6PR2xSAS2kPM1HHq1P1inxfrq9KO4uwmrwoCz7xLVUNH0OUWb5wYlGRUCZ1ohns
-	 Bc0UgEfYkoC4rrffirpCCIGtYkh9lGlOZc2VrEkFbBoJ9K8yi/nEF+QgVDhUNn0dPinHi
-	 thAh6aLYgUgeoA0pVUtU9c+/z3EuHjE66xYnFNppccTkBQziitSrxYpCnYPOvjwtTv2sa
-	 7UtZA3AaIAl8XD2A89tgSuLskqA9sQLcGE7zI1NdLw5MVZbqk3M2SWCYvMD/DGrGJdu/C
-	 o5LH2US8WeBkbTCZLn4tLsvd49xftpVNTNdjyAIeNWg5BAJL8NmyWE5BDOUr9oW3W1Q==
+	t=1795073640;
+	b=fdkbGW94HAhK4DSp0vxkWJq2WgXK9F1R0yrxzAMIuM2kLSZOhPVha5iR1NPTk4KS69yT
+	 AM53nBWZ3CPVmoII4tFEAg1C9Hx1/ktII+QIdhqkJZSUWVj2ByVHEZwbJfuP3g4uUsgyT
+	 +/UEFExdxCcrz5Z/tAcQuQ0xUrYlixQiaDpejouLgdRj4SbGg514nbgWVAAdI/yy/4qC8
+	 gy0x319/nuCW1kcqnOLVIj1Af/OoeGEUrwIUnTV1Jl3+xPERZguJwtSDI+cdoW+8ojRSm
+	 WF7uqzg+nIo5huml0wSWv2LdvJnASMIB3c8oyksC3rGa6e14TGSLuOac7PZEzcgR8Rg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795069328;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=Ao9DeZ00W1Ha8SrPgtgKIsZ+z4rQpKJ/lpe4GpJWBWw=;
-	b=M8sd63lgVjPp/sypg1w15v7q+hQceS1qQY/QRHosLL9uq2P3cl3fesDZDEE+maYck0FQ
-	 RoJ9Z6p6qOlG+Or3lymIp7+8O703fRuiaCHtdzB3C81BAkrXrrbtrDgwuSMBDVhWg2PAq
-	 e3vivVOdAXzJ9TNtvuspHvqmzBJl4tFGxfq11lWFAabsc9UiiKEnUoHbBkt4065M+bMWH
-	 Q9glojDsLE0yuD3UhN8UtMgq8CfmWweD/MqeQz1jlwRfsFoRWudUYqCOBPpm8+fyEE2h4
-	 bo04VV9ajEPL+pYSkeIBMYrslGs99SxZCP7ZkM+JNnkB14REDOSHWEic1uFCLf4JVdw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795073640;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=48uBQbOIW5SOxGa36ux7wu9e7/2VqH2xuOnahPVaDpg=;
+	b=Jn7HpsWtvHtObQ+hvTHO/zS58odykJ3R57PEaw3G4XgGyTpfeOpbnVFDg6cxMaiPUhKF
+	 jRlJsWUsPa0LxyC/NHE1Dm9orLUsUKJZSp9D/qmmbWJqjkRelAI5QDam3it1G8yqrwB77
+	 sX+AJ6If6Cf6tqnd4lqfR5sr7f6qesH1MAuDgSbCGB83fXEAqPJFQZqwHlDQxPAn0+8lr
+	 aiV3xOfN6wCf33cJCPLVriYtlGpplefJZUKOys5NvH33pIUQ6jkzD2mU6OQNu6NR7bane
+	 +Lsdhj58MAVanga1/XCRLDOyCN+RTBMD3Xq1ZCLz260vCwZPIEcRiOSBiBolvHpsgyw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=TWjGzZTa;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=lcOephla;
-	arc=none smtp.remote-ip=103.168.172.148
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=fail header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.221.174
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAB2606A33A
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 06:22:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1EAB2606A33A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=TWjGzZTa;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=lcOephla
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id D4E1DEC0015
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 01:22:06 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Thu, 19 Nov 2026 01:22:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795069326;
-	 x=1795155726; bh=Ao9DeZ00W1Ha8SrPgtgKIsZ+z4rQpKJ/lpe4GpJWBWw=; b=
-	TWjGzZTayvGpDTkOTyxAMxTQml2VKD5NoBIVs2ZVUXoOISYaA3Uc1LxG+dXllhYe
-	J8FxZsBsdvL6tFO56+d7HUXPzKgi7IAmgs6o/cm/15Jka4G+tfW8HRtGFX4GIjyB
-	lZ5vRV85egHGbxXBKii+j+pzNZEkGZA0caU8pwv50zf/hZMXkvrGK+19K8rROrHL
-	YHc1wturLPZzyL+fhyxeP1rPMvW3j1/wHAVDiovnXcibtM0N2Kvm3tPwH0yFDZXc
-	3s1Wf6CQjtnsU+buz0OMiJulwT9v8/9vdNXTaCy0NFs5D/pM+pRWzNS292Nj6zoB
-	AgmT9AcQSU2LUhLgWL0opw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795069326; x=
-	1795155726; bh=Ao9DeZ00W1Ha8SrPgtgKIsZ+z4rQpKJ/lpe4GpJWBWw=; b=l
-	cOephlaTHHsTmFyYdCBarj12KrWZh1ErZD47QUWRBMVJQHRfyGAfeCgckDcmDfMx
-	lwItmwwZD3exyzG2ZlFwSyBbAEuUBWaqLf/WMkk1NCvDrC4RVG4AFbEqowlX5giT
-	Iz0dri6yfXj1yKeNjSOU3areLB5YT0uOThBeHwSRyn/Pdb3yktdi3kRhcGFSABRz
-	R5QkwH2B22KyKKQS5EJidcBYobWfh4mEFpEK8pnuNK0i3W3o7LS6dWEI4xw4Hfl/
-	8escvIj1iduDwB/Mudh0k6CU7skSRGR7bPFOof1K1fs5fKmSES8pkLTGMDNilCxY
-	6ssyyc74sIMXxWxTeZVVA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795069326; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:mEEICKpO0fR+Yx2bfCe/GORbDEuPWRJgiZwOA1gc+cPrGAc
-	w+BK3Y+jxV/03ap56D8CzkzN2bzK9ueV0nZW7Ury1QSoZOyYvoSCcuCPw2KyJgDP
-	VgslAe3+4iCFr9BN8ej4RbgUPn1eEimBpnN7TOl75lNFYbBaezmsJnQ4faKaoyc1
-	dZ4GEZ8zGUxKB7KuahFPeFe5nmQtO9AIyxn1jki0sqel2lA/umBzQbeIXSj9N/VH
-	I7RpPFCXEOyJy897QjhWDpe0+97J7mgWuvxm0DRJydglkh4Te2F1yIEOhh/mbw3h
-	oGNDzPrUUx9phLoJAardQaNzvSd2o1mVbDs5G6A==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:3XkK0W35CgOH/ZKPpusMqfDFNQ2k6j18tYK4xGXexXE=:OYBDagLCE9VvBKeXfkcgoMdANKiUxPGnsTXCyxnNgpU=;
-X-ME-Sender: <xms:jpX-avr6WfwOaKp5-CrTkbIiwg4maxTIUS_vQEGJWEYV7uDSAU9rIg>
-    <xme:jpX-alhLKWuI-Jy6crLHmRN7U6VJ1DpCgo44gSJzEQ1b14aoa2rh28cNRk42C9eYl
-    pd5wpuyJ8OcZJ9_WRqctxdUOkSwIckazz8MYXRCyVXQGiw-2DExEIuK>
-X-ME-Received: <xmr:jpX-apM_MU8rJFz7JdA5m7AjT4n3r2V1YOm3uT5I-bh7Qi-djzTfFhlacZ3RGB04dDi5RNAAKnRlDZM7JNcxjy0U0gr6Bdc>
-X-ME-Proxy-Cause: dmFkZTEr95tSe0kNh6fNcC5bhVppNT54ROS1KzDK27rEScZTj0CiDDhAyE11Awns4Ey0B9
-    qHzt1YKEmltWC2LNLmlF2H7jBw6N9O/U0Mehub4MnUYFmd8MXWqxgD/gnfqXeGDPviTjE6
-    7AFDcBirkYMwrJ+33dS9TLg0sT6pNCsY34FbAFHriDmay+kg16sXd95o9IddWnMexW+DMx
-    Eswel8V7dM5fpdTdBBDM+dfI9FZ7P8MGsXFEJliPVUDSFnUDz1mnyB7vOWxp/j2HxcpgrW
-    LtmmbBP+ZKsh+8zyPukLfBKo8USZ+7c9+KZUi7mRPkhKC6wUGbkqFH+feU3XKIfUu/rdFN
-    UIEQyyseZte0Ip3Z0avPDf9G3iSad95WuoHwMQ3tLtO3GsZYz5TGCbp2z7WCSUNKQRHIPC
-    MZk32fhhaZbNbA0DSaF+XB48FdnGxQ5H+sn9Y3vjDEUO2M9MKnspKj4kJwaAyLGUWbP36w
-    rpfaXKtL9Kuvu0jaNBouHIBw69N0uoaYYJCPoSi7UHMHu05oitgCYLP06/8SdJIECOBgm+
-    abvytkYTadp/EgXJi24ADPBWJkzJEVv6gtTzeE3Lj0F4JiDmSwZVvKD+nB5rxM/Ao+jRNT
-    Qk93dlGlf34nUcdtfMxYVtuPm1VsqXyzxoKe6OxCTt4FaVm6067ta88V8DzQ
-X-ME-Proxy: <xmx:jpX-anyOy8nHWpG9B1jshvHE1Y-x9qIKWeN8Snlq4Wa1V-egfUIE8Q>
-    <xmx:jpX-ajpMUHgMC8u7xylUrAP5l78eb4vV0WBJ6lYZAZ8qgcHT_IjFxA>
-    <xmx:jpX-avPN0iI9JLjDZRVdZYSVaSGrYWOQrSRXAhBw1Y5TGSHvqLczcA>
-    <xmx:jpX-aveYWBX8zQ5w-OAw4prvIuIAkLaCm09NpHtDe4QuKITXBKeZZA>
-    <xmx:jpX-ar-SlIw2jrk4tj-DQVQzslSUB-B_dvegZH4ouZl2Zxjs0eToXMyc>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 19 Nov 2026 01:22:05 -0500 (EST)
-Date: Thu, 19 Nov 2026 07:22:03 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: rafael@kernel.org, daniel.lezcano@kernel.org, rui.zhang@intel.com,
-	lukasz.luba@arm.com, geert+renesas@glider.be, magnus.damm@gmail.com,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, edubezval@gmail.com
-Subject: Re: [PATCH v2] thermal/drivers/rcar_thermal: disable the work before
- masking the interrupt
-Message-ID: <20261119062203.GC2300348@ragnatech.se>
-References: <20261118072321.1259639-1-shunsheng1218@gmail.com>
- <20261119022903.1493494-1-shunsheng1218@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05A7606A324
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 07:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F05A7606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5eafaeb8684so646213e0c.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 23:33:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795073639; x=1795678439;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=48uBQbOIW5SOxGa36ux7wu9e7/2VqH2xuOnahPVaDpg=;
+        b=pP+sRL6qE3SHuIK6/sVOcI24WNdRgU64Cpf9AIKzpJrfJqqf+7VcFZyeC7pG1qvAx8
+         p3nqbYWYGM9P0oD2UTf9hK/mmtBpOL70frKMKWyeXpgfSObCRmZeL498UIC4VzTIViYq
+         RpS7b2jToGIGY4tnClBn4fQlD7IJlqhrxkbS3pZHUKi7ZawdS9PuSQU6MVhNAcK/xBuv
+         xausq9WTvJ34zqgEt4N/9H/t6sqGWvqF3+nvDQvZlw4HlmjM1T/x5QnbXflxJmAST6gy
+         FDM+qg6ov7Sx/lJeb6wwmdjKVHAqNhteoulsG6hUkn00O/zsxoWwIS+AHs6co9fdDt/o
+         RpQQ==
+X-Forwarded-Encrypted: i=1; AL+hErFvthiesPhEh0IZxYYYh+bOaMe2ZzzPzQ99YAmg4IfnA3Y5wJ+JKv+/Zi7V5Y/tuqCAwF+zhJjxFDMCfcPZz1qGjw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/GJKlKh8klrLaiEbJHMqQBtaJu4zppfUo3HbYLjYB2vxO2pYXj
+	iBaRUiBO5RdC6j+LX7clV6KiOmSewN0LAz6DwqBbkDy0fkZ/KaEyNEnu5sYQb02K
+X-Gm-Gg: AYBFou0vPZ1w2Kv84TNhMtTFY/iEIzPyjx+fRG291LSxVRY/vobupPQjyKVbVPwMCka
+	HPDnQHUQhuYljA5xpujJv9nHkt4F5rArRH+HQpohCAg8E661nLKcjg1H0g65YgHNa+/PkQs9ZqQ
+	ZaJmTBFQOH0bSFyOu+ZXesmMf19tGeilBHKSfYYjlI1kRDQfSZkp1xcOoER04uuTENDNV5GfpAb
+	qST4AGSVNcxsji2IkAdQ3s+3aQWZjLkHKNqaAMuswicQPs+qpQRIws728iDgY3YuMJcIS1qPWgH
+	GduIWKjh45c12CVTQFwSO3s80iE68e0rHCIrllThA3Dc+HotJzEQQY6SV2vlnxrit20JWnwz9GU
+	wNUwNxmmvkABPUbBgb6GDhg6qeElhw5EOrN0nklfvj3gHrOAJbvN8kttLtwGSNIsXiYd0ajT8qq
+	qesmYXPxM/YZ31kDBdNvkhDXR0SjGopArzL/U6XWe6m054dNR67v6gafi/Bm8X9/MbfR0BSCtDH
+	crMCniHqFT+PwuvYEiQ+nHFru43IQlrTtyIU4GZNWmmPxctqlONLsAttaWFxd6mm9Mr61j15/w5
+	B5In7Q/JYi9KDvhGXi02btEb9Iy7E1dr+/0hM0DMMdgf7p3hK8iW82t0pSmSQK58rtS1GWXumDJ
+	tLSxwouEjZkVtWA==
+X-Received: by 2002:a05:6122:8b03:b0:5ea:c084:6f19 with SMTP id 71dfb90a1353d-5ee64c6d8e1mr2083583e0c.12.1795073638851;
+        Wed, 18 Nov 2026 23:33:58 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee64e4d867sm3546077e0c.3.2026.11.18.23.33.58
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Nov 2026 23:33:58 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-98301b325c4so632989241.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2026 23:33:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFxSWU72X06HwCjl+Ld69AxRxXCh80lSqpTwawEw3iy0Bxfc0OAV19CI4+N5C2acoKlEmxU33cnVbTC6LQS/myZ1Q==@vger.kernel.org
+X-Received: by 2002:a05:6102:c50:b0:7d0:5688:f4f3 with SMTP id
+ ada2fe7eead31-7d6ba190840mr1767507137.1.1795073638117; Wed, 18 Nov 2026
+ 23:33:58 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -129,179 +82,62 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261119022903.1493494-1-shunsheng1218@gmail.com>
+References: <20261118214518.29317-1-ville.syrjala@linux.intel.com> <20261118214518.29317-21-ville.syrjala@linux.intel.com>
+In-Reply-To: <20261118214518.29317-21-ville.syrjala@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Nov 2026 08:33:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXALVCBk5D9UqWLed6eMgOFYLv8HJNaNLvfuv9YaZ_mcA@mail.gmail.com>
+X-Gm-Features: Aa3M54pJIRGM8tExrNH7BQLmQBPW2tJFU5szZzp83frb40V080lFIDwtqcIbTTc
+Message-ID: <CAMuHMdXALVCBk5D9UqWLed6eMgOFYLv8HJNaNLvfuv9YaZ_mcA@mail.gmail.com>
+Subject: Re: [PATCH v4 20/20] drm/rcar-du: Allow VSP and writeback build with COMPILE_TEST=y
+To: Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yaohan,
+Hi Ville,
 
-Thanks for your work.
+On Wed, 18 Nov 2026 at 22:47, Ville Syrjala
+<ville.syrjala@linux.intel.com> wrote:
+> From: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+>
+> Make DRM_RCAR_VSP selectable with COMPILE_TEST=3Dy, and enable the hidden
+> DRM_RCAR_WRITEBACK option by default, so the VSP and writeback code gets
+> built for greater coverage. Builds fine on x86, x86_64, arm and arm64 at
+> least.
 
-On 2026-11-19 10:29:03 +0800, Yaohan Li wrote:
-> rcar_thermal_remove() masks the interrupt sources and then cancels the
-> delayed work of each sensor.  rcar_thermal_irq() drops common->lock before
-> it walks the sensors and queues priv->work for those whose status changed,
-> so a handler that read the status before the mask was written can still
-> queue the work after cancel_delayed_work_sync() has returned.  The work
-> then runs after ->remove() has finished and devres has freed common, priv
-> and the thermal zone.
-> 
-> Waiting for the handler alone is not enough either: rcar_thermal_work()
-> re-enables its interrupt source once it has updated the temperature, so a
-> work that is still running when the removal starts undoes the mask that
-> ->remove() has just written.
-> 
-> Disable the work before the source is masked.  That makes the
-> queue_delayed_work() calls in rcar_thermal_irq() no-ops and guarantees
-> that the re-enable in rcar_thermal_work() has already happened, so the
-> mask that follows cannot be undone.
-> 
-> The interrupt line is shared, so waiting for the handler once does not keep
-> it from running again later; unregister it in ->remove() instead of only
-> calling synchronize_irq().  devm_free_irq() waits for a handler that is
-> running right now as well, and the slot is marked unused so that the probe
-> failure path, which also ends here, cannot release it twice.
-> 
-> Every sensor that the removal walks has been through INIT_DELAYED_WORK()
-> before it is linked into common->head, so no uninitialised work is touched.
-> The interrupt numbers are recorded in an array whose unused slots stay
-> negative, instead of being counted separately.
-> 
-> Fixes: 697ee786f15d ("thermal: rcar_thermal: Prevent doing work after unbind")
-> Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
-> 
-> ---
-> Prepared against v7.4-rc1-1969-g666539eecdf4.
-> 
-> Compile tested only: arm64, aarch64-linux-gnu-gcc 11.4, CONFIG_RCAR_THERMAL=y.
-> No hardware was available, so the removal path was not exercised and no race
-> injection was run.
+> Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
 
-Ohh, could you test this please. It's a rather large change and while it 
-looks correct it could behave differently then expected.
+Thanks for your patch!
 
-> 
-> AI assistance: prepared with Claude (Anthropic) as a coding assistant; the
-> author reviewed the reasoning and takes responsibility for the content.
-> 
-> Changes in v2:
->  - Drop the shutdown flag and the separate IRQ count.  Niklas asked for less
->    state, so the removal now disables the delayed work before the source is
->    masked and unregisters the shared IRQ instead of waiting for it once.
->  - Keep the interrupt numbers in an array whose unused slots stay negative.
-> ---
->  drivers/thermal/renesas/rcar_thermal.c | 37 ++++++++++++++++++++++++--
->  1 file changed, 35 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/renesas/rcar_thermal.c b/drivers/thermal/renesas/rcar_thermal.c
-> index af6d09a75bb6..3310ed4a8bda 100644
-> --- a/drivers/thermal/renesas/rcar_thermal.c
-> +++ b/drivers/thermal/renesas/rcar_thermal.c
-> @@ -39,11 +39,15 @@
->  /* THSSR */
->  #define CTEMP	0x3f
->  
-> +/* .nirqs of every supported chip is at most this */
+> --- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> +++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
 
-.nirqs is not really needed here. Just say something along the line of 
-max number of supported interrupts or some such.
+> @@ -85,5 +85,5 @@ config DRM_RCAR_VSP
+>
+>  config DRM_RCAR_WRITEBACK
+>         bool
+> -       default y if ARM64
+> +       default y if ARM64 || COMPILE_TEST
+>         depends on DRM_RCAR_DU
 
-> +#define RCAR_THERMAL_MAX_IRQ	2
-> +
->  struct rcar_thermal_common {
->  	void __iomem *base;
->  	struct device *dev;
->  	struct list_head head;
->  	spinlock_t lock;
-> +	int irqs[RCAR_THERMAL_MAX_IRQ];
->  };
->  
->  struct rcar_thermal_chip {
-> @@ -376,10 +380,34 @@ static void rcar_thermal_remove(struct platform_device *pdev)
->  	struct rcar_thermal_common *common = platform_get_drvdata(pdev);
->  	struct device *dev = &pdev->dev;
->  	struct rcar_thermal_priv *priv;
-> +	int i;
+Merely enabling COMPILE_TEST should not enable extra functionality.
 
-unsigned.
+Gr{oetje,eeting}s,
 
->  
-> -	rcar_thermal_for_each_priv(priv, common) {
-> +	/*
-> +	 * Stop the work from being queued again and wait for a running one to
-> +	 * finish before the interrupt source is masked: rcar_thermal_work()
-> +	 * re-enables its source when it is done, so it has to be gone before
-> +	 * the source is disabled for good.
+                        Geert
 
-I think you can make this less verbose and more to the point.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> +	 */
-> +	rcar_thermal_for_each_priv(priv, common)
-> +		disable_delayed_work_sync(&priv->work);
-> +
-> +	rcar_thermal_for_each_priv(priv, common)
->  		rcar_thermal_irq_disable(priv);
-> -		cancel_delayed_work_sync(&priv->work);
-> +
-> +	/*
-> +	 * The handler is shared, so waiting for it once is not enough: another
-> +	 * user of the line can invoke it again after that, when the zones and
-
-line?
-
-> +	 * the sensors it walks are already gone.  Unregister it here; that
-> +	 * waits for a handler that is running right now as well.
-
-I don't understand this.
-
-> +	 */
-> +	for (i = 0; i < RCAR_THERMAL_MAX_IRQ; i++) {
-
-Please declare the loop variable in the for () statement to reduce 
-scope.
-
-> +		if (common->irqs[i] < 0)
-> +			continue;
-> +		devm_free_irq(dev, common->irqs[i], common);
-> +		common->irqs[i] = -ENOENT;
-> +	}
-> +
-> +	rcar_thermal_for_each_priv(priv, common) {
->  		if (priv->chip->use_of_thermal)
->  			thermal_remove_hwmon_sysfs(priv->zone);
->  		else
-> @@ -413,6 +441,9 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->  	spin_lock_init(&common->lock);
->  	common->dev = dev;
->  
-> +	for (i = 0; i < RCAR_THERMAL_MAX_IRQ; i++)
-
-Here you can't declare the loop variable as the function already 
-declares it at the function level. This is likely because this function 
-pre-dates when it was OK to declare it directly in the loop definition.  
-
-No need to update old tested code en-mass, but lets use the better way 
-in new code.
-
-> +		common->irqs[i] = -ENOENT;
-> +
->  	pm_runtime_enable(dev);
->  	pm_runtime_get_sync(dev);
->  
-> @@ -449,6 +480,8 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->  		if (ret)
->  			goto error_unregister;
->  
-> +		common->irqs[i] = irq;
-> +
->  		/* update ENR bits */
->  		if (chip->irq_per_ch)
->  			enr_bits |= 1 << i;
-> -- 
-> 2.34.1
-> 
-
--- 
-Kind Regards,
-Niklas Söderlund
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
