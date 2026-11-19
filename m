@@ -1,104 +1,121 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795087123;
-	b=Mw9Q9oJBZRoPSiZEW7OxbJhmSXvvKQ+t8oMBWaBRIT7schGgt/RmpeN8mhKpuL5tNolL
-	 1rxT2r7/UNFoKDMn00JRJseLBjUdyM2PXWno0muiMKfQPqw63AgBZ1FqJ743OuFtZnjMJ
-	 Xzx2dPm/kg6QHNIODE71lEGdjiToMI6Q98OiKtH1GiOfowN9/XcYawtTjtga1ZQiFgp+C
-	 VSw6PPVq4Lf/kHoPwrHXJGiNqubyfsnoGi983QUGHbb7oFG33UUqwLnosaH+ih68kE2h2
-	 62nM096HyBZeT3ElxEg2wq1+/0VH2QcTtIJrTxS8FqI13lHRhnccTmhutTHEXz+RTAA==
+	t=1795092547;
+	b=cL4qQech9UUR8NUI6cDF0E0r3LM0vqgFGrGEfFfzsI0cTeCF0xHQk3XjpZm6FS/xakpg
+	 ZMnWHbAxxsQfgtE0ekqJNUAAiDBnYDNmdLa5hHQHISsVcx5rVpV1OQAUUUuO+6HNPpEVh
+	 dy2r3snNrsg7hlrqyL6CKvXSEG8XyBQe6D5jhX/rUx13k1gjMONjDWITAIKRAUXDhL6Cc
+	 RDZbrFNVAfgcMlnklAT5TcfQp8C4Wc3G+9n7Vtm0g+N422kY7ajdhX/Q0vMgvCp4+fA/W
+	 lZqSSPQnSu+YYsV+Y8ByqhofJU9KypvCjRYJGHWqwlwWa5xqnFL3h2y3MevLPdxwKvA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795087123;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	bh=VrCvkLrp/royT60LvX87nJ6hEmqSNe0EsAi3XYZ2mds=;
-	b=qtN6oGZGUBo+hql5tMB4uepY1/pUHL+Cgn91g9XSmDrzBRdvQtxiEYwsKRy3Ul3tiw/e
-	 vIaPmf3cMq2Ibzs07JVIbNUUhqO2urTfHWOOHWZBfO6bX9vPWmx8TQa26jZdRLZ9Kv3jQ
-	 hyGqcigM57/mzQCw9nNm3cWi6/vAhmHT1Vz6OzFKGvtWDMgH+BOiMUcmoKhije1gRXV5K
-	 qteFmNlWg7HlAblCjUxV4VyPTZk8v7E6ePwydPpBDroMoi6tSz2u43bnCIyxVNK9Xks/z
-	 Q2edmIDRIIZDtAh1yPlUPW8Z/v1N1VTxDhGfvYB+pYGwC09DditCF7PT2H4eENTPUsA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795092547;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
+	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Last-TLS-Session-Version;
+	bh=FrqcePVIbKpJOlr0CwwEXmHuYmHa3yUMeo1BTUrWcl0=;
+	b=aK/PX4qDn6ZAE9v1AM9OE0XkpUQXRG21xaS9WblYjdL5Uxi4RVbaZaeBo8H3q4wQjOnA
+	 /nVQzn18ohWh1JR20VqUDY93kEUF/d7NQbl28f0SBSiIjn3zupHIrmAxi/7b2Obf7MSOB
+	 wQmy8B2DnHcPJkIW9qD8CB+sQiC+yzYEjEYS6hqceyi+cIxGqrJSOILs8gvMCgZWkdaRl
+	 askmYiWXKcvAmSdgjirN+nm2dCkj/ZUP7EiFUzee55/9ZFAbHWpTYshr/Qk//dDGthhye
+	 xaajlyLjTQlC/4a/1PNasgBoLlYwGvwR90C3q17rRTGwRJxnu3oBTWk5bvdQplPlrAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Yw1+nWQX;
-	arc=none smtp.remote-ip=74.125.82.173
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=mteItAuJ;
+	arc=none smtp.remote-ip=185.246.84.56
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 50DBE606A325
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 11:18:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 50DBE606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A53606A32A
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 12:49:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88A53606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Yw1+nWQX
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-381f65e4e4bso3274798eec.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 03:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795087122; x=1795691922; darn=vger.kernel.org;
-        h=mime-version:content-transfer-encoding:content-type:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=VrCvkLrp/royT60LvX87nJ6hEmqSNe0EsAi3XYZ2mds=;
-        b=Yw1+nWQX/9MPwkAQh8pdVQIdLTe/NkpdOgbv+Hll9VJQoYPfSURkPu2iscTiJkjEct
-         TpTa0Ptw3z8VupAMDUdwL6ygvS39Yn5ve7hKPF5Q+B6+04VKOjLIBq2KKBqXfwRYy3Iw
-         +oLKJ9tvXlfNyk14X22x8S0UMhzanidJDLQ0Z6Ryh/Ui9a5UeTGY1JBG0OUmc5jU4f6G
-         LTZyf0htrPp8Pm953jpotEQR13HKi5NqC3e5weOdI7242gW20nnr2gOVHO27wxi9SGrn
-         3aOQs5KKbKsmT895tbtxnO8OJwW/pe7+sbIkHUKTC3BG1sfiQhXBSOqXfHJSWTizaMQG
-         ZrWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795087122; x=1795691922;
-        h=mime-version:content-transfer-encoding:content-type:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VrCvkLrp/royT60LvX87nJ6hEmqSNe0EsAi3XYZ2mds=;
-        b=Ts8KER6uAIJQwZDp4/GOc7idI/NWOTqFns861MTDIMr6xaYjphVU9PTtmrpHlNA54v
-         g4ZyvKW8PYNW3EumRriS2zL8bevffTTiMxlg800RIJB4hcnzOTd1KDDAGwMUQUsVo/2M
-         RIqR85Wuox7ebZAweAigVXhAd/3lZ08awIgkN0b9HvcqLMek7w5AGJFXTeC72ZmZ3pQd
-         5EGyqqqb1Zvf3lSfraLAad4BmyagvmlUG/OHezwt2RrjbBTOT8xORCPEcB7umBKf9mhX
-         XHzIRx9VIDDMuc90nc3OQNtYKJeiP5u+QtBTWrpTK1zjIzSNOIUW7CmOrr27qFh5vYH0
-         3Z7A==
-X-Forwarded-Encrypted: i=1; AL+hErGji6bMVS01F6pTBUpr/5NpZdQ9ck8/Wa93WC93ODwnZh1KJszyvJoeeigDCNlNKddt4Pb6ypWhou+NQ0muZusRMA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8Cc1bQErHxRfF5o/FAwKIii7qotg9wojB7HVkoux15nPSOxx2v
-	CT8d4/zdzpv+KC7WD6omGmMxQSd0jXSZUu8SY8neBa4k/Wq7rF57+m8R
-X-Gm-Gg: AZFdTZeIQgpUIBIiBvA8TdxkvxtkbZEsCnqbrxr+m+/ENP2IUdhfSjo8ENwom+nudW2
-	yFmK5ctNaPGdRwAKArEz/LR3sC7dzFzzNtCQzQ9Oj0jNEg9c/gYQ4Io6cJ8m4g5ybQ2VcimjEFE
-	Em802EwB1KgXx1mrlwPeOtt8iJUUKeS5Rr3hWCWNoXHjntejWRpnAcCD5pl9mCLlywH2UyFg2AH
-	RTsOnvTnAvxy8UtG9f/0hvs4XCG2VnpZasS+n+8XtD/Pit47sEn6hkprTsmHw4/VMWAt/AFvHTf
-	vpXtz/tczai3JkxvhMjkdOTnr1RPsTwVTutTYqEKkQ8sTp+5a0qyZE+GaPT7DmJH/m2PA0KYDdz
-	tZdkNFFxcoPMGTMhCE5iZp9qCr/abE2bWZ5a+z7W3mTGkt1tfhY0MxQkObWmuFrC7VUwnwI8Cn7
-	fuHLqwgWj/Pql+TOdtawEJTpWPRp1lwmuyg34D/9Jud9RXDzN6Kv7xknjw1YOGBQVkKJcrdJEJp
-	hJL+NyTdzd2y8y/ODsKpW8hP4QLxN+7TE6hFqqV6HRRwpc5iGVTvHbH7MpGQqKzBQ+J9STZyI7f
-	d4rRNVyFI3sDRdJRbr1zTgHKg5UFsc+SGN9dvIMQHjlCQFgruFZ0WI4v97UsqK+22h98yupiq02
-	HD1nO5dJ9vOXLVheJJFHbgRIK
-X-Received: by 2002:a05:7300:b2a8:b0:375:e4de:96d3 with SMTP id 5a478bee46e88-3828171b0afmr5821926eec.31.1795087122102;
-        Thu, 19 Nov 2026 03:18:42 -0800 (PST)
-Received: from [127.0.1.1] ([74.176.208.23])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-382a6304efbsm27440350eec.7.2026.11.19.03.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 03:18:41 -0800 (PST)
-From: Yaohan Li <shunsheng1218@gmail.com>
-To: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-Cc: Rafael J. Wysocki <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v2] thermal/drivers/rcar_thermal: disable the work before
- masking the interrupt
-Date: Thu, 19 Nov 2026 19:18:35 +0800
-Message-ID: <179508711555.3615492.10674834361832600268@gmail.com>
-In-Reply-To: <20261119062203.GC2300348@ragnatech.se>
-References: <20261118072321.1259639-1-shunsheng1218@gmail.com>
- <20261119022903.1493494-1-shunsheng1218@gmail.com>
- <20261119062203.GC2300348@ragnatech.se>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=mteItAuJ
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9F4DE1A1712;
+	Thu, 19 Nov 2026 12:49:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5877D60271;
+	Thu, 19 Nov 2026 12:49:04 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC49311BC0673;
+	Thu, 19 Nov 2026 13:48:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1795092535; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=FrqcePVIbKpJOlr0CwwEXmHuYmHa3yUMeo1BTUrWcl0=;
+	b=mteItAuJBxCXIm6o7Tz4CiCkaMG9jXhvMU2sSQLnSpwBcZpG8f2MBEvcJ1Bx2lQIvEFPHc
+	cDtQgbCpT1F3jW229XoKlV3ReW5mnP/ABdent9sCr/5183826BqbllILfT90L05VaHMgtP
+	dUJUiAyMuYUR1NhbdpZFwHZONdW4QU9si+WZSm1qV6DhZI6XlaK2xQVRCAOzwBKLP1wBFh
+	3qw4wVp4q47Ts1Jsp/lIRy+UYxCPzeFEV89KDKzTVDondoVzVYjpyUCZKV/Oz4GxrsbGus
+	YTBzHCONs5aDQShHm1+BnPAiQ9L4baKhNKmb68Cs/uKC0//BXan270Bf1Uz6BQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: James Hilliard <james.hilliard1@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Srinivas Kandagatla <srini@kernel.org>,
+  Tze Yee Ng <tze.yee.ng@altera.com>,  Richard Cochran
+ <richardcochran@gmail.com>,  Jonathan Lemon <jonathan.lemon@gmail.com>,
+  Vadim Fedorenko <vadim.fedorenko@linux.dev>,  Yuqiang Sun
+ <izaiahsun@gmail.com>,  Amit Kumar Mahapatra
+ <amit.kumar-mahapatra@amd.com>,  Luca Ceresoli
+ <luca.ceresoli@bootlin.com>,  Bernhard Frauendienst
+ <kernel@nospam.obeliks.de>,  "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>,  Kees Cook <kees@kernel.org>,
+  linux-hardening@vger.kernel.org,  Arseniy Krasnov
+ <AVKrasnov@sberdevices.ru>,  Boris Brezillon <bbrezillon@kernel.org>,
+  Brian Norris <computersforpeace@gmail.com>,  Jernej Skrabec
+ <jernej.skrabec@gmail.com>,  linux-arm-kernel@lists.infradead.org,
+  linux-sunxi@lists.linux.dev,  Samuel Holland <samuel@sholland.org>,
+  Chen-Yu Tsai <wens@kernel.org>,  David Woodhouse <dwmw2@infradead.org>,
+  Thomas Gleixner <tglx@kernel.org>,  Vitaly Wool <vitalywool@gmail.com>,
+  David Woodhouse <David.Woodhouse@intel.com>,  Russell King
+ <rmk+kernel@arm.linux.org.uk>,  Mike Rapoport <rppt@kernel.org>,
+  Alexandre Torgue <alexandre.torgue@foss.st.com>,  Christophe Kerello
+ <christophe.kerello@st.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+  Jason Roberts <jason.e.roberts@intel.com>,  Boris Brezillon
+ <boris.brezillon@collabora.com>,  Michal Simek <michal.simek@amd.com>,
+  Mason Yang <masonccyang@mxic.com.tw>,  Ramuthevar Vadivel Murugan
+ <vadivel.muruganx.ramuthevar@linux.intel.com>,  Lucas Stach
+ <dev@lynxeye.de>,  Dmitry Osipenko <digetx@gmail.com>,  Jonathan Hunter
+ <jonathanh@nvidia.com>,  linux-tegra@vger.kernel.org,  Stefan Agner
+ <stefan@agner.ch>,  Thierry Reding <thierry.reding@kernel.org>,
+  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+  Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+  linux-mediatek@lists.infradead.org,  Matthias Brugger
+ <matthias.bgg@gmail.com>,  Heiko Stuebner <heiko@sntech.de>,
+  linux-rockchip@lists.infradead.org,  Yifeng Zhao
+ <yifeng.zhao@rock-chips.com>,  Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Nicolas Ferre <nicolas.ferre@microchip.com>,
+  Keguang Zhang <keguang.zhang@gmail.com>,  linux-mips@vger.kernel.org,
+  Shan-Chun Hung <schung@nuvoton.com>,  Jacky Huang <ychuang3@nuvoton.com>,
+  Fabio Estevam <festevam@gmail.com>,  Frank Li <Frank.Li@nxp.com>,
+  imx@lists.linux.dev,  Pengutronix Kernel Team <kernel@pengutronix.de>,
+  Sascha Hauer <s.hauer@pengutronix.de>,  Han Xu <han.xu@nxp.com>,
+  linux-renesas-soc@vger.kernel.org,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Jerome Brunet <jbrunet@baylibre.com>,
+  Kevin Hilman <khilman@baylibre.com>,  Liang Yang
+ <liang.yang@amlogic.com>,  linux-amlogic@lists.infradead.org,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  linux-arm-msm@vger.kernel.org,  Manivannan
+ Sadhasivam <mani@kernel.org>,  Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,  Kamal Dasu
+ <kamal.dasu@broadcom.com>,  Piotr Wojtaszczyk
+ <piotr.wojtaszczyk@timesys.com>,  Vladimir Zapolskiy <vz@mleia.com>,
+  Harvey Hunt <harveyhuntnexus@gmail.com>,  Paul Cercueil
+ <paul@crapouillou.net>,  Maxim Levitsky <maximlevitsky@gmail.com>
+Subject: Re: [PATCH v5 00/58] mtd: rawnand: retain chip and controller state
+ across removal
+In-Reply-To: <20261115-submit-rawnand-retained-handle-lifetime-v1-v5-0-cbc49c5c5e74@gmail.com>
+	(James Hilliard's message of "Sun, 15 Nov 2026 23:29:15 -0700")
+References: <20261115-submit-rawnand-retained-handle-lifetime-v1-v5-0-cbc49c5c5e74@gmail.com>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Thu, 19 Nov 2026 13:48:02 +0100
+Message-ID: <87v75tc7i5.fsf@bootlin.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -108,38 +125,82 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Niklas,
+Hi James,
 
-thanks for the review.  The code changes you asked for are in my tree, and I
-would like to check the testing question with you before posting a v3.
+On 15/11/2026 at 23:29:15 -07, James Hilliard <james.hilliard1@gmail.com> w=
+rote:
 
-The delayed work is now disabled before the interrupt source is masked, so
-the handler cannot queue new work after the cancellation, and a work that is
-already running cannot re-enable the source behind the mask.  The shared
-interrupt is unregistered with devm_free_irq() rather than waited for with
-synchronize_irq(): the line stays registered for its other users, and they
-can raise it again after synchronize_irq() returns.  The RCAR_THERMAL_MAX_IRQ
-comment, the loop variable and the two comments in rcar_thermal_remove() are
-as you suggested, and the shutdown flag is gone.
+> An MTD handle can outlive controller unbind. Its metadata and NAND locks
+> must remain valid, including when a writable file closes and calls sync,
+> while further hardware access must be rejected after disconnection.
+>
+> This builds on earlier MTD removal-lifetime work. Commit 19bfa9ebebb5
+> ("mtd: use refcount to prevent corruption") added MTD reference counting
+> [0], but retaining an MTD reference does not by itself retain the
+> driver-owned allocation containing the master. The read/unbind discussion
+> also covered raw NAND [1] and draining active operations [2]. Tze Yee Ng's
+> SPI-NOR series addresses the corresponding SPI-NOR paths [3].
+>
+> Following Greg's review [7], separate class-device data from the MTD
+> backing allocation. Delete the device's interfaces and drain NVMEM and
+> class PM callbacks before releasing backing data. Bare device references
+> retain an independently allocated device, whose type, PM dispatch and
+> final release are built in even when MTD is modular. NVMEM similarly
+> disconnects and drains provider and layout callbacks before unregister
+> returns; retained consumers keep core-owned metadata and receive -ENODEV
+> on subsequent access.
+>
+> Introduce opt-in backing-object ownership for MTD masters. Registered
+> nodes and acquired MTD handles retain the chip, while nested partitions
+> also retain their parent metadata. Unregister first so removal notifiers
+> can finish I/O, then disconnect raw NAND and drain admitted operations.
+> Hardware resources can be released without waiting for open files to clos=
+e.
+>
+> Virtual concatenations serialize publication and removal across physical
+> controllers. Disconnect and drain a published concatenation before any
+> component can disappear, then release its component references. An old
+> handle keeps the disconnected virtual device, independently of a later
+> replacement.
+>
+> Run NAND and controller-specific cleanup during disconnection, while
+> the controller driver is still bound. Snapshot the OOB layout in core-own=
+ed
+> data before publication so metadata queries remain valid without driver
+> callbacks. The NAND core frees retained chip and controller allocations;
+> the final MTD put never calls back into the controller module. Ordinary
+> MTD and NVMEM handles retain the NAND core that implements their
+> operations, rather than the hardware driver.
+>
+> Share allocation ownership across the raw-NAND drivers, including
+> partially published probes. Shared controllers remain allocated until
+> their last retained chip is released. R852 allocates a new chip for each
+> card, and NDFC allocates controller state per binding.
+>
+> Based on NAND next at 30daaf3e7897, with Tze Yee Ng's module-reference
+> ordering fix [4], Karl Mehltretter's OTP cleanup fix [6], and the separat=
+ely
+> posted registration, operation-locking and controller probe/teardown fixes
+> identified by the prerequisite metadata. TLA+ models and their assumptions
+> and coverage limits are available in [5].
 
-On testing: there is no R-Car hardware here, so what I have is a controlled
-ordering test on a KASAN kernel, 17 checks, all passing.  It uses the real
-delayed work, workqueue, wait and signal machinery and a simulated interrupt
-line shared by two handlers.  It shows that a work queued after
-cancel_delayed_work_sync() still runs while the same queue attempt after
-disable_delayed_work_sync() is rejected, that a running work undoes a mask
-written before the cancellation, and that after synchronize_irq() another
-user of the line can invoke our handler again while devm_free_irq() ends
-that.
+While lifetime issues are a real concern in the kernel, please note that
+in general, removing or unbinding the flash controller driver is not a
+practical operation. While highly unlikely, this is possible though. But
+I am not going to sacrifice all the devm_ calls in favor of reinstating
+manual error handling just for that. If there is a way, it must be
+different.
 
-What the test does not do is run rcar_thermal's own ->remove().  It
-re-implements the removal ordering, because exercising the driver would need
-a real platform device, MMIO and a thermal zone, so the behaviour of the
-interrupt status registers on real hardware remains unverified.
+Also, this kind of contribution can only be done if you *understand*
+what you are doing. Getting the big picture here is not optional.
 
-I can send the v3 with these changes if that is useful; if you would rather
-see a different shape for the removal sequence, I will rework that first.
+Maybe the problem is MTD refcounting? Maybe the problem is the devm_
+orderging? I don't know, I haven't looked in depth at all the
+patches. But the current approach is clearly not acceptable.
 
 Thanks,
-Yaohan
+MIqu=C3=A8l
