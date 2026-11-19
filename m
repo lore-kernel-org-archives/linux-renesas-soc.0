@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795111101;
-	b=sqRQ8+SilazKBT5q/ZETcOxlMHFpO8Zj8gmL/VLk2gNYFCUrUU0xtZW4BWq145vOFKse
-	 WF/KUlqt4o7YANa2RdKyH4/QLLcgz74cR6bBdkJBJUdLJEiuuZRKn9lcdnsJRq12JGTnj
-	 rYOFJ2bvSIalBwNYkpssN0WEFF7pBkhLALyHpNV+V7I1id7h2rvvltI1EgjETqKNm11YK
-	 aZurFiDo7MKlvotaJOgXxtB+qnmCeifn3MCUD1ZKI8v8oqwVE77IqgaALQ9bnclAcSIsr
-	 Y9VoUZIo6ohvx53k2X6Cr31YlCCOuO/mIRltNmsvzVU7MQG3BtwM2ffWK71X0j3Jpyw==
+	t=1795111100;
+	b=eA+hHTVHEP4GEkryT6tCWs4mpBX6Pt0DQ/aIrnAKyykjorVqW+Nk1Tfl6tCrdIfh9Q+Z
+	 6ao7WMXeHolFfIJLT/kFMJ/XumWK2kQou2dQkS12iKKmCCUdvATgipZgFJn7nzKTT0wQd
+	 3NryEJsg7o6rl3N/YLinrgIqaGIVHu1gTu5Pn/2Td15l4Cf7wcKs2ouLZ5rTtZDKN6QeO
+	 ba1324IM12usP5e0pbXgRmui2+8ox2Mtyjuk8886I5nEdzw1SltbyGMMFQovkpSwLss8D
+	 Z7SyAqTq/3ZKDdGGTnOAtH0ByK5W9pbdiL42HA4koh8Rx4higfWGz50sTMVwbWIX/Zw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795111101;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795111100;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=YOu9rRqlMqXgJo9K0RA4KBUJJfmp1x33sccm5Z9IIHU=;
-	b=P7eofT6Hzhvsdf+E6e7avclV4gbQTorPHn7BeNHb9fJ1/psjZTKe+E92GJNt6m+BdJZE
-	 xiNNMAa+ACWKMuiXC3tP8I70EbCQEZWOikvpJjFh6cRqYwKajU5LmYLVW3P3Jy3tWmhHj
-	 3217crfsgMtX6rXZWADuGjfsOV5WVfwyne6iGWI7T8o7fW5DlMPhvWDw61LigAlBd98vA
-	 VZEN8495KPb8Sxv4294sq5sej2HtLR2knG8jJ0TyaqXWljgDeIRLsLRVp9bfgLd53927R
-	 qFD4skcqVQR2SI5QSHtgSUbhQMTeyTUj2AV5i4Xw+tYJMhiD7LmAuBiuMLQ5c+fq/OA==
+	bh=U7I0g+bU0sdoTYJW10ATCi0RI2EUlSB1/X8r7zW5Y8w=;
+	b=vLpUgrBLKpD4QGqvcpvR6dsNUf3PQNH1489Isi/Rbj2AqT0yyM4TAt5L9G+a9BaTOb39
+	 GJF1IUc7RO+JVl2xTY3Y80NfAz4JCncKKUvUdFjfOtVepftqsWzNj3b1UjmfXuCe2HOeN
+	 +FW7gkMSHbTfyit2rfWL6+/ANYGVGKDt3hhGhT9UsN0KIczCoHiqcTIkFRvJx1OaWH4Xa
+	 +UtXwxlEEtcGJYwVLnOeOJdhpBXa7WTh8wfiUW6nU8nMDYTM174vxisIkAtMj7FmOWJqw
+	 V8AlIXHr2qZUtEpv+0pB0TxXEnpCNfERqhJS/+c99y5TNOTe3L0JGJdauMv0abZ8KSg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CjMdM262;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=URMegtIw;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779BE60A3802;
-	Thu, 19 Nov 2026 17:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462E606A337;
+	Thu, 19 Nov 2026 17:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CjMdM262
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=URMegtIw
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795111101;
-	b=L9rUh+kr7Rk/k+0FzH1NZszw2pnu2UJ+4AZqtZ0YUfdV+HuTnjfvydL0K+QEOHjxjSJX
-	 LZHjPxd3V+mCqrSCWvTGbPYyZtpHLpE059nIUm63kdMCdNrSNiQUwx8gs4SyOX5R9HLUk
-	 mBUKFGYPwTro9Hqr6KsFQu9I/sBtzM33SMP3ORW11f7NAH35JSzEHGS2WFsmF6qTnq7ax
-	 JWOHXd7xiobADaRdgZks4vf3lD2vI7LWGH9Hky0vxcKyITNN07GCLXd5ivOa9yEUbypWF
-	 Y/+Y/3Ek7Vy9nkGoZgCYbEAzfiFbiuI22PM5q4Wv4X8+h4D+tH+5DDNPfiR22K1tiMw==
+	t=1795111099;
+	b=YvKfuKEiOnNVlxfEy484aajO6O5Fw2mCLswYiU5AsUk3OsHHAN98HGI77fKdQfeOPWjN
+	 EXlnEFdvST88ezr7RRvU8GAQPcOlUhlQBW/hIXwlOTaR3BKPWDfz2c6RfvD0SaOzRBC2W
+	 j0wWtK+zzORozp7BEDJzwuJpU5u/Z+kJP45NX7KCNCeIl/eIFcR+xR72SJVuh0xwBTRQO
+	 StHHz/TNDgderGk4XdpXtDNIsrGIkW50V9LD0/cJw0EeuBBHWjMYkLXRg8FwLCtfuILDJ
+	 S8V1jDmi5tVnpZZ5gIiaD+Cj6dAWXrIULTu8t+ntxoyOYkFPA9NnGip10FtJMUtu5Wg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795111101;
+	c=relaxed/relaxed; t=1795111099;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=YOu9rRqlMqXgJo9K0RA4KBUJJfmp1x33sccm5Z9IIHU=;
-	b=mIBmN3sj7gp1wZJYRdYP9peLUU0H475FX76OVbnxJ4cpZVp1bFUJFp4l5EcR0lhUCBip
-	 nGNYvj3E9Ar8Y5LXie9GAvtYgIuKVDriVxurCvRiPFPXwy1UNFeiS0aSrjYpNrsAnjfqi
-	 GkefPRUDfHEt2GRQ3B8aYlHcPF155NtvT5Z/uVvyTc/zYtun44bsNziTuBlhX/27o3Tvl
-	 7ueRfITrgmlmHn4S+uBDmiIMLDdX1GgDe2FVTUsN/0vHYJ7ikHIcEw+G69tpiXx7uSzPb
-	 OK0IEdENZuWi6wgI3njmluFsX4qYFK6/knOaguFqFjeVIF0wPViQfXEttaR3tfKTy/A==
+	bh=U7I0g+bU0sdoTYJW10ATCi0RI2EUlSB1/X8r7zW5Y8w=;
+	b=MsAZtNZq7xPGtNMnGqlvhr9Q5nLN0SN8ItIXB0vj0VNj3hY1SFExHhnTZ69Y+QrLpZNf
+	 Ogas1Grnc+WvrkwNJRSAW4FgMYVMThFBYJQtqJ+FGb1kRQ9VFqBB6Z7bTU8aCsve0Ca5L
+	 AXyWywNFI0jDGJiwVor5ScjvUvaaOnDA3h3V+PjFHCHXizaWq7bWX0/3Ih0zq0AQaY8M/
+	 La5doXLLDynV8rFCsIoq5HPdzoS5OuLjpVSZnwCOD1rb19SyuedWaH4ymtiYzaqf+KJb1
+	 0vLPs3BZ57M6A8grAX+sCQzAdrnNLea/nDbO8Kcsm9Jhl2LlyQev53Fh6UzZYsLytKQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id C879A1F000CF;
-	Thu, 19 Nov 2026 17:58:19 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id B6D4E1F000C6;
+	Thu, 19 Nov 2026 17:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795111101;
-	bh=YOu9rRqlMqXgJo9K0RA4KBUJJfmp1x33sccm5Z9IIHU=;
+	s=k20260515; t=1795111099;
+	bh=U7I0g+bU0sdoTYJW10ATCi0RI2EUlSB1/X8r7zW5Y8w=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=CjMdM2622hJMRYq49PVeIea/Fyh38bjCeeQZl/VgTBSISAcObjhkQ3GN+ZFMup+D+
-	 fejJJ7N+1UbAlSTEhr6jlY4c4oABhQ4vBZRn7DaHpyE7G/cbMiqV2pb06bJB1jnf3u
-	 AHEwpHfGWcDZYPtdw67cAt9xR4uBzj1Cmybf0pLgcIBbMOFc9A1xWg3cDRarapAl0y
-	 roSLQAAhu0jNtc8mY7U746oLBqTrJWW67T+1lMySlg01HiULOlJrw/sjPuBaVQfQ1T
-	 ArkvUf5DeYhx19bNg2sG/IUVs7HdRKOzqo0HDtAtOd+yviN9ayBkdpoEzH/A6uvF4D
-	 YaJAikSG23YSw==
+	b=URMegtIw4PK6kjLmYIiYUyiZ2rXuX2I3sEyXimq+9UjRfdgaQBR7wFaD3tzhHxkAz
+	 OHNLLJAcMa0orudjI9ekVtxpvpfLGmRg/5vhal9/DNopLCYc+QZ/Vq/UwXpQ1bevlm
+	 LwmtBOSgCYGDuIdJriEb+UEFeQPOMN+Zehna8VM4pFsqLmmWylHcdqkKkidivIhzCU
+	 PK5s2u8UgOKCEsyYUyrXSJv1xoXA3tZs9U5kfT63Z0FpmeLJoUHZGveMMT6zhnvE6X
+	 8zdFJk8y4YpmT85GJR6JpvzcQ47KH/+WL0kHiZb2guo6UXGQ0ueGU3ka0SkL50sB/2
+	 8rOGxeGgtIZUA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id AAC384B3B6;
+	by lkml.kernel.org (Postfix) with ESMTP id 425984B3A6;
 	Thu, 19 Nov 2026 17:58:18 +0000 (UTC)
 From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Date: Thu, 19 Nov 2026 09:57:48 -0800
-Subject: [PATCH 6/6] ARM: dts: renesas: r9a06g032: Add resets to mii
- converter
+Date: Thu, 19 Nov 2026 09:57:44 -0800
+Subject: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261119-rzn1-miic-resets-v1-6-feee2bb28bb4@reliablecontrols.com>
+Message-Id: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
 References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
 In-Reply-To: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -105,11 +104,11 @@ Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  netdev@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795111097; l=858;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795111097; l=3698;
  i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=qgvA5VciuFpDDlBloW4+43M1wkddJY2irZpJYObbd+0=;
- b=OhrIO0OOq4envOlQ9SlkMKgZ8zwywCqI1Hl35UHS4W/dakNbGHiHRR1SxMVHYQLVh/LFjgBDm
- 5VR8kkDEHxuDewOhaKUuZGCrfzaMxujoY0XpSH2F3UcUugaAkVPUUrP
+ bh=K55PGhDwoeO0SnRKw9KIc71iX+MI6F5UGeo6Fl4rgqg=;
+ b=/xzBEMOSa6Ag5ThW111yAz4JSl7e4KnR37Ab2clbt8Jk+rmxL1fmeISH6HFSHk14JLdZLQ0rY
+ UOyw+PTObnyDihP9ReuckRXnsv1MEMkerCQCaPpz7bAT++Rk5kh5kF0
 X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
  pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
 X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
@@ -120,26 +119,117 @@ Content-Transfer-Encoding: 7bit
 
 From: Kyle Hendry <khendry@reliablecontrols.com>
 
-Add references to the resets in the system driver that the miic needs
+The rzn1 system controller has two resets that need to be cleared for the
+mii converter to work. They are not directly associated with any clocks
+so they need a reset controller to set them.
+
+They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
+
+Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
+Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
+
+Add a reset controller and add resets for those bits.
 
 Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 ---
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/renesas/r9a06g032-clocks.c | 64 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index f2bf087f7ad2..0a538d922125 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -463,6 +463,9 @@ eth_miic: eth-miic@44030000 {
- 				 <&sysctrl R9A06G032_CLK_RMII_REF>,
- 				 <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
- 			clock-names = "mii_ref", "rgmii_ref", "rmii_ref", "hclk";
-+			resets = <&sysctrl R9A06G032_RST_TS>,
-+				 <&sysctrl R9A06G032_RST_MIIC>;
-+			reset-names = "rst_ts", "rst_miic";
- 			power-domains = <&sysctrl>;
- 			status = "disabled";
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 3df3f2b2c6de..547e8d82f1cf 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -21,6 +21,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/reboot.h>
++#include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/soc/renesas/r9a06g032-sysctrl.h>
+ #include <linux/spinlock.h>
+@@ -675,6 +676,11 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
+ 		RB(0xec, 16), RB(0xec, 17), RB(0xec, 18), RB(0xec, 19)),
+ };
+ 
++static const struct regbit r9a06g032_resets[] = {
++	RB(0x188, 3),
++	RB(0x188, 4),
++};
++
+ struct r9a06g032_priv {
+ 	struct clk_onecell_data data;
+ 	spinlock_t lock; /* protects concurrent access to gates */
+@@ -1307,6 +1313,56 @@ static void __init r9a06g032_init_h2mode(struct r9a06g032_priv *clocks)
+ 	writel(usb, clocks->reg + R9A06G032_SYSCTRL_USB);
+ }
+ 
++
++#define rcdev_to_priv(x)	container_of(x, struct r9a06g032_priv, rcdev)
++
++static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
++				  const char *func, bool set, unsigned long id)
++{
++	struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	clk_rdesc_set(priv, r9a06g032_resets[id], set);
++	spin_unlock_irqrestore(&priv->lock, flags);
++
++	return 0;
++}
++
++static int r9a06g032_reset(struct reset_controller_dev *rcdev,
++			  unsigned long id)
++{
++	r9a06g032_reset_set(rcdev, "reset", true, id);
++	udelay(5);
++	return r9a06g032_reset_set(rcdev, NULL, false, id);
++}
++
++static int r9a06g032_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return r9a06g032_reset_set(rcdev, "assert", false, id);
++}
++
++static int r9a06g032_reset_deassert(struct reset_controller_dev *rcdev,
++			     unsigned long id)
++{
++	return r9a06g032_reset_set(rcdev, "deassert", true, id);
++}
++
++static int r9a06g032_reset_status(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	struct r9a06g032_priv *priv = rcdev_to_priv(rcdev);
++
++	return clk_rdesc_get(priv, r9a06g032_resets[id]);
++}
++
++static const struct reset_control_ops r9a06g032_reset_ops = {
++	.reset = r9a06g032_reset,
++	.assert = r9a06g032_reset_assert,
++	.deassert = r9a06g032_reset_deassert,
++	.status = r9a06g032_reset_status,
++};
++
+ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1404,6 +1460,14 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (error)
+ 		dev_err(dev, "Failed to populate children (%d)\n", error);
+ 
++	clocks->rcdev.ops = &r9a06g032_reset_ops;
++	clocks->rcdev.of_node = np;
++	clocks->rcdev.of_reset_n_cells = 1;
++	clocks->rcdev.nr_resets = ARRAY_SIZE(r9a06g032_resets);
++	error =  devm_reset_controller_register(dev, &clocks->rcdev);
++	if (error)
++		return error;
++
+ 	return 0;
+ }
  
 
 -- 
