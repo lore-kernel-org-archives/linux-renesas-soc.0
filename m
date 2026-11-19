@@ -1,106 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.238.236.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795114237;
-	b=vzQb2vr/I25PmxIA09ONqQZQWrnFnPbPwNLXpwxFkdEVEoTcN0Gq7SSBogb/NPcMZ+3+
-	 MRNQl4sIoBz/ZpdV78bHuMH12lZZUY1uPJr1IaLnradhicOWHk3dc+o13RKEyGkNnClV2
-	 Fl5TIbvyvOMgE9DNbiAoFlfCsh76VsyAK9au4oSm0af4EAJLR6rE55xDd+L4Zs7swQ2pE
-	 94aACEBaUCa4xtN3J8NrzKgv2R/lJxM9gsmAVLKfnGLtcc4f/8Q0urDrhEsxEW6FtYWDD
-	 3ybNUitQlBTZ+c+48Mvb4FPGPo7vkPVZsPWa2/jh7LdYEvFWkO8oVYRgaWezxterWvA==
+	t=1795125047;
+	b=o+Ta/6U0aqZWPAninaTKIDXyUOozCRe7jUj3v2LtQGGV2+4N7MvPB/FJRXw+ZhLPQOLs
+	 hisnLgLBP61i5gNab/n2GhYq+v6HDF8WmCrcRvqcZsQEoshL9Pr0QbppF2g3lD3y+kVJ7
+	 IT29Flp+qR1uLvd+HA84N3iUkzkkFE+vrYKVUmxFZOedNxjeVErA4a8IsrmFzmKJdNYBS
+	 qzaulY+kJdKFjXt9DFwvC7GP52sx75ybq3IdFHpOBcPgt7xeP9rPQ5RMSnFuPPkJjoFo4
+	 keLvIolu4gfwbgpYE1HQyCV2t8Wc3TCtR+Zny+iUHQkJ6rdOIExfXbqi+jnhfSN0vSg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795114237;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=w0iUd6Uae7/9DsYoCpyTzPmzaHpxV8RPjMLG//AJIZk=;
-	b=kwRyfDq2WXURxCKJyn5ouePmpazduzWte+DK2bw9tKburKemoT5KCTaj/6RwQkHmMcJ3
-	 pAkxhuNNcvKT8huwQ4Ucl+V10J5B8iJNy+ruMUyGM4ChRQ3+4DKPR/Ik0lB228wWYjO9+
-	 XiKxrAlLyzUm9yrJ6b1wWI9pzmFc2kgYFzBT3glG7B5M+R1wwGVqvRciYq6m1XVYgiSwh
-	 9lk6iFPaGwTS4CfNM9MCrAnuCmgKVIpk07Wi0HnHf+K+2Vc7n21X23gH4+lsQjHbuDcvU
-	 XnPW9sV1CX52bWKyiJkYH8+3/4EJneiDk7y55LQtKGGHV08yQQT41an45Z+kVbtTZBg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795125047;
+	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=vzam9azfkf4B2QjTL0Ocw4FvWfNSsyoxxQWc2bs79yk=;
+	b=tPgvo9ySoNh9QhFINRPAZvUxdqDqEDGpfON/jJcdXp2S+2oCbQhbB0wcSq0B4+sW0irn
+	 alZaqgP7/cF6bd/scvD7ppmU+aAQk6uEMxI1qYcEHZ9/t1p089T3avZBf5nsSqRV4AaDF
+	 5PTgOFcKQ5F+jZ6PYsY+wsLFGQ3iDb55mOelXcl3bax1Xa87URsoKTsonxjFVdykzg4Cz
+	 id/+gF6Ut8WAUEKnnlQbUSQHe9PCHtvE5eK8Ww0ckZHUS9ICnywJe+gbvjX3dwgZLMcgu
+	 KJcAR7r5aA9+i9c6EfM1jYR3diRLRyuWqfWPTQQ/F/pxJOx2lqdtcK1Nf2As4HJKlkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gbHZgpz4;
-	arc=none smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=kemnade.info;
+	spf=pass smtp.mailfrom=kemnade.info;
+	dkim=pass header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=QZzhip07;
+	arc=none smtp.remote-ip=178.238.236.174
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FDB606A320
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 18:50:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 63FDB606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B541E606A320;
+	Thu, 19 Nov 2026 21:50:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B541E606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gbHZgpz4
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-498f5fa5103so2967f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 10:50:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795114236; x=1795719036; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=w0iUd6Uae7/9DsYoCpyTzPmzaHpxV8RPjMLG//AJIZk=;
-        b=gbHZgpz4vVJ//vKAAUuZDXlJrfKwfiVjk6fUGe+eh7tJD4Y/e3f5+7CvDC8fx7x/Tu
-         eav+eJdbHMIz5AexBAcy9CuyiuCH3cXssH2NWyPa7dH9EtqgvGCYzdWREK457Fk928VI
-         GTyXCcvn/A2hO6+tgiCtvGqtEBTV32+E2hmolNj3/O1fl0mUlTwDHNSJMi7h+GLCfBU1
-         sm5JwAheUZLBq4ChdUxhBeULwI+yXm1pQSH7mWD8anFcB+m8pR6/1f6ifAylXfw8/xvl
-         wY5x3RkExpZi1xwzhmvmTMnq28e+jZDrzJDyujFP42Eym9kYdGKR+I7vpBuwGO7OxNaM
-         KyBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795114236; x=1795719036;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=w0iUd6Uae7/9DsYoCpyTzPmzaHpxV8RPjMLG//AJIZk=;
-        b=UElPW7USuyDzTuzf4lfsxY+wBk8n4Y9KLXQ2HSgHdnz+6uxZMLk151Ye1ETxv5ZOMt
-         8HlZ57DBwC5R9SpJ1rMcF0uTi/OgRLNuqDNr3pcRUcmTbPA30gX43sTciW26KPB0+CpC
-         qp6/K8RxnCnkCwunqSQk28RdTc/1YC1mm4qfrKSIehfW2m+AiaPOtryZtbxrKqBd5L/U
-         1uSzSS8dEm5ATBT0cJVnIiSjFqnqpo9WSSClnQW5kMWT+XoOTeCfKOhzhkuWDsBsRhCI
-         ZARS6vfLdZjYkOwjmVoHWvNkoLNcJjTOg3NhdcS37bj6omfroBsTVOHHoW/bEjU1Se+d
-         gwFQ==
-X-Forwarded-Encrypted: i=1; AL+hErGy1DB7I0I6ul0q7Z+2bmbH/v6POpEU6Qtz/s/1VLHePioDd9aseJqSMt3Ma9ZIo4m+rJL/cyc+tFtvN29h54OyaQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9MIJBhouZl9vaabNCu6zOqUxlk5+zEWj2HPXHEb0C5rntPoUnd
-	NLdlsI3BUfvQ/RiW3BlMq0rFopQRcINgt/YuNPJnwnuJC+CHeUKxthTK
-X-Gm-Gg: AZFdTZdxWmSBYwuAPwKmkpZbSVrJ9y0qvizVA3SeK7WQe/trTIbOoEEaW+IkPFsDZuL
-	2cnxcYBQFDxkqT3wbs1+p41/ZLOTgPVJNYsBKzme4GmaTZLgTbvJNTQpJ+Bg4mb9Y6cwrL3mJNP
-	BdibTIyG5n97tduf7RUW67zNi78/lh6j68+cE1dbRff+MVKdGXbia52Dfs9BCqyqlYfxIpxN7w+
-	gq4aIw+7uz57oppOB0yRH/GA6EJb+jod2XScU9CgiyIBMrQVRAjzfzPdphBGBml8YkFjk8N7up6
-	G6TVdiI+bowcN0oC449YkPyZOjMX//Z23u48xkIQCaTaPWR9Ah3mRvtCcP9WtvL1OrvAxAOM4lC
-	80aBhvAXtz19wLP7FbL7kbyGtDNCVPJtcYRBQ3Vtfc4yuegk1IfEqXvzGTDX5M69rALwHYtHn7A
-	4dj09Q0uC8+/J/iNGSX38/BtxHkMPZC6H2Z2srqDHAK3af1lHfaA35AwJxkFT0Qk9AgOuibv/Yq
-	WZlAiUCyps+WPj7ktAHx6SGTW2LUpeeESOue0jPmXz1kOc1CvFjbFfTZYVeOqrBxh0K/SlHL+SQ
-	lMMj/h1PXq3FbawPJrO5Wl+zYEsxOCQlqMapGsZghBeej++kNU199Q15nacB4n/nzPkRLroLmf9
-	orwJL9M1kvIewpKMEAGxqWUidK/duXv9djhjullKvHaQm4k/SolTbiI7YCKlS80kjd/gxz0V/cH
-	Xfb2ITcqxQKYZQWyg1jklnxxthzzw=
-X-Received: by 2002:a05:6000:46cb:b0:48d:f0e4:27a4 with SMTP id ffacd0b85a97d-4abb42ea14emr442175f8f.24.1795114235494;
-        Thu, 19 Nov 2026 10:50:35 -0800 (PST)
-Received: from iku.example.org ([2a00:23c8:254f:fd01:c5c5:590b:f4b8:3e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6bc8ce06sm1147674f8f.47.2026.11.19.10.50.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 10:50:35 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next] net: stmmac: Advertise TX checksum offload only when supported
-Date: Thu, 19 Nov 2026 18:50:16 +0000
-Message-ID: <20261119185016.1789843-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.56.1
+	dkim=pass (2048-bit key, unprotected) header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=QZzhip07
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=vzam9azfkf4B2QjTL0Ocw4FvWfNSsyoxxQWc2bs79yk=; t=1795125046; x=1796334646; 
+	b=QZzhip079B0obmamkBNrBF2baTdS2f3I1oV2oniLlbeQsw3gAx3F9gsIYW0BASURvqnuqbwCggs
+	ayx3DNyWnPTtRUgo0q1TUv0Lt2pz9wD96lOYuaykMZKfXESSfoZCth1H7hHiXJHAFPhyw5WwBWZip
+	1MKMvbRfFr/zQVmosiqyjcs1Yp326JSE+Q9WJhugR0RgrLsqwnlMR8OrCaitMUoXkK4/7dhlOUb94
+	aUgKfHkqCB4SnxPPdXciCIpc+xDRoApWv+C89JceVs4h7Tw3sbWhOXO3I22a1AOKjAovjKy3GDK/8
+	+iCMtFdGhc+sfztZ4mUP7P04Tbfl1UTdGsLg==;
+Date: Thu, 19 Nov 2026 22:50:17 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Paul Walmsley
+ <paul@pwsan.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+ <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Sandy
+ Huang <hjc@rock-chips.com>, Heiko =?UTF-8?B?U3TDvGJuZXI=?=
+ <heiko@sntech.de>, Andy Yan <andyshrk@163.com>, Ulf Hansson
+ <ulfh@kernel.org>, linux-clk@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 5/6] [RFT] ARM: OMAP2+: Convert to
+ dev_clk_get_from_provider()
+Message-ID: <20261119225017.15a7b5cc@kemnade.info>
+In-Reply-To: <683b5b189409e5ee04100044fb615b01cb877f3d.1795094688.git.geert+renesas@glider.be>
+References: <cover.1795094688.git.geert+renesas@glider.be>
+	<683b5b189409e5ee04100044fb615b01cb877f3d.1795094688.git.geert+renesas@glider.be>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -110,38 +72,94 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 19 Nov 2026 14:40:38 +0100
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-The driver unconditionally advertises TX checksum offload, even when
-the hardware capability check disables it, such as when threshold DMA
-mode is selected. This can cause DSA user ports to inherit checksum
-offload through vlan_features despite the conduit not supporting it.
+> OMAP2+ clock handling uses of_clk_get_from_provider() to obtain clocks
+> used for power management, so the latter show up as "deviceless" in the
+> consumer column of the clk_summary file in debugfs.
+> 
+> Fix this by using dev_clk_get_from_provider() instead, letting us pass
+> the consumer device, too.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Compile-tested only.
+> 
+> The first change is probably OK.  The second change may fail if anything
+> in the oh->od->pdev->dev chain is not available yet at this point.
 
-Advertise IPv4 and IPv6 TX checksum offload only when tx_coe is enabled.
+Test on OMAP3:
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 4afe09d8fbe4..23d83b8376e2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -8222,8 +8222,9 @@ static int __stmmac_dvr_probe(struct device *device,
- 	ndev->xdp_metadata_ops = &stmmac_xdp_metadata_ops;
- 	ndev->xsk_tx_metadata_ops = &stmmac_xsk_tx_metadata_ops;
- 
--	ndev->hw_features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
--			    NETIF_F_RXCSUM;
-+	ndev->hw_features = NETIF_F_SG | NETIF_F_RXCSUM;
-+	if (priv->plat->tx_coe)
-+		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
- 	ndev->xdp_features = NETDEV_XDP_ACT_BASIC | NETDEV_XDP_ACT_REDIRECT |
- 			     NETDEV_XDP_ACT_XSK_ZEROCOPY;
- 
--- 
-2.56.1
+$ diff -u clk-old clk-new
+--- clk-old	2026-11-19 22:44:59.810807920 +0100
++++ clk-new	2026-11-19 22:26:52.862531880 +0100
+@@ -1,17 +1,17 @@
+                                  enable  prepare  protect                                duty  hardware                            connection
+    clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+ ---------------------------------------------------------------------------------------------------------------------------------------------
+- oscillator                          0       0        0        26000000    0          0     50000      Y   deviceless                      of_clk_get_from_provider 
++ oscillator                          0       0        0        26000000    0          0     50000      Y   deviceless                      dev_clk_get_from_provider
+                                                                                                            deviceless                      no_connection_id         
+- secure_32k_fck                      0       1        0        32768       0          0     50000      Y   deviceless                      of_clk_get_from_provider 
++ secure_32k_fck                      0       1        0        32768       0          0     50000      Y   deviceless                      dev_clk_get_from_provider
+                                                                                                            deviceless                      no_connection_id         
+-    wdt1_fck                         0       0        0        32768       0          0     50000      Y      deviceless                      of_clk_get_from_provider 
++    wdt1_fck                         0       0        0        32768       0          0     50000      Y      deviceless                      dev_clk_get_from_provider
+                                                                                                               deviceless                      no_connection_id         
+     gpt12_fck                        0       1        0        32768       0          0     50000      Y      48304000.timer                  fck                      
+                                                                                                               48304000.target-module          fck                      
+-                                                                                                              deviceless                      of_clk_get_from_provider 
++                                                                                                              deviceless                      dev_clk_get_from_provider
+                                                                                                               deviceless                      no_connection_id         
+- dummy_ck                            0       0        0        0           0          0     50000      Y   deviceless                      of_clk_get_from_provider 
++ dummy_ck                            0       0        0        0           0          0     50000      Y   deviceless                      dev_clk_get_from_provider
+                                                                                                            deviceless                      no_connection_id         
+  mcbsp_clks                          0       5        0        0           0          0     50000      Y   deviceless                      mcbsp_clks               
+                                                                                                            deviceless                      mcbsp_clks               
+[...]
+Regards,
+Andreas
+> ---
+>  arch/arm/mach-omap2/omap_device.c | 2 +-
+>  arch/arm/mach-omap2/omap_hwmod.c  | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+> index 77a75b0b9ae69c85..5695e0c8f2392eca 100644
+> --- a/arch/arm/mach-omap2/omap_device.c
+> +++ b/arch/arm/mach-omap2/omap_device.c
+> @@ -73,7 +73,7 @@ static void _add_clkdev(struct omap_device *od, const char *clk_alias,
+>  
+>  		clkspec.np = of_find_node_by_name(NULL, clk_name);
+>  
+> -		r = of_clk_get_from_provider(&clkspec);
+> +		r = dev_clk_get_from_provider(&od->pdev->dev, &clkspec);
+>  
+>  		rc = clk_register_clkdev(r, clk_alias,
+>  					 dev_name(&od->pdev->dev));
+> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+> index 03cd523dff874bb0..5e4123014909d4ac 100644
+> --- a/arch/arm/mach-omap2/omap_hwmod.c
+> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+> @@ -147,6 +147,7 @@
+>  #include <asm/system_misc.h>
+>  
+>  #include "clock.h"
+> +#include "omap_device.h"
+>  #include "omap_hwmod.h"
+>  
+>  #include "soc.h"
+> @@ -796,7 +797,7 @@ static struct clk *_lookup_clkctrl_clk(struct omap_hwmod *oh)
+>  				clkspec.args[0] = addr - provider->addr[0];
+>  				clkspec.args[1] = 0;
+>  
+> -				clk = of_clk_get_from_provider(&clkspec);
+> +				clk = dev_clk_get_from_provider(&oh->od->pdev->dev, &clkspec);
+>  
+>  				pr_debug("%s: %s got %p (offset=%x, provider=%pOF)\n",
+>  					 __func__, oh->name, clk,
 
