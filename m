@@ -1,54 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795167861;
-	b=QAGdZqoMN0jibhlh9qoY6N8zGct6y/znoIcGv6LKiKNUZ1CDTDEQD26r30AMjy3NYrrm
-	 obBCcSr+7Wh33dLUOL3ZAK/ncqZpVluGCG0I51h8xeTaAbLlOvQ8fu6QfeVbL95csfZAE
-	 UuyKuqorRcYOkqzx6OGOQrMh5xkTlXUV1AdW2PS8J1wDas7Lj1QJc5I3SflRrGSibGzh1
-	 mgNAp1yxtdJ6Y8OcPXprHjiwkLS+Ecm4wQLKPppfc3cB2rC9TO3/NPwvyqt5BucdiMC9I
-	 31el8lUMbYhoxWmrigeZSFmP49W6b2xxyDhgIE/M7qGj13tUBQG11gJGY+x7G+FC1wQ==
+	t=1795167953;
+	b=NZeiB1OAAZn6Nh57KDtCIEppb5gpsahK/bIQ0V+vv38yYBNG7J9g+2TyuGTUeIiNKGiC
+	 O/u0MYbGBAYXwdUh7wE4EGwnWzyhxa/Jpzlq7tv5nKwIwBCA3ojouL+y2ZjjAYzC2IE2w
+	 z5gjROPVNP97aVl2+UGQwm2Ft3kCxwcs4uHpz9C+Wh7I6LYl8cRiBuiLV7MzSMMeNp9Vw
+	 1eZODczHfX+HzdY4foSIMFs5KqE9l6ILQHWYmkyDiSg4jn4H8YRJKLyYtJn6BY5a036Zs
+	 oVJW3NLEbkPHirm9KisKN5AgSDhS598yA0aS9JFg08Ru/w1fAeJUnXjSKFslVAxrncw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795167861;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795167953;
 	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
 	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=oFjhW+7eKqQT97kIliJ3yMumyK6wp8D8hexPVbCu+yo=;
-	b=gUEOukN9NxowvenMl2hdXvSulNrbiXRT9EyKGJWDtQeAssJbxgTKwwbI44YH1XGFivHX
-	 kgvEenhY/C5zYHTpsllVNznzgZamxWQTRZFNWctka7dXYDoMEvkloANtRmSNho8KBvpda
-	 4eVrTFtx7NAha8w3OKoPHSWyDcuufoZlPkPUJzTay2pimMqLfbCmb0bbLZtoj+JUFzHI5
-	 uonkVctVVxp7Nxdt2S/s1k3WrKRkJUOgxr5Ou/Wo1nzFwZb7LEqa9suKNqTcZM10wsjeR
-	 SubAfOWhAbPFTITBnpgAKzeoZaNBXxy3FXsFHO6aNZPHq1pk5DYv3JveSxF1QKw3fPw==
+	bh=lyqZrq+1VDfx+17rLJle9JHjC1P2n2bfSRm53uAOyLk=;
+	b=bIFJ4TX+dvjUhA6YvLrpASoUGgK6v9iWKkTJP83qTK70WPRZpCleuEQoxn1jiq0E6IYz
+	 vnbF6MfvpmAqOqTrjqxrF3Fuo14f4fc7Zum0I71FhGagkKanAcfg/vDriNKSSKV6/K1ye
+	 2m7KZz6ZWInxu7UbYPTus9kCPu3yVHAis/YfYjLKfG6X6fQzpTjE9X+LLQgYWNIVh789u
+	 duRCWeASbP37dfVXZYH7bUREq9ygPvtDMx0iqF3WS84NKRaNt7FcZEHW3HGolnancV1q0
+	 rQXfLdvHPUYT8oaRg3Mr/pnMlcbz+mIBYahCIKkT49+fKHrB8XEYeMqZRS/3Jbre+ow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.dev;
 	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=DjXhq2vT;
-	arc=none smtp.remote-ip=91.218.175.174
-Received: from mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b="H5voM/KI";
+	arc=none smtp.remote-ip=95.215.58.18
+Received: from mta1.migadu.com (out-18.mta1.migadu.com [95.215.58.18])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F88606A325
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 09:44:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 97F88606A325
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC19606A325
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 09:45:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAC19606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=DjXhq2vT
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=H5voM/KI
 X-Envelope-To: linux-renesas-soc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=oQYnZu7+wRteiPN1ghqb+fRHNCk2pIXgXlUOMBMX+4A=;
+DKIM-Signature: a=rsa-sha256; bh=MOVcWwUOWIJzHtjaEKy4VCowPx1uh/dz8Ha0zt4lwus=;
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1795167857; v=1; x=1795772657;
- b=DjXhq2vTkD4/KuyM57OwBvaPgvVetN0WTti8yr/3rahHAnmo1+kOdcniJENRHezJ2Qj1l7e6
- eBcNkYAKfLStx7asOt0YV4NlrmHy636KBcOVEEqycCj/KqH5SA88Afr2o2CqujmMec2F0rppkQC
- jM7j+5oSZD8ONhRqfx+trteQ=
+ t=1795167951; v=1; x=1795772751;
+ b=H5voM/KIJylIyoim6S9u6H8im5dFRTo1cSE8gZHtzVt1OLCDg+WzuXDshKeAlRAqvsUb624L
+ O9xKvy9zkXJiQRKLfPcP9YUuSP95qcu7MAr6fUQYiSrhaj/L1oaJVV7IJ1Gl3cn4jEPyu4oUWsp
+ z8tjs++YvFD2GvN1A+9P0kGY=
 X-Envelope-To: linux-renesas-soc@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 7ed50c03f98480e6;
-	Fri, 20 Nov 2026 09:44:17 +0000
-X-Mizu-Trace-ID: 7ed50c03f98480e6
+Received: by smtp.migadu.com with ESMTPS id b5ccc56c1eb29246;
+	Fri, 20 Nov 2026 09:45:43 +0000
+X-Mizu-Trace-ID: b5ccc56c1eb29246
 X-Migadu-Flow: FLOW_OUT
-Message-ID: <99974c5f-c1c0-427c-ab10-a6559789f258@linux.dev>
-Date: Fri, 20 Nov 2026 10:44:15 +0100
+Message-ID: <73e4df46-89ba-4578-bb07-acad3d319d88@linux.dev>
+Date: Fri, 20 Nov 2026 10:45:42 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -59,8 +59,8 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 20/24] net: dsa: rzn1-a5psw: Get lookup table
- size from OF data
+Subject: Re: [PATCH net-next v5 21/24] net: dsa: rzn1-a5psw: Update CPU port
+ comment for RZ/T2H
 To: Prabhakar <prabhakar.csengg@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
  Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>,
@@ -79,131 +79,50 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
  Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
  Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20261120002549.1908299-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261120002549.1908299-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Language: en-US
 From: Clement Leger <clement.leger@linux.dev>
-In-Reply-To: <20261120002549.1908299-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20261120002549.1908299-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
 On 11/20/26 01:25, Prabhakar wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> The RZ/N1 A5PSW has 8192 lookup table entries, whereas the RZ/T2H
-> and RZ/N2H ETHSW have only 4096 entries.
-> 
-> Add the lookup table size to struct a5psw_of_data, derive the address
-> mask from it and use it in the FDB and ageing code.
+> The comment in a5psw_phylink_get_caps() states that GMAC2 is connected
+> to the switch management port. This is only true on RZ/N1. On RZ/T2H
+> and RZ/N2H, the conduit is GMAC0. Update the comment accordingly.
 > 
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
 > v4->v5:
 > - New patch
 > ---
->   drivers/net/dsa/rzn1_a5psw.c | 10 ++++++----
->   drivers/net/dsa/rzn1_a5psw.h |  4 ++--
->   2 files changed, 8 insertions(+), 6 deletions(-)
+>   drivers/net/dsa/rzn1_a5psw.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-> index 7e9bc252d92a..c0c1f45852da 100644
+> index c0c1f45852da..751d03b0bde4 100644
 > --- a/drivers/net/dsa/rzn1_a5psw.c
 > +++ b/drivers/net/dsa/rzn1_a5psw.c
-> @@ -311,18 +311,19 @@ static void a5psw_phylink_mac_link_up(struct phylink_config *config,
->   static int a5psw_set_ageing_time(struct dsa_switch *ds, unsigned int msecs)
->   {
->   	struct a5psw *a5psw = ds->priv;
-> +	unsigned int entries = a5psw->of_data->lk_table_entries;
->   	unsigned long rate;
->   	u64 max, tmp;
->   	u32 agetime;
+> @@ -237,8 +237,9 @@ static void a5psw_phylink_get_caps(struct dsa_switch *ds, int port,
+>   	config->mac_capabilities = MAC_1000FD;
 >   
->   	rate = clk_get_rate(a5psw->clk);
-> -	max = div64_ul(((u64)A5PSW_LK_AGETIME_MASK * A5PSW_TABLE_ENTRIES * 1024),
-> +	max = div64_ul(((u64)A5PSW_LK_AGETIME_MASK * entries * 1024),
->   		       rate) * 1000;
->   	if (msecs > max)
->   		return -EINVAL;
->   
->   	tmp = div_u64(rate, MSEC_PER_SEC);
-> -	agetime = div_u64(msecs * tmp, 1024 * A5PSW_TABLE_ENTRIES);
-> +	agetime = div_u64(msecs * tmp, 1024 * entries);
->   
->   	a5psw_reg_writel(a5psw, A5PSW_LK_AGETIME, agetime);
->   
-> @@ -511,7 +512,7 @@ static int a5psw_lk_execute_lookup(struct a5psw *a5psw, union lk_data *lk_data,
->   	if (ret)
->   		return ret;
->   
-> -	*entry = ctrl & A5PSW_LK_ADDR_CTRL_ADDRESS;
-> +	*entry = ctrl & (a5psw->of_data->lk_table_entries - 1);
->   
->   	return 0;
->   }
-> @@ -638,7 +639,7 @@ static int a5psw_port_fdb_dump(struct dsa_switch *ds, int port,
->   
->   	mutex_lock(&a5psw->lk_lock);
->   
-> -	for (i = 0; i < A5PSW_TABLE_ENTRIES; i++) {
-> +	for (i = 0; i < a5psw->of_data->lk_table_entries; i++) {
->   		reg = A5PSW_LK_ADDR_CTRL_READ | A5PSW_LK_ADDR_CTRL_WAIT | i;
->   
->   		ret = a5psw_lk_execute_ctrl(a5psw, &reg);
-> @@ -1357,6 +1358,7 @@ static const struct a5psw_of_data rzn1_of_data = {
->   	.pattern_ctrl_base = 0x3eb0,
->   	.vlan_res_vlanid = GENMASK(16, 5),
->   	.vlan_res_portmask = GENMASK(4, 0),
-> +	.lk_table_entries = 8192,
->   };
->   
->   static const struct of_device_id a5psw_of_mtable[] = {
-> diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
-> index 29d205e2331d..fd523fe7bf47 100644
-> --- a/drivers/net/dsa/rzn1_a5psw.h
-> +++ b/drivers/net/dsa/rzn1_a5psw.h
-> @@ -93,7 +93,6 @@
->   #define A5PSW_LK_ADDR_CTRL_WAIT		BIT(27)
->   #define A5PSW_LK_ADDR_CTRL_READ		BIT(26)
->   #define A5PSW_LK_ADDR_CTRL_WRITE	BIT(25)
-> -#define A5PSW_LK_ADDR_CTRL_ADDRESS	GENMASK(12, 0)
->   
->   #define A5PSW_LK_DATA_LO		0x40C
->   #define A5PSW_LK_DATA_HI		0x410
-> @@ -210,7 +209,6 @@
->   
->   #define A5PSW_LK_BUSY_USEC_POLL		10
->   #define A5PSW_CTRL_TIMEOUT		1000
-> -#define A5PSW_TABLE_ENTRIES		8192
->   
->   struct fdb_entry {
->   	u8 mac[ETH_ALEN];
-> @@ -241,6 +239,7 @@ union lk_data {
->    * @pattern_ctrl_base: Offset of the PATTERN_CTRL register of pattern 0
->    * @vlan_res_vlanid: VLANID field mask of the VLAN_RES registers
->    * @vlan_res_portmask: PORTMASK field mask of the VLAN_RES registers
-> + * @lk_table_entries: Number of entries in the lookup table (power of 2)
->    */
->   struct a5psw_of_data {
->   	unsigned int nports;
-> @@ -252,6 +251,7 @@ struct a5psw_of_data {
->   	u16 pattern_ctrl_base;
->   	u32 vlan_res_vlanid;
->   	u32 vlan_res_portmask;
-> +	unsigned int lk_table_entries;
->   };
->   
->   /**
+>   	if (dsa_is_cpu_port(ds, port)) {
+> -		/* GMII is used internally and GMAC2 is connected to the switch
+> -		 * using 1000Mbps Full-Duplex mode only (cf ethernet manual)
+> +		/* GMII is used internally and the conduit GMAC (GMAC2 on RZ/N1,
+> +		 * GMAC0 on RZ/T2H and RZ/N2H) is connected to the switch using
+> +		 * 1000Mbps Full-Duplex mode only (cf ethernet manual)
+>   		 */
 
-Hi Prabhakar,
+Hi Prabhakar
 
-It would probably be better to fold all these commits that adds data 
-into bits of data in oa5psw_of_data into two commits: a first one that 
-prepares support for RZ/N2 and then a second one that add RZ/N2 support 
-itself. I'm not the net maintainer but your series is already quite 
-large just for this change so folding the commits make sense rather than 
-commitmaxxing.
+I don't see the point of this commit, fold it into the one that adds 
+RZ/N2 support.
 
-Thanks,
+>   		__set_bit(PHY_INTERFACE_MODE_GMII, intf);
+>   	} else {
 
-Clément
