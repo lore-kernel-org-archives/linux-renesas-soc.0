@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795167067;
-	b=Q4Ioszc5gPX2lhhfgvcnlehi0X8Juh7qH/ZMkdNwqn/HkISfnRd+wTGo2TifcnWTyeDM
-	 HDk87moPPj+a6Oqz0xG7SrpwDwbbHB2eepUA+qyx06OYGeeADSB3iy+2JWMuu5MU+4/Lp
-	 Kl3k/dDPFEDHXs/x7v6Btpug8TVI/lhEnrRwdKHsYNjhvW31Mx2eN7IVGMuOSh4e5fPtm
-	 IQHjiOHKcWjLvtflisKASuhf+Mx7vhdURJvPlT3Qy+H1BVRgc9H9MD03Ll9/9gDcHQA9n
-	 V4yUxp8BQuH5zpAGbk8cPwhiBdI2/T6ZE6Y1ppF9Hv/ezYbNu+jEDKwMxNO4fp2VSBA==
+	t=1795167151;
+	b=wTOjs3KFnKFVIxh8+E1H6X6K97Jg57iwTQKUmio31bowf2GoTBMs5pv4bi5t67n2EeNu
+	 H+oon97/KczVBUtbavp/zbdGBpybHF+OLFEhB/pfL6ZRY9qcJda+wcA0JUCCF6uPSFiSQ
+	 XvWlUxF7bmKeZUE8yV0K4v8uRwezwjbb9lasb2uOPIMAoXqHbU8VGbm+BwVfiBb69jDlN
+	 4WfUN1CVFwQ7mNvIMkvhOkUn+Um0kv7aLgoZW4fqPbZRsk0sWI01X7z7A2llbgO8se9An
+	 t8UmpUnXuZHE/46mr8e4CropaoOoLoZTTt6YUuKJLD0Fn0Q2Yjlpb9OGd+vSx4klGeg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795167067;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795167151;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=OCf75Fx8Ai6t0lF3SSBe/SqcSWFA8siREMgmIjNPvtw=;
-	b=gTMBjjuHPE1/9IcXWObWtQoNByxe0mUDKqpJ9bIOD3zBle4eFrsmesIwTk0FQt6pHT5e
-	 4ZKlm+JKIN5PxqKlN/NZUjd3yKCMgaiVL3Qy+DnFBPu2jc4KcJlgOA1kckqC+eXiJDMSp
-	 420nT1Yml6nn9Qt+LGAVx0cYNh8RV8O6EJ9H4nMd2NXAhqdmrqSCWsK8zUK0nDXpytiEg
-	 L8aWCsEb48khIYlGOU2DA2aeciKs/eU+W5GQaHxaA7km+IFsvUUQNydCH0sKWuw8wJvX8
-	 CGsBWCOFSAi3X2TCQFWKn99YRNoj7OvG40yXtkksJRFBf62RQXltUwoE7ffoMCwFqZQ==
+	bh=Wl+1Y8SscpZu5c/+A8SGiP7r5RTTmIzRVOYemhTE16s=;
+	b=etvLHYafJYIgzu7KGAJOkeI72IG0hlZWXWOutvgU3/vAbEZu41bOt17GZqky/iXKses9
+	 vLxwZsdXB2sYi1vNlo0Ht7tgg2rg3x7hC+zUeIjgAwwCZfDYaXxvFXdL1lDJA8TsXBiAG
+	 uKu/kMH9Wbz3vm2d2bHOEzFiqKcQpgE3kyg2v1RX2a4jscCIbXvCXEEWRJKJQtDGAFZGk
+	 otaF3sGUh23tysYDlEoa+6JvwG/6s/HVjEox1v0YWfmZvmoNE+qdYaRXJgBItES/aJsMA
+	 nV6RMo6KSLamGMj5JhswOG+vTSqbTciQk8VjiVSnByS14OzKipkqXkA1IYOWEfYn7ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=j4zY14Ej;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=kPZ0LKFM;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E781606A325
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 09:31:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9E781606A325
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE4B606A33B
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 09:32:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9FE4B606A33B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=j4zY14Ej
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=kPZ0LKFM
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=OCf7
-	5Fx8Ai6t0lF3SSBe/SqcSWFA8siREMgmIjNPvtw=; b=j4zY14Ejcq6UA7scHG1f
-	sESzw7YadTEDxETZXBudXGp9uvTVn7bd9oesG+nqEtKkcIXrpmgpvGqxIiwLPnFC
-	s7ZstBwtDTAbU9VCDYsuXdc9SDXSe8sCzGmAiVRi0Hw7Hw+Li+w7dAtgueHMNtFj
-	XNMnBbkGXftLrqlVwtMxjnKoWfmnZSmZZ/pDRvrYH11QCfNAIZCJBuiJ8hoalwhN
-	70LDwn9iZEnqgohgMGBl9FVpJptbRSd6KEA4/c0yQYhWBQy27Af/deQwdMabAE1N
-	ewpV+My+wK4S4K9rMKGuzKIr5QfY2bV/kKFdq5tNkGpDKiAlD9jJun26nbDYcZ1z
-	PA==
-Received: (qmail 1416495 invoked from network); 20 Nov 2026 10:31:01 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 10:31:01 +0100
-X-UD-Smtp-Session: l3s3148p1@fT0E57FgbpsujnuU
-Date: Fri, 20 Nov 2026 10:30:59 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Wl+1
+	Y8SscpZu5c/+A8SGiP7r5RTTmIzRVOYemhTE16s=; b=kPZ0LKFMaWfHPifU/dVu
+	TJNP7mHIWypkmCCedPnNOz/ifdUipTy/3tXcXyLNlNmgqUBIpk2CGdos2ejOlBOM
+	f6GNsB9tggi6IfuaMWWrTuQpakEuiZxTK+3wnAss35LtptnBPq9+k6IUmYnRSkTG
+	grnoZZle0gvFHBIs/szATkBReI+ypE+6F5NB8ktO4V13txFmkrQ0SwOdtTuOx8Jh
+	CPKnAc51CMRLpwQHa2eAvOD9k3/5AfFixDpAQCnF89I60vL84/ouxK95+iZBDpBS
+	diUZScPReLqoC3+aknLHMej6XZWnWKz8jTDavjV+xUxOoxZiFrRo5yC9cdL62FIp
+	+g==
+Received: (qmail 1417033 invoked from network); 20 Nov 2026 10:32:27 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 10:32:27 +0100
+X-UD-Smtp-Session: l3s3148p1@YeMm7LFgsrcujnuU
+Date: Fri, 20 Nov 2026 10:32:25 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: khendry@reliablecontrols.com
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -71,10 +71,11 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
-Message-ID: <awATU_lyjPBxThwq@shikoro>
+Subject: Re: [PATCH 3/6] ARM: dts: renesas: r9a06g032: Add #reset-cells to
+ system controller node
+Message-ID: <awATqUeXeKfiTEr7@shikoro>
 References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-3-feee2bb28bb4@reliablecontrols.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -85,90 +86,46 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wI2vg4tZYniA4rpi"
+	protocol="application/pgp-signature"; boundary="tO7PsHmg5vUk1tXy"
 Content-Disposition: inline
-In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+In-Reply-To: <20261119-rzn1-miic-resets-v1-3-feee2bb28bb4@reliablecontrols.com>
 
---wI2vg4tZYniA4rpi
+--tO7PsHmg5vUk1tXy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 19, 2026 at 09:57:44AM -0800, Kyle Hendry via B4 Relay wrote:
+On Thu, Nov 19, 2026 at 09:57:45AM -0800, Kyle Hendry via B4 Relay wrote:
 > From: Kyle Hendry <khendry@reliablecontrols.com>
 >=20
-> The rzn1 system controller has two resets that need to be cleared for the
-> mii converter to work. They are not directly associated with any clocks
-> so they need a reset controller to set them.
->=20
-> They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
->=20
-> Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
-> Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
->=20
-> Add a reset controller and add resets for those bits.
+> Update the rzn1 system controller node with cells for the reset controller
 >=20
 > Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 
-General approach looks good to me, just some minor comments...
+I'll leave the final decision for Geert, but I think this can be merged
+with patch 6. But in general:
 
-> +static const struct regbit r9a06g032_resets[] =3D {
-> +	RB(0x188, 3),
-> +	RB(0x188, 4),
-> +};
-
-Please add the DT name of the reset as a comment after each line.
-
- +	RB(0x188, 3),	/* RST_TS */
-
-or similar.
-
-> +static int r9a06g032_reset_set(struct reset_controller_dev *rcdev,
-> +				  const char *func, bool set, unsigned long id)
-> +{
-
-*func was likely debug help and is unused now and can go.
-
-> +	struct r9a06g032_priv *priv =3D rcdev_to_priv(rcdev);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +	clk_rdesc_set(priv, r9a06g032_resets[id], set);
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int r9a06g032_reset(struct reset_controller_dev *rcdev,
-> +			  unsigned long id)
-> +{
-> +	r9a06g032_reset_set(rcdev, "reset", true, id);
-> +	udelay(5);
-
-For future reference, please add a comment pointing to chapter in the
-docs where it is saying 5us is needed.
-
-Rest looks good!
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---wI2vg4tZYniA4rpi
+--tO7PsHmg5vUk1tXy
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsAE1MACgkQFA3kzBSg
-KbY8qBAAqsju+kzP2C7aoqbzO/2VbVOoegIp6nxG4ePZzZi7fWZwQQ2my2PZX8sJ
-Fv6oyXmr2Jh0iG+CBCfQTRRa34ya9bPAQv+wUspgT/B0TPGRxhuQ8jP1LUzfBidR
-ypH4KLVRvDAJMsKK9rdD2i4yI/3xqNpI0km+15IkqriDMXxU3J3fyWGTxCETKB8v
-KGT2dVv/GDC57K5DY5DCP8rczMcIBhFQgV07CJmrDo2w5Ze8dMABgqm3xe8SzDYU
-yVRl0Ccv2fLJpPmccasQzgg1aJi8KIbDAIVSTvMRVoZhiLRSOzUYQfuYJRpkMM6n
-OyYKl0mDwnJyeIJs8qGjEXl0w2osrHSKMdi7ItK/ndH3l/s2h3mK7KuTPWwg7aJW
-GuFgkcF1sbAS5EZN+Bv1nKPXFEEpgSWz1Kvwb3Yshn0PaGWP59NNq68u1oPzYrXc
-00HOP2cPycotBuSjW5YJm3F72vbRDV3uOX/+RcAyNj59elduY2oNFIYlYPDXDS+E
-8Zkcn9m5vGhJXyy8Qg2ysoc287fsThgO4EVyB4lYn4JmRW/1X4L4b7Zx9Lz5rK7M
-f2mrPxtHz1DpLc5bcIPfwlDr2zEgyeJKpNRmRwj4Q+DQRGFXL9pGSVCrvb9/e/9j
-sB6P90kZ2406EN8+l5Tf6AKtRh3gynP4vZpZ3ilJUpNcdsUFevg=
-=CdDX
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsAE6kACgkQFA3kzBSg
+KbYHmQ//Y9yJPTxYFP3eZThxeShEaRY1gN9JF9+fsHlS4f68NrnD+ZoqB+MSggDt
+WmHizS0YVZ6+5OcWSPmVWn4aNnXbrXFeCDSNQgIFmjQBwcvA+1uaI8rc7Ul4kAhH
+VS2Z0tdur0JMIGv5C5r20jw/4AwfDLMOrui++tjwvf9yXH7kwIRlFKzQuEz+bM8D
+b4yuwxMNe4gClr/ava4ydeaunSjwP16Y6BAQUVv9sUuwp6jto+6NOKCe+a40n5Mq
+XoaCKUcHmwkic9+GeX69q3Hn/eBR0+Pe3ESiLvnm+pElticVOd4oUVJbNMthWeqa
+fIdIpUDZN5V0AoJ6Sr0HTGoKzAPRtFo0QuWrarhUJ7HZIqx4eqEnmkUAFiwx6wjj
+GIO89J+jfg5CghQ1vfIbvODH2+XwoPbHKbgCX21tf0xTVp+GA7Zf6DdOHlhz3oPR
+VMcpZi+y7mkxNv104VmDyVmqunHr7ZU+UgIBsfvakdjsFRdqoK69se9o88wRHQH3
+DNNmqKjydp/Rru6DsoXZ9kWlpYyl5lKPvn8qBGuyQ84PSKmEeNDGflfqv3mGKW34
+PryStiAR9UV8IO+MJXH+U0qWQVYKyXGFXFWI7qcx3YhaG9gyiTLig3/fzFKmyNFY
+j7PF+L1bbq7gHKaN5CG0N6zk3uAFgzKBzfHNhydRzY+0r+Vj5dA=
+=nOOC
 -----END PGP SIGNATURE-----
 
---wI2vg4tZYniA4rpi--
+--tO7PsHmg5vUk1tXy--
