@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795134374;
-	b=s5Y98GAKD7EGJXIxcDfm8htLASDLouBQxjkw9lwULL5iRej/ro1f3wtMmYLo+qxvbIqY
-	 ILgnqR6ouZMOMMjhLO8DMmBCpF+McT5T65yqQVaYJepIMByD/WfnbPv5yGTQ10iTQzFY8
-	 BQzjZp2Qt1OZLnFoCljVzJP8RPunB5vPUV6wDTc7EWXb28U/LNEu5n5ygk6I4jX5o55Yh
-	 XmZVyFDYIlbDR0A2edgY0LHnnYNscHT5HuqLssnWB4OKnU4vIvzHxmDj24JeMVgVZTWqR
-	 INvqD+b8Tdkytq6ug37aFWbRm1vY+63nBGP798iEw/9tdCvIb/Iwqni35AtgpvKUc1w==
+	b=3q6IFD65/rVplENKOqjPaBnsg9QyGsSe8FkAUsdgRyGek+ULRy0aNEtdfALxbBgv8G4b
+	 ugeToDntHjy7khQJSFfVFXw3dfOqDLZG5T+EkFlA9eXTz0K8KtFcmQ9+ORRTOp7vGOFvu
+	 0bWHWbABrMD1bBEtODKczzS7MX+BrnVxxtprVyaf15szRFHkrcgIpn/7dLP28yBubz7+Q
+	 ibJ2GcujEHd1BjHj57B+oQ5auvMeOZyJWt6OhSb0VgdmNDQ8TZ987eZNnTZtI4pDC7zUL
+	 lgN60MsR967n1Mml1kHwjhBwLRMgYyWzWyksl/3P6NLCJ9CHzav8/t48qUVlqDh0tYg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795134374;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=mOagZS7KAFKo44G+tzdlLS8PcffQ89K8YxtJsO34uKo=;
-	b=UCXY9oDg+9w28RZd7+MNMc/UTjFOjqcjrYyMwrVi4VfsvoVSicFZ/5WmXFl//GJrmpB1
-	 AUxnIAHMNfJUzLcaoB7ttevTZVh8eWkXdcbnFTua3CPw7+slysn3Fd0WBk9ukFjd3j+ir
-	 MKQIdCqi3s82kx+nfuMplSmlcR6EIJBeBAdrPHMt8cgD7AtOH117W/fmVZhr/Mut230vF
-	 NBpZBmRomNICXRZBhUhkWJV8y2GW9ykOHB5DmRLH1yRjZ2KshqbY5IxG4vDaUPmOGVv0i
-	 mQsJYJYX8vuiKonJkvYK8bWV9AK2RivZm/3mIwQmPtf4J7HE8lEU2Cd0lg7Oct0gCMQ==
+	bh=2HI2zoBly3+pjWajoQlzGpQeohSyK8NQtkZ3jxbEecU=;
+	b=I+pD+xdEeIvStYcspGHoeSUURV3bkF2P8KciNwogcwf1Xdfn4ivaMjVABPYEbLNX1QRi
+	 SuhBUPm/L6FhMj1GksV+q4Q4LdG998daMiyQXv1ENewPPf+GiU/DBKnGmOPyYivhnLpcj
+	 jI3pBcva8GA72BOT0+JKkuoJpBUefbJtGbrd8AqdLJafvvA/riW4zUCefFZzH7K9PrjVx
+	 SYfuKnaM0bkUCVLXp6KdZ7yMJV8HApzWT5y0Dp03lGX4GAPtv2OvxDTd+vaoLtJxxtqaT
+	 WLWNlbcumx/kJDk0t7xN0OrxkFxytM3puTCrir7TmSrGbEqjRkh44+k2ZgfO77At3SA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xLHktkA4;
-	arc=none smtp.remote-ip=209.85.221.49
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TbnpkyVH;
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE051606A33A
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 00:26:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE051606A33A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6195260A260B
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 00:26:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6195260A260B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xLHktkA4
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-491846221ffso216791f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 16:26:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TbnpkyVH
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4bb72b44a97so2375455e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 16:26:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795134372; x=1795739172; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795134373; x=1795739173; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=mOagZS7KAFKo44G+tzdlLS8PcffQ89K8YxtJsO34uKo=;
-        b=xLHktkA4z+MREgOPIaJJMK0ppf56iAg34EROcEYPZDErtMcoCLZkusRo25bs7Lcfzg
-         AND9tJqUhGMi1CJH/aTmGB13Ix04icIlcBBz+TKYY6BRVlaSXWhFvk03Yw6qe+iF531D
-         f4joEXAW4puPL/fEhrAguYdMn4IZFPA50T3RxViYAH7YP0EI+8yQCacN1fakcOgGk4lb
-         /fqPdXMW7/ZC5tG03rW3bxiVhnfa1lpsTRKW0CBwtyqCVIkTNcLEq3Eg8x7q/o3++sB5
-         HMW2g9Q6Gk/PgnHsmmshl1rXa+fPuIqpU7Qlh6NdKquvv2yYPE5oyo8K3xV0s4vzn0Q1
-         Ro1w==
+        bh=2HI2zoBly3+pjWajoQlzGpQeohSyK8NQtkZ3jxbEecU=;
+        b=TbnpkyVH+yhTrKOHjWx/7zpM/66j2jIRzeSvBMJR+qCh6qNpfVPHDkV3ya7jF78JaM
+         YPZZVeawh3qS2OBUVieNI3wwKxN5RGICbyG++1DUKKhsLzrs1YkHhqnNnqfJaoMdjpFx
+         IClVzRMM8NUUg0HKQh0vXIF7rkWwSOVonKyLsr219Q7IYmV5/ONWmyhcdW8tFUlzG5kr
+         E7jPN7CQXMLSQbuiw+ifctWcvpa7bQ9mSycRILdAZg3g5xG6EduSDZtfHIiA2KYxpr/E
+         DKx2Er5qb5jYmfCpOY1Reou/72dMQFpmG41Cg76BEZPkSvCHJQMDimpVsbAdSWn2Hk6R
+         9Vog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795134372; x=1795739172;
+        d=1e100.net; s=20260707; t=1795134373; x=1795739173;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=mOagZS7KAFKo44G+tzdlLS8PcffQ89K8YxtJsO34uKo=;
-        b=dEhiC6oNFXR56tEy9VV1kGeFx59Xyw4fQ6dx/C2i1flrNDXgpiccdIWr1iFsYtL70W
-         1bbg+qbc57kN+dCd+JXSbyLzK0VK6r7JHKN5GyZzjUrNKTcCtJz9ytTewRtMJir7ZI8A
-         NupyMTVyouKRCMDRiYUsNRbpkO+kioQwWnUwpLihVsHdI+o7Qqk0BIyHwxeXnu+A7fNs
-         YTajOQ2GFMnd9hX0JuJkolFnV6ntxxuN1gxNI/M8XVtUohaeI2UhUUf8IEtsv+lS2I2D
-         noYTdWuSnBhi9ks/5rayueo148sS1eg5kjiuoXvSR0k8GA/of+u+jTeaF1OU+LBC5zaH
-         bZ+w==
-X-Forwarded-Encrypted: i=1; AL+hErFTCx6XifBvWV5ZOdbUjDPAYx/9g6KRkbKrsEAbv1itlbmlPThaYwvOnGMeHB6uq9ZNPOQJIXs9vzqLAIfYvStGxg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/7s2N+iW5pc2RawS/RO+1jNx1Vgu+19lc2/eLoV38M2kz4kmMO
-	PuuKRjUyHsR5KeDDkmHHg/wVAG8rBw3Wxw6gfg/Vh2Feyq1XrQ1Zxep3
-X-Gm-Gg: AZFdTZfH+Ki+HcUE/7B15rsgxpCIyCnK0ReyfxbF1O1kB7sJAQeLMiEbBcisuZPcl67
-	AS3I6bhOeCpkF36oyUmOXqO/gIMfqLfCcKNW+YOzY800SBZfUj6M9GcviwZjVTRVvd1LWL/uKNR
-	OYscoiFFLyv8ofZe/709XrB7i9P5nv+eBNLZmPsINTk25vY+LJ0C0721yfO2EVZrIGtR25x/EM9
-	bCjKPYGJeXbH0bgxNvfyVPyekcPVuPaUOLtnRgamuDdp5RNwoxnkIjEUurd/AtC2nh72FGLoara
-	/gpiHspq9b8LP+O6gwN97XRiD58YalMz3TWv8DkXzNm7xv1549d3o//QYwMRJOO2R2duePkEbW1
-	wr7npeoW/DzCAWq4UZamut7AVALJWOElRGG7yyLr6gio99fYj+bECBFZdUBrGrSqw534ykj6/La
-	YlmtTdpksxSMFjDUJUiv+WDmt81hi5ya8leClbSCQajM5tsv5EbnPU6nUUYOZERJljd69bpPRFj
-	2Th2Udas1pMFS1pYSbT5+YDox6K3IyqXi1vU2LvOaAZTccuWLHTlV9/FZaN8Hi5VFvaGdEIzu+K
-	V+Tn0ijN2D0POxRhmuz6bpRFLjkdMwzVmNwtQapxJsR3EC0nkv5Q1ylnvmtuiHh8EL9faCpIDdu
-	9OsyZZhA/0U2IigzOmR19/IGY7c02Cx5oZt2qaVWe9fwizHieW7QhnNCskr5pU4Cf3IcMwxfp
-X-Received: by 2002:a05:6000:2506:b0:48d:ba3b:af36 with SMTP id ffacd0b85a97d-4abb47b0f64mr2492662f8f.37.1795134371827;
-        Thu, 19 Nov 2026 16:26:11 -0800 (PST)
+        bh=2HI2zoBly3+pjWajoQlzGpQeohSyK8NQtkZ3jxbEecU=;
+        b=NtHAncawUf0v3C0xPf+B6MV4coW5+SMuy7HM+YG9/ZQQmm/w4eTRcCTzKZsC1kdq2l
+         /VifdT7bDcpEKxklXtXpzafLg17MQtLODlCaytSmz5ZYvDuxuhW1D8yuezYsZGCOS8i4
+         86d0x4a5kDhD1px0LtzGhCf+FUl8ngeUKrghi74f0StYJ9cilH1mA9EXHO4uvBz91/6N
+         jjWJ6krnaZJiWt8W8C9OyNLWn0C/QZPJ4qPZdopBdFcm6rmm+8w7jLGXVjKitR/ZwhtE
+         uzEaVgAgK2Lg9wYUcXqpQZrZJ5/PgCJvTbxPo09aOgtW5z20gzfp6xSFKMrHcOuYfds+
+         mULg==
+X-Forwarded-Encrypted: i=1; AL+hErGSEksMrzRanK966uhu5xJAllDBdWZ9jrdJ/6il12CES0OT6B9INlqQmNzxfAQTESJF0sYGHrBHY2HaMyGCdd9zGQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+v9a3HeRsvqx3D7MWs8ZEXBWQLCmX4BDBI7bQ146gn2nFYUhgB
+	6ro+gsiOS/TR7xEMsv17spV6fdbREfFSKqRfa920W+58BFoG+VvasOpB
+X-Gm-Gg: AYBFou3EPCn/kBK+ylX8aYllUYq6PoVW9yC0XuU/+tRghzpa446bTbQ3LQNeM4LBq0J
+	uVfd9WOybH8CQ5lDzSThWnV/ppMZ1zjBCjSBs93Rw71NylV/D7Cipw6VGfSCPGDfg0Bv+xxC6p8
+	4bujjjldDIEWpkos+BC//+FXqawVECaO0c38zyXaAWqabuYNQdMasExLXbcGZXCrjcEZsZT84of
+	vW0VdI2AzrmtALh8ItcRvU8c592FFPLu9taEo92gmcBqFn/SLuZr1ctw5T+7CF75AcO6mWpjjZm
+	fcRjTbzNwFVIRq3H7/yNK2Ah0HfUZ7rlVGkQQHsu926jtCOvpK7P72IMAJJjxH9Ks79KV/gMHxy
+	5WDk9y0KZdQFw6qTw4R5+qHNcMxmmWlKVm7C7IjBcO2w/DbLvWciBPRM/tRQWtXVAb0BddiJUim
+	0+6wf046MQSKcI0/WiaRs24S6TCU+b5wTTWJPZTVpQ02r/NH/N5AtmOhGgUTrCTo4a9ggjHYNaw
+	fmMy5VsY7K3uMBHi4sTorSMgQ5ntrQyIaOFmim6mQJSYc7GMdev92S6bZ2IdhCCwOB9uIIjv6UY
+	DrqeQCuWfLnTvdW2DW5ljww7GeV6KfSvu3avqMWpBO5dssfjQ/UmbhyS+mObMYPg0VPCKzWur1Q
+	i374Drd8XTMEbVFIxjLWFaZCSJQE7xy0j8hvK8qsVIn7DcKH4/VcGj1oCkeP9wXlZmy6TPxgg
+X-Received: by 2002:a05:600c:4e0b:b0:4bb:68f1:5bc0 with SMTP id 5b1f17b1804b1-4bb88920967mr26725725e9.33.1795134372763;
+        Thu, 19 Nov 2026 16:26:12 -0800 (PST)
 Received: from iku.lan ([2a00:23c8:254f:fd01:c5c5:590b:f4b8:3e])
         by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6c340df4sm2629998f8f.55.2026.11.19.16.26.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 16:26:11 -0800 (PST)
+        Thu, 19 Nov 2026 16:26:12 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@linux.dev>,
@@ -106,9 +106,9 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v5 20/24] net: dsa: rzn1-a5psw: Get lookup table size from OF data
-Date: Fri, 20 Nov 2026 00:25:30 +0000
-Message-ID: <20261120002549.1908299-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v5 21/24] net: dsa: rzn1-a5psw: Update CPU port comment for RZ/T2H
+Date: Fri, 20 Nov 2026 00:25:31 +0000
+Message-ID: <20261120002549.1908299-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -125,109 +125,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The RZ/N1 A5PSW has 8192 lookup table entries, whereas the RZ/T2H
-and RZ/N2H ETHSW have only 4096 entries.
-
-Add the lookup table size to struct a5psw_of_data, derive the address
-mask from it and use it in the FDB and ageing code.
+The comment in a5psw_phylink_get_caps() states that GMAC2 is connected
+to the switch management port. This is only true on RZ/N1. On RZ/T2H
+and RZ/N2H, the conduit is GMAC0. Update the comment accordingly.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v4->v5:
 - New patch
 ---
- drivers/net/dsa/rzn1_a5psw.c | 10 ++++++----
- drivers/net/dsa/rzn1_a5psw.h |  4 ++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/dsa/rzn1_a5psw.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-index 7e9bc252d92a..c0c1f45852da 100644
+index c0c1f45852da..751d03b0bde4 100644
 --- a/drivers/net/dsa/rzn1_a5psw.c
 +++ b/drivers/net/dsa/rzn1_a5psw.c
-@@ -311,18 +311,19 @@ static void a5psw_phylink_mac_link_up(struct phylink_config *config,
- static int a5psw_set_ageing_time(struct dsa_switch *ds, unsigned int msecs)
- {
- 	struct a5psw *a5psw = ds->priv;
-+	unsigned int entries = a5psw->of_data->lk_table_entries;
- 	unsigned long rate;
- 	u64 max, tmp;
- 	u32 agetime;
+@@ -237,8 +237,9 @@ static void a5psw_phylink_get_caps(struct dsa_switch *ds, int port,
+ 	config->mac_capabilities = MAC_1000FD;
  
- 	rate = clk_get_rate(a5psw->clk);
--	max = div64_ul(((u64)A5PSW_LK_AGETIME_MASK * A5PSW_TABLE_ENTRIES * 1024),
-+	max = div64_ul(((u64)A5PSW_LK_AGETIME_MASK * entries * 1024),
- 		       rate) * 1000;
- 	if (msecs > max)
- 		return -EINVAL;
- 
- 	tmp = div_u64(rate, MSEC_PER_SEC);
--	agetime = div_u64(msecs * tmp, 1024 * A5PSW_TABLE_ENTRIES);
-+	agetime = div_u64(msecs * tmp, 1024 * entries);
- 
- 	a5psw_reg_writel(a5psw, A5PSW_LK_AGETIME, agetime);
- 
-@@ -511,7 +512,7 @@ static int a5psw_lk_execute_lookup(struct a5psw *a5psw, union lk_data *lk_data,
- 	if (ret)
- 		return ret;
- 
--	*entry = ctrl & A5PSW_LK_ADDR_CTRL_ADDRESS;
-+	*entry = ctrl & (a5psw->of_data->lk_table_entries - 1);
- 
- 	return 0;
- }
-@@ -638,7 +639,7 @@ static int a5psw_port_fdb_dump(struct dsa_switch *ds, int port,
- 
- 	mutex_lock(&a5psw->lk_lock);
- 
--	for (i = 0; i < A5PSW_TABLE_ENTRIES; i++) {
-+	for (i = 0; i < a5psw->of_data->lk_table_entries; i++) {
- 		reg = A5PSW_LK_ADDR_CTRL_READ | A5PSW_LK_ADDR_CTRL_WAIT | i;
- 
- 		ret = a5psw_lk_execute_ctrl(a5psw, &reg);
-@@ -1357,6 +1358,7 @@ static const struct a5psw_of_data rzn1_of_data = {
- 	.pattern_ctrl_base = 0x3eb0,
- 	.vlan_res_vlanid = GENMASK(16, 5),
- 	.vlan_res_portmask = GENMASK(4, 0),
-+	.lk_table_entries = 8192,
- };
- 
- static const struct of_device_id a5psw_of_mtable[] = {
-diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
-index 29d205e2331d..fd523fe7bf47 100644
---- a/drivers/net/dsa/rzn1_a5psw.h
-+++ b/drivers/net/dsa/rzn1_a5psw.h
-@@ -93,7 +93,6 @@
- #define A5PSW_LK_ADDR_CTRL_WAIT		BIT(27)
- #define A5PSW_LK_ADDR_CTRL_READ		BIT(26)
- #define A5PSW_LK_ADDR_CTRL_WRITE	BIT(25)
--#define A5PSW_LK_ADDR_CTRL_ADDRESS	GENMASK(12, 0)
- 
- #define A5PSW_LK_DATA_LO		0x40C
- #define A5PSW_LK_DATA_HI		0x410
-@@ -210,7 +209,6 @@
- 
- #define A5PSW_LK_BUSY_USEC_POLL		10
- #define A5PSW_CTRL_TIMEOUT		1000
--#define A5PSW_TABLE_ENTRIES		8192
- 
- struct fdb_entry {
- 	u8 mac[ETH_ALEN];
-@@ -241,6 +239,7 @@ union lk_data {
-  * @pattern_ctrl_base: Offset of the PATTERN_CTRL register of pattern 0
-  * @vlan_res_vlanid: VLANID field mask of the VLAN_RES registers
-  * @vlan_res_portmask: PORTMASK field mask of the VLAN_RES registers
-+ * @lk_table_entries: Number of entries in the lookup table (power of 2)
-  */
- struct a5psw_of_data {
- 	unsigned int nports;
-@@ -252,6 +251,7 @@ struct a5psw_of_data {
- 	u16 pattern_ctrl_base;
- 	u32 vlan_res_vlanid;
- 	u32 vlan_res_portmask;
-+	unsigned int lk_table_entries;
- };
- 
- /**
+ 	if (dsa_is_cpu_port(ds, port)) {
+-		/* GMII is used internally and GMAC2 is connected to the switch
+-		 * using 1000Mbps Full-Duplex mode only (cf ethernet manual)
++		/* GMII is used internally and the conduit GMAC (GMAC2 on RZ/N1,
++		 * GMAC0 on RZ/T2H and RZ/N2H) is connected to the switch using
++		 * 1000Mbps Full-Duplex mode only (cf ethernet manual)
+ 		 */
+ 		__set_bit(PHY_INTERFACE_MODE_GMII, intf);
+ 	} else {
 -- 
 2.56.1
 
