@@ -1,69 +1,77 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795173603;
-	b=VG51awYS2KCteJW6Mncw4C0i6aaI8LgsJkU36a96BWDupEjE75yevU1cdsa7wYIYLsXy
-	 uyGFjZVS0KdfBZb+dUMBv7S99kJTG2W8WarzIiPIl7F6dKmiMp3rY+lnque/6wkI655Iw
-	 SoJfPh3UXtKO0p/HN1461Lg+90DiKp8YHTzw+4C4Elqr6pZbZAdcgKEFfGzb427EcROYy
-	 sVjfCNlr4Ky3jZ8rzbtkaTE7my7rYWAru8din9MI/uZfDwUWxcUkUlrKdpq+2dvzbKRiR
-	 Hn5mKpkz0D2i23KlIWfj9FUXIgyL25LttoUNi7euIC+3G7bft2Ne1PPSkjjjeaS0VMg==
+	t=1795175248;
+	b=lZdHqKLnAnPm+3YfXsOB6fYNXZzG8fNS6Fke7DN7Jm43ze3ASx92xb0GZ0zqM1vQliub
+	 oWngBWIhfyMFLZEcOO0CAlq753Ep3SLAwQcTq0Vql6QFLl/9873Zkj0BzVxcN7KbDI2ZY
+	 swsqN9xnmfycN16wNYdS9s+0783QtTv4RO0RM335jCD6P5L33X3RzaYqxxShiClQj3hmJ
+	 UNA7wCnpMqm+hELY/Dw4Q8iFxxRcjgacfZj7o6a9yXfP4WJr1oTyr614qjL9pwzrkY+og
+	 4LtZbzjUsOxAFaT7CXId8xm8u4VRV6TOkot3tEoP7XtO3k40e+0tTUlhzsuyX0G8ohA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795173603;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795175248;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=gNcTdMNoAR9gRnBMyvwag/gk0hbmSsrfzpvTTscVcK0=;
-	b=eitDUXUcqT8AYOCIzCkl2ODPom6MicmZBvji3gEDFDdkI5rZ+rc+B3LXFAGPI4qYsr0O
-	 ZtvY71S39QdT5573nkECfa7Dmi+TtAVE2+cX5ZfTpW+UqYReG7zskc9Uj5KixULmJshMP
-	 Ri6mAjDr+5yayHeWCQ+xI0rvo/v4lYTgTSrMgMIq6Zhub2/H11FCkjeKieEocUpISfa3b
-	 EeD39XbCjxc8WvICHRcfSI7ZnOet9/9Wp/PvpItDZ3ozG8tltilc5DOih/tZX/a1S1XX5
-	 CoBpH1nj3xqI1O6FLXFedm3eZ6PvHNeQU6XWPSGYLKCjGZH3wtOm8y6qUse2+MGjIoA==
+	 Content-Disposition:In-Reply-To;
+	bh=iyyk82KwD0gTHK6EesukEP1DVEZLAy4u41nZQjINL94=;
+	b=ROPYOEwZGkVVsJ9wijevFWovTm9vipwXotG74e4Vcaf/5ewMwKpR3S405ciRISrdgCcc
+	 QPxcCrtHUuKYr0GZYvf9fBmu2k2ruP2869NNhLtj2q+yIpN2G0O+bEholMLR/b6O9CI2b
+	 7vmHq4DK250i7aqgJ4ujoufLt5JVLstvBFr/femnfEDyB+V1VcetoyRHnBMpqDx8QtwF9
+	 L0wwdjRrmVxr44np+A0//2H39BESrUNJTBLQc6TbXyHSql7r9ao0laidjdMvyjIgME4fJ
+	 ck/DaAzutnqfO9xjN5iCt5e7gEWf/DqwL+mXj5kzYfzaqa1x99y230dZRBlYSjxEQxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=E+ipsy5D;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0389606A334
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0389606A334
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75875606A332
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:47:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 75875606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=E+ipsy5D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:content-transfer-encoding
-	:in-reply-to; s=k1; bh=gNcTdMNoAR9gRnBMyvwag/gk0hbmSsrfzpvTTscVc
-	K0=; b=E+ipsy5DZmgibyZ225i2A3KvSwW/6S+7BiOwIza4wDy0EmBBTwlFvne8c
-	11HxunERh+H4/RNSzt8/qjKoaLbDPg/GOu+ZxKITLLvN5HKoXautnO/01LUqAw6+
-	m3ZION2ymsLyN7itbb1yCzWvl56yFMvEMjN1e8pVDy3XZ7ijMm0yC95+cJk6IpDH
-	v8koSDGi8iWltrPLN/z9Y4mZvadswu2Bwm99szGZTw1Bsrg3ym+GMcq3gZ5bBlok
-	X6m/voWJpmaZlBjEmrtRfRyAfpCXCpsoD/XC50ZsSyiOXUY0nfNQMUAHUfJHyg7a
-	5EchhgxfJjSiSvhzZZaDEbXPL5z7A==
-Received: (qmail 1452867 invoked from network); 20 Nov 2026 12:19:59 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:19:59 +0100
-X-UD-Smtp-Session: l3s3148p1@PqSwbLNgduUujnuU
-Date: Fri, 20 Nov 2026 12:19:59 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=iyyk
+	82KwD0gTHK6EesukEP1DVEZLAy4u41nZQjINL94=; b=GiD6KoS3cmPa1hLcSgGg
+	v3rXdC4hqxx4lcmtFohEFZ82WB0mJn1C8BPAIK83TXXTwjD/0kSoTGS7dCIRncTA
+	vl9D37TI1R7DXDSQ4HG4BgkGpWCj1a9t8ivFrAB9IBfQv8oWp7XjQnlG1YcfZIsm
+	cT++Szewq/WJE/NwnfC69Qo3kuguYzAnIiZxw70arMz8AT2kjxj0qzIZtMK4YvqU
+	ro4PiOlX3hYF40O2A3NTM1z9W4E9ERqHZe3eMjUtjTpRvWNwInUbXwF4yMYGZ9H+
+	H7nWZQUWHwQwmoNMVKy6q4d0kOe12oXHaTvavqu9+c8S6XrzHgcSWYrI+wI4HOvQ
+	3g==
+Received: (qmail 1461023 invoked from network); 20 Nov 2026 12:47:19 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:47:19 +0100
+X-UD-Smtp-Session: l3s3148p1@CWpszrNgLOwujnuU
+Date: Fri, 20 Nov 2026 12:47:18 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Paul Louvel <paul.louvel@bootlin.com>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+To: khendry@reliablecontrols.com
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-edac@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: Re: [PATCH v8 2/3] EDAC/cadence: Add Cadence DDR EDAC driver
-Message-ID: <awAs386mgR23nmJ2@ninjato>
-References: <20261118-paul-v7-3-rc1-edac-v8-0-ed791084cc19@bootlin.com>
- <20261118-paul-v7-3-rc1-edac-v8-2-ed791084cc19@bootlin.com>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+Message-ID: <awAzRgXaPNHcUC2G@ninjato>
+References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -73,122 +81,14 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261118-paul-v7-3-rc1-edac-v8-2-ed791084cc19@bootlin.com>
+In-Reply-To: <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
 
-Hi Paul,
 
-could you comment on these, please?
+>  struct r9a06g032_priv {
+>  	struct clk_onecell_data data;
+>  	spinlock_t lock; /* protects concurrent access to gates */
 
-Happy hacking,
+Build error :( No addition of 'rcdev' to priv data!
 
-   Wolfram
-
-> Thank you for your contribution! Sashiko AI review found 2 potential
-> issues to consider:
-> - [Medium] EDAC/cadence: cdns_setup_mc() reports SECDED mode when ECC is
->   disabled
-> - [Medium] EDAC/cadence: missing memory base PFN offset in
->   cdns_mc_err_handler()
-> --
-> 
-> commit 75a0021a276efa3f6b0c9a800bd2617eb0141dff
-> Author: Paul Louvel <paul.louvel@bootlin.com>
-> 
-> EDAC/cadence: Add Cadence DDR EDAC driver
-> 
-> This commit adds an EDAC driver for the Cadence DDR memory controller on
-> Renesas RZ/N1x SoCs, supporting SECDED error reporting, software
-> scrubbing, and debugfs error injection.
-> 
-> > diff --git a/drivers/edac/cadence_edac.c b/drivers/edac/cadence_edac.c
-> > new file mode 100644
-> > index 0000000000000..a3b72116ba129
-> > --- /dev/null
-> > +++ b/drivers/edac/cadence_edac.c
-> [ ... ]
-> > +static irqreturn_t cdns_mc_err_handler(int irq, void *dev_id)
-> > +{
-> > +	struct mem_ctl_info *mci = dev_id;
-> > +	struct mc_priv *priv = mci->pvt_info;
-> > +	u32 status, err_addr, syndrome, reg;
-> > +
-> > +	status = readl(priv->io_base + CDNS_ECC_INT_STAT);
-> > +	if (!status)
-> > +		return IRQ_NONE;
-> > +
-> > +	/*
-> > +	 * Hardware is not exposing how many CE / UE occurred since last ACK in
-> > +	 * case of multiple errors. Always set the error count to 1.
-> > +	 */
-> > +
-> > +	if (status & (CDNS_ECC_INT_STAT_UE | CDNS_ECC_INT_STAT_MULTIPLE_UE)) {
-> > +		reg = readl(priv->io_base + CDNS_ECC_U_ERR_STAT);
-> > +		syndrome = CDNS_ECC_ERR_STAT_GET_SYNDROME(reg);
-> > +
-> > +		err_addr = readl(priv->io_base + CDNS_ECC_U_ERR_ADDR);
-> > +
-> > +		edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci, 1, err_addr >> PAGE_SHIFT,
-> > +				     err_addr & ~PAGE_MASK, syndrome, 0, 0, -1, mci->ctl_name, "");
-> > +	}
-> > +
-> > +	if (status & (CDNS_ECC_INT_STAT_CE | CDNS_ECC_INT_STAT_MULTIPLE_CE)) {
-> > +		reg = readl(priv->io_base + CDNS_ECC_C_ERR_STAT);
-> > +		syndrome = CDNS_ECC_ERR_STAT_GET_SYNDROME(reg);
-> > +
-> > +		err_addr = readl(priv->io_base + CDNS_ECC_C_ERR_ADDR);
-> > +
-> > +		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, 1, err_addr >> PAGE_SHIFT,
-> > +				     err_addr & ~PAGE_MASK, syndrome, 0, 0, -1, mci->ctl_name, "");
-> > +	}
-> 
-> [Severity: Medium]
-> Does passing err_addr >> PAGE_SHIFT directly to edac_mc_handle_error()
-> miss the physical memory base offset?
-> 
-> On Renesas RZ/N1 (r9a06g032), system DDR starts at physical address
-> 0x80000000, while the Cadence/Denali controller logs 0-based DRAM offsets
-> in CDNS_ECC_U_ERR_ADDR and CDNS_ECC_C_ERR_ADDR.  cdns_setup_mc() fetches
-> the /memory resource into res and enables SCRUB_SW_SRC, but discards
-> res.start and leaves mci->ctl_page_to_phys unset.  Without adding
-> PHYS_PFN(res.start), edac_mc_handle_error() reports a 0-based PFN and
-> edac_mc_scrub_block() fails pfn_valid(), silently skipping software ECC
-> scrubbing.
-> 
-> [ ... ]
-> > +	reg = readl(priv->io_base + CDNS_ECC_STAT);
-> > +	if (!CDNS_ECC_STAT_IS_ENABLED(reg))
-> > +		mci->edac_cap = EDAC_FLAG_NONE;
-> > +	else
-> > +		mci->edac_cap = EDAC_FLAG_SECDED;
-> > +
-> > +	mci->mtype_cap = MEM_FLAG_DDR2 | MEM_FLAG_DDR3;
-> > +	mci->edac_ctl_cap = EDAC_FLAG_NONE | EDAC_FLAG_SECDED;
-> > +	mci->mod_name = pdev->dev.driver->name;
-> > +	mci->ctl_name = "cdns-ddr-ctrl";
-> > +	mci->dev_name = dev_name(&pdev->dev);
-> > +	mci->scrub_mode = SCRUB_SW_SRC;
-> > +
-> > +	dimm = *mci->dimms;
-> > +	dimm->nr_pages = PFN_UP(mem_sz);
-> > +	dimm->grain = 4;
-> > +	dimm->edac_mode = EDAC_SECDED;
-> 
-> [Severity: Medium]
-> Should cdns_setup_mc() set dimm->edac_mode to EDAC_SECDED and continue
-> probing when CDNS_ECC_STAT_IS_ENABLED(reg) is false?
-> 
-> When the bootloader has not enabled ECC, mci->edac_cap is set to
-> EDAC_FLAG_NONE, but dimm->edac_mode is still hardcoded to EDAC_SECDED.
-> Because EDAC sysfs exposes dimm->edac_mode via dimm_edac_mode, userspace
-> monitoring tools will see SECDED reported as active while the driver also
-> requests the ECC interrupt, unmasks CDNS_ECC_INT_EDAC, and exposes debugfs
-> error injection on a controller with ECC disabled.  Failing probe with
-> -ENODEV (as documented in Kconfig that ECC must be configured by the
-> bootloader) or setting dimm->edac_mode = EDAC_NONE would avoid reporting
-> active ECC.
-> 
-> -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20261118-paul-v7-3-rc1-edac-v8-0-ed791084cc19@bootlin.com?part=2
