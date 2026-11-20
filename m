@@ -1,84 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795134361;
-	b=y4i5xLA3Ciw5gE74lpVpL85vmzLXzZNV1gky7RzMXxwVP9yzsvTlrq4DlD03C4Fnvtbg
-	 Jl+3ESJaBqGst2AUS5LWrDAiW9425lvb2NDIA2N/YPAC8R78CO5+niMEDFIe8cd6VWTpd
-	 A2b+uXM6lZWxQk0o08SNEZ2s7h17OQYO1gySw/taYK6PeY/9MNV2ryMO/I0VuKkHCH5EU
-	 icMdZhpn9F/sbkDEMB2bMIpt6BRYFkYbQk7yJxzuszfubIzZxQhfbnZMWpf749YwWufK8
-	 NBGKvNo7yHjOVGKZ/uffn+/mdEqlIQa55rw6aqQtJ9ADbC1EwS/z6gNu0I0DcpKOxQA==
+	t=1795134362;
+	b=qU83acYiNRgp33HcqHis9lusxTy1Mm5WupMjoY0DtACXTnS4xN6niOfu44XOWQ4ukq5D
+	 c6mmaJi0thG3dnifcQrz1b41upu7+RsTEoUJUJ5gf73o82hBayr7vb1/sCbvaBR8vMxLt
+	 o7Q01zgVkx2TBRvuCazr7Y7YlKvNncJ/Hb674hvQ3YL6lCN0TmgogIglopac9glETBmQ3
+	 a4RCeKvker14uE0xCdHSlL5FoxUi7nTBEM4i4dCCHyEKKxwLBOgLkkaiHL8b7jBswAL7v
+	 aHfs6ghHfJLPJt9cnoS9fNpO6lFX2zYsSM0m/0u8xj6hhllY5IuN2zfqYeUm59HH10g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795134361;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795134362;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=GGWXXbC2MXXklgsFeFJyGdh+7D3X93VCJjfHDj6ZHnQ=;
-	b=C/9QEbSiyspBJFF4f17KCwK+M5d9bzDFP/XnU+UWtNM4AU71atKwautF41a4eRlNpivW
-	 eO+NrzjQZuPO3Tpr+FX3Q3EJ2FeanCZYdM4x3ZGTfpw1eWo48f/N0cAB5+s9TPOHZcCEJ
-	 cV+T6x5r4jhRQqRNX4Gb6J6GK7AJKDsCsGsO3eaI7MpsCycTAZH3N8wN+uXB5vFX67D20
-	 oGTTPwdxd6vX2eHtsb3TKbMwgIVOqUTIXy3AzD+dXUAP/3R9mB2T2BKGHryuZQI8xNjfW
-	 ZLtKJw/iksPxacavHpWwHBBV2o7f4Q11TjA2IpPqwiZ9ZAuSKNzD9npfXKuq9dV42oQ==
+	bh=6w08ojKvpQJFXR8rAUWt6PkCv2RVjEVYZAF28er5FZo=;
+	b=VRWY8tu+2BdXMUS3LOdT1XYnVInlM3j8vjpS2bwMD22fAWswZxWgtdJnqM8IBMJQ4uGG
+	 yTmwdGll1Mqh/Cry394Woc9Pyi1HFTnR+rCCBqVbo1ydKhfSWL5aiJL5AOGMp0VBD6UVC
+	 3WzFNci9VwC99O56bLTi6DgC7wIX9HskfWzCv/XxRteaOY/cjmkP4R57Y0V1mjDvKK7H7
+	 a7O4H2Sfb2WfO0iGOd0lb3rA/778foNlZA9XsUzWLxCEdARjcD6P1RfPylUFoBeyVSaoP
+	 NVYWw1TPAx6Jma9oKgCJYmET5RrT9iimgVoV1QHoeL3s6baAgt/dyDlFm39+5FBjBkg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="yes96F/A";
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="O/p/TIxM";
+	arc=none smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DCF60A2605
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 00:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07DCF60A2605
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B2460A3808
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 00:26:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9B2460A3808
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yes96F/A
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4ac95761c85so2083605e9.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 16:26:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=O/p/TIxM
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4a68190a2a7so258831f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 16:26:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795134359; x=1795739159; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795134360; x=1795739160; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=GGWXXbC2MXXklgsFeFJyGdh+7D3X93VCJjfHDj6ZHnQ=;
-        b=yes96F/AWcke++2IhWE9S1GYVPvIXwQVG6b/67QK1Dtq+GI0p979xDnhwZF7MYRYUV
-         F7q/FAavAX5OEsE3akSi6OSoO4SdmRPvImkns6ZK7JPzMNEB1dQlC5DpaxOJRpwvD1sS
-         w0dE6AGEYfAtR38BmhAXGRLUrDNHUMYlP2vvUGXTTbybQr0+OFkG9w0Ym6aMxdLsrcpn
-         2u5vPd98/Vv4RylkQ5SrtWhMLkeWxSPadMS/W6Y10MMCkDCACELP6h78N0gRvO7v8J61
-         PfLMW3z/fv5y+pH/0AG36zPyG/bQXD854lXzXEksKn0NEg8DcbVEyBtjec+MKW4KYR4V
-         67xg==
+        bh=6w08ojKvpQJFXR8rAUWt6PkCv2RVjEVYZAF28er5FZo=;
+        b=O/p/TIxMNe1VZNL0tb69pZrpgTyXAasD93YyWm4O4g0OxXiQ3RSyP+C1k2XJcpnnWZ
+         57wQmpgoyFahDY7mHlhUmAqXIeRyltFF6XLfMNAnPR+Vs+7LdI/jtzJQztOHkRlITWbJ
+         VXgmmiEHRdCou5t1ST1xNBJxZk4gGYchsXSXvc9BAb7nbZLlZAC09xdqLBwWcpIoGE0Q
+         XzwajEO2ph+fICyEmYZsaln5bJzkr+Nu+MF/c54njKpwSNJ49uOl0yWg8s3box/C0mIY
+         bHPqK18hIDiiVTHrTtEo8IwXNQWgDXP7AOfifUyqRv4PPHPEY8AmczehAFIY67maiQFi
+         8cdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795134359; x=1795739159;
+        d=1e100.net; s=20260707; t=1795134360; x=1795739160;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GGWXXbC2MXXklgsFeFJyGdh+7D3X93VCJjfHDj6ZHnQ=;
-        b=Qg2H194nf8U+0x2dxoVfGSywzke/NOfc09tOFy23odO17Zcsn4MqanmFBAkQcjcX/z
-         oqxjT6xIzKMNIEWpuw+14rQ4ytf8ZwrlgUHsa5TcKcQhN4vvAzFG8gCmfzXE5h1zAXVD
-         nojKqONV8D0RY0JyfmO4Ri2FwlgKXa+jgVW7nIxOo9bdEvle8qRhcRpBwIPeE3xWKcbi
-         5GL68eT5bHGmRMs85QJVs0Ev5N0ENeT1dA2qjngkjogMGl2R7aEHnDdZzle05PRtZhU1
-         YG8XkQ9/kbz8Jukmxx0ZJymYN0usx6UdiDaYPX2n50XGJPaMjSMkpVlW9A78fyVFXpjY
-         DCZw==
-X-Forwarded-Encrypted: i=1; AL+hErFlRa95b4Kj5aPqbo/MmiCZHkg+M4DBn34NHxd8GP5WgGRhSeZopxI+Jxw9gpnYPRAVeCR/QIC7In3VzvjrERlVJA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/w9HD0GjzpNSenz4L8Flx1zJGWmsthIZNa8L2jR7sl5JxK3h7t
-	Br9eqW2YEOhzy8192J/drs0G670cxBOjDg0NzoI01qrK7yvQwNINn0GH
-X-Gm-Gg: AYBFou2rlTiqDa1Buj4e1Tzx+Wc19ak5QGFbez70Lb8bfNFCst77QfdssOmV4xXqJkw
-	uMoOBHxELSPH5qds+ny3cE+EDcXICnbr09iPJesEKpke/EbPuqXt/yEzvpRS39j+8TO65OtCGM+
-	qGGJGlBDoyRXfSWQ9A0exUdl/0DL0Vtl6GH1D4/d1UgdERPYVTqSavmmt4OtsZjBv99yzDXlYuq
-	RVs62kxSxQaUu9+JpZYI/+fkAW3DOsD8CVoDa6BRaKGKGFSkPZKJg2kzrTRWMl2GFoCABw/Z1jJ
-	/pQ9BcdBlNmWAZofHnhS86Nlm0hCCsvRMfhm8zAm6loLwwzZnUh1trUheMqYvI/46jRkcgYjk0P
-	HfMuBOnHtGVy753WXKO+qLxiu8lRo8H7X1fRal9jmkhPthO9NU4H7vVq92nLpFpqSjKVDY40asU
-	TZ42WLCZuZJRuUj+cntgqjQVpJQQXq0j/Yz13IYJSL8Jku614kRqhgNmTvgXTUOgO8ibabg2r/B
-	sgB8+NvtNNDypiTCVxw+Z6sARgPQjjbmZ4tBRzrjPLGscsvHiYkJkFzg3341eoAF6E8v1t3is6I
-	74w58i79dzQiDSD+dsIIqCCJe51xzctZjGkJCUJY6vuNQTdme/M9Ooix/dbyW05WODW2BjwU5Bs
-	Sze2GC/74Zpkwtgdg1BjQ8dTiw84Y492PC/N6zEoT7dOrh1hHJXaIUdtQ2bd+AqaSU5EWoUtV
-X-Received: by 2002:a05:600c:a085:b0:4bb:7bee:5496 with SMTP id 5b1f17b1804b1-4bb8880f04dmr31085375e9.13.1795134359239;
-        Thu, 19 Nov 2026 16:25:59 -0800 (PST)
+        bh=6w08ojKvpQJFXR8rAUWt6PkCv2RVjEVYZAF28er5FZo=;
+        b=NVFBLfHt1GY5INoGDHO4Ah3NyfmUFbX4pv9F3u0xV7RjTMxMvhxjC2EmNAKSAfuSbC
+         2h0xga47AsOGy4eVD6C8qhsLnQQrMQ8zw1fWRBBC9VoGsPpnJUxBYbxL6kbwehtIlneu
+         W2q+6mxPelZNaLZ5rC83ZSBhO71MgFg1EiMdzUSS2F9jpqvZTb2Gy9FI3NHmz8F/SEcY
+         UDgOIYzM5NhwVnrjl/yHz7AKOiG5qnvsuyNQ0bgYVmlwPtjF5OEBjd3RHDkhhJzyB2dT
+         kQfn1b4ByZTnWBmBPexv3pKjNCn5VCIMC4Npqe8/MYUCQp3Bng26wPWKmbhxNeSfYoyR
+         6Agg==
+X-Forwarded-Encrypted: i=1; AL+hErGeNlDJ997EGA/3O4vNSrCuhuvjgy4yrW7s/l1IBfJTyF+ROhADMb8mRaEOnKrh/iViWcYiHX9g3zkmX9OwXPrkug==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9392ndUUYTStD/8fnoN3oeXrFpB1UduMwN7vfP30beJCnTdihN
+	F5Gh0qVmGlEyqPYcuKV/BJNrjnCSdZrz0nVYaomzWd7j1++DuZqealpx
+X-Gm-Gg: AYBFou1Q+rNlGwDjLeolVem1NiMCS6HsbCn5/me8M9oS2f8JFEqa22ObY6kOdT2lNJv
+	XQ9YKSrCXl4SPHUS13PjXU5qGaoFvn88Sah3hL36JORlQkb6tb5AQKPsqEVV4IA9h+KCCE/b4UO
+	xDGdL1njehGJh9/hPCZfn5MFl6DJfGEwNO/fGtL5UM1GLTlaV4qHNH0mcY86r0WzYdePi24ly6D
+	tl2rQBNh0XSx4uWwwlf33BI+PEPlyPtAjcLbgiMm5hBtiY76H4MejQS+odpqoxo+EFtfPjB8qkv
+	BignXrVfSKSM2G5ohBs/1fMleIZ37D1YAb4rGL7BPhJvG2gwiwY/aAolnncCUmPVExWAk5Nl5F7
+	8M1Smq563rEH/FQ2kEzMkEAZTQbSwo0Bop+2oebSJmqzjXmew072IygD4g4oYp1+4geKPK0DjAo
+	3TBLKM4GbQIT+MDjd/OnE+/cf26qlv5Nr6CWEnD3glC+WuhwG3N86PKPQCoONtpouAY4tol14rq
+	OcUu/ddyOMP/Xnh3ygyi80nl/SKRYnwYPfv0el7mDypPcEfgV/wY8t8nPANRMwQ0Ot3BAtYiJiT
+	oRCfjscvzBjj2/NFg2sH4EWmOdXMNKe7zxjKzN9f9I4KtKuvJHSwAuyl1S//ETw/OsDvW+2KOXo
+	MIzVC/kUxptgo4mJPu1ln7RbLDMdCQwFmJiAlZmvUo4yhPd5XDtOKd57TyxfMCv0AkVOJa7aklA
+	==
+X-Received: by 2002:a05:600c:848d:b0:4bb:6687:5386 with SMTP id 5b1f17b1804b1-4bb8880c7f1mr29095585e9.19.1795134360078;
+        Thu, 19 Nov 2026 16:26:00 -0800 (PST)
 Received: from iku.lan ([2a00:23c8:254f:fd01:c5c5:590b:f4b8:3e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6c340df4sm2629998f8f.55.2026.11.19.16.25.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6c340df4sm2629998f8f.55.2026.11.19.16.25.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 16:25:58 -0800 (PST)
+        Thu, 19 Nov 2026 16:25:59 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@linux.dev>,
@@ -106,9 +107,9 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v5 05/24] dt-bindings: net: dsa: renesas,rzn1-a5psw: Reject the "ports" node
-Date: Fri, 20 Nov 2026 00:25:15 +0000
-Message-ID: <20261120002549.1908299-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v5 06/24] dt-bindings: net: dsa: renesas,rzn1-a5psw: Limit port reg values
+Date: Fri, 20 Nov 2026 00:25:16 +0000
+Message-ID: <20261120002549.1908299-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -125,59 +126,51 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-dsa.yaml accepts either a "ports" or an "ethernet-ports" property. A
-devicetree using "ports" therefore passes validation.
+The A5PSW has four external ports and a CPU management port, using
+port numbers from 0 to 4.
 
-Replace the top-level unevaluatedProperties with additionalProperties
-to reject the unsupported "ports". Also explicitly declare dsa,member
-to keep existing devicetrees validating.
+Previously, the patternProperties expression only matched port nodes
+with unit addresses from 0 to 4. This allowed port nodes with other
+unit addresses to bypass the port-specific schema constraints.
 
-Also Add ethernet-ports to the required list.
-
-Existing in-tree device trees use ethernet-ports, so they are unaffected.
+Update the pattern to match all port nodes and limit their reg values
+to a maximum of 4. This ensures the constraint is applied regardless
+of the unit address.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
 v4->v5:
-- Added RB tag
+- Replaced the patternProperties expression
+- Added maximum constraint for reg values
+- Updated commit subject and description
 
 v3->v4:
+- Added reg items validation for ethernet ports
+ 
+v2->v3:
 - New patch
 ---
- .../devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml      | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml       | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-index fab6aa6237e9..9c477ceb170b 100644
+index 9c477ceb170b..30f25b06d62c 100644
 --- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
 +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
-@@ -45,6 +45,8 @@ properties:
-   power-domains:
-     maxItems: 1
- 
-+  dsa,member: true
-+
-   mdio:
-     $ref: /schemas/net/mdio.yaml#
-     unevaluatedProperties: false
-@@ -73,7 +75,7 @@ properties:
-               phandle pointing to a PCS sub-node compatible with
-               renesas,rzn1-miic.yaml#
- 
--unevaluatedProperties: false
-+additionalProperties: false
- 
- required:
-   - compatible
-@@ -81,6 +83,7 @@ required:
-   - clocks
-   - clock-names
-   - power-domains
-+  - ethernet-ports
- 
- examples:
-   - |
+@@ -65,10 +65,12 @@ properties:
+     type: object
+     additionalProperties: true
+     patternProperties:
+-      "^(ethernet-)?port@[0-4]$":
++      "^(ethernet-)?port@":
+         type: object
+         additionalProperties: true
+         properties:
++          reg:
++            maximum: 4
+           pcs-handle:
+             maxItems: 1
+             description:
 -- 
 2.56.1
 
