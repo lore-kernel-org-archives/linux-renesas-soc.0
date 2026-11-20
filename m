@@ -1,81 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795167260;
-	b=Tp2Tnq0MtQGOtSeMIuW0PjZV3dJVOCTYvDqUdhXQZBeBmVKdxdhproeKvCN6GZOMj1VN
-	 kiBbWY5fgRUrjAIn+ZKe9/AB6WRAGsQlgzsQDHjyBozSL5VElkV17aJgDNWcExVGdH7nF
-	 qRs6HlxUxG//4ftoEme/BV34uk9c8gsNRmCCu/j+o1APXfWh27AXemzk99zjN6xe5rtG+
-	 2eD/1mO/B1vXNHXfkc4X7MOkprafAr1dXJG5I+o4ozDE8Vod1QXxcMpv179t3XmpD8/0a
-	 qdYb3EoNbM2IkjxOd8khRCLdBJwZqzJjRZW988xp9ahrkD7yOWEowGjZ+sDSMa6u94Q==
+	t=1795167336;
+	b=5F3QCh1JvcWyoXWWIgcSt3pPdQ4EdNlfs/+pn037gxRE7HChvO5LwcBltd8GUzLNDVfF
+	 IgM43CTncPaC5sFfBR/UjF93/WrxDx6XJBOcjpNPdJQIU8oW2vjd71UHoZxdlh7VyBZc6
+	 qaq4pmtgdMgcxfmEm0ZpZY0NfUqe5ylKupB2VXG8rzUtBKwwsucREaXy+5sFeFAfapFrQ
+	 n6CuyAh7QpKa1kMRH1559yB0nOQU5SzJDbLszJedSIB0HuQskNudHsLl08n61XUpO7GYF
+	 1Lbl9p3wh97Cerw6i+ItXnoxCQEaHftZhwYrM14XsT3KyCcNhREPAQCNwesqWClrpcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795167260;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=cm66rIDm0mspQZkDd07/nYM38ZnF3/ekQp9ChnXHpk4=;
-	b=1BoRlM1PeUceczJnYBsimg+L2IvYRidQI7v6vHDKAViPdL0pxf/0+r+lvF2vvBd818L8
-	 K6ohcwFJq+eTgrIcVfBFIIT9ar3dTBKzg+P/gve890NDiu3D7a3w1aGQh/nscYRaJYawA
-	 /cb8N53xukuCtcQEA4CalCDFkdybNeShA/OdH+i+wgXUZxdkf4j/ICGRg5MxUV+R0bIrn
-	 xju1F0f1nldqYKlou4SZJCm3JBeERN42xi1SE8ujQqEWcF/d0965zG5hFjy+f3l0XdFnt
-	 SO+Tftvakc8QFgFL+2mxR3z/QyDxr4HZPcMPSo7raHlbI5axfg/OKXR3pYl0BF+IAsQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795167336;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=43AS4amyalzgXE0K6sJkFXQxyxxUIzihdzn0SjkUBf0=;
+	b=GDUZXQW/t1hKHitSK7PxMci7n9jzSIJLkvrkNiRUo+n3f/aCcbm7/Wp8IHdoj2MMZHkh
+	 4vJIYnYZeU3J90Aae0FRgObca/2kAu99sXo3qSPzh3NYcT/crjpUgtV1VTFd7YLs9xSpT
+	 2e180rFuOmUgF0NNQH20wTnNAIKH0edWFvfbpkvLQuDGXhQhdSLmgO4H1VofmFZEZrX1n
+	 COol9XHfSQAxHkCK7UOQLahAzkCDmi6CZkIfCkxi2qCGZUONXBaYKOWoKKFEDl3tjzjHv
+	 y0tLyHpFsEfuVGUPO9Nr8Fz3tZ+9IABCBSAxO6puVP98nI9viaAAfHCJKpCJHDXrDYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=sang-engineering.com;
-	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=EYfbxfWc;
-	arc=none smtp.remote-ip=194.117.254.33
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=RIDEQ8ct;
+	arc=none smtp.remote-ip=91.218.175.14
+Received: from mta0.migadu.com (out-14.mta0.migadu.com [91.218.175.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C973606A332
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 09:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C973606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3508606A326
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 09:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3508606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=EYfbxfWc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=cm66
-	rIDm0mspQZkDd07/nYM38ZnF3/ekQp9ChnXHpk4=; b=EYfbxfWcu9Jo7SpjGnsX
-	HqFU9vohB3/40LCwE0O4/pYOAXqwoztdZxpdU1iPcYpiR8HSJpNfTefJiETTeO83
-	VJm+sX8kUj51mJM+H75N7htaWItwTXLrw/Y+jLZi/Cns/Kz8XrMADMrHW9OYqFhB
-	xyMQmm5fo8KHOte3sln7SgYNBuNUgowgd9/ZWbf1RepgVbFPyzt2EgzgieP7++/M
-	jmCv2gjh+cRxVBqaGiAi2niKBoig6ZMYG/vNReNseMxnWSLrapr9s7jZKFtax09v
-	J5qqDYp3FAgORaz+upSOq4vXlOT/0EHORBceo30RknlWCIaJmiQU71QG4utjQL7t
-	EQ==
-Received: (qmail 1417621 invoked from network); 20 Nov 2026 10:34:16 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 10:34:16 +0100
-X-UD-Smtp-Session: l3s3148p1@W8ul8rFgZt4ujnuU
-Date: Fri, 20 Nov 2026 10:34:14 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: khendry@reliablecontrols.com
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 6/6] ARM: dts: renesas: r9a06g032: Add resets to mii
- converter
-Message-ID: <awAUFvXzkAlHMOsw@shikoro>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-6-feee2bb28bb4@reliablecontrols.com>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=RIDEQ8ct
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=ZflrbahZsofPbCrWMnIKEw5KReETDYjuOB4jROTcdaE=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795167334; v=1; x=1795772134;
+ b=RIDEQ8ctHIrwE8ojKHe9U6bAca4iJ3jXJlZPLc68RGyIwL/hGRITNsbW6P4IpVUWfleDg653
+ t117hqcZ92+p7b8Ouni3OvxGt+w3eUwFPNHNiSvkm7EXoluQAEjnDHukXonkHgv2BeV4NkHq+L1
+ Et0uYfgnoU1JwwxUPAQ3dPcs=
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 49724b56a0ec4ac1;
+	Fri, 20 Nov 2026 09:35:28 +0000
+X-Mizu-Trace-ID: 49724b56a0ec4ac1
+X-Migadu-Flow: FLOW_OUT
+Message-ID: <30b4eece-f79c-4a8a-971b-e5566b96d878@linux.dev>
+Date: Fri, 20 Nov 2026 10:35:27 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -85,44 +58,130 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0VmP1Vxr58+Mf2ir"
-Content-Disposition: inline
-In-Reply-To: <20261119-rzn1-miic-resets-v1-6-feee2bb28bb4@reliablecontrols.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 18/24] net: dsa: rzn1-a5psw: Get pattern
+ matcher register offsets from OF data
+To: Prabhakar <prabhakar.csengg@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+ Ralph Siemsen <ralph.siemsen@linaro.org>, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261120002549.1908299-19-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Clement Leger <clement.leger@linux.dev>
+In-Reply-To: <20261120002549.1908299-19-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---0VmP1Vxr58+Mf2ir
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 19, 2026 at 09:57:48AM -0800, Kyle Hendry via B4 Relay wrote:
-> From: Kyle Hendry <khendry@reliablecontrols.com>
->=20
-> Add references to the resets in the system driver that the miic needs
->=20
-> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---0VmP1Vxr58+Mf2ir
-Content-Type: application/pgp-signature; name=signature.asc
+On 11/20/26 01:25, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> The RX pattern matcher registers are located at different offsets on
+> RZ/N1 and RZ/T2H/RZ/N2H. While RZ/N1 uses 0x3e80 for RXMATCH_CONFIG
+> and 0x3eb0 for PATTERN_CTRL, RZ/T2H and RZ/N2H use 0x3f00 and 0x3f40,
+> respectively.
+> 
+> Move the base offsets of both register arrays into struct a5psw_of_data
+> and use the correct values for each SoC.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v4->v5:
+> - New patch
+> ---
+>   drivers/net/dsa/rzn1_a5psw.c | 10 ++++++++--
+>   drivers/net/dsa/rzn1_a5psw.h |  8 ++++++--
+>   2 files changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
+> index 9475e53752ce..6f3f902f9f4c 100644
+> --- a/drivers/net/dsa/rzn1_a5psw.c
+> +++ b/drivers/net/dsa/rzn1_a5psw.c
+> @@ -112,7 +112,9 @@ static void a5psw_port_pattern_set(struct a5psw *a5psw, int port, int pattern,
+>   	if (enable)
+>   		rx_match |= A5PSW_RXMATCH_CONFIG_PATTERN(pattern);
+>   
+> -	a5psw_reg_rmw(a5psw, A5PSW_RXMATCH_CONFIG(port),
+> +	a5psw_reg_rmw(a5psw,
+> +		      A5PSW_RXMATCH_CONFIG(a5psw->of_data->rxmatch_config_base,
+> +					   port),
+>   		      A5PSW_RXMATCH_CONFIG_PATTERN(pattern), rx_match);
+>   }
+>   
+> @@ -953,7 +955,9 @@ static int a5psw_setup(struct dsa_switch *ds)
+>   	a5psw_reg_writel(a5psw, A5PSW_MGMT_CFG, reg);
+>   
+>   	/* Set pattern 0 to forward all frame to mgmt port */
+> -	a5psw_reg_writel(a5psw, A5PSW_PATTERN_CTRL(A5PSW_PATTERN_MGMTFWD),
+> +	a5psw_reg_writel(a5psw,
+> +			 A5PSW_PATTERN_CTRL(a5psw->of_data->pattern_ctrl_base,
+> +					    A5PSW_PATTERN_MGMTFWD),
+>   			 A5PSW_PATTERN_CTRL_MGMTFWD);
+>   
+>   	/* Enable port tagging */
+> @@ -1348,6 +1352,8 @@ static const struct a5psw_of_data rzn1_of_data = {
+>   	.npcs = 4,
+>   	.cpu_port = 4,
+>   	.tag_proto = DSA_TAG_PROTO_RZN1_A5PSW,
+> +	.rxmatch_config_base = 0x3e80,
+> +	.pattern_ctrl_base = 0x3eb0,
+>   };
+>   
+>   static const struct of_device_id a5psw_of_mtable[] = {
+> diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
+> index 942931cbc402..5c5f5ec25774 100644
+> --- a/drivers/net/dsa/rzn1_a5psw.h
+> +++ b/drivers/net/dsa/rzn1_a5psw.h
+> @@ -74,10 +74,10 @@
+>   #define A5PSW_VLAN_RES_VLANID		GENMASK(16, 5)
+>   #define A5PSW_VLAN_RES_PORTMASK		GENMASK(4, 0)
+>   
+> -#define A5PSW_RXMATCH_CONFIG(port)	(0x3e80 + 4 * (port))
+> +#define A5PSW_RXMATCH_CONFIG(base, port)	((base) + 4 * (port))
+>   #define A5PSW_RXMATCH_CONFIG_PATTERN(p)	BIT(p)
+>   
+> -#define A5PSW_PATTERN_CTRL(p)		(0x3eb0 + 4  * (p))
+> +#define A5PSW_PATTERN_CTRL(base, p)	((base) + 4 * (p))
+>   #define A5PSW_PATTERN_CTRL_MGMTFWD	BIT(1)
+>   
+>   #define A5PSW_LK_CTRL		0x400
+> @@ -239,6 +239,8 @@ union lk_data {
+>    * @tag_proto: DSA tag protocol used by the switch
+>    * @management_port_fixed_frame_len: Fixed frame length for the management
+>    *   port to account for the HW issue.
+> + * @rxmatch_config_base: Offset of the RXMATCH_CONFIG register of port 0
+> + * @pattern_ctrl_base: Offset of the PATTERN_CTRL register of pattern 0
+>    */
+>   struct a5psw_of_data {
+>   	unsigned int nports;
+> @@ -246,6 +248,8 @@ struct a5psw_of_data {
+>   	unsigned int cpu_port;
+>   	enum dsa_tag_protocol tag_proto;
+>   	unsigned int management_port_fixed_frame_len;
+> +	u16 rxmatch_config_base;
+> +	u16 pattern_ctrl_base;
+>   };
+>   
+>   /**
 
------BEGIN PGP SIGNATURE-----
+Reviewed-by: Clément Léger <clement.leger@linux.dev>
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsAFBYACgkQFA3kzBSg
-KbYx6w/+LrrsV2Dv4U+RN4ZZTaWUZoegihR9ijHXb1Y+KgI0n8aHjlp0SenehE/K
-FZaPUJEGMx6Dk2MmIU4IKHqjB9oC02IS0D7T6GRzPOTaHpXg014FQhVOXDDMOMD8
-wruMfqvaxyIqolSxfSWuAcvAPtJKGfR1Tw1MEFhmNfPZFeN0ChNni4UHNabWB/xK
-67ySya+itOctg3LnB0LbZBMjjHzBViagNsXTLsxzAZx8glCPsrs2FeWh6n4yFRyo
-VKhvTZRD6IxIn2jy9ijfLZ1z01/3u9mz0CiXBqcduL5UXyMbMhhUfpcuzkgHD2Ti
-IY+ZTqnql8kGZ86HaAsYMM2jCix3RlcI0KwrJBq0ONGVJe3DRiyN50oW5PTzj9xM
-jLJ9MGs2f/sq1AnMZPIhon1SLNuI804tEWHEjlXYSzzwY6nSyZa1cIe4vNJa2pJp
-8ugxKOGg9UZmfshjiJjyVrFcOJWYxYpwjsSmzio38qYloTJLhjnYtfhvt4J05pVa
-BA4hm/+CauVkreBEPXuY2zb5uHB4h3cDH1Yb3R99+BOrIAKceYEn98ttnY2hmbdD
-q4mVsx+8nD0QwtmwLinqdCHzI6K+iF5/VNiTGtt8ylj29hAkhiFS22LWwTVErAku
-H7I5Us6IYWf7KVI6hVw7rI8XYUok5xu2XWfw/EAZrJs3L638d2M=
-=0QzY
------END PGP SIGNATURE-----
+Thanks,
 
---0VmP1Vxr58+Mf2ir--
+Clément
+
