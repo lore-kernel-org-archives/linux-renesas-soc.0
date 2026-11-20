@@ -1,132 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795159828;
-	b=ZINT8g7MS99lMrIeuwZ0g7W3qoXeKP5/RsewAgDfyc6NSVvCdJW4Dqev9DVipMmBX+fy
-	 RfzDP/6C9lKUCU8Dtbuq1q1ZZTzPgQWnNtkvTPUQqU3p++H0cdZpbzXkEjHfxyh0SdHRF
-	 FZlWt1IdG03VZrfp/cLovQg/vNS7Z7elQl9NZdKJYDmLRvDo1X6+gUnKajJw6TXm1gb+M
-	 EeYuOsXlno/9DVhyw0emvMQjCmnHg0inxKPiYwud7iYgq0h8QnwiJboJHqOg2yKaWE74S
-	 zqIhyGMUHzIqC7325uWHavp+s1C6/t5/WPKqxSA+ngoGX75u0fV8VFwlM+fpR5uWjXw==
+	t=1795160683;
+	b=fvnM8S0kAl7qme2iu5YeMdPp7lQYtyOu77FyWzsKnBk0tzaVat36dQrtoJdn4BZtvxHZ
+	 2Ejlu1GmDvmsvQLoD3qL/sxtuEm3M/y4qESW22REjTjwiTI62aASKe923fQM0/YPW5cTS
+	 T4jgBcoDPBTiTQtvn5HX7WsX62Aso5ZdpyOHS0wrEux0F12Bh3sxUAC4Q/CnfXcK24Cve
+	 2KzcFn9JjWj6hthBfuT9vpnAv6x9bLpup7M/s0DjrjgXbp7KncnVvCK6L4XDSV47McO3E
+	 bTVakUYLQmddZWGleN+IPzHO8YLyovfduR13pnbXNDFrUJMmZ9NB0hSKAbIyNqHs3bA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795159828;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=2u/H1uWmtn0rYKOIJUAGYGAWzwBNm3ZSYXTR4+3kkrE=;
-	b=k3S5wt5zbHnbr5Fipjcl/P7fE5IH8i5bysqTtbfL8XbE17jFIWD7l6rzMyLlx8xYMAcO
-	 SNxm5jpcpXsEDES7v0Muj1LRgWjmU8Adkn3BIIWS9hv/EyXbqD5gowO2dZPcY3ULl1FTJ
-	 194jBZrIhmrHd4zY3acrrYxdWDUYxh25zU0R3/IQXXNFPf303z946+5F8Dq2/m6JzCucN
-	 V1MdU1mwDXxNvp47z+qx1mPV2WQhR+QCpPNfns5rBTfHIfAEQZ8MwA1UbBgRNhg2CGu+Q
-	 zYtmCz4pFtpyHbzcall3r+7JzZ5rFb/AjW93EVZzL+Z2zPxZM3CooDiScL0MNDCeuzw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795160683;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=Vu6IMQbhyMpXX+yWtY4enAtEpk8kj3N3fFV230nsSvs=;
+	b=xgbFJHqxD5o0rYpD2bXGo27wV4cAHuU+mUOtyJJ2AGYVdZ2XIAO7xSJIphhqmq0GmguQ
+	 /HzKPBKPdhNPuIwx55wpElsHNXDf+CllD0GbLiT4oADinS52EhxnXB5XCSC72ef/X+5vq
+	 8Zm1KDMgnQyr7TKWYX0Hsa45bF/3xnpvMQPun1UcI/OwkBbi2wVrNjqtES+RHyOHAU54j
+	 DQSE6vN1tSaSrNj2kHUk1HFcJpr4Al6CsSoxOaqdtAzwRrxAAlmTNG1i2ihkniGqD+TDx
+	 BTOnrX4c/EhjlUr8jhSYAuFPN3cxKzLiul2BvGAQvw0qDl9vDeNwbP/ksBYWnbTtOdg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=Oot7nq6k;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=e7hrtIih;
-	arc=none smtp.remote-ip=202.12.124.146
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=fail header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.217.53
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC8C606A32C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 07:30:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2CC8C606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=Oot7nq6k;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=e7hrtIih
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id 20CD61D002E5
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 02:30:26 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Fri, 20 Nov 2026 02:30:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795159824;
-	 x=1795246224; bh=2u/H1uWmtn0rYKOIJUAGYGAWzwBNm3ZSYXTR4+3kkrE=; b=
-	Oot7nq6kbb108l/xDtc3uPTP2rR+ufBaLLqwm8DjcaXcWyXRZtrOJRRp8598EOhF
-	OxOsta+GgGNMQ3J8S2pXFBe9x0MWX0lvQb+Hch6NeyWuz8ZhjmfOeqCMx9VlaiM3
-	hRdIGJUfSVN2dnUGg9iT1Is5PgWTofkLwPmpXWqARDMbe/+NZBxxqBdjArwnWFIn
-	GGBZqTORVjecTLbDJKPT2N6Xqrz3lZ020WaWtMOIp+mHZHC9oPwgoAWzlEl6WXcY
-	8Bylq/iwV9ticNvgxb5N2c3yknxvUFOtB+2fLpgO/VWaM1cgltrQ/XVwDEBO4n41
-	hEVdo4/3/4YT+Nnmc7a0MA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795159824; x=
-	1795246224; bh=2u/H1uWmtn0rYKOIJUAGYGAWzwBNm3ZSYXTR4+3kkrE=; b=e
-	7hrtIihZsZf6omEco1hqLczBXyxlFHy/Bv4B3gPYtCNqU607iMucm0asDAAJEo8q
-	JM0JAs7bN/CB7Mvj//YHlSYTzMZK++6bFCYPnYBbBalaK3MBUs2RThLdrqyTCxHn
-	Uw6jV0kw51hCc8khmZ8WGN3/JWOnoH98e/iUmlsoChbjIticOaAqA5GA6pQ80iA/
-	YiJud6EXQ5XOAPFdut0ZbuSPn7JlBXdhTMTFImYvBb/3VbpAw1Z3J2WL7SrgEfxJ
-	fe1y5FeMaQ1ZvJIlq6AueZysykRtXp+u5HVaGKbC4ot61VPwXs8Z1jOyNhqiwQsT
-	4Ln2eK0e/DwBF07b02q/Q==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795159824; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:SaXjrdw9gm1k/A97Mm1izs0gJyNgcW2DmAbo1NSqF3ducmt
-	mevaMSXIr859AkB4pogSDXNtF7K8aD0jYXEgbv/Fjuak51XKIpS5w4/tfrzEt9nL
-	sQFhaNoeknMGKmtxBRsyE1iZhpHNMxDI6ZS+Bq7QYLjvQhwv31vCmj8YOUDkm+bn
-	PHvKx4jCXijoUlZEeMy8zBCqHleZVvWMOh2z142U0I9zqhOY5xG17IYy0jqXy8Qy
-	iCKj8CwUoKr6bBxI2xGlqFChiDmwY7ZuOLNwoJq7MUgWzcokjzzxl2Z4SLs6R6QC
-	c0yWdmJ15Luj/X21vt+G4yGk3tgPnN6tZvKSyTg==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:kI0YwS3/X+5PBSZzioGh2A9tMSzpYmWZsK51BETerMA=:t8FIxVM7jmpGvFdp9emUSUMHqyhKFLOFwo8iWLMBas8=;
-X-ME-Sender: <xms:EPf_alxbcHZAldYyWjeG9R0mFIVf40XaCX9na8OXpwLqaOrfhbxkoA>
-    <xme:EPf_arQFvjmml8vXRvkgxAhHbH-e-O6fQXEtWCUZr6_DfjkpzBeVovVvHuYuPB8qa
-    wlAwa41vdDCY2fP0loHRvHvgjOVVi_urOCj1Rkb7xAor8HReBSCWtzf>
-X-ME-Received: <xmr:EPf_aqKOuDwjZ2T0ErOnK_OfEjAV7QKOOuB9QAkq6RlOVRLjFy-qC3tL6qPFOvYoUPESpGaSqw5N_0BL-wucMeHpCQmqAEo>
-X-ME-Proxy-Cause: dmFkZTGpQeMcMjibnWEdWpH3i7C2pzUc5HaMxERBi20DEvx4nbplCdMTC+QpQmK82oUCae
-    MpF+uSwsYPkN/TbypIs+6qnl/ezxBIjCLXSLE7O55VPKHD2mJGPtBAHNMWWyw9PJImooEj
-    Mb18sz7c1RzD/A7dmOgsug+2vf30aE5jF3HLNkigPiKw8XKQoxOQdxMYtxADQDQR6Ov+kj
-    iyQJx4Hmea4mQ/5NMYXr9u1D/O4V8OMDv5ygiM4Hv/XjbqJl8asvPLbDyMc/A+vpALPbGy
-    RO9ujuitKNYafYKUAYBkuKDvW5KR84zMC+ZFYy+qhtcWz1TUudLpBoOjyS7fYvIfootjVA
-    MzUhmGuMPxogH23cBHRXQw9SzwrZQLfeiPgBSLhXrGUahhefDVfX5qkfzTgIw7QSbrRP8W
-    NO43VM1ZssPJoGOZiNuhqMnvPJhmXcSHhX7zlFBlIcueatX7jLcfqMpeM2KfjFP1CvxESL
-    f19IISYEwK+8Kx2ktPyeX9qv1fkBn9Aynj1vmTx5EjJulwA3x+VpwT9nbM4EFRKDu76Vm0
-    ++0tc0LKLHUASXk+oi6d0f4modMXPibsVPkHkYvlfExUj8AAccpPuqCz1iOjI8mM/xEkea
-    hTaK0Bc5Dc1RjIXh9r0JpsddE9U5KuylmjROrHQMne2WuKSldiy+jQc7A6zA
-X-ME-Proxy: <xmx:EPf_aqVXhGZFS20g7woKAeCfxHOKDz1PsMmcJDTDkbwTCPdK83QoWg>
-    <xmx:EPf_amRRrviECtbPSrwX3bBF3l34YcFlbdTbSyjZVs4R4vxnFDF4VA>
-    <xmx:EPf_aqAFAaJJ0g90Fpbx6z1o-DD4SyhYIIvXlOHPfBbvya46S8roVA>
-    <xmx:EPf_atJoS8z3tY9hmOgV9jO5CCPyxLXqZFs9mbE6xzg3PfPQMr_Nug>
-    <xmx:EPf_aqid_iRMKn4QOjSE6kgqP98dhHvj07-tp5-sf5iF9Res1aqnsL4o>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Nov 2026 02:30:23 -0500 (EST)
-Date: Fri, 20 Nov 2026 08:30:21 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] thermal/drivers/rcar_thermal: disable the work before
- masking the interrupt
-Message-ID: <20261120073021.GA3126029@ragnatech.se>
-References: <20261118072321.1259639-1-shunsheng1218@gmail.com>
- <20261119022903.1493494-1-shunsheng1218@gmail.com>
- <20261119062203.GC2300348@ragnatech.se>
- <179508711555.3615492.10674834361832600268@gmail.com>
- <20261119162517.GD2300348@ragnatech.se>
- <179514885544.420816.9397060314487706966@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3457D606A325
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 07:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3457D606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-74ab99038afso397536137.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 23:44:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795160682; x=1795765482;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Vu6IMQbhyMpXX+yWtY4enAtEpk8kj3N3fFV230nsSvs=;
+        b=THcYzYEowwVB1LwI8KpEq/2IyiVD+DEb/JTaLbHN/VJ2Y8eVwlaf420+na4I/ktVIY
+         0scblNV1nL5rBATc2XWjEoRxadHJFkFsTZnQB5ebxNI1Rd+DBT9vkq8tAsSu7SQ1mDX4
+         MoPVeXU5PQUA6ryyUSYaRikGS7fcvIIcbdsTpzzp566DX2ZuEMJAQ62bErnT7qFeCWlV
+         53Dqd/4ExaHpGH3kkHkLXOtwIN/JU16MsxuCspzcCn2D2bFi+TLMp4J5siYFhGL9ZAH9
+         DFH22sIAP0EzDOXjvQTQXVwwnKjq3EAI7c6kJ13Kq15XU/aRCBBJr9wXhysY5h78O0EN
+         IKbQ==
+X-Forwarded-Encrypted: i=1; AL+hErEYvAh1HljBKGwiQ265eOUG4jmdaHEoRFb7YM001TCjJmj+xYp3MbmYe6B1mNbbKjXm1Ngd/6aM1qAkcnOxAW2rpQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9N31eHYNZAiPExQzp4s41lznQuxi/nHX2QH2o6NmLPYQVHLNPR
+	FQ25MIxlB6cHB+AxfYfOSItqn6yOnEoij+DzmTuc9DZjV4h9q72masdsxqhrVy9f
+X-Gm-Gg: AZFdTZfg5r660QKSbbv+ybqr6gHJtGdp+nndeekQY6uPedTfqOc6EgricYvvqD+O30d
+	lNQizGC7Kmlpt2W5rwxW7BcjHd5VgmBCpCCXV/p6QMh21IwVjV7SXnAlEr5bjoWMa+NDhuKfPPg
+	rnuTCeXFC8ugGGMpD4dnwpWiNkxkJo6p0g9s7YWkCKjp+guAP712topDmyOjh4uQLT2dHQ+qqpq
+	nQP4QQ9QEQnPJLvwPXwspbtxrZfFCONL+BPLvE6HUuNhI2BYf/HaeFRCmT+yNH5dfLzbrYX65Wb
+	xjWG4BmIVJPdgG2Nq3JZHo3tiwHIAUiyWKJtCmQTXqX1SKugHW4p67+Uft1PjIgyskJ3p9CmU0z
+	NN9um5DHmLN3nZJmfX43Xi8LpMNwr7OoMj/RLflRPSeHHoKu5g86Zibeu8+Ih9iqCLy25eApjr4
+	p0djprFO052Glw0qt031I2P2Xr54owkvipP3B3i/YDAXA62GgvwvwEtlMDQ7FJ7POFOtbeh8Vdw
+	SbrYBmWh/YITaG4iqMuxnMS/Ah+w84h8EFxo8vMp/h6gqKX0uW0njbXgHFKjXx0QdGKNIzAwBgY
+	DyixwvKlIoKRzBrtOk/iGslrcN7aDYZZKrR9OZJlQe3uG1K6g2R+Jsy4I5hY0g8+2R4=
+X-Received: by 2002:a05:6102:3f94:b0:7cc:2674:b78c with SMTP id ada2fe7eead31-7d739391bf3mr836197137.7.1795160682082;
+        Thu, 19 Nov 2026 23:44:42 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d6e7d784b3sm2211178137.2.2026.11.19.23.44.41
+        for <linux-renesas-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Nov 2026 23:44:41 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-97ca72f2cd9so380554241.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 23:44:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFSwA6PyMXU60o3YnyF6LdXVxaVsdRAuARMlVxRfjjiHNjkLxL8cseoOQ/kQz8zkf17dWBfWsD69Yf6B02iX9rO9g==@vger.kernel.org
+X-Received: by 2002:a05:6102:441e:b0:7cb:bda3:27ab with SMTP id
+ ada2fe7eead31-7d7393925f5mr941037137.13.1795160681386; Thu, 19 Nov 2026
+ 23:44:41 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -136,98 +80,61 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <179514885544.420816.9397060314487706966@gmail.com>
+References: <cover.1795094688.git.geert+renesas@glider.be> <a896e5bdb29c7c6de39df9b28b11d55614f2ec2d.1795094688.git.geert+renesas@glider.be>
+ <179513882271.284394.17357508909448455391.b4-review@b4>
+In-Reply-To: <179513882271.284394.17357508909448455391.b4-review@b4>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Nov 2026 08:44:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWJ8zK+kzcznM7FJ3JCo1xWzjRZ5MQz9jhSUcYQfO5rBA@mail.gmail.com>
+X-Gm-Features: Aa3M54p6yw1Lhc431P_jQfP5g0YMf_od8mct8UUR6SclOJC7dcSgYi-awR9w8qQ
+Message-ID: <CAMuHMdWJ8zK+kzcznM7FJ3JCo1xWzjRZ5MQz9jhSUcYQfO5rBA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: Remove unused clk.dev
+To: Brian Masney <masneyb@kernel.org>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
+	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andyshrk@163.com>, 
+	Ulf Hansson <ulfh@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yaohan,
+Hi Brian,
 
-Thanks for sharing your test.
+On Fri, 20 Nov 2026 at 02:40, Brian Masney <masneyb@kernel.org> wrote:
+> > This basically reverts commit efa850487a6b6742 ("clk: Inform the core
+> > about consumer devices").
+> >
+> > This commit added a struct device pointer member to struct clk and a
+> > parameter to clk_hw_create_clk(), but the new member was never used
+> > beyond setting.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 2026-11-20 12:27:35 +0800, Yaohan Li wrote:
-> Hi Niklas,
-> 
-> yes, of course.  It is one module, self-contained, and it needs no device
-> tree or hardware setup - it builds against the tree you give it and runs on
-> the board you load it on.
-> 
-> The module exercises the three primitives the removal ordering depends on:
-> 
->  - a work queued after cancel_delayed_work_sync() still runs, while the same
->    queue attempt after disable_delayed_work_sync() is rejected and the work
->    never runs;
->  - a work that is already running re-enables the source behind a mask that
->    was written before the cancellation, and cannot do that when the work is
->    disabled first;
->  - on a line shared with another handler, synchronize_irq() does not stop our
->    handler from being invoked again (and from queueing the work), while
->    devm_free_irq() does, without disturbing the other user.
-> 
-> To run it:
-> 
->     make KDIR=/path/to/linux
->     insmod irq_semantics.ko
->     dmesg | tail -n 25
-> 
-> It needs CONFIG_MODULES and CONFIG_IRQ_SIM (the latter is a hidden symbol,
-> selected by CONFIG_GPIOLIB plus CONFIG_GPIO_SIM; GPIO_MOCKUP works too but is
-> deprecated).  The last two lines of the log should be
-> 
->     summary: 17 passed, 0 failed
->     RESULT: PASS
-> 
-> That result is 17 assertions about the workqueue and interrupt primitives,
-> not about an R-Car unbind: a green run says the kernel behaves the way the
-> patch assumes, it does not say that rcar_thermal_remove() was exercised on
-> your board.
+> > --- a/drivers/clk/clk.h
+> > +++ b/drivers/clk/clk.h
+> > @@ -5,8 +5,6 @@
+> >   */
+> >
+> >  struct clk_hw;
+> > -struct device;
+> > -struct of_phandle_args;
+>
+> Did you mean to remove of_phandle_args?
 
-I agree your test-case is kewl and interesting but as you point out, it 
-test something else then the code this patch touches. But I learnt some 
-more about ktest reading it which was nice!
-> 
-> The tarball is attached; the README in it has the same instructions and a
-> reference log.  If the list strips the attachment, tell me and I will send it
-> to you directly.
-> 
-> What the module does not do is run rcar_thermal's own ->remove().  That needs
-> a real platform device, MMIO and a thermal zone, and the driver's removal
-> would end up buried under the scaffolding.  So it pins down the primitives,
-> not what the interrupt status registers do on your board.
-> 
-> For that, what I would suggest on your side is to unbind and rebind the
-> platform device in a loop while the zone is being read, on a KASAN kernel,
-> and check that no work runs after rcar_thermal_remove() returned and that the
-> source is not enabled again afterwards.  To get real interrupts during the
-> unbind the overheat source has to fire at least once; on this driver that
-> happens when the temperature crosses the trip point it has programmed.
+Yes, it was added by efa850487a6b6742, too (although it was
+used in that header file before). Currently it's not used.
 
-Yes, I was wondering if you had something ready made for this test.  
-Having something push the trip interrupt often enough so that 
-bind/unbinding the driver from the device would provoke the condition 
-within reasonable amount of loops.
+Gr{oetje,eeting}s,
 
-I will see if I can make something up.
-
-> 
-> If you can tell me which SoC and board you have, and whether the thermal node
-> in its DT has an interrupt and a critical trip point, I can work out what the
-> smallest meaningful run is.  I am also happy to reshape the module if you
-> want it to reproduce something else.
-
-I have access to a few boards. For this patch I intend to test on M2 
-(r8a7791-koelsch.dts) which have trip points. IIRC when adding interrupt 
-support i had a critical trip at a low temperature and then used cpuburn 
-to trigger it. Maybe a non-critical trip point around the running temp 
-and enough iterations can trigger it.
-
-
-> 
-> Thanks,
-> Yaohan
-
-
+                        Geert
 
 -- 
-Kind Regards,
-Niklas Söderlund
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
