@@ -1,83 +1,69 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795173106;
-	b=vRMTsZ4erfkqLoccIZid6OsuYeOCUX9rGJnFDpMwq8QlncYyZcUB693nEf5Wxs5wvGFu
-	 q081yov0RTtEZMVIpFJhvZk2z5bwgrJJlP86xR3zUb5gX/3kc9CrpICIuRuepVI/cjTO3
-	 zHkyJIKzWNYXdzTIZiz+2qwdJnDA7EWuVAAFtIVF84iKSGY+7vo6q9gXzifjhJRYyq5WL
-	 yPnKsQXLFjiT90O7fx7JuyR2I08SZnSJV31Kuecz7pjEsHmUI791v69vKy9isz+LSCh9e
-	 N8xm2aZycO+VmpRNAxrBGG2cU3OlJRrtulCP0V7a//LeS39d3JZcwNhmPnDxxfdNFQw==
+	t=1795173603;
+	b=VG51awYS2KCteJW6Mncw4C0i6aaI8LgsJkU36a96BWDupEjE75yevU1cdsa7wYIYLsXy
+	 uyGFjZVS0KdfBZb+dUMBv7S99kJTG2W8WarzIiPIl7F6dKmiMp3rY+lnque/6wkI655Iw
+	 SoJfPh3UXtKO0p/HN1461Lg+90DiKp8YHTzw+4C4Elqr6pZbZAdcgKEFfGzb427EcROYy
+	 sVjfCNlr4Ky3jZ8rzbtkaTE7my7rYWAru8din9MI/uZfDwUWxcUkUlrKdpq+2dvzbKRiR
+	 Hn5mKpkz0D2i23KlIWfj9FUXIgyL25LttoUNi7euIC+3G7bft2Ne1PPSkjjjeaS0VMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795173106;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795173603;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=+0jvDmYpMRkDRCjGyAjujLifgFkDdi98SrDxejAju4Y=;
-	b=wbfNN3DYlpalox6xjrW6NM8hNxBt9Gvm4qbxxmR5aD4Qsxd2iPda+N+JCGiyrUcpI0+d
-	 ITfQJfiUqTitLNdlkEO67OEjny37GOQ2sOgvkntcu7SRnKv629Ok1x1DmlK9mNPzbZI6e
-	 vf/KSy+7lGi54kbXVvTuYzUue3Y0Nz4fpAmjrhAoNprFHGI9WCDjOh6oWse2dGL3X/Qx1
-	 4kCIJm62FYzjHaVXKlyE0n6KztEPP5OkRzbO38h5CS6MKKHSlYj2rU3yTqNo7OWDv4L2o
-	 ECp0W6dD7J1qtOR+KWIcRHyu/13H67G39ZqNN5CC8k97k9AN02Woa8fW4UakIJSzZCA==
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=gNcTdMNoAR9gRnBMyvwag/gk0hbmSsrfzpvTTscVcK0=;
+	b=eitDUXUcqT8AYOCIzCkl2ODPom6MicmZBvji3gEDFDdkI5rZ+rc+B3LXFAGPI4qYsr0O
+	 ZtvY71S39QdT5573nkECfa7Dmi+TtAVE2+cX5ZfTpW+UqYReG7zskc9Uj5KixULmJshMP
+	 Ri6mAjDr+5yayHeWCQ+xI0rvo/v4lYTgTSrMgMIq6Zhub2/H11FCkjeKieEocUpISfa3b
+	 EeD39XbCjxc8WvICHRcfSI7ZnOet9/9Wp/PvpItDZ3ozG8tltilc5DOih/tZX/a1S1XX5
+	 CoBpH1nj3xqI1O6FLXFedm3eZ6PvHNeQU6XWPSGYLKCjGZH3wtOm8y6qUse2+MGjIoA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=XSEEn4dc;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=E+ipsy5D;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5978C60A6F45
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5978C60A6F45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0389606A334
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:20:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0389606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=XSEEn4dc
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=E+ipsy5D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=+0jv
-	DmYpMRkDRCjGyAjujLifgFkDdi98SrDxejAju4Y=; b=XSEEn4dcs+dmjgXWMrsn
-	2woUGRjhi0OvAd2x1RPubcWTW0kmlTVxBRL9nr4oclr10H6nSZyLnfTxUmjKXXsV
-	k8Zxi/4Vs4JkzS6aXv+/jAeghtygszaKQfQIJqAFkIVBcFhMkkh1bkTDeitDLNJZ
-	Iynsy9GLzslsM1lie7wDhCl4B/DGjO7gYt/cik79ypVKr3u+s2gE90eq6hq4OtPf
-	94cG89uPSwaMNN4rhE8GEyiFWEyLI6a7mdOP8XSjwM3CoUOo6hGIq/421nbJXe1P
-	shNk2ADd7sQh24Rrn3Bva9tTGBEbC674jIP8V33bUvWI4evDzU0rf5QFpXXt37U2
-	9w==
-Received: (qmail 1450602 invoked from network); 20 Nov 2026 12:11:42 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:11:42 +0100
-X-UD-Smtp-Session: l3s3148p1@aboUT7NgiOAujnuU
-Date: Fri, 20 Nov 2026 12:11:42 +0100
+	:references:mime-version:content-type:content-transfer-encoding
+	:in-reply-to; s=k1; bh=gNcTdMNoAR9gRnBMyvwag/gk0hbmSsrfzpvTTscVc
+	K0=; b=E+ipsy5DZmgibyZ225i2A3KvSwW/6S+7BiOwIza4wDy0EmBBTwlFvne8c
+	11HxunERh+H4/RNSzt8/qjKoaLbDPg/GOu+ZxKITLLvN5HKoXautnO/01LUqAw6+
+	m3ZION2ymsLyN7itbb1yCzWvl56yFMvEMjN1e8pVDy3XZ7ijMm0yC95+cJk6IpDH
+	v8koSDGi8iWltrPLN/z9Y4mZvadswu2Bwm99szGZTw1Bsrg3ym+GMcq3gZ5bBlok
+	X6m/voWJpmaZlBjEmrtRfRyAfpCXCpsoD/XC50ZsSyiOXUY0nfNQMUAHUfJHyg7a
+	5EchhgxfJjSiSvhzZZaDEbXPL5z7A==
+Received: (qmail 1452867 invoked from network); 20 Nov 2026 12:19:59 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:19:59 +0100
+X-UD-Smtp-Session: l3s3148p1@PqSwbLNgduUujnuU
+Date: Fri, 20 Nov 2026 12:19:59 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: khendry@reliablecontrols.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
+To: Paul Louvel <paul.louvel@bootlin.com>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
- reset cells
-Message-ID: <awAq7vxcY8CGjhNl@ninjato>
-References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
- <awARmkCuelD_fdX6@shikoro>
- <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v8 2/3] EDAC/cadence: Add Cadence DDR EDAC driver
+Message-ID: <awAs386mgR23nmJ2@ninjato>
+References: <20261118-paul-v7-3-rc1-edac-v8-0-ed791084cc19@bootlin.com>
+ <20261118-paul-v7-3-rc1-edac-v8-2-ed791084cc19@bootlin.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -87,19 +73,122 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261118-paul-v7-3-rc1-edac-v8-2-ed791084cc19@bootlin.com>
 
+Hi Paul,
 
-> > > +#define R9A06G032_RST_TS		1
-> > > +#define R9A06G032_RST_MIIC		2
-> > 
-> > I didn't find any listing of the resets in the RZN1 docs, so coming up
-> > with arbitrary numbers as we need them seems okay to me.
+could you comment on these, please?
+
+Happy hacking,
+
+   Wolfram
+
+> Thank you for your contribution! Sashiko AI review found 2 potential
+> issues to consider:
+> - [Medium] EDAC/cadence: cdns_setup_mc() reports SECDED mode when ECC is
+>   disabled
+> - [Medium] EDAC/cadence: missing memory base PFN offset in
+>   cdns_mc_err_handler()
+> --
 > 
-> Why aren't we starting at 0?
-
-I wondered as well but clocks are also starting from 1, so we could
-argue with consistency.
-
+> commit 75a0021a276efa3f6b0c9a800bd2617eb0141dff
+> Author: Paul Louvel <paul.louvel@bootlin.com>
+> 
+> EDAC/cadence: Add Cadence DDR EDAC driver
+> 
+> This commit adds an EDAC driver for the Cadence DDR memory controller on
+> Renesas RZ/N1x SoCs, supporting SECDED error reporting, software
+> scrubbing, and debugfs error injection.
+> 
+> > diff --git a/drivers/edac/cadence_edac.c b/drivers/edac/cadence_edac.c
+> > new file mode 100644
+> > index 0000000000000..a3b72116ba129
+> > --- /dev/null
+> > +++ b/drivers/edac/cadence_edac.c
+> [ ... ]
+> > +static irqreturn_t cdns_mc_err_handler(int irq, void *dev_id)
+> > +{
+> > +	struct mem_ctl_info *mci = dev_id;
+> > +	struct mc_priv *priv = mci->pvt_info;
+> > +	u32 status, err_addr, syndrome, reg;
+> > +
+> > +	status = readl(priv->io_base + CDNS_ECC_INT_STAT);
+> > +	if (!status)
+> > +		return IRQ_NONE;
+> > +
+> > +	/*
+> > +	 * Hardware is not exposing how many CE / UE occurred since last ACK in
+> > +	 * case of multiple errors. Always set the error count to 1.
+> > +	 */
+> > +
+> > +	if (status & (CDNS_ECC_INT_STAT_UE | CDNS_ECC_INT_STAT_MULTIPLE_UE)) {
+> > +		reg = readl(priv->io_base + CDNS_ECC_U_ERR_STAT);
+> > +		syndrome = CDNS_ECC_ERR_STAT_GET_SYNDROME(reg);
+> > +
+> > +		err_addr = readl(priv->io_base + CDNS_ECC_U_ERR_ADDR);
+> > +
+> > +		edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci, 1, err_addr >> PAGE_SHIFT,
+> > +				     err_addr & ~PAGE_MASK, syndrome, 0, 0, -1, mci->ctl_name, "");
+> > +	}
+> > +
+> > +	if (status & (CDNS_ECC_INT_STAT_CE | CDNS_ECC_INT_STAT_MULTIPLE_CE)) {
+> > +		reg = readl(priv->io_base + CDNS_ECC_C_ERR_STAT);
+> > +		syndrome = CDNS_ECC_ERR_STAT_GET_SYNDROME(reg);
+> > +
+> > +		err_addr = readl(priv->io_base + CDNS_ECC_C_ERR_ADDR);
+> > +
+> > +		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, 1, err_addr >> PAGE_SHIFT,
+> > +				     err_addr & ~PAGE_MASK, syndrome, 0, 0, -1, mci->ctl_name, "");
+> > +	}
+> 
+> [Severity: Medium]
+> Does passing err_addr >> PAGE_SHIFT directly to edac_mc_handle_error()
+> miss the physical memory base offset?
+> 
+> On Renesas RZ/N1 (r9a06g032), system DDR starts at physical address
+> 0x80000000, while the Cadence/Denali controller logs 0-based DRAM offsets
+> in CDNS_ECC_U_ERR_ADDR and CDNS_ECC_C_ERR_ADDR.  cdns_setup_mc() fetches
+> the /memory resource into res and enables SCRUB_SW_SRC, but discards
+> res.start and leaves mci->ctl_page_to_phys unset.  Without adding
+> PHYS_PFN(res.start), edac_mc_handle_error() reports a 0-based PFN and
+> edac_mc_scrub_block() fails pfn_valid(), silently skipping software ECC
+> scrubbing.
+> 
+> [ ... ]
+> > +	reg = readl(priv->io_base + CDNS_ECC_STAT);
+> > +	if (!CDNS_ECC_STAT_IS_ENABLED(reg))
+> > +		mci->edac_cap = EDAC_FLAG_NONE;
+> > +	else
+> > +		mci->edac_cap = EDAC_FLAG_SECDED;
+> > +
+> > +	mci->mtype_cap = MEM_FLAG_DDR2 | MEM_FLAG_DDR3;
+> > +	mci->edac_ctl_cap = EDAC_FLAG_NONE | EDAC_FLAG_SECDED;
+> > +	mci->mod_name = pdev->dev.driver->name;
+> > +	mci->ctl_name = "cdns-ddr-ctrl";
+> > +	mci->dev_name = dev_name(&pdev->dev);
+> > +	mci->scrub_mode = SCRUB_SW_SRC;
+> > +
+> > +	dimm = *mci->dimms;
+> > +	dimm->nr_pages = PFN_UP(mem_sz);
+> > +	dimm->grain = 4;
+> > +	dimm->edac_mode = EDAC_SECDED;
+> 
+> [Severity: Medium]
+> Should cdns_setup_mc() set dimm->edac_mode to EDAC_SECDED and continue
+> probing when CDNS_ECC_STAT_IS_ENABLED(reg) is false?
+> 
+> When the bootloader has not enabled ECC, mci->edac_cap is set to
+> EDAC_FLAG_NONE, but dimm->edac_mode is still hardcoded to EDAC_SECDED.
+> Because EDAC sysfs exposes dimm->edac_mode via dimm_edac_mode, userspace
+> monitoring tools will see SECDED reported as active while the driver also
+> requests the ECC interrupt, unmasks CDNS_ECC_INT_EDAC, and exposes debugfs
+> error injection on a controller with ECC disabled.  Failing probe with
+> -ENODEV (as documented in Kconfig that ECC must be configured by the
+> bootloader) or setting dimm->edac_mode = EDAC_NONE would avoid reporting
+> active ECC.
+> 
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261118-paul-v7-3-rc1-edac-v8-0-ed791084cc19@bootlin.com?part=2
