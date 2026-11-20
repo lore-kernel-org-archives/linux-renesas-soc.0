@@ -1,58 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.28
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795152525;
-	b=TyIpnzwW4BJiMX4Z1O7Nxxy4y0bDUu2nHakAZqRBpDywmQo9qfjyZz4uOvS/OyviVzds
-	 Pn5mxZA6HWP7guGL/Q5hluJco+ddnGAaSxaXm2MtEgy/3m7JPuAdOFBAzznbBGJsrWwj/
-	 On/VaDdklRFWqjKvdWIjiC3Vh2Xk8NJCp3URrN1vwBYiRGgfIeVso0QGR41XSrCyA4E21
-	 xypVg94Q/MndYhbT9AAoLPWsQoQgY5AoWuos74zoivZA6MN0jVNtp6Vy0KY/uGKZhFzDg
-	 u7yVt7kX/DEJizD5zF3Wz9lOOWNE3NOkZ2UQB7J66YXxV4EJJXlLsl4CYL1GVvj8Drg==
+	t=1795154516;
+	b=jdf3hiTjbWvu2hOcZ/C8FUTw0sfBpafqckkg/cwG/I1+/MrM6CUqzb54e4yoRizd8z3e
+	 PYJ09RJyo3Oh17Ika7rwj4lfQZ2E+aDvP6K7UNJWxdyxCb8CnH1a8nrfVgshwBIuY0QnI
+	 RD/hkIVWvcfb9Dhys+fjitGIdTnsfzv1rZbGbaM3ge7muG2kwxnMtyewC0Pk8Ch5wZ7bz
+	 d2WPl9IQzAYVFfpOTUa8gloo59WGlfhe5WmVCn97Nx9lBpAvOXyB+MQQfUuqCs7nw8TjA
+	 Db+bnIt8lMWTslkjEnWuD8zVTdL2jUVZpRXTgF6AN8EwiiEF/Xa749T81qz/pLQa5Ew==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795152525;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-ID:X-MBO-RS-META;
-	bh=J2OGnbZI2RyuSc7mFDxV7TFFnaltYUWFL9MIdYgF4mU=;
-	b=XxhkGQME9r7/zGkOUPpMih5t8h/MNosuXxLkfAezD9kFgNqPS/lKy3S31jxbgLiyQEWo
-	 Bx0JCyDpLe2d8VlQDezo0GhPHBxopXWodBHi7jm3RjXWTiC1Dy9/zDX8VyW2/r2X+nofU
-	 AYfHDRFoQ29Ey7WWbamuPfdZx61nC3W4MUPucy9lZ0UmzCjevF4jpAji3ghKIVsacyN/S
-	 y2RTq+JZplG/KKTw/8CUqr/oktNMwr2G6D6tzrcWk7c0RiY3umNPxV40ZnYtjZddyydGN
-	 34/A6v9P1Nw0mmrvIVbrcZYVRM/NxJrA+ESMqOmj2iArJEsviAfRwcobaqZ1wP6jxkw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795154516;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=MfLnJK7wEETnWhNL1VJ9v2r2Cv1i7NwWvlx5qMBHHgQ=;
+	b=X1WrrHHP9tv5OZN5IH6FoUSgJx9G2//Vylv8vPnckIbqLkmQtFjDF7HewOJQqo5DsYiA
+	 pRo746a839ehus4LRCNmRRV9zhL7c9roGZHPFJUBXWicqXIyEyBNJ8B0a19U5enB+aMYf
+	 uzRwhUfpD2cg+FyzE4gYXWnJkE1w1TtPJOiMdkYV1wBGNkLOwC4Vew/rSCUAotsrqGoVF
+	 JtWTNgV8hTphjLHapnozpJhqQd6CELbOiVUMJkBqXad2zW4/bm52ISZUYU+Ai9hyU1Ew8
+	 PtcmFF4oKvjU7LrdPCe1B7T6JBfhNUa7Xm3U/tISpjzEAAKFtFjKRWkgfCQ5MrEqzBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mailbox.org;
-	spf=pass smtp.mailfrom=mailbox.org;
-	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=fSP1q1Gq;
-	arc=none smtp.remote-ip=80.241.56.161
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=EcK0Q3PH;
+	arc=none smtp.remote-ip=91.218.175.28
+Received: from mta0.migadu.com (out-28.mta0.migadu.com [91.218.175.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88AC606A330;
-	Fri, 20 Nov 2026 05:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C88AC606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683B7606A523
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 06:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 683B7606A523
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=fSP1q1Gq
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4jW3lh5G1SzKnpn;
-	Fri, 20 Nov 2026 06:28:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1795152512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J2OGnbZI2RyuSc7mFDxV7TFFnaltYUWFL9MIdYgF4mU=;
-	b=fSP1q1GqB4YSd3yYZpZD7CoBk3OXGzxXXVYV5tFve6hGE1nuB4TZFnGKVErFNRvpVqNXR4
-	WClS2aKJwimDXHWHKm0uW85Z339XgdeKzNQe26FiIW6N/jIUiL/BojSFiGZnEiScXnFzSW
-	9UTA4caaPFqYl0qoppEQo3Oxhc+u5yrq1kDB1zxL4zkgocgjptjGh9OqkJx/C4CkbgD+WU
-	aytnZl48P5hB9tI2k3TgwAoSyPNeKLOoeDU6xfrTGa9RGTgCRh2wAVW4mMWt44cWRQzcEM
-	KWj/V6KANVEneIwSy4PNhFNGf0Q+FGPz43WnILOS0Et6nBPrKO/Lz73ZT2YCYQ==
-Message-ID: <702afd88-3383-4f6f-9a54-78cd95a80c30@mailbox.org>
-Date: Fri, 20 Nov 2026 04:36:14 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=EcK0Q3PH
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=+fYMFB+pYYrgt7QtO/hE8IfWmoajzI7XXfxThypRgF0=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795154507; v=1; x=1795759307;
+ b=EcK0Q3PHtXb4lcmZnMgLSMfUJJiq4KI/qSGiqe1yWgPhPBGj8bqaO+UU5WAL+9O0eKJjhCjL
+ UmpGdzoPde10CKYn9UGW3LLRtkkM3Ue8KapJdkJsY/VVXJ55MdrzZwwL0UB3f7lUp5mlWKmkUq5
+ 82CJigjsqUtkv1oS/EEN215g=
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id fd24a32bd353097a;
+	Fri, 20 Nov 2026 06:01:47 +0000
+X-Mizu-Trace-ID: fd24a32bd353097a
+X-Migadu-Flow: FLOW_OUT
+Message-ID: <d0f5f347-a5f6-4e84-b773-f29ffcdab156@linux.dev>
+Date: Fri, 20 Nov 2026 07:01:42 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -63,49 +59,111 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/15] pmdomain: renesas: r8a78000: Replace sentinel by
- explicit ID map size
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+Subject: Re: [PATCH net-next v5 08/24] net: dsa: rzn1-a5psw: Fix LK_LEARNCOUNT
+ write mode encoding
+To: Prabhakar <prabhakar.csengg@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
  Philipp Zabel <p.zabel@pengutronix.de>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Paul Elder <paul.elder+renesas@ideasonboard.com>,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <ee60a54c457af21277a13e8e1db36ce83209b3f5.1795029012.git.geert+renesas@glider.be>
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+ Ralph Siemsen <ralph.siemsen@linaro.org>, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ stable@vger.kernel.org
+References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261120002549.1908299-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <ee60a54c457af21277a13e8e1db36ce83209b3f5.1795029012.git.geert+renesas@glider.be>
+From: Clement Leger <clement.leger@linux.dev>
+In-Reply-To: <20261120002549.1908299-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 0eb81db9691d4bba056
-X-MBO-RS-META: jtxh91mtydrj9pcr6axxbzggtj71f7wm
+Content-Transfer-Encoding: 8bit
 
-On 11/18/26 8:45 PM, Geert Uytterhoeven wrote:
-> The use of a sentinel in the module ID mapping array will become
-> cumbersome when the need arises to find out the actual number of
-> elements in the array.  Rework the mapping data structure to fix this,
-> also improving naming.  Let mod_id_map_find() return an index, to be
-> used for indexing additional mapping target arrays later.
-> Add a MOD_ID_MAP() initialization macro for brevity.
+
+
+On 11/20/26 01:25, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> While at it, drop the check for "!map" in mod_id_map_find(), as that
-> pointer can never be NULL.
+> The LK_LEARNCOUNT write mode lives in bits [31:30] of the register, but
+> the driver writes the raw A5PSW_LK_LEARNCOUNT_MODE_* values (0, 1, 2)
+> directly. As a result, adding an FDB entry writes "set LEARNCOUNT to 1"
+> and deleting one writes "set LEARNCOUNT to 2", instead of atomically
+> incrementing/decrementing the counter.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> Use FIELD_PREP() with A5PSW_LK_LEARNCOUNT_MODE so the mode lands in the
+> correct bit field.
+> 
+> Fixes: 5edf246c6869 ("net: dsa: rzn1-a5psw: add FDB support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v4->v5:
+> - New patch
+> ---
+>   drivers/net/dsa/rzn1_a5psw.c | 10 +++++++---
+>   1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
+> index 13c46cf2c420..7fd2652813ac 100644
+> --- a/drivers/net/dsa/rzn1_a5psw.c
+> +++ b/drivers/net/dsa/rzn1_a5psw.c
+> @@ -5,6 +5,7 @@
+>    * Clément Léger <clement.leger@bootlin.com>
+>    */
+>   
+> +#include <linux/bitfield.h>
+>   #include <linux/clk.h>
+>   #include <linux/etherdevice.h>
+>   #include <linux/if_bridge.h>
+> @@ -545,7 +546,8 @@ static int a5psw_port_fdb_add(struct dsa_switch *ds, int port,
+>   		goto lk_unlock;
+>   
+>   	if (inc_learncount) {
+> -		reg = A5PSW_LK_LEARNCOUNT_MODE_INC;
+> +		reg = FIELD_PREP(A5PSW_LK_LEARNCOUNT_MODE,
+> +				 A5PSW_LK_LEARNCOUNT_MODE_INC);
+>   		a5psw_reg_writel(a5psw, A5PSW_LK_LEARNCOUNT, reg);
+>   	}
+>   
+> @@ -604,7 +606,8 @@ static int a5psw_port_fdb_del(struct dsa_switch *ds, int port,
+>   
+>   	/* Decrement LEARNCOUNT */
+>   	if (clear) {
+> -		reg = A5PSW_LK_LEARNCOUNT_MODE_DEC;
+> +		reg = FIELD_PREP(A5PSW_LK_LEARNCOUNT_MODE,
+> +				 A5PSW_LK_LEARNCOUNT_MODE_DEC);
+>   		a5psw_reg_writel(a5psw, A5PSW_LK_LEARNCOUNT, reg);
+>   	}
+>   
+> @@ -963,7 +966,8 @@ static int a5psw_setup(struct dsa_switch *ds)
+>   	}
+>   
+>   	/* Reset learn count to 0 */
+> -	reg = A5PSW_LK_LEARNCOUNT_MODE_SET;
+> +	reg = FIELD_PREP(A5PSW_LK_LEARNCOUNT_MODE,
+> +			 A5PSW_LK_LEARNCOUNT_MODE_SET);
+>   	a5psw_reg_writel(a5psw, A5PSW_LK_LEARNCOUNT, reg);
+>   
+>   	/* Clear VLAN resource table */
+
+Hi Prabhakar,
+
+It could probably be worth it to add a small a5psw_set_learncount() 
+helper that contains these the FIELD_PREP + writel.
+
+Otherwise, LGTM:
+
+Reviewed-by: Clément Léger <clement.leger@linux.dev>
+
+Thanks,
+
+Clément
+
