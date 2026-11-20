@@ -1,76 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795172735;
-	b=r7GL+x7kuXylj9v7q7qtjw9etrwAJlZgT31PxR3wq2Hs71waiyqu60qNaue0R+SaH/ZB
-	 2Ww3uT3zC1kJI5ZF9WoC4QzhWVkXOz7aMWrGkJV/IiL7lZ1RDaP6Nl94bpkytCjb+X9wW
-	 qeVERJrzjilj7oTodwgWszuxgTT0IJqtyD7XqsUqQTV2g1a2xPEaEoGPRuvXaN4euxRBQ
-	 mcLK0r+65598cP0ek6CmuOCxfqzYteEuGRA7fhZzqRyEmeIkHRFi/O88U3uXP0sn0YkyZ
-	 ZffUAD623CrUFx7EQxf6OJLgU6BUJLPskutdaftun/K92AO5U4BPhk7eZ8puWm9XExw==
+	t=1795173042;
+	b=JeM6gAATJFB5OB21xCd05N3y9oo0hbvbN8EHLUicUExXfi5sEYjmCtbaUkvaFytlb3ij
+	 MnHeQ8IuSEcZmZhfxIwdQBZ8ni+m2AHfGr2Fmx7uzPi2G8JgsJhE8cicjx4UH4e9pMtMj
+	 jSlhr4aERzwB/HKIhnx/uB+KQpj1j4MuZXbc7PY59tXmesvgJ6fVapfwR1uAjrqDlMKGv
+	 bmxUTfOEhMF1BV5XOE/XoQCcacgBQufpsoFhuK0HzLFu01TeBowegDulx9qijiO0ir3OU
+	 Gw69hDtq+PWe7DmkJo7YNAXQWyubsex9nVn3SjI4kRP5dt7Wei0IlGghRKnTpmch9vg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795172735;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=7Fsqs1iX5umt9C6HSg0iQYMwk7igmLmbTGhkL3PvPnc=;
-	b=I2l7Edto5kBjRGF2FQJ63x5fHn53hoAjp5VWuMvTdT2XbMBHohliSHailYetO4nNaL5h
-	 ffXjHJ7jCUcXcXBKbQbGwyQleo8GvcWtICsc6FsgF3TqRHnyzEdn7+4tUHmaz8c5Xuqw7
-	 1HG+KIgAtj/89ONhgY9UAS8Xs0iLDOHbkecGIOZZb3WYXsEJfoBqNbyL49UoaqV0ycE0w
-	 D5AU2BW8vtnFqEZgMdIBCcO7cpgBjOVy576+C6c/DLtvRNadMxNlIbeyqJK2ImWLDF/0K
-	 h4Xb1W3+NbYiHe6ittEZbVxJfQIoaBODGMWhcS1L8I2YDTEQkLLDD2bDA7nMX1tpJUw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795173042;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=P31KX+HGbOZ2m/ze0RQmiiG2ACd7jzLv4I1BkpYMPf4=;
+	b=QeA8c2E4+R/Tk4pTqFfAfe//eWSZLFuaioqBUBFOnpZnTmh6LJdFajR1GGXAlECViJ49
+	 fcbh1zJZAMNEa72Z06VZpWI2ZOHlh/8M2Zayd3b9XXRgU1Gy3+yBo0blLyPELKNShwcM6
+	 w/1xfF5mBRSWycz5pnDAsPby/8U987vAE/BEsGdUMJ7lQJGykwk49YMcxIS7IBRQUg6vl
+	 AY0zJi4VAqhSGTFeGprcwxeSSw+pp7CM2M0aOvqYde0DAQVYkL6ra/D7vn6+CETBHjhWL
+	 XSF4ogrNb73HNAAkF5WY/9mB/ZZGZFb4J8NDHIBMX/FjS5v0Y+/5QYdxBaE+6sMbPww==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.43
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Obxoi06N;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820D606A336
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5820D606A336
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-9828fee1b4bso235869241.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 03:05:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795172734; x=1795777534;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=7Fsqs1iX5umt9C6HSg0iQYMwk7igmLmbTGhkL3PvPnc=;
-        b=WAVNhfh+hINK4AmubmjDc5brEGTtIu6ORFtZIpkGV+fjr5b0XnQgXINUu/v9EuNEWa
-         i/vSnBjGCoL3N+uhad4uztDIVcSb1mH+PUEwFsJ+l0V27B2QZAuPy9NhzWJZG2nCJxCA
-         g4JErLjvSimXM6c6djYcHjwG/jJv4rTToWZeAdr+fQhfffb6q9aGSXll3Dr+Cpoii7jm
-         GBeObF8ECwAhmltVUWOkqtxnn4p/ppVT/IIQ5si4L7w8xWHzgzYH34nv7P30c9qJiRc5
-         iBMa+4xDrzx0949W6UlicIkiTcJogfIxD02+GWg/BUlJS1L4600iZkEh+3Iaz7ySGZs9
-         F57w==
-X-Forwarded-Encrypted: i=1; AL+hErGiI2RGvugePN/IpC14qZiNUBJFFlF0stz2vo4S3N5Ovgn3Muo0hZyB1bV1wAz05MauWOCninzUHOeip6esM6NY/A==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Sb/DEZApMpqpZcwsVI1rQzaGiX0kVAk1QlXx1+b+pZD7GJqNy
-	wOqRaO+FIPl3+a9G12FeSBt9sDWVOgRSIIY4dif/ynkZdPq+ihuDVvwlqZDCFvD2
-X-Gm-Gg: AZFdTZdgy0uvl8IahBoxhDLqhJZyGghdMt2BoZtQ5TQpUgNg86vHk6XXQS5fPfFGTAE
-	CSNPvGjV7SXqYTsr2hvBbWHLaBTSESrvRheYVm8Qe7+DRTcD/YqslxU2GvBa3pU0ondigVYH6ki
-	5tIloo+UShWa82YJjgnf2LiPR5o9P/82wkwlGzgofejCDOKj8cljBezVIsbLLuj7FHDVNZWYCL1
-	silxUiE5MJkInjWRprI8gDzv2+O0CQQ55gP3X3nbFNqLpFg1MF3DuDYaksGzVFyNzWic0wu53FN
-	fV658WKUts/InPsEHUPvBbYt5rC7yLfpV02kmQ8hDpnKbI2xAz3g8geG8KQI67eQmmOqYd2Yojn
-	xNiTk4FdCAkADJauyIoY8DUgfXqDF7PpMVwOi7IR8yPSRWqQ8O6Iz1c7qv4oY//KmP74bsuvrCY
-	H+eajyM2jnUScnzRRhlKrZMDkSbZsCRZDW/oPXCHsX7QzXurBxFMRLIl2Dp8fP5QsV1T1LzoD4B
-	EFlguuK3uE2k722Hh6BYyF3dtb+kGY2T9VK7cV5nejz8HE18qhougDqOcsrDrGdIeWr14qrkI8c
-	htnq6OJ/1gRU2JmVuhJMaWYeFrGIoS4YLYPkNUsM0ABgEPy1mlEg8981Z8yizxcIhVk=
-X-Received: by 2002:a05:6122:d91:b0:5ea:b1f5:a657 with SMTP id 71dfb90a1353d-5ee8aeb4a46mr1223092e0c.7.1795172734273;
-        Fri, 20 Nov 2026 03:05:34 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ee8b59844csm2148409e0c.7.2026.11.20.03.05.33
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Nov 2026 03:05:33 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-99e145569c6so149534241.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 03:05:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFJic+C84uJQkwm6UxK9VylGF/IPsYYUa4zrEYo2QqrJeI81oeK156B/tVN03aKX+MEqGZ1A3n9xs6777fcr6Rgyw==@vger.kernel.org
-X-Received: by 2002:a05:6102:2926:b0:7cc:9d47:9c9 with SMTP id
- ada2fe7eead31-7d73963f00dmr849125137.35.1795172732962; Fri, 20 Nov 2026
- 03:05:32 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F29606A32C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 56F29606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Obxoi06N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:content-transfer-encoding
+	:in-reply-to; s=k1; bh=P31KX+HGbOZ2m/ze0RQmiiG2ACd7jzLv4I1BkpYMP
+	f4=; b=Obxoi06N2BzJC2E18N5zskewr6CRQuDC+9+KvJKyH9LuFwQeHEoRM8iX+
+	1RN3g2hi0vRMpw9ChKCggkqpDtldXjWSxbuf15ors+C79EzQrWROtqkODXwVMioz
+	AwJzyY5VTdwsnFQspH2hE8RSP1Nhf8/y7hf7KJNOdig+td/U5uqFSxRWdKIjksaV
+	xUmXByPF0+tNuh7pm304XaQfgfBSY355NR4ka2paF3JigCsRB5BOfvmbMWMNBP9B
+	GnaFo74Vv47qUVK4+9ZpjQSKFC89PuuUA5BL806XF5TI21wlvLZ+P+r6LUjwEDNL
+	l86k8NVB2qHZ1u6bkApUglRKLQi7w==
+Received: (qmail 1450248 invoked from network); 20 Nov 2026 12:10:35 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:10:35 +0100
+X-UD-Smtp-Session: l3s3148p1@knAOS7Ng4JIujnuU
+Date: Fri, 20 Nov 2026 12:10:34 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Paul Elder <paul.elder+renesas@ideasonboard.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+ support
+Message-ID: <awAqqg6F2Z1t55x2@ninjato>
+References: <cover.1795029012.git.geert+renesas@glider.be>
+ <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+ <20261119234759.GB2324725@killaraus.ideasonboard.com>
+ <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,58 +86,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20260902141544.565763-1-claudiu.beznea+renesas@tuxon.dev> <20260902141544.565763-8-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260902141544.565763-8-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Nov 2026 12:05:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXhBKV8zoi_95WsB3qSC2tm-nX9opurqFPO8n3mn3L=UA@mail.gmail.com>
-X-Gm-Features: Aa3M54qJy6m08CrK20MF4Bh-SEahYYaIemU7d5t_ENxV4MsT0OIrWbFwbx-tam8
-Message-ID: <CAMuHMdXhBKV8zoi_95WsB3qSC2tm-nX9opurqFPO8n3mn3L=UA@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: mkl@pengutronix.de, mailhol@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, 
-	claudiu.beznea@tuxon.dev, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
 
-On Wed, 2 Sept 2026 at 16:16, Claudiu Beznea
-<claudiu.beznea+renesas@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The two CAN FD channels available on the Renesas RZ/G3S SoC are routed
-> through the Renesas SMARC Carrier II board when used with the Renesas
-> RZ/G3S SMARC Module.
->
-> The CAN transceiver on the Carrier II board has its standby pins connected
-> to GPIOs that are selected through the SW_GPIO_CAN_PMOD switches. By
-> default, these switches route the GPIOs to the PMOD interfaces.
->
-> Enable the CAN FD controller and its two available channels.
->
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v4:
-> - collected tags
-> - used ti,tcan1046 compatible
-> - adjusted the standby-gpio property along with CAN PHY node name and label
-> - adjusted the CAN channels phy phandles
+Hi Clément,
 
-Thanks, will queue in renesas-devel for v7.5.
+> I don't think SCMI itself introduce instability.
+> It only defines the protocol, and each firmware choose its ids.
+> Could you tell me what you mean by instability?
 
-Gr{oetje,eeting}s,
+Let me try to reword:
 
-                        Geert
+In the past, we wanted to support all kinds of firmware. Sadly, each new
+firmware introduced different IDs here and there. So, we came up with
+some stable IDs ourselves and mapped them to the IDs per firmware. This
+is a n:1-mapping of firmware IDs to our stable IDs.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The support for <n> firmware versions got serious opposition from
+upstream. We concluded that supporting only the latest firmware will
+make most controversial discussion points vanish. So, we now have a
+1:1-mapping of (the latest) firmware IDs to our stable IDs.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I guess this is what Geert means with IDs becoming "stable". <n>
+firmware versions might return <n> IDs, but supporting only one firmware
+we get the same "stable" ID from it.
+
+Sadly, of course, with the next firmware update, we still might get a
+different ID all the time. So, not stable in that regard and we still
+need the mapping :(
+
+Yes, this means the driver is then tied to a specific firmware version
+because it only has this mapping. Not nice for a user. But we didn't see
+another way moving things forward for now.
+
+Was this understandable? Geert, did I miss something?
+
+Happy hacking everyone,
+
+   Wolfram
+
