@@ -1,82 +1,83 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795173042;
-	b=JeM6gAATJFB5OB21xCd05N3y9oo0hbvbN8EHLUicUExXfi5sEYjmCtbaUkvaFytlb3ij
-	 MnHeQ8IuSEcZmZhfxIwdQBZ8ni+m2AHfGr2Fmx7uzPi2G8JgsJhE8cicjx4UH4e9pMtMj
-	 jSlhr4aERzwB/HKIhnx/uB+KQpj1j4MuZXbc7PY59tXmesvgJ6fVapfwR1uAjrqDlMKGv
-	 bmxUTfOEhMF1BV5XOE/XoQCcacgBQufpsoFhuK0HzLFu01TeBowegDulx9qijiO0ir3OU
-	 Gw69hDtq+PWe7DmkJo7YNAXQWyubsex9nVn3SjI4kRP5dt7Wei0IlGghRKnTpmch9vg==
+	t=1795173106;
+	b=vRMTsZ4erfkqLoccIZid6OsuYeOCUX9rGJnFDpMwq8QlncYyZcUB693nEf5Wxs5wvGFu
+	 q081yov0RTtEZMVIpFJhvZk2z5bwgrJJlP86xR3zUb5gX/3kc9CrpICIuRuepVI/cjTO3
+	 zHkyJIKzWNYXdzTIZiz+2qwdJnDA7EWuVAAFtIVF84iKSGY+7vo6q9gXzifjhJRYyq5WL
+	 yPnKsQXLFjiT90O7fx7JuyR2I08SZnSJV31Kuecz7pjEsHmUI791v69vKy9isz+LSCh9e
+	 N8xm2aZycO+VmpRNAxrBGG2cU3OlJRrtulCP0V7a//LeS39d3JZcwNhmPnDxxfdNFQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795173042;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795173106;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
-	bh=P31KX+HGbOZ2m/ze0RQmiiG2ACd7jzLv4I1BkpYMPf4=;
-	b=QeA8c2E4+R/Tk4pTqFfAfe//eWSZLFuaioqBUBFOnpZnTmh6LJdFajR1GGXAlECViJ49
-	 fcbh1zJZAMNEa72Z06VZpWI2ZOHlh/8M2Zayd3b9XXRgU1Gy3+yBo0blLyPELKNShwcM6
-	 w/1xfF5mBRSWycz5pnDAsPby/8U987vAE/BEsGdUMJ7lQJGykwk49YMcxIS7IBRQUg6vl
-	 AY0zJi4VAqhSGTFeGprcwxeSSw+pp7CM2M0aOvqYde0DAQVYkL6ra/D7vn6+CETBHjhWL
-	 XSF4ogrNb73HNAAkF5WY/9mB/ZZGZFb4J8NDHIBMX/FjS5v0Y+/5QYdxBaE+6sMbPww==
+	 Content-Disposition:In-Reply-To;
+	bh=+0jvDmYpMRkDRCjGyAjujLifgFkDdi98SrDxejAju4Y=;
+	b=wbfNN3DYlpalox6xjrW6NM8hNxBt9Gvm4qbxxmR5aD4Qsxd2iPda+N+JCGiyrUcpI0+d
+	 ITfQJfiUqTitLNdlkEO67OEjny37GOQ2sOgvkntcu7SRnKv629Ok1x1DmlK9mNPzbZI6e
+	 vf/KSy+7lGi54kbXVvTuYzUue3Y0Nz4fpAmjrhAoNprFHGI9WCDjOh6oWse2dGL3X/Qx1
+	 4kCIJm62FYzjHaVXKlyE0n6KztEPP5OkRzbO38h5CS6MKKHSlYj2rU3yTqNo7OWDv4L2o
+	 ECp0W6dD7J1qtOR+KWIcRHyu/13H67G39ZqNN5CC8k97k9AN02Woa8fW4UakIJSzZCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Obxoi06N;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=XSEEn4dc;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F29606A32C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 56F29606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5978C60A6F45
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5978C60A6F45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=Obxoi06N
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=XSEEn4dc
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:content-transfer-encoding
-	:in-reply-to; s=k1; bh=P31KX+HGbOZ2m/ze0RQmiiG2ACd7jzLv4I1BkpYMP
-	f4=; b=Obxoi06N2BzJC2E18N5zskewr6CRQuDC+9+KvJKyH9LuFwQeHEoRM8iX+
-	1RN3g2hi0vRMpw9ChKCggkqpDtldXjWSxbuf15ors+C79EzQrWROtqkODXwVMioz
-	AwJzyY5VTdwsnFQspH2hE8RSP1Nhf8/y7hf7KJNOdig+td/U5uqFSxRWdKIjksaV
-	xUmXByPF0+tNuh7pm304XaQfgfBSY355NR4ka2paF3JigCsRB5BOfvmbMWMNBP9B
-	GnaFo74Vv47qUVK4+9ZpjQSKFC89PuuUA5BL806XF5TI21wlvLZ+P+r6LUjwEDNL
-	l86k8NVB2qHZ1u6bkApUglRKLQi7w==
-Received: (qmail 1450248 invoked from network); 20 Nov 2026 12:10:35 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:10:35 +0100
-X-UD-Smtp-Session: l3s3148p1@knAOS7Ng4JIujnuU
-Date: Fri, 20 Nov 2026 12:10:34 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=+0jv
+	DmYpMRkDRCjGyAjujLifgFkDdi98SrDxejAju4Y=; b=XSEEn4dcs+dmjgXWMrsn
+	2woUGRjhi0OvAd2x1RPubcWTW0kmlTVxBRL9nr4oclr10H6nSZyLnfTxUmjKXXsV
+	k8Zxi/4Vs4JkzS6aXv+/jAeghtygszaKQfQIJqAFkIVBcFhMkkh1bkTDeitDLNJZ
+	Iynsy9GLzslsM1lie7wDhCl4B/DGjO7gYt/cik79ypVKr3u+s2gE90eq6hq4OtPf
+	94cG89uPSwaMNN4rhE8GEyiFWEyLI6a7mdOP8XSjwM3CoUOo6hGIq/421nbJXe1P
+	shNk2ADd7sQh24Rrn3Bva9tTGBEbC674jIP8V33bUvWI4evDzU0rf5QFpXXt37U2
+	9w==
+Received: (qmail 1450602 invoked from network); 20 Nov 2026 12:11:42 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2026 12:11:42 +0100
+X-UD-Smtp-Session: l3s3148p1@aboUT7NgiOAujnuU
+Date: Fri, 20 Nov 2026 12:11:42 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: khendry@reliablecontrols.com,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-Message-ID: <awAqqg6F2Z1t55x2@ninjato>
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
- <20261119234759.GB2324725@killaraus.ideasonboard.com>
- <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
+ reset cells
+Message-ID: <awAq7vxcY8CGjhNl@ninjato>
+References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
+ <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
+ <awARmkCuelD_fdX6@shikoro>
+ <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -86,44 +87,19 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
+In-Reply-To: <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
 
-Hi Clément,
 
-> I don't think SCMI itself introduce instability.
-> It only defines the protocol, and each firmware choose its ids.
-> Could you tell me what you mean by instability?
+> > > +#define R9A06G032_RST_TS		1
+> > > +#define R9A06G032_RST_MIIC		2
+> > 
+> > I didn't find any listing of the resets in the RZN1 docs, so coming up
+> > with arbitrary numbers as we need them seems okay to me.
+> 
+> Why aren't we starting at 0?
 
-Let me try to reword:
-
-In the past, we wanted to support all kinds of firmware. Sadly, each new
-firmware introduced different IDs here and there. So, we came up with
-some stable IDs ourselves and mapped them to the IDs per firmware. This
-is a n:1-mapping of firmware IDs to our stable IDs.
-
-The support for <n> firmware versions got serious opposition from
-upstream. We concluded that supporting only the latest firmware will
-make most controversial discussion points vanish. So, we now have a
-1:1-mapping of (the latest) firmware IDs to our stable IDs.
-
-I guess this is what Geert means with IDs becoming "stable". <n>
-firmware versions might return <n> IDs, but supporting only one firmware
-we get the same "stable" ID from it.
-
-Sadly, of course, with the next firmware update, we still might get a
-different ID all the time. So, not stable in that regard and we still
-need the mapping :(
-
-Yes, this means the driver is then tied to a specific firmware version
-because it only has this mapping. Not nice for a user. But we didn't see
-another way moving things forward for now.
-
-Was this understandable? Geert, did I miss something?
-
-Happy hacking everyone,
-
-   Wolfram
+I wondered as well but clocks are also starting from 1, so we could
+argue with consistency.
 
