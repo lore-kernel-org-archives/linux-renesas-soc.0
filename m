@@ -1,88 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795170593;
-	b=Dc8CceMBTGmqnqCco1rCCVDfpMBDA2NO4AXfrYZeX8RrcDi5KQLzwn6BdcLWI0afdEb0
-	 369pEO2pJKu9H94CQBmmEBpSIpF7h24dE+G6U6cAqrbS+E0IuYGDNt8nz1XNB7mISOA7Z
-	 aqwuJ1q3KmJoxkTtibqu17XdPEM4mIrgVtsH4hWAVCmRfh2iCvDj/XNMuIBN8KVo1qmOB
-	 rAKS/8eGE78Hu/dGW4iHX3PfF7q2Tq9Lzrj6QEHeqWFi8wVWKibhSy0GE3RdW8nhWw39F
-	 kIAtRzbFRs5mHN0Ht/v14rF5eCqxBiYO6uDWRH40u7c/vYQKbUF8dyv5dFYWEovJrLQ==
+	t=1795172429;
+	b=rCE4tP1Mjr07gVyF2nKBCkb5AfJ7xfhVIlzh1gJl2v8q7naPeupVJ5qVT1AWWcX8pwne
+	 4SgIHeSIk/kHaDPTuEtzSxHK/yqi1CQWAe3p9nlouPQv4zPXUgPz5xsQRw5zmWc6gzyOx
+	 sAMlAn/JWku9QV+hsxZMB5cK50qycA8cQlt7QboATn09kfbhqUe2Xbuto5r91Fj5VFbc3
+	 tQer+BEPMkZXq7rkYPkD9Dk/TrVixP3LUppwMA5MpyIzSuwU642QDgpXDmpI1liwPnui0
+	 nm/c7Bz5INhySoyBfeDCo2gb6xSsbEnWT8p7ip81rku54pPYj/e+L2/W+aHc4qCMEhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795170593;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=YECa1p9LzdYXA7zGnIWZNUD0xhZVO826hfzpFJvQccs=;
-	b=xdyVMSqQu6cZeRlkowHjC74tWngv+7U0GvC4C6Kt8eBR3AmKkk+DsX5krGcc8/50FgIy
-	 4fp64UnaPnNGAcW2m3Gy0N3EO1HqPl69CMzDuVdRDS1P6g2WO39fZmHOc+PCTRXyNas3L
-	 ZDdpQ9H/guMQMRM6EDoF7MXI64tVN5w3aKiasM5wJXVJU0qHN00Jx1nzhfVOh5syEmGMJ
-	 o7aaJjULA6ZFrzmRI6HU+sDwtWAts2YA5SZJ5sCIj4R26YucVWk4iYwQ4BgZNMuqZ0eEU
-	 9q8K6E4Qzq1xDioiGhuimkQ50D67vv8k3O2O0X7MldzszBg+h4yIKCTQrk6SZYD+DUg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795172429;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=LIOr8EpDe3/dYmsJbUDbEQoYb1h/0cU5uZHFxnrpj+U=;
+	b=pGtBxYj3AWU6eq4EUbq8CQ2AaUiwjBfbBkizyW4HVapDD0iDhMSpVBCV7ed+ECclvgDE
+	 78UIGyweEH1FV97NWQDEzislRrCDBJ0N/45qrG5zrygRvxMK75s7288COJcjQvLmw+2CY
+	 UBfXjbv6r3v8BN38pHT9zip34lhFfqgc69fNTYe4qMTIaq8keR8rdHaRJHc5VJmQeZbcH
+	 93+iB/XUn19EcApw8HyDIZOMtFr+dMU/LvpPEdX0kfrUQmf2I4/D6zJq85u4G1+TWjr9g
+	 9UGxuSWkfr0zj7xhtoM6TacEQy9SA7Ba/llZ8WKdSqYyBTgDu7VAOWSPBucu0oyKU7w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=emnnzxhh;
-	arc=none smtp.remote-ip=209.85.128.50
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dmarc=fail header.from=linux-m68k.org;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.217.45
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD817606A326
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 10:29:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD817606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=emnnzxhh
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4bb69f5b161so4310215e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 02:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795170591; x=1795775391; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=YECa1p9LzdYXA7zGnIWZNUD0xhZVO826hfzpFJvQccs=;
-        b=emnnzxhhSXC7pOKVR4XJxY37JOLjOZChOAK8ys6839gghkzDP+P+c5pUqMAdfQBI8u
-         AEHGxP6PrOmX6taHKNBIJJC5V/mEyzoX0UK2Ne9gWuY3HPn53Zb/5ETmtXitq0LlHZA6
-         PLcBn6cQcLYaOEiRvWhqaGoNM/bMkhIPn/xxaF+NV2e++aJJiQ/yqseiqE3UmEx3eK1+
-         ij775jpfZ1RUph0D6QJHxszrkgPkYhm4N+7mWb2I3KzT6yBo9OKyQVgSglqI1Q93UQ3B
-         LA0EMG/ZrARNzVVucMAgbJCyu4tY5crfyGbBhh0vFBEgPBa/v+rKxcsxsaJAIj7/cE8w
-         cBFg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF4D606A326
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:00:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BFF4D606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-74ab99038afso490792137.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 03:00:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795170591; x=1795775391;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=YECa1p9LzdYXA7zGnIWZNUD0xhZVO826hfzpFJvQccs=;
-        b=XeK4Kkv3tTfgmVIjHdpA2F/yu4oZeHat6oC6ADN2hhtZN3fEfqDQuZr1EpwQcSnoHc
-         GOrskT/Rlt54qFtPjK/uICGUw2a6diPlMzXdGmqWD1tOq9Q1OeySoRbtmNHMH6pucpvb
-         Ltlj+cfkpykuR8TJ4L029MVuS3ULnshLtisa5GSr0bHOx+uToMfmecroe4UuYWliqMxF
-         qI2Th15MPmds5Z/Ho+xDo73HiG8ZyYDp5ltB1z75KnfzFRoWloCJEvS298icsOAYLqil
-         scBPtfaYuJWK76g4Bbv4uWr0Dmh6dFaMJ/+3v7e0vI6srmJigL3rfyVvdeaq42QHgga4
-         inYg==
-X-Forwarded-Encrypted: i=1; AL+hErGIbRMEn50vABtxV/ORE5IBA6YWCrv8rTUG6n+jkiKprLFwK3TdsFOvNT5YuqQ+ZUXi+MdNcQ0LXoyDSwBZ31aqsQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8RFqte1Tu6/L8v3qM/pU8x65L0e2ld/hGxbQDU8hk0nMn2eZk8
-	oXJfEhwmVWVZc8q86ZuEr0GlCQvljNcchiTaAx3Qi7CC0HfuhjqvPQ5YHJc6pjKmGuk=
-X-Gm-Gg: AYBFou00L9w7eJAFFFNj0kNLTvBKWIalsW2ICZ3JoQcPWrwBA4dMuzomXCfhT+9DjNI
-	PvgTQndY6HNdIAuxhzZ/dMRZsy7YkjemiQfFKEY+HMljQnhxGQf7Aut5gNaDE/aGqNAdY8QlujC
-	9MsJZk5vC/5qNRfRJ+xwFhPO2oYp4oXCBBJ/9wsxv47iuPX8PVc+AZzP5MlcDvn2CGgnwjHflZW
-	0Gg5xuMuQt2OJNvZ+QWOarMszhhJNhHE05O6uJmIMiAhUnleCDFYlLpTD8Z6FbR3BXoV+fBCI4w
-	xHll/y2zU2AHtTFayroMYlVQatQCtNohmMhh/jb+zHdqegiqp/xv8ctnLinqFa3g73ZUZhn9jgo
-	6nCKVusRCsXJ8QYBYKLsGN7jQr95EMlwo46KbzK12BOHl2gDcLPmfIC4bUDclTV4lw3reLUweeH
-	IpC/HWEv24BLQKzuhHq2XIgPrvuBIunxvFsujLopRQbij/SuS/WGmjqa0H76URFnX+zKKAFzh9Z
-	Kx47aqpC/Sb/jVZw4NN4fLVvQd1jtfU/mc6MM4k+i2fTVjre5/QwzpZ3j1StMqi9eujzgENFXya
-	HuGC4r3v7FTX2OVmZr0herKWftcz+BA7gfMYyiJ4/EvSDHOtkZbQhQ+qpQ==
-X-Received: by 2002:a05:600c:64c8:b0:4bb:605d:8e92 with SMTP id 5b1f17b1804b1-4bb8881e767mr51613175e9.32.1795170591115;
-        Fri, 20 Nov 2026 02:29:51 -0800 (PST)
-Received: from [192.168.1.62] (140.30.66.37.rev.sfr.net. [37.66.30.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884a3a3dsm65912515e9.10.2026.11.20.02.29.50
+        d=1e100.net; s=20260707; t=1795172428; x=1795777228;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=LIOr8EpDe3/dYmsJbUDbEQoYb1h/0cU5uZHFxnrpj+U=;
+        b=KouYnNjNoe54fL755BAxJ3XURtaHiFPrWT26xzh7oMuU3hZMCp1pHgcGpsOpgNI+c/
+         IeQs2JjZGihjDOOMUI1R4hu1rBGwhlHqT6L6skTPmpOlx9q5fCO+sa7OfIhNbzYqYEcZ
+         5OMvOgelo0rFbZzjspiwYtKuD63T7hst65XM4Jf9jZ91G0BvdQksXKT0uQazVMoHWAkU
+         d+hjwiJ/fS2edhPAO2KNiXwuLmDoE4E0tzJ1bEI1WRwgdaYcbPJjO6YPbDR06r0/1Hm8
+         wsN5OsaCZ7UapFLyyYyq/jSO1GHhSp9mmBzRJEfMRogV06hJsUyFu9gI9T9616M1zknV
+         G50w==
+X-Forwarded-Encrypted: i=1; AL+hErGPbHK+nHOmYI7inGPWxvsMWMBcB+Gb2UcVtqCVjopTYKiRRWOOpLZWJxB4U5NTrc3UxKK8+qeQ3ytTI9O65IskJw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/ZXMgp0Tdg0Tz0hvoqX7rJeuuJY/epdBN31BgkPzSlHbznWCYr
+	pJOZzsI/QSVv1IifMMPva4XLCYVN8HQmoH7j7Szj6UwLuPpDpEdRcOJCkucHhskH
+X-Gm-Gg: AZFdTZe3nXIH10z0FQVCZsdAJLxPEOkS01xk76VrtLuxUC+AbMPq04SLJnSduF/5InA
+	Ami3yfs174HpWe0xG/X1tD4Pk1ElrhVkCsj29xVSTLoNrLEhWPTZe4dDdsdHhPNmdW7ktSLcEUA
+	CEiHgka9OIQhjZQ7aHG4pgoAB6FDrTUinzhj9LvDgha/xKx26aidTf/t4iga+4t5OnzOzjf7JEJ
+	5/L17UetHuHBTc+nlmihSsHN0sKhdIhjbephCYrGb4l7gWnYoPHRjYcCyU5G/gbx6lPvdcFOyzR
+	QMlKnGW9BxyFU5yr3G94AoNwb9KQD8VEO0N/kF+0WED8bPPI2MaW/lv2kNwHqq+vibBh/D5z88i
+	Vc0aBbA2NGDifqrF89xs5ixDzIgyOFNgtIjilzPUqPXNOVctnPPRDDco63QKjhrgtdRow5a5LTp
+	QNwIMPlAT/yEf0x1QYvjPLpZ3EmGy54TqIwfqZfASjTUpbbsCgPbXDCHHESBFpOGLWtfdIr0w8I
+	wsVG9W2Q1nHjLKNhllUAAnuDE6SnuH2WYF6WTP149JnqCnjgBGjHae8eF+ERDUxAXBzAmKjYXw7
+	7Q53xA3nKZBHgCxWzYYw/cJ7OX9d7Jv0l0uvjQu9LzeZEKcdOnYy6cOzV7vfFZ9EeJQ=
+X-Received: by 2002:a05:6102:b11:b0:7d6:3d9a:4da2 with SMTP id ada2fe7eead31-7d7396157aemr1194410137.26.1795172427495;
+        Fri, 20 Nov 2026 03:00:27 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d6e7b12eb7sm2659254137.0.2026.11.20.03.00.26
+        for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Nov 2026 02:29:50 -0800 (PST)
-Message-ID: <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
-Date: Fri, 20 Nov 2026 11:29:49 +0100
+        Fri, 20 Nov 2026 03:00:26 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-99e1408dc59so369872241.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 03:00:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErESAMz20vVERoJwsruXmTK11UE4I76S9mUTNwCASJTbjCQ7DlaAaRdK1uLiPkYMcd3eHtQV5Sf2LCrTUrnI4HvGpQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:6047:b0:7a1:f7d2:e82a with SMTP id
+ ada2fe7eead31-7d7396a6eb9mr826644137.35.1795172426626; Fri, 20 Nov 2026
+ 03:00:26 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -92,76 +80,44 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Paul Elder <paul.elder+renesas@ideasonboard.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
- <20261119234759.GB2324725@killaraus.ideasonboard.com>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
-Autocrypt: addr=clegoffic@baylibre.com; keydata=
- xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
- K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
- BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
- AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
- B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
- 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
- LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
- vLfPDQ==
-In-Reply-To: <20261119234759.GB2324725@killaraus.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20261116-canfd_rzg3l-v2-0-89e06c46f40b@bp.renesas.com> <20261116-canfd_rzg3l-v2-1-89e06c46f40b@bp.renesas.com>
+In-Reply-To: <20261116-canfd_rzg3l-v2-1-89e06c46f40b@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Nov 2026 12:00:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWBB=tMDtssy-8r4=v_u=Pid51gFC1LOgzP3vbJQg5HHQ@mail.gmail.com>
+X-Gm-Features: Aa3M54ok0nFqWrmNFE92MZcAAo9DF0uGdtmbDc1Y1AOqliGu_4a_ac6uIR0TZqI
+Message-ID: <CAMuHMdWBB=tMDtssy-8r4=v_u=Pid51gFC1LOgzP3vbJQg5HHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: r9a08g046: Add CANFD node
+To: Biju Das <biju.das.au@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Laurent,
+On Mon, 16 Nov 2026 at 16:33, Biju Das <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Replace the CANFD placeholder with the full node description:
+> interrupts, clocks (fck, ram_clk, can_clk), resets, power-domain,
+> and three disabled channel sub-nodes.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Dropped fallback compatible based on bindings.
+>  * Retained the tag as the change is trivial.
 
-Thanks for your feedback !
+Thanks, will queue in renesas-devel for v7.5.
 
-On 11/20/26 12:47 AM, Laurent Pinchart wrote:
-> As far as I understand, the assumption impacts the mdlc and cpg drivers
-> only, not their DT bindings. If (or rather, let's face it, when) a
-> firmware revision later breaks the assumption, we will be able to handle
-> it in those drivers without affecting DT.
-> 
-> I don't like this remapping driver much, in the sense that I wish it
-> wouldn't be needed, but it seems to me to be the best possible
-> compromise given the instability introduced by SCMI.
+Gr{oetje,eeting}s,
 
-I don't think SCMI itself introduce instability.
-It only defines the protocol, and each firmware choose its ids.
-Could you tell me what you mean by instability?
+                        Geert
 
-For development firmware, Geert's cover leaves it to vendor trees:
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> This list deliberately ignores ID instability and the need for SCMI
-> quirks during development of the SCMI firmware.  While upstream Linux
-> must only support sufficiently mature firmware versions, vendor trees
-> (e.g. renesas-lts) may still want to support development firmware
-> versions.
-
-For a resource that hangs the platform when Linux uses it, the SCMI server should deny Linux access to it.
-Until the firmware is fixed, a quirk can cover it.
-
-Best regards,
-Clément
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
