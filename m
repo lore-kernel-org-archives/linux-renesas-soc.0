@@ -1,76 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795160683;
-	b=fvnM8S0kAl7qme2iu5YeMdPp7lQYtyOu77FyWzsKnBk0tzaVat36dQrtoJdn4BZtvxHZ
-	 2Ejlu1GmDvmsvQLoD3qL/sxtuEm3M/y4qESW22REjTjwiTI62aASKe923fQM0/YPW5cTS
-	 T4jgBcoDPBTiTQtvn5HX7WsX62Aso5ZdpyOHS0wrEux0F12Bh3sxUAC4Q/CnfXcK24Cve
-	 2KzcFn9JjWj6hthBfuT9vpnAv6x9bLpup7M/s0DjrjgXbp7KncnVvCK6L4XDSV47McO3E
-	 bTVakUYLQmddZWGleN+IPzHO8YLyovfduR13pnbXNDFrUJMmZ9NB0hSKAbIyNqHs3bA==
+	t=1795161323;
+	b=mv0dLjnT7aIrJMt3dLmB+cik0CupiiCWnkuAKtMvE/IC3cVectDBxzT+ntfyQS8p8KRb
+	 ZOyMf0QMeOFkFlIJW4jYX0NQrPtlbW8PYdijZJtdubds5CratT3758NABCD/dk961bkOr
+	 4qYsnwzB4xZ6eWbg35F6rqBeRDZ0uepb6giB0oSNJXRBnRB7xsYDfrE5TfH6mTA3Eep6s
+	 npNq5wKbk4qqCZOrSoNzPeENh9/Ftpj/4Q5zlj7YWHc6eK5zlcQk8bH5DiY0fSA9ZhGMp
+	 Vr6DFRA5BDCWrTE+7jR76YEhB9MRybO+HGhFPSAkbSzzoyshTsG16xYnVvlKPAbov5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795160683;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795161323;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=Vu6IMQbhyMpXX+yWtY4enAtEpk8kj3N3fFV230nsSvs=;
-	b=xgbFJHqxD5o0rYpD2bXGo27wV4cAHuU+mUOtyJJ2AGYVdZ2XIAO7xSJIphhqmq0GmguQ
-	 /HzKPBKPdhNPuIwx55wpElsHNXDf+CllD0GbLiT4oADinS52EhxnXB5XCSC72ef/X+5vq
-	 8Zm1KDMgnQyr7TKWYX0Hsa45bF/3xnpvMQPun1UcI/OwkBbi2wVrNjqtES+RHyOHAU54j
-	 DQSE6vN1tSaSrNj2kHUk1HFcJpr4Al6CsSoxOaqdtAzwRrxAAlmTNG1i2ihkniGqD+TDx
-	 BTOnrX4c/EhjlUr8jhSYAuFPN3cxKzLiul2BvGAQvw0qDl9vDeNwbP/ksBYWnbTtOdg==
+	bh=xKnU/TldM314xEN7UqLDGvv/eDTZSOGz68aX0N6/qi4=;
+	b=hA8Lak08Wp0gM2snKeBfEdeQHOsVH3ojTSQ759RlJq4qxPDmyFyPy99xWkjYwfNcJZY3
+	 xo+qOOl+KBbb5LzDL4HSuBoms8u+iYEwcibFxmS5VWdRnfNiCnH+GpHOGCQLLcCcuciBL
+	 8H9i0UKXjFz9fIFcCY+uF05uXhv+dFEfLwek3CJn/EWWX97dGHeyMCPUDpgbkh8dHHU6t
+	 OSoMx2zLeYqzBtjafdVLcrYO5RHfJpzwbdZwriWNV0Gwfhy98ApcqyChs5+67owBKXEPY
+	 A2VaoodWEDaU0FCZ/gUf2+t6H0Pa7E0fGngMA667JldprHf9nrn+aWJ5pgtdAhBhA+Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=fail header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.53
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	arc=none smtp.remote-ip=209.85.161.51
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3457D606A325
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 07:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3457D606A325
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98E0606A320
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Nov 2026 07:55:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A98E0606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-74ab99038afso397536137.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 23:44:42 -0800 (PST)
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-70bf1671c21so384381eaf.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 23:55:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795160682; x=1795765482;
+        d=1e100.net; s=20260707; t=1795161321; x=1795766121;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=Vu6IMQbhyMpXX+yWtY4enAtEpk8kj3N3fFV230nsSvs=;
-        b=THcYzYEowwVB1LwI8KpEq/2IyiVD+DEb/JTaLbHN/VJ2Y8eVwlaf420+na4I/ktVIY
-         0scblNV1nL5rBATc2XWjEoRxadHJFkFsTZnQB5ebxNI1Rd+DBT9vkq8tAsSu7SQ1mDX4
-         MoPVeXU5PQUA6ryyUSYaRikGS7fcvIIcbdsTpzzp566DX2ZuEMJAQ62bErnT7qFeCWlV
-         53Dqd/4ExaHpGH3kkHkLXOtwIN/JU16MsxuCspzcCn2D2bFi+TLMp4J5siYFhGL9ZAH9
-         DFH22sIAP0EzDOXjvQTQXVwwnKjq3EAI7c6kJ13Kq15XU/aRCBBJr9wXhysY5h78O0EN
-         IKbQ==
-X-Forwarded-Encrypted: i=1; AL+hErEYvAh1HljBKGwiQ265eOUG4jmdaHEoRFb7YM001TCjJmj+xYp3MbmYe6B1mNbbKjXm1Ngd/6aM1qAkcnOxAW2rpQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9N31eHYNZAiPExQzp4s41lznQuxi/nHX2QH2o6NmLPYQVHLNPR
-	FQ25MIxlB6cHB+AxfYfOSItqn6yOnEoij+DzmTuc9DZjV4h9q72masdsxqhrVy9f
-X-Gm-Gg: AZFdTZfg5r660QKSbbv+ybqr6gHJtGdp+nndeekQY6uPedTfqOc6EgricYvvqD+O30d
-	lNQizGC7Kmlpt2W5rwxW7BcjHd5VgmBCpCCXV/p6QMh21IwVjV7SXnAlEr5bjoWMa+NDhuKfPPg
-	rnuTCeXFC8ugGGMpD4dnwpWiNkxkJo6p0g9s7YWkCKjp+guAP712topDmyOjh4uQLT2dHQ+qqpq
-	nQP4QQ9QEQnPJLvwPXwspbtxrZfFCONL+BPLvE6HUuNhI2BYf/HaeFRCmT+yNH5dfLzbrYX65Wb
-	xjWG4BmIVJPdgG2Nq3JZHo3tiwHIAUiyWKJtCmQTXqX1SKugHW4p67+Uft1PjIgyskJ3p9CmU0z
-	NN9um5DHmLN3nZJmfX43Xi8LpMNwr7OoMj/RLflRPSeHHoKu5g86Zibeu8+Ih9iqCLy25eApjr4
-	p0djprFO052Glw0qt031I2P2Xr54owkvipP3B3i/YDAXA62GgvwvwEtlMDQ7FJ7POFOtbeh8Vdw
-	SbrYBmWh/YITaG4iqMuxnMS/Ah+w84h8EFxo8vMp/h6gqKX0uW0njbXgHFKjXx0QdGKNIzAwBgY
-	DyixwvKlIoKRzBrtOk/iGslrcN7aDYZZKrR9OZJlQe3uG1K6g2R+Jsy4I5hY0g8+2R4=
-X-Received: by 2002:a05:6102:3f94:b0:7cc:2674:b78c with SMTP id ada2fe7eead31-7d739391bf3mr836197137.7.1795160682082;
-        Thu, 19 Nov 2026 23:44:42 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d6e7d784b3sm2211178137.2.2026.11.19.23.44.41
+        bh=xKnU/TldM314xEN7UqLDGvv/eDTZSOGz68aX0N6/qi4=;
+        b=VDR+6k6J1ENTnzI8jRG3f7QIOcwmVn7LU/5mbvnReDD7hryIvepNocShyXOPoL8LKu
+         1F8Qgq+RYqnlmaauN5pNnMJRATgOXB1OgJ3iY0doqYOwlgO9y2KiXnB62L42Oy3M8AZO
+         iXIb1WzYwy2pP7O7GDEW0smDO06PEuqTOASfMy2nkusD7e/jZuAj06uTxXxJ23iWQcOL
+         JG2GQZTVr+01ddSe6JRupHwinut2hP6AK/fTBj4ybdlzZ8pFG4PyuzZ1uJNwLRWPQZEV
+         2AEC4scK5cjXa5Cm4HRoJIvZXDmJ/hoSBPTQtV12mIaLwl6zJWZ++cr6dG3vyEn/3jDy
+         xBWA==
+X-Forwarded-Encrypted: i=1; AL+hErEBn8+AYgr5mi4mAjfgw4JB1gQuoo5C8woWGXOcOjLgcgGSyfk1+tOwAogH4oSoO3NMkD9rSAjuqJFoTPih79VRYA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/Ja51C57l0rvDgdu5wgz7TN7nJlVAC/ErqOsndx5fCBqjQXbjq
+	h0p55Ps84mpL4ijO4MXvPmFGVb0oQ43tL/Mnx5DiOWNn2ccpuD6XhuS+lQcyOQEc
+X-Gm-Gg: AYBFou1xuX1A8V5r3ZQCYTRT5yjTCTskGbIXcXVxDxyseizxvMjlhgdCRPS7H9rPTsE
+	gWldY9nuIWYpnKh+46LkAV3vt1nvGhh6twrkaMX14R2DsGqOalM+ndLelWklhX6UwOg8UF0p3NX
+	SIhxuRfP+U2uC3IPb7JIbVMaP0bHsl2fBKLK5aJaxXmQJnOYLK7d736kM2LfBXxFfuQ40YdEHU7
+	0vYUIZtirtJiB0dfPm3oxt5VUW2QDPbfAdeR9fcGvnXQkjzi58XhxajFqF+mltas9t9pJXDaN3m
+	yUihp9zJbQgbXFDrsQZ+rGlVtsVG1/w/I9t6Dn1TngJHeSwfx4MpFxz0Kcrc++h1M5lza6wIiJT
+	oiBkhAARbMx6UA91tGn9LFrtLMDQ4FGg9+ItPSqtf6hy+ioaR3rqVkkDGQoAciXDMkXhoRu89n4
+	NC4HmQ8ryYQUK7r3/7buv08wX6Q6ue2NNAn7ZVSJCovmCHqJm76M0GxICPIqD42EUSbimpQvqVJ
+	aXfpGaJeMAVM2av7oIV0rObo8X+7xoJRWiyO1toV7m6JosJALRPL6oIn2AsgIRlt0aIaYvmMVWM
+	h4dLO6ALsr3OENdYgG+o6kuXciYO3FeCHqoxqX0MjStwUoPxYcjZXIXa5Ee0CUp0fQ/xAlWB2dE
+	iSK5k/dncMKHg
+X-Received: by 2002:a05:6820:a746:10b0:6c9:80d8:a1ea with SMTP id 006d021491bc7-71b394eff7dmr1499035eaf.39.1795161321473;
+        Thu, 19 Nov 2026 23:55:21 -0800 (PST)
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com. [209.85.160.46])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-71b380e5472sm1622067eaf.14.2026.11.19.23.55.20
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Nov 2026 23:44:41 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-97ca72f2cd9so380554241.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 23:44:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFSwA6PyMXU60o3YnyF6LdXVxaVsdRAuARMlVxRfjjiHNjkLxL8cseoOQ/kQz8zkf17dWBfWsD69Yf6B02iX9rO9g==@vger.kernel.org
-X-Received: by 2002:a05:6102:441e:b0:7cb:bda3:27ab with SMTP id
- ada2fe7eead31-7d7393925f5mr941037137.13.1795160681386; Thu, 19 Nov 2026
- 23:44:41 -0800 (PST)
+        Thu, 19 Nov 2026 23:55:21 -0800 (PST)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-48ed0b68895so486029fac.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Nov 2026 23:55:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErH93x6hdIsVATWvJi3hgow+9D9FSpoweYlViiv8KTsOibb7B1tfSHmfKqg7yRNy6823NOyxSIIkpdwSlAc69wjzDQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:6c4:b0:7b3:8f0a:f76c with SMTP id
+ ada2fe7eead31-7d7393caab1mr683612137.13.1795160956421; Thu, 19 Nov 2026
+ 23:49:16 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,53 +81,83 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795094688.git.geert+renesas@glider.be> <a896e5bdb29c7c6de39df9b28b11d55614f2ec2d.1795094688.git.geert+renesas@glider.be>
- <179513882271.284394.17357508909448455391.b4-review@b4>
-In-Reply-To: <179513882271.284394.17357508909448455391.b4-review@b4>
+References: <cover.1795094688.git.geert+renesas@glider.be> <683b5b189409e5ee04100044fb615b01cb877f3d.1795094688.git.geert+renesas@glider.be>
+ <20261119225017.15a7b5cc@kemnade.info>
+In-Reply-To: <20261119225017.15a7b5cc@kemnade.info>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Nov 2026 08:44:29 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWJ8zK+kzcznM7FJ3JCo1xWzjRZ5MQz9jhSUcYQfO5rBA@mail.gmail.com>
-X-Gm-Features: Aa3M54p6yw1Lhc431P_jQfP5g0YMf_od8mct8UUR6SclOJC7dcSgYi-awR9w8qQ
-Message-ID: <CAMuHMdWJ8zK+kzcznM7FJ3JCo1xWzjRZ5MQz9jhSUcYQfO5rBA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: Remove unused clk.dev
-To: Brian Masney <masneyb@kernel.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andyshrk@163.com>, 
-	Ulf Hansson <ulfh@kernel.org>, linux-clk@vger.kernel.org, 
+Date: Fri, 20 Nov 2026 08:49:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVbgGV_6yjOip4xT3YhBgaOveHzSRbw9e_cHen9NRZqmw@mail.gmail.com>
+X-Gm-Features: Aa3M54rfGlA3UrmhLbFF7B0m1MfxoFvw1pyboKcP24dUngkkG_fWLkpDdrOnbn8
+Message-ID: <CAMuHMdVbgGV_6yjOip4xT3YhBgaOveHzSRbw9e_cHen9NRZqmw@mail.gmail.com>
+Subject: Re: [PATCH 5/6] [RFT] ARM: OMAP2+: Convert to dev_clk_get_from_provider()
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Russell King <linux@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andyshrk@163.com>, Ulf Hansson <ulfh@kernel.org>, linux-clk@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
 	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Brian,
+Hi Andreas,
 
-On Fri, 20 Nov 2026 at 02:40, Brian Masney <masneyb@kernel.org> wrote:
-> > This basically reverts commit efa850487a6b6742 ("clk: Inform the core
-> > about consumer devices").
+On Thu, 19 Nov 2026 at 22:50, Andreas Kemnade <andreas@kemnade.info> wrote:
+> On Thu, 19 Nov 2026 14:40:38 +0100
+> Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>
+> > OMAP2+ clock handling uses of_clk_get_from_provider() to obtain clocks
+> > used for power management, so the latter show up as "deviceless" in the
+> > consumer column of the clk_summary file in debugfs.
 > >
-> > This commit added a struct device pointer member to struct clk and a
-> > parameter to clk_hw_create_clk(), but the new member was never used
-> > beyond setting.
+> > Fix this by using dev_clk_get_from_provider() instead, letting us pass
+> > the consumer device, too.
 > >
 > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> > --- a/drivers/clk/clk.h
-> > +++ b/drivers/clk/clk.h
-> > @@ -5,8 +5,6 @@
-> >   */
+> > ---
+> > Compile-tested only.
 > >
-> >  struct clk_hw;
-> > -struct device;
-> > -struct of_phandle_args;
+> > The first change is probably OK.  The second change may fail if anything
+> > in the oh->od->pdev->dev chain is not available yet at this point.
 >
-> Did you mean to remove of_phandle_args?
+> Test on OMAP3:
 
-Yes, it was added by efa850487a6b6742, too (although it was
-used in that header file before). Currently it's not used.
+Thanks for testing!
+
+> --- clk-old     2026-11-19 22:44:59.810807920 +0100
+> +++ clk-new     2026-11-19 22:26:52.862531880 +0100
+> @@ -1,17 +1,17 @@
+>                                   enable  prepare  protect                                duty  hardware                            connection
+>     clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+>  ---------------------------------------------------------------------------------------------------------------------------------------------
+> - oscillator                          0       0        0        26000000    0          0     50000      Y   deviceless                      of_clk_get_from_provider
+> + oscillator                          0       0        0        26000000    0          0     50000      Y   deviceless                      dev_clk_get_from_provider
+>                                                                                                             deviceless                      no_connection_id
+> - secure_32k_fck                      0       1        0        32768       0          0     50000      Y   deviceless                      of_clk_get_from_provider
+> + secure_32k_fck                      0       1        0        32768       0          0     50000      Y   deviceless                      dev_clk_get_from_provider
+>                                                                                                             deviceless                      no_connection_id
+> -    wdt1_fck                         0       0        0        32768       0          0     50000      Y      deviceless                      of_clk_get_from_provider
+> +    wdt1_fck                         0       0        0        32768       0          0     50000      Y      deviceless                      dev_clk_get_from_provider
+>                                                                                                                deviceless                      no_connection_id
+>      gpt12_fck                        0       1        0        32768       0          0     50000      Y      48304000.timer                  fck
+>                                                                                                                48304000.target-module          fck
+> -                                                                                                              deviceless                      of_clk_get_from_provider
+> +                                                                                                              deviceless                      dev_clk_get_from_provider
+>                                                                                                                deviceless                      no_connection_id
+> - dummy_ck                            0       0        0        0           0          0     50000      Y   deviceless                      of_clk_get_from_provider
+> + dummy_ck                            0       0        0        0           0          0     50000      Y   deviceless                      dev_clk_get_from_provider
+>                                                                                                             deviceless                      no_connection_id
+>   mcbsp_clks                          0       5        0        0           0          0     50000      Y   deviceless                      mcbsp_clks
+>                                                                                                             deviceless                      mcbsp_clks
+
+Hmm, so the passed device is always NULL, and thus there is no point
+in making the change.
+Do you know if these come from the first or second change in my patch
+(I guess the second)?
+
+Thanks again!
 
 Gr{oetje,eeting}s,
 
