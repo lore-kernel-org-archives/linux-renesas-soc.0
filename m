@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795296282;
-	b=A8V2tBI++5g+nzKOYwaDxtuSKehLmJ0wHjQyL8dSNXwevSokMb09Yc2rXJSqxOto7fil
-	 Fb0Qbk8KDFcK2uVIh5c7Sp/PzYMeYkusA/pgos+SB5qYj4rzWZJUlqrExalkvvqi79JNB
-	 8cJdF1qao5mZ7MxeVCcPCa8hQG0vja64oCLETh/H8vMxDLPd5+40tuf00LqDVXCiG2jLH
-	 E03tLpX4v6du48xbErIbDJkVYupnMguTwp+AJ19eT1eLG1rAD5dzqXwPdzPnmjIcNlp8E
-	 z+Z9Ztlf9KnuBBcQV6B9NSDp7KDCwvDfgJC2p5idbFawLRhdsNI6Z8yvkRF+q2RyiBA==
+	t=1795296865;
+	b=VlEt2y+zbyHpVQq5Evbkb+HqhFQQ39u38shYdF/0kk0bFffR6L6oWOrzzXNCefOUZKpR
+	 yu9OcnkHdu+vmh3pjRmKt9drRbuLBj+oyqgMmYA5xZbDYABLgoXeizFaJO+L8VlKGFCgz
+	 t46ytue2Do04ftQwdy+DlE7FfS/G95YOGZWfXPh9h4mEfIVxlQmSvaf2NsqZQCwjtaQia
+	 Qs+ngYIkkROPuzVCBUu51oSsajrHT9hDUKrf+MxVlg5qHRzCgsseY1s116z1Uajf60tlm
+	 Qnwf6x02hkCztjTFcqqAFBFiJefXAjBs2isH7o7OItrCNE8H5JcWkMqi/PytePv9+5w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795296282;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795296865;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
 	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
 	 Content-Disposition:In-Reply-To;
-	bh=qPv/aRybxiihzTHTiKkFME6FpgXCP+REMbbDc/0fYE8=;
-	b=qIPMUt34ZePVCcmZDrk3BJtR+Sx8jgEJ19ro9pVf9WaHIAFtz31ICVk+ySCOCf76dccY
-	 ZbUi+QCo4uSPmJMy2pPR8i3UyLlJsXKECPjNg3myALh9JhuxFU+hqk+KwGTWFobB6m7JR
-	 emi59RV6T+IeY07Xfa+n9p55rLJgXTKDiqnrzm70YJ9T8zaO8179tybF6eOdlWRSvKExQ
-	 MWSj4ryCWG5Vh2mKK16GW194VRNxwV3AhSwk6ZqVmfS3NzoGiBgheazfjr/HDZfG4pS9L
-	 ktV3Fsx6Po0ahHPS7BK4XiNk+zKfmoqsaAfv7onnZpRE7TLhTtrcv/VnL092r6REfyw==
+	bh=mUChzLeVR2MtutKX97MdpZQXyx2OvW2YcvAen733fVE=;
+	b=qyexq6aPiUcwDFs3rzDWwIbQGBjls5mDxHGZgYJJrVFHWubNcZDR8wIelTVNmqX+clbc
+	 yUX2mfZ0j9G6dBVYjmy0KeswBat2OUOmdhlcPtiVegZgD7b2zkbLUMsKBubI14Z0/m82C
+	 4gxBIZR68CKDddJ8U2ra9zik8ehMxPCcqpSjL3ti6cp3UWFQk2TLYGHxztWrFYAN6FCnP
+	 EpaP87L46pHBLDZr2WGitkrp4EhkafIQ4jaqvb7/tTyeMwLDuSHW2pYBEJWOXY0Yapakv
+	 nNzJMlVWGHRR0eT2Gu8UuBCaV6JLXaROpI3Ay3Z5QhUGPljZm80PaflioDkCtdjWyTw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=sang-engineering.com;
 	spf=pass smtp.mailfrom=sang-engineering.com;
-	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=AJqs8GGY;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d0YsZAnp;
 	arc=none smtp.remote-ip=194.117.254.33
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F364606A335
-	for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Nov 2026 21:24:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F364606A335
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0B9606A330
+	for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Nov 2026 21:34:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED0B9606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=AJqs8GGY
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=d0YsZAnp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=qPv/
-	aRybxiihzTHTiKkFME6FpgXCP+REMbbDc/0fYE8=; b=AJqs8GGYNI1DF6qNJeT9
-	gyjB3dc6oXz4D+Yz/Qu+w02FrCzwj8AHpHK0fH6BeLfjG77NqlYQkpC3PnjCG92A
-	tGtT44cHaEKXQxziL01NLdBOJsvmclbSlpav6UUGWBRwlJmGHoHsgwOhISrn9uEE
-	fIp2eXF8iUGnlgLm56VCvglKYYvAcQx/O4G/w7AmpTw0JdjJV5aHFFZOls9s7VU5
-	diZ730+ilaxa6udyF0BVGbHNDiiEjL8n3yden5w4wI9YvSZAwHDs6DbP3dF2CAzl
-	U1uHwNFnxnbRRDCntrrlEgmN3udg9q6oA39xHetZr2yPK7N1dCq2oo/gToOVOYd2
-	tQ==
-Received: (qmail 1945706 invoked from network); 21 Nov 2026 22:24:28 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Nov 2026 22:24:28 +0100
-X-UD-Smtp-Session: l3s3148p1@betU/M9gntsgAwDpTyYqANgHwk2rnHm5
-Date: Sat, 21 Nov 2026 22:24:27 +0100
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=mUCh
+	zLeVR2MtutKX97MdpZQXyx2OvW2YcvAen733fVE=; b=d0YsZAnpbPtYmpNcRM2C
+	SwMgfmHzUur9jym6TLvWP6yFBmfbiMz7GTVq2bYzCi9mo7w/J6gmvlLNeKVbxfEF
+	ATF4zA8/M6UHo+wOll0MTUswaIbCpJ1Cy5jtzOZl/mgbRMqPWKcWExP9YxEok13Z
+	IkGJniWBTahtwqByiPMbUSDp/SLEMvMN4U0kvyY9W8ZiSH1qWjNoV6WbzFV+FdWH
+	wAJmaZEnUv7xwJ+Njk39l7jlQO2linQutAXM61ddpShNXZOWt/oRVIdp8eRhi08J
+	/FKL7hwLS4TbZmfWrpqX0qscB2/JlqXozeMgtL1R1s0Idk1ooGu9sL+DfpM6hUYH
+	ew==
+Received: (qmail 1948086 invoked from network); 21 Nov 2026 22:34:21 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Nov 2026 22:34:21 +0100
+X-UD-Smtp-Session: l3s3148p1@iaquH9BgZOIgAwDpTyYqANgHwk2rnHm5
+Date: Sat, 21 Nov 2026 22:34:20 +0100
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
+Cc: khendry@reliablecontrols.com,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -59,6 +59,7 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
 	Conor Dooley <conor+dt@kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -71,15 +72,12 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>, khendry@reliablecontrols.com,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clock: r9a06g032-sysctrl: Document
- reset cells
-Message-ID: <awIMBj_7OLrlM5G-@shikoro>
+Subject: Re: [PATCH 2/6] clk: renesas: r9a06g032: Add reset controller
+Message-ID: <awIOXP337u_nHqnN@shikoro>
 References: <20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com>
- <20261119-rzn1-miic-resets-v1-1-feee2bb28bb4@reliablecontrols.com>
- <awARmkCuelD_fdX6@shikoro>
- <5d8530485716d129be2efa0518254e3322cecdb0.camel@pengutronix.de>
- <awAq7vxcY8CGjhNl@ninjato>
- <awGV8BU_AfaXQyBv@maple.netwinder.org>
+ <20261119-rzn1-miic-resets-v1-2-feee2bb28bb4@reliablecontrols.com>
+ <awATU_lyjPBxThwq@shikoro>
+ <awGZ-nCCbCNEuyr7@maple.netwinder.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -90,41 +88,42 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fv0MbHVxiEYH6cP3"
+	protocol="application/pgp-signature"; boundary="pTXDnQ8DG42W+K2e"
 Content-Disposition: inline
-In-Reply-To: <awGV8BU_AfaXQyBv@maple.netwinder.org>
+In-Reply-To: <awGZ-nCCbCNEuyr7@maple.netwinder.org>
 
---fv0MbHVxiEYH6cP3
+--pTXDnQ8DG42W+K2e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
-> Thinking about it some more, perhaps instead of using 0 as the special case
-> for "no parent", we could set .source to match .index. In other words a
-> clock pointing to itself means "no parent". Worth changing?
+> The reset duration could vary for each reset ID, since they refer to
+> different hardware. There's probably no "optimum" value here.
 
-What would be the gain? As you said before we can't update the values
-because they are already in DTBs.
+Figures 7.3. and 7.4. say "5us delay is recommended" when changing
+XXX.RSTN bits, at least for the NoC parts. Yes, we can agree to trust
+the driver authors to get it right, but we could also decide to make it
+hard to get wrong. Bigger delays can still be open-coded if needed.
 
 
---fv0MbHVxiEYH6cP3
+--pTXDnQ8DG42W+K2e
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsCDAYACgkQFA3kzBSg
-KbaxSQ//cizj5OOLsgYrAxaW1EKGn9YvmafR+RlvEqb8FlFxWBREKwon8e0FF3gu
-2Jpvaf/tOsiK1NhtQ/eTuYRfJ89p1XpJXX0tA+oTBv8eYdCEik3NV7hBMMNAXb7G
-EA/K0pyjN4k+UqvQMWP6h+WodMzFfNvLyu8aVMaNyGfC2Bjii/GKUAfJAUcR6ZTK
-McT0/W4e4kvFRKJQ0Lq1vQjzins0eQhFtTDnGd9hqDakYfbKFYE6TZQ/GuiQdfuf
-1+2wk+shbGWC1D1zk2kzHx+QCYxAZnNnFtF+XPtgorT6XKucDDgeeZ2A0qXpT1+z
-TVL6DMGWPaC78QHXrDuh52k8IgpB9EMAPksX+GcLlHdbSwjxtbGVcg6RoyVQH+dQ
-RQ+QHRgQtuw48k/SdZ6AILxxgUGGM5wWfn/xUWz7HF6kekq91GVIDraIEhpe5M1r
-32mie0F8Ej8YQj5Tpc5MSNrtRRLAKDQFnd95BmRvZeM7dZtHo5ajZWiRq8BMFaix
-VVJk+y6dxOXlZfm6I1rZYRnz0etxZhfYaUh3xth557wkLrXft4r5x1Gyr/G2xA9U
-uh5AhXZO5WMo7H9sv6XX7KnH640ry/gJpkK4G4qcS7KrFMddn2zhFG3pDpwxMdpR
-oCQzd28u2Kelvnez5qwBUf7Y/E48ehv8YgVjkAeHbFCtHVnMbqY=
-=0+NB
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsCDlwACgkQFA3kzBSg
+KbbM8hAArBvvQ3J6Gl2ZjLmVjeIL3UFqSTbiCDK7dNBn73kMdODTOv6XgDwwQCJ0
++RQVzZUoF483LdiGroT52MAKjlo1oWzk3gdMmtMt7FtGeZyFbC+E8jykCJNKM8tW
+TlPcVmrqpF94fiaGWpaa35ehTON2ezntNWShpvM/N5a467PfztHUKOEMyx7ERO/D
+q8Zn//i6qbQ/bci+hmagIMmDXFBiHV6akmDzttSbf4wZdH2u1yroItrahB3wTblE
+PL6B5BA4GjBL64FLKr8XW4NVDhxQmAVDoZdMlhUWjPS5vhqCPfS6NNuTLQUzUfWy
+E/BWwxn1CWMTxV+HhO4AXFVFrys9T42Z08ICAFOHjOleoLZplVkfMN+zIh3h7wBR
+o7iZb25vxWL2hu8UgGMc2sNo8OwT0PATXlCenrBuR/uqhSIsfhRCC/nF02/ZI47v
+ahSvFkWSufuVhwIhbUmk8U5Exgzj+Mg9c4TjhrRTK6MCDa4fpdCvNnpl1U72mJHR
+Xq3jgLhM+4bodCBDJQHXPVNZwkMbyKlTf+hPpav6okETuNgQ86XE+CNYNywhmnzJ
+Mlo12B/mYG5JwpKPGcR1smZkcwNsrp/A+I1asgC7fhSDs7eD5HXNlLBN92yrCTc4
+3LnPqGr6KuIzZPaT+I3FXAJ7Zoy5D41UpNpmpYtcFmsR2WAy6ys=
+=XIqi
 -----END PGP SIGNATURE-----
 
---fv0MbHVxiEYH6cP3--
+--pTXDnQ8DG42W+K2e--
