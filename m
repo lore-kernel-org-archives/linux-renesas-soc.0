@@ -1,93 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795369473;
-	b=wRcLtRAjGsp/417bz+J3S7bTY4c1XvdwDKhf9Vyw48TQi2z2j2u8PpaBtV5G4zgA28Qw
-	 Bx0VLV0FZxnjQU5RFsDWoOpQ1TWSrZ2co03la34G+RribKsY4S+bL5erhstXTQVdXxcFy
-	 n+XQWr1zwcyFKkmNGnh24F/DW6gTZdkIozlPsYt7uRfDA4XzkUumCiHf5j6s1BaFm9xtG
-	 FbHFH9RxTifTsEtMhgGxmj+eM3Ev4AtWUPlGjI2d4AuKRQ5XLjCxEmkQ4Cd7V0Jb7+8kc
-	 euwqSFeKRv2u3kVet+KgDMQAYOZDAniYYTZSzA817D+UHZUE9KmZ7EKkpkiZTHM2isA==
+	t=1795371962;
+	b=TrKcsdG66lVrtt8M8klS1XKDRUyGw0dK4unQ7j1nLlNgMbFWxFfxr5ulklRogIjsW5LI
+	 6I5unzmIn4iPRtVO66rBFsV/lIgMeDPWaKAgA4go8UdOIxvx8GbRagiD4zMVAmCAoBDln
+	 bm2v90rbpxSEnTL5Hv58vwS4HCTPEA7XITx0hTJ+JG4CrILsBeXwU/l3WBqLkwJCdZCpd
+	 teFuB7aEU7I31KbfLW410ir9j+BPtIdvh8EclWOe485+7ETsDoI/PmrYFtVOX90UuGZru
+	 wbWvIXE0pSwh3SFD5bbNYmYuVqT5+0JhF3gmAWcQ7uWAXbudW7/emQy/kkwx3Pk6lYA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795369473;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=4TIo8XI8rbm8m77QUuo4L5vnn8DDR2Hp5bySmwkQxQ8=;
-	b=NPJPqpKEGqJ0bkbevcce0R8LRIuIKZc1GjP+XEJVTmiqwX9k5LQ36ApCyHjtNmTa1vle
-	 yomU3rZwBsno9NYATDrO67N9bz8Bo9xvFDjXGypYId4GcAgtO+yGgO/KLng7hPb7//En+
-	 ZR1N4D6f1Xtgg2VqLm1Ci0NkjY8HWS9iCeYCd/jBDQSNmJ/jXsdeoNu1mWAYUsV3Oldgi
-	 cDz7vE6TSDommHsJhqUs8lPQ/evZvtU9HRh0ke47Zlpb0POTsdUMYCBDOekavlKFtL6bn
-	 JLO0RB78TDD0wBh+zEJz/Jx0gEvubTQ30LDrvqlibg1eYp42kXm5yE61MaGXZitzf/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795371962;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=vKXplfw29klXWzsM/alOEy1eosFo21V/yDh9Ut4ySd4=;
+	b=ppewQ413caBKRz4xYx/xLydgK0ZGL4fkdPCURPLth6pocdJjluXrkKTS9oWLjEkvsXPD
+	 I2Fq9qh/dLKPbn//g8/+Lm20D4tkMQIgmW9qMpHGXINZGbxNESCaWa+s3k6RBvHjPBGFL
+	 IcM1fjp9bb05u6jzcWOXFe3l5T1NCQ2ygQmTQOgqIwSFk3ghFthRP62r4LO59SJRs8RrH
+	 MgXmR3mipjMfHf9L274iA1frbXSCEBnszzRzFPczhvbgq5b/ps/ZnnxQJVAsqdfsIDSGG
+	 OkZ0TuQkexaOCIEogT74XHELNDozTU+l7NBgjU98ldljKbQja9odK/VhCcK3ARlP5pA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rLeiBumj;
-	arc=none smtp.remote-ip=209.85.215.173
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=vNDgyv2z;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779C5606A69D
-	for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Nov 2026 17:44:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 779C5606A69D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BF4606A332;
+	Sun, 22 Nov 2026 18:26:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30BF4606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rLeiBumj
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cdba1b5ed8dso1252886a12.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Nov 2026 09:44:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795369472; x=1795974272; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4TIo8XI8rbm8m77QUuo4L5vnn8DDR2Hp5bySmwkQxQ8=;
-        b=rLeiBumjk8TQGxJxb12x1jOoBNcpTTZuMgD5FoSJfFUr1x8u3IcRvBDV2aKGQ+EWLj
-         CWgtnCaNl1IQzgFGpJEZ7w1GuGVfo/XjnJkSQgtGBwdSGwTvGx5PngJq4I8AohwPDdgQ
-         ZdLAJ3Wic+Yl3yqokWFgkZeYNK9Qyh2I1AQ9GMJHWn/KC/BFELg9DvZ1elIhDEdJTEhm
-         Bab8jDUt7R5Qtbk1LcHHuhzgnxIB7BDPwCH/ZYzkh/Xq1WZ38U2f/xBeqrcdrd+BhWta
-         30U6TAWHv6yfzN2NTLWK6vRrIwNt3Nm2ydXoTmPbMgpOvOo40VaErfViSOU/JMbmEqmh
-         N57A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795369472; x=1795974272;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4TIo8XI8rbm8m77QUuo4L5vnn8DDR2Hp5bySmwkQxQ8=;
-        b=zhMrkpstDCEd9a5gzhtSoRCvOnv46u8mkBZFGcnXgotIIvP32wPiqaSuB+/P667tWA
-         mvuoYKd9XJgW7IJB2IAPZ5v/35pmC8XYHgvE66y9Lo4YYdN8/QiTVfXyBq/eD7zjKeaq
-         rN1evF8VNiqxz4v+Jdr0NUxTbdX2f7m9tp+QTXuXd9fZQRp8tVGgBP3ot1uNMDAliRBx
-         vST0hEfpHgBEa3Vs743tAx4yiB/vae+TSSuySkhAdfw2GXXnEJF1JfjoL6Qo3ZEbZmDB
-         d1MhL7Lu6/Ahwhi5VuFbL6TDB8j6t2RPs8K2UUzNZHujvbzq8U9BW/Wmrp6tBKDzyVke
-         debw==
-X-Forwarded-Encrypted: i=1; AL+hErHTpuAfffiKiSSLzKsl3vSlRn9cmgtwfP94rVewsEKA5FI+A+C9iJQMm6b3o9ILOOd6HVjdbnI9P75c5c65q+IC1g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8Ii4T4nsh4OzPEiAQ+yvJzTWhPTXHD86kscquT4gvmaYEs/42Y
-	nm645Pa+Crr09wAellnCFc85MHoD934p5agRbxiuH6Ml6PoTbVEOJRVe
-X-Gm-Gg: AZFdTZdAUSADg1v2iYcaEMCBfEtTOvf6fMGYC7l+bY17ekLnfS4TMyVKiskqbNHheqL
-	mHFURWS7yEX1XKVXZXpNEypmNqR1QV2qROLK5VQOzYvHgUa6bw1h9ICMlra1ftapoJRn0N0wEhZ
-	pKf8/gQTrmK7+AGIB9/Bt+kqtSnvZwEocLscAfdIP4uprHCKhDqWRqP3BsmEyu4L2THwFRgw7ZE
-	QRfLTMVFM0DIr8m3cY/drMrM5LsUzrCMsiS2zLxb1xCGn9ORIB22BujsHEkEjZYsdt/kBbOGnKH
-	+apZ7VBQOQSL1AQWNKGtRRofZXmMo92+208feblRTCattTnB0YgWqkMkrlSRo26awf1lTUXmtSR
-	H6n/vkdLMcQWZXUGIuc/q5UhDvGPHDIvzrpnBPKtPGMOBz1kmPmpTBw71eSy8NlDH8F+tL4/El3
-	2kXy6vQYDGV30YJ7FViWDp2LUW9eR54kHBwB/lOgeTJGVSgk+3LzYL5O2unwZT70d8tpthSho4G
-	2DyRxih1bhXhKMRPhOYpil0vnqWWh1SlvEtTNTOVV3K0HxGPSYa3oLYIXOijvDXG0HbDjQC3E7d
-	gyomf36Sg5HAKRPOl8Jh/LkstDEoD8Vi9cfLYfCBIQkX497qQVTcvTSGSDsUEeqb/2tlEHWK
-X-Received: by 2002:a05:6a20:a106:b0:3fa:53f1:abf2 with SMTP id adf61e73a8af0-4014de5db77mr6772027637.29.1795369471685;
-        Sun, 22 Nov 2026 09:44:31 -0800 (PST)
-Received: from fedora.tailc1fb0a.ts.net ([134.82.71.171])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8c872e4d7basm4060108b3a.21.2026.11.22.09.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 09:44:31 -0800 (PST)
-From: Artem Novak <artem122novak@gmail.com>
-To: geert+renesas@glider.be
-Cc: linusw@kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Artem Novak <artem122novak@gmail.com>
-Subject: [PATCH] pinctrl: renesas: fix typo in RZ/A1 driver description
-Date: Sun, 22 Nov 2026 11:44:27 -0600
-Message-ID: <20261122174427.276446-1-artem122novak@gmail.com>
-X-Mailer: git-send-email 2.56.1
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=vNDgyv2z
+Received: from ideasonboard.com (mob-5-92-38-150.net.vodafone.it [5.92.38.150])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C37D4177;
+	Sun, 22 Nov 2026 19:23:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1795371808;
+	bh=mofZKxThtOO31xRvXRSYb1bxNpLhtkX7vhP8gelB6rI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vNDgyv2zhF4AllMc3DtpOi0gVUd5M1ZVzeCFLpjjaMDEsbzoM6dpgVtYmSIto6y62
+	 b6gR4dvthRucpHQyLpjftoAhDiHwrOXBHs7y7ngW1zuMTJlLCI1AfH7INvdBuDLo5Y
+	 OZR9lXKyYQkqInw16KRPSs8knaO8Dpw7LCKY5H7o=
+Date: Sun, 22 Nov 2026 19:25:56 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: rcar-vin: Return unused buffers correctly
+Message-ID: <awMzb15zjEf3n3XU@zed>
+References: <20261121-vin-fix-vb2-v2-1-602a3d876853@ragnatech.se>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -97,26 +62,63 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261121-vin-fix-vb2-v2-1-602a3d876853@ragnatech.se>
 
-Correct the spelling of "Renesas" in the RZ/A1 pin
-controller driver's module description.
+Hi Niklas
 
-Signed-off-by: Artem Novak <artem122novak@gmail.com>
----
- drivers/pinctrl/renesas/pinctrl-rza1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Nov 21, 2026 at 12:54:59PM +0100, Niklas Söderlund wrote:
+> Unused VB2 buffers should be returned with state DONE not ERROR when
+> stopping.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rza1.c b/drivers/pinctrl/renesas/pinctrl-rza1.c
-index 07afa4b3abae..7a2ea8add139 100644
---- a/drivers/pinctrl/renesas/pinctrl-rza1.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
-@@ -1401,4 +1401,4 @@ static int __init rza1_pinctrl_init(void)
- core_initcall(rza1_pinctrl_init);
- 
- MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org");
--MODULE_DESCRIPTION("Pin and gpio controller driver for Reneas RZ/A1 SoC");
-+MODULE_DESCRIPTION("Pin and gpio controller driver for Renesas RZ/A1 SoC");
--- 
-2.56.1
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
+I'll take it as you don't consider a Fixes required. This however
+count as a bug to me as it doesn't respect the expected API behaviour.
+Am I too concerned ?
+
+> ---
+> Changes in v2:
+> - Link to v1: https://patch.msgid.link/20260828-vin-fix-vb2-v1-1-97eb1f4f75c9@ragnatech.se
+> ---
+> * Changes since v1
+> - Fix unused buffers returned in rvin_stop_streaming() too.
+> ---
+>  drivers/media/platform/renesas/rcar-vin/rcar-dma.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+> index 5e515d16c164..d3d1af47f8b1 100644
+> --- a/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-dma.c
+> @@ -1434,7 +1434,7 @@ void rvin_stop_streaming(struct rvin_dev *vin)
+>  	for (unsigned int i = 0; i < HW_BUFFER_NUM; i++) {
+>  		if (vin->buf_hw[i].buffer)
+>  			vb2_buffer_done(&vin->buf_hw[i].buffer->vb2_buf,
+> -					VB2_BUF_STATE_ERROR);
+> +					VB2_BUF_STATE_DONE);
+>  	}
+>
+>  }
+> @@ -1449,7 +1449,7 @@ static void rvin_stop_streaming_vq(struct vb2_queue *vq)
+>  	dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+>  			  vin->scratch_phys);
+>
+> -	return_unused_buffers(vin, VB2_BUF_STATE_ERROR);
+> +	return_unused_buffers(vin, VB2_BUF_STATE_DONE);
+>  }
+>
+>  static const struct vb2_ops rvin_qops = {
+>
+> ---
+> base-commit: aa0f4c41d4870a18e65772a1817af16427200371
+> change-id: 20260828-vin-fix-vb2-28e1bb24a618
+>
+> Best regards,
+> --
+> Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>
