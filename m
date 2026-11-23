@@ -1,86 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=130.133.4.66
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795421250;
-	b=bJbtut+DHxhJ+2/08LA4hfgmjUoSrQaJGpKXWEmppeJIxbLvaxgQCI7z0fTkzRmNyK0y
-	 ur3NDji+ZVjF/sL5wUMB3sVGtF0MAroTSJ1PBAxp64+aqE/h+FkP9/v7MCDZxG4f4YIIk
-	 ZAFc+S+AL6Gx3FxatcSBH+2oxS18v3Qr5SOzcc9vQw1RTnidQiQkI2bzHlZlQInuP4fog
-	 Crj/eSxosnUmx3UMOcM7jPjLGcxEM/Sckt0MTpWYfiby6atzuw01vEegUqGStlVyFFQbH
-	 6bJ/qkFO3lCfD5sf1az51VjZllsiDKHsBr5W3zoTIKy4PA/AhhrHttg3MFNltMr0VYg==
+	t=1795421571;
+	b=c8K2m2sqIVr8yqhkm8l+0Cb71Y1cKxu7Sa2EFoYo15P+qPBTXFeGBgNcSmJApdqTfKKy
+	 ohbYZrp+55ZPU+Gh4dOnQmiYBuu3VbUugtMbrT9gfy5AywiMmC5OOZLUlrhuP7j8Mfcjn
+	 6RRrTSKD0Jqcf8inN4e8b/naMeopIEIDdZOAvWWxWn5lKEaIA6apX5RZeoUNCnqomc43O
+	 ApEzXnegHB5H5S9DvTAg/5msLoTtYCOtrLfR7BhnGAm5or4ExDmsCN+Bhf4UbLa6G6AQH
+	 nfjG1AFTwha3JzUd7AeB2Gvr3qv0J0AwwN22aD8zd0bIaFLccqJ7r7MZnTylPPXHPWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795421250;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=wpeI2D8k4eF4Gl52wSeLaD2a8enBNfeJeACQoMkSgLs=;
-	b=i3DeoPHUpMdMNCydS75QNWxRKCUTrRC6zgiKzn3lumfTkVHjSmSM3w2GHrViiJZ+bU+T
-	 7MR1uid2CDx1g1JJ7n/TTv3/0brIEWgvJSALwKJ+KsqwRKLfDvmQ/ZNPXLY13RW2ANogp
-	 DrSqOTa37g/9K89LHtowvOjHW3Lxg3tPBeJmz88vsf4Z9giovunRUZopml5h5cB+5l6dg
-	 2eS36JrfUvj/n5CObYhj4yl34WlZa9we96l85t5nmzA5wOUbhw9ZZQtbFcCAdP4l550J4
-	 w/lpv1sg+zbn2oqxNEsuzUJDQmMQNPhfsJXaowa5C+w+d0bi/D2khXjS8RhxZ+t8LgA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795421571;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Subject:
+	 From:To:Cc:Date:In-Reply-To:References:Content-Type:
+	 Content-Transfer-Encoding:User-Agent:MIME-Version:X-Original-Sender:
+	 X-Originating-IP:X-ZEDAT-Hint;
+	bh=xThfAToSR6bF3rJ/R8vOcJlYdxkzc5cR2ncMAQ8XHLE=;
+	b=r5THsVzq45eSuizJenYEkQoj7ZHtGnFQfUz0LB4mh+lB20oCo1mUg1k8cKewQxWdeo88
+	 eZVSgW91goIsGYlSS0bndrcOVZNBC8uIWBP2BN4Flo6EtOVG5pIDskPgJ6mZfJ9F4p9nB
+	 o3ROxmG2aG6ye6fPfgwuZmK46DFmrQeHRMw5d5rrZg8uq+N2bzXHjeKOC6zOJ7bZpC4nZ
+	 cna6uC/BdcKMy3RrZdcO9OoZPfn3EBZyQiR75Lm2S2Fux2iVTyQkQhK7fF7ojNwsCj3c6
+	 20Sqey1MiEsMAsPApohgPVBEJB0cJ0qFni7UEnJ/n608mPqUxwR9I9BmIlMHrYOIUHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tuxon.dev;
-	spf=pass smtp.mailfrom=tuxon.dev;
-	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=Nd8tQEwv;
-	arc=none smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=physik.fu-berlin.de;
+	spf=pass smtp.mailfrom=zedat.fu-berlin.de;
+	dkim=pass header.d=fu-berlin.de header.i=@fu-berlin.de header.a=rsa-sha256 header.s=fub01 header.b=BnZVxjmY;
+	arc=none smtp.remote-ip=130.133.4.66
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01F2607151A
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 08:07:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F01F2607151A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0543D606A31A;
+	Mon, 23 Nov 2026 08:12:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0543D606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=Nd8tQEwv
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-498f5fa4f70so2394765f8f.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 00:07:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1795421248; x=1796026048; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wpeI2D8k4eF4Gl52wSeLaD2a8enBNfeJeACQoMkSgLs=;
-        b=Nd8tQEwvw2YVHeQ8j1Cb46XOj1W6KTiKi55pRshAkmzgXk660CQlg7it9/dDUxWvZR
-         HiHj7dU5yALL1R7gq97965gGFJsx+0mj3aapPkq7VvG78sdRxkhNmLB32vpYQDmHu7Q+
-         GWZANiiisuMmVdhErOcvtxw5imyZorhl4pvPAG2lvvUMw42goZu36Hmg5uxvrgTQu5/d
-         Awjdc6tzeYDjiDbVB4ickreDMX3baO07gu4+BGY7T0OzsmreaiSUf8Ezt7ujDb96+OOU
-         oKLMaBOCWsTbgjvp/UQbBrb62jWNG/WoOI8hhnigAO+POKC0oiU3k/QSvKR/4BGMTk2o
-         +m0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795421248; x=1796026048;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=wpeI2D8k4eF4Gl52wSeLaD2a8enBNfeJeACQoMkSgLs=;
-        b=QOFjF36pRBrnTwyOcTOSzXzQ2GeCcvIr2jUhw6bkDX9pgsYShPexjb0VEcs87/5PzY
-         Fq3lO6gTzwayyklYbh+2nPRtErAET84KNShD6gHgkDhiv2s4qRIYMxC+uhKgN8Y8+S5Y
-         ZWrkA4ETX4kkdWc3z7nUwC1E4MgiaQZCRfAeVGYyjX4Awz9pxkJrHXr68gomTWOt3EWU
-         w/wu8o1AcEwfERu5f1/7VN/XffKR1sElWafGgCCpTpSzOyI4coeLUJTOworsvF7osflB
-         +LvkzN7/Sg4jG5bI+jRSec+2fRj0vNy0jAwh0coN9qxv7NTpi2TtqIVaRp/Opr0R3uMN
-         L41w==
-X-Gm-Message-State: APuU4Z/+5zLpqzH7ADkYw4vIrKcAqT3qwo7vTXHblhVlxzmutM+rlqCp
-	PnzQtbnBOO850FfQZ/H4YdiwMFYShdARQR5N1SF0GADWne2+21PrXG16GZfMkNFWj7E=
-X-Gm-Gg: AZFdTZefW5I8QsrxsiyBhcEQ9TlyyFbR+uUE5ot7Ukn/zLkcdPisrSyaOxPqZ1oWczP
-	+HsgydPXyVaUFZ18LK4fW4lu4/RPUc1kuOyOIy1DAxNi1Y06LyVWUhejWQeXTisjvJhg0Fx1vaa
-	elY+fCerctAdGGSBXW43rejLEKRk24uZPfX7rkbUBoVdbIRxRm/tbtUC2RXXhAAPvP/WDGjExE+
-	9xtQ3C45jsi8ZWbyWB3tKDnL4Oid4OCKWw2E1xudLCQMvj55GaQELdBlclMzUfelZJlWXOoqR1/
-	Q+O+2Z94TXV2i6O8FWq51q0a6hf6NHBvk1cXZLafg/Ry2vXkIRbCOu2DY3PZLqWBXveoojKtOGR
-	ctys6ByBqrVtKAMnuhMxre5zAkgCunSqJdWwCE6XlVq0UWf5BhFG0Yswj0IcoacFkeA1FdrK/k/
-	CRAmOakvv64C6p9fZCTEINDr4W14CjS2eZAieFHBqSNmtZhUlgfPvz5I9zIE8f5CvUqwLvjAc2A
-	WgZN753BO1LY+ckwwNufkD3l4YU4CkwaxyvQa2Zze+NW69jGIu+ujoW+h/VlPbBau98fzmp5UeC
-	b75tA2O2zyywU6n3zA2vma9r6ie8GSIjROZZEIY=
-X-Received: by 2002:a05:6000:2c05:b0:498:b92a:30b with SMTP id ffacd0b85a97d-4abb0c5d560mr20861869f8f.15.1795421247404;
-        Mon, 23 Nov 2026 00:07:27 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b9add26sm20895154f8f.44.2026.11.23.00.07.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2026 00:07:26 -0800 (PST)
-Message-ID: <c1b91afc-5b9f-4ed4-bfa2-b202e552769f@tuxon.dev>
-Date: Mon, 23 Nov 2026 10:07:25 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=fu-berlin.de header.i=@fu-berlin.de header.a=rsa-sha256 header.s=fub01 header.b=BnZVxjmY
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=xThfAToSR6bF3rJ/R8vOcJlYdxkzc5cR2ncMAQ8XHLE=; t=1795421570;
+	x=1796026370; b=BnZVxjmY6t8jarxpDkToo/H8c0fNj7uHqMzrKdezMQEa/HSXTPT/OtuZkQ3iF
+	SIjk645HaQlguO2vz4X5xoQAcMq7Kekvox9aQ5/Wv/2Y3y7Peg+KjZm84nlrQkt/cO7uTmKUHCI5G
+	rUPSdfuSDhULcJkCdZgXtngzD0f6Qlj+b8BuVkGpr3h+m0+bVxGwnhWH+Tlu/JrQPqRYWz58kESIA
+	azCY9UVurEj16zTYUULKfrDesX+idU3fR1aMKwCwDOMOXSM6O4PJnaJDguDFOUOWLmrq9PO0s0ccC
+	0Tcqy9nu5/LQbiorjpYiGoUAQ0dmYdjJFjzL8MWFSInDYscE3Q==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.100)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1xVPAE-0000000107v-2isJ; Mon, 23 Nov 2026 09:12:38 +0100
+Received: from p57bd95b5.dip0.t-ipconnect.de ([87.189.149.181] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.100)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1xVPAE-000000035JX-1XDw; Mon, 23 Nov 2026 09:12:38 +0100
+Message-ID: <ce838102be497ee6eab490b4454095b96e16d015.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 0/5] sh: mach-rsk: rsk7203: switch to using static
+ device property, drop legacy gpio API
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann	
+ <arnd@kernel.org>, Rich Felker <dalias@libc.org>, Yoshinori Sato	
+ <ysato@users.sourceforge.jp>, Geert Uytterhoeven <geert+renesas@glider.be>,
+  Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Bartosz Golaszewski	 <bartosz.golaszewski@oss.qualcomm.com>,
+ linux-sh@vger.kernel.org, 	linux-renesas-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 23 Nov 2026 09:12:37 +0100
+In-Reply-To: <dea00f90c205f8359baca729d8b0f31a@gmail.com>
+References: <20260929-rsk7203-properties-v3-0-02f84aeb8e47@gmail.com>
+	 <3a51385d-9649-4bd7-87b3-0caf9e462b2e@app.fastmail.com>
+	 <arzKNhmoL6yiGrzH@ashevche-desk.local>
+	 <dea00f90c205f8359baca729d8b0f31a@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.62.1 
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -90,68 +87,25 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: renesas: rzg2l-cpg: Skip re-initializing MSTOPs and
- critical resets for s2idle
-To: Claudiu Beznea <claudiu.beznea@kernel.org>, geert+renesas@glider.be,
- sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261019122501.2423969-1-claudiu.beznea@kernel.org>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261019122501.2423969-1-claudiu.beznea@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi, Geert,
+Hello Dmitry,
 
-Gentle ping.
+On Sun, 2026-11-22 at 22:44 -0800, Dmitry Torokhov wrote:
+> Gentle ping on this series. Will you be applying these patches (possibly
+> with Arnd's Kconfig tweak folded in), or would you prefer patches
+> removing rsk7203 support altogether since it is not working anyway?
 
-Thank you,
-Claudiu
+I have been super-busy with CVE fixes but I will try to get into kernel
+stuff back again later this week. As I mentioned before, kernel maintenance
+is not my primary job, so I cannot act as quickly as people who are getting
+paid for it.
 
-On 10/19/26 15:25, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> When the system suspends to s2idle, any of the IP blocks may be in the
-> wakeup path. For a device in the wakeup path, the generic PM domain (genpd)
-> does not disable/enable its clocks across suspend/resume. Re-initializing
-> the MSTOP bits for such a device leads to synchronous aborts when its
-> registers are accessed for the first time after resume.
-> 
-> In a suspend mode that is not controlled by firmware, power to the SoC is
-> not lost, so the MSTOP and critical reset state is retained and does not
-> need re-initialization in the first place. Skip it when
-> pm_suspend_via_firmware() reports such a mode.
-> 
-> Fixes: 5cd33db56956 ("clk: renesas: rzg2l: Add support for MSTOP in clock enable/disable API")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->   drivers/clk/renesas/rzg2l-cpg.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-> index f6293c968bcf..3d2281456036 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -31,6 +31,7 @@
->   #include <linux/reset-controller.h>
->   #include <linux/slab.h>
->   #include <linux/string_choices.h>
-> +#include <linux/suspend.h>
->   #include <linux/units.h>
->   
->   #include <dt-bindings/clock/renesas-cpg-mssr.h>
-> @@ -2697,6 +2698,9 @@ static int rzg2l_cpg_resume(struct device *dev)
->   	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
->   	int ret;
->   
-> +	if (!pm_suspend_via_firmware())
-> +		return 0;
-> +
->   	ret = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, priv->info);
->   	if (ret)
->   		return ret;
+Adrian
 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
