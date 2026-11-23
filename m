@@ -1,134 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795415901;
-	b=WrhyUJflSgWPrRf7GVZt5CnQTGQ1erozQ4m+BR9VwmmcFBX6mKUJbx0yL3p4Kep6fw+z
-	 JcCot47q1iPt2hc3WhiYYZvKKfzxp1u9qWs95QXRjUnATfwmEKHTyHj5y2iGaUPcUG3vl
-	 7hPfCSDUzhZvjfEVofc1MKJU/FrbmGYq+FA+aFcsUl+NcecRT3u8tN4m1dBFUzPZ4aJus
-	 XlyI71I0zz0NOhbUKM/AJdiBgDThXN9vsXOUG65K/G/+D2jjIM4sHbY+w30qG92wzW//k
-	 1PGTzkuMexV65cYyG+A3RrRQSK9IO3xS0aJ4xPQM1Qntj4knUINvmdZm9Rwf1Uf9jBA==
+	t=1795416292;
+	b=oDm118RDFeVLoxcUIfOMgZd6PGr/Y8Wb75qm7owFknC4LCFyehHV668//o97AuDJRlI/
+	 jF3q2VQxBdZJMHB5LW5WduqfY0CxDa5nLvDZ24zYravxTLxj1U4QQ6CbvbNbk5+vPbUEe
+	 jy3PeIzpeKkakv5rGaxVGh5BfO+zXcE3tpoDYAGNVvkkDEYSqUBoL6aRkrXWaA7DFl2PJ
+	 aP/GXYbqLFUcCbUp2nJ4balcP9Lp0AzhCQsbhPpbJQOzOxqZ2biXdhQCRT/X4eTJDYFMw
+	 HYsJ7Z+JjvYBGBWEo2BdBZhtDExKYdVwI9E/qdjyuhCNc9vMfoUgHxCwhnx3xaPinww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795415901;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=q0mLqSXDIzQNqVTzln8PT3COGc8e6WnuckNQ4xhN+LM=;
-	b=5UXxvNd4Pg3omF1fJIbojRCw8iE5NMzQOFbgoLyy5a2xtnBHle+MW3tUtLmUE1EhbKEs
-	 ulFmg5joe3BV7HPYx8o6JLk0Lsh3GgFDWVben1g9bORtcD79Dv6f1yexeN9MVUQcURMJU
-	 WCDaUDzHBZoJE9nI92OnoERU9uRVRBmhjUsFgWfyQgF/NrLxeVyS8H0qSYtlCa/ubQgSD
-	 fWoYe7xavWJdwOCB+vnKuBoCgGbT0Em6OapfCX02yBEMASkXu0MAVREoDHmLvngfdrFoX
-	 L1jOrpUNz3EQL8OUY4Vuk0wYJ/hO0oASyCvlijmahfj/mVggodRGrJPbP2Px83WPOMA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795416292;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Content-Disposition;
+	bh=2SjRi5DA6EPs4N724PY/ZYwEORsvpZ9R0IBDl0iZ0NE=;
+	b=dAFkI8cFOqUDQFt0oUFtvZMR3cwCZqoL5XxuGhTxzEj3EUtjnZc3MkChspxqNbgGo1fV
+	 gLubTFYHVi7VS0bj0NXZdn7NqtxBY++zsUPnDW22w7XNKzvOSTyCU+KqbBqGedymJG2z/
+	 Xz3A7cnbxMmJQ1siw/aV2Q24ov0btD6WyVhJdim4dlLJISSOKvlwCDcNZHZ4GlhnJKVCh
+	 DHMGOybLBinjPQsp5943MZei2ElSA1ArCYvwHqJjuJggUmVR76fMfgyxfSGbc1/kgkCSD
+	 N+9dcdpSslZc4Yqinh6cNvjZffTZwu+HKsPQgTnzlsHcz8lMmxffDU7GqCpmpiQOVwA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=fAPq3fr3;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=Ccn1qYJs;
-	arc=none smtp.remote-ip=103.168.172.147
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=j4o2xYsG;
+	arc=none smtp.remote-ip=209.85.216.46
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2608D606A31F
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 06:38:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2608D606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B41606A321
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 06:44:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B2B41606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=fAPq3fr3;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=Ccn1qYJs
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 5B0C7EC0B13
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 01:38:19 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 23 Nov 2026 01:38:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795415899;
-	 x=1795502299; bh=q0mLqSXDIzQNqVTzln8PT3COGc8e6WnuckNQ4xhN+LM=; b=
-	fAPq3fr3FJdNF7PpPrSJfewbqnTPYZUuGRLrPO9JuCE+d4FBRr6lt6HfIp+HD5i9
-	rbAK4XFKEbEw3+0+XVWxdvHWe3d2+hMHwXx3/CVrehbS67uNNScSWG/0GBJNLdYg
-	Kqi3obknXcx3dp3MyBhQV9O0h4E0ld60lr1at+7XlW4t/t58W9Ra/knYZMQjqVk5
-	dp+RjZJbPLePR/mtPEzwn/nKC/A+WpVfitWDvMy3xv07wiG387aLkF82e6cXxYdM
-	+9fKz1gtURIUSZzajAzhsUz3VenUZMAeeSOmB++uiOIwJxq4fc7C1I8d7DBF8ONW
-	sjLEmIIC9PBLQCQNl7jo2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795415899; x=
-	1795502299; bh=q0mLqSXDIzQNqVTzln8PT3COGc8e6WnuckNQ4xhN+LM=; b=C
-	cn1qYJss8pugykUKg6x+M0CQujJIIGtpsezee59MfEbgASbRLkUwiAx3/UMYRRC+
-	u7uM9SaXH+qjbuEljZDFHFcu4aZFeMksM9bkgz4nS3Kdc2pIRFlhJ/nhSlwuCxbX
-	kwwaBVC5eZUfw2bq2xnM/rSmsH4JQ3qRhlrVXEIKl/aKnxXJAvQGzXXNcVmRAfaw
-	kf7+73HT3ghSCixzvLFnj20y9a3811DNUuBMJO3zAGjKJzqgbx2WfWxTNAU5mL0m
-	nJcHw1LP1xVg9MkXNNm1ATJMnXWlhXxnvyEcqMGm0W2mV58xDqaEtOvLOIOn36zJ
-	leddjP/y/cRpMmzE89GyQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795415899; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:bPrNvE9oWgcmTSs+nFKaXpGU49+UKUfbaEX5QUhr3JUo5Kv
-	PM/yXoUDcSbmBk/wQD3B9gYPEFPWh9z2o8byBm/FQr7RFiHU2URgPaKgNUP1wUJ3
-	J/FVqIx2ZPv6LWvm2l9borOoWrzUIccbhnXjv+0A/sh4ifz8e0j2YxR3zIy/zb+E
-	EXr/PLX2/zDRBc6JxVfEfAfWc+S5lGZs9xBA0kV20s82KkPzByMd6P7vyXhjw5C9
-	hbESc2XhtlwpKNFKz/GUDERmq0pm3x7txF5/0o4uD7b7ZyB7+U3ic1XlmLZMkTdb
-	Gy3nI9XnA7y4iPBYo4Q8E/88viWZHVIhf62PvDw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:3Z8WjHWepqbXWook7ooKgKyfBrU+JKjnlzBgU5lBNWQ=:d30LbSxU56iby5FnjAFaMponSV+0lphd2F0vRkD1iVI=;
-X-ME-Sender: <xms:Wt8Da-5h5xngbIUCm1D8MlV2J8MI5KH4UvTsZOWSV_j3G4SLw7mW1w>
-    <xme:Wt8Da9796m15KP-l_9iQwsmCjCKHgvUEwD7pQjsBEev5rKlVSqDkEJW5_q0sk3HPj
-    Bu2cKcj15cycI266boyrhJFGVxPb-E3b1mHwHM5XmTEtqomYbdAHwc>
-X-ME-Received: <xmr:Wt8Da4T0iw19TmSBRhvCMS77Fw8PtiGU0jA1ngxHRSSt8Q0txvdTHN6D0dd_jFIqzcbnBPgnN3kG83OxcVCFawrJVtxlMZY>
-X-ME-Proxy-Cause: dmFkZTGQKv0zWvGdnav/t3IFqUqITDlr4jn99xB8PNcn+tTn6dgxpZ5y8lPFArXeNCklnX
-    JQfHaj5X54IZimrNIcDOI0Ze7tRtfV3l7Nfz5RxEse4/i6/xJ9MXghu3jTrRLnDj49QVIb
-    WDMSn2KS81Kjgzo8tYU/VQaPlW+N3wjcUO61PtxY1+jOoPej918/j2T1ja/8Rjcs8FNJf/
-    D+iHWWM8BbYdHP6f48Y+C+DuK8JAqc4RrMFbUdFpJ2sxnEMSBc1YpZl851XnB34tlQrAGv
-    8KdageTwsuLChsdiavzXOeP8voCy6wgBoC8PA7/C72z/euo4grVEXyMQnqDV1Db6AkpGWz
-    JSJJDe/IcKzRtsU2xVeeBfSzQSo8TMrCWkq4CNq22XaM/1bkOF1EqGVLfo5yoPtidl1rOy
-    NgJ/INCxPVCW8EemN9CTyIxkVB3O1q+5sZ/7gKYYi59vgwaY4squvoMnn7fSEpsyqWXZ9n
-    iPr2B8G0MI0vftz7rfCIIBtSjZ5eBxsNEvyHl1hOAQe8/KHajTE8eQEHQmpQtfzqfb5ctD
-    HVLC2tybdUZUs1BfXjK75We0r+GoX4dFVeP4BIJcUWp+74L6JbfHvN4+axOrvD1b44Iizi
-    j1WWDZEMf0tNWbNBk94j3BwhW4+EnXTdKLiVA56D/UM60aAnZZbWcHJgQo/g
-X-ME-Proxy: <xmx:Wt8Da9_EZya7vg2shLZ0lEr2-NiP-Y7HQnmbTyGYEQWeU6UVsULFyA>
-    <xmx:Wt8DaxbvHf5u9iwnYTsCaX-BRGjkCrwNpNWX8ajLSoHultJZTI9acA>
-    <xmx:Wt8Da2oWTfaqdQqJ6XcgF-c1AniyXdPHQkcq7G8qHN6eURE9RAfiMQ>
-    <xmx:Wt8Da9QK_K2Js19-tflPPLFjh3yZGWGJxUZbykd5WrSE5h8MbduviQ>
-    <xmx:W98Da7q_zjyhcVf0woLsmRszgfS8FyO09vKAF-bfbvBpMi3sRiElmR2d>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 23 Nov 2026 01:38:18 -0500 (EST)
-Date: Mon, 23 Nov 2026 07:38:15 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=j4o2xYsG
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3b4021b572dso1854410a91.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Nov 2026 22:44:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795416291; x=1796021091; darn=vger.kernel.org;
+        h=content-disposition:content-transfer-encoding:content-type
+         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2SjRi5DA6EPs4N724PY/ZYwEORsvpZ9R0IBDl0iZ0NE=;
+        b=j4o2xYsGh3WF/JUZQQOuj/v67/PWJ7hBi2FsjvLLsZtbm29aHoYdH0NO+RcHpADiGL
+         2dvXRLuk5oNLY5e3J5y6E54Umcm0YyNsO+tBVTYSYc8Xa+Jk/uS8g20d6XOSmM85q7Mv
+         OOvTfnX7Egw7qPncqmwIy1jdpRDl0/Prkna0hyc/JYVrKiNwRkwjCwV3C6XJAL+vV7E7
+         rmefry0U/PqpRQnG2xXtfNfXYUkv1b7CidqpNSjO077yuGBXMab68jiF244vxAbttmAO
+         b74JQzwV1UZI8H2QsIDxvyqmNgfBnWyrqPslKLrBAFY8wGlBVH7Oxyb80w9pFsfby4Ex
+         UGCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795416291; x=1796021091;
+        h=content-disposition:content-transfer-encoding:content-type
+         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=2SjRi5DA6EPs4N724PY/ZYwEORsvpZ9R0IBDl0iZ0NE=;
+        b=alQ4OxSVlNOEZrBeSjZVrc5Sznr/WAPv6Ib3kefyGlAFga6mVNv2j2IEmqOguGjs9a
+         MqVyks/srLFisf6SQSZUA3jF6eghWbr7ofAAyTI/LKrkNbqOgAoyaCcFBUhSWZs+wsYZ
+         deEcGH81fH6cralvOzESV9SzZR848AhNtusfFINjJwanJaoX8xMWuZE7Lf0zMkUqzSxp
+         rA6bjoO2N+VscJHR8uZ/v3yVzmRrYhpPxnHS3qK+XtwK0gAjFLlRBP9GNfpnoGG7ywkh
+         SV9v65Tey0pwWv6UJYNM75cZDon0iMiELHBH5oPi/c+vvlCxMZH6KebZJyFmPIUeJHXl
+         DNlQ==
+X-Forwarded-Encrypted: i=1; AL+hErGzlxIK0mUHdzYacxxDsPIrmyzpjAq0vselIJIVbiiz6XcChXrdt45mt5QQIXAUIqrCYJMDRmleElfuEfxgakxeWQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8KRx8ecN2t5oGMMfA9xiFeSZ76BkQMrE5Fbg4QYW9uwAep9eY1
+	9geqmRvi4+3SXoE/LvSiHTjxpgQzH5SJXm0+nZFhUGAxrmYamOTfo1NE
+X-Gm-Gg: AZFdTZdjLRN/EHt4LorbNMOgCSP2yP1Nh7Faoqr4lx40lEA6uNHe1n9u28bVPZ7NHFT
+	lND9AVwifLxaWOCoXNHLVe70+ZGOpAji7Rmp3qa++qZmZSXkph683AmN3ry+WCvCvh5GRsGhaRe
+	b7+oLnrnNanG9rqHyc0Nz+MGOiIfcmqq6LCaf1YnwVNKlC1t38t68vysV0zuqmsDqL/o+5CmuAq
+	YJRUCOvvPloL/9244Nnj1aPLxtLbHIrHKXKITUAQ565rG+dZ9fyIeBnS5X4Pdq/UVwjkxZSU+ie
+	3GRiCWMRzJlQTkJSfoGCg/N8/Pwx7lDGroy2iV3HzvF0/thNAfS1ratg7RId6W3Bq76aqSxUtpq
+	VQspxh4tUh6Hol1J9sk2Mk7170cO4bzk1bvBSefldrWC218F95eZSMDM3b7aKwkrEuBILl/HWim
+	2O3xUSeYdFpqHVaP3a/cjneuVyaAO9gqjF9wbL54mwdqZZETIP3Yi3fwNZZtFy9rpoqReT3j5hq
+	pYVNNWONwQl4W4vZ0oHYosROR8kr9r8ZCktkb8w+qIL1ABvPFKt9yx0V0d4aLaJDreHKsd/yNHr
+	jD6I+N7budbZV7UjDoh6opCPrUCDXco9V2RRg8z1F52c/LEk/f6pMRW80EyVNcoZPTYM5w==
+X-Received: by 2002:a17:90b:224e:b0:3b4:f92:ade8 with SMTP id 98e67ed59e1d1-3b41c7e1174mr10446536a91.7.1795416291007;
+        Sun, 22 Nov 2026 22:44:51 -0800 (PST)
+Received: from localhost ([2a00:79e0:2ebe:8:4121:d698:201c:9274])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b41ad0b52dsm17835023a91.5.2026.11.22.22.44.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2026 22:44:50 -0800 (PST)
+Date: Sun, 22 Nov 2026 22:44:49 -0800
+Message-ID: <dea00f90c205f8359baca729d8b0f31a@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arnd Bergmann <arnd@kernel.org>,
+	Rich Felker <dalias@libc.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-sh@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] thermal/drivers/rcar_thermal: disable the work before
- masking the interrupt
-Message-ID: <20261123063815.GC3898744@ragnatech.se>
-References: <20261118072321.1259639-1-shunsheng1218@gmail.com>
- <20261119022903.1493494-1-shunsheng1218@gmail.com>
- <20261119062203.GC2300348@ragnatech.se>
- <179508711555.3615492.10674834361832600268@gmail.com>
- <20261119162517.GD2300348@ragnatech.se>
- <179516779969.759914.14349189301325900521@gmail.com>
- <20261122140906.GA3898744@ragnatech.se>
- <179540050658.417371.12537370024433882605@gmail.com>
+Subject: Re: [PATCH v3 0/5] sh: mach-rsk: rsk7203: switch to using static device property, drop legacy gpio API
+In-Reply-To: <arzKNhmoL6yiGrzH@ashevche-desk.local>
+References: <20260929-rsk7203-properties-v3-0-02f84aeb8e47@gmail.com> <3a51385d-9649-4bd7-87b3-0caf9e462b2e@app.fastmail.com> <arzKNhmoL6yiGrzH@ashevche-desk.local>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -138,41 +108,34 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <179540050658.417371.12537370024433882605@gmail.com>
 
-Hi Yaohan,
+Hi Adrian,
 
-On 2026-11-23 10:21:46 +0800, Yaohan Li wrote:
-> Hi Niklas,
-> 
-> You are right. I do not have a ready-made reproducer that exercises
-> rcar_thermal_remove() on the actual driver. The 17-check test exercises
-> workqueue and shared-IRQ primitives; it does not show the original driver
-> failing or the patch fixing the race.
-> 
-> I should have made that distinction clearer, rather than suggesting more
-> thermal-load experiments. I will keep v3 on hold.
+On Wed, Sep 30, 2026 at 11:37:10AM +0300, Andy Shevchenko wrote:
+> On Wed, Sep 30, 2026 at 09:23:21AM +0200, Arnd Bergmann wrote:
+...
+> > The patches look good to me. I have build-tested this with the snippet
+> > below and my series from
+> > https://lore.kernel.org/all/20260907090956.2825703-2-arnd@kernel.org/
+> > to check that no use of the legacy interfaces remain.
+> > You can probably fold my one-liner into your last patch.
+...
+> > I would guess even with access to hardware testing is going to be
+> > challenging, I noticed that the defconfig kernel does not fit on the
+> > 4MB flash any more (even without rootfs), and the USB support was
+> > never added for rsk7203, only for 7264/7269.
+>
+> ...which induces a practical question, shouldn't we just drop the whole thing
+> for good?
 
-I think you can post v3 already, if you think it's ready. Once we can 
-test it or it becomes trivial we can move forward.
+Gentle ping on this series. Will you be applying these patches (possibly
+with Arnd's Kconfig tweak folded in), or would you prefer patches
+removing rsk7203 support altogether since it is not working anyway?
 
-> If I can put together a
-> test-only instrumentation patch that forces the relevant interleaving in the
-> driver's removal path, I will share that for review before asking you to run
-> anything on your board.
-
-Maybe the top half of the interrupt handler can requeue itself. It will 
-be a infinite loop but as a hack patch to trigger the issue it would be 
-ok I think.
-
-> 
-> Thanks again for offering to help test it.
-> 
-> Yaohan
+Thanks.
 
 -- 
-Kind Regards,
-Niklas Söderlund
+Dmitry
