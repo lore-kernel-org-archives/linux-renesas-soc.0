@@ -1,80 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795446436;
-	b=yCj5KtSXD+ZozdfWcmFmv+P5zagYh+ej/741l3+NzKu7ajRPTHfO6t1W3riFX8O2TM5s
-	 KxUhigoEgJeQiVgriKDjlhc23Yuo/qs8ww+bKvWmRHbY5IkbF6uvX+68XZdhUSxKqH6gW
-	 548/TZz7vkEKTEKsqZIeRlyADLf3tALu0srhMZQzYawvRurVfFCukMNd3qiZWv1pGod0a
-	 yZfvS08reJ3Ko8M5rb61kwfcNvBVJPaVg89VoEQUnzibufo18suhzoQo+AzwhU+/vkZax
-	 z7w5CUfGoNC9DJE7m/MoiBdWPqBMswdV2KnklIG54oHXf/O6sEQGTxjCIV3UyDS/0Zg==
+	t=1795447499;
+	b=fk+xTQt6bcnlP7PrUzgowZvor+7VyfMu24tZgNCm8qSIXFWyWm8Go/IkbgEuwnRP6ZQC
+	 Q8SOj1JKZUiYoQX4Bp12e6qECInaPNerXqVeW8bYrZP6/GLLhV/MTzUxBczmbgAibWhL3
+	 QhYp3XPYIcpuKjB19AGM0iQzpIcR7916OUZ1410AEEaFFvU5MsrgQ2cLrBYX2/at0WrWL
+	 xHTMc7GdLWFMVKhPJSK41V9LfdKyfTpfa1NuUvb+yBXUs8vrO6rX/9sVFlxvssY8ZM/Sw
+	 Cygo7Ry3h+biI5G7AZy7KSnHzsgPwg3d/vfh29hbUjzsIuMyIBe7p7CsAPJxohNcITA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795446436;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=QhwkeRsKW2eU1yR2DBn8OENZbsAgbpApGZdt64vMdFc=;
-	b=5g1MtjCNFPYe1161tCelyDa5nnJO45O2mTgFNHFLSVEcwU7/J2pAk33T2VEUF5APNaAA
-	 +2t9ku948TEMqs55sWBRMQ3hP5ohLGSGD2Oo14cipE6Xa1UYcuEV7Lu+ulmZVtxOEmb7E
-	 5FQXQ9vXwrXo4f8rN6CGdS9l+G6ZxEy0JccSEgrOrdT3nfMO2Xd/aQLh71p9A91pdSJRB
-	 XLuTqVSlnsysoImw4Xm2aWso9nDGmvPoQruIOdI5U4LyjTuVCt+zNX9WsB77/SbxdlcsQ
-	 866NHaZCxYGpaxTDFRko8Xndemjv6oqlKbXMovd1O49jTIm+kSesLZqcBxeKPyLWCzw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795447499;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=hU6lCuXcSGRGPK5UfUxs40iBp8ye+14Obren8ukXLbQ=;
+	b=czlq83SYqjO6JHP/HnJMEx14sbFN7VW2F9wP4zk29cUQPeZbfGHB6ibyORSLM2u2apv8
+	 WA7/2m4NlYCsMFtHEXDD88RL4xgu4ewcJgt8d0Q6+3pdkcpdSzciVAP7zq+EvHmgldGfk
+	 syvHvZSlNBuZ3HWUE8iol7A5ib9+qJTetVbNwqSEk1qNgS0bDTHpGZ8uCSArCs6vOQKwc
+	 UfGW8bfndXo/WCI+p+trZBp72gkUCn7H4sO+zd8wo91FFxSFBa4YPsZkiFBuYx5rqMTLf
+	 oCFoHUnc7EXdtiaxB5BviZafcCivffj95j07YYog0YHz5FU090D0Rg42V5+eh9xHqUA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=tyx9iVUr;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=gxVQky7b;
+	arc=none smtp.remote-ip=91.218.175.124
+Received: from mta0.migadu.com (out-124.mta0.migadu.com [91.218.175.124])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9106E606A31A;
-	Mon, 23 Nov 2026 15:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9106E606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714FF606A31E
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 15:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 714FF606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=tyx9iVUr
-Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E20A0177;
-	Mon, 23 Nov 2026 16:04:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1795446280;
-	bh=hWpll5jCWlb3p4P0FO1e+zezhAH+oosPgqeDUB2EaBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyx9iVUrmGY4LpCqE/MfiTNAFkDFvyz0SFmzDek+lY5RRd76Px++aSNSpfPLdXWKZ
-	 TVcpqSiPaYUFQumgA4os9b+Hwh6xeZtVU0fEHDhmkvEN/vhwnbaJ89aOm/40l2m528
-	 anHmd+DXrdgZC2kgRDJEfzq4FcSmfRw4NtfIiK4Q=
-Date: Mon, 23 Nov 2026 17:07:10 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 05/15] clk: renesas: r8a78000: Add SCMI remapping
- support
-Message-ID: <20261123150710.GL3010398@killaraus.ideasonboard.com>
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <e01baebc546ed6f1b71a0487a59cda73239ea7f1.1795029012.git.geert+renesas@glider.be>
- <20261123113619.GG3010398@killaraus.ideasonboard.com>
- <23ab561a-c5c5-41ff-a0f4-87a3f5ca2e49@app.fastmail.com>
- <20261123125410.GK3010398@killaraus.ideasonboard.com>
- <066fcf7c-e1f6-4186-9874-622dbce18f92@app.fastmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=gxVQky7b
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=w69mSWUbKNyFWa5SNC3RxlJB/92Ei48ZvSabQKErQrw=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795447496; v=1; x=1796052296;
+ b=gxVQky7b5fSMJm4NdKilc59dIzzYJ23qDvX9Wrracg+DlP59zBVhhO+3mJxI9IaogZn2kkBD
+ AtNE2O+iCrEDnMPsMTFsADCISIsKjyDg67ebJtOjaqQet9NzzLvyHp/EtRa9nPuLjjBlny1V/Ae
+ 794v+b6BRbrWBGqsB+tkAE8A=
+X-Envelope-To: linux-renesas-soc@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 1060c7766cc6e36e;
+	Mon, 23 Nov 2026 15:24:56 +0000
+X-Mizu-Trace-ID: 1060c7766cc6e36e
+X-Migadu-Flow: FLOW_OUT
+Message-ID: <b43ca10b-6ef5-4114-8d9b-cb1eafa22765@linux.dev>
+Date: Mon, 23 Nov 2026 16:24:51 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -84,80 +58,67 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <066fcf7c-e1f6-4186-9874-622dbce18f92@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v6 2/4] net: dsa: rzn1-a5psw: Fix VLANTransmitted
+ counter offset
+To: Prabhakar <prabhakar.csengg@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+ Ralph Siemsen <ralph.siemsen@linaro.org>, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ stable@vger.kernel.org
+References: <20261123130852.3420491-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261123130852.3420491-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Clement Leger <clement.leger@linux.dev>
+In-Reply-To: <20261123130852.3420491-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 23, 2026 at 02:02:35PM +0100, Geert Uytterhoeven wrote:
-> On Mon, Nov 23, 2026, at 13:54, Laurent Pinchart wrote:
-> > On Mon, Nov 23, 2026 at 01:34:06PM +0100, Geert Uytterhoeven wrote:
-> >> On Mon, Nov 23, 2026, at 12:36, Laurent Pinchart wrote:
-> >> > On Wed, Nov 18, 2026 at 08:44:53PM +0100, Geert Uytterhoeven wrote:
-> >> >> Extend the Clock Pulse Generator driver for R-Car X5H with SCMI support,
-> >> >> to remap DT clock IDs to abstractions (clocks) offered by the SCMI
-> >> >> firmware when running on a system with SCMI, and SCMI support is
-> >> >> enabled.  Take into account some peculiarities of the current SCMI
-> >> >> firmware implementations, and fall-back to fixed-rate clocks as
-> >> >> replacements for SCMI clocks that are not available.
-> >> >> Support for bus clocks used by serial, I2C, and SPI devices is included.
-> >> >> 
-> >> >> This lets us avoid putting SCMI IDs in DT, and allows us to use the same
-> >> >> hardware description in SoC DTS for systems with and without SCMI
-> >> >> firmware.
-> >> >> 
-> >> >> For now, it is assumed SCMI clock IDs are stable, and match SCP FW
-> >> >> SDKv4.31.0 and later.
-> >> >> 
-> >> >> Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> 
-> >> >> --- a/drivers/clk/renesas/r8a78000-cpg.c
-> >> >> +++ b/drivers/clk/renesas/r8a78000-cpg.c
-> >> 
-> >> >> @@ -140,7 +182,35 @@ static struct clk_hw **get_hws(struct r8a78000_cpg_priv *priv)
-> >> >>  
-> >> >>  	for (unsigned int i = 0; i < map->size; i++) {
-> >> >>  		fw_id = map->entries[i].fw_id;
-> >> >> -		hws[i] = fixed_hws[fw_id];
-> >> >> +		if (fw_id >= FIXED_CLK_OFFSET) {
-> >> >> +			hws[i] = fixed_hws[fw_id - FIXED_CLK_OFFSET];
-> >> >> +			continue;
-> >> >> +		}
-> >> >> +
-> >> >> +		scmi_spec.np = scmi_clk_np;
-> >> >> +		scmi_spec.args_count = 1;
-> >> >> +		scmi_spec.args[0] = fw_id;
-> >> >> +
-> >> >> +		clk = of_clk_get_from_provider(&scmi_spec);
-> >> >> +		if (IS_ERR(clk))
-> >> >> +			return dev_err_cast_probe(dev, clk,
-> >> >> +				"Failed to get SCMI clock %u\n", fw_id);
-> >> >> +
-> >> >> +		hw = __clk_get_hw(clk);
-> >> >> +		clk_put(clk);
-> >> >
-> >> > Doesn't that leave the hw pointer possibly dangling, shouldn't you keep
-> >> > the reference to the clock ?
-> >> 
-> >> Only struct clk is reference-counted; struct clk_hw is not, and exists as
-> >> long as the clock provider hasn't unregistered it.
-> >
-> > That's what I meant, what prevents clk_hw from being destroyed while you
-> > still hold a pointer ?
+
+
+On 11/23/26 14:08, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> If the SCMI clock provider goes away, we're indeed dead...
+> The RZ/N1 hardware manual places the VLANTransmittedOK counter at
+> offset 0x8f4, not 0x8ec. Correct the register offset so the driver
+> reads the counter from the right location.
 > 
-> Note that __clk_get_hw() + clk_put() is a common pattern to avoid
-> leaking the struct clk reference, and fixes were CCed to stable.
+> Fixes: c7243fd4a62f ("net: dsa: rzn1-a5psw: add statistics support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v6:
+>    - No changes from v5
+> v5: https://lore.kernel.org/all/20261120002549.1908299-10-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> ---
+>   drivers/net/dsa/rzn1_a5psw.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/rzn1_a5psw.h b/drivers/net/dsa/rzn1_a5psw.h
+> index d54acedac194..9693f8503b0b 100644
+> --- a/drivers/net/dsa/rzn1_a5psw.h
+> +++ b/drivers/net/dsa/rzn1_a5psw.h
+> @@ -185,7 +185,7 @@
+>   #define A5PSW_etherStatsFragments		0x8E0
+>   
+>   #define A5PSW_VLANReceived			0x8E8
+> -#define A5PSW_VLANTransmitted			0x8EC
+> +#define A5PSW_VLANTransmitted			0x8F4
+>   
+>   #define A5PSW_aDeferred				0x910
+>   #define A5PSW_aMultipleCollisions		0x914
 
-It's only leaked if you don't store it and release it at remove time. I
-suppose that, in this case, we can rely on the SCMI clocks never going
-away. Hopefully.
+Hi Prabhakar,
 
-> "git grep -A1 __clk_get_hw | grep clk_put"
+Reviewed-by: Clément Léger <clement.leger@linux.dev>
 
--- 
-Regards,
+Thanks,
 
-Laurent Pinchart
+Clément
