@@ -1,89 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795443990;
-	b=uuyLAsq5vF7oH8XfroSlGfc0ZOS68+K+ihY1k/WU1ARqH3cvv+9dADvRliSrjzyVW1Ci
-	 wkiOjUVM1fMctuUGO4xy3BIqEmx9G+QxGDUfPDtJmdVo5uM0HArgdjdF7GZZgb9FWOW2s
-	 y3lIcrzN8qcWFr5LDi6kqG/dEPFcxtxA7uMUkjXDZHYVpYFasZUqX/4RJRZ9C3+tLtLv0
-	 3/VozFcYNYhYNUm0uhXqWQ9+7mRofRqCuAAWekyBjMN1BEtGThSMzL86X8ldBw1WeJo1+
-	 RQuaap8TYLAJgJPKwZEwcOYjKa/XMUh1SSqKLDiUq9cyaU65RRTmbN1PWDmDXc2BydA==
+	t=1795446436;
+	b=yCj5KtSXD+ZozdfWcmFmv+P5zagYh+ej/741l3+NzKu7ajRPTHfO6t1W3riFX8O2TM5s
+	 KxUhigoEgJeQiVgriKDjlhc23Yuo/qs8ww+bKvWmRHbY5IkbF6uvX+68XZdhUSxKqH6gW
+	 548/TZz7vkEKTEKsqZIeRlyADLf3tALu0srhMZQzYawvRurVfFCukMNd3qiZWv1pGod0a
+	 yZfvS08reJ3Ko8M5rb61kwfcNvBVJPaVg89VoEQUnzibufo18suhzoQo+AzwhU+/vkZax
+	 z7w5CUfGoNC9DJE7m/MoiBdWPqBMswdV2KnklIG54oHXf/O6sEQGTxjCIV3UyDS/0Zg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795443990;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=MpBy4DQUeAY3YB4hP8JJP2A0Pzqf+41bgmSv+sbuZU8=;
-	b=J2tnt7AXIK1HsKdD0dOAW51qRxVavOk8hEX90AkrQiUYl2/nhacmK+h/cth7hgoY4XPR
-	 wOpPsG3wDoLmik2za4ntoGlI3aaJEESyczljjx7b7toUiD/L+Plx7HxuMz+sJGw3lQqxW
-	 n7/n13lyAsiQf1I+DFwMRDkLSR6FfVlBhuUWs+Eu37puqRxDGcprURYTDmBzCtzoe4j8+
-	 vVXn0XqoBiSqf9pbH9pt1KpYGGDrdKC8+Rnv6U9AyhKOrycVHwy9/UFWfuttw7PbKCCcT
-	 EaN8Xpor9iFlBXwfGy6BwVlPH+vM8Z/Rlj+VwySkAYGPXcRPGBkDhkntHGMQNlHSW3Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795446436;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=QhwkeRsKW2eU1yR2DBn8OENZbsAgbpApGZdt64vMdFc=;
+	b=5g1MtjCNFPYe1161tCelyDa5nnJO45O2mTgFNHFLSVEcwU7/J2pAk33T2VEUF5APNaAA
+	 +2t9ku948TEMqs55sWBRMQ3hP5ohLGSGD2Oo14cipE6Xa1UYcuEV7Lu+ulmZVtxOEmb7E
+	 5FQXQ9vXwrXo4f8rN6CGdS9l+G6ZxEy0JccSEgrOrdT3nfMO2Xd/aQLh71p9A91pdSJRB
+	 XLuTqVSlnsysoImw4Xm2aWso9nDGmvPoQruIOdI5U4LyjTuVCt+zNX9WsB77/SbxdlcsQ
+	 866NHaZCxYGpaxTDFRko8Xndemjv6oqlKbXMovd1O49jTIm+kSesLZqcBxeKPyLWCzw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RUIY67PM;
-	arc=none smtp.remote-ip=209.85.208.171
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=ideasonboard.com;
+	spf=pass smtp.mailfrom=ideasonboard.com;
+	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=tyx9iVUr;
+	arc=none smtp.remote-ip=213.167.242.64
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE4B606A330
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 14:26:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3BE4B606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9106E606A31A;
+	Mon, 23 Nov 2026 15:07:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9106E606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RUIY67PM
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3ae1fd4252fso31698831fa.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 06:26:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795443988; x=1796048788; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MpBy4DQUeAY3YB4hP8JJP2A0Pzqf+41bgmSv+sbuZU8=;
-        b=RUIY67PMq1SQpC96Na5nTl3jAyRwEebw/mDWGod9yXt8IsGlmlTbbsyWn7X2cSb73L
-         dB/FORW/5mTkaB2haIysp91S+cFrM2WzVocyIJDpnJKRCsMAZh+2AMPv+Cb9qzJmnN/p
-         xVhtvboIzZKmLZuxYSV+bp9jXmGt/XGLsa3NkwIEjKhmnT/FmPcIYkZmo9USpV0+DVld
-         +T7wajOC1ZKDFwX45AVhUhuQXPjUbPPbDrQCtLMD5NyK6n3BloDQGZVPITo+qylDu4KF
-         qxWCPUIvWmu9AImsOgfgoOsXo6JqMQLDHrQeoNb3vm5Ivrwtz3Ew4LzO8OTKYYbraeQ+
-         bbhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795443988; x=1796048788;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=MpBy4DQUeAY3YB4hP8JJP2A0Pzqf+41bgmSv+sbuZU8=;
-        b=k2Sp1bQOiuq/ryWt3aIadGPVor+JXbpcPSbMtgX/LNLkJ/CVqdQJhJY5U+97ugiuT+
-         wrNg/cZKAj0eE+GZYpijBXZQdBabzfwjePt+EMHToF92b+VDbPpwJaWlduvEQTllEcYj
-         +EIBH98ceV/oMTnliBWSYhHMd6gDVGf+xu396+w+xQ5z1IDqNOjT6Z9ukZPJBDU7oxdF
-         vXkXDYNrUOljq9GmOQAqNYd2B1yRPYmzNhAI7Ryx3HdkVWlwacDaefyC9uboQWXf8jXP
-         fMjapjB57Z/rXyEfNTdb0CJuXy82clTBhJbbKKeexp6ogNftErw0UDIZwbvOUy4sQRKI
-         tPdA==
-X-Forwarded-Encrypted: i=1; AL+hErH0tbYjWmoyEzUyRB7f82DKIdktnwN73CRfQgBXEW9VJEGDaUPPxfgS4zIA70+sJDq2UsKJ1IXhQVXA1SfwY8o9JA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z97046IzvahHTV6RmeD4heOdP/4A/l6K+iJkbONWpb/484QIMcj
-	Owy+LMvSC0mCTin+5V/OCN61qSwhExbWt/8rok23s62W/LmUosW4E9dm
-X-Gm-Gg: AZFdTZcQ7uFEW1moPtCNn0y93CBHQeriQ6/DMfTuewgsITIAg1yRXhZ67uN2cHwXz3G
-	cxCNndK+xXjzS86Y/ssJQwt3kIILXdC8WcYwH2cL5B3fRZ0zTEi+9C/v7SAFINBGY7cOyS3kxr6
-	xyTBaqKqm/tEfLcIiQ4P/JC6KUgtB8698rwerVDQJaf3Kr41nNrGDKr/qHSU6eDlSYeAyyh4u2j
-	nvbjG87pGuCTOtlF9h/esDQhYi8Q6VG+aEIVRjtIc3j8nd8npad/16gqiVltMV+cPT+leuCeWw5
-	kuTSWxYZMFxVjtzkUjN4qIwVps+LMlAGaj2zYmjzQUCPgBSV3IeJAU0MbW61tcqk5BHqdVOrvZV
-	dasjUna8DXqK8acowYlx/bIAR1DcADtY3f7sk9CosRqz4PScb2FJy4J/KfzDsK+m0ibp21mxVaU
-	3Mlqouqr5NsWuXBDPPpXt5FtBLXfkoXmXSeiGWKfMI+A0GOVaFEDmH1TgYLxVa2XPnALVm/UDxF
-	M+nKY9H5mq6zarFHvx2HSfI/gcyf2f0IXlzDwvGJtAxGHnu1EAev3IJzJD3xfWDqoCef84/uHkR
-	UJZGiis60A8Y3yS8+V7zxXxgfPi2NqRwPQG2xiJZXKOWAKr1kRkZataIM5UUNbjqtbX3BYpwps2
-	gc9sMW/hNIQ==
-X-Received: by 2002:a2e:ab0a:0:b0:3ac:e4b6:b93d with SMTP id 38308e7fff4ca-3ae7f9a072fmr31420641fa.8.1795443988058;
-        Mon, 23 Nov 2026 06:26:28 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ae80536529sm33679491fa.27.2026.11.23.06.26.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2026 06:26:27 -0800 (PST)
-Message-ID: <bc178673-54dd-4811-acdf-cb6327ec2417@gmail.com>
-Date: Mon, 23 Nov 2026 16:26:25 +0200
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=tyx9iVUr
+Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E20A0177;
+	Mon, 23 Nov 2026 16:04:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1795446280;
+	bh=hWpll5jCWlb3p4P0FO1e+zezhAH+oosPgqeDUB2EaBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tyx9iVUrmGY4LpCqE/MfiTNAFkDFvyz0SFmzDek+lY5RRd76Px++aSNSpfPLdXWKZ
+	 TVcpqSiPaYUFQumgA4os9b+Hwh6xeZtVU0fEHDhmkvEN/vhwnbaJ89aOm/40l2m528
+	 anHmd+DXrdgZC2kgRDJEfzq4FcSmfRw4NtfIiK4Q=
+Date: Mon, 23 Nov 2026 17:07:10 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Paul Elder <paul.elder+renesas@ideasonboard.com>,
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 05/15] clk: renesas: r8a78000: Add SCMI remapping
+ support
+Message-ID: <20261123150710.GL3010398@killaraus.ideasonboard.com>
+References: <cover.1795029012.git.geert+renesas@glider.be>
+ <e01baebc546ed6f1b71a0487a59cda73239ea7f1.1795029012.git.geert+renesas@glider.be>
+ <20261123113619.GG3010398@killaraus.ideasonboard.com>
+ <23ab561a-c5c5-41ff-a0f4-87a3f5ca2e49@app.fastmail.com>
+ <20261123125410.GK3010398@killaraus.ideasonboard.com>
+ <066fcf7c-e1f6-4186-9874-622dbce18f92@app.fastmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -93,99 +84,80 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 16/17] mfd: Unify style of of_device_id arrays
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Lee Jones <lee@kernel.org>
-Cc: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>,
- Linus Walleij <linusw@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Chen-Yu Tsai <wens@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- James Ogletree <jogletre@opensource.cirrus.com>,
- Fred Treven <fred.treven@cirrus.com>, Ben Bright <ben.bright@cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Support Opensource <support.opensource@diasemi.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Tim Harvey <tharvey@gateworks.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Charles Keepax <ckeepax@opensource.cirrus.com>, Sven Peter
- <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Saravanan Sekar <sravanhome@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
- <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
- mfd@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
- linux-rpi-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-amlogic@lists.infradead.org, asahi@lists.linux.dev,
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
- linux-rockchip@lists.infradead.org
-References: <cover.1795431460.git.u.kleine-koenig@baylibre.com>
- <b69bcdcc394e46e0eb60947f23923e6241d24ff4.1795431460.git.u.kleine-koenig@baylibre.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <b69bcdcc394e46e0eb60947f23923e6241d24ff4.1795431460.git.u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <066fcf7c-e1f6-4186-9874-622dbce18f92@app.fastmail.com>
 
-On 23/11/2026 13:18, Uwe Kleine-König wrote:
-> From: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+On Mon, Nov 23, 2026 at 02:02:35PM +0100, Geert Uytterhoeven wrote:
+> On Mon, Nov 23, 2026, at 13:54, Laurent Pinchart wrote:
+> > On Mon, Nov 23, 2026 at 01:34:06PM +0100, Geert Uytterhoeven wrote:
+> >> On Mon, Nov 23, 2026, at 12:36, Laurent Pinchart wrote:
+> >> > On Wed, Nov 18, 2026 at 08:44:53PM +0100, Geert Uytterhoeven wrote:
+> >> >> Extend the Clock Pulse Generator driver for R-Car X5H with SCMI support,
+> >> >> to remap DT clock IDs to abstractions (clocks) offered by the SCMI
+> >> >> firmware when running on a system with SCMI, and SCMI support is
+> >> >> enabled.  Take into account some peculiarities of the current SCMI
+> >> >> firmware implementations, and fall-back to fixed-rate clocks as
+> >> >> replacements for SCMI clocks that are not available.
+> >> >> Support for bus clocks used by serial, I2C, and SPI devices is included.
+> >> >> 
+> >> >> This lets us avoid putting SCMI IDs in DT, and allows us to use the same
+> >> >> hardware description in SoC DTS for systems with and without SCMI
+> >> >> firmware.
+> >> >> 
+> >> >> For now, it is assumed SCMI clock IDs are stable, and match SCP FW
+> >> >> SDKv4.31.0 and later.
+> >> >> 
+> >> >> Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> 
+> >> >> --- a/drivers/clk/renesas/r8a78000-cpg.c
+> >> >> +++ b/drivers/clk/renesas/r8a78000-cpg.c
+> >> 
+> >> >> @@ -140,7 +182,35 @@ static struct clk_hw **get_hws(struct r8a78000_cpg_priv *priv)
+> >> >>  
+> >> >>  	for (unsigned int i = 0; i < map->size; i++) {
+> >> >>  		fw_id = map->entries[i].fw_id;
+> >> >> -		hws[i] = fixed_hws[fw_id];
+> >> >> +		if (fw_id >= FIXED_CLK_OFFSET) {
+> >> >> +			hws[i] = fixed_hws[fw_id - FIXED_CLK_OFFSET];
+> >> >> +			continue;
+> >> >> +		}
+> >> >> +
+> >> >> +		scmi_spec.np = scmi_clk_np;
+> >> >> +		scmi_spec.args_count = 1;
+> >> >> +		scmi_spec.args[0] = fw_id;
+> >> >> +
+> >> >> +		clk = of_clk_get_from_provider(&scmi_spec);
+> >> >> +		if (IS_ERR(clk))
+> >> >> +			return dev_err_cast_probe(dev, clk,
+> >> >> +				"Failed to get SCMI clock %u\n", fw_id);
+> >> >> +
+> >> >> +		hw = __clk_get_hw(clk);
+> >> >> +		clk_put(clk);
+> >> >
+> >> > Doesn't that leave the hw pointer possibly dangling, shouldn't you keep
+> >> > the reference to the clock ?
+> >> 
+> >> Only struct clk is reference-counted; struct clk_hw is not, and exists as
+> >> long as the clock provider hasn't unregistered it.
+> >
+> > That's what I meant, what prevents clk_hw from being destroyed while you
+> > still hold a pointer ?
 > 
-> These arrays already mostly match the most used and generally
-> recommended coding style. That is:
+> If the SCMI clock provider goes away, we're indeed dead...
 > 
->   - no comma after the list terminator;
->   - a comma after an initializer if (and only if) the closing } is not
->     directly following;
->   - no explicit zeros in the list terminator;
->   - a space after an opening { and before a closing }, a single space in
->     the list terminator;
-> 
-> Adapt the offenders accordingly.
-> 
-> Reviewed-by: André Draszik <andre.draszik@linaro.org> # for Maxim MAX77759
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-> Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com> # max7360
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+> Note that __clk_get_hw() + clk_put() is a common pattern to avoid
+> leaking the struct clk reference, and fixes were CCed to stable.
 
-Reviewed-by: Matti Vaittinen <mazziesaccountw@gmail.com> # rohm
+It's only leaked if you don't store it and release it at remove time. I
+suppose that, in this case, we can rely on the SCMI clocks never going
+away. Hopefully.
+
+> "git grep -A1 __clk_get_hw | grep clk_put"
 
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductor
-Oulu Finland
+Regards,
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+Laurent Pinchart
