@@ -1,104 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.191.92
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795463273;
-	b=fE5TLH3WOHyzsKnDl3bLew8phKw4YkKgvANSYHjsPEKCQxfLgP6uwZPDTeHoAcLnzyH9
-	 3trdo/TTCbDzFxnNjWYBVHzUCcIXotWFTGtQ+5cFEMgUIjXrWcN/rSDv+3MvYh5j2wkaP
-	 LKZTrY/KQKcLSEDgkxs2kPmMUN1o2P/53fFqAxWyQ7F8GlbVbG9ISA4AKSn+F6oEnIlVY
-	 ekptoHrHyUWfaCVfEcu1vItK0NCeSPJF5on9R77/e9hq19j8imOuvNVNyZwcG8Xz29sRN
-	 ZhB/Exc4FLOGRL27ghz/0q+jNwbhxuUaMmFZCbsWPyAeO5dcZEg9s5mkm9jTHtHKFQg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795463273;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-AtpMessageProperties:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=GeeFyNrTJ0QsritZKw63ARz1DmzWU4m4LEgDO2AUpvY=;
-	b=Z+jk/3F+s/f7dPNAlw+AXieTXXmwMNmZwGYVeZDNAJq8NznMSLoZBSK67RJlpaCSvmyA
-	 oM2Ywj3QhRQWUMxN0HQ9vZ07gP5IVZYgWd8cazUBhGAt9qpIQhLKd9CD5W1WeTEP6lgKr
-	 ovz2o/V43SQkVYaIvmSdeGj5M3I+hqsnAHqlugncDSDKwo+KFV7D42JPb5MRRWltAX2yH
-	 HQlVOS/6TQkoZajk2xVW9+enf+1aB4xyYwXfc/3vI27Li7f6JgxDWk9uczAew7288DTd+
-	 qFKag4TB1YsD7gjyu0PwniWsLLkgB0Fnf0jZ7Nx+ac2uWM+ekTcGl3ZsGL7JofYiuEA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=reliablecontrols.com;
-	spf=pass smtp.mailfrom=reliablecontrols.com;
-	dkim=pass header.d=reliablecontrols.com header.i=@reliablecontrols.com header.a=rsa-sha256 header.s=selector2 header.b="xNRD/0r2";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.191.92
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020092.outbound.protection.outlook.com [52.101.191.92])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795464369;
+	b=jQklHY2lJQ+1ZKtNymGrtV4PkKrnaYhuY1scqTkTC6C1nPNgBj5NTa+FYZIB9e5owo9T
+	 m6cXx1HT1xUjKLfg5qodaj7B0Y7EWkfDrAzqF7Wit9/hkGe0B9Ed1KlFoYsMIwVgLZcrX
+	 ZjmbzDuvCSMqrpBU/mrRFA2A3ndH0vBsFjtMmnJs33PmaIWTPwkmZ2kc49iSuXBKpLwbv
+	 NXUN9dNMOy3Gh+GOWWnc8N3Orpi7vjUOK9yTjAkiuZN7k1lUS5slAYFSEqlj7IEH134oG
+	 kl9AioSzXrVyK6O6EOzbwEirN65GoZYYJCWUcKtOVYZc7VO6p/0Az8aM7rmEkBYDzjg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795464369;
+	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
+	 In-Reply-To:References:X-sashiko-severity:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	bh=9Z13M2q1BEju2I9bduqQgoLJT03MD/wXP6Ev3AKsXE8=;
+	b=aLzO3YnzE3KHz8qds2Nm/f8QfVqn/9ffoUxyo6KlQjTmoOr3Oo1t7lHyoLJUbYj4rPBr
+	 PB5dY5K6IMkfrOY8PVPaMy/cGyQtBzliClt+qbLJd6lTHQxG/UCYeDSQNCT++Yx6fpc3F
+	 EtqQhOP9onaYi5b6+t7QJKn2b7eGWh2Uc/jRP7l2ZE8b6Be7CmqaXJpcpY1WWpwNqHeyh
+	 w8ISAfbZrH/h6ktni3S1j+TBf4lp5oenyBHxrOFm5H3eBseBvBKy7wGA3pkucCUbfnzXl
+	 o+RRn/nW3KitmCY/NUxMsvGDexpl5xdnUIAbf/BmJhnixnvI7Bh0JQ5bLSb6N4RBoiA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OujbhL8g;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BBF606A31A;
-	Mon, 23 Nov 2026 19:47:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11BBF606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=reliablecontrols.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=reliablecontrols.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA47606A31E;
+	Mon, 23 Nov 2026 20:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=reliablecontrols.com header.i=@reliablecontrols.com header.a=rsa-sha256 header.s=selector2 header.b=xNRD/0r2
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P16B+G+EiJunDdoTTM6YsJxuFPjPirmj3zicQ7aF/65I7Ng1obdtKBkXMT1vjgBCq/pEDy7E7ThXdXulVQXc3lB18vvZr3Ef5p+PE4VnV0XhdjBZ/3YuTyu5+P0mzrNu5NWL+rMPNhnX1QQygZNJVBnSyUyfqCT9LklBnR6BhZJri1jr00L5RasnTZMYA6xUJtFeqIu4vBjweDLELH48DxbAFl4/vBHcoAjW2J+WPYqoOmgrQMs2hLqV6hvzN8YyLsQ7+NLBCJIA6TNVJCGM9Op/dBC0hEVkqQITTW4QIOIJ4JqSi7Zzd6Uk4fgjndVVtNxCptgocmXANXKEoviSSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GeeFyNrTJ0QsritZKw63ARz1DmzWU4m4LEgDO2AUpvY=;
- b=bChuFjQefg/N7hSoEszM9kHjCmdn7E2umEuWIquwY5qRRjOoo9XmE4UvsHs4Xq+Ll8FV6OrCTCuOD8aZffddfXwtAaH4/QeNX/wvS06hbOfQTRjCHviWicApgWp3MGR/pJY8rI5AkOo1pOO68dzlYURq/eGi/YbEQSCAN3a74XPHUpT0eiGeFuLgN4BE8u6eOpWy9kQW7vnP9qe7yKnVNDwxmM7HJJGyFCiRxni94uzee5vZSr20bDE8W4mWIkc5X6CPwMRPf5eOhaSKBed/X12jwzc6YJySAiaWXbTjXdRGKTXAsi9eEVMpuxe/hs/9fqOyIeRElGsvCvxA2C72Ww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=reliablecontrols.com; dmarc=pass action=none
- header.from=reliablecontrols.com; dkim=pass header.d=reliablecontrols.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=reliablecontrols.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GeeFyNrTJ0QsritZKw63ARz1DmzWU4m4LEgDO2AUpvY=;
- b=xNRD/0r2BrTLlDJWmm5rBAdiI5ZVs1vvmLLTqT9+Sf1bJDtbY7WAINOFBy43RMxtf5hslLUQZVRF6HJIMpvE3+g9R3NexpyUv6i8GuXihyUaby0SmQx4H680+4G85w51QBnRb1NeOuzTLglTTkoWPCohLoJ15u6MK/jffE3D0PpCrP3FNU2iFMl4CY5o21TxBune5X9XEL54T4GEh1THKDswR6xkHtl3etqI4WW8CRVFzYj2XenjWRbRceQZZ4KWxzVv0a52ut04EB2qZzZE19uPBtR8vNQ8RwKubbW2jJ4U7lQOESUzX+GeKPM0rueGbpzBh7UPLt/1LWQvwgR9dQ==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=reliablecontrols.com;
-Received: from YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b00:a::10)
- by YQ1PR01MB568964.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:d4::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Mon, 23 Nov
- 2026 19:47:47 +0000
-Received: from YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::bda5:1597:e27f:11a6]) by YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::bda5:1597:e27f:11a6%5]) with mapi id 15.21.0639.012; Mon, 23 Nov 2026
- 19:47:47 +0000
-Message-ID: <65383108-4648-4558-b6c3-bbe69ef97c69@reliablecontrols.com>
-Date: Mon, 23 Nov 2026 12:47:44 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] clk: renesas: r9a06g032: Add reset controller
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com>
- <20261120-rzn1-miic-resets-v2-2-f1cfa678615b@reliablecontrols.com>
- <awDIp5YYhxQM6bHo@shikoro>
-Content-Language: en-US
-From: Kyle Hendry <khendry@reliablecontrols.com>
-In-Reply-To: <awDIp5YYhxQM6bHo@shikoro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P223CA0011.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:303:80::16) To YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:a::10)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OujbhL8g
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E2F1F000C6;
+	Mon, 23 Nov 2026 20:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795464368;
+	bh=9Z13M2q1BEju2I9bduqQgoLJT03MD/wXP6Ev3AKsXE8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=OujbhL8g4RjTPcaG7WStbC7wPRVKD9zNCUxUHNvz9yRdzjeEK5cLjMCFEGTf7tQLn
+	 SNTeOXnILyC+R8t7hohjDTuwu7ZxJ4tGblUEQnq3/jV3GOCFoKLrt9PAULrOg9Xc/l
+	 3G7rUInCJ5SvfOKfRMrBvS9SScrLa9dAKy6H0H/r7gvIB71I9qNg7I8USl8kfs3wrj
+	 gQY9PzLbdSGZn2I+SkWnziuwMtS9bAnmgLOjCoFzNTXY2e4918CxcXgONZvWy79RlA
+	 ARoEdVbJUpxF6HyGTirp6ggHj2sW3ddKU3UX86/QudDOMVQLpr4UI4ya8DzCrrFW9k
+	 2XDjFBPZAnRzw==
+Subject: Re: [PATCH net-next] net: stmmac: Advertise TX checksum offload only
+ when supported
+From: netdev-bot+sashiko@kernel.org
+To: prabhakar.csengg@gmail.com
+Cc: maxime.chevallier@bootlin.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@kernel.org, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ prabhakar.csengg+renesas@gmail.com, biju.das.jz@bp.renesas.com,
+ fabrizio.castro.jz@renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com
+Date: Mon, 23 Nov 2026 20:06:07 +0000
+Message-ID: <179546436704.3135.12593345717335656860@kernel.org>
+In-Reply-To: <20261119185016.1789843-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261119185016.1789843-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-sashiko-severity: Medium
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -108,83 +67,144 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT8PR01MB560833:EE_|YQ1PR01MB568964:EE_
-X-MS-Office365-Filtering-Correlation-Id: c19c728c-4e6e-498b-f190-08df499aa628
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|7416014|366016|261026121527099003|261021123027099003|10067099003|11063799006|4143699003|56012099006|261009223027099003|55112099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	mC8iyr8Lu95oJ5MJIoUQ61Qk+wMwF0QVuQkyfAtfjTYuMSWET2ZvgDKdGJu0otNFGNrb34OJLYzrcgDhHjTUGiFcwCwf377g4tkAg9cFkNTrelqLo1rHeq8iVCAlFeMBf7ejuxqUnvtJ77LkQYcFhOr/it+HmzCPf7zkwtUNHjin4j/jUQOZ8pzxBxSGhhl6Y35j/uklaFwQnV1NaQczbBMzLVVNOwiGV9no3uWpu/sdcuKgytrgJdO5iAFJ9IZ5x5doPua/mV2SiU26RkXotMkvNvSUQSa1zcAEzw3RWkO7Lb50UUe8tHBqB78RRrsqu9LNcNAkIqcyGju2/z5B0O4XtD4u9PzwL9DtU5/hZNdxshB3CNc4vNfRAxVLTLh8mkwBPscXdW2E5xaeLzN2981r6VkM8dLoNPB05+q/CBPbUoMbkz+w8ATxi58F/ir99XEk4rB92Am/u1q0TD7mDd0flFRa6c//6H1OMHzrLJC+iGIVQEHnCrSf2y5+KzKWxC+/h9cWmuwqPwlA8v2ogfrsr3yhTyrA9yCp24Gk0hUooX/97lB3HCTUxBUfqhf85hrJlLn75R/YUdkVK9jqkdW1+jI8UiVYbLvZCtAGza68yh4f/QY4Yig7bUBAoDGMjs1W7ZL5qJ40ZkILrqugMJaKQpiplX2jh4MrOz6xrbg=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(7416014)(366016)(261026121527099003)(261021123027099003)(10067099003)(11063799006)(4143699003)(56012099006)(261009223027099003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TmNFem4xWTZyT3pKc0pmdDZaODJGTTNCUEZpdFVyb2RaUFBtVzRFWUNCbVR2?=
- =?utf-8?B?VkZVYllpNTRQcm13SEV5S0NqREFSNFA4UnBXSHp1WndmbDc5OElCK1AvVjBB?=
- =?utf-8?B?TitVU3doQ3I5NEpPUVNZMnVWT2xqQnpOeFpHaU5zRGFHQVpoWTRrRktEcm9w?=
- =?utf-8?B?YjNWZWlvM2s3eDV5dUdReW9wUU5kcVA1U1JqaTJYdm9LRzVvWjdaZnFrWlpB?=
- =?utf-8?B?d2R2b25Yc0FPZzZPN0dtVGdpMHlLUW5PcVhwYmxpMk1PQzdmSjJtdW9aN2w3?=
- =?utf-8?B?bmd6Q1AyL3UxL2dmUWt2K3IxV05zcFhrdGtTdkNDM3lhKytBc2hPMFJZd1Ew?=
- =?utf-8?B?ME9PU1d6bWRuMzBTNG5CY09vTjAwU1hiY2lYVWFwZWhqTHBNZUlJdHhNTGoy?=
- =?utf-8?B?ZklxRktka1cxUDFlcUkzU0NFUzZGRWNCWkNkNEZaaDk5dDFZcHBPWnNMUThD?=
- =?utf-8?B?OE1QRm84dFY3U1BxRFl1bXk2UURZdmUxaitXNUdkdmJGRWY0VjF6SUREZnlN?=
- =?utf-8?B?Z0pZWlU0UDVoU0Q0SnR2K1pFWmpJUUwxQno4M3U3YXptMjZvREltNzdlTkNx?=
- =?utf-8?B?OGgzSlFCMnlvK3lLMmtYSFY4eG9ib0xsZDg1VENXekpsanBqRlU2YlpUMXQw?=
- =?utf-8?B?RmdFNXdDcUFMUGFNZXphRTZOeVl4Mys0RzhUMi94dTNMWnVic3YreUhDbTB4?=
- =?utf-8?B?R0VhZUpSbjcwUWNjNDgyYXZuL0h4a3hIQ0pRVkV1SUNycVAxMkhSZmhDUnJ2?=
- =?utf-8?B?YnpoL04vWHkwa1hOYm9hM0V3cW1GT3dEUjI2SWMwaUh0bzBuUURoUnowL1U3?=
- =?utf-8?B?TkdTV1VBMlNHcGx4SVV3b0VwWkgyd25ianMwZU9iRU5XTjMrZzdHV0Y5NkNs?=
- =?utf-8?B?SkN5NXI2aXpGaStSdVpCR0RwdWFDdk4yNDZrdmZmMXFnYlM0NUZ1YjVYTTFU?=
- =?utf-8?B?U2p5dXNsczFjM29Ibk9yY1RoakRuelQxdDdFUk1QdGtuVWhubXVtejhCNkJu?=
- =?utf-8?B?WmtIQ3NDclg4ZzNqNjQ1UUVvaXVyV1lFYmlVd1FyN2RmejFwZUlyQlUyVXk5?=
- =?utf-8?B?MkczSytLRVJZOGJIUHlqR3F1QzQ4aFpiTW9TTi9Rd3dDMU5hSWhwZDBTT3lG?=
- =?utf-8?B?Ly9oNUNjTkRtSUJpTjdwM1VDT1R0eFdqVmhvcGppS0JPUHdoNzNrMjgyb3B6?=
- =?utf-8?B?SEFTVVVGeTEyR1pIMGlrbHVJWG5OZ2tFSk0zdnZkMEt4ZEpreFhKVHpKMzA0?=
- =?utf-8?B?akpSSDRZeUxTcnY1TGt3NkYwREk0ZXgvVXlrSVdwOFJ5OWFFa2hLaHlmeVJX?=
- =?utf-8?B?T2RwQndnMjhDSlcvNDJtRWo5SUkxQWVsWGFWeWZYcXpGV3FOcHdrN2JLUFE0?=
- =?utf-8?B?d1N2OG1FSVY1N3pLaEk3YXhua0wyRWxlQ0Vrb2VrbFg0RCtIT2wvemYzYWhm?=
- =?utf-8?B?OFFENjNPZGdrWG9yZ0ZOWWtOd1dkSUVsSjJLODk2ME5KTTkzMVI5RGIwWEFi?=
- =?utf-8?B?NkpOYkhpRWtCdVZkMTNXa3NEQlBXRm9IQ24wL1JIaXZBdzZaTnRZMFJkaDc0?=
- =?utf-8?B?cm5xaWVBaE5FVllzNVJwNUxhdTZxL21ITHJTSUxKTjBPZUNzWkVNQjNPSDZO?=
- =?utf-8?B?RnRYdkpQb2VzcHc5SENrd0RzVWJtNUpubGtCMnF0d3JPRkRpUU9ybVRXRDNX?=
- =?utf-8?B?OWxYM0wzYWw1YW5xTSsyY1dGTUVXR05CRHdHTjdQVFdueEJObDZ1aEordjVM?=
- =?utf-8?B?bVEyN2xiaVROYW0zcHgxc1VOQVdUUGJlQVlTOTBsR0t3Q2RJVmRLTjdLMUlT?=
- =?utf-8?B?WmhnR2tnZml6bnFkNFhoNUphZlQ1RVNPc1I2WjErWnhBNmpLTThCRzg2M2Zj?=
- =?utf-8?B?UUxGK1N4dEFBM0pab0NmY00zR0hpUEJ6YXVwTmxDSWw5SWRUOUdBL2Qzb1dE?=
- =?utf-8?B?ZlhlaHdoajQzNXlhWXZtYTRwZ2RWV1FucjdDakZrYXBPNm5rQjdqOWhjZlNU?=
- =?utf-8?B?ZGdFV3o0blFWNDlaL09MVzMyQStHbURRenNrRkVHYzR4b3YrVnRITUJoL0lr?=
- =?utf-8?B?MDlaWGc4ZmRYUHdGcGNBRW9TMjI5b3dJRTJGd1lLM0JyTStQejFIQXp2d25y?=
- =?utf-8?B?ZEZjN2gxTHVhYktwU1FPSzBpK2pSQW1iVG0rWXRLM2dzTS9Say9hZm5kQW5l?=
- =?utf-8?B?cUhBWWhwSjZDM1Z0c01hTDlIeXovNnBKcWxQcllkMjdlcVRrNWRhckhaQnZp?=
- =?utf-8?B?cm52aFJpdUw1Mmd0SS9KZnVpOEJZWkFLM3JWYkxKRE5ZNElHSCsrclZONWFO?=
- =?utf-8?B?bHY3d05qajlEM1VKN2NaRVRjaVZ6YnFzSkM0WnRWZy93c3p6K0dpR1pIRjF3?=
- =?utf-8?Q?4hLMKcOsH4iQaH3g=3D?=
-X-OriginatorOrg: reliablecontrols.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c19c728c-4e6e-498b-f190-08df499aa628
-X-MS-Exchange-CrossTenant-AuthSource: YT8PR01MB560833.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2026 19:47:47.2755
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 70dc28cd-aa9f-493c-abf3-5c1ff69c0ddc
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n9K0wygHXV7qC8vMy/b2LhsDYcxBxWWZXKosvAlGjBDyhb1AdelGmSIGd/9DpygZv6qWK82uSRcunHbidyxVeEZ2ummhAyYf2gOkYRpuaqc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQ1PR01MB568964
 
-On 20-Nov-26 15:24, Wolfram Sang wrote:
->>  	struct clk_onecell_data data;
->>  	spinlock_t lock; /* protects concurrent access to gates */
->>  	void __iomem *reg;
->> +static const struct reset_control_ops r9a06g032_reset_ops = {
->> +	.assert = r9a06g032_reset_assert,
->> +	.deassert = r9a06g032_reset_deassert,
->> +	.status = r9a06g032_reset_status,
->> +};
-> 
-> How do we ensure now the 5us recommended delay for reset propagation?
+Thank you for your contribution! Sashiko AI review found 2 potential
+issue(s) to consider.
 
-I looked through the renesas u-boot code and it didn't have an explicit 
-delay after deasserting these resets. Should I add it back anyways?
+Critical: 0 · High: 0 · Medium: 1 · Low: 1
+
+If you believe none of the issues are legitimate, please reply to each
+issue of Medium severity or higher and explain why the AI is wrong.
+If any of them are legitimate and you plan to respin, please let patchwork
+know by including "pw-bot: cr" as a separate line at the end of your reply
+(one such reply per series is enough).
+
+- [Medium] The new advertisement gate in __stmmac_dvr_probe() trusts
+  plat->tx_coe.
+- [Low] The commit message presents this as a bug fix ('This can cause
+  DSA user ports to inherit checksum offload through vlan_features…
+
+--
+
+net: stmmac: Advertise TX checksum offload only when supported
+
+With this patch, __stmmac_dvr_probe() adds NETIF_F_IP_CSUM and
+NETIF_F_IPV6_CSUM to hw_features only when plat->tx_coe is set.
+Previously they were always advertised. The goal is to stop DSA user
+ports from inheriting TX checksum offload through vlan_features when the
+conduit can't do it, for example in threshold DMA mode.
+
+> The driver unconditionally advertises TX checksum offload, even when
+> the hardware capability check disables it, such as when threshold DMA
+> mode is selected. This can cause DSA user ports to inherit checksum
+> offload through vlan_features despite the conduit not supporting it.
+
+[Severity: Low]
+This reads as a bug fix, but there's no Fixes: tag, and the message
+doesn't say what actually breaks. Is this meant for net or net-next?
+
+Before this patch the conduit's own dev->features was already correct.
+stmmac_fix_features() removes the TX checksum bits:
+
+stmmac_fix_features() {
+    ...
+	if (!priv->plat->tx_coe)
+		features &= ~NETIF_F_CSUM_MASK;
+    ...
+}
+
+So only hw_features and vlan_features were wrong.
+
+For header-tagged DSA traffic, validate_xmit_skb()->skb_csum_hwoffload_help()
+on the conduit already falls back to software checksums. Also,
+stmmac_features_check() drops CSUM for non-IP ethertypes. In that case
+the only effect looks like wrong feature reporting.
+
+Wrong L4 checksums on the wire would come from trailer taggers that rely
+on the conduit (tag_trailer, tag_xrs700x). Is that the case this patch
+fixes, and could the message say so?
+
+There is also a change users can see in ethtool when tx_coe is false.
+tx-checksumming on the stmmac netdev now shows "off [fixed]" instead of
+"off [requested on]". Should the message mention that as well?
+
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index f256244ce0d11..8cb1e3b4030e2 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -8224,8 +8224,9 @@ static int __stmmac_dvr_probe(struct device *device,
+>  	ndev->xdp_metadata_ops = &stmmac_xdp_metadata_ops;
+>  	ndev->xsk_tx_metadata_ops = &stmmac_xsk_tx_metadata_ops;
+>  
+> -	ndev->hw_features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+> -			    NETIF_F_RXCSUM;
+> +	ndev->hw_features = NETIF_F_SG | NETIF_F_RXCSUM;
+> +	if (priv->plat->tx_coe)
+> +		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
+
+[Severity: Medium]
+On cores without the DMA HW feature register, does plat->tx_coe reflect
+threshold DMA mode by the time this check runs?
+
+The threshold-mode override is applied only inside the hw_cap_support
+branch of stmmac_hw_init():
+
+stmmac_hw_init() {
+    ...
+	if (priv->hw_cap_support) {
+		...
+		/* TXCOE doesn't work in thresh DMA mode */
+		if (priv->plat->force_thresh_dma_mode)
+			priv->plat->tx_coe = false;
+		else
+			priv->plat->tx_coe = priv->dma_cap.tx_coe;
+		...
+	} else {
+		dev_info(priv->device, "No HW DMA feature register supported\n");
+	}
+    ...
+}
+
+Older GMACs such as 3.40a don't have this register. There,
+dwmac1000_get_hw_feature() reads 0 and returns -EOPNOTSUPP, so the else
+branch runs and tx_coe keeps the value the platform set.
+
+For "snps,dwmac-3.40a", stmmac_probe_config_dt() sets that value
+statically:
+
+	if (of_device_is_compatible(np, "snps,dwmac-3.40a")) {
+		...
+		plat->tx_coe = true;
+
+It reads "snps,force_thresh_dma_mode" for any compatible. Nothing makes
+the two settings agree.
+
+If both are set, stmmac_dma_operation_mode() checks force_thresh_dma_mode
+first:
+
+	if (priv->plat->force_thresh_dma_mode) {
+		rxmode = tc;
+	} else if (priv->plat->force_sf_dma_mode || priv->plat->tx_coe) {
+
+The TX channels are then programmed in threshold mode with tx_threshold[],
+while tx_coe stays true.
+
+In that setup the new check still adds NETIF_F_IP_CSUM and
+NETIF_F_IPV6_CSUM to hw_features, features and vlan_features. That is the
+DSA case the commit message describes. stmmac_fix_features() keeps the
+bits because it also checks only tx_coe. stmmac_xmit() then requests HW
+checksum insertion for CHECKSUM_PARTIAL skbs.
+
+The driver comment says TX COE doesn't work in threshold mode. If the
+hardware really skips it, won't those frames go out with only the
+pseudo-header partial checksum?
+
+No in-tree DT seems to combine dwmac-3.40a with
+snps,force_thresh_dma_mode (spear3xx.dtsi uses 3.40a without it). This
+may not be reachable with current in-tree users.
+
+Would it fix this to move the force_thresh_dma_mode check that clears
+tx_coe out of the hw_cap_support branch?
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261119185016.1789843-1-prabhakar.mahadev-lad.rj%40bp.renesas.com
