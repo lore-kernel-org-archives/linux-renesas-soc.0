@@ -1,101 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.42
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795436946;
-	b=BaGZEXt5d5qu9GwjC75XPrDp6na8XDUfua5eJNjE+0Q2j7GATniZrTGSpEj9h0TbkKjV
-	 RU89M7CKHiDm/ePJhj4J9rkKnJ3iRwMKHVvBmgy4xOeVhVX4PQ4iV2Ftn2aNlUxcGJZ1o
-	 5IJGvwE6VXTQtBqM+YoYbqV68xTZ8xIraIMHJa8mP+0K2EOrFfJPhSWf5z/TsZK4fIAXf
-	 nhcM4sA0G7Qomqu4vSvyndQh8JWSC0T4ldBln6JLUGzswE7cNOK6zgYDTY/ikbgwwuPjM
-	 lOyndJC/fjuK9qYmITCc2t7lZnFcbUQqGcRyCpRI68/7e9C3XLl1Z2dAbYdNJsoji8g==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795436946;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
-	b=dM9XiYfEYqhJHkH5Crxxa0SV91ZfBMvgzWPuIZ1/vpjC464GHDHdCvVkejm/x4tCOuJl
-	 RknU9aCkWTt3WHDZ2iej/rTPXX78ScAK+QSTrkGS+GYT7c31hh4b0ICrbsH0HDIWER+Ba
-	 qs20B3fBBveS6ofMx32U9j0xJ2xuCBxGfXAwnrLGt7SXloPZotzaP4OhyExYC4tNSgfoW
-	 uc8DVUyW27YdeaLhZ/yMBWogGRkJ8rjCp7MG5X+TF2HLiNMiEHcH7jkdHiKIgfS+Rm6MQ
-	 B8Rz8n1Xq+vA6zCjvmJXRLZvKlABHDVYtsQS0iqVbqnzd56REQj2dcI57Ee4Wt9MOXQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="exdAKoY/";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.137
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795437293;
+	b=rYniDoKmgqWSTfSeTscwPEXZNPwVlY/1kmJYSAUB3Tjiz8eU2b0fXJS7mPGozUu1QQE+
+	 JeouR2+GyacswyCYAFAp5hDETNAQpbaBWrRwKivhr1mKi+YNm4kozGfPp4/TcGF9mkJ6E
+	 sNg5f3WRUKGCQvEkkafc0dPMSvnOc3qMFryI6onsV37oAKy0PPSVimq0PeKwIIeWjq8nh
+	 mDlYE66ImZRhbdvWfgZauYIc4lq9rKoQgddp0wqDWm4eKtdamTRHSgLoO+80/aaCTtzBW
+	 UXHabLa2Cud8KvaAF5tGUIOQRzK21sX31oFwHJ4xe+mC+wReNYhri1f6uYMFkdPM0rw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795437293;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=eHnVdH3eygeNZ6mEwcCP89LSgWOPzbTMb7xVcTPFhqQ=;
+	b=P/rYGU+L3FfQy2g/CUyLV+V8IzERtT40v2lCf95R25voJgz+d17Jm3yip4YXRNUR0hhI
+	 OJXz144P6magYNwVMq/s4cVwmcwgh6SEtWP2W2RkjohSABBzhnyhcaPUCYAuZOwEtBoWB
+	 Zy2RGGa5Iv5jZL5bh2zYj1fSJivK6i5X3e2gk8FLE9Y9v0q1lUheupdj8a2/IlWYRajDf
+	 gHjsAd1ZQ7dSyCClFerExF7Cwf/AmNpT4IyVJZWXxDlMnf2UbWMzWrK5j4zvzO1zGqkqc
+	 0QMUxOQizT3N+uHgwU6JEKG0pp7Xkx8EAfgjLivs4pb81/r/+ihJwWplLD9p3XBi6eg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=glider.be;
+	spf=pass smtp.mailfrom=glider.be;
+	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=lwhvrItP;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=UsLMaOp3;
+	arc=none smtp.remote-ip=202.12.124.137
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78100606A32D
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 12:29:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 78100606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9FC606A321
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 12:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4D9FC606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=exdAKoY/
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48e09aa5264so1766748f8f.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 04:29:06 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795436945; cv=none;
-        d=google.com; s=arc-20260327;
-        b=jMWJxVLVs6Wlb8bbBRYKDW3AebvCKQhKzmoCmL1eAbcbi59D39G5XWl0MZI1iLzqYv
-         8dJ2uqOPrVhRY3D9Otqr8FIqDoF9/yAN0FWq5iJEeCuLtpKR/kektojbH9zcOG+YSCI0
-         dNBiWdqvE+iRA/YIkAjur78Wmf1Y7fL/jd7e1DYNwABcgASrYa2iRJ9lAzavk2iI06UV
-         ZGIA+NWyfdvDMpxQW/FJ7wPfdCGKfYbS7hWFSMWidohegoB/t3la6RjhR/F04YqWu1Go
-         /J9FxxyEvGPEFT9Q7y+iKI0yUGhx4t4elB0LaSBF4aHWCO6DEVaksMf4I1Bnaira8ku1
-         xaOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
-        fh=fpGN2lNe71EhlxaEI2nCEAutFYpTGU5/+OPaUS6KLkw=;
-        b=czBHE/FoqwVIvswse2e2oG+pNjhlglib75b/q33ViS/pmeuMxN4OSoSk6EAfaz0wxo
-         Bi+AfZYpwdEv2KVhRcL+RYnh+Rw4cwr5Jd3uFzDhwONZKOWhb4wgZ9Zwq0Bg6tX4VG7Y
-         bDD7CIB2YI0mX/XJrdEHsyZEEy9akAwEl/tzmMOCovXp2rbotpufUZxQso4w893RK2ic
-         Zx3jEev3KXHGvC1C41gVIeFobPgiDDAOqcKAHDsveuFTRyB8Fg4RNp1Ow+JmZJhgSIN7
-         jJT4CdEXf4FHYGGeHutiT0EielVw2pGla/cs2qRAaU+wpCLZRpqppE3Su5SmYxhpy8dJ
-         krHQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795436945; x=1796041745; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
-        b=exdAKoY/Sj/1MXfEqx6dzg3yHAtBCcka/a3q+wOk9rh8sSSJckb+zIRZkfr40oLKVH
-         wfDW18ceNJCsog9LvJkKKnghF7uN1XMi7rRx/tO5FjZoD5OrqUrAehqlQ0o+5/u1ZdCb
-         GjRUDPBlgZ21WMLM6Qxns5OK/KkgTPAcivTBlc1CcXwqPlJqxNik/s1J7qwpFImIZej2
-         640uIY7tOPlp+LT4oahfc1rtLth1nAfWuweJxebo0Bt75ROek64MzxDq+chxxDV2I5JG
-         9xX70cNeoctg55raFUoP/6PYAvapBr3jiT2FrzhU8eCeQ+J/6BN/7aeCO6ctwfkxnxAC
-         VOYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795436945; x=1796041745;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
-        b=djPNUl1inU18HZVll1YD1iWobcWqyTD+Xn+ISDmbawDV2hRwhKGV/LDlrVCHUBuvPC
-         KCvHsunNLyhjFEQ5dMJrmIZN2Pc3Yv7b9+iVRsyWfKV4hLbnz4361rRMwEE4yz0fx0JT
-         9aZWgAqmWeyIfoLRzistlm3SG7TtLwP4w8ORG6tbdUEl7pz+VxCQbqLh/6Jodf5mRY8n
-         FccBU01bx4If20Dyaz5VW29EIldqdrQmUEi2RTRUwV+2M3EuJvLraV9gS7NxhsjIMx15
-         gXWX/GLxUocPJMnhBqhpbjHe+e09b6M7FIIBv8YbzMI/+CgfOAQjRaSSqEBKj2IcP8qp
-         HdTA==
-X-Forwarded-Encrypted: i=1; AL+hErFEIKmeWB2KiUGSBxc77BUX4gNIMwX7Xg5Pcyb8rASXGDc5zCbfNfzLxWyITpHFOAInE2IJ0I64D+ztOCuXntt3tw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8g8JJenpgJch1ap6kO0gzJcYY9ihhmqFWT69/N0t6aXdd2Z+aq
-	+CkdK3a8tlldIAIdePmy+4OozayGKpKBC8U5MZqvnp0/EUtZi8hxJa1zQ9EICoGRZc4IB3fHLiC
-	VTHDFyHJkyRxDFdUUvNsI1pvnU/piH9k=
-X-Gm-Gg: AZFdTZdmYSN6b//ZXRoOZ8TVQsyt6+T7n8N3yeOHEYdQMaeO/loa4hwMhhh8wZ7YLvN
-	zbYCBsg3Nt9dSwemfYshSI+8WX4bBlEHPUdSsSN/U/1Vqad/rb4gOJUfo7fDXqH7aUk0wJpksI8
-	aO1PTyJ9TCvblrfLO7QGP61Ae9RR54yY1xNM0YH3S5PklGwutbdFCRgXSAOLD9huav5dZ9leDQ7
-	FC2FL/0HLXPnHyi5UfN7Jv+AAgPziftGhP6ssTZwUy8Gh/iTtUqSJUfWU1pif4MhjCTNKj93xoL
-	ZtYXTgS3eGgbCwN/ZkA3zbAQWkWtHBLIbmriD6UuCrj+Q153vo3dI1wpf9ojB2jOxUIyJCqKgHn
-	0KU6sYp7K9g6Dk4C6HT2eeCVAdHYdKBkZhvJQ7Qya/OdjakPDk0HPJcOhRcDx0LsbuplGPNAe9/
-	xDy200hRI5tH2r9Bb9eSbpX6tfyXjShYNey1whQiM0vvaSMLbqQr0DW4AYkA==
-X-Received: by 2002:a5d:5f41:0:b0:4b4:510c:519e with SMTP id
- ffacd0b85a97d-4b4510c5231mr3941260f8f.27.1795436944634; Mon, 23 Nov 2026
- 04:29:04 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=lwhvrItP;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=UsLMaOp3
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailflow.stl.internal (Postfix) with ESMTP id 770D41302F2B
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 07:34:52 -0500 (EST)
+Received: from ams-imap-13 ([10.64.2.33])
+  by ams-compute-02.internal (MEProxy); Mon, 23 Nov 2026 07:34:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1795437275;
+	 x=1795440875; bh=eHnVdH3eygeNZ6mEwcCP89LSgWOPzbTMb7xVcTPFhqQ=; b=
+	lwhvrItPrxrnWeg316nV1PuaExKq05uOnB7kdGOR+IJk3rFQ4890Jz9EcO31c0kk
+	xI5+e5MQsZ0Yu/9Wf27fOSkUCHAHEv49K9IkC+q+zMAiV0fWxL6WVhEL0+7utY0A
+	sMfoGyUVx5WNE7TkLtuFcn5bgseBGwR+2VyVL+Itg7Bp2cdvDppO16Gw3TVGIzFs
+	+veTAsVcniGMCYUlt6/hAvIA3qTBC20vLfBumf1+HmZqvHv8q4hsNKIWQCGv9AIk
+	kBIyqj9HN4qUmIGzSxUWBSlcFtdt4oVoz0eRwV++3xeZ2I5GDpbWpNk2sI5vSH5E
+	XacBZeeCuSCzIGUDtDjXyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795437275; x=
+	1795440875; bh=eHnVdH3eygeNZ6mEwcCP89LSgWOPzbTMb7xVcTPFhqQ=; b=U
+	sLMaOp3ptN7qnKvIWkUvlnS7dH7+uzP+HriLKIrFXHLFQoGwOy+gn5VW7NtvjlTt
+	ManvQiXA/yGJs2Qs6t1/vWVROdmRhLQH/8Hcwu1SoOc4SZMVpnelETNdusb/zknJ
+	UmxWQ0dzev43r8pjIXIriUtoK8G+VORVCbl2FWAa9ww1T55Zk7Fli9ccMLHqkTRa
+	728HmALwK06es2xy8VIwZ29dfV8WS8beUKPzAiEKfZ+k1pFpUdcWF5cXI8faDOsU
+	AVE3P+q0ygfltJRFgOfUjOofusYqIx5b+2wM0O7GquksOL7nSHB2Odj/pNqvOcPx
+	EDEeO1hAn3Zw6rwm8/1hA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=glider.be a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795437275; d=glider.be;
+	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm1:rsa-sha256:CdFPvXzSJ9jb+ticZPZT/koq40fqu8rPXzcswB5LXjFHFJQ
+	ToQQIMt+3nmy5ufVAdHSJj1UhHYR77fxOiBtHqRczaz9hBu27/Hy/PxaaFOuh8sH
+	0serkkx0Bq4y3SoqGqKO//VDkvz58EiyPWziWkDKv2IvZgboHteOuh29rwyImGZU
+	FMtu9EZqxIn8i/cmdVGZIDwZ4NeGgy6Qnae/o2qtm1Ph3YQ7YMyhzMP0LDhUF76I
+	U1nM2/2BqV7GMCMVr4UqKRB/k9SegsxEXwqEbNyQMtl0wwoHXY52giOhRD5n6rW/
+	4LtIBDyX3Fl26HMYXPLksw0oyoWwBWOyxGg5pAw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:NqarG23xk+ubs76/imvVRMIVR9rWyW+HFno8706/BFM=:crBsktOEwz7H50H+P11uEpNa/OLN9cRsaNs9xh5MNQY=;
+X-ME-Sender: <xms:0jIEa-kXHJSkHDBxBkbB-Rfk12hTluPPIO3BLiJ00t8HIPNy3Ml4xg>
+    <xme:0jIEawpYzEGOcdmBH7VfOrQ3QrgvR7pCr3gof4I3Y8cveujyxtwEy4Wlp9OZfM0KZ
+    6NIwSex1_RsXjNhe9UyR-zy65wJm5Tu98aBjnJFwfhWMy5aSsomJmxq>
+X-ME-Proxy-Cause: dmFkZTGjXOFYrJRxiwHc7rFicL9MWrbJzVM+Gc43OT+4O8mbpHX/5MAATZsAInI6Irclg4
+    HmBPr8P3wEx6H7B5dwsR/HHfQoqdBCUtEOiLxJS9mZIu4PwsE2PDUU94Q4jqfnzMI9Btwd
+    XpAwuZscnIVSUJsF+0koA0iiwDsWZD37XBYDpPn7VmVqd2+XDkRmbJlf9eAMXdWpLtpQMN
+    czFKZy8qBH04/Oxu9ZQMA8zOfPCNmVRws8jIRBNnncQG5Q6WPhVcUJAKcrqyeTM0Wsgfxf
+    7khQAAS5dOfnNwzM5QvQ9pzjX/BkQ1CzMMp393inSIF78qd4yR0IFm8Ms0iqIjWovz6FpU
+    CgFQgw/soK/tq/mFGhE7cmCgQ2BSc3IlcKqUnBArsu0BDneAWSEtDCvjKurDHAbPO6oPbX
+    sF57QnbFAohTkunviWyVlbAtg2pDgFRklPonksWA69xQ0TXMBe/n4cgjmLBjnjnFOL+NIQ
+    KG8IEHZU2UaWpcvWRx2fiUdHV9c6XRoVgAOrwaQm0/CLrqRT7skw2gfC9tF/v7PC1CmPph
+    Hx52t6ORfO6Jkd49V45jcWX6CXK3RoCdKJg6vWEOHTfKxESaXeoFqhF0QwDn54eSftAZVO
+    e2XmsNI60B6pmvsE0U09WBDT/LdtdFP602rgOxjdTpAl5xk+xpMyC10wzLkw
+X-ME-Proxy: <xmx:1jIEa9MdAPtePcO_m0xHaaHu0JEHLytb4ihDc7EMzSSAh4JomFv1WQ>
+    <xmx:1jIEaxKYf69HkxcKUSVCWteMnRpFcoVEdsxp4onPUsO6FVxf2CWTFQ>
+    <xmx:1jIEa8vVRg3M5Q1pMJ_4h2N16qOm3qOZcdRAwjDOgv9xHzpZR0A39A>
+    <xmx:1jIEazHtrOgobv7i74yPIQ2hjQZ8bg54nM33N94XEWR69sFzIEwHvg>
+    <xmx:2zIEa8npJ8YnsLCDqc6cvQGTXzw3RisQ_vkaFmsAS7VIUCAHgwtMzrMj>
+Feedback-ID: ia0f84a9e:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 935AEF80098; Mon, 23 Nov 2026 07:34:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,48 +115,100 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20261120002549.1908299-13-prabhakar.mahadev-lad.rj@bp.renesas.com> <457ae5cb-fea3-4366-802f-f81447cca3cf@lunn.ch>
-In-Reply-To: <457ae5cb-fea3-4366-802f-f81447cca3cf@lunn.ch>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 23 Nov 2026 12:28:38 +0000
-X-Gm-Features: Aa3M54pwpdIWaGuuMBrn27ZxcRZ-1H1x8XFbCBtqvnWS6semHXinABmTSf51p7Q
-Message-ID: <CA+V-a8vGO+pf-2fSZ3BEfNepz7wpPmqiRB00MUMWrW87mN13JQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 12/24] net: dsa: rzn1-a5psw: Add support for
- optional reset control
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@linux.dev>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Simon Horman <horms@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Ralph Siemsen <ralph.siemsen@linaro.org>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: A9C68vVDcqlZ
+Date: Mon, 23 Nov 2026 13:34:06 +0100
+From: "Geert Uytterhoeven" <geert+renesas@glider.be>
+To: "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
+Cc: "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Brian Masney" <bmasney+clk@redhat.com>,
+ "Jerome Brunet" <jbrunet+clk@baylibre.com>, "Ulf Hansson" <ulfh@kernel.org>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Marek Vasut" <marek.vasut+renesas@mailbox.org>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
+ "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Vinod Koul" <vkoul@kernel.org>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+ "Paul Elder" <paul.elder+renesas@ideasonboard.com>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>,
+ "Sudeep Holla" <sudeep.holla@kernel.org>,
+ "Cristian Marussi" <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Message-Id: <23ab561a-c5c5-41ff-a0f4-87a3f5ca2e49@app.fastmail.com>
+In-Reply-To: <20261123113619.GG3010398@killaraus.ideasonboard.com>
+References: <cover.1795029012.git.geert+renesas@glider.be>
+ <e01baebc546ed6f1b71a0487a59cda73239ea7f1.1795029012.git.geert+renesas@glider.be>
+ <20261123113619.GG3010398@killaraus.ideasonboard.com>
+Subject: Re: [PATCH v5 05/15] clk: renesas: r8a78000: Add SCMI remapping support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+Hi Laurent,
 
-Thank you for the review.
+On Mon, Nov 23, 2026, at 12:36, Laurent Pinchart wrote:
+> On Wed, Nov 18, 2026 at 08:44:53PM +0100, Geert Uytterhoeven wrote:
+>> Extend the Clock Pulse Generator driver for R-Car X5H with SCMI support,
+>> to remap DT clock IDs to abstractions (clocks) offered by the SCMI
+>> firmware when running on a system with SCMI, and SCMI support is
+>> enabled.  Take into account some peculiarities of the current SCMI
+>> firmware implementations, and fall-back to fixed-rate clocks as
+>> replacements for SCMI clocks that are not available.
+>> Support for bus clocks used by serial, I2C, and SPI devices is included.
+>> 
+>> This lets us avoid putting SCMI IDs in DT, and allows us to use the same
+>> hardware description in SoC DTS for systems with and without SCMI
+>> firmware.
+>> 
+>> For now, it is assumed SCMI clock IDs are stable, and match SCP FW
+>> SDKv4.31.0 and later.
+>> 
+>> Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Fri, Nov 20, 2026 at 3:32=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
+>> --- a/drivers/clk/renesas/r8a78000-cpg.c
+>> +++ b/drivers/clk/renesas/r8a78000-cpg.c
+
+>> @@ -140,7 +182,35 @@ static struct clk_hw **get_hws(struct r8a78000_cpg_priv *priv)
+>>  
+>>  	for (unsigned int i = 0; i < map->size; i++) {
+>>  		fw_id = map->entries[i].fw_id;
+>> -		hws[i] = fixed_hws[fw_id];
+>> +		if (fw_id >= FIXED_CLK_OFFSET) {
+>> +			hws[i] = fixed_hws[fw_id - FIXED_CLK_OFFSET];
+>> +			continue;
+>> +		}
+>> +
+>> +		scmi_spec.np = scmi_clk_np;
+>> +		scmi_spec.args_count = 1;
+>> +		scmi_spec.args[0] = fw_id;
+>> +
+>> +		clk = of_clk_get_from_provider(&scmi_spec);
+>> +		if (IS_ERR(clk))
+>> +			return dev_err_cast_probe(dev, clk,
+>> +				"Failed to get SCMI clock %u\n", fw_id);
+>> +
+>> +		hw = __clk_get_hw(clk);
+>> +		clk_put(clk);
 >
-> > This change prepares the driver for use on Renesas RZ/T2H and RZ/N2H
-> > SoCs, where the ETHSW IP block is connected to a dedicated reset line
-> > that must be controlled by software.
->
-> So it is not optional for those? At least the DT binding should mark
-> it as required for these compatibles.
->
-Yes the resets are not present on RZ/N1 hence I made it optional. For
-the RZ/T2H SoC where the reset is present the DT binding marks resets
-as a required property.
+> Doesn't that leave the hw pointer possibly dangling, shouldn't you keep
+> the reference to the clock ?
 
-Cheers,
-Prabhakar
+Only struct clk is reference-counted; struct clk_hw is not, and exists as
+long as the clock provider hasn't unregistered it.
+
+Gr{oetje,eeting}s,
+
+                                                Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                                            -- Linus Torvalds
