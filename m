@@ -1,79 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795433888;
-	b=1I0zb/RJsPX/9ixPjnQLXZbtr0rvHHkNACuTtMsXUaJN8odqnklcyo46aCM+TGWNMh4c
-	 yCmCh5tPCG1zI2TD49HmkpDtq9ZLaIhw0sBnLWOLNbCG55ipX7NioY8dF0bjlMtdW2h1Q
-	 fucBSyBbos+BJ13W6cVkxyHb73ovKfne+NHijMYM7nxhshV+wsLoHwVjt7yDVE2VMWDQH
-	 OReOpJ6T7r69OrXswg51dJnLPjl3DB9MJuWMa9V1JxlxWMkS+Z2FdDVW0q3NPksQO5YHK
-	 74Ebsr8QfBVjS6uzdwoS/lottrZheKH8XNSR/wfIo7FsrkOq3ndKOywqG1v6Pmaf08w==
+	t=1795433892;
+	b=RrzLmh3ojcbyZOUUZCylcejwxHubUBePBvM83txtY6Jqb8RRU0ohttuICX7C97lWkIMj
+	 7298fgTu+n+7I1VhBnexeOUd1Xi4c67irMxj7PoMbjH+/i6Fv4T9tw+TdzgshgfoB/yWy
+	 iyOUEDxKqMsdorGunM1yOO3VfZxquAM9On47UxBm89fpCnu9nnuHuwoXxd1+DYAwnIboD
+	 DyEd8F4IRmdKO2ddDG8G5cqKb7P6Zz3J1k4FKsfeVW6ZqHQG8oVDCgH5P7a3Oe2rKnppR
+	 rg6H6CYo1kN7MAWLFzzYLEN/gwIWTXaNa9GrktDIBZ68yzINrtHnG6xzvR1iI3c6KLg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795433888;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795433892;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=Khejrep24yyzWEzO9hkzlnH2dbaJOCBXw2GKcHL6sSY=;
-	b=aA8S30VbK7jeVjfVohhmGp+Xx+P0zBBr7MpyvadPGy4EUF7BFfM4dyf8c4eR6i9nvlgn
-	 2XdviamRmld8dCa7lfH249tU2dxb08/wfHQkAN2emgtNAxa35/4XEM7KbS3hN+5w3yYw5
-	 WFaD8i3tfzW73SlIIfOUAMbQxrs08NYT2OvRIZqaBB3IgXe/YVn+MxpVp3wAoV+rlUd+4
-	 8lwkDiEZRCG8gyFRfSFaqx90GXnk024UO5N8aU3laSDRRQZMTrE8vft9Qh+gwEotM7rAK
-	 ja5V79z6MuRO7Lnr+3S9AHarm9lUH0OWqoNOYEySm5YKgAemz2EBbL9e9PAMFT0Muqw==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=/uf72jF94qcU3idbI2020NJhdWUqwDd/ONaRN+2ot6c=;
+	b=nDWnFMkgvpVM7AxNEjL3Y6mIwNcP0Z9FMSwA7eSgKa7MAfUxOW7/GPiXWAVDKDS3XLtA
+	 OwONdd1PtBjyJS62ZEbzpWbfnST/6c0e9bbw+mJ7qoTkVW+/VkUm0A3p20BG8DX7O436R
+	 bshDAcyzhDn3oqhlIZjmWT1uO7JDU/OhqfD4tgEru/7jCakIxE8WtbGa3gEsbCFPBfiwm
+	 QTpGLuPeTRbPYqJ9yK7TSTETrwo76YTJd6Co1KVUq8s9nRuG+oFOu2qFHGBOU8tbcqCRX
+	 oO5TjvOSJzyWDTzvmvrz2gsz2sVszBZd8pgfCxPVjno9yBzcF9kAeSllw1/yHfUJ1rw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=jbwLwmRe;
-	arc=none smtp.remote-ip=209.85.215.174
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Ti3mIkkI;
+	arc=none smtp.remote-ip=209.85.215.181
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDDD606A31E
-	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 11:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DCDDD606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B2D606A331
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 11:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48B2D606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=jbwLwmRe
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-cc758830601so2511613a12.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 03:38:07 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Ti3mIkkI
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cde1479f76fso1922805a12.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 03:38:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1795433887; x=1796038687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Khejrep24yyzWEzO9hkzlnH2dbaJOCBXw2GKcHL6sSY=;
-        b=jbwLwmReAKQaVzUeDss8ILk/irYQPtopTRHAEKOe0NAE1MqbTcPOn5e3Oumo6x/hs2
-         Xg6czQO/GvobpeNaiQhKfpfd2fdafZIofzRqva571GhAf1MctcvfdDrAmDmsY+//qlui
-         rlFPW3Q4x/V/wd2l3OApWrJ864LrtLJaL9wOc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795433887; x=1796038687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1795433891; x=1796038691; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Khejrep24yyzWEzO9hkzlnH2dbaJOCBXw2GKcHL6sSY=;
-        b=PIwP9h1pFuXT39WM3ZpYVUaict+pn/XglZFlLZYFAHDJM29/rvXLAaU4fQyd89Iql/
-         RmIsLGWdO9431CgSk1OHtTvwaVkZrJPgZguEFcYnvF+rCkxY2CzNgAnMftzrbCmMUIC7
-         1E+Mk7Bf2MBORFPk4UKuXecnqEOZKq/yoHkVQTOSp7J2qng4OIuR/uTWdfsm2rUBrbog
-         N3pT6VV+0lY8WhzD/Moxhq3GeoYP/4v9BiBA+jLqz2th4/S14PJ0CoPA7FwFCtULLVM0
-         +Ow+ECeBN9iVlxdZ9eGotrPiJSqhhLZiKiP+alPRRdwQ2f5eDZs2V1unydpfhUDQNa5K
-         SDGw==
-X-Forwarded-Encrypted: i=1; AL+hErGiHjeNNDC6cdAsUmSXNLDvMOPhfAaPz6Ttj2dZptndEfU1utiadw6B8v65q8go0jJ6f9BTJbinXXFw2k66WW+NJQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8PmHqbhjwNY0dmkNhCGG5hxnZ5p1Ukut37lmhgINPAPxizdyLd
-	6WtP4XKAholtmHKYB+nf+zbuQobu6zXe50lLkfPKxT+Kro2CtBvTWP22PsyV9B7Tsg==
-X-Gm-Gg: AZFdTZeoCoiHld0yr9FS9kB/lM2ALogXwNxHGup3WsQda7qseuvLAIQP1lVMLVW66r3
-	1ook6DmjXT7Xud23xIjHjeGgCIBGr6TdUhMVDkJGAkJtrTmDq7CQfz150fpYkKICJfPCgsghTrD
-	Hmmbhp+VkoKH2e97Ff/lX9V8DuVh0kHrZqwbNziBuWcMxx2rHgJOBFXy0aeWp7EuSmOCH0MqsAc
-	YD7IHflVDPOel8G8aX0Sr3/wRQeprrVr0UAuTVhy7h9svBYMeJuN/falvzDf2WPIDckfyUl9pUC
-	c+gMHt18m+HAYjxCyzi4JqO4l1X68dDPwI8e63rgMQXlcSPbCfsWUkJgtZYWEGibgVCFlTBr8a+
-	GnbUnrjGFyro1YGjoLZTyCqvHeQnKfXd/xArYIqYi07fnOfQgWxl2gqVYEicpJNjHJ2OHasgY2L
-	Th7JwhdFvB7H7+LM4qY7TCbfN8fNsBI0O3DTZfMah2s/3gSZqLipRj8RmYSX10gn2yC5/QmK+VS
-	HbOV0D/lKW6SI1uh/pXapheIxuLB+IUOkX8IWAB/WPoLoJJG5bjh6zM5XsruFPtPNn5Rk9sGVub
-	BhUvf/OshzlPAdwjjf7fB8msV7Pew4jaxI312sbFJtv5IRhgQS4e6Rxvfvkm
-X-Received: by 2002:a17:90b:3a45:b0:3ad:ce24:acfa with SMTP id 98e67ed59e1d1-3b41c8fed61mr10151391a91.20.1795433887289;
-        Mon, 23 Nov 2026 03:38:07 -0800 (PST)
+        bh=/uf72jF94qcU3idbI2020NJhdWUqwDd/ONaRN+2ot6c=;
+        b=Ti3mIkkItoB1uzyh3L5WUUEz+MtHiX4+XGUoA2+v/RpWcSXi7L1Ty6bHeK6o3xuPxY
+         F0Vj8jV9huA+/e/GdDSaQ0QFMvfDLlD5sLa9ctfzj4JZhFXCaI8qjWqF3ZbPtWmEjB+o
+         ayR82fZrSNujQsZw7/zhxzwakgyVVhzzQVmc0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795433891; x=1796038691;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=/uf72jF94qcU3idbI2020NJhdWUqwDd/ONaRN+2ot6c=;
+        b=wySF7uQ4z4MX4J7kYLC3se+31VQJU3qpqnJ5tkU/Pl+V27ceVMkKPF+7O1q9ZF67mB
+         TZCQF99FqpsmHX/wnVUws5UDZje1Aa6M/ZkjWa2ByJZyfzxiGumb8XtRtc9nWyW1k4jC
+         +d6SP47U+YAqt/+vSIiWfmJSbEQayISVENP76bnCKQQhxmhktifT69VkJs5BjONU8BRC
+         t5uuWHJY8E6AZrlk3TMm7t9+f9ONspHuDQuxWiXr7/p8fYyJYDPXV4YAW02w+TV8bDqP
+         gNIN2/fPFNTznKaXE4X7lvq4+1KzxXcuRRfFLpDUT9BDwogkKmTFi214tsRqQl3nGqQi
+         HxNA==
+X-Forwarded-Encrypted: i=1; AL+hErFj5heYjU3ORdAduyDGJWawG2zzF3DPIfEOE9aSnEXcDjwXuA3HhK5R4XeqhoJ2FgeLXk7a35nMcQu3apP4SFVgEg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+HGroX2NyQef57W8D4qKrSv1R1uAFIiAWtd1z8nT4XDdpUdV1R
+	hpLjMm7okpepIKiw2maqAMDQHu+A5i5UVhyOfcf6Oc43wYdjat9tcf0LX5qSiiykEQ==
+X-Gm-Gg: AZFdTZe17DGjVcLMwaEnh7OSa5HJmnch3W78Q8FBKsTBpClUfA5zubqcG44IvgzU7Zv
+	LnI4CN1K/sJSYZLAwgya11HG64s+5e+EIK/2Ot/kf/TIJLtJIRIHq7KfH4aVnHAVSJ2gJr9/e6h
+	f3ZHABre2WuWPBtw8zpSgTZy1MHZHMfVp5nI5XrJ3BnU6yBePQfFdkGhdY0HJOaNJIaB/TLeVwZ
+	zvbvsTzk6gTg5lOauUjZFlmuPG35AOlKwVRtE/9i+8ZgxU5EloOvpqzeJ8FO10FOL8A3bJWfuZP
+	v8JmToFHFwzkiyt3kGY+Tkp3x2Qb4vviLMeJa9m8tTDewqqgQa3nC8gU7rGc3yvwdETfbM5ueH0
+	mh/fldiuqqUkA/2p9rLWUoHjyG7XuE95+jMe49MQ5NHwe1cqKzDyc71ZWaFCzEd0lvJOeSLQB68
+	883oixkRadhp835T+t4xSa/0k7OxtOsvm0P4ytlw9blgWqrQJEATmhLrP9XhfsGdJPts5zLeNgm
+	1y4TnbjeNLsnRIOP9pUks1ppBo0jiYsNXMl9OYHJY32yFOVNNAoeFtfS6pBU1obEjXKPj+IRCqb
+	pP4RyyiUY9Qm86M/rHct2ZGop1rBcBqv6WA51FIbWGwi7oC3+BzncKxz5nYW
+X-Received: by 2002:a17:90b:5109:b0:3b4:aed:d423 with SMTP id 98e67ed59e1d1-3b41c95ce8amr10439138a91.57.1795433891643;
+        Mon, 23 Nov 2026 03:38:11 -0800 (PST)
 Received: from localhost ([2a00:79e0:203d:7:ceb5:5e59:832f:d16b])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3b405ffa98esm20358101a91.17.2026.11.23.03.38.04
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3b41ad8ef99sm18165446a91.12.2026.11.23.03.38.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2026 03:38:06 -0800 (PST)
+        Mon, 23 Nov 2026 03:38:11 -0800 (PST)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
@@ -87,10 +88,12 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] iio: adc: rzt2h: Make POWER_SEQUENCING dependency optional
-Date: Mon, 23 Nov 2026 19:37:52 +0800
-Message-ID: <20261123113755.3033436-1-wenst@chromium.org>
+Subject: [PATCH 1/2] power: sequencing: Allow desc=NULL in enable/disable stub functions
+Date: Mon, 23 Nov 2026 19:37:53 +0800
+Message-ID: <20261123113755.3033436-2-wenst@chromium.org>
 X-Mailer: git-send-email 2.56.1.831.g720f3f5937-goog
+In-Reply-To: <20261123113755.3033436-1-wenst@chromium.org>
+References: <20261123113755.3033436-1-wenst@chromium.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -102,58 +105,45 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi folks,
+The non-stub versions of pwrseq_{enable,disable}() are no-ops when
+the descriptor is NULL; however the stub versions always return -ENOSYS.
 
-Commit bdfc454e8567 ("iio: adc: rzt2h: Add support for RZ/V2H(P) SoC")
-in the IIO tree added power sequencing support to the rzt2h_adc driver
-and made rzt2h_adc select POWER_SEQUENCING. When combined with the
-in-flight USB core power sequencing integration [1], this introduces a
-recursive Kconfig dependency:
+This would require more code to deal with on the consumer side if the
+power sequencer is only needed for a subset of the supported devices.
+One such example is the rzt2h_adc driver. Only one of its two supported
+hardware blocks requires a power sequencer. The driver could be built
+without power sequencing support and the other supported hardware block
+would still work (provided the Kconfig dependencies are changed).
 
-	error: recursive dependency detected!
-		symbol USB depends on POWER_SEQUENCING
-		symbol POWER_SEQUENCING is selected by RZT2H_ADC
-		symbol RZT2H_ADC depends on IIO
-		symbol IIO is implied by HID_MCP2221
-		symbol HID_MCP2221 depends on USB_HID
-		symbol USB_HID depends on USB
+Align the pwrseq_{enable,disable}() stub functions so that they also
+return success on NULL descriptors, acting as no-ops like their non-stub
+counterparts.
 
-Since RZ/T2H and RZ/N2H do not use a power sequencer, rzt2h_adc does not
-strictly require POWER_SEQUENCING at build time and can use an optional
-dependency instead. However, rzt2h_adc calls pwrseq_{enable,disable}()
-unconditionally in its runtime PM callbacks with adc->pwrseq == NULL on
-RZ/T2H and RZ/N2H, whereas the !CONFIG_POWER_SEQUENCING stubs currently
-return -ENOSYS even for a NULL descriptor.
-
-Patch 1 aligns the pwrseq_{enable,disable}() stubs with the core
-implementation so they act as no-ops (returning 0) when desc is NULL.
-
-Patch 2 switches rzt2h_adc from selecting POWER_SEQUENCING to an
-optional dependency on it.
-
-Patch 2 relies on patch 1 at runtime when POWER_SEQUENCING=n on RZ/T2H
-and RZ/N2H, so both patches should ideally go in together via the IIO
-tree with Bartosz's Acked-by, or via an immutable branch from the
-pwrseq tree.
-
-
-Thanks
-ChenYu
-
-P.S. This cover letter was drafted by LLM. I think it did an OK job.
-The patches I wrote myself.
-
-[1] https://lore.kernel.org/all/20260916075745.3549953-1-wenst@chromium.org/
-
-
-Chen-Yu Tsai (2):
-  power: sequencing: Allow desc=NULL in enable/disable stub functions
-  iio: adc: rzt2h: depend on POWER_SEQUENCING instead of selecting it
-
- drivers/iio/adc/Kconfig         | 2 +-
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
  include/linux/pwrseq/consumer.h | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ 1 file changed, 4 insertions(+)
 
+diff --git a/include/linux/pwrseq/consumer.h b/include/linux/pwrseq/consumer.h
+index d24b5af3e49b..5b3c61e963eb 100644
+--- a/include/linux/pwrseq/consumer.h
++++ b/include/linux/pwrseq/consumer.h
+@@ -54,11 +54,15 @@ devm_pwrseq_get(struct device *dev, const char *target)
+ 
+ static inline int pwrseq_enable(struct pwrseq_desc *desc)
+ {
++	if (!desc)
++		return 0;
+ 	return -ENOSYS;
+ }
+ 
+ static inline int pwrseq_disable(struct pwrseq_desc *desc)
+ {
++	if (!desc)
++		return 0;
+ 	return -ENOSYS;
+ }
+ 
 -- 
 2.56.1.831.g720f3f5937-goog
 
