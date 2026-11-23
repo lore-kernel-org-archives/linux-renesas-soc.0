@@ -1,76 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.167.242.64
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795433983;
-	b=reO4k3E18gVQh1HTkXr9EamM0vVMfKsDqYjl9h7rdXPLp08O5RQvSXmngQqnVPRM4h6w
-	 ySxRhXhSk8hUD2y9KhHn1XrfE/kQV7XxZFzDUYlOmYGs+JOfAj86kMdFRoLn8al1Qwm39
-	 kGxjG4+4+g+FaoofEKpzlnkngQSj3LxHFJk4bhiM08lAJ7VjJKy4YL4Xn34L4LwCKuxWB
-	 nCatMLbfVHpic8metFw4sOxdIRX416tMoXqxoucKVbmM85uAawiqGMALW4qG93JYqlp/I
-	 2AVbar1ismnuTV3/ekbI46CIGu0Z8Zuq04Q+R3p46ma5b+0Y/TIfuH9igBS1dv6rmXQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795433983;
-	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=ERbB76zpet3DuApuKnLZM5P0t4NNQkDvueQ2YL5Mbns=;
-	b=NedKeFpvj3htSve6oiZXUJKnSlYseEhy59sE2Y+u9VSVBs9egbdaDifLZc4XcXBl6msr
-	 QEQTmgoz9JfRYENzv+UY1KXYVDhFdhEUSl8bjZ9UQOJ9aQL9PbRN5yXQAtAXrgOX167ot
-	 5wCplmoYo2+Xl0ddD9/NoD3RnJMbcjTOiD0d9epbi710jL62DzsNOBLaXy4VSJx0+TuSM
-	 fjqB8YO1magffDrmQlq5cbJ/mdR/gXDY8jl87mRAMGQZJOrI++tzMibnbkGMnozRXkIA8
-	 DGS+j8rhROyG4dVjxy0IT3JaCKoPTA6XBNGNNbgoG8ScHx4kXhuGKEGxwieTvmoEFWw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideasonboard.com;
-	spf=pass smtp.mailfrom=ideasonboard.com;
-	dkim=pass header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=sAyxzm4R;
-	arc=none smtp.remote-ip=213.167.242.64
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.42
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795436946;
+	b=BaGZEXt5d5qu9GwjC75XPrDp6na8XDUfua5eJNjE+0Q2j7GATniZrTGSpEj9h0TbkKjV
+	 RU89M7CKHiDm/ePJhj4J9rkKnJ3iRwMKHVvBmgy4xOeVhVX4PQ4iV2Ftn2aNlUxcGJZ1o
+	 5IJGvwE6VXTQtBqM+YoYbqV68xTZ8xIraIMHJa8mP+0K2EOrFfJPhSWf5z/TsZK4fIAXf
+	 nhcM4sA0G7Qomqu4vSvyndQh8JWSC0T4ldBln6JLUGzswE7cNOK6zgYDTY/ikbgwwuPjM
+	 lOyndJC/fjuK9qYmITCc2t7lZnFcbUQqGcRyCpRI68/7e9C3XLl1Z2dAbYdNJsoji8g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795436946;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
+	b=dM9XiYfEYqhJHkH5Crxxa0SV91ZfBMvgzWPuIZ1/vpjC464GHDHdCvVkejm/x4tCOuJl
+	 RknU9aCkWTt3WHDZ2iej/rTPXX78ScAK+QSTrkGS+GYT7c31hh4b0ICrbsH0HDIWER+Ba
+	 qs20B3fBBveS6ofMx32U9j0xJ2xuCBxGfXAwnrLGt7SXloPZotzaP4OhyExYC4tNSgfoW
+	 uc8DVUyW27YdeaLhZ/yMBWogGRkJ8rjCp7MG5X+TF2HLiNMiEHcH7jkdHiKIgfS+Rm6MQ
+	 B8Rz8n1Xq+vA6zCjvmJXRLZvKlABHDVYtsQS0iqVbqnzd56REQj2dcI57Ee4Wt9MOXQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="exdAKoY/";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.42
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3405606A31A;
-	Mon, 23 Nov 2026 11:39:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A3405606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78100606A32D
+	for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 12:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 78100606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.a=rsa-sha256 header.s=mail header.b=sAyxzm4R
-Received: from killaraus.ideasonboard.com (2001-14ba-7086-3000--a06.rev.dnainternet.fi [IPv6:2001:14ba:7086:3000::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 38C3B34;
-	Mon, 23 Nov 2026 12:37:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1795433829;
-	bh=d/fYOVW5pZ7TatqYKzHhPfuzuwLHZqwD4bIlohGjcyU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sAyxzm4R8p58eVBo/8lbZhtFx5M3sca61vhovfL37qG1VnayPd67mJfh4XuzgS+Rx
-	 Db8HBACnacnBJYoQDIQKvSWB7ggObdmtWwXfxA6yE5sK64Y8kZJIeTBFlp7DIA7zdH
-	 8L68N/UfI4413vqF5K4KxAzj4wdLKTFp2zfFCzKo=
-Date: Mon, 23 Nov 2026 13:39:40 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clegoffic@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 13/15] pmdomain: renesas: r8a78000: Shrink IDs to 16
- bits
-Message-ID: <20261123113940.GJ3010398@killaraus.ideasonboard.com>
-References: <cover.1795029012.git.geert+renesas@glider.be>
- <72f8eae23faefaa169cff7a52cdbafce2cd50e1f.1795029012.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=exdAKoY/
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48e09aa5264so1766748f8f.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 04:29:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795436945; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jMWJxVLVs6Wlb8bbBRYKDW3AebvCKQhKzmoCmL1eAbcbi59D39G5XWl0MZI1iLzqYv
+         8dJ2uqOPrVhRY3D9Otqr8FIqDoF9/yAN0FWq5iJEeCuLtpKR/kektojbH9zcOG+YSCI0
+         dNBiWdqvE+iRA/YIkAjur78Wmf1Y7fL/jd7e1DYNwABcgASrYa2iRJ9lAzavk2iI06UV
+         ZGIA+NWyfdvDMpxQW/FJ7wPfdCGKfYbS7hWFSMWidohegoB/t3la6RjhR/F04YqWu1Go
+         /J9FxxyEvGPEFT9Q7y+iKI0yUGhx4t4elB0LaSBF4aHWCO6DEVaksMf4I1Bnaira8ku1
+         xaOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
+        fh=fpGN2lNe71EhlxaEI2nCEAutFYpTGU5/+OPaUS6KLkw=;
+        b=czBHE/FoqwVIvswse2e2oG+pNjhlglib75b/q33ViS/pmeuMxN4OSoSk6EAfaz0wxo
+         Bi+AfZYpwdEv2KVhRcL+RYnh+Rw4cwr5Jd3uFzDhwONZKOWhb4wgZ9Zwq0Bg6tX4VG7Y
+         bDD7CIB2YI0mX/XJrdEHsyZEEy9akAwEl/tzmMOCovXp2rbotpufUZxQso4w893RK2ic
+         Zx3jEev3KXHGvC1C41gVIeFobPgiDDAOqcKAHDsveuFTRyB8Fg4RNp1Ow+JmZJhgSIN7
+         jJT4CdEXf4FHYGGeHutiT0EielVw2pGla/cs2qRAaU+wpCLZRpqppE3Su5SmYxhpy8dJ
+         krHQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795436945; x=1796041745; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
+        b=exdAKoY/Sj/1MXfEqx6dzg3yHAtBCcka/a3q+wOk9rh8sSSJckb+zIRZkfr40oLKVH
+         wfDW18ceNJCsog9LvJkKKnghF7uN1XMi7rRx/tO5FjZoD5OrqUrAehqlQ0o+5/u1ZdCb
+         GjRUDPBlgZ21WMLM6Qxns5OK/KkgTPAcivTBlc1CcXwqPlJqxNik/s1J7qwpFImIZej2
+         640uIY7tOPlp+LT4oahfc1rtLth1nAfWuweJxebo0Bt75ROek64MzxDq+chxxDV2I5JG
+         9xX70cNeoctg55raFUoP/6PYAvapBr3jiT2FrzhU8eCeQ+J/6BN/7aeCO6ctwfkxnxAC
+         VOYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795436945; x=1796041745;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qrBlPM8eFe+UqrAcD/gV4kBOAQwCPiHjxrajE3hn/Mc=;
+        b=djPNUl1inU18HZVll1YD1iWobcWqyTD+Xn+ISDmbawDV2hRwhKGV/LDlrVCHUBuvPC
+         KCvHsunNLyhjFEQ5dMJrmIZN2Pc3Yv7b9+iVRsyWfKV4hLbnz4361rRMwEE4yz0fx0JT
+         9aZWgAqmWeyIfoLRzistlm3SG7TtLwP4w8ORG6tbdUEl7pz+VxCQbqLh/6Jodf5mRY8n
+         FccBU01bx4If20Dyaz5VW29EIldqdrQmUEi2RTRUwV+2M3EuJvLraV9gS7NxhsjIMx15
+         gXWX/GLxUocPJMnhBqhpbjHe+e09b6M7FIIBv8YbzMI/+CgfOAQjRaSSqEBKj2IcP8qp
+         HdTA==
+X-Forwarded-Encrypted: i=1; AL+hErFEIKmeWB2KiUGSBxc77BUX4gNIMwX7Xg5Pcyb8rASXGDc5zCbfNfzLxWyITpHFOAInE2IJ0I64D+ztOCuXntt3tw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8g8JJenpgJch1ap6kO0gzJcYY9ihhmqFWT69/N0t6aXdd2Z+aq
+	+CkdK3a8tlldIAIdePmy+4OozayGKpKBC8U5MZqvnp0/EUtZi8hxJa1zQ9EICoGRZc4IB3fHLiC
+	VTHDFyHJkyRxDFdUUvNsI1pvnU/piH9k=
+X-Gm-Gg: AZFdTZdmYSN6b//ZXRoOZ8TVQsyt6+T7n8N3yeOHEYdQMaeO/loa4hwMhhh8wZ7YLvN
+	zbYCBsg3Nt9dSwemfYshSI+8WX4bBlEHPUdSsSN/U/1Vqad/rb4gOJUfo7fDXqH7aUk0wJpksI8
+	aO1PTyJ9TCvblrfLO7QGP61Ae9RR54yY1xNM0YH3S5PklGwutbdFCRgXSAOLD9huav5dZ9leDQ7
+	FC2FL/0HLXPnHyi5UfN7Jv+AAgPziftGhP6ssTZwUy8Gh/iTtUqSJUfWU1pif4MhjCTNKj93xoL
+	ZtYXTgS3eGgbCwN/ZkA3zbAQWkWtHBLIbmriD6UuCrj+Q153vo3dI1wpf9ojB2jOxUIyJCqKgHn
+	0KU6sYp7K9g6Dk4C6HT2eeCVAdHYdKBkZhvJQ7Qya/OdjakPDk0HPJcOhRcDx0LsbuplGPNAe9/
+	xDy200hRI5tH2r9Bb9eSbpX6tfyXjShYNey1whQiM0vvaSMLbqQr0DW4AYkA==
+X-Received: by 2002:a5d:5f41:0:b0:4b4:510c:519e with SMTP id
+ ffacd0b85a97d-4b4510c5231mr3941260f8f.27.1795436944634; Mon, 23 Nov 2026
+ 04:29:04 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,53 +105,48 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <72f8eae23faefaa169cff7a52cdbafce2cd50e1f.1795029012.git.geert+renesas@glider.be>
+References: <20261120002549.1908299-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20261120002549.1908299-13-prabhakar.mahadev-lad.rj@bp.renesas.com> <457ae5cb-fea3-4366-802f-f81447cca3cf@lunn.ch>
+In-Reply-To: <457ae5cb-fea3-4366-802f-f81447cca3cf@lunn.ch>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 23 Nov 2026 12:28:38 +0000
+X-Gm-Features: Aa3M54pwpdIWaGuuMBrn27ZxcRZ-1H1x8XFbCBtqvnWS6semHXinABmTSf51p7Q
+Message-ID: <CA+V-a8vGO+pf-2fSZ3BEfNepz7wpPmqiRB00MUMWrW87mN13JQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 12/24] net: dsa: rzn1-a5psw: Add support for
+ optional reset control
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@linux.dev>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Simon Horman <horms@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Ralph Siemsen <ralph.siemsen@linaro.org>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 18, 2026 at 08:45:01PM +0100, Geert Uytterhoeven wrote:
-> Reduce table size by shrinking hardware module IDs from 32 to 16 bits,
-> which is still plenty.
-> 
-> While at it, use u32 to store of_phandle_args.args[1] in
-> r8a78000_mdlc_attach_dev().
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Andrew,
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Thank you for the review.
 
-> ---
-> v5:
->   - New.
-> ---
->  drivers/pmdomain/renesas/r8a78000-mdlc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> index 6477abe64511e880..733bf68dab2ce6dc 100644
-> --- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> @@ -17,7 +17,7 @@
->  #include <dt-bindings/power/renesas,r8a78000-mdlc.h>
->  
->  struct mod_id_map_entry {
-> -	u32 hw_id;		/* Hardware module ID */
-> +	u16 hw_id;		/* Hardware module ID */
->  };
->  
->  struct mod_id_map {
-> @@ -148,8 +148,8 @@ static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
->  	struct device_node *np = dev->of_node;
->  	struct r8a78000_mdlc_priv *priv;
->  	struct of_phandle_args pd_spec;
-> -	unsigned int id;
->  	int ret, idx;
-> +	u32 id;
->  
->  	ret = of_parse_phandle_with_args(np, "power-domains",
->  					 "#power-domain-cells", 0, &pd_spec);
+On Fri, Nov 20, 2026 at 3:32=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > This change prepares the driver for use on Renesas RZ/T2H and RZ/N2H
+> > SoCs, where the ETHSW IP block is connected to a dedicated reset line
+> > that must be controlled by software.
+>
+> So it is not optional for those? At least the DT binding should mark
+> it as required for these compatibles.
+>
+Yes the resets are not present on RZ/N1 hence I made it optional. For
+the RZ/T2H SoC where the reset is present the DT binding marks resets
+as a required property.
 
--- 
-Regards,
-
-Laurent Pinchart
+Cheers,
+Prabhakar
