@@ -1,105 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795461435;
-	b=lMLTt8Y+mjJVE/zNX1J64DT8uo+pDW3vbSBc7NjHz0WqsDFzYYGZKIOtO6Sz6pNuDg8Q
-	 ZnpBWUrj9USSWAj8NbwXAVrO2+B22DAm+RqFQm005E1GCVGeLxIDC/r9RJyTKLKAAppJH
-	 clEkfWoBpeT/9Xq4bQKUskiI9ELTcCOSzjwRbJxOCsXsJv1P7W+f8nIB3tOyRAmQkmqeh
-	 2ZZDDSIMxScFeyNyFPAYnxpKvi0EQaCCPinTPpD1y9y7GOdT2ZgjmJn/LH9HHEq91pOkH
-	 BA8ILTWn0NhpbEMNcWY0OQp/dZwi7okExDy++DozAcl+UoUh5ygIKeOrYEeol7JUYRw==
+	t=1795461484;
+	b=WqUMY5nZUWte7vO4vOfq34lcwXrGuT2mNw0sVzvYr3e7Fz/+O/IbxzXt10J0EQy2yML4
+	 EmcdCyIdVOLJE/PZAU8Cjyy1c8fIyZbdt4o/g1ij7v2Y0NfJInyIpguTgxqfxiPMA7Xnv
+	 D6I7x2aYErarIk2b1b5W4K4fupGkc+qNVutTS9ZGmFLkFKN5YV++Ml13tDTr7ViNCWB1f
+	 vDIg3Di3NH+xA2MdwRtB53eP1zJX9rns61GiDLnu3tgGpe6+nlFr50j7vXqe5uElYFz1w
+	 5Ryb/Qp/ZAi0NFEvobUrBcC/KyFLnDdEKrH3HDLyx3txqK9DQPeM4aIo7tM0UawY7xg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795461435;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795461484;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=93LY7kxfE4k6lRlMsqn9aMoZqt0mdV8mOF8QxYg6ZSM=;
-	b=n4kBoMjK06/TAoWMUhniGWh/VW85RdXyU66Ek4Er3XljBRtmAvEaPFLXMDQNjUh8kg3F
-	 5KXNmF20Aw/YZR3dU5xwnO/J3b6HvRnsHfjmEf/tiaLZSgSAk36vgBbujA3PzEigRGNaW
-	 WvHC1xqE302xNjdchtWt8xmjNP+86T6RpqTIakijq+OVtX5PMeGvX9yckWsEyyDAO6W+q
-	 pyfJknE3qeLrMQMEpF4TZTZMU+ceT1/hXGEmi+S8Ay43QZfqD1zgNb/p4BEzh3OQKxCUV
-	 oNhljIDRXLVowg7Hgz40Z+vnFD8Iw8Ql0DiaiQXDRRptCZb3+jiZIMLzBXfJ41sAhbA==
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=aBzMS+ka1Rq8hvj4d1OdFgsS5C7iWSpuf0TYXqoFseE=;
+	b=YzW4qwA/3lI2oIRvXeswsjiv7IC62iHQmJRmQqYFPHuXiQ8neH/MPvE1V2zZhckdxzN0
+	 nVn2M2bqGLWNnjVvjnMhxXU+zPZeqYh34qFFDujn7K6e+IrWoeL8JV7vVemA6npO9LorU
+	 0MoF17YkDG3oDrsPKWVvF3T/BCpADW66i+ompQ6Tm8wHk8ZeZ5UIlXql0pFjtxC8D/Cvb
+	 6k3qDg+bI0g3Tg5KiWrI06SbUo2ZKvQHq+BG3oS13ifeWNLomwblGzdJYTa3C8iW4fWiJ
+	 ZMhpxc2DQrelvtjvmBrvgg4HCmPb40VS9ziWSM/wYC16pgRifrR2sZm1KOPqkO3y9Pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KXV77g+x;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dEx5oerY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ED3606A31A;
-	Mon, 23 Nov 2026 19:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BEA606A31A;
+	Mon, 23 Nov 2026 19:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KXV77g+x
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA881F000C4;
-	Mon, 23 Nov 2026 19:17:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dEx5oerY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3F11F000C0;
+	Mon, 23 Nov 2026 19:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795461434;
-	bh=93LY7kxfE4k6lRlMsqn9aMoZqt0mdV8mOF8QxYg6ZSM=;
-	h=From:To:Cc:Subject:Date;
-	b=KXV77g+xEmHcy7JpHoLaeSS6FNFX59hjFuDeFdRUxf8bakm+MFK4B1tIxcAizka31
-	 d/TYrffwOZ6eh2MYxzhBrE9U7xKPR5+FHseHQy3XVCEuumJvJPUtAspAB82Q6LKRcV
-	 +o6jDteDq6bDsXTuRRHptp7IXtEnseEwH8XiKo1HADF54dAIvJi6/mXE3DU3W+rNYd
-	 R8X9ukWTBJO7GV23deLPIpUYCKrTq3QNVJ0MEsYklQIkIINdoCFxejPEeZCuOl7VI+
-	 42puN8d8vAQ5rB9YQ5J0VPQzofHnbk2b+w3U4zA8Rv2LuQfEh9+It5SOowCZK4UM5d
-	 jxMn/yzINazhQ==
+	s=k20260515; t=1795461484;
+	bh=aBzMS+ka1Rq8hvj4d1OdFgsS5C7iWSpuf0TYXqoFseE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=dEx5oerYnkgvth4XaUxvHfJCr+yBhfWrtAQl+6s1TLfLiBGyJvkQfmy5WBsmjxKPP
+	 mPuk3rKlmNYTw3+gqb41G4h9FeQH3fMKk+bPfnQduWwlNwnQcQZ2pNXL/TbXvDakpM
+	 OlcpkNBxWM1QOnuIPtaNoIyWcVBbcDBk14b2XhKIfIpyU4FAuAtJrGUog9I+buOk8r
+	 jerMq54zREA+RU0TixiYnQ5AnKC/S1p+xTAkQ7a9w3P0k4wTsnb7Qv+7qm2V+XbAJe
+	 8KnImr9WaNbq4hhibBvUDKhm5ejcqjLfUPPzWe2XUZOaYwR9AI5fcL8EenAePLmJyx
+	 S88xI0lxr9CgQ==
 From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Alex Dubov <oakad@yahoo.com>,
-	Allen Pais <allen.lkml@gmail.com>,
-	Apelete Seketeli <apelete@seketeli.net>,
-	Aubin Constans <aubin.constans@microchip.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Cavium Inc <support@cavium.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Georgi Djakov <djakov@kernel.org>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Hiroshi DOYU <Hiroshi.DOYU@nokia.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Jan Glauber <jan.glauber@gmail.com>,
-	Jarkko Lavinen <jarkko.lavinen@nokia.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Josua Mayer <josua@solid-run.com>,
-	Juha Yrjola <juha.yrjola@nokia.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Phil Blundell <pb@handhelds.org>,
-	Pierre Ossman <drzeus@drzeus.cx>,
-	Pramod Gurav <pramod.gurav@linaro.org>,
-	Ritesh Harjani <riteshh@codeaurora.org>,
-	Robert Richter <rric@kernel.org>,
-	Samuel Ortiz <sameo@openedhand.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ulf Hansson <ulfh@kernel.org>,
+To: lee@kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 00/13] mmc: Assorted bug fixes across MMC host drivers
-Date: Mon, 23 Nov 2026 19:15:44 +0000
-Message-ID: <20261123191703.179283-1-lee@kernel.org>
+	Ulf Hansson <ulfh@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
+	linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH 06/13] mmc: renesas_sdhi: Guard host->cmd access in internal DMAC issue work
+Date: Mon, 23 Nov 2026 19:15:50 +0000
+Message-ID: <20261123191703.179283-7-lee@kernel.org>
 X-Mailer: git-send-email 2.56.1.831.g720f3f5937-goog
+In-Reply-To: <20261123191703.179283-1-lee@kernel.org>
+References: <20261123191703.179283-1-lee@kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -112,93 +68,54 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-These issues were reported by Sashiko.
+renesas_sdhi_internal_dmac_issue_work_fn() unmasks TMIO_STAT_DATAEND and
+dereferences host->cmd without holding host->lock or checking that
+host->cmd is still non-NULL.  If tmio_mmc_reset_work() times out and
+clears host->cmd under host->lock after tmio_mmc_cmd_irq() queues
+host->dma_issue, or if unmasking TMIO_STAT_DATAEND allows a concurrent
+data-end error completion to clear host->cmd via
+tmio_mmc_finish_request(), evaluating host->cmd->error triggers a NULL
+pointer dereference.  Unmasking TMIO_STAT_DATAEND outside host->lock
+also races with concurrent updates to host->sdcard_irq_mask.
 
-None of these changes have been tested on physical hardware.
+Acquire host->lock across renesas_sdhi_internal_dmac_issue_work_fn() and
+bail out if host->cmd has already been cleared, matching the sibling
+system DMAC implementation.
 
-Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-Cc: "Niklas Söderlund" <niklas.soderlund+renesas@ragnatech.se>
-Cc: "Uwe Kleine-König (The Capable Hub)" <u.kleine-koenig@baylibre.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc: Al Cooper <alcooperx@gmail.com>
-Cc: Alex Dubov <oakad@yahoo.com>
-Cc: Allen Pais <allen.lkml@gmail.com>
-Cc: Apelete Seketeli <apelete@seketeli.net>
-Cc: Aubin Constans <aubin.constans@microchip.com>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Cavium Inc <support@cavium.com>
-Cc: Christian Loehle <christian.loehle@arm.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Georgi Djakov <djakov@kernel.org>
-Cc: Guangshuo Li <lgs201920130244@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Jan Glauber <jan.glauber@gmail.com>
-Cc: Jarkko Lavinen <jarkko.lavinen@nokia.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Josua Mayer <josua@solid-run.com>
-Cc: Juha Yrjola <juha.yrjola@nokia.com>
-Cc: Kamal Dasu <kamal.dasu@broadcom.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Phil Blundell <pb@handhelds.org>
-Cc: Pierre Ossman <drzeus@drzeus.cx>
-Cc: Pramod Gurav <pramod.gurav@linaro.org>
-Cc: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: Robert Richter <rric@kernel.org>
-Cc: Samuel Ortiz <sameo@openedhand.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Ulf Hansson <ulfh@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: c330601c9c93 ("mmc: renesas_sdhi: take DMA end interrupts into account")
+Closes: https://sashiko.dev/#/bug/linux-57271e16-2f7e-4151-a686-57ab2474fe6f
+Cc: stable@vger.kernel.org
+Signed-off-by: Lee Jones <lee@kernel.org>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Lee Jones (13):
-  mmc: cavium: Remove MMC slots before destroying slot platform devices
-  mmc: cavium: Prevent slot_pdev[] out-of-bounds write during probe
-  mmc: sdhci-msm: Resume runtime PM before accessing registers on remove
-  mmc: meson-gx: Fail request when descriptor chain DMA mapping fails
-  mmc: jz4740: Skip DMA cleanup in PIO mode during post_req
-  mmc: renesas_sdhi: Guard host->cmd access in internal DMAC issue work
-  mmc: tifm_sd: Synchronise timeout handler with request completion
-  mmc: omap: Shut down cover timer before disabling cover BH work
-  mmc: renesas_sdhi: Disable internal DMAC BH work items on release
-  mmc: jz4740: Apply DMA max_seg_size limit to unified tx-rx channel
-  mmc: dw_mmc: Disarm central watchdog when ending a request
-  mmc: renesas_sdhi: Fix SDIO manual tap correction in SDR104 mode
-  mmc: sdhci-brcmstb: Handle absent optional sdio_freq clock in probe
-
- drivers/mmc/host/cavium-octeon.c              | 17 +++++++++++++----
- drivers/mmc/host/cavium-thunderx.c            | 15 +++++++++++++--
- drivers/mmc/host/dw_mmc.c                     | 14 +++++++++++---
- drivers/mmc/host/jz4740_mmc.c                 |  6 +++++-
- drivers/mmc/host/meson-gx-mmc.c               |  7 +++++++
- drivers/mmc/host/omap.c                       |  8 ++++----
- drivers/mmc/host/renesas_sdhi_core.c          |  9 ++++-----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 13 +++++++++++++
- drivers/mmc/host/sdhci-brcmstb.c              |  6 ++++--
- drivers/mmc/host/sdhci-msm.c                  |  8 ++++----
- drivers/mmc/host/tifm_sd.c                    | 16 ++++++++++++++--
- 11 files changed, 92 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 0c3967f758c2..6831fc34cd22 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -450,6 +450,13 @@ static void renesas_sdhi_internal_dmac_issue_work_fn(struct work_struct *work)
+ {
+ 	struct tmio_mmc_host *host = from_work(host, work, dma_issue);
+ 	struct renesas_sdhi *priv = host_to_priv(host);
++	unsigned long flags;
++
++	spin_lock_irqsave(&host->lock, flags);
++	if (!host->cmd) {
++		spin_unlock_irqrestore(&host->lock, flags);
++		return;
++	}
+ 
+ 	tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
+ 
+@@ -462,6 +469,7 @@ static void renesas_sdhi_internal_dmac_issue_work_fn(struct work_struct *work)
+ 		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &priv->dma_priv.end_flags))
+ 			queue_work(system_bh_wq, &priv->dma_priv.dma_complete);
+ 	}
++	spin_unlock_irqrestore(&host->lock, flags);
+ }
+ 
+ static bool renesas_sdhi_internal_dmac_complete(struct tmio_mmc_host *host)
 -- 
 2.56.1.750.gf70dc682cf-goog
 
