@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795487191;
-	b=wHAhHkJ5D4Nq57eXE4x7W4/yMiv9b0vH13WusfXXxtV6RfpzYrlqW8h+POsl3cusAnvo
-	 EK6s68XbSVXnljIikSzk4059PyKBZZ/GaqAmJpkqh7ODcsAdqmvaNVkt1OxRzw7Fcb3V3
-	 lmLYf/jACF4qpz81CIN2msChGb3mlYE0+lpS1QuPceJpa9zKF4oHUD5fNUBeCe7PkhrJx
-	 PgrccCDJVkcGD+NjDyOj5hamf0q9kE4DU2uefSezcbyoKuzi4v+jBz4eypH/GXE+uslGK
-	 5nPtjuCq69aqmNgA+v6KJecH0JHJwnmCWklKGPNM9diNQ3wO0MAd2cg02tLmdYEzgBQ==
+	t=1795487194;
+	b=bMDMDKrDoeMsDYxbrnRjtWrJOG0oEsrEvP1PUVRzo06LQzTQmvNmYht9mQ2FXNv5ppvJ
+	 YOaEbgj2f8ahrVUGI5dSovZvLzuHC+29/V4jl6Ri9ABDEmJLhVNBqR33VfVMxs0qaiVoZ
+	 auk6qMWFEXKkF9spp6yga0cNPrv4NE2+Sm12qT9WvTLhYdFxnYI2LlvHInKuCvKZ55BWc
+	 STaN7+atJ+9xRozF+QCEutDUKp5C/1f6rJ1s1bVKEdvfl4rJoTpWabCpth4mFnE+tHbD6
+	 aXvdwrecrZsuVQgH+qOfeqEniF0fJWhoSaz1h1+UBBMzFiIH4/fNnOj4L9RxNIe1y4w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795487191;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795487194;
 	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
 	 In-Reply-To:References:X-sashiko-severity:Content-Type:
 	 Content-Transfer-Encoding:MIME-Version;
-	bh=mmliaB+t5y87KpSlRozX2kcKHmFURkapiqmxRlQLekI=;
-	b=WNETkZ+duxK2uh7fLv9Gd8+/eIxhGeMZ8gVI/i9YZUxY/XDZ3S6Bf6HVd6u8PuW3myv9
-	 mu6XVFlPjg4Jfxn/pjHgTwKoi88YY1qQbf6IJH7SxguoWNPpc/eDXJrvLphxFumTaQGhU
-	 CZVjIRxfy6f992nSsHCnrXXfNFbfcP5RKMrKJKmZ7LZUn7WehySk4jcPAEunkc3eZ8zfG
-	 6u/7Nr/F/1tPOr/ZWa2XSPogk5MYGHNl0eMc85Nt0xur4nCXfjEut7bRC4Xu3Hnf74CEN
-	 fGkMQwxssBsL4KSj3bpJ0TDJP0ODMcOXo9JVLxa8FLPEUYcKU5BzkMgqWhmIS4qjIAw==
+	bh=UNc4WxmfbfLgUpSIVGlILF9NYv4ex8h4CwsAajsbkL4=;
+	b=JgllzN3Wli6u4KFFpDullHoLBidWKWXNOyfDJj76fC69bq7U+9KYC2EEiT+Or/DH5Cu1
+	 usRjoJTsp30ToJdGFRXDAMbJFY0BYO5QZkMjaI4adavh5foSi0BDSBKzfaR3auEwvcy0v
+	 cWh88/KUxBl00WZW3dqppuFbzBBT6NkV134ePFyi4zq45DnJAbu7AVHdeXUxiZOPLJgnN
+	 Xhr7mPJomoyyuQx6ju8fDwFFGvVHCyT/LJcWfulZ9PM8tiqAsyRdPlAqR7spMqc2IrKb6
+	 su5iLgsxKi/27VjVGaoIGOZFLFNvSDO8Ik9w8I1NkfZZ46Io8Ta/pJSQsbfamGNREhw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RES45+72;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e74D9ACb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91417606A326;
-	Tue, 24 Nov 2026 02:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FA4606A32D;
+	Tue, 24 Nov 2026 02:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RES45+72
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B90DC1F000CA;
-	Tue, 24 Nov 2026 02:26:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e74D9ACb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA881F000C0;
+	Tue, 24 Nov 2026 02:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795487191;
-	bh=mmliaB+t5y87KpSlRozX2kcKHmFURkapiqmxRlQLekI=;
+	s=k20260515; t=1795487193;
+	bh=UNc4WxmfbfLgUpSIVGlILF9NYv4ex8h4CwsAajsbkL4=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=RES45+72ZngxLJ4XAQacbxAYPHtbrDv7CBl2zU+BMUM/ZBBnkUxmRc7FNtShRtbhi
-	 Di0y5qub/E2dZ1RepjAHQzPEIaGLqBL9w/3kKU3sZkjwlLG0L1Z7/dkvkdpHM0VJhO
-	 gSNRkWfliFxdsrvM2SZ4Ipegj5GBXQ1ulVn0VLN6+V2Wy4g+EZaiqABn68dSeIR8aa
-	 rnZq21PWwX3ASYUXjuQKTa1Yx4m3cVhOV83U+DUlvR+JiId7TiipHw+7DHq4HLccy2
-	 le1vJE/SUCgyVFWuha+BsLBihNq/vSE05olF9vfwRmnPYkpIshbRLD0Vtug59+DwES
-	 p2UG1tGY7M99A==
-Subject: Re: [PATCH net-next v5 22/24] net: dsa: rzn1-a5psw: Keep MAC TX
- enabled on RZ/T2H
+	b=e74D9ACbYJZoXJ9sLL93uzDY66JcwoY7btCTeEmPRBCHdSdqroP1VYKuRKIG9sKeZ
+	 RIigLtZDeV9XUxvTlljYqQ8jUuA3uSw514h3RMkyKpJcQjN2WsRQvk0UpkLVauEBqY
+	 b7Wa/SzUBf3I4BIaUOVjGId76BxbFNkAZUKnBmxMLeSdESP1IjOyU77WOZSK3jt1uX
+	 /Ih5YNqN4gSeLRGHqAVr7XlOLMCsggPPheuECbm2DCIvbfgvu2tnD38wyol/X22CyQ
+	 kmUowcvNgwXM9QtuCySaUuOvDx0EkKKaxZZUovTClqEu0T30I9ou18p1mgcMMNR6Wj
+	 x3rYPFOIU8N5w==
+Subject: Re: [PATCH net-next v5 23/24] net: dsa: rzn1-a5psw: Add support for
+ RZ/T2H Ethernet switch
 From: netdev-bot+sashiko@kernel.org
 To: prabhakar.csengg@gmail.com
 Cc: clement.leger@linux.dev, andrew@lunn.ch, olteanv@gmail.com,
@@ -54,11 +54,11 @@ Cc: clement.leger@linux.dev, andrew@lunn.ch, olteanv@gmail.com,
  devicetree@vger.kernel.org, prabhakar.csengg+renesas@gmail.com,
  biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
  prabhakar.mahadev-lad.rj@bp.renesas.com
-Date: Tue, 24 Nov 2026 02:26:29 +0000
-Message-ID: <179548718931.3135.3714317987961155691@kernel.org>
-In-Reply-To: <20261120002549.1908299-23-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261120002549.1908299-23-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-sashiko-severity: Medium
+Date: Tue, 24 Nov 2026 02:26:31 +0000
+Message-ID: <179548719178.3135.16247387052615724547@kernel.org>
+In-Reply-To: <20261120002549.1908299-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261120002549.1908299-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-sashiko-severity: Low
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -71,100 +71,76 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue(s) to consider.
+Thank you for your contribution! Sashiko AI review found more severe
+issue(s) in other patches of this series. This mail is only an FYI, in case
+you want to address the nit picks below when you respin.
 
-Critical: 0 · High: 0 · Medium: 1 · Low: 0
+Low priority / nit picks for your consideration:
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
-
-- [Medium] This patch's stated invariant for keep_mac_tx_enabled SoCs
-  (RZ/T2H, RZ/N2H; the next patch, "net: dsa: rzn1-a5psw: Add support…
+- [Low] The commit message for "net: dsa: rzn1-a5psw: Add support for
+  RZ/T2H Ethernet switch" does not match what the patch does.
 
 --
 
-net: dsa: rzn1-a5psw: Keep MAC TX enabled on RZ/T2H
+net: dsa: rzn1-a5psw: Add support for RZ/T2H Ethernet switch
 
-On SoCs with keep_mac_tx_enabled set, this patch stops clearing
-CMD_CFG.TX_ENA and gates port transmission through PORT_ENA.TXENA
-instead. The TXENA bit is computed from both the STP/admin state and
-the link state. CMD_CFG.SW_RESET is no longer written during setup, and
-the probe path pulses the switch reset line instead.
+This commit adds OF match data for the RZ/T2H ETHSW, which uses the A5PSW
+IP but has a different port count, tagging protocol, pattern matcher
+offsets, VLAN_RES layout and lookup table size. It also adds the
+renesas,r9a09g077-ethsw compatible, which RZ/N2H uses as a fallback.
+
+> Configure the driver for the RZ/T2H variant with:
+> - 4 ports (3 external and 1 management), with the management port
+>   at port 3.
+> - DSA_TAG_PROTO_RZT2H_ETHSW tagging protocol.
+> - A fixed management port frame length of 0x3fff.
+> - Pattern matcher register offsets of 0x3f00 and 0x3f40.
+> - VLAN_RES fields using VLANID[15:4] and PORTMASK[3:0].
+> - 4096 lookup table entries.
+> - The odd MDIO clock divider formula.
+
+[Severity: Low]
+Is this list still accurate after the v4->v5 change to rzt2h_of_data?
+
+The last bullet mentions an MDIO clock divider formula. However,
+rzt2h_of_data has no MDIO setting, and struct a5psw_of_data has no member
+for one. a5psw_mdio_config() uses the same formula on every SoC:
+
+drivers/net/dsa/rzn1_a5psw.c:a5psw_mdio_config() {
+    ...
+	div = DIV_ROUND_UP(DIV_ROUND_UP(rate, mdio_freq) - 1, 2);
+    ...
+}
+
+That formula came from the earlier commit in this series, "net: dsa:
+rzn1-a5psw: Fix MDIO clock divider calculation". Its message says the
+formula is the same on RZ/N1, RZ/T2H and RZ/N2H.
+
+The list also leaves out a setting the patch does add:
+
+	.keep_mac_tx_enabled = true,
+
+For the new compatible, this skips CMD_CFG.SW_RESET during setup, keeps
+TX_ENA set, and gates user-port TX through PORT_ENA.
+
+Could the MDIO bullet be dropped and a bullet for keep_mac_tx_enabled be
+added?
 
 > diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-> index 751d03b0bde4c..86d5b9d52f8db 100644
+> index 86d5b9d52f8db..2b69e92e18533 100644
 > --- a/drivers/net/dsa/rzn1_a5psw.c
 > +++ b/drivers/net/dsa/rzn1_a5psw.c
+> @@ -1411,6 +1411,20 @@ static void a5psw_shutdown(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, NULL);
+>  }
+>  
+> +static const struct a5psw_of_data rzt2h_of_data = {
 
 [ ... ]
 
-> @@ -996,9 +1037,22 @@ static int a5psw_setup(struct dsa_switch *ds)
->  	dsa_switch_for_each_port(dp, ds) {
->  		port = dp->index;
->  
-> -		/* Reset the port */
-> -		a5psw_reg_writel(a5psw, A5PSW_CMD_CFG(port),
-> -				 A5PSW_CMD_CFG_SW_RESET);
-> +		/* Gate TX on link state only for user ports */
-> +		if (!a5psw->of_data->keep_mac_tx_enabled || !dsa_port_is_user(dp))
-> +			a5psw->link_up |= BIT(port);
-> +
-> +		/*
-> +		 * Writing CMD_CFG = SW_RESET also writes TX_ENA as 0, which
-> +		 * must never happen on some SoCs. Their switch is reset through
-> +		 * its reset line in probe, so the statistics are already
-> +		 * cleared; only disable the MAC receive path.
-> +		 */
-> +		if (a5psw->of_data->keep_mac_tx_enabled)
-> +			a5psw_reg_rmw(a5psw, A5PSW_CMD_CFG(port),
-> +				      A5PSW_CMD_CFG_RX_ENA, 0);
-
-[Severity: Medium]
-Where does TX_ENA actually get set on these SoCs before the first link-up?
-
-The new reset pulse in a5psw_probe() puts every CMD_CFG register back to
-its hardware reset value:
-
-	ret = reset_control_reset(reset);
-
-This branch then clears only RX_ENA. TX_ENA keeps whatever value the
-reset default gives it.
-
-The only code that writes TX_ENA=1 is the full register write in
-a5psw_phylink_mac_link_up():
-
-	a5psw_reg_writel(a5psw, A5PSW_CMD_CFG(dp->index), cmd_cfg);
-
-Unused ports never get there. User ports get there only after their
-first PHY link-up, and the CPU port only after its fixed-link comes up.
-
-If the RZ/T2H / RZ/N2H reset value of TX_ENA is 0, would unused ports
-keep TX_ENA=0 permanently, and user ports keep it at 0 until their first
-link-up? That would contradict the invariant this patch is meant to
-enforce. The old SW_RESET path in this same loop wrote TX_ENA=0
-explicitly, so the register does accept 0 there.
-
-The following patch in the series ("net: dsa: rzn1-a5psw: Add support
-for RZ/T2H Ethernet switch") sets .keep_mac_tx_enabled = true in
-rzt2h_of_data, and this behaviour is still present at the end of the
-series.
-
-Would something like this set the bit regardless of the reset default?
-
-	a5psw_reg_rmw(a5psw, A5PSW_CMD_CFG(port),
-		      A5PSW_CMD_CFG_RX_ENA | A5PSW_CMD_CFG_TX_ENA,
-		      A5PSW_CMD_CFG_TX_ENA);
-
-> +		else
-> +			a5psw_reg_writel(a5psw, A5PSW_CMD_CFG(port),
-> +					 A5PSW_CMD_CFG_SW_RESET);
->  
->  		/* Enable only CPU port */
->  		a5psw_port_enable_set(a5psw, port, dsa_port_is_cpu(dp));
+> +	.lk_table_entries = 4096,
+> +	.keep_mac_tx_enabled = true,
+> +};
 
 [ ... ]
 
