@@ -1,130 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795502445;
-	b=Qh2QbKMuvrfwC9QVXgGTzhpehPLoyY+pINu1oWrkBmu4/J1Lp4jxoV9upub7m7FR2gvI
-	 rOjlMO/kM0rtAExjz+vGGnuCU1FoUH7La8cWgUH13lpxYY7GMO5v1RnuABbabeM7UnjiM
-	 dmsMM6iq40FMmFzqlgNtKpWNHDyWxn8uCIIDoShPcbUDIL5TS5Vskq6h10k+OX2dGKgGj
-	 hv4mdr6c1YNTK19kAqjWCNMG/1UWtN06HU5ttoA7CqcTtiYkCMFwlvXBdCAoC01Kc4YuM
-	 LfSHZWI4VBRF4stCfdNhqpkwDOmRuRJ2zB1KbVng6bdpnyA4tRNWsGFRWf2IIty8kRQ==
+	t=1795504633;
+	b=BS8L9Ku+6XjynfQI/w32u4P+uynAi5GF4LDp7ESzCEKYcX/mWJWvGr52PXsf8RGuzJkJ
+	 mm0+27iaIBSx/jcrNm45Po9wTHqzegcjYWcLFGUZChbg6z6aQk2yRRN2tFh3nHUe0w6QS
+	 DAlAGdmVYUp1JAhF1SdzWHea1v/daiwN1kx40aMfm0J9iR7xPVAmPSjwGktLr+EXAiPEk
+	 YLJDB5o/E9In27No2PWs4DSlrnpTBFQtCV7j8vdsJ+RzouTQvLO3+3GMuQ5cMS14xjrSv
+	 M0Bb6krveY1gx9k0HO4V6SkxoG30S9wi6KLS+aaw43a+gnI58/RZdpGD8vAOhnuHqwg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795502445;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=w23lNFq4PU3EA/g8IT7NKGXR8jqt/dFslDDg8kIe164=;
-	b=HKE0j/oKlfBfCPz2ytUomVLgWB7jMAv5ajL9r4yvcErQn6nCQX4/saQ35eesq6p2e6+S
-	 Rnz3n7ysDEhsDEY3BoHYgBmJPM3/2laNYPyk+STCC07ls7+DwVK+vTu+kpjuTNC5+6XKu
-	 Zg+N+O0b8uZOfUYznFo5S8uX5sM5jpdVvwYzdCqnr4OJ3OOwPKZHEEGlIGGeYiEClRW9/
-	 XoxkIvffURY2aSwWwTqzqq3bDmbtIo0c72ux0/4aghusVcePnNw8s03U70rDPfBAibfdY
-	 N4+RR6MSbJJJBkN5B3lrJBsXZcUr2qXOn3weSCfmtFXBqfFOSyulps8JWKSjt/PPXIw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795504633;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=RQcDNanpw//dbaaaimKQPYZVp7hL9J0JtvEqkrn+7kE=;
+	b=BOoOZkUcB4o7oH13kqIcdf3JkqZ8WC9tY77Cjyro76y8dvH4MDhClG28olZ96iFYQE7G
+	 1FprZyhCbqhYkD8K7PKv3e+JosrnqBC27Q7+AFGtSD7lalcfrPB3oVpArGOEQSR0dPlx1
+	 zUPNIbGW5vo+VM7ehSz6ZhAwEQnnuP//wuJdV5J2imneoaaLBxvW0zCY1HAql6kZSZArJ
+	 UkXST7Z0Sr42FRBCK9MfkYlvAGED3+RTbChpFiNRqfMeATvxSogUAsSxJHArDsN+QkDgh
+	 1Fz+UbnsWLE/XqEBbuaw0F9Ifx91oLPBwq0JRF1lev828YWAbg25IbUaN5QvzEDcb/Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=oBumkIjE;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WAZ9zMHG;
-	arc=none smtp.remote-ip=103.168.172.149
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=BwaWYyVN;
+	arc=none smtp.remote-ip=198.175.65.9
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08305606A32E
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 06:40:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 08305606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE250606A31E;
+	Tue, 24 Nov 2026 07:17:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE250606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=oBumkIjE;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WAZ9zMHG
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 05349EC0980
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 01:40:44 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 24 Nov 2026 01:40:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795502443;
-	 x=1795588843; bh=w23lNFq4PU3EA/g8IT7NKGXR8jqt/dFslDDg8kIe164=; b=
-	oBumkIjExkoM1uwCehL/8oDhAQlt08qXvFbsmQNQYgAfGBD5NYGk+u85+QcpSBr3
-	IeGEwNWzr8kBxoP1y5MR9UM8OHEvHqfh09uX11iwF6Ad8ch+aMafcxG/qRFYEjcY
-	J4AO+Rnl1EmniiB/RoKKdWumxugKLRfac672moww3Ug+NUnYbwOZQTRsr+yBUGn/
-	sYa7y3WvyWBNsgLSBwElyfZQN9GYxA7KPxZNqU2iHvf7DBzXvD2h3nUewhy3F5b7
-	Y57JfrsJNJVip7YLloTJ3EIcEWI6L/t50gcmR1alY5fibg1MpI/prAqb/eXaU2OC
-	g7aP9zY5s3s9aJLtoNZLyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795502443; x=
-	1795588843; bh=w23lNFq4PU3EA/g8IT7NKGXR8jqt/dFslDDg8kIe164=; b=W
-	AZ9zMHGtea3NNZRXu4FUEXV6Bzhntnmfou1n5WVSuKqpMR7dDsl8QLH26GCd+W/z
-	KctwHRNHLnlUnNjIOAREn3DWh/m7g/pcvjcrqJ4s+mpfAn5oTjLo7HubR/KnUxIc
-	ayEmdMZ7dYcfpVzBKzQ+pK9TDtCf1yje4ZPBGN60E2PPY5416Th0FCxFqzzsS80J
-	1c2tt5arOumSyzIYNnltDrghSg2qAXKWo2eRQlYct2uSqISLXQfVvYuftJ7Vjs94
-	yESCxu84mAM/BMXm8l+g/ORG0/QwvjvrgcT4YsC2JIIWBrO1M5n3qpUNFfHUNXaj
-	aeSjxODs9RT66EM97T/qQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795502443; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:VdIrPy0YVG58pDJ/Da7aY02R4P+o0om/kpXGFFFYxMhhBK0
-	wfsaK+lnP9szSik9Iw8FVuyopbOcBZlgaQh9nL+3qgJniMVXhZEgrQbTqJA31QET
-	4XJMEQWSD2eWTduAIh2/Ag7JnXkpxJlzM+92bLrvtPBnkw+P8B12maY3XFIzY4TX
-	l1v6K4lAhgi82qekabCEpjNInpRhGH/0bURIuExm+tWAiuLdTYrXRwTJibu6nNIY
-	BgA6OcqJkF5ObmcWLijSDEsvFn3L6ZgiE+sLHJcvJjKeRz5Pfo4XSdl6NFyEsjWF
-	26m8zVTISAC7YcWBOrtDQyExWMpNVqld9J9TdXw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:STD6H0HdESP6jlj1Ui0LxDpZbGwRDzEyJb8kvkm7AG4=:XDFc0NTQHGVBocCGeAeBq/Z+MiIoxLgdkMxglKsMzN0=;
-X-ME-Sender: <xms:azEFa4tD-g6g_xAa5S9YsbHnAmZnBQ5ahcc73PVn9xpPacqFWM843Q>
-    <xme:azEFa15aAxm40NhgNkelVxNtVvusqHDHbkLa9udQekNfJj-0Dyn3rwF8dalgLMbPb
-    DYM2A32Y69SGy-L1iJQ3HIKt076vR4e0LVbRikV7g_3irn73wee>
-X-ME-Received: <xmr:azEFa0fqTEURASYd3KlUIdzC1wocQOpeic0TAAg2hW1b5clpRiuNn7tcGX43E-hz_5WD1qvBrhdY4jYoMvU21o3SgvDnYH0>
-X-ME-Proxy-Cause: dmFkZTEZm1p0nloDXCDDKweUR4luS46Uz3EWb2EgwJk32G4Vg9LVoiy2p+zVRYy110bsoE
-    0imqv32La6cgFk2EuNvmn4GxG5XLm/NJBl2YetOQhdgT2+k9mR4Bzki9T4yHyJ5V6QTQcX
-    DmpQicN2uQkqExraEzYLlcXNOcQhRzYXSFwYVKD8ufnUxcNpQcWQVF2N0q6V9ibAJRuQ3o
-    jn3mVXoryYaqGW+3G0ECefPAy4ybFAvHHB73CdCxtWAFc8Uq6LQlmKJtWwvOUpYAUmHcI1
-    mij4p5AoXoNDsRx1Mo4UUURwoJW2xZIkVeEGp+iDQUzCbuvpPrk6DLtvk8fWJFgbJgLoFJ
-    UOCUeAICb9oT1TQ5M+6CoIaudDjcALNbktE7fXWhpOMU+jV4qUdRerNCh4YZSYEqifKNwE
-    Qk/EWvie8LZ6xSrWbTTK1syG5TXm4U96uBPqzoqJQ2okVfBpZyEVgv5PgUcZcPXLkdoE5B
-    H8PZK3IEgchx7LG/wRupnpPqvN/v2jou1VEllehrrYZq5kjQ0wiWPLk8YsqqHkyR7Qh05v
-    FSSrz/XNTq6Bn5cJlpM8VCNWUPVKTBiU7/GFlSLqcnfhIoU+zbFEIpJiI4UiRsULKt3KH5
-    edF5++UkoIh3BiMxAKZXA/oYgMf44fKf2IHLOoiqPpw6l2XV0wcRLzo3e4YQ
-X-ME-Proxy: <xmx:azEFayxxe5_YRxRV94TPLHwFWG1-DQqA8u2yXiNDELCbZpGuSoRCOg>
-    <xmx:azEFa5_wcr9ctliapuT1eKrYDSWhWFOxJC6jNQFmH66qouQJJtTwJw>
-    <xmx:azEFawxPKK23kTm4uezKwy11t-RTvDPVcSeC757YqYMbNtab0dJgbA>
-    <xmx:azEFaxpIXJRZuzIvTuj66iuACsQk8jHATShGxcooPZzcNtyMZwXcEw>
-    <xmx:azEFa9XlxaCFvUDAfTZBpnZlbDYi5Cv4esXVmnb5Rz2f3zL2FIAFbJel>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Nov 2026 01:40:42 -0500 (EST)
-Date: Tue, 24 Nov 2026 07:40:40 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] thermal: rcar_gen3: release the IRQ handlers before
- the zones are freed
-Message-ID: <20261124064040.GF3898744@ragnatech.se>
-References: <20261117145348.1092528-1-shunsheng1218@gmail.com>
- <20261119022926.1493582-1-shunsheng1218@gmail.com>
- <20261122144813.GB3898744@ragnatech.se>
- <20261123064745.GD3898744@ragnatech.se>
- <179548695107.1834709.12105107414276177799@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=BwaWYyVN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795504633; x=1827040633;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dugEFlR4OXZrsWQLYSz0uPzA+ZdKgtgmNmQXvziDeew=;
+  b=BwaWYyVNbzgwvkgIbvGE5I+QjCmO4sK6FZu8apeNCrSXP3fSuppyCvML
+   UbhXQE8I2mV0la4KPEcvRAjPm4MXhsw7gibozJdwc8/NJ0+bcNzZlyvBI
+   bwVA+t3qpZd7tNHwTiBEdJrvP+rDPP5eGPUSJTVS9E0yjry5EFwsXQ9dr
+   vRjH9bFzkVijnIJmbCfoPFIHWiotoQHoGDYbgrJTY9oIkgaF9Nfs8AUWR
+   BMNcIwK8GzOfDsCyEBl0embReSxGNilxev9azG+QZ29rc8H7NGHDhv+FQ
+   yPw8c5au9u2Xyqn/M3DWkXFEa6Jq77XJusO3ZNcgLQcmUCg6siUEtfluI
+   A==;
+X-CSE-ConnectionGUID: 9Q2mKrrjQJyvoLDuoe9oVA==
+X-CSE-MsgGUID: ejq79uhrQlK8pCLiCUukkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11975"; a="4183791"
+X-IronPort-AV: E=Sophos;i="6.27,230,1787036400"; 
+   d="scan'208";a="4183791"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2026 23:10:40 -0800
+X-CSE-ConnectionGUID: QQVnudcPQpGWfCNIBVElPQ==
+X-CSE-MsgGUID: GmZfKkh+SM6bye3Wjh6v/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,230,1787036400"; 
+   d="scan'208";a="13284049"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.125])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2026 23:10:37 -0800
+Date: Tue, 24 Nov 2026 09:10:34 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Arnd Bergmann <arnd@kernel.org>, Rich Felker <dalias@libc.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] sh: mach-rsk: rsk7203: switch to using static
+ device property, drop legacy gpio API
+Message-ID: <awU4aqWbKEs4Qhyg@ashevche-desk.local>
+References: <20260929-rsk7203-properties-v3-0-02f84aeb8e47@gmail.com>
+ <3a51385d-9649-4bd7-87b3-0caf9e462b2e@app.fastmail.com>
+ <arzKNhmoL6yiGrzH@ashevche-desk.local>
+ <dea00f90c205f8359baca729d8b0f31a@gmail.com>
+ <ce838102be497ee6eab490b4454095b96e16d015.camel@physik.fu-berlin.de>
+ <2e4f0d32c05d841feb367741bf8802fc@gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -134,46 +91,61 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <179548695107.1834709.12105107414276177799@gmail.com>
+In-Reply-To: <2e4f0d32c05d841feb367741bf8802fc@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Yaohan,
+On Mon, Nov 23, 2026 at 03:55:09PM -0800, Dmitry Torokhov wrote:
+> On Mon, Nov 23, 2026 at 09:12:37AM +0100, John Paul Adrian Glaubitz wrote:
+> > I have been super-busy with CVE fixes but I will try to get into kernel
+> > stuff back again later this week. As I mentioned before, kernel maintenance
+> > is not my primary job, so I cannot act as quickly as people who are getting
+> > paid for it.
+> 
+> I completely understand; upstream kernel work is not my main focus
+> either, and I appreciate you keeping sh maintained in your spare time.
+> I did not mean to rush you; I mostly wanted to check how you would like
+> to proceed before the next merge window.
+> 
+> FWIW, I took a closer look at the current state of rsk7203 on mainline
+> prior to this series, and quite a bit of it is already broken:
+> 
+> - Ethernet (smsc911x) has been silently ignoring its platform_data since
+>   v4.13 (commit 3708184afc77) because device_property_read_u32() returns
+>   -EINVAL instead of -ENXIO when there is no fwnode. That drops
+>   SMSC911X_SWAP_FIFO, corrupting TX/RX packet byte order on this
+>   big-endian board.
+> - The RTC (sh-rtc) fails probe unconditionally since commit 689602e0609e
+>   because sh7203 only defines one IRQ resource while sh_rtc_probe() now
+>   requests IRQ index 2.
+> - sh-cpufreq fails init because sh_cpufreq_cpu_init() never populates
+>   the per-CPU clock.
+> - Enabling gpio-keys-polled (disabled in rsk7203_defconfig) clobbers
+>   LAN9118's IRQ0 on PB0.
+> - As Arnd noted, the rsk7203_defconfig kernel no longer fits in the
+>   4 MiB flash, and USB was never wired up for this board.
+> 
+> Given how long some of these regressions have gone unnoticed, it seems
+> extremely unlikely that anyone is actually using mainline kernels on
+> rsk7203.
+> 
+> Rather than worrying about hardware testing here, I think the simplest
+> way forward is to just apply these patches (with Arnd's Kconfig tweak
+> folded in, or I can send a v4 if you prefer) to unblock the legacy GPIO
+> API removal,
 
-On 2026-11-24 10:22:31 +0800, Yaohan Li wrote:
-> Hi Niklas,
-> 
-> Yes, I agree.  I have reworked the probe to look up the IRQs first,
-> initialize the sensors with IRQEN cleared, and request the handlers after
-> all the thermal zones have been registered.  A devres action disables the
-> interrupt sources before the handlers are freed, so ->remove() is no
-> longer needed.
-> 
-> Since the thermal core copies the zone operations during registration,
-> set_trips() still has to be selected beforehand.
-> 
-> The current version retains the no-IRQ fallback for -ENXIO and propagates
-> -EPROBE_DEFER and other lookup errors.  However, if IRQ lookup succeeds
-> but requesting a handler fails, probe now fails instead of falling back
-> to polling.
+I'm agree with this.
 
-It needs to revert back to polling. IIRC the interrupts are used to get 
-quick notification of a trip point but if interrupts are not 
-enabled/supported it can still find it using the polling method.
+> and we can resolve any bug reports if they ever arise later.
 
-> 
-> Would you be happy with that change, or would you prefer to retain the
-> original fallback on IRQ request failure as well?
-
-A bug fix should not alter behavior, other then fixing the bug ;-)
-
-> 
-> The reworked patch builds on arm64, but I have not tested it on hardware.
-> 
-> Thanks,
-> Yaohan
+...or even remove the board support completely (would be interesting
+to see somebody investing time in this HW to fix all what listed and
+not listed above).
 
 -- 
-Kind Regards,
-Niklas Söderlund
+With Best Regards,
+Andy Shevchenko
+
+
