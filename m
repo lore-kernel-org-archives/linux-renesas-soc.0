@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795487183;
-	b=nkmklMRVjbzhnZS6qrEBDVPtYOKG4AYS4DpXK5sd6sYwOxM9oyRG6jip1UyxZMFPKdQ5
-	 Q6RzcOaFF+WULnPkh2H1RioLe7qZIqbnTqAY47cBV2Hef+IGVAS3mPF6K3HrtWTB3SCQW
-	 guxNNn2yTTvfGBYslLSZKSJ6Lc0gLsJuAawHDTRO0t7/2YvsV/10M/j7K+LdVxUuX+EAK
-	 whgfcPayISHKJlI9rVsKWTPSQwFQfXFoLQw4JtCqLGRhESu4qUqs0MBc1gKfTww6EXL9v
-	 ErarI1Y+He1bZOuVN8YOLzsFTp2PrZxrByzYtkKmMD4nCuXggOuuX8mq+qJYJESjAow==
+	t=1795487184;
+	b=gZIWw5oItU1AqK3MXA66E49FlbEyt+ndHk+GuiKdB/MDLxZJdlzApnFHrvvaAgX5HmJs
+	 0iFi7Bt7JttFPPIL+PMKapYPLxGNJw+DOZyxVcW3mddg9PQhwyNRdQzcHNPZhUVHn6ksN
+	 FiS+V/tGUQuLDscc+vWjzhGKpdhyKNRLn50XOmBZUkiEhiJlNiClsYhJoo5NvRyBrnNZp
+	 dnFxcU5HvDV3SmaF3uXqcyE4RDiQeETO7QyMCumkgs3Mk8q2f9h6sBUoHxeqg1Ut6NW+P
+	 o+N1poICQk07LCi460fuQc650OteKBC4x4e85+NL1VDTQyRElVO0V7VKpy2uxe1kKpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795487183;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795487184;
 	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
 	 In-Reply-To:References:X-sashiko-severity:Content-Type:
 	 Content-Transfer-Encoding:MIME-Version;
-	bh=B9gKAtYl6nmnZZ4QKGueT/aYpYuR3X0x/8ivAVYjrKo=;
-	b=uoxuYWV+YxZ6f+2P6Tc0aKBomTfwEyLxWWJ6vKSayVstn2MSGaomehwmgDGk5AzmQEdI
-	 S4G27nEUGPPDghwgTN2oFemsBYbWU6NtYDimOpV04eb8Gth4qmr+eeZmpnzZUhEF5nJyC
-	 70P/Cgh5OJMdpcIg5HNNK92AuR+KHNHZxi80MRdmja0pMaCix/WI39kusk/UFhwgowb53
-	 6b6fvlvR2zek+4NTKsyeoisCWKwp9B7jS7uEXA8tZHtvm6tYHlY7tV0bDENmi9PAyEcBd
-	 KweODO2Y6ZV4HhNLsLSDJDTOSj1VTA9vkzddI9Y5jLoun3PYQ0R+cwTsm+zmUsmQbKg==
+	bh=dkKUxZiILvLL+d+t8iprkOu9f16cw3LDGzCnoisw70w=;
+	b=x4wS2O1EdI7xv/oL9UpbYe25+cSgWWhbwJjxS3h2CBm8Y7xP+sSczasPwG85cKA2WdhS
+	 jig3RnGIh2qWLv9VrrvdNAp45NF8jwONJBJ24EZCcLr1oj4sZwVRSrhXh61/+gr84h+Kp
+	 vLlyAbXO2q54EmBjaCkXO6l6macM/OTEYe9Pb+orDkUA2xcrZ4LQYtYr0tOYmdETJP1Cp
+	 ZTbR7TCJa71OZ4hhchu3qeBJvoWqr0yFwXBVbwpn3PS941etLAihyI3eIfdRXEMLGtak/
+	 3O076g4HzIWuGuUd+AZ4y2RfM0b64hosTkRd5gFbNl6VhBoyF+Ce1RNP3KztLyPGJ1A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vv+42BH6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P+iuh2KX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0431A606A322;
-	Tue, 24 Nov 2026 02:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4522606A32C;
+	Tue, 24 Nov 2026 02:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vv+42BH6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19371F000C6;
-	Tue, 24 Nov 2026 02:26:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P+iuh2KX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D67F1F000C6;
+	Tue, 24 Nov 2026 02:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795487182;
-	bh=B9gKAtYl6nmnZZ4QKGueT/aYpYuR3X0x/8ivAVYjrKo=;
+	s=k20260515; t=1795487184;
+	bh=dkKUxZiILvLL+d+t8iprkOu9f16cw3LDGzCnoisw70w=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=Vv+42BH6FcOf0rB9jidqkMffK2321PTvbM/TD7kvDiM9um24PbNfkJV8M5udRJ14t
-	 pbubYBfHx1rvqYqlwIHW8qZxBpNh/XhGvJwWGIir5TT33e7wGocYeI8QtjiKXZsSGU
-	 J38e8bz3WqJi2WOeRKvxn/+f/WYJPkqfYmTEvinFuJ5o3QGSBez4oyhL6nMe9zZDdA
-	 +uqs4pjBXyJmFrZlqE/x98IW2z8YsZeJWp0mWtpS4EIOQlajvdSOiEmVRR9isn2hgu
-	 ebOtsa7VM2fvz3Qx5OUgkt27zmYrbEIf1hJwfxDdqth1/KQ1AOfY7+16V1V8f8QABK
-	 1ewEuBnRas3QQ==
-Subject: Re: [PATCH net-next v5 04/24] net: pcs: rzn1-miic: Select ETHSW port
- speed through SWCTRL
+	b=P+iuh2KX6oubpuQ8lzvmYXA4cSD/7bQTyZ8p/G9CfUnxoH54jSogQTt/s/rJvT3Xb
+	 9G821UakFqLms36i5B01g/fkIS2Kv3unI6HQth8k2zUX6DZin9eDSxYnHphhApwyCX
+	 MG80MqxgnDgn79AYBz9aTh++IwhrYSSGE7s+ZQjeq31OXCHRIpGS7L3Am0I3A+AEDj
+	 ZZ4x0G2B2pEQ6Mip8brEvhqBe7BYhDcAsbMRofrg5OoVtpY/BNFcMKsqNrigcZufS+
+	 TKctFCypSzAW+uUY27lOwU0lF398hpkvDY9rnyZhJuKnkkBskHjKsT6Vn8vukb0W4x
+	 23AvTo4fOAAQA==
+Subject: Re: [PATCH net-next v5 07/24] dt-bindings: net: dsa:
+ renesas,rzn1-a5psw: Add RZ/T2H and RZ/N2H ETHSW support
 From: netdev-bot+sashiko@kernel.org
 To: prabhakar.csengg@gmail.com
 Cc: clement.leger@linux.dev, andrew@lunn.ch, olteanv@gmail.com,
@@ -54,11 +54,11 @@ Cc: clement.leger@linux.dev, andrew@lunn.ch, olteanv@gmail.com,
  devicetree@vger.kernel.org, prabhakar.csengg+renesas@gmail.com,
  biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
  prabhakar.mahadev-lad.rj@bp.renesas.com
-Date: Tue, 24 Nov 2026 02:26:20 +0000
-Message-ID: <179548718033.3135.6350808715041189386@kernel.org>
-In-Reply-To: <20261120002549.1908299-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261120002549.1908299-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-sashiko-severity: Medium
+Date: Tue, 24 Nov 2026 02:26:22 +0000
+Message-ID: <179548718283.3135.16421455472482043498@kernel.org>
+In-Reply-To: <20261120002549.1908299-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261120002549.1908299-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-sashiko-severity: Low
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -71,131 +71,76 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issue(s) to consider.
+Thank you for your contribution! Sashiko AI review found more severe
+issue(s) in other patches of this series. This mail is only an FYI, in case
+you want to address the nit picks below when you respin.
 
-Critical: 0 · High: 0 · Medium: 1 · Low: 1
+Low priority / nit picks for your consideration:
 
-If you believe none of the issues are legitimate, please reply to each
-issue of Medium severity or higher and explain why the AI is wrong.
-If any of them are legitimate and you plan to respin, please let patchwork
-know by including "pw-bot: cr" as a separate line at the end of your reply
-(one such reply per series is enough).
-
-- [Medium] Possibly incomplete MAC configuration for duplex on RZ/T2H/N2H
-  ETHSW ports.
-- [Low] This patch leaves a comment in miic_init_hw()
-  (drivers/net/pcs/pcs-rzn1-miic.c) that is now wrong for RZ/T2H.
+- [Low] This patch adds `interrupts` and `interrupt-names` to the top-
+  level `required:` list in…
 
 --
 
-net: pcs: rzn1-miic: Select ETHSW port speed through SWCTRL
+dt-bindings: net: dsa: renesas,rzn1-a5psw: Add RZ/T2H and RZ/N2H ETHSW support
 
-On RZ/T2H and RZ/N2H, this patch programs SWCTRL.SET10/SET1000 from
-miic_link_up() for converters routed to ETHSW ports. The commit message
-says COMMAND_CONFIG_Pn.ENA_10 has no effect on the actual MAC speed on
-those parts. The matched MODCTRL configuration is now kept in struct miic,
-so the switch port that a converter is routed to can be looked up at
-link-up time.
+This patch extends the A5PSW DSA binding to cover the ETHSW variant found
+on the Renesas RZ/T2H and RZ/N2H SoCs. It adds dedicated compatible
+strings, with RZ/T2H used as the fallback for RZ/N2H, plus per-variant
+constraints on interrupts, clocks, resets and port numbers. It also adds
+a co-maintainer.
 
-> diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-> index 682a73cf5a87d..96f4cb533a719 100644
-> --- a/drivers/net/pcs/pcs-rzn1-miic.c
-> +++ b/drivers/net/pcs/pcs-rzn1-miic.c
+> diff --git a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> index 30f25b06d62c4..c087291361760 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/renesas,rzn1-a5psw.yaml
 
 [ ... ]
 
-> @@ -383,6 +396,27 @@ static int miic_config(struct phylink_pcs *pcs, unsigned int neg_mode,
->  	return 0;
->  }
->  
-> +static void miic_swctrl_set_speed(struct miic *miic, int port, int speed)
-> +{
-> +	const struct miic_of_data *of_data = miic->of_data;
-> +	u8 conf = miic->conv_conf[port + 1];
-> +	u32 val = 0;
-> +	int sw_port;
-> +
-> +	if (conf < of_data->swctrl_conf_start ||
-> +	    conf >= of_data->swctrl_conf_start + of_data->swctrl_conf_count)
-> +		return;
-> +
-> +	sw_port = conf - of_data->swctrl_conf_start;
-> +
-> +	if (speed == SPEED_1000)
-> +		val = MIIC_SWCTRL_SET_SPEED_1000(sw_port);
-> +	else if (speed == SPEED_10)
-> +		val = MIIC_SWCTRL_SET_SPEED_10(sw_port);
-> +
-> +	miic_reg_rmw(miic, MIIC_SWCTRL, MIIC_SWCTRL_SET_SPEED_MASK(sw_port), val);
-> +}
+> @@ -86,6 +158,46 @@ required:
+>    - clock-names
+>    - power-domains
+>    - ethernet-ports
+> +  - interrupts
+> +  - interrupt-names
 
 [Severity: Low]
-This isn't a bug, but on RZ/T2H the comment in miic_init_hw() above the
-probe-time SWCTRL/SWDUPC writes now seems to contradict this function:
+Should this change to RZ/N1 be mentioned in the commit message?
 
-drivers/net/pcs/pcs-rzn1-miic.c:miic_init_hw() {
-    ...
-		/* Disable speed/duplex control from these registers, datasheet
-		 * says switch registers should be used to setup switch port
-		 * speed and duplex.
-		 */
-		miic_reg_writel(miic, MIIC_SWCTRL, 0x0);
-		miic_reg_writel(miic, MIIC_SWDUPC, 0x0);
-    ...
-}
+interrupts and interrupt-names are added to the top-level required list,
+not to the RZ/T2H then: block. That makes them mandatory for the existing
+renesas,r9a06g032-a5psw / renesas,rzn1-a5psw compatibles too.
 
-On RZ/T2H, writing SWCTRL = 0 does not hand speed control to the switch.
-It selects 100 Mbps on every ETHSW port, and miic_swctrl_set_speed() now
-uses SWCTRL as the real speed control.
+The commit message only talks about adding the ETHSW compatibles, the
+RZ/N2H fallback and the co-maintainer entry. It does not say that the
+RZ/N1 schema gets stricter.
 
-Could this comment be updated to say it describes RZ/N1 only? Otherwise a
-later cleanup that trusts it could drop the SWCTRL programming. The
-comment is still unchanged at the end of the series.
+drivers/net/dsa/rzn1_a5psw.c does not request any IRQ, so no driver
+depends on this. The in-tree r9a06g032.dtsi already has all five
+interrupts and their names, so in-tree dtbs_check still passes. An RZ/N1
+DT without these properties used to validate, but it would fail now.
 
->  static void miic_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
->  			 phy_interface_t interface, int speed, int duplex)
->  {
-> @@ -415,6 +449,8 @@ static void miic_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
->  
->  	miic_reg_rmw(miic, MIIC_CONVCTRL(port),
->  		     (MIIC_CONVCTRL_CONV_SPEED | MIIC_CONVCTRL_FULLD), val);
+Could these two entries go into the RZ/T2H then: required: list next to
+resets? Or, if requiring them on RZ/N1 is intended, could the commit
+message say so, or could it be split into its own patch?
+
 > +
-> +	miic_swctrl_set_speed(miic, port, speed);
->  }
+> +allOf:
+> +  - $ref: dsa.yaml#/$defs/ethernet-ports
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g077-ethsw
+> +    then:
 
-[Severity: Medium]
-Does MIIC_SWDUPC need the same handling as SWCTRL on RZ/T2H?
+[ ... ]
 
-Only speed is copied into the switch-control registers here. In
-miic_link_up(), duplex only sets MIIC_CONVCTRL_FULLD on the converter.
-MIIC_SWDUPC keeps the 0 written in miic_init_hw() and is never written
-again.
+> +      required:
+> +        - resets
 
-On the switch side, half duplex is only set through COMMAND_CONFIG. That
-is the same register block whose ENA_10 bit the commit message says has
-no effect:
-
-drivers/net/dsa/rzn1_a5psw.c:a5psw_phylink_mac_link_up() {
-    ...
-	if (duplex == DUPLEX_HALF)
-		cmd_cfg |= A5PSW_CMD_CFG_HD_ENA;
-    ...
-}
-
-a5psw_phylink_get_caps() advertises MAC_100 | MAC_10 on user ports, so
-phylink can resolve a 10/100 half-duplex link.
-
-Suppose SWDUPC selects duplex on RZ/T2H the way SWCTRL selects speed, and
-HD_ENA is as ineffective as ENA_10. The MAC would then stay at whatever
-duplex SWDUPC = 0 encodes, not the negotiated duplex. Could that cause a
-duplex mismatch on half-duplex links?
-
-Nothing in the tree documents SWDUPC semantics on RZ/T2H, so this would
-need checking against the hardware manual. Testing with full duplex only
-would not show it. RZ/T2H ETHSW ports only carry traffic once a later
-patch in this series, "net: dsa: rzn1-a5psw: Add support for RZ/T2H
-Ethernet switch", is applied.
+[ ... ]
 
 -- 
 Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261120002549.1908299-1-prabhakar.mahadev-lad.rj%40bp.renesas.com
