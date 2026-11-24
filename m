@@ -1,112 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.34
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795533866;
-	b=1jVe4HDoj0FbE47HeCKta0aZjMKICCVWWyYil/X2cRqABO0ZQUcAXb9JErH51wUDxsrf
-	 x4R2yUvHM4fBQsy4XMZQNDaB+qpQzc0ISDBHG900qEDTpjkQ+1R+4l7DjF/w42Sw+BgRi
-	 or32A9+I77xeJUp6yukJae059GTYpfocMFSF4wkVFSietwwjkrjDUKQ3M7rnrIlNBGju/
-	 xtaySZrCjDWD3gPj2J1pij16c//vzeneClNoPKhiAdLz6FIQC0EZA9QKPCpYc8+hpys+I
-	 zFXpyf1j+IIm0uvJD/3bWf4pdcKQP01S2jGyHkQUeTQzX2uk9pedZYjahH1ZBN7mAxg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795533866;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-LD-Processed:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=s2W1pOpQit+waCD2jihvc9+lVRg8k1Lgvuv+GDE8PdM=;
-	b=P4hM8rY6Uc5dlmv0xjEcQGnI/H++YMoTDVJrsnFEsVau4lj9lDSSgtZYzRQ58LE4LyIZ
-	 U5r2p8A2Qz3hl249S5j6iVHWJukn+psWhKnySbnfEzZEkd8M+ycCU+mjKU8AsvodQhwA8
-	 xpt13qC57a+XxQf0VucBbIzc4pvm1VTOtiucjrtbyObcHJ5mlCnrAXMtHoR3WjN3D6KyH
-	 yJ2ZCDwIWeoYsq9TLfDi+DcIJS3+A07JH0kG+joT07T8FPzvTJSSnlhIOXyBRHyLI0RKK
-	 wL2Hv51SjmKE1RjavdWPUm91OwY4mtOsFz4k7B9xlHERRGmQnd72DfKGwIT9eIZyfWA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=u8B88wbs;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.34
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011034.outbound.protection.outlook.com [40.107.74.34])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.42
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795534695;
+	b=gC0X5Y3P461h6rw6GE/7GazeVk18SGfOHJ7gzqIu0li6v72CCvXB7VJ4fIwT9HK2s8vG
+	 1IZNamfczKt6XAaiF37QimDW5/Nj4DGiK0+BctXqtxQiQEubDpXvpl0UlrbWQz/wpx923
+	 v85hJftn8uZVO7X6h9O7sz3r6TpFFtHQwjv1CjPJKx47pwEX0/yNlbqnRCoumGQO9KnlI
+	 PjfU6w29WMcwAtnVHAGiTvZhdcohRwsCkkSqu45x4pNoft+/ePetz8VGjDO5f0rtC5Q3K
+	 4vlM9tH5q1fHIoA2bBFI/OKW42IY+yDO4idCKzrl6QLYRnSCSa7GZV8mSD8NJ0NdL3Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795534695;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=7bx6YXLfofHgTcT+fkqDDtRZ6uWmHxeGGyk9a9eB7Gk=;
+	b=S1vdBVc+teLynCdcjc1Vs4oz8NBCi79cpeN+UagJhk3Jv4ufkwmLjskiL8frnB5BHnko
+	 fLTVwzVRo3h1/rTwpp2X1OIQh92iZ6RQvq+xJZdK86XIJFwYaxy0RqaIHyASHCOphv3U5
+	 3mM44Rit2mqQMX1RidyMRZu09XoKayKl2VqQXd7Hg+wlDH+8p2j9PHKu641o+5XCcaU7x
+	 OTwCvtW0ArU0xEPB8MQ0mfxc8GNL3iG1bz3EsIvJyTPKnm7ACJdR15K8AR3A+XEoS3p5P
+	 HUOkRf+LNq7VsYBIL37KiQtMYJNHT9yhTiUGZ/iShiv3oCXvJ+QUHrQdHC4LIKEwN8g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=deUMFlsp;
+	arc=none smtp.remote-ip=209.85.210.42
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C87606A31E;
-	Tue, 24 Nov 2026 15:24:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0C87606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE929606A31E
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 15:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE929606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=u8B88wbs
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YFo7HY3l7Ox/QKOXXA1E45PwgbOT9iQWeqN1Iho+Zlm+fYXzkjtpfaRiCVTfdZTPbJujT4HmyG44bLK13vRwkfLexRbO6Q6GquOtDc15YWVgLatCkKEhjiF2E8JIrZBjoVjA4tfVW87QjrC4A8ZEMeLbEpNH+1RcdHZbh6NqXKY7n7btVWdH8rUTSQdTfCLFslPH9GiQwk0bpQoeIJ8kzrF/9SKxJzdBRXou7loY6d0KOcm6zpT6YLxtLeQzEi4v3HIgXRCMQd6edqlcSKHgeWG6mOOvc5eRsbpIzDa2DugmoHCQlraxZ91AxBlnfan4nRfdKsWI7xK0fk1Y8fvOgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s2W1pOpQit+waCD2jihvc9+lVRg8k1Lgvuv+GDE8PdM=;
- b=xvguYv55HW9LIgpyghsouWg6RPi/nT2nAQCKfDB86jTJX15ynZWvSgqCnhgLHWXqeGMldLxS9mUx8ZB1gr98LcSL7pHnTej5CNI1hNgpjCfcWabsJDrifd8lzfdcVcVcEUIGnWotwfVeWd1kKsC/PF4YBDarRQs0d/UX9ZSF2AZox4rs4PqUi801Scz720HM+Gz0QMIQUfzMRvyPUK3i+Go+GBkFC/SBuEiIOyXhxxbmgm+nCiLk6sgLYIRWnf62UTgE54y85uhRnAocVssRmLSvmv6Byci07sfSCMW8Jve9MBeA0Ob8Gabaduun0bRVk9J+QJCpdIBR2qw7M7AmQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s2W1pOpQit+waCD2jihvc9+lVRg8k1Lgvuv+GDE8PdM=;
- b=u8B88wbs0EpnGYNg+MqHgHWsgLIV0l/yVqqRIiyrfUGdQ0s4WQSEV8Wf0zYV3fShLbOB0IJwj11dwDJsUkJtIqr0+MBXYVYPIqWKhmmX7OBCxEMq45g0828j5aMKCcLO/vZmqkzkvFPWDVYmklnfbjIlWm4Pi6BtL3MdrgZKA1M=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15) by OS7PR01MB13650.jpnprd01.prod.outlook.com
- (2603:1096:604:359::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.4; Tue, 24 Nov
- 2026 15:24:23 +0000
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0639.012; Tue, 24 Nov 2026
- 15:24:22 +0000
-Date: Tue, 24 Nov 2026 16:24:10 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 08/12] drm: renesas: rz-du: Separate the DU instance
- from the DRM device
-Message-ID: <awWsGjt6cW_CSoMH@tom-desktop>
-References: <cover.1794502191.git.tommaso.merciai.xr@bp.renesas.com>
- <68fcf838eee14c1906f23b2b7c74c560793cd1d4.1794502191.git.tommaso.merciai.xr@bp.renesas.com>
- <OS3PR01MB65968FEBCB08429F11188CE986452@OS3PR01MB6596.jpnprd01.prod.outlook.com>
- <awVW5B4p06FUfBHw@tom-desktop>
- <TYYPR01MB6603AA1B7A48B7D899604EE586442@TYYPR01MB6603.jpnprd01.prod.outlook.com>
- <awV8G86QIth4GtaA@tom-desktop>
- <TYYPR01MB6603A1FB28A473A400A2C49386442@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYYPR01MB6603A1FB28A473A400A2C49386442@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-X-ClientProxiedBy: FR2P281CA0065.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:93::11) To OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=deUMFlsp
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-8479f46ecd8so1888488a34.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 07:38:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795534694; x=1796139494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=7bx6YXLfofHgTcT+fkqDDtRZ6uWmHxeGGyk9a9eB7Gk=;
+        b=deUMFlsp+pdwjun4GHWKzF0sS3xgDr7ShhARb9srSDmtj+cvwu5jnvhPb3liiFtNfB
+         qzbKd01Eaj4Z8WUIUYTFNaE4x/3WA8YjyxxHwoy7pLVcQqLFAFwmNlIhoSHhOsOjLAV6
+         xnXQVaVEGEAZsPXMNjdBNVG6zGYHPNtTBtIUNPA4NWAbCsce+47/lPHkRcmclXtCrx+R
+         KkKwTEPolcal86hgNwozGfFquLFse5ANwsZyJo2ZIcjPYQE6mhTXmkQndUs83HufDfWN
+         nA0ppBbpW+2l+bqJRPQQXGklRXyAd34kUYIHmY9KUr9AgwzrFUevg2ZXDyQ0yX4BAg4v
+         O0tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795534694; x=1796139494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=7bx6YXLfofHgTcT+fkqDDtRZ6uWmHxeGGyk9a9eB7Gk=;
+        b=Ec2zp0uQ5TnJ3+zrxRW2WhiWN+FwqhsMLP/uVP8/cbxNZSCXB/9I9nUvWEghrNDXmr
+         +SY7QcjR+V5y4cm8qYhs9wwvzrWY9EudP1At3UrmllpifsSbevoDkx9+n3cwA4AQCM0B
+         ITv9CYMxFY0g65fVtL2APfRFlv3gpNtZ35PFPs2w+BLStx9kW4ikFEYQdd9FKDDCDdeL
+         iAN4R/al//+qqy2lo4C14gGaxSWX++shTft2cTJFu/XlJPCz2DbSTaiax+XAbKs1Ur0s
+         1HyW5L/Bel9EoezCOPS+RykmD1yylk9J924jZ6v+k/EUaw3rdLtXg/XlERK0PhtOXMcv
+         bE9w==
+X-Forwarded-Encrypted: i=1; AL+hErF/JkwAg87eYDA26mIeO7ne3jeYJ77ZfZPp1qD6Dz+gxLOUJ8xPXx2TR9dSygv4J1+posyLx/UO6UIpMjxcUyeclw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/TnNubD3KQN7X2z0zUurvHQjfZdM+/Z3sRnq9E2mOLwnsOfjQ7
+	iJXlYiEc3JHU3PhDO0uKzXC14tmcHDdtp/VJ3b09ev6xhEIl3c/WLxl2
+X-Gm-Gg: AZFdTZcJQd6Ag2M4qFp1o+eXNqZGCkLJPX7InqdMKPA+w3Z4pYK2WQeIVrP/EAQYQo9
+	2cdS/LOeBfbYiL0IhSQPkupiLJZkWnQB0u7qnlZ/UR1/V5b4lWYdC3/Z8M2TEiLGvgQkNBf0+FG
+	iZX02BwLsNOAWLqWi4TD8ASOXqbbJv3n6phnEF7pIayArGNP/svjKNJk0qygOLlYJIh9gBKKMMX
+	SDddhIMfKJ1WAd9F7ViLKzaujKDd+Qj7xrukKnBCsxblVNT23bAe1gWphqZ3WAPDc8s5WmdE7rE
+	BpDbpdJtUCddNQ47hgRx+p9zTTJzTx/3MOqbmG5xgw0ki3IPVESW1B4fwP/HL6gUJPyRoBnEu3d
+	o8oBd+kAjA9HpaKZAPl2PtaQEUacj/Sc0+GYgjrWD7/mauHlnsgtDtBphzvARdjGxDk1MXDuQUM
+	viY+Tnc8QOaliTv4k31kNKqKf8st9Fz67xEM2GP231wTdw4uzcQufd7zaNWfqfW9ix+BLpc6QCk
+	guAyScT2Sc9TbGaMny5FSp+A2h9iQo0nVhfldmKd0sGv51knkKBQejBaaeK5+ZVj8GvI04FMgj8
+	KfuJMNPStjgm6epbo74/ITqEfuM46D7PqSvrtf0OSoMTqrKrXHwu3w98lT9kEVC/TwuPg7yD66I
+	jDPcyiG9J4B4tV5v0Fbd+ADroYOYl4xkSLLqqeARgkDSrUrnaGSx+Ra5XX/7IYrLuE65SccPD38
+	WTwLHAaG2Xzeti
+X-Received: by 2002:a05:6830:3151:b0:862:ca2e:919f with SMTP id 46e09a7af769-863158f0a19mr21098554a34.18.1795534693844;
+        Tue, 24 Nov 2026 07:38:13 -0800 (PST)
+Received: from tempest-testimage-cc-centos9-stream-server-1191361818 (chi-dyn-129-114-108-164.tacc.chameleoncloud.org. [129.114.108.164])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-863607d0f48sm1501065a34.7.2026.11.24.07.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2026 07:38:13 -0800 (PST)
+From: Yuho Choi <oss.patchbox@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulf Hansson <ulfh@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuho Choi <oss.patchbox@gmail.com>
+Subject: [PATCH] pmdomain: renesas: rcar-sysc: Fix CPG/MSTP node reference leak
+Date: Tue, 24 Nov 2026 15:38:08 +0000
+Message-ID: <20261124153811.338437-2-oss.patchbox@gmail.com>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -116,181 +100,53 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|OS7PR01MB13650:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa18593c-8b0b-4b16-bde9-08df4a3f043f
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|23010399003|366016|18002099003|22082099003|261009223027099003|4143699003|261028144727099003|56012099006|11063799006|261022075727099003|261102123227099003|261026121527099003|261021121427099003|261022105027099003|261021123027099003|261026140227099003|38350700014|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	Aepn4M0xooXvDu6ZpnXG9ZdAbIzpx0zD1+e6Ztx+oYc/RpMrKC0jLdapHVVXs73l13xI2dSoHPqut4qpD4BD0ZbMicW9mJFm5HoBDstufEicyJUXTaJm8f38+CKddqKafT0+T/WfX+u/Eb1Rs3nCJRStsQIxsGqseSk2qfJVoioY+e2kVSpV/va0cBUhEsUGaPTHeTiguCfIJdEFmWppQ9GgVfjTWNZm1g176gXvdAzMAGujT/uk58gRhMFj6N+7K635uy7NXgrsGRYNTR9gkAC8K0rYyvGRCKZ/H5thkX7v7a568UekNMC5wQqdevAj/gPYtiZmMt1La48N/CpCYCxKG5byRiLSQXXBUVBkh/T5jaUbNvRIJ+hOjoMzHSNDiDi5e1PTU4vNFFh25R/YPuUqsld0zn4oL0OOowny3TaxfKFJ53//Ps6yKFeI9KMJAyq2Zwiz+hkq+sCXGCgaqskjXi88cHnLFRXJJrVGrxPW94Z6IvDbGNaZsoAGCJ1+B2QyucTi9Yv5ZGYXGs03axKPQb7fyVarA7to9E7FyMvPv3y8cYRz/5KkwIYzD3zL0mXv3HrJREdg8EMyHx1y3MKAYOnmOWA96uieDlNPZ5HDjThJMoCIyjMBLqecf6phnhlIWqS233A1UsAHdlgT4F1bT/uLhwdv9td3XFlCQCzWwqCoKDRTGsjvntrxqnj3kb/Mx2Y/y8saT4uMG1aI04fyxdyMgd3V1EJcQLIs35k=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(23010399003)(366016)(18002099003)(22082099003)(261009223027099003)(4143699003)(261028144727099003)(56012099006)(11063799006)(261022075727099003)(261102123227099003)(261026121527099003)(261021121427099003)(261022105027099003)(261021123027099003)(261026140227099003)(38350700014)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sVJU3UAsNzq/oqd3e4xTlxCSzaoL6+7voURWSA4DDBpkVlCMpQJW3ZHOVFAq?=
- =?us-ascii?Q?Zc6vOgyWWNcWOQQYSBiIb8QX9KQdf6jmoAv/bgU8n+irIX3H6BFnbTNJIhGG?=
- =?us-ascii?Q?GmOsWgPQA6aMmHgRJ70sFWEJAd435pj5S5yTbmdEBGg79PGM90hLUiix6K9l?=
- =?us-ascii?Q?LzZCK1bYrdG3wpm2atYq46KkSebeK7uc/TZBfX5V9w9mS7WObybn/R9excne?=
- =?us-ascii?Q?iET6daU8gaznvTn3IVoflAc192lwF5p4DRd8VMiY+1ShEcOeDueRkYvMWp3L?=
- =?us-ascii?Q?RN813D2/kSm8XftW9nscMySlL3oArllkONzaFl8wRSZRrMnYcXefRAAT2R3W?=
- =?us-ascii?Q?nPA/gGiz7Zx4H/rOxXZKJ/wwZvLFsMcrlokj0DDESohQoyx7kgdMQt6eg28a?=
- =?us-ascii?Q?RfddgTpv7zicV+opI+2zE2AJ8fZC80ulhVtsuHEAu9GhuWoY4q2k5ACOe7J9?=
- =?us-ascii?Q?VnsqJQkQ/lSfPIjMGTVq2/1/msI6IsySOMPloUk5bnZ/CTodefX6RNdMznYC?=
- =?us-ascii?Q?4434QLR/Q9hidCdReYl4k/nfFZv7eb7sOdbtP/cb4HMqtOwYUtbHgdkeUDxR?=
- =?us-ascii?Q?T7vE+Hbftop5rtbAzFYur2iLLSDdAi4cwj4D+GVaRMXr67vF2U+mAemb2rWY?=
- =?us-ascii?Q?TQOrYDrwE8LfrNVZBTXBoH11dV+nySXosWXlfBa4IdDAwdZ55peFoaz1UT7+?=
- =?us-ascii?Q?lUtszTNO6I4gPSntApy8PIvnLa3U+7UhPbwk9kL8h16v4YFV8cOxqHVKAsd/?=
- =?us-ascii?Q?OXQViu8no6U04OK0dt4bDzceEjUDOGhhiktlWT9G0yvXQyOssKnvGSNcpuiS?=
- =?us-ascii?Q?l5NIbuHYnbV5bkg243QRhCnYcOSoFXNONFYZo344MPkoL5o5CeM4NR13Xhq/?=
- =?us-ascii?Q?tPIExrRHKzQqhqYdUQjWUFEy1N9BxxJ/f1/5ZnCrezKsahY7VdWg70h+2ME/?=
- =?us-ascii?Q?Q++IczDPJ/vH3D5akOro6viBQ9Dg3pATvKHXMPE4ZbUcBiNFPLuSHVYS49sG?=
- =?us-ascii?Q?qK9OHL7vWcKRX3ILLm/m18ikJ1XkpEmTaNztqGbItQtm0Q3oOxORvrIipAbX?=
- =?us-ascii?Q?WhlZ9pegEkQMDyTyrCQu5HgHCo6E/PZxv+Wwvg/x+iRp/FjKgnxEui60RxjA?=
- =?us-ascii?Q?eNsYSjDwLp/Q+nz5LCGC7EHf8HYW9xPkzy+51nvTjU5P6ha8KbVOgbyiG7jf?=
- =?us-ascii?Q?nwSEIK54r0TP6LTIAFDvAph9+kFXfBeD2E5qqs2WXomAupsi4EXw8HQ0sVOJ?=
- =?us-ascii?Q?acP368YH6F2OkuKcB8u7RAmncm+MbdC3bj5a2QNK0tFpO+fdTmv312thIxJP?=
- =?us-ascii?Q?B9mYzTm1Q7Gc0YGcdhmi0KK2J5KIGmcJgWF5fDxQaQWuEm4R78qgmx3TGVxN?=
- =?us-ascii?Q?jINdjhPeui1mP3SeV8V2sBY+/cmyJkh2UjB69wgmwqbAxBTDWanuEVRf9QLS?=
- =?us-ascii?Q?hkCwV9XnHlAQXa735NPV6y9Y/9t53oidIC8Q+taNJ2uM+kB3IOq3FXEK3GTt?=
- =?us-ascii?Q?RDVQ+iZT1/K07+W70ldtazfn3Z1EYZr44c2xNiP0h1HrMzpm851mAPzZ5ogY?=
- =?us-ascii?Q?91ciP8+KD1F1WWYgcurkDM6pXiQp4rSNcWISRy9gcKmIArxTYUXxr+KDbIIJ?=
- =?us-ascii?Q?63ZMp0HjjqyQGKrv6ZIXo+mKCKufpZKEdvYnWdbpaLK17D6uGpeDHv571O+O?=
- =?us-ascii?Q?ZrDkMYjEC52D2ER7PWQS4DFLMtNRw3AdcClOuxRq2p53rmK1By5jQBuJrBft?=
- =?us-ascii?Q?hnK8YSPWJH82sLw1cWGgdFBJmX+f/6/syRO5NU1Ht3iW7M5gqmfz?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa18593c-8b0b-4b16-bde9-08df4a3f043f
-X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 15:24:22.8228
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wgp5IHvoDaAjdh6/Nt5Pc1OLo0IGEvMTENV4saML9eYb1lwhlzlqQY9qIsRFBDQHNjYQEOQH5x5BvRkV4IClgD6wCEymwyu1NKvjtekX7jeXCO1oKcWj5EbLTsv5U6L2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB13650
+Content-Transfer-Encoding: 8bit
 
-Hi Biju,
+rcar_sysc_pd_init() checks whether the device tree has a
+"renesas,cpg-mstp-clocks" node by storing the result of
+of_find_compatible_node() in the bool has_cpg_mstp. The returned node
+has its reference count raised, and the reference is lost when the
+pointer is converted to a bool. rcar_sysc_pd_init() runs once as an
+early initcall, so this leaks a single reference at boot.
 
-On Tue, Nov 24, 2026 at 12:51:18PM +0000, Biju Das wrote:
-> 
-> Hi Tommaso,
-> 
-> > -----Original Message-----
-> > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > Sent: 24 November 2026 11:59
-> > Subject: Re: [PATCH v10 08/12] drm: renesas: rz-du: Separate the DU instance from the DRM device
-> > 
-> > Hi Biju,
-> > 
-> > On Tue, Nov 24, 2026 at 09:33:13AM +0000, Biju Das wrote:
-> > > Hi Tommaso,
-> > >
-> > > > -----Original Message-----
-> > > > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > > Sent: 24 November 2026 09:21
-> > > > Subject: Re: [PATCH v10 08/12] drm: renesas: rz-du: Separate the DU
-> > > > instance from the DRM device
-> > > >
-> > > > Hi Biju,
-> > > > Thanks for your review.
-> > > >
-> > > > On Mon, Nov 23, 2026 at 04:59:32PM +0000, Biju Das wrote:
-> > > > > Hi Tommaso,
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > > > > Sent: 13 November 2026 12:20
-> > > > > > Subject: [PATCH v10 08/12] drm: renesas: rz-du: Separate the DU
-> > > > > > instance from the DRM device
-> > > > > >
-> > > > > > On RZ/G3E two DU instances share a DRM device, which can only be
-> > > > > > created once both instances have been probed.
-> > > > > >
-> > > > > > Split the DU device structure: keep the match data and the
-> > > > > > registers in a structure allocated with the platform device, and
-> > > > > > allocate the KMS objects with the DRM device in a new
-> > > > > > rzg2l_du_instance_init() helper, as they are released
-> > > > with it.
-> > > > > >
-> > > > > > No functional change intended.
-> > > > > >
-> > > > > > Signed-off-by: Tommaso Merciai
-> > > > > > <tommaso.merciai.xr@bp.renesas.com>
-> > > > > > ---
-> > > > > > v9->v10:
-> > > > > >  - New patch.
-> > > > > >
-> > > > > >  drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c | 61
-> > > > > > ++++++++++++++------
-> > > > > >  1 file changed, 44 insertions(+), 17 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> > > > > > b/drivers/gpu/drm/renesas/rz- du/rzg2l_du_drv.c index
-> > > > > > d3cccbdf9012..d102876c07e1 100644
-> > > > > > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> > > > > > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> > > > > > @@ -162,6 +162,27 @@ static int rzg2l_du_pm_resume(struct device
-> > > > > > *dev)  static DEFINE_SIMPLE_DEV_PM_OPS(rzg2l_du_pm_ops,
-> > > > > >  				rzg2l_du_pm_suspend, rzg2l_du_pm_resume);
-> > > > > >
-> > > > > > +/*
-> > > > > > +---------------------------------------------------------------
-> > > > > > +----
-> > > > > > +----
-> > > > > > +------
-> > > > > > + * DU instance
-> > > > > > + */
-> > > > > > +
-> > > > > > +static int rzg2l_du_instance_init(struct rzg2l_du_device *du,
-> > > > > > +				  struct drm_device *ddev)
-> > > > > > +{
-> > > > > > +	struct rzg2l_du_device *rcdu;
-> > > > > > +
-> > > > > > +	rcdu = drmm_kzalloc(ddev, sizeof(*rcdu), GFP_KERNEL);
-> > > > > > +	if (!rcdu)
-> > > > > > +		return -ENOMEM;
-> > > > >
-> > > > > Why there is duplicate allocation of rcdu? One in probe() and here
-> > > >
-> > > > The two allocations have different lifetimes.
-> > > >
-> > > > The one in rzg2l_du_probe() is tied to the platform device. It holds
-> > > > what is needed before the DRM device exists and outside of the
-> > > > component bind (dev, info, mmio, and ddev/is_master for the master, PM and remove), as on RZ/G3E
-> > the DRM device is only created once both instances have been probed.
-> > > >
-> > > > The one in rzg2l_du_instance_init() holds the KMS objects (crtcs,
-> > > > vsps, lvds, index). Their drmm cleanup handlers point into it and
-> > > > run when the DRM device is released, which can happen after the platform device has been unbound,
-> > so it has to be allocated with the DRM device.
-> > >
-> > > Then there is an issue right, platform unbound will unmap mmio and
-> > > other data structures it allocated in rzg2l_du_probe()and drm driver
-> > > is using after that( Use after free Bug)
-> > 
-> > Mmmm In theory no.
-> > 
-> > The KMS part keeps its own copy of dev, info and mmio, and its drmm cleanup handlers only drop
-> > references, they don't access the hardware.
-> 
-> Can you please make sure these variables set to NULL, after
-> Platform unbound?
+Keep the node in a local variable and put it after the check.
 
-Please correct me if I'm wrong but IMHO this patch keeps the same behaviour
-as the driver before this series.
+Fixes: 1c8c77f52d10 ("soc: renesas: rcar-sysc: Enable Clock Domain for I/O devices")
+Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
+---
+Compile-tested only (ARM multi_v7_defconfig, W=1). I have no R-Car
+board to test it on.
 
-Where rcdu is embedded in the DRM device (devm_drm_dev_alloc()) and mmio
-is devm managed. Setting the pointers to NULL would only turn an invalid
-access into a NULL dereference no?
+ drivers/pmdomain/renesas/rcar-sysc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
+index 3c8a44c6d772..20acc9dece6b 100644
+--- a/drivers/pmdomain/renesas/rcar-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-sysc.c
+@@ -353,7 +353,7 @@ static int __init rcar_sysc_pd_init(void)
+ 	const struct rcar_sysc_info *info;
+ 	const struct of_device_id *match;
+ 	struct rcar_pm_domains *domains;
+-	struct device_node *np;
++	struct device_node *np, *cpg_np;
+ 	void __iomem *base;
+ 	unsigned int i;
+ 	int error;
+@@ -370,8 +370,9 @@ static int __init rcar_sysc_pd_init(void)
+ 			goto out_put;
+ 	}
+ 
+-	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
+-					       "renesas,cpg-mstp-clocks");
++	cpg_np = of_find_compatible_node(NULL, NULL, "renesas,cpg-mstp-clocks");
++	has_cpg_mstp = cpg_np;
++	of_node_put(cpg_np);
+ 
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
 
-Kind regards,
-Tommaso
+base-commit: 8dac6df92a2e66e2098bbc69061964cfe7e8375b
+-- 
+2.56.1
 
-> 
-> Cheers,
-> Biju
-> 
