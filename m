@@ -1,97 +1,130 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.180
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795501204;
-	b=Q8Go/vvq3WBFGjgQ8XALi/DKcNhJZDgreN6y+1GJlgjKrmTLydHNHbFhQ/D65RWHptS1
-	 YSKVuR2im//da/HajFBWgljEoJPIVPBxPhDSuGIGInQ7+9Aub9Pt195C5rVly37nzupoI
-	 VzQAADZ2LY5YXUhhEdhJiZFAI6ocMe3OjNCKmU1ji5DyGS6/WatV1AGqf4D83R2UJ2/Hx
-	 vtBauvK6NpP67sFBmcHC88QL7ga0mTUpV5MKfiyr/f95MRH6DlhJLg8stHuh/kB6JYc1T
-	 6m+ke5DaZ6dfjdajSJ4KC9u6eAIou7++hXdemuyBmxHMScUOhzSA8VdDKVEvnUYeifA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795501204;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=pI4cY4bgznXKJ4A1hmZr6uhBddx8lY/IEe8WYtmh65I=;
-	b=lnc963PwBpsaTiKRch/T4/mCf8yow/4WqaSPTldD7P9QWpQJELIc2Df/vmBcjRn5lJPU
-	 CKSoimolbShj9BzsmmQshB7jbJ4hYsk59NrJSfsdyHfBv9eCDhCUnNdf6ugOJeOsBeqMg
-	 ZYWadjTu3TcnDVJkTaRwICtcoKmbbr7LSL9I8Ughw8BAdAJbLc1fZE0SgF8m5hzIgN+Sg
-	 WsxJE+1YiWKW4oJLsmqswttA0SjTgKRFKOfgTchvwgX3tjQyEBb0GzsI34WpLryfIX982
-	 Rtm0BVTupfAE+Z4flWeQGK6y/ud48kfJk/+dX9bEfm9XDbi2p2hLTV1yZ0mkKVmheHQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=gLQh06ZX;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.180
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.149
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795502445;
+	b=Qh2QbKMuvrfwC9QVXgGTzhpehPLoyY+pINu1oWrkBmu4/J1Lp4jxoV9upub7m7FR2gvI
+	 rOjlMO/kM0rtAExjz+vGGnuCU1FoUH7La8cWgUH13lpxYY7GMO5v1RnuABbabeM7UnjiM
+	 dmsMM6iq40FMmFzqlgNtKpWNHDyWxn8uCIIDoShPcbUDIL5TS5Vskq6h10k+OX2dGKgGj
+	 hv4mdr6c1YNTK19kAqjWCNMG/1UWtN06HU5ttoA7CqcTtiYkCMFwlvXBdCAoC01Kc4YuM
+	 LfSHZWI4VBRF4stCfdNhqpkwDOmRuRJ2zB1KbVng6bdpnyA4tRNWsGFRWf2IIty8kRQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795502445;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=w23lNFq4PU3EA/g8IT7NKGXR8jqt/dFslDDg8kIe164=;
+	b=HKE0j/oKlfBfCPz2ytUomVLgWB7jMAv5ajL9r4yvcErQn6nCQX4/saQ35eesq6p2e6+S
+	 Rnz3n7ysDEhsDEY3BoHYgBmJPM3/2laNYPyk+STCC07ls7+DwVK+vTu+kpjuTNC5+6XKu
+	 Zg+N+O0b8uZOfUYznFo5S8uX5sM5jpdVvwYzdCqnr4OJ3OOwPKZHEEGlIGGeYiEClRW9/
+	 XoxkIvffURY2aSwWwTqzqq3bDmbtIo0c72ux0/4aghusVcePnNw8s03U70rDPfBAibfdY
+	 N4+RR6MSbJJJBkN5B3lrJBsXZcUr2qXOn3weSCfmtFXBqfFOSyulps8JWKSjt/PPXIw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=ragnatech.se;
+	spf=pass smtp.mailfrom=ragnatech.se;
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=oBumkIjE;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WAZ9zMHG;
+	arc=none smtp.remote-ip=103.168.172.149
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E707606A321
-	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 06:20:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7E707606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08305606A32E
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 06:40:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 08305606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=gLQh06ZX
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-8b4e04eda5aso29808127b3.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Nov 2026 22:20:03 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795501202; cv=none;
-        d=google.com; s=arc-20260327;
-        b=eyyxylBIZy6b7og1ZquiJ0/tJbplSRf08Fukg3rwice8q3wo3khQVZJ+ZXaved5whC
-         GRuNNJMQvJYgM0pJvqn8Gu0QMy9pWMZtBTjllOEXuXivetPZa/sLC4f1BVSDxJ/17bJ/
-         jEwaEzPHjWX/a4+qMoYjYFvs18AsSzr2N18u8mFLCj7EGR/FCC1GjhzHMBFMUHJsXMno
-         LIOW8Jl1TKwFUK7tPcdVd0erfhAm6RpoTnuSM1YaufrTMQCH4Ot9PLXZiR3+i+nfiVLG
-         nHsrFlCYYiC6rSICtABBjT+9fi9YMVnbl7On/337Ay8hYxARowBahi0qHRGCmA4nZh11
-         UONA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pI4cY4bgznXKJ4A1hmZr6uhBddx8lY/IEe8WYtmh65I=;
-        fh=nx667bCVDcFAVnFl0GAf89w5pWlaqo1QLT/vGYNOcOk=;
-        b=pM8BnO1ioj+2FyeqiFXfwg4SVNe2w8fAR//6mKzHXA7zxcqkUivqj105SxdhiNZlU5
-         sgmDGzUrimpg2CSQ+RoGO3B08N12zhSeTiElsr++7+nQFLJaYFI+gNbs9m1D/Y8WFD4J
-         5ydLrHmIn9aufoqBvBzqsTV11UWU/gF1MZFMK/L/TCvcoFbkaSC15Aij93ItsIct71yN
-         +3MY/QDAOR1jDsgZmaosBfNdZzTwAl+RydrkKKP5iITou+DUvGPORNsgAhNMr9/tXDJR
-         8ng587iFbtgKNEKA8jBmRawzaSk/9M8JFXGSWfZnR2WTtRkqNjz0g9kjYM9TM9lTVrRd
-         TWXA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1795501202; x=1796106002; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=pI4cY4bgznXKJ4A1hmZr6uhBddx8lY/IEe8WYtmh65I=;
-        b=gLQh06ZXN+nXp1eeOgp/W/m9EQcb4H6xxbAtyBqkY2Re512Zn0YieDfPUaKgVNKnaf
-         wsyJvbnWySDCo2sf8C5Mg56I+TKOuiVvALTqyjKc1h3eZrL+J8OIfnMcfXINEb/5SB4g
-         jYSFvQACzQeoK7mOXSeU5JhFzNnUPbcoC20xQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795501202; x=1796106002;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=pI4cY4bgznXKJ4A1hmZr6uhBddx8lY/IEe8WYtmh65I=;
-        b=mMOq6aTrKu6Eu29X7fTnJlWv9Sfl0J3Qxyor+K447VkzWmJsY5rej1r0tCLfeLtMRi
-         Vc046UlMG55wtukU3mLZ/Sc8r7WLMWZt7cJIQiG13GG9wJCctkiTw30gqkVStrWwvkvc
-         nzOekdKuZxP5fKMVeNInb53z0EfKogAejjdXVXEXkUl1FKEbSEpahWX4GG2lnHb6S78F
-         rPjLN5h0Wy66nm6tgWjfkbm/SrGHSmrsa2I55VyZ1jYNoHuhvz2pEwXUSBn6pDjhiBDF
-         zwELNjX3D7akVugOp7RrnWvoYkRQGBjpKpUSi7/P9V5nTN1BD3lz7dXjwS7/UEwnRqz6
-         znwA==
-X-Forwarded-Encrypted: i=1; AL+hErFmK0XqYt7g3WEfvNchyjuOYN08wuZcvGrmBMlHdsJp5HRlmfaIVuzvlGCQxS0U09UvUvpaj6lolLNDetGPkbTAvg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+oYh50XnROzP4dec+mVdzqYVbcL+W97M6ZOxzdkbKevpXDNkuL
-	IV5XRW76mXQBE++OwmxenZaKmcysj6UkvBTOaAFfNpmka2CDL5CWT0NA9F1gN766P2A3IO5YvaO
-	3Q+GLhcS/vCH816RSpXv/OHhZ4seXZd9hX5ifrQww
-X-Gm-Gg: AZFdTZfCHnX4gUOs0Pux6ZJD6613D55hsovsoam6a5oqoAotNLywwyPfQI1TQo3iFAi
-	1s9zfLKdkkxihxG/PJmdxS4MwvK4L0cpr3pKlGGCjtpih58aJexqx4bG6tadcKF7SvagomJoDkX
-	uUoSu5tYxzZ6AhIKWzer+jZHKUh9JiVlMcDVBeYAC/EYZMggIoLc4j7zfAa4eeS2Dhatydpp1ct
-	r0nM2I7AnmRYbdbuccpOwKstlk0p94HQCNYG2yrmkP27LoNXVKmjVU2qhnGt1RwoOP4EmdKWPeu
-	UEbWNfnYrZeDbXCRW3q5IpUxb0+OjtqTTjb/meoyyMU4FHrpEQCb9Y9yc/zMfIe3OTmboltN4AE
-	ovN36Bp/gSQ2/JFslHnCxN9jvGdAJLvn8wYMPNThDhFiz0WUnJ78r70mqiuv6TUi1RPU=
-X-Received: by 2002:a05:690c:2a87:b0:8b3:3fe5:f6b3 with SMTP id
- 00721157ae682-8b520537719mr57934737b3.50.1795501202456; Mon, 23 Nov 2026
- 22:20:02 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=oBumkIjE;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WAZ9zMHG
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 05349EC0980
+	for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 01:40:44 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Tue, 24 Nov 2026 01:40:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1795502443;
+	 x=1795588843; bh=w23lNFq4PU3EA/g8IT7NKGXR8jqt/dFslDDg8kIe164=; b=
+	oBumkIjExkoM1uwCehL/8oDhAQlt08qXvFbsmQNQYgAfGBD5NYGk+u85+QcpSBr3
+	IeGEwNWzr8kBxoP1y5MR9UM8OHEvHqfh09uX11iwF6Ad8ch+aMafcxG/qRFYEjcY
+	J4AO+Rnl1EmniiB/RoKKdWumxugKLRfac672moww3Ug+NUnYbwOZQTRsr+yBUGn/
+	sYa7y3WvyWBNsgLSBwElyfZQN9GYxA7KPxZNqU2iHvf7DBzXvD2h3nUewhy3F5b7
+	Y57JfrsJNJVip7YLloTJ3EIcEWI6L/t50gcmR1alY5fibg1MpI/prAqb/eXaU2OC
+	g7aP9zY5s3s9aJLtoNZLyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795502443; x=
+	1795588843; bh=w23lNFq4PU3EA/g8IT7NKGXR8jqt/dFslDDg8kIe164=; b=W
+	AZ9zMHGtea3NNZRXu4FUEXV6Bzhntnmfou1n5WVSuKqpMR7dDsl8QLH26GCd+W/z
+	KctwHRNHLnlUnNjIOAREn3DWh/m7g/pcvjcrqJ4s+mpfAn5oTjLo7HubR/KnUxIc
+	ayEmdMZ7dYcfpVzBKzQ+pK9TDtCf1yje4ZPBGN60E2PPY5416Th0FCxFqzzsS80J
+	1c2tt5arOumSyzIYNnltDrghSg2qAXKWo2eRQlYct2uSqISLXQfVvYuftJ7Vjs94
+	yESCxu84mAM/BMXm8l+g/ORG0/QwvjvrgcT4YsC2JIIWBrO1M5n3qpUNFfHUNXaj
+	aeSjxODs9RT66EM97T/qQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795502443; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm2:rsa-sha256:VdIrPy0YVG58pDJ/Da7aY02R4P+o0om/kpXGFFFYxMhhBK0
+	wfsaK+lnP9szSik9Iw8FVuyopbOcBZlgaQh9nL+3qgJniMVXhZEgrQbTqJA31QET
+	4XJMEQWSD2eWTduAIh2/Ag7JnXkpxJlzM+92bLrvtPBnkw+P8B12maY3XFIzY4TX
+	l1v6K4lAhgi82qekabCEpjNInpRhGH/0bURIuExm+tWAiuLdTYrXRwTJibu6nNIY
+	BgA6OcqJkF5ObmcWLijSDEsvFn3L6ZgiE+sLHJcvJjKeRz5Pfo4XSdl6NFyEsjWF
+	26m8zVTISAC7YcWBOrtDQyExWMpNVqld9J9TdXw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=13;
+	hn=cc,content-disposition,content-transfer-encoding,
+	content-type,date,feedback-id,from,in-reply-to,message-id,
+	mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:STD6H0HdESP6jlj1Ui0LxDpZbGwRDzEyJb8kvkm7AG4=:XDFc0NTQHGVBocCGeAeBq/Z+MiIoxLgdkMxglKsMzN0=;
+X-ME-Sender: <xms:azEFa4tD-g6g_xAa5S9YsbHnAmZnBQ5ahcc73PVn9xpPacqFWM843Q>
+    <xme:azEFa15aAxm40NhgNkelVxNtVvusqHDHbkLa9udQekNfJj-0Dyn3rwF8dalgLMbPb
+    DYM2A32Y69SGy-L1iJQ3HIKt076vR4e0LVbRikV7g_3irn73wee>
+X-ME-Received: <xmr:azEFa0fqTEURASYd3KlUIdzC1wocQOpeic0TAAg2hW1b5clpRiuNn7tcGX43E-hz_5WD1qvBrhdY4jYoMvU21o3SgvDnYH0>
+X-ME-Proxy-Cause: dmFkZTEZm1p0nloDXCDDKweUR4luS46Uz3EWb2EgwJk32G4Vg9LVoiy2p+zVRYy110bsoE
+    0imqv32La6cgFk2EuNvmn4GxG5XLm/NJBl2YetOQhdgT2+k9mR4Bzki9T4yHyJ5V6QTQcX
+    DmpQicN2uQkqExraEzYLlcXNOcQhRzYXSFwYVKD8ufnUxcNpQcWQVF2N0q6V9ibAJRuQ3o
+    jn3mVXoryYaqGW+3G0ECefPAy4ybFAvHHB73CdCxtWAFc8Uq6LQlmKJtWwvOUpYAUmHcI1
+    mij4p5AoXoNDsRx1Mo4UUURwoJW2xZIkVeEGp+iDQUzCbuvpPrk6DLtvk8fWJFgbJgLoFJ
+    UOCUeAICb9oT1TQ5M+6CoIaudDjcALNbktE7fXWhpOMU+jV4qUdRerNCh4YZSYEqifKNwE
+    Qk/EWvie8LZ6xSrWbTTK1syG5TXm4U96uBPqzoqJQ2okVfBpZyEVgv5PgUcZcPXLkdoE5B
+    H8PZK3IEgchx7LG/wRupnpPqvN/v2jou1VEllehrrYZq5kjQ0wiWPLk8YsqqHkyR7Qh05v
+    FSSrz/XNTq6Bn5cJlpM8VCNWUPVKTBiU7/GFlSLqcnfhIoU+zbFEIpJiI4UiRsULKt3KH5
+    edF5++UkoIh3BiMxAKZXA/oYgMf44fKf2IHLOoiqPpw6l2XV0wcRLzo3e4YQ
+X-ME-Proxy: <xmx:azEFayxxe5_YRxRV94TPLHwFWG1-DQqA8u2yXiNDELCbZpGuSoRCOg>
+    <xmx:azEFa5_wcr9ctliapuT1eKrYDSWhWFOxJC6jNQFmH66qouQJJtTwJw>
+    <xmx:azEFawxPKK23kTm4uezKwy11t-RTvDPVcSeC757YqYMbNtab0dJgbA>
+    <xmx:azEFaxpIXJRZuzIvTuj66iuACsQk8jHATShGxcooPZzcNtyMZwXcEw>
+    <xmx:azEFa9XlxaCFvUDAfTZBpnZlbDYi5Cv4esXVmnb5Rz2f3zL2FIAFbJel>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 24 Nov 2026 01:40:42 -0500 (EST)
+Date: Tue, 24 Nov 2026 07:40:40 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Yaohan Li <shunsheng1218@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] thermal: rcar_gen3: release the IRQ handlers before
+ the zones are freed
+Message-ID: <20261124064040.GF3898744@ragnatech.se>
+References: <20261117145348.1092528-1-shunsheng1218@gmail.com>
+ <20261119022926.1493582-1-shunsheng1218@gmail.com>
+ <20261122144813.GB3898744@ragnatech.se>
+ <20261123064745.GD3898744@ragnatech.se>
+ <179548695107.1834709.12105107414276177799@gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -101,104 +134,46 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261123113755.3033436-1-wenst@chromium.org> <20261123113755.3033436-2-wenst@chromium.org>
- <TYYPR01MB6603FFE6D156C9E84C9891DA86452@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYYPR01MB6603FFE6D156C9E84C9891DA86452@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 24 Nov 2026 14:19:51 +0800
-X-Gm-Features: Aa3M54ojNfKajFSsYfJiknRIvLbdnHGoigTuXBmWZPLKOqIabbjntbCzug34xtM
-Message-ID: <CAGXv+5E5fSyU6gEPk7BLQdz6wXpgSxaXShM_zTtjuim5W_pxdA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] power: sequencing: Allow desc=NULL in enable/disable
- stub functions
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, 
-	Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <179548695107.1834709.12105107414276177799@gmail.com>
 
-On Mon, Nov 23, 2026 at 8:36=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
->
-> Hi Chen-Yu Tsai,
->
-> > -----Original Message-----
-> > From: Chen-Yu Tsai <wenst@chromium.org>
-> > Sent: 23 November 2026 11:38
-> > Subject: [PATCH 1/2] power: sequencing: Allow desc=3DNULL in enable/dis=
-able stub functions
-> >
-> > The non-stub versions of pwrseq_{enable,disable}() are no-ops when the =
-descriptor is NULL; however the
-> > stub versions always return -ENOSYS.
-> >
-> > This would require more code to deal with on the consumer side if the p=
-ower sequencer is only needed
-> > for a subset of the supported devices.
-> > One such example is the rzt2h_adc driver. Only one of its two supported=
- hardware blocks requires a
-> > power sequencer. The driver could be built without power sequencing sup=
-port and the other supported
-> > hardware block would still work (provided the Kconfig dependencies are =
-changed).
-> >
-> > Align the pwrseq_{enable,disable}() stub functions so that they also re=
-turn success on NULL
-> > descriptors, acting as no-ops like their non-stub counterparts.
->
-> Could this make debugging harder? If someone disables the pwrseq Kconfig =
-option,
-> the stub returns success, so the power sequence is silently skipped.
-> The resulting failure (e.g. card not detected) would then look like a pro=
-blem elsewhere.
->  Should the stub return an error such as -ENOSYS instead?
+Hi Yaohan,
 
-I think it depends on your code? The (devm_)pwrseq_get() stub still returns
-ERR_PTR(-ENOSYS), and if you pass that to any of the other stub functions,
-they also return -ENOSYS.
+On 2026-11-24 10:22:31 +0800, Yaohan Li wrote:
+> Hi Niklas,
+> 
+> Yes, I agree.  I have reworked the probe to look up the IRQs first,
+> initialize the sensors with IRQEN cleared, and request the handlers after
+> all the thermal zones have been registered.  A devres action disables the
+> interrupt sources before the handlers are freed, so ->remove() is no
+> longer needed.
+> 
+> Since the thermal core copies the zone operations during registration,
+> set_trips() still has to be selected beforehand.
+> 
+> The current version retains the no-IRQ fallback for -ENXIO and propagates
+> -EPROBE_DEFER and other lookup errors.  However, if IRQ lookup succeeds
+> but requesting a handler fails, probe now fails instead of falling back
+> to polling.
 
-This change specifically targets code that expects pwrseq_enable(NULL) to
-succeed.
+It needs to revert back to polling. IIRC the interrupts are used to get 
+quick notification of a trip point but if interrupts are not 
+enabled/supported it can still find it using the polling method.
 
+> 
+> Would you be happy with that change, or would you prefer to retain the
+> original fallback on IRQ request failure as well?
 
-ChenYu
+A bug fix should not alter behavior, other then fixing the bug ;-)
 
-> Cheers,
-> Biju
->
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> >  include/linux/pwrseq/consumer.h | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/include/linux/pwrseq/consumer.h b/include/linux/pwrseq/con=
-sumer.h index
-> > d24b5af3e49b..5b3c61e963eb 100644
-> > --- a/include/linux/pwrseq/consumer.h
-> > +++ b/include/linux/pwrseq/consumer.h
-> > @@ -54,11 +54,15 @@ devm_pwrseq_get(struct device *dev, const char *tar=
-get)
-> >
-> >  static inline int pwrseq_enable(struct pwrseq_desc *desc)  {
-> > +     if (!desc)
-> > +             return 0;
-> >       return -ENOSYS;
-> >  }
-> >
-> >  static inline int pwrseq_disable(struct pwrseq_desc *desc)  {
-> > +     if (!desc)
-> > +             return 0;
-> >       return -ENOSYS;
-> >  }
-> >
-> > --
-> > 2.56.1.831.g720f3f5937-goog
-> >
->
+> 
+> The reworked patch builds on arm64, but I have not tested it on hardware.
+> 
+> Thanks,
+> Yaohan
+
+-- 
+Kind Regards,
+Niklas Söderlund
