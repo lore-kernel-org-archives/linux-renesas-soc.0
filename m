@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795487186;
-	b=N8mB1Ew4ua6qYg8pKhssnJ0fYwE81TeRZTm3Gq4Wxea70RQzZcQWeDh0uMOxu2u/EQS6
-	 El62Cywj2WMpX7WPsso0lLDqs9CRl+8x6dTDK1JuREN4AUlsGsmA8ZfN6G/zKaVOJwHMj
-	 szfyNK0BoRru6xQ+Xs5XEBDZvIXzOKVjn8tYnUruXLZ2aaWnpWyUwD7zEdzoT6lWLD1L3
-	 h+tgR1cKYrt4OoCT29HjYn+dRmSgVwQTsNOJdz6ABToaXsdxEOKrz8Exutg6p8mmr9I6w
-	 CGtdr0Q6fnQAPf5pnjB9ZBrkxo8a9S44iAUOGFRqbvs9V9rIenkJhfcI37UxMfwda6A==
+	t=1795487189;
+	b=eA96x0RzCTBst7y4UuyTrTp68xcd51eKJKbQw0hEpG9B6OL3Gb6dNTZGGlzo75xQHdXI
+	 ionUb/l2cZ0uNcUjyY+8p4wUlJkzLvTrvvTe9VtN3x9UmtbIPMVE9qH6f4u8GUkFqQbQm
+	 lPt8N/aHXmt2UnrrGHpX/lMr7h7Lh74iLt4wxJ111SqQNW81BztjGrqrQ4Vkic/Ep3Vs7
+	 NPnOn4lgDN+HOnDkM51xcmkpKn4yU3v0P6r7t4wLAh8NcSR+A7So5cbNQ+5oE2D3Bv8a8
+	 TyebaD4+EFBhOCBOMi5AQ95fh/B68mEu5zuA8AsrWR0E/7ZkR9WWGaraFyFDbDYY3sg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795487186;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795487189;
 	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
 	 In-Reply-To:References:X-sashiko-severity:Content-Type:
 	 Content-Transfer-Encoding:MIME-Version;
-	bh=p9Meye8EdomVgGo7ib0+5Twh3gdkb8XAbFKswpS/dAA=;
-	b=V6L77LxmIW2NaJ8R8aRU8U7quX7aQlW7NFKO52fEcwtr51CvCzPkv45ZNveiiXxbgm/l
-	 l7MfNzvgQjg5yTRcCsfdJK+Aiepl3hRZP1/o94/jnl1zyJFDX4oZrhbXVnRkH3WFA1onL
-	 Q6lqzwMLKpkZc4nVwlkCCQQvuOa0DGRSmdUHLn7/umG2xU6qMGspBUKPGIqV197Qnvp5i
-	 LhdmgAS3ukoA3/4gn/V4RL2Ggc/BhQb72RxikrMEwMp0j+lEfLf9kJaVNmzrvzEvV3FCT
-	 sEMqzMH0PkoTMOV0OirQNcGNstBuGxCuowdT6V2k0+NVy6QFMQ+ya+g1SA/32fcmMeQ==
+	bh=XRLMwQm9cSwnCXwLWzr19EeC/TeAhie3XNROKNH+2Bs=;
+	b=zMoyzTChZ9649HAFqYNCLl/t+Lt0VibnyT0boP7ohyfhhKjFsMh/xsaiIloxW21CmLxz
+	 97kwYG1lgSSLNyErYbJVSgVyqd69iPTerVEx3pYQC5EK5ODbqlQdIgewMf759kRx+jlAY
+	 jvUdDNVV5EvRhi0/s8GaHjyD2tccLJOgZPtR1gMXFs15q34KEastIcIQx4wANYB69MauA
+	 j8qJQV6g1D82smy/wmYp9oRbW7mWJmaE6TRYtgWvOGLeKT+5adj9vG9V4hE3ybbRUtACA
+	 HRdZp0p7ojlw2IQbYvyMn2fy89MjHa20VjOks3g8MFct/8X5sywvQ0ll8q5+m8JeIDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QKM51Ptb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=chbPH5HR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA737606A686;
-	Tue, 24 Nov 2026 02:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E20F606A33C;
+	Tue, 24 Nov 2026 02:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QKM51Ptb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 381431F000C0;
-	Tue, 24 Nov 2026 02:26:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=chbPH5HR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 432F81F000D8;
+	Tue, 24 Nov 2026 02:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795487186;
-	bh=p9Meye8EdomVgGo7ib0+5Twh3gdkb8XAbFKswpS/dAA=;
+	s=k20260515; t=1795487188;
+	bh=XRLMwQm9cSwnCXwLWzr19EeC/TeAhie3XNROKNH+2Bs=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=QKM51PtbHVOfJUC5lAEw515T3RPXG4Pt/qEsW9pEjw5PEBp3vKBVPV4WBamVWlI3T
-	 kqh74m/0an1nGp0uvEdD5o6qtm6Bx+5UCvn6Mb3vQr5Mnnaf9aZyNiFXCEg1Cc/If0
-	 XsuDH97EU2rtCkPAMPtUXmzN410iOlYjH/F8ivdlENz4edTyQSLQqqxdvYS+PK+ick
-	 KYAUQH2AwbTknmB1S/3PWe30IRD9hsNqXbZaKZLxYLajAPJJqx2ayRROLh9od0HLLh
-	 i0tgtitUSzZ6Th13PMXapWLUjPK28r/X7xGc53fwJpjMHGKc/cRvkWqDPeRSj+GKsz
-	 SEGyDbBIiSmnA==
-Subject: Re: [PATCH net-next v5 08/24] net: dsa: rzn1-a5psw: Fix LK_LEARNCOUNT
- write mode encoding
+	b=chbPH5HRokEWNzPzf+J9gMRNiokhjFcZ9PsFwIVZX1A9XK8IzkLtix7bOKMLtpi+Z
+	 p82NHvdTL9zSWwU3m4jOxK2REdt97jmcLnroquUSwhs0GFRF9c8SpZ+0qq/FNL5BVv
+	 Rf89FKdSofDVBZSJ9tHEtBPx8XNOy5cezAag5QtDB0NFdFN2TZVpGF8H8m9dF3XR+Q
+	 4XzdN4YR7SpPcf+HBrG1eaOGUbgh/L9xZtPZ1ozMAdsGpX2bwgjC4BxeG4f0bl8eDQ
+	 WpQg2iGj4GuuQdCS7nHx7oGMDzfPzTlj6sQx68fL9gQBVVeWjY0ADv/I0QG5woTeqJ
+	 sDu3n3AzBbtLA==
+Subject: Re: [PATCH net-next v5 18/24] net: dsa: rzn1-a5psw: Get pattern
+ matcher register offsets from OF data
 From: netdev-bot+sashiko@kernel.org
 To: prabhakar.csengg@gmail.com
 Cc: clement.leger@linux.dev, andrew@lunn.ch, olteanv@gmail.com,
@@ -54,10 +54,10 @@ Cc: clement.leger@linux.dev, andrew@lunn.ch, olteanv@gmail.com,
  devicetree@vger.kernel.org, prabhakar.csengg+renesas@gmail.com,
  biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
  prabhakar.mahadev-lad.rj@bp.renesas.com
-Date: Tue, 24 Nov 2026 02:26:24 +0000
-Message-ID: <179548718477.3135.6592520355111834808@kernel.org>
-In-Reply-To: <20261120002549.1908299-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20261120002549.1908299-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Tue, 24 Nov 2026 02:26:26 +0000
+Message-ID: <179548718681.3135.5483552869953704216@kernel.org>
+In-Reply-To: <20261120002549.1908299-19-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261120002549.1908299-19-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-sashiko-severity: Low
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -77,62 +77,48 @@ you want to address the nit picks below when you respin.
 
 Low priority / nit picks for your consideration:
 
-- [Low] The commit message for "net: dsa: rzn1-a5psw: Fix LK_LEARNCOUNT
-  write mode encoding" carries Fixes: and Cc: stable, but it only…
-- [Low] "net: dsa: rzn1-a5psw: Fix LK_LEARNCOUNT write mode encoding"
-  fixes code from 5edf246c6869 ("net: dsa: rzn1-a5psw: add FDB…
+- [Low] The commit message says the patch will "use the correct values
+  for each SoC" and quotes the RZ/T2H/RZ/N2H offsets (0x3f00 / 0x3f40).
 
 --
 
-net: dsa: rzn1-a5psw: Fix LK_LEARNCOUNT write mode encoding
+net: dsa: rzn1-a5psw: Get pattern matcher register offsets from OF data
 
-This patch changes the three writes to A5PSW_LK_LEARNCOUNT in
-a5psw_setup(), a5psw_port_fdb_add() and a5psw_port_fdb_del() to use
-FIELD_PREP() with A5PSW_LK_LEARNCOUNT_MODE. Before this change, the raw
-mode values were written into the count field instead of bits [31:30].
+This commit moves the RXMATCH_CONFIG and PATTERN_CTRL base offsets out of
+the A5PSW_RXMATCH_CONFIG() and A5PSW_PATTERN_CTRL() macros in rzn1_a5psw.h
+and into struct a5psw_of_data. The RZ/N1 entry, rzn1_of_data, keeps the old
+values 0x3e80 and 0x3eb0.
 
-> The LK_LEARNCOUNT write mode lives in bits [31:30] of the register, but
-> the driver writes the raw A5PSW_LK_LEARNCOUNT_MODE_* values (0, 1, 2)
-> directly. As a result, adding an FDB entry writes "set LEARNCOUNT to 1"
-> and deleting one writes "set LEARNCOUNT to 2", instead of atomically
-> incrementing/decrementing the counter.
-
-[Severity: Low]
-The FIELD_PREP() conversion looks correct. Could the commit message also
-say what a user sees go wrong because of the bad counter value?
-
-As far as I can tell, the driver never reads A5PSW_LK_LEARNCOUNT back.
-It is also not exposed through ethtool, devlink or debugfs. The only
-accesses are the three writes in a5psw_setup(), a5psw_port_fdb_add() and
-a5psw_port_fdb_del().
-
-That means the bug only matters if the switch hardware itself acts on
-LEARNCOUNT, for example as a learning limit or to decide that the lookup
-table is full.
-
-Since the patch carries Fixes: and Cc: stable, would it help to describe
-that hardware effect? Stable backporters could then tell whether this is
-a functional problem or just a wrong value in a counter nothing uses.
-
-> Fixes: 5edf246c6869 ("net: dsa: rzn1-a5psw: add FDB support")
-> Cc: stable@vger.kernel.org
+> The RX pattern matcher registers are located at different offsets on
+> RZ/N1 and RZ/T2H/RZ/N2H. While RZ/N1 uses 0x3e80 for RXMATCH_CONFIG
+> and 0x3eb0 for PATTERN_CTRL, RZ/T2H and RZ/N2H use 0x3f00 and 0x3f40,
+> respectively.
+>
+> Move the base offsets of both register arrays into struct a5psw_of_data
+> and use the correct values for each SoC.
 
 [Severity: Low]
-This isn't a bug, but should this patch go to net as a separate
-submission instead of being part of this series?
+This isn't a bug, but is the last sentence accurate for this patch alone?
 
-The changelog says "v4->v5: New patch", so it was added to the
-RZ/T2H/RZ/N2H ETHSW enablement series. That series looks like net-next
-material: a new DSA tag protocol, DT bindings, PCS SWCTRL speed
-selection and OF data refactoring.
+At this commit, rzn1_of_data in drivers/net/dsa/rzn1_a5psw.c is the only
+a5psw_of_data instance:
 
-This change only touches existing RZ/N1 code in a5psw_port_fdb_add(),
-a5psw_port_fdb_del() and a5psw_setup(). It doesn't depend on any earlier
-patch in the series.
+static const struct a5psw_of_data rzn1_of_data = {
+	...
+	.rxmatch_config_base = 0x3e80,
+	.pattern_ctrl_base = 0x3eb0,
+};
 
-The same seems to apply to the other fixes in the series: "Fix
-VLANTransmitted counter offset", "Fix MDIO clock divider calculation"
-and "Set driver data in probe".
+Also, a5psw_of_mtable only lists "renesas,rzn1-a5psw". These values are the
+same as the old hard-coded constants, so the RZ/N1 register addresses do not
+change and this patch is a refactor with no functional change.
+
+The 0x3f00 and 0x3f40 values for RZ/T2H and RZ/N2H are only added later in
+the series, in "net: dsa: rzn1-a5psw: Add support for RZ/T2H Ethernet
+switch".
+
+Could the commit message say that this patch makes no functional change, and
+that the RZ/T2H and RZ/N2H offsets come in a later patch?
 
 -- 
 Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261120002549.1908299-1-prabhakar.mahadev-lad.rj%40bp.renesas.com
