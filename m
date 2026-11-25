@@ -1,125 +1,120 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795582444;
-	b=xlpBkrDfiltbzLqt0nnUYYMtcNHnpABpiMwc7tPwa09+ayc6YXvmEJG2yB0Wk+GSbfHX
-	 PhDmafMYIIxPnE04kOX6WnW3x1sv1LwbhYUwW3qyV3G+tDsGB3VGeaAXWgecLcKdwcaS5
-	 vbRTAQueAPnSjr7c/18DqKDQ6udazkuDt0jV0a4wmR72sJrDwFqhd3JTNJsgeNk1Nbv+a
-	 U6Kiqw5YRUx35gZJWJNl4AYh+Wb2268pFp4htaR75eIeBUVMAfW9UlDAueNJ1FuB5wRAd
-	 1PRINgUs3h/bdRt8jUyTUSk30D/RxcuQR5j1+4PEblLBB4ILgCc0GpjZb3R4TnBHLfg==
+	t=1795582446;
+	b=3W0gO1xFTf8Y2ebF77X60JJDOweC4IKFDzi+OsQQa9XlRzwTYOktdzPUV2EAG2YiYFeI
+	 Y0JvWWUN28l45rMpgs/2d3p71T644vFOsiliAJMWJMfqaY1lrrZJz77UNrbu8r7PHbNTt
+	 nmPMVib5ruu084naNzq6hChJgu93tCae2bUqhELukpsPv5aN2QiG50VjIj7L5sVU+Dp0c
+	 Y8pswqNYDzDQYNzgFj79TIV6P9eODUbEGv8i9sySOLZtX9TXFeBa/Jz5xCnXp4L03+yQh
+	 JdSrwwurexZbKRunPOoFdfeAfE8C26h2hyInVHH8ai70Vw7CMDHTulu9saz/f7iS8vw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795582444;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795582446;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
 	 In-Reply-To:References:Subject:Message-Id:Date:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:X-Mailer:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
 	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=xR7RhWJqTr/aczzO3EIq1crgEudqfPhwaC9mSHTF0TU=;
-	b=IfaxUuX093SiE2rk9HcKwjM1Xmfp23V/jnKZhmsM1onyMC5fXaOUCypZjjOI7Gy/xpvR
-	 BI/u9mZIiEX3rV4DXqBCX2u+u2WE6d/+TmU4SUyjJSK/D6wJvlqhTygfJXlSlKkCrFDsf
-	 BJDa3KgmRxJEfxA7C6s/tCEipqwsDrg/dfAgphbpWT3JoC3f69NJzC8qnMuAqaemg/GM6
-	 5vfrGXakQx8W7+AmY0QX7qrBLLCoafgDFYaKSaAbNtGOvsN0FGvwYWNfzdjpsOuki2mkY
-	 OUw5pMe+ej3gnCs4T/f5+Rh3QwlOO6BTbSSdSMHrizmNTONRBGIoGiMD+iXoe+mCJ4Q==
+	bh=3s86VvG7B0bhUerbEXUlNzOcbhT+/CsYmE4Xu2ZdCi8=;
+	b=Muud9x6SdnliTo+GqDM3Elo7mPq8Sx3uLs7qnbUgrGRR/md9RfQTfh/+t6xG4rjYB3GM
+	 mXzK+FdHMUhQqCLOiL+wOJEc23e8FRcMQCYdMrbUNw31mUEF7RG+4AM2iQd96+U7N0DdG
+	 N5DbGi/J3LjTajtdeuWrNgCv8LoJpaeAoRf5Y8dwH5IcrGwb4cXbQKoQxbbXHBprzoah8
+	 Ojh2F5kHdF7EeC95fII9K3hISWl/wIKWyPtZbnDqrFNpT6JTyAYOWCoKMA44BwzpRiBJR
+	 2WMQNefNkryopelNVKXS2Fwxhr/fgoMSN2hJQloNEywlcs6P84kKe2d2J/Ys++Ej+Bg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=l4KQfzU9;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=CJFmXCZT;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=pGyXrgBS;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=C4Bnont3;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513DE606A31E
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:54:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 513DE606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1584606A334
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:54:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1584606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=l4KQfzU9;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=CJFmXCZT
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AP2Av9K3286426
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:54:03 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=pGyXrgBS;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=C4Bnont3
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AP2s78b578100
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:54:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xR7RhWJqTr/aczzO3EIq1crgEudqfPhwaC9mSHTF0TU=; b=l4KQfzU9Rc99lK+V
-	nzj0GpWMR9ZTrp+ng2TtKfpbVTLmMGKE/7Xq7JL3KIUBubUG0ACAJZPToxrlD+sQ
-	3pu0vOv/lBWMNfHDGgTxkN8BfGVxREQMD0OuGmohCSHRoKMQTZuiAPq0gBmZhBq7
-	HaqCbfXV7EE5oD2cuyNMP4ASZKI/yI2lKoGExHLw46voeEF6SD8pn4/BaXB1V+HC
-	uhBUkk0IIflK8NedFUpB8LMPsI9fKiTlDRLZo3QdFV/FuT39GETZFrRu+BCSnnFl
-	McRY2fZiqlknjN0ZviKBt1NVNPsj0B49N85i8UkpOtdO8I+l8aXGiCBWbTzIFzJ2
-	OTi/aA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j5cxkay4m-1
+	3s86VvG7B0bhUerbEXUlNzOcbhT+/CsYmE4Xu2ZdCi8=; b=pGyXrgBS0CVfPhAf
+	F+DmeoCK04ETuCxvBx12lZym1mVvH962Bi+++BwWoB+o86Kw/1CRepy8fFzd7Rvo
+	9k/oGNASssh9o744hg2W06Csl+pR9OfhSKTuv3eb9QxuCUQYm+RU7UtjLHnG5EPx
+	zYGUjBgRoPYpYJrPH45PCm58btSVE7MvCDFw7Dt9GoJsYjLBKtzk7ck2YW4WPzSJ
+	H7oiryhwoBYv7znOos5DP5QVfNpjIu/sP219f3Ef78C5Kf67cJorT9+srk/3a3zM
+	xmQlpF4zhCaSRgmNr3m9uwaAUiasOToYilw4JHwJEsHAKxEoE5eDwdrdsRINXdgD
+	74s1NQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j5qa28cb2-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:54:03 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-92179251e32so8243026d6.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 20:54:03 -0800 (PST)
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:54:04 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9495c71055bso115581785a.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Nov 2026 20:54:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795582442; x=1796187242; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1795582444; x=1796187244; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:date:message-id
          :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=xR7RhWJqTr/aczzO3EIq1crgEudqfPhwaC9mSHTF0TU=;
-        b=CJFmXCZTjsbQrVl0wz30WjqVWe2WcQ+8G+HouIqhcKPeRdXXw/rkzMHnjyLBRK1oi9
-         5c+x/tUcIDdQS3cNrAbr48mD9QOycLw4ut11ywSq8Z64i4ecdoK3fyK34zWsaUCagBjA
-         oqbMgilB6T8MIEDyxNKppfxAQlr1x2k0PVYWx0vl+CboQrqGg/l7R5IsAKOh9U2TTYv7
-         7OcWVnWWMykCTQynrAE2rf4boPzl43BVnjvNuqoYvadBPfObbDJRKIKZdXjJXHT4rj1x
-         +f2nTVkSNurReKKddPcUGYLdWMFlRB6iQ9b3/cGCjf7hf1iLxhbUroiA0JogGvlG6T0U
-         cKxw==
+        bh=3s86VvG7B0bhUerbEXUlNzOcbhT+/CsYmE4Xu2ZdCi8=;
+        b=C4Bnont3elN75N5X1q+B3pjh8ulDQgsCAr6T4Rl3UpZDCpudIREU6aNC6uHx6cAUvq
+         xIEFgLDnC2OhaF0WVrwgwM63rMdDSbDSh3N0QlBgAXBJEAgszeCdhafPuhObqSPdW871
+         MBPbrJYX2g9EPAsJyXXLj7NPg/fyoAHgXz7Om1TuEu5RpbNxcT4G0irY3CSpPiQNRQJn
+         y9tEMKBCIwXwh9jQ0GWeVrRj6D1kdkP/LuBAt32hQN75isGT3S7bqYWnt3Rfj/TjFJE7
+         WFBEz5GWeUx4LF9oE3tZFghhsePquN86iDrmHRX/hEpXgYNAGGgUBQ4GaGGm5odwRusa
+         PfNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795582442; x=1796187242;
+        d=1e100.net; s=20260707; t=1795582444; x=1796187244;
         h=content-transfer-encoding:content-type:mime-version:date:message-id
          :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=xR7RhWJqTr/aczzO3EIq1crgEudqfPhwaC9mSHTF0TU=;
-        b=yiJ/IOWzppbU5PdyoIPA+CND7kODD1sxZqvJqF/eEypYyttG07xaEvUZHNtvkJTqS5
-         54Ez60reZYGGTXZG/55l5pg3yjCCA1lJIyqEpYCYDI6CSGXCUiho+10F8UHOO66ipL9J
-         KVKg2rU5I6xuN1LLHbJnojjxI3DYKtEbxSh3SONGs7Eh2Az7NMAMSbI5tR1LWciLWQRz
-         186epTQKSMccG+OcVKeic9Lz/m7LNS+tIhWtOzIWpkzurtVnYAp3uZ/H27XWblFTHdbq
-         2+f4zKJBzG+JnOFfBEgZzQs3ak82C86f6xAn7hXOkBkpP27CdysNFzmarUMo1/t2IKn0
-         ilHg==
-X-Forwarded-Encrypted: i=1; AL+hErGCvu/dUEVhXjBcu3QHj593yLRhfCcJ0Tjw1rFVUjXcdBQzHG+clmAcDkvrXSNE43zYPAV1DztOs+eschtiLzhXNQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9JZigOdLWB+yPTW2/AThAfHKXux7ffOUsL/ND4TSgYNhQNMo3d
-	0+gZTT0mxXJuBZ1FobLkodo9z6ibsxlTGBC3X8AikxNJCDPc93AqO5wPddxb1WY/f50NcN36ICX
-	482XMBhWxDG35+gilrUQU4rsBGl+qwIPksIaA7VW5LXkHkYnHhGBNE5vUnc+hHB8fTD1Wl44fZA
+        bh=3s86VvG7B0bhUerbEXUlNzOcbhT+/CsYmE4Xu2ZdCi8=;
+        b=uRjrS7b5ZYI0k5VNIbQFFDUUjodQENZjwYuon/h25B8QFDxWUT3lxJ0A8E3kKYoPdq
+         Gr4KRcEh7xrs0nzOw45oxoaQfZOpFvfWdaEcFgtJZ7Ntofog67MXPv5lx75aNLypwyk7
+         SSfutfc7W3BWrlKV7v3z8paevxeSeTjlI6UhQuEMP4k+Y2y2JnK49kATNAJDMO/02lkz
+         AdWlOtxNIzNOVvBAbKdb/zidSvwoUzccGFlSw6AuKGpkIQcS9mQoZcQrfH9Rb312FZWc
+         QnGkq9iU5nhg7LHzzj5z5j7X1EYNXH+xY3N5iq4ShbK9FbU2js1SF+wItFJwy0UoZe6d
+         J6RA==
+X-Forwarded-Encrypted: i=1; AL+hErGB2ABI0vQaLJCt05/6QoIACd3Q9sUACyCvHiYLfMR5gYskhEPyYwm63cwpQ0c3M4aO0434auftyGmXVHXQlhFGqA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/OcLCW6HeyW3z8slZA85Not69yRNe35pgrr/C/FgkHE4hn9GOC
+	jErLLKAj6jCVWputv6P5Zqtui1a095ML90Jc0CtUvLOlaPRrZmln3ksSamplFQ4i6zaSJX/anAM
+	TPG/NUGKxz3qf/R3pEtb6UGEV6XMAifMeCSkysUPMW0slu1sZw10211UhgNpvqJY9OKpEG24obA
 	==
-X-Gm-Gg: AZFdTZdmu11rW5QMTo1PZJMOKbISyk2e0IQ7zgRpxwzK91H8u2ZtPxgn2I90INMLQeH
-	qIxmrl4jYsEEEV8xq3iWG9LUjNR1rk0YMpAOBppVH0waOdspkIR3uYpJR+fK/Lg9d/nHS6Lqt7H
-	P4TPPBK6fWIuLrxOnJjAplBKRcpq9xkJVPQQ/sQ1H9J2IoK8L9o4V7dU82yx2hag9o985YcOZ/3
-	nmDwglQldKwD2lh84aLL7mv46W588V6LLCaSxhzvRWolDtNCmbDBiNdoED2nZGMkkbAIZNEwryD
-	yqCC/HDgAK2tc55Hzq2IeT2JPQHP9hdEFqHwazaHM1QFZCwTkRYbEk/cUF9C8r+TLYahS5jDz7M
-	w1mf2FxNZr72BFR095ax5sh5WO9FVtiK/o7RSwEB5ExtQ86sxDh9Kum0EN1QcYeXhZedWnk3EJ6
-	n+pEa8vBwIDQKwGnJB+2wS+xhpryTgudhud6O8MSvvS/Ntd4SqwU6rTFhx91HJAQ==
-X-Received: by 2002:a05:620a:a408:10b0:94a:889:5a41 with SMTP id af79cd13be357-94a08896148mr24607085a.71.1795582442559;
-        Tue, 24 Nov 2026 20:54:02 -0800 (PST)
-X-Received: by 2002:a05:620a:a408:10b0:94a:889:5a41 with SMTP id af79cd13be357-94a08896148mr24604185a.71.1795582442056;
-        Tue, 24 Nov 2026 20:54:02 -0800 (PST)
+X-Gm-Gg: AZFdTZeSnBwpiokCtoZXMCEcfuJ3vwF6xW79U7V9nO4kIV7v4Q/QpC5EP2bqLPM9pan
+	y/jdFOZqrQOZC7fpvO0ajNqL0TSqZq0Qdoxr8ZEnNL7EfMTxiKDPZlZLAus475DGYJeshCnz5f0
+	59yNgITHKUKLRoefoPH6iT7CFOM8RsL8UdCf5OMqnDptbcdmoRMtj+H6oWJ4FBdMEn4tY+4BHFN
+	OKrb/rS+uQygk1GXEsuRwnxiw3X3kvNp/5NJa3AV6Y4F0kHvgB9x4iqOHdTTQh7Zh5s43fvfAHG
+	iQZnH2Pq1y6MepBF2AxpOU3GP9hsM1YgtJIXGjPk1qNlg84N9jgIYma4nMWULhfFSSHZnIIvOrS
+	w5aH9owH7jT2FbqaHIc4/lh9juirsyCHzHmBmsTb96by4Q6ul3/IGii+KOmSLd9T+bCG5r51v5s
+	Go+nBryYE6V671IW0/1sWWW3+inDXEOG3wTAhoACcJhPEUQSPbS0KWhzQGcLXEsw==
+X-Received: by 2002:a05:620a:130f:b0:93f:2ae1:ea06 with SMTP id af79cd13be357-949bab20007mr2846366985a.44.1795582444201;
+        Tue, 24 Nov 2026 20:54:04 -0800 (PST)
+X-Received: by 2002:a05:620a:130f:b0:93f:2ae1:ea06 with SMTP id af79cd13be357-949bab20007mr2846362185a.44.1795582443689;
+        Tue, 24 Nov 2026 20:54:03 -0800 (PST)
 Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bcff6e32sm4243023e87.17.2026.11.24.20.54.00
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bcff6e32sm4243023e87.17.2026.11.24.20.54.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 20:54:00 -0800 (PST)
+        Tue, 24 Nov 2026 20:54:02 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        "Kandpal, Suraj" <suraj.kandpal@intel.com>,
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        John Harrison <John.Harrison@igalia.com>,
         Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
         Rodrigo Siqueira <siqueira@igalia.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
         Liviu Dudau <liviu.dudau@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -128,17 +123,23 @@ To: Jani Nikula <jani.nikula@linux.intel.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
         =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
         Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
+        Louis Chauvet <louis.chauvet@bootlin.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
         Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
-References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
-Subject: Re: [PATCH 0/8] drm: writeback: clean up writeback connector
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Suraj Kandpal <suraj.kandpal@intel.com>,
+        Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+        John Harrison <John.Harrison@Igalia.com>
+In-Reply-To: <20261111-wb-drop-encoder-v8-0-62948ed87d13@oss.qualcomm.com>
+References: <20261111-wb-drop-encoder-v8-0-62948ed87d13@oss.qualcomm.com>
+Subject: Re: [PATCH v8 00/10] drm: writeback: clean up writeback connector
  initialization
-Message-Id: <179558244050.1572056.6952667613622271304.b4-ty@b4>
-Date: Wed, 25 Nov 2026 06:54:00 +0200
+Message-Id: <179558244222.1572056.13569389105654454020.b4-ty@b4>
+Date: Wed, 25 Nov 2026 06:54:02 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -151,61 +152,72 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.16.0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI1MDAxOSBTYWx0ZWRfXxaz+FOWu322Y
- o4hIF9fG2IBMeJVyonUAHQFPdviedRvRhyHBaJbc2zXF7vlHFRXioUxawlLKHx6lbOugiEK3CGD
- /bd5K10Ml9hHAp71I+BWZ5dzxj0oMxQqcKb03FMuR87b95sJka8cxf6ax6HXpiEmiwrPFfbpFuZ
- /H0Nnv66auHpw2ZdtHNTnRctnD7xRjtKDAwRUdQcJfHZ0n1cZRl/iVmuhsFqdiZAQjwYG6zqCcy
- 0xgNC9qE8cDTo6Zeg6VJWYHycmqSkwW2I4DljnFFMvHwDDn/l71uprthFIScDHaI9Ux2yD6pAtj
- 5XIPEWXC3FjmWVTGaBUQIlu/aNtSQbSUiwM9z2pCnN3TMOQToYiy2GnJrAMh8B4q0HjhhAdSIjB
- Ad9Fy2xFWCrwvOxOOf/HFAun2GEkRzl/XhmRADkAispqtbEJ1y3FzwePKKObmYN76nCHVvNRCla
- xnrF3A1hBb0+G0UTwng==
-X-Proofpoint-GUID: FSraoqsvmTIdpOd-izMJcVn1IIJswohA
-X-Proofpoint-ORIG-GUID: FSraoqsvmTIdpOd-izMJcVn1IIJswohA
-X-Authority-Analysis: v=2.4 cv=TLbQ2Fla c=1 sm=1 tr=0 ts=6b0669eb cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Proofpoint-ORIG-GUID: X-pwAuEDfFKMIQ0LWrb14-OT63nsIV7O
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI1MDAxOSBTYWx0ZWRfXxoCTg+IRXjs+
+ bEk9utEadNE7XCHayn9t4inEMXeuJ3ESD1DKDMLXHc/O70aWlEuILbDBgzwr50aup7sXAB3B0uK
+ UjM2Aq/JW5nWZdNr90ySgQtVmRnF0aA=
+X-Proofpoint-GUID: X-pwAuEDfFKMIQ0LWrb14-OT63nsIV7O
+X-Authority-Analysis: v=2.4 cv=CKu/zhrD c=1 sm=1 tr=0 ts=6b0669ec cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VUr37Z-sP6Vbzkouko0A:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI1MDAxOSBTYWx0ZWRfX4GeFzC355kmG
- /uf2mkZhb8/zNWVYR6ES4YD2ARqTCZbWfU+h6rjyLuqD+/Xbfctc6EefFJZRmULa2Hq5TrdEStV
- 2qOUmgEyE7575HmCg58o+rNPx59alGc=
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=t1lj0SIDRZ1apvpNlpYA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI1MDAxOSBTYWx0ZWRfX5WxnN/nxLXn4
+ CbK2O5kD3SUDajTjwIlPlHXxdSvmP/0EkdB+XWM6io4iy398rJ9kznh8WCkDJxO1HWjWoX0kZzX
+ u+fYun/LuKVVFl84+6e/qaGm9tEK/WTyQOgTqXTupNqweAQJaQemYFARnb0InvGJwUYkG9Qdnix
+ tCN2uhRxGuWHr+CtIuFD7nCKlcE+riFiC+aZNamkFSgQPopjcs+2Ge6uzSLJxBiC7j6UZIWnEKY
+ TeSG1Rao9OBNXLXVMLW3TdUUrlRjlRL6qJVFWik+gmEABtwRi48WELtW6velGn1voQmVuhrHJpq
+ P+T61ntcVXWQxHlB6DJAGQRmS2hdhmipmTi+fsqdB7lslmNigmEztzaw2M1ancDHrymUA/F+ukS
+ B8DAo199/l0Po3ERb+q0qfz3A7lKY9ECH1+FjgV/1or11+YtH9/pukjgdBwWuqXw8ok1IFEndur
+ tblfRGEVZD01Bl4k32Q==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-25_01,2026-11-23_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 spamscore=0 clxscore=1015 suspectscore=0
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ spamscore=0 phishscore=0 impostorscore=0 suspectscore=0 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611250019
 
-On Fri, 01 Aug 2025 16:51:08 +0300, Dmitry Baryshkov wrote:
+On Wed, 11 Nov 2026 02:42:29 +0200, Dmitry Baryshkov wrote:
 > Drivers using drm_writeback_connector_init() / _with_encoder() don't
 > perform cleanup in a manner similar to drmm_writeback_connector_init()
-> (see drm_writeback_connector_cleanup()). Migrate all existing drivers
-> to use drmm_writeback_connector_init(), drop
-> drm_writeback_connector_init() and drm_writeback_connector::encoder
-> (it's unused afterwards).
+> (see drm_writeback_connector_cleanup()). Enough of the drivers don't use
+> the encoder embedded into the drm_writeback connector.  In preparation
+> to further rework of the WB connectors (as planned to enable WB for i915
+> / xe drivers, which would move drm_writeback_connector to be a field
+> inside drm_connector instead of subclassing it) remove the drm_encoder
+> wrapped in struct drm_writeback_connector. Rename the
+> drm_writeback_connector_init_with_encoder() to
+> drm_writeback_connector_init()
+> and copy drmm_writeback_connector_init() interface. Then, with the
+> encoder being gone, handle proper cleanup of writeback data in
+> drm_connector_cleanup().
 > 
 > [...]
 
 Applied to drm-misc-next, thanks!
 
-[1/8] drm/amd/display: use drmm_writeback_connector_init()
-      (no commit info)
-[2/8] drm/komeda: use drmm_writeback_connector_init()
-      (no commit info)
-[3/8] drm/mali: use drmm_writeback_connector_init()
-      (no commit info)
-[4/8] drm/msm/dpu: use drmm_writeback_connector_init()
-      (no commit info)
-[5/8] drm/msm/dpu: use drmm_writeback_connector_init()
-      (no commit info)
-[6/8] drm/vc4: use drmm_writeback_connector_init()
-      (no commit info)
-[7/8] drm: writeback: drop excess connector initialization functions
-      commit: 7bcb37603df095e56e87d6144201179fe911e4dd
-[8/8] drm: writeback: rename drm_writeback_connector_init_with_encoder()
-      commit: 81f61b4e0467ddab3695be58a94fc322c8bd559a
+[01/10] drm/amd/display: embed the writeback encoder in amdgpu_dm_wb_connector
+        commit: 283a3cfbb29cf3d0af1ad03012fcd049dece6e64
+[02/10] drm/komeda: embed the writeback encoder in komeda_wb_connector
+        commit: 9d5cdb46eed94ddee3732fbb5f8c008c798aba51
+[03/10] drm/mali: embed the writeback encoder in malidp_drm
+        commit: f07e5e8eac86bc7db2ffdd2e748e256ee2b419a1
+[04/10] drm: renesas: rcar-du: embed the writeback encoder in rcar_du_crtc
+        commit: 12c88af117c77a1604bb02397cb2b622c47da9e6
+[05/10] drm: writeback: drop excess connector initialization functions
+        commit: 7bcb37603df095e56e87d6144201179fe911e4dd
+[06/10] drm: writeback: rename drm_writeback_connector_init_with_encoder()
+        commit: 81f61b4e0467ddab3695be58a94fc322c8bd559a
+[07/10] drm: writeback: don't destroy the shared writeback properties
+        commit: 7a5c8848606a9c1c9a57dab4332c9445c7f1d60f
+[08/10] drm: writeback: clean up writeback jobs outside the job_lock
+        commit: da12cfd8400b7b2fd00be22cdebaf2efa6299c68
+[09/10] drm: writeback: clean up writeback connectors in drm_connector_cleanup()
+        commit: 2bed5919e005687d163d1b6d273db450449b8bdf
+[10/10] drm: writeback: drop the drmm writeback cleanup action
+        commit: 616a651a5be4655d2cceed0612f70f076eb24cc9
 
 Best regards,
 -- 
