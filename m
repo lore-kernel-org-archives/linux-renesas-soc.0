@@ -1,32 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.143
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795625821;
-	b=ZMheGsW3aOLgpLft2kUx0w+b/ijKcfGWNzQNV5Yfam7AdiKYsQC2qu/IJTNyTqAMDkW4
-	 cV/YJMnJKH8dei7XBDAo22lI/wRxnst7dCJT6fIhK5sC70ussHGFtC1G0iLcVgIwn4TFZ
-	 D5UaqksRrarM8FYlCcWTXukfWdC1S3XLPTY8vyc0E1UDSe4cZmKl/H+w74JcWC+K+4+d+
-	 OFtXcLZx9U5CyQ3e+j+XOOcva+DpCsFHcElggJLtbmJbbOlHSnzqsF9MMFLA/u7yn3gfw
-	 9c4SqIdFmwL7cRJjXlzyNmhhGlSADbH4dIMuqYX34bSDyeWSsvlbyJBpaRyzglhvsiA==
+	t=1795626063;
+	b=Yx7HX0DgXCQuKfdhYXfJuSu8NhTlmxebCrAfUBCRtk8jQ7nZo4KH3+Y4dnW9+CIdPedP
+	 AKYPjRHKMTibF9HmIrfoaHeq72aPftA1s6bmWKd45XmB8LpDWxZSox3LV/sJt48X2SWBJ
+	 1IJWpZldcVGGWPYTnvu7ll6czXZIHy+Re94fxMUUlDsdfXrO+KEE7xEgko7/TWtntnbL4
+	 w3bcNdG2Wf8lWcCMIfxF0tnhddNq4PARud5GekHRg6qEUgXLS588dRznnSfadaQ8jBF0l
+	 efuFyo5jS411AunCZEvMhFUOBjpgILKB2Xv/pC/qDY9rQPrRBesdK23h+quipJHf7nQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795625821;
-	h=Received:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:
-	 From:To:Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=7ayXOfVT38fNNXhVQZJD7BxMf+msWkjBpfCELCX48Lw=;
-	b=cG5NoiGaM0ZbmqH6XC0hFmr5hM0mIA00oYzxQYPuGUEDU8b5gSb7c48nTseCLQdvNc3B
-	 CLuabm8rm5qmsA3VN0TX3yAqETBQOtqUUNZqqJja1Cb1R66kb320GCyVVvMvjkZriBDuW
-	 jOJoDKViQuJdyJzC6FT242hcAru5duVhBm2V8s5i4IL0r1vZBAmwAZfdVdzitz8dMO+lT
-	 3jRkQm2XoI3hRUwrbA4f8S5DoGWUjxV+ZxXaLyXdz6sMJPcxsTxAxRfdyqkgi4liSSdqK
-	 aaIPem/Z/EWAUlA2juiCIWLpd4bCelRpcwLeBnPUqJu+b4KTqnWwMGeFawIWWUVMdKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795626063;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=wJ4LhvZqqY8UbBhqAwzRVVah7EqIXTb6AUHHg5yGZp8=;
+	b=nzUKBNjEKT3e/fPG84cjW2AyGoTQdUmalAZUnu3OkZvslcRz6/ACIYPWsNHnVKIsWvlB
+	 Rpn/zNfyi59V6fvA6DiPNc6jQtnx8gNiIVrREti2AY7nxegcTJICqmhF1zFCnPwAiTLdP
+	 9nJN2utY7afoTVibBjrTEaG/AD54KPD5SSjLzEFQUo/W8eJEenXVU078EEF/+r96p/QR0
+	 hXVt3wEjy5cKLw4n4ukPMX1PQSJs5Dz+sktt/ZM5BZ3UYUYdqDZvOdZjVD7T4tqO0NMGK
+	 vU0cRyNax35DUpVJ6ozni9OVL67NrseHC3557enXCPZW/mBFJY2/Xv0F2a1nDfW7NQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=glider.be;
+	spf=pass smtp.mailfrom=glider.be;
+	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=ico5ogXv;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=P3yh2Ytn;
+	arc=none smtp.remote-ip=103.168.172.143
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D0D606A326;
-	Wed, 25 Nov 2026 16:57:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A331F000EB;
-	Wed, 25 Nov 2026 16:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C847D606A329
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 17:01:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C847D606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=ico5ogXv;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=P3yh2Ytn
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailflow.phl.internal (Postfix) with ESMTP id A74AF138102A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 12:01:01 -0500 (EST)
+Received: from ams-imap-13 ([10.64.2.33])
+  by ams-compute-02.internal (MEProxy); Wed, 25 Nov 2026 12:01:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1795626058;
+	 x=1795629658; bh=wJ4LhvZqqY8UbBhqAwzRVVah7EqIXTb6AUHHg5yGZp8=; b=
+	ico5ogXvJVauaAsGnqKHzXbfGMNtq6TPW4Wti+o4V7+0obpJsXj9BNBESqXx6Z8z
+	4VOX+5lKyE7hr+eOKxLzMtQRKsdsjavf7Vf5rmxn/o2Tv+6w1EicDxsT4kKiQB87
+	whB5S7pvXaWJzi/vJa6PKt8hHSK15EvvachbjuPBM1EyrbRd033sJTjUOPNhAWWz
+	KM3zbX/ZkL0v7bdP7NSTH2gxvEYxygX/aEDRubewBXixycViT3KFqg9Y2huASq6v
+	bgjbw8MGI+s/y3YN8DqcLcLy1k4fM91frQVakFpUsWW0P4omJsFuU6ZIln0ZU/RQ
+	rGC4XWQQZiYh9/XOWYlC5Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795626058; x=
+	1795629658; bh=wJ4LhvZqqY8UbBhqAwzRVVah7EqIXTb6AUHHg5yGZp8=; b=P
+	3yh2YtnOAkF7IS1AwpziEumLimkIldcBcvb3YMBnQ9Sbri1CHOKR1V6HvcLo3WYQ
+	/V7wddAkbB1YWGiqKbGbuP8ZDUZqRCN+s4a/fjgO7VN0jooLx6JnUD5Z+3Ric095
+	Bsh2AoYAmb47VgRPw17V1V7KoSs5Z68Lo1c2jYB/Q1DaA27GUJ4S6FjTuIAo+Grp
+	MIix49ZYmoGDfFKLB24vSuHfPANED/semOp66Bu/YO5FnlLaQGSWphHryxfDc/vF
+	SUDO8BkySYsLgv/RkVVT2C4+4tqS327a9kdMAVIF2GW5sgF8uq6Wi1KScbV6S+25
+	iwGPlWJzMI6jGtOJb1BYA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=glider.be a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795626058; d=glider.be;
+	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm1:rsa-sha256:kiXuzBG9IDWmazEq7GPZTZ9KhDAg9KpHBfmBecunmXM/iwf
+	2ANfYTgsuF1HBaFPGodNrLpMP31xhH/kleeJi1ZmVs4M94dAtq+9Vk/AGh0EWavo
+	vTcIthytuQm6gnAOTpK+IGNcr/HS3ZlPuItKatSLMq5WYwxY+F94KdLmIuwvJG5/
+	QOdBmaGeoB395ItrbJ1q+dzD5oeTxIxixJd0EM7ik7a/4i34h1+RcPVTcr0FKrEh
+	KDq6VYwHg0JYTk35SgO/8fpMf+1vIxBN03Gn6W+WQZhb372ir1Sbsoe/p3uP4r8J
+	wUVqT/1ib+PP+5gNr8iacclY6fEbKpySTgIoIyQ==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:xJ58VRc5LlEDH5o7tOgsmtxJEwdWZ9FiyVDfOSBSYVA=:6lVmZurQ0Ave5XoxY9O8lzq5TuUCBgamo3QkP0Zn5kw=;
+X-ME-Sender: <xms:SBQHa2qF-Luh88RyPZys_vqHhNjaYcBkUSijCivR9dzpJPSUxmYvQA>
+    <xme:SBQHa_fd9BWet9QNygudqbeV_xEQV31YCDj-silgs568HYrtWaE2SJqC3wGvcL406
+    MvUjmL1y6VNE_97br7IqsZVM02ka9ds33Jtoie5mtIFfslHB7nKL8hW>
+X-ME-Proxy-Cause: dmFkZTGwfXy/CoCxb29kAq0yniJj7+9ODcxgUwp3/l4Ac1hX1tkQtDdqP6qaTHcK9NhjBw
+    n6Rp3v3rPS1K0Dfv+W2b5Kp0Y3lM2fFAB4lG/YthsktuuHkpRiHI70Twq+rHEQNSltg9kM
+    4/xbVODOE54wtPVounOA6t+IBqZqchlauYq0yjMdbzuX80Tir/sD9ksSrvTDwCyDOZi20X
+    V1v5WdiN+V3QNGx/r5tspRXsIespy4zcQt/zRp1M1JANhWVm9bCm5A9vx7adVqqODxI51x
+    OxX7xt3hCVi+kme1xEODTEmxGswo5VhMrLP8KGgZrIHu2Yx3ycN/t+QkSi5fqExwZ2uBtY
+    GGMyjGVJ/qlSn/dAf709OYgiB2FDB4GN6N7/1mVoPMePMTWABmH7YCLobA+/Fksl/VLc9e
+    R8YzZRU+1BbVHCWUdd2NPVAtWJUH9g9nFOhiQThcxO9O7fLAnjDTObgD+Lg6Ob7lgQZQ7z
+    WpCfx2Toc84d3O5eNBNPN3H6wFTz52eTeUzQzGdpu7cpVOgd1vyHYvF71VxZe88nRwmSU2
+    CsU9YmBIIFYNtYpxMX8sbEi2+CIXMZQb25W4csGcm1uUDYgvn6BmCMpkmfDMk98Nv+acMM
+    BzoaJfPBUH2rqfBqNz0wJSrniYCUI/y3VFvBYc6NLmZuYBM7PWTJlsBUIABA
+X-ME-Proxy: <xmx:SRQHazdalclFcJRp26Dpng0asjX7ywYqqksDwMEDvgoGK8XaT6p-HA>
+    <xmx:SRQHa84Uytfo1uk_jlVahARZC8hUuPav4fTNFfZWBu1HQDl2fG7WkA>
+    <xmx:SRQHa2VKZ4p6VtZsqiLWQYMfwLYc8_aCVMRVP7s3BS-XIfba66k6ug>
+    <xmx:SRQHa77a2snD77CZiz-keXF00LdvzfzBwMUYnLCyKva0-ASkMvy99A>
+    <xmx:ShQHa1fFBS7bYApGueQ8S_ND2IdfsTCCFinjkirQacPYeAfLEzCVVS4i>
+Feedback-ID: ia0f84a9e:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 718A9F800A1; Wed, 25 Nov 2026 12:00:56 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -36,44 +115,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ThreadId: AvA74aORy9iR
+Date: Wed, 25 Nov 2026 18:00:36 +0100
+From: "Geert Uytterhoeven" <geert+renesas@glider.be>
+To: "Artem Novak" <artem122novak@gmail.com>
+Cc: linusw@kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <835b2097-33fb-4361-978c-e591384e5a07@app.fastmail.com>
+In-Reply-To: <20261122174427.276446-1-artem122novak@gmail.com>
+References: <20261122174427.276446-1-artem122novak@gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: fix typo in RZ/A1 driver description
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v7 11/14] PCI: rzg3s-host: Move IRQ domain setup code
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
- robh@kernel.org, bhelgaas@google.com, p.zabel@pengutronix.de, 
- geert+renesas@glider.be, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev, 
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20261019065025.2146539-12-claudiu.beznea@kernel.org>
-References: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
- <20261019065025.2146539-12-claudiu.beznea@kernel.org>
-Date: Wed, 25 Nov 2026 22:26:51 +0530
-Message-Id: <179562581171.5580.11485969247008114241.b4-reply@b4>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=211;
- i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
- bh=SDjk0CqIeSZspvTcR/jFZd/9D08fYAjch2jyNFdx0ao=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrBxNXLWcZagBr7cmA8GlLA8I2lpG/bFVbCYDIm
- 23263mFthKJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawcTVwAKCRBVnxHm/pHO
- 9f5PCACEsd7zftNT+C0HcTbtaSGupKAuI4VTUJschIb2xpyv24j6hC+rQy7btfUXNapgAjMTwUN
- zuKDRDXwh1qk7gebD5dsHeEL1iCk/1Xbxu5t6p4CO8buc8VMTxeQnFcgt3LC31yUXX6489JU1kM
- 4AJfdxXfXfQoogmqeVvfQGmDDa7YotJe7FWn0kDw7t1SY0bstZYO4x/ip105zhLF6Y7i0lslhWf
- UiVuStd8g/Y3tJZaLEaALYzXqUylgMIR9SoCG6o30lcBtpIT1slmGgql+itVMrajArebUXb5zvw
- FALpbuVg06xiA/Q6U2VGWzRDpYmHB9Ea+JIUmkQbcQ7T0E9L
-X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On 2026-10-19 09:50 +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Subsequent patches add support for the event IRQ to handle link
+On Sun, Nov 22, 2026, at 18:44, Artem Novak wrote:
+> Correct the spelling of "Renesas" in the RZ/A1 pin
+> controller driver's module description.
+>
+> Signed-off-by: Artem Novak <artem122novak@gmail.com>
 
-s/patches/commits
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v7.5.
 
-- Mani
+Gr{oetje,eeting}s,
 
+                                                Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                                            -- Linus Torvalds
