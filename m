@@ -1,123 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.170
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795605450;
-	b=RGbvUP2J90kstQsJ8DCTMhFx2Bac2H/zbJIC5uY4x6fJK/P22PUpzTU8RYXxghMRc134
-	 3ai/Rs6QHsDFftbJCEJbIpmHk0JhZlEf0Po74ckgvo5Yb8OA/VwJ/K0PegofAjPrR9Ikt
-	 tg+w3Jlx+wMESxi1ZPJUouN8W9adka2aTDi1G6DMO5lMK1dFs6yyjFDlNWPl3K/xlSuTJ
-	 mCsE0z9CpkKru5r6XK79GZGnTpFebrjh4hVs3q0riVewig1dl9IP8PhECE3DiBUOGjq2c
-	 Iliwf3SyqizcRQm2Ov7MSDpstGTul3dxIV8msTuJrBisWoquEBARztXatey4R85SJUw==
+	t=1795605504;
+	b=Zw/rkH4XMc0k4WgOGA6RqnWlwi0s+oxgTOgNRlFXP7fzQrBDBuMoAIwplkUFDY5QbX2T
+	 oVhwMMnhqefwOrhSEDyLvvvAlmqQlxKIsfKEKQbR5E63V7bPwY7cLxoo/mKLgECi4Q17B
+	 tX0dYgpaVQWEjAG+kPNsS2CF69hd7qmXGdlog4LwI9WkbQag4vQ2TEb5vGwFPqUpmZtxL
+	 UD5DOAQnf7y0T3eoEsri/M05rIFoXn5EQP1cWDtOnEUNFxVQJNk3eqoPHbdqmZC1Yvurr
+	 OHWgMfkCmtkpFpGzQR1fCY4W5acrTsSL6yR1KMwNPBYREJwHg3L4LMCd7QEaG4VRB5w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795605450;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:MIME-Version:
-	 References:In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:
-	 Cc:Content-Type:Content-Transfer-Encoding:
-	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=GGcM3DKIo02LA8xtKEqWDCXbSDDx+E/CgQ8lPKySp7s=;
-	b=hv8hUJmqUt9oreiTGKsfBnXuVQ1rcge/6q/+gxMt77BlCjbi+pYg86sGVw2VqxCz+d+j
-	 HSaOzlrzNOdqGd3RjJoRZ/AXBPmk44GUPpJXtgbRkrS2qHLqUfrEjEZn5YrbaF40LtWvK
-	 sBbQkHRYomzpgczm4bR8QAe07qP5VHOH4IpxP4yPR1nt0piHtkqqXCdPQMrAUPfnoxJ3c
-	 aIoMuYE5HtF9v72GVPoKDkDBxyhbIp+yeVFnTBvoPQ8d2/rVw8dtlJJV5VpQckmlUHjAu
-	 KNDqM1lMr//A4zypu1TIbzDFSYK6gvImBtE3u6MQacgrp4MvO4019p9wKA+NAWQTldQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795605504;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 In-Reply-To:References:MIME-Version:From:X-Google-Nh-Sender:Date:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=aUuDBjF4fZ3y792JWpEiTnxw/iQ5Ii+xISV/HSd9qVI=;
+	b=KdBNeTXBgX6Ests4CWB+/MH+YDjHkHTHvBvUVwIO8bnsaubIO6XBPAzKORvPD54fYLhI
+	 6oQ/BSFI7B9x5zvpRgqa6t5HbIu7uRb9y22+TWL0vEwfehD4gIEK/1O3ntn9sptYmqAbJ
+	 PhwClGHuNzTBKPWWGNJVHyjjOfY6uNbVpTDfJHC+1NoHpHs2AMsH/cmvLilIq0qBtdPpi
+	 03HsL1Q1ybBtHx8JnAIUuQTgZ7yfGjcch/x6aikZkjivCatD3ugFoWNEJbemSvIivr0Nv
+	 xBR07lr9c6/PrxTnhPgaH+lcaIaZxSQNivCL5O2y9eWUlnvxSFraAdEkZh2iwMX6DOQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=W4jWDdVB;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=QKrZI4Ng;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Z5N2Trz9;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.170
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EDC606A32D
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 11:17:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92EDC606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAABE606A32E
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 11:18:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAABE606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=W4jWDdVB;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=QKrZI4Ng
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AP9mcp5796775
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 11:17:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GGcM3DKIo02LA8xtKEqWDCXbSDDx+E/CgQ8lPKySp7s=; b=W4jWDdVB1vbwwYli
-	084svRdTuIpZGcbEUnPgXFOT3xfX3COpD8NlOSCTDx5vbmO6iqlsSjsyj1d4GyLL
-	nVOQ7ZWM8f0DKHclVqbU4ZkP7EVvYnnEXvT3wIzR4iDWx6pNq8Z1BIggEvUuYzO1
-	GxNYOiSA7xj39P9WA85R+PuRN/T8BnNtIXrGD8KSW0aoV0KInDxHm0smhmzGphcI
-	3lY13tpzpfmCw4yTAdbwxyIy0T27VvXtuE7mzUuS4uPS3QeJ/y1RC2M0RqeEGhwn
-	KxzYHwGlf6NbPM8BaVxNMu7AyROhy/1HuLKSIiKuynlR62oYOUOeNrSDq7kvHR8I
-	97krqA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j5n6rtdev-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 11:17:28 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2f09a37f41dso29297675ad.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 03:17:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795605448; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Z5N2Trz9
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3ae85add4ceso39267671fa.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 03:18:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795605502; cv=none;
         d=google.com; s=arc-20260327;
-        b=V3KB+t5gwzJBTM97osWE47k5KIXvRhOJt1XY3HBkIGJbBpimqwB5HLBdXozRNW/shK
-         mViqWB4n99mb03DhlpQkd6iwZ0bIucfMtvmoxIqQjwROndbkbR1+tEOYiwT5aWf6s1mc
-         Ub29aglvKdgheoXyavY+kxxZ+Rt45kggAa44zoluRQxejLumOiXS4N34J2UhI2ULuscL
-         gkZz9tLbW9DtPj5Ij8rr4nVonFKsBnyzjsPIRl88FYqLNCvV1a1uml3mi3Ra27BpdCOd
-         ghkFL/4OSY7CWREW+sNG0n08o7GaRA1ue4SAphPs0yIk2M3qUqLQE5jsOh5LHt1ALYbl
-         HORQ==
+        b=PXrkUoR2zP0xwN/UQr317WVNlDS5+Jy0O2FSD2UYTKVSR2ACubxcILbHarHg7G/nfz
+         C+kqmQmO3h46Gzm/AK84L9oL9Ju6qn/Ym2+W0H8v5Qgc6qOwuH147LWdjAh6I/P9w9vo
+         puSd7oCQq8QhWLs331njCmvpTOquxkcFLJ1++WlhNLMyCCrrLpqeVM0OuCt3oBoM2/Ar
+         8xSJor95VbJ8HnPm8ngLadJw92ngazCoRKD5pctFKg6pwyULFS3g6AkxASe5FY54JNv5
+         qiYt/f9ZaQLdBDkikYY2aCeJyRDOKqT+ytxcxQL5F08Yo1i3mtAUEUkGKhDiiPSnWPej
+         IJng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=GGcM3DKIo02LA8xtKEqWDCXbSDDx+E/CgQ8lPKySp7s=;
-        fh=PhiNrzZUuINxFeLQbOm1pdZyXEzb+Ms+e0ssQRKfvL0=;
-        b=UqkzS8QWNDrhLAzNDzPQvT1hClkDPXf3RloEDuN2HpKNtJoVR3RJQsF3kEQ2SRARW/
-         +OuVbw8lUFiVoiig+6Xfz3Gc8Kn4GIawFH0o510XryXS+iWMePHdj/ltRnukXuhr0Iog
-         Aa3ws878e3Lgz/ZmHPc5mM+15nc3bXa8RXSJNKnlGAV3jM5qljWu2Me7INBW4T6/KZSZ
-         4Q3wmxM5aMk87tfW5gkQxO+K55QDV7mXatvQJ7ZkfczzZVsno6bvrLif/sB9pGvvqyw4
-         GsAL18Z2lK8oyBNY4VYD3omlctIJXPtLfiQ+yeE/K+thRX5eRFdeoZqhutzZvqPYOXtm
-         xPQg==;
+         :mime-version:references:in-reply-to:dkim-signature;
+        bh=aUuDBjF4fZ3y792JWpEiTnxw/iQ5Ii+xISV/HSd9qVI=;
+        fh=0oYKtLJeB50JrKu/WdN8J1Fb5cXUcvwavlvz4lPwpmk=;
+        b=VufWUtiE4g+q5Hofit2fle32RkY5slS7thZtudO65EbzQtJKploOwJKaNdVF1spdP3
+         qcWs2ab+JiyxptUYY9kwyBr1jpwvUDKY8DbaZaWgKWCgJbNne/xNFQZtUfuLyieL4oXw
+         jNrwaHiVdXd7trp1pEX6NNQI4P3iDYABmPdGtR+hXwebht6bF3c05gknAkOx7zCByYAD
+         MoSRlItMNOgmBodkc2ItlhLeh6HkMmUUWrSaHe3g6t7lYM06zuK4tEUBCLiia8JoBVCs
+         b9z/7Wov7c0vlqACPgcoQ/l9337cvjAHQuTEy04zvCub0mQKyJ+oH36BTNoNtGYaAzIv
+         eEpA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795605448; x=1796210248; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795605502; x=1796210302; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:from:mime-version:references:in-reply-to:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=GGcM3DKIo02LA8xtKEqWDCXbSDDx+E/CgQ8lPKySp7s=;
-        b=QKrZI4NgAhRHB370rBIbBEFXiJRt9QROPd09PkqFBWsAzoWKlBdFIThs/MDYEdCSPA
-         sPezC3Mh+wdHgWOLLOkO08Lx1ylLHGANQeWY4nSZtmt6GXCMw2hsFyMnPh0wZ5fQWxCn
-         RKlNQfOhbztl8N7O3XdyM4PXLMzGyROxS37zsonwNnHD1MZM/u2ba/jRAks6GZGao2F1
-         RdReAizJpvZ6OFoVaGQ+FKCm7gZt2CPq2GwdAdMoj8oSh8NV8yNrfLcO58J77RoXtiCN
-         3WFjxQQ1pHWUyyBRIXb4Af76MTBTdVlnzLXd1lWXI80FspcDhyCTYHZXWnHdqY6O0pt4
-         nQEA==
+        bh=aUuDBjF4fZ3y792JWpEiTnxw/iQ5Ii+xISV/HSd9qVI=;
+        b=Z5N2Trz9OaW5p3cAAbOX9JMT5a7/xNE6KBeBB7bu1qazqaDzrYDfbu4MVXwS2jEjfj
+         YGb2r/NDBc/2OfH3LZfGHiq+SGScj1o41KOX3vCgZo7KTiIptT04Ws0+nmk5vEoz8G/m
+         XZ0l1kOi5Ww4vR2LBhfU+rfqAAIx1lNMn+suEgiR+dVZUITzuJfPMzvl6GVQUv3O/69i
+         5dQjfp6Hoo4QQA9KFVG+Vo3JVk2nWBdWLRJNSsJHVAxnVrjIUDeqRuIdCTDj+M8Sxas3
+         qupPM3cZcX0EfsrJ/wZF86TqnPgptqdOaZEhJyK1EvoF0gEfLxHaCpFgmCc3gP8AzKyI
+         ZqiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795605448; x=1796210248;
+        d=1e100.net; s=20260707; t=1795605502; x=1796210302;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :date:from:mime-version:references:in-reply-to:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=GGcM3DKIo02LA8xtKEqWDCXbSDDx+E/CgQ8lPKySp7s=;
-        b=Ww7U6zeS6w4ha+bxgEoEEfLBWPffsXemx9bwaRl2GcecClafIV5ai9tRhsNb2FutaN
-         qbZSjjeSZLRIpmgYAWXjtHvARlOOvGuMQLj5ZaGw8dUEsZLi9XguFRXCgGck1QATXwps
-         iraj3hRek3y83uyZT184htzctosOICIwLKcVE6JSFmdfdHM4eNeF03lfyn7ayLNNzLpX
-         YLkgb67XfflRqatbOw79G3jFD1xuOJy8EYN5GfOfq8Yme1uTG4nZeCJwmGAu/M2zsFUP
-         PmzdRCsMEmWCS4uV60D+Z/x0AXLjBhPTKC9yzne6tveDiEVEBnwGYwn1aC+AwtEg2iMa
-         cxPQ==
-X-Forwarded-Encrypted: i=1; AL+hErHG3WqTbvi1pWC5e/ipagx/ItgyaDOFpXIcGB8S2mcI+n152EkO/UuW4wI05X1zv/YgbPzPD8rgpIsN419bQfrg2w==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8Tdu31x2Xs/pdm23tM7iwSRLp0t5fTs2g3/zv7ssRBKEiiULKz
-	lKA/vFgTR8Cnvb3kAEPE/lf4B5eye6oWEPDMkeZKysH1PQ1uW7LicC8htIO6A0EGBDxz26Ae5va
-	/ysss4t4MKHYLfatutmUKFT6m1NALwA+nl3Ux6zF+QSrpJIR94Y5kGN+NK7xKr0Au1joadBCRTd
-	KnobgNh+xmj17I3K5HwefMxZ5LYX2a1Uz9U3ijV/VUZc8eiIzk
-X-Gm-Gg: AZFdTZf8OGUu6DuvDfwB+UPcPiSacbTqgljLeF/gn4yMkXVbU4UgnVMPCPSJ8B2KNW1
-	Ob0kifLr5/87wkLPmZ69cv8rRuWHUOLGdvXxsk8ul/3F1pz3Vi0KLpTaVemeEg+C//UzroTCf34
-	01KvRDIqpYNUJtYo1hADRigA+GpcDz81HoSSenvvWDc+sbXnEkFZIegeKg7g==
-X-Received: by 2002:a17:90a:d2cf:b0:3b4:1714:5bfc with SMTP id 98e67ed59e1d1-3b41c9b9dc1mr17035880a91.61.1795605447946;
-        Wed, 25 Nov 2026 03:17:27 -0800 (PST)
-X-Received: by 2002:a17:90a:d2cf:b0:3b4:1714:5bfc with SMTP id
- 98e67ed59e1d1-3b41c9b9dc1mr17035856a91.61.1795605447334; Wed, 25 Nov 2026
- 03:17:27 -0800 (PST)
+        bh=aUuDBjF4fZ3y792JWpEiTnxw/iQ5Ii+xISV/HSd9qVI=;
+        b=K65ayiN8lKTcANS9jo+ddIdKOVuotEQJQkkafZAWxSX5jnwFTEFDE62P3b2h3f0dgv
+         HtkEplkOc3j1s9XzhAsIWYd9lrYUdwVQBTQOaagVARi3r/fyXwfrE+V4rk64XqxoRKpG
+         A2l5niORP9TSVBZP8n37ZVZyRmBDDAcxOiqePBDMXCgE7XLdYhO4HFjeEwHaLEVL1q/S
+         +tQzziqSrkNYLrt/X2AYbGFNiUjEdA3oGwvv8niM9paXFO0pYKkVPwKTSBmIFZeobhPX
+         F+t0Wnt8ZMgBMlv9Yi5t+k9Q003TulejxaNEH281W5ebSM2B0mPt9fkVFU5c6HdMM4Zw
+         F29w==
+X-Forwarded-Encrypted: i=1; AL+hErERGlmjzEmQ1QyCqhVDDNtxkrPsPdJihZbhWQi1bPrUiwCbP7o/80xxu2syebgdKZzvK9o6OSYjb4c3c+zmq/h6Ew==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+fUzdgMzRJJPvn+g4a4xuJxcSbt6+hMCDVVNuJhZ1rhv27xhBp
+	88xR/EcFpW/tYYEAkUVuwZWg0suZ4EL6XiQwIBLtiXtgqjtm6vVUtm1MQdYSDlxCEKf7Yi4bzd9
+	W2j3WVluk2w6b1lps4XuRDBptjCaIw7I=
+X-Gm-Gg: AZFdTZcSu4jf5DMIx/gWwkwBeNuXOVRaLk9yxCBel9Jgyo09qt+PdOZdjfymZl2kMdi
+	3+t2ME+tWRDw4kgAXf4mUZICXvc6+Y3aiNcW/UWItQJJxPgYIliAuvcGg4KqCuNmcuZqhb1GfOv
+	fEy/B5dmV5MAZr5Au88s/tJ8oKVyI9PaacdqDxXq5RYgnoKa+mRMM82AIHOGSHmniYdWNnJvzW4
+	cpXqq07m23l4RiZU8/btZZqT/xpC52t/LQ/cF5+Hw4cmGEwpprJXQZbwGC2KOKK8RJwCYsrKTLr
+	frbj8YSNQzzhW3KWdPs/JVFsl4GbbnDzRZdg8LkFmjsvkQ3S8h51MloDgRf5wfmg5Jg28skTeid
+	cJgyLfWkEQuh5vfgvhJSj0A8WFELVsqTZosi92QPd+GalLG7iykPqvY2Mtsub+slEriw4f0pfPF
+	QTpuLiG65m4TTKEz10QZtCbzba7c8=
+X-Received: by 2002:a05:651c:1a0a:b0:3ae:62ba:1eb with SMTP id
+ 38308e7fff4ca-3ae7fa43128mr58552731fa.22.1795605501623; Wed, 25 Nov 2026
+ 03:18:21 -0800 (PST)
+Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
+ Wed, 25 Nov 2026 05:18:20 -0600
+In-Reply-To: <20261125073342.GL3898744@ragnatech.se>
+References: <20261124095110.131258-1-shunsheng1218@gmail.com>
+ <20261125030327.953450-1-shunsheng1218@gmail.com> <20261125030327.953450-3-shunsheng1218@gmail.com>
+ <20261125073342.GL3898744@ragnatech.se>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -127,242 +112,182 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795029012.git.geert+renesas@glider.be> <dcdd928d5b89cd0a67bd8c1d3a60cf657516850f.1795029012.git.geert+renesas@glider.be>
-In-Reply-To: <dcdd928d5b89cd0a67bd8c1d3a60cf657516850f.1795029012.git.geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Date: Wed, 25 Nov 2026 12:17:16 +0100
-X-Gm-Features: Aa3M54otUsCwPZ0NLSXUquKQv9JCjL7ZJt5maqUuGrgwo9AgbaI_i_khKOzQbo4
-Message-ID: <CAPx+jO8EFFeGp5HwOEnQgR1rc--1Akz+ADOoqTjdba6Y8Hb11w@mail.gmail.com>
-Subject: Re: [PATCH v5 10/15] pmdomain: Make genpd_get_from_provider() public
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Paul Elder <paul.elder+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>,
-        Sudeep Holla <sudeep.holla@kernel.org>,
-        Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+From: zhang san <shunsheng1218@gmail.com>
+X-Google-Nh-Sender: AW_J_UpCVIodhkIqK-BapsyqbHTdE4ByeK1Vp3ycLC_CoU8RR4sD9sqDWn3naQJB3rzHn5yAy_szSuBdZ7MWZBqqOqUQeEOy98tV4eoKuXy7XCjKtkbLKCfZTO0q3Oegz6-c0UBAmgSS3nochUw4VL4KvZ7fi5i_IM--QFjBln0RxG7TgAJvgi4IdXVLhS9uN2DqYXVM9asfeyflk0NSX_so_xEsLEtv2g9U1eM9nPjW6jQn_A53RK2WVhDQ4yCygqxR
+Date: Wed, 25 Nov 2026 05:18:20 -0600
+X-Gm-Features: Aa3M54qfNGJJeA1uK2QHUImyTAAllwJfpJqcfABrJCEBi9leUt0MV6WNKDisRgQ
+Message-ID: <nh-17d10cf4-3201-426c-b9a7-95bcba2df381@google.com>
+Subject: Re: [PATCH v4 2/3] thermal: rcar_gen3: release the interrupt handlers
+ from ->remove()
+To: niklas.soderlund@ragnatech.se
+Cc: rafael@kernel.org, daniel.lezcano@kernel.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI1MDA0NCBTYWx0ZWRfX4XTY94M76Xxi
- 5/0LVVjsZ60Jq3aSTuhcjWHP6gfu2SCsyiaMmVr4EZt4X0hMcP/c2tI086JnRG/wfTEtRG1hOc6
- vMeWTL2mU1KYN0+EzIs5cF3P5CDwpVVrP34cAicYuysMKL/zwvu766h6QXLqEYeSgM6QvCZfAtV
- mgMuqWP2l2VGo2cQtmfFUMe7fBwxfWTW/rKL/sSuqMSFZC1Msxt3kk8+TrNEote2aboaAsx49u+
- tqeI1F1VMxNZlqZUzSb5QVWgKoRh99wmFWX/XqY5pC6Yze7Qa7kDTQsy9nUOU0kI4IYJoETSMt+
- yS1+JsAqjLQ2GQpribPxhfiT8i/tlWMoXpyVTcs3/+e+jjLRen+slq8btACp8WTP+pZI8WAsnLj
- KdiqQykkNIWJ/T35b8fJHp3oAhIFR5Ggic52J2h4jefuGXIXJQvoWVUhDdrey6TJeVaia3p3VLd
- 1Zq1lL8i66zMMI76XhQ==
-X-Authority-Analysis: v=2.4 cv=Voa2kO2n c=1 sm=1 tr=0 ts=6b06c3c8 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=eoimf2acIAo5FJnRuUoq:22 a=LDBv8-xUAAAA:8 a=wx2en-tew_9JlkkAXb0A:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22 a=DZeXCJrVpAJBw65Qk4Ds:22
-X-Proofpoint-GUID: 7yAos2LyNDiC7PXu9eZvsK0aR1CUILuR
-X-Proofpoint-ORIG-GUID: 7yAos2LyNDiC7PXu9eZvsK0aR1CUILuR
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI1MDA0NCBTYWx0ZWRfX+FQ1H3ftHLum
- lR4kAakQsvVDaJZwiBbAV/w4fw2iiYq+DpdqM9Mun5ZKdJuMJXq86th+ztce7ZFdDMwK45YgLVz
- uHOTXCO/VTbiZyDjqD04rzBSG63vSFY=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-25_03,2026-11-23_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1011 bulkscore=0 lowpriorityscore=0
- adultscore=0 spamscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611250044
 
-On Wed, Nov 18, 2026 at 8:46=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Unlike the corresponding function in the clock subsystem[1],
-> genpd_get_from_provider() is private, and thus cannot be used by PM
-> Domain drivers.
->
-> Make it public, so the R-Car X5H Module Controller driver can call it.
-> Add an "of_"-prefix for consistency with public genpd function naming.
->
-> [1] of_clk_get_from_provider().
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Niklas,
 
-FYI, this looks good to me. Will apply the next version.
+Fair enough, and sorry for wasting your review time. Dropping
+RCAR_GEN3_THERMAL_MAX_IRQ and your earlier style feedback across revisions
+was my fault.
 
-Kind regards
-Uffe
+I'm dropping patches 2/3 and 3/3 and won't send any further IRQ lifetime
+changes here unless I've worked through the driver properly on my own.
+I'll look at patch 1/3 separately on its own using your feedback.
 
-> ---
-> v5:
->   - Add Tested-by,
+Thanks,
+Yaohan
+
+On Wed, 25 Nov 2026 08:33:42 +0100, "Niklas S=C3=B6derlund"
+<niklas.soderlund@ragnatech.se> wrote:
+> Hi Yaohan,
 >
-> v4:
->   - Improve patch description,
+> Thanks for your work.
 >
-> v3:
->   - Add "of_" prefix,
+> On 2026-11-25 11:03:26 +0800, Yaohan Li wrote:
+> > The interrupt handlers are requested before the thermal zones, and
+> > devres releases the managed resources in the reverse order, so the
+> > handlers outlive the zones they report to. The handler walks every
+> > sensor and calls thermal_zone_device_update() through tsc->zone, which
+> > is not cleared when the zone is unregistered. Masking the interrupt
+> > sources neither waits for a threaded handler that is already running
+> > nor removes the action.
+> >
+> > Release the handlers from ->remove(), which runs before the runtime PM
+> > reference is dropped and before devres unregisters the zones.
+> > free_irq() also waits for a running handler, and after it returns the
+> > handler cannot be invoked again.
+> >
+> > Record the interrupt numbers as they are requested, so that a partial
+> > request is undone as well: if the second handler cannot be registered,
+> > the first one is released and the driver falls back to polling, as
+> > before.
+> >
+> > Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
+> >
+> > ---
+> > Prepared against v7.4-rc1-1969-g666539eecdf4.
+> >
+> > Compile tested only: arm64, aarch64-linux-gnu-gcc 11.4,
+> > CONFIG_ARCH_RENESAS and CONFIG_RCAR_GEN3_THERMAL.
+> >
+> > AI assistance: prepared with Claude (Anthropic) as a coding assistant; =
+the
+> > author reviewed the reasoning and takes responsibility for the content.
+> > ---
+> > drivers/thermal/renesas/rcar_gen3_thermal.c | 38 ++++++++++++++++++---
+> > 1 file changed, 33 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/ther=
+mal/renesas/rcar_gen3_thermal.c
+> > index a96f02d4a8ad..37348f4413b6 100644
+> > --- a/drivers/thermal/renesas/rcar_gen3_thermal.c
+> > +++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
+> > @@ -107,6 +107,8 @@ struct rcar_gen3_thermal_priv {
+> > struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
+> > struct thermal_zone_device_ops ops;
+> > unsigned int num_tscs;
+> > + int irqs[2];
 >
-> v2:
->   - No changes.
-> ---
->  drivers/pmdomain/core.c   | 22 +++++++++++-----------
->  include/linux/pm_domain.h |  7 +++++++
->  2 files changed, 18 insertions(+), 11 deletions(-)
+> What happened to RCAR_GEN3_THERMAL_MAX_IRQ ?
 >
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index c242807f62579e5b..2a44b45955dd6ba7 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -3008,7 +3008,7 @@ void of_genpd_del_provider(struct device_node *np)
->  EXPORT_SYMBOL_GPL(of_genpd_del_provider);
+> Please stop thorowing this code at an LLM it comes up with new code
+> ignore past ideas.
 >
->  /**
-> - * genpd_get_from_provider() - Look-up PM domain
-> + * of_genpd_get_from_provider() - Look-up PM domain
->   * @genpdspec: OF phandle args to use for look-up
->   *
->   * Looks for a PM domain provider under the node specified by @genpdspec=
- and if
-> @@ -3018,8 +3018,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->   * Returns a valid pointer to struct generic_pm_domain on success or ERR=
-_PTR()
->   * on failure.
->   */
-> -static struct generic_pm_domain *genpd_get_from_provider(
-> -                                       const struct of_phandle_args *gen=
-pdspec)
-> +struct generic_pm_domain *of_genpd_get_from_provider(const struct of_pha=
-ndle_args *genpdspec)
->  {
->         struct generic_pm_domain *genpd =3D ERR_PTR(-EPROBE_DEFER);
->         struct of_genpd_provider *provider;
-> @@ -3041,6 +3040,7 @@ static struct generic_pm_domain *genpd_get_from_pro=
-vider(
+> > + unsigned int num_irqs;
+> > int ptat[3];
+> > int tj_t;
+> > const struct rcar_thermal_info *info;
+> > @@ -466,9 +468,25 @@ static const struct of_device_id rcar_gen3_thermal=
+_dt_ids[] =3D {
+> > };
+> > MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
+> >
+> > +static void rcar_gen3_thermal_free_irqs(struct device *dev,
+> > + struct rcar_gen3_thermal_priv *priv)
+> > +{
+> > + while (priv->num_irqs)
 >
->         return genpd;
->  }
-> +EXPORT_SYMBOL_GPL(of_genpd_get_from_provider);
+> Please use a for loop not modifyig priv->num_irqs, this looks dangerous.
 >
->  /**
->   * of_genpd_add_child_ids() - Parse power-domains-child-ids property
-> @@ -3113,7 +3113,7 @@ int of_genpd_add_child_ids(struct device_node *np,
->                         goto err_unwind;
+> > + devm_free_irq(dev, priv->irqs[--priv->num_irqs], priv);
+> > +}
+> > +
+> > static void rcar_gen3_thermal_remove(struct platform_device *pdev)
+> > {
+> > + struct rcar_gen3_thermal_priv *priv =3D platform_get_drvdata(pdev);
+> > struct device *dev =3D &pdev->dev;
+> > + unsigned int i;
+> > +
+> > + for (i =3D 0; i < priv->num_tscs; i++) {
 >
->                 /* Get the parent domain */
-> -               parent_genpd =3D genpd_get_from_provider(&parent_args);
-> +               parent_genpd =3D of_genpd_get_from_provider(&parent_args)=
-;
->                 of_node_put(parent_args.np);
->                 if (IS_ERR(parent_genpd)) {
->                         pr_err("Failed to get parent domain for %pOF: %ld=
-\n",
-> @@ -3196,7 +3196,7 @@ int of_genpd_remove_child_ids(struct device_node *n=
-p,
->                 if (ret)
->                         continue;
+> Declare loop variable in for loop, where possible.
 >
-> -               parent_genpd =3D genpd_get_from_provider(&parent_args);
-> +               parent_genpd =3D of_genpd_get_from_provider(&parent_args)=
-;
->                 of_node_put(parent_args.np);
->                 if (IS_ERR(parent_genpd))
->                         continue;
-> @@ -3227,7 +3227,7 @@ int of_genpd_add_device(const struct of_phandle_arg=
-s *genpdspec, struct device *
+> > + rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQEN, 0);
+> > + rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQMSK, 0);
+> > + }
+> > +
+> > + rcar_gen3_thermal_free_irqs(dev, priv);
+> >
+> > pm_runtime_put(dev);
+> > pm_runtime_disable(dev);
+> > @@ -491,22 +509,32 @@ static int rcar_gen3_thermal_request_irqs(struct =
+rcar_gen3_thermal_priv *priv,
+> >
+> > for (i =3D 0; i < 2; i++) {
+> > irq =3D platform_get_irq_optional(pdev, i);
+> > - if (irq < 0)
+> > - return irq;
+> > + if (irq < 0) {
+> > + ret =3D irq;
+> > + goto release;
+> > + }
 >
->         mutex_lock(&gpd_list_lock);
+> This changes the behavior of the driver...
 >
-> -       genpd =3D genpd_get_from_provider(genpdspec);
-> +       genpd =3D of_genpd_get_from_provider(genpdspec);
->         if (IS_ERR(genpd)) {
->                 ret =3D PTR_ERR(genpd);
->                 goto out;
-> @@ -3259,13 +3259,13 @@ int of_genpd_add_subdomain(const struct of_phandl=
-e_args *parent_spec,
+> Please stop using an LLM to code this. As you don't have hardware to
+> test with throwing LLM spaghetti over the wall and see if it sticks is
+> getting tedious. Please read, understand and write the code yourself as
+> coding for gear you can't test is hard.
 >
->         mutex_lock(&gpd_list_lock);
+> I will not review another set of LLM slop, especially as the good parts
+> like RCAR_GEN3_THERMAL_MAX_IRQ are dropped between revisions.
 >
-> -       parent =3D genpd_get_from_provider(parent_spec);
-> +       parent =3D of_genpd_get_from_provider(parent_spec);
->         if (IS_ERR(parent)) {
->                 ret =3D PTR_ERR(parent);
->                 goto out;
->         }
+> Nacked-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
 >
-> -       subdomain =3D genpd_get_from_provider(subdomain_spec);
-> +       subdomain =3D of_genpd_get_from_provider(subdomain_spec);
->         if (IS_ERR(subdomain)) {
->                 ret =3D PTR_ERR(subdomain);
->                 goto out;
-> @@ -3297,13 +3297,13 @@ int of_genpd_remove_subdomain(const struct of_pha=
-ndle_args *parent_spec,
+> >
+> > irqname =3D devm_kasprintf(dev, GFP_KERNEL, "%s:ch%d",
+> > dev_name(dev), i);
+> > - if (!irqname)
+> > - return -ENOMEM;
+> > + if (!irqname) {
+> > + ret =3D -ENOMEM;
+> > + goto release;
+> > + }
+> >
+> > ret =3D devm_request_threaded_irq(dev, irq, NULL,
+> > rcar_gen3_thermal_irq,
+> > IRQF_ONESHOT, irqname, priv);
+> > if (ret)
+> > - return ret;
+> > + goto release;
+> > +
+> > + priv->irqs[priv->num_irqs++] =3D irq;
+> > }
+> >
+> > return 0;
+> > +
+> > +release:
+> > + rcar_gen3_thermal_free_irqs(dev, priv);
+> > + return ret;
+> > }
+> >
+> > static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+> > --
+> > 2.34.1
+> >
 >
->         mutex_lock(&gpd_list_lock);
->
-> -       parent =3D genpd_get_from_provider(parent_spec);
-> +       parent =3D of_genpd_get_from_provider(parent_spec);
->         if (IS_ERR(parent)) {
->                 ret =3D PTR_ERR(parent);
->                 goto out;
->         }
->
-> -       subdomain =3D genpd_get_from_provider(subdomain_spec);
-> +       subdomain =3D of_genpd_get_from_provider(subdomain_spec);
->         if (IS_ERR(subdomain)) {
->                 ret =3D PTR_ERR(subdomain);
->                 goto out;
-> @@ -3491,7 +3491,7 @@ static int __genpd_dev_pm_attach(struct device *dev=
-, struct device *base_dev,
->                 return ret;
->
->         mutex_lock(&gpd_list_lock);
-> -       pd =3D genpd_get_from_provider(&pd_args);
-> +       pd =3D of_genpd_get_from_provider(&pd_args);
->         of_node_put(pd_args.np);
->         if (IS_ERR(pd)) {
->                 mutex_unlock(&gpd_list_lock);
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 14e0e346c610a9a6..d65ee8b3725c1bcb 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -467,6 +467,7 @@ int of_genpd_add_provider_simple(struct device_node *=
-np,
->  int of_genpd_add_provider_onecell(struct device_node *np,
->                                   struct genpd_onecell_data *data);
->  void of_genpd_del_provider(struct device_node *np);
-> +struct generic_pm_domain *of_genpd_get_from_provider(const struct of_pha=
-ndle_args *genpdspec);
->  int of_genpd_add_device(const struct of_phandle_args *args, struct devic=
-e *dev);
->  int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
->                            const struct of_phandle_args *subdomain_spec);
-> @@ -501,6 +502,12 @@ static inline int of_genpd_add_provider_onecell(stru=
-ct device_node *np,
->
->  static inline void of_genpd_del_provider(struct device_node *np) {}
->
-> +static inline struct generic_pm_domain *of_genpd_get_from_provider(
-> +                               const struct of_phandle_args *genpdspec)
-> +{
-> +       return ERR_PTR(-ENODEV);
-> +}
-> +
->  static inline int of_genpd_add_device(const struct of_phandle_args *args=
-,
->                                       struct device *dev)
->  {
 > --
-> 2.43.0
->
+> Kind Regards,
+> Niklas S=C3=B6derlund
