@@ -1,54 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795609102;
-	b=pzmb/jeuZE74x/IeBSSdVdSOoe1Xr6Z0urRTLyfZG71NaHfy2D5vizJ5flb4YcXXqPxx
-	 s71e+Bbjio0vgg8Y1XuXH8N8ooMeeOKkbrIIqi4QWqHYQcZRVf/U4AeLDkweq+1uB5xQa
-	 AYppaR8S3IE8xOI5qOmqRbHH3ZLvfMJIUUpFWAYr0qArs+lSOwsPIG+E1SKUxdrgF+RTK
-	 s0DYaJvtAC7Z+uwNTaLd29TwgD23tvYNGgpKo5p866UIsM5MBgeTfWiUg864CK7ISBjpK
-	 3I18KVWde2rFBBMvIFKePAuSD8I2KzMxW+z9spNK2Yg0GlSHEIkde2sXsmqsNuL9/Lg==
+	t=1795609216;
+	b=nJN//HyouufYeFkY26TKPu6bM4H4EeMUwOEYAmGFKlmdzCHpcqvG2Kk+wEmt82PWTxwk
+	 I2B1/MZ16f8iW3HTCX/eLWphsfemyujAmbfvwGG2PEsTTizfJYno3WnyPrNrlifr//VIv
+	 YJaH17+XsE+8QuVddp0K8WEu2KeOO66R3xKkgMXnimHPe+xpyupDaFgaYdb+Y76R6qS5j
+	 sSZFZWj7rUjthokEI2buNEjP0RfjjLQL5iYtUOXJcsB9h1Gl5lBWAIKXIni6T9x58LB0I
+	 kNZ2cBwYnd8dwJYVkC3D9GmjxLsJykkSIhYouquWwEd9/rdHGOLjghf3ie+7r6AGkJQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795609102;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795609216;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=w6brxhWc58ejPdDmDsjZBb3VI0jzhlT7oBmaZ1G4V/4=;
-	b=aQ59mje40fW6wyaY/HpsmA+Qk3FSCjUjxWWpEr1EINUYEQtf9DCgGdb8xKbB156UIiE0
-	 eo3SKX7bsDTIF+wjqASOmouWCz12DIsTgOK22HATd+iveY6khKZwMDk5ksthXp4M4ZObl
-	 kGqzELeoIsBWyGvPw2LJSiCNKnGwFiiN5U0y43+PleSxPjsEPM3pK45KjXIu5mheklwKI
-	 uL9ZUTadwXk6c4J3B3CSOKvWcXeK27FTTn7WMKdnq/mJ1dnk5ZR0XISsmeAJy79mCRLYh
-	 KRXDthrEYWTubhz76wlHJrCRK+wFbZSsMcv/x6kWDzg0g99+/dRhqL7XQsLR7E8EPBQ==
+	bh=g0cGllNjSZ1Dlm0jVYy1c6i4slueJeHAQyhOKe/jYNU=;
+	b=0o14rK9kAKFuSV/BkROMz1qrpBkunSM1Tj/G9HCtmZc8Y7L7lKHN06cyrFbvaOZl3/U0
+	 dNMiAxuq/FNcnaYzq4xTAB5FqI6ZRbfNLlgaZVzUFmdJfrBD2aJO0pUrVbSlA+upUSR2M
+	 VxL3qVUwxIOe89xjLwoiejyzS+DrQQ/WFlqL+vArK8TgZWi7JKEX+qWsr0Rzvt1/h2T4d
+	 9tv+tYD6DSsLXi+5WDvt2ZobWwHMIP0OQGIOxHRWEC0yN9P4NLSrwqjMzI83qV/SmpbvV
+	 VcZo0EMaYgcbBBaUM6TG7sJejd0apdauCkDEmgs0GnR3qOhrmw4e5K1bgmDj8NTHKbQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f3UgWEen;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d7ZAtjiu;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F7B606A31E;
-	Wed, 25 Nov 2026 12:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A789F606A31E;
+	Wed, 25 Nov 2026 12:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f3UgWEen
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 022BE1F000C0;
-	Wed, 25 Nov 2026 12:18:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d7ZAtjiu
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8EB1F000C4;
+	Wed, 25 Nov 2026 12:20:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795609102;
-	bh=w6brxhWc58ejPdDmDsjZBb3VI0jzhlT7oBmaZ1G4V/4=;
+	s=k20260515; t=1795609216;
+	bh=g0cGllNjSZ1Dlm0jVYy1c6i4slueJeHAQyhOKe/jYNU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=f3UgWEenHgZd6XLE/pukysN5IutxEUMLdNKKdEK9zJsRki4m+Z8/DuVppUciskqiH
-	 hUv8Bg7TpLKz6HidPpPzpLGvA1Eum3t0lFmi3edx/zNZqzeijeipQWmLpJsdGQ8N6H
-	 oWgv2qkvqg6Xmvx2MwfU3uZ1EUCVOVPMQmocEFXMn9QdCrIBJovDIK1jlV8nCqgaDu
-	 pYbWX14eqOgkzt2cl5dikb1t9hi6059ZL7uwxKAGSoxCYWP+WylaOdKxfUZeHT0jKZ
-	 yfVquEHqcXFUmZUimfKX9S7dWLyb7LpsnfNfIhrWRrwClh7hVxBYdHt62y6Rnen18c
-	 gJTnK1p4kh2CA==
-Date: Wed, 25 Nov 2026 13:18:20 +0100
+	b=d7ZAtjiuRyHXkqPBq4xg2DgJbYRJHmkbUzYixCVpFSEAoCHirys2mk6dQ+JIr+J40
+	 Knp+k4We+LIxg3mN+xOf5pn5oFGpoRbB7zmzZxMp59fNS4SCtJ2M2GtceeukrKHpUR
+	 CS6JtMtrfxBZyLRsDGp7OcyFzczFogVAuryMbi2wUvYwcROvU27p/VH1dlGFp/j0Ad
+	 sFVyOPs2tdKw7uiAy7L+7ejV6na1073gaznu18X/foVmIU/fE+KlS73dpFF6YM9oXZ
+	 vrK+Iq94NSBDFzduyLUvx6GzHc6gifbkg4mmFeRxn3aIefOLWH+dKs7DKqMk8KeIil
+	 CJ/8noLwUVlcg==
+Date: Wed, 25 Nov 2026 13:20:13 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Geert Uytterhoeven <geert@kernel.org>
 Cc: soc@lists.linux.dev, Magnus Damm <magnus.damm@gmail.com>, 
 	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [GIT PULL 1/2] Renesas ARM defconfig updates for v7.5
-Message-ID: <20261125-tidy-screeching-nightingale-f8c74a@quoll>
+Subject: Re: [GIT PULL 2/2] Renesas DTS updates for v7.5
+Message-ID: <20261125-qualified-shiny-cat-ade8f1@quoll>
 References: <cover.1795540796.git.geert+renesas@glider.be>
- <cover.1795540798.git.geert+renesas@glider.be>
+ <cover.1795540800.git.geert+renesas@glider.be>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -60,9 +60,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1795540798.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1795540800.git.geert+renesas@glider.be>
 
-On Tue, Nov 24, 2026 at 06:28:35PM +0100, Geert Uytterhoeven wrote:
+On Tue, Nov 24, 2026 at 06:28:36PM +0100, Geert Uytterhoeven wrote:
 > From: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
 > The following changes since commit 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4:
@@ -71,7 +71,21 @@ On Tue, Nov 24, 2026 at 06:28:35PM +0100, Geert Uytterhoeven wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v7.5-tag1
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dts-for-v7.5-tag1
+> 
+> for you to fetch changes up to df85c8ee22391046200bb057c85717eb906e464a:
+> 
+>   arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD (2026-11-23 11:05:32 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas DTS updates for v7.5
+> 
+>   - Add more timer support for the RZ/N1 SoC,
+>   - Add PCIe endpoint suppport for the Renesas Spider development board,
+>   - Add CAN-FD support for the RZ/G3L and RZ/G3S SoCs and their SMARC
+>     boards.
+> 
+> ----------------------------------------------------------------
 
 Thanks, applied
 
