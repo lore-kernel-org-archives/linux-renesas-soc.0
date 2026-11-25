@@ -1,83 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795608911;
-	b=1yPzGCUj2xwUm85veKtHpQh+LRTwSbQiJZ2k8Yc9OrFFa7J5yiV2Mzeb0EvPBZs2MJ71
-	 JTfOdcNkYCGNBVyo56CvKCbV3ED1bRVdW8L1ix899PwOfDR3QS56Zi+W8SsUrUGXJxa/S
-	 d8Nqozdegzw/Leujqz38kSSqIQZ2JzGYMf0kPMw2gHbrOCfLpR7YD7R72sr1J/K9iVtLh
-	 L8tIST6xoLggwNXXXzT3f0qTmyHb3ye4nt/t5oOtxn846CqZEjwwH9p/aFYXZ7JOlFOoZ
-	 YXGYbrBv3UWBLZxKi0NYFwLe90OmCgMvv9qF6TIlxMbsll3G2OXxFyOcKG57v0Bk0FA==
+	t=1795608912;
+	b=y7h7mBGIVPj6VkYB6mn/1NM+gdcVggQcC5UytgEtr3os4ByoT1E6uYIQyWg+43yrq+Pt
+	 nsvWEbzF4rSSffBrp7uS7DU+btrfKpLq+1q3GEn3dMqXCdWUokPy5zNjcnP7YCrbtwhKJ
+	 UDCMRP7RspewPcdyDA4iqOayY9h8cFjIThXaLUaEQwwE+/YxxY7uql9q9Vi5bt9Lc//sR
+	 CkkVbmL6eF0cG5BLTQyDv3YFJsasGgPtUdS2oSZzn7Jjfny0SUUsEANmssqI/r4jFz5lQ
+	 Xq7tRh0zxvWSla5y9pIJi+QbRfwoeJ34cTl7KWSnPjLAqqTrgit9ZmUPJtkL3CmqpSA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795608911;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795608912;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
 	 X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=YOmjDet4CehHcWMpBY2GAw58yyKf1Sga9AXQjB5h2d8=;
-	b=SY7x+7wOxuyHTyOX9oIL8Zk1YKelfsQtz8nxQJXf6RfJjlvu/8Gmva/aZfgPO+Ns7iCR
-	 RL3EF0MoBrwZMsi/HWkM913ZOv9bMQ2xBlp9XlrY0/H4IYJz71waBV4nh/kj/oFSEyNn2
-	 Vn/cUXHjldOaNqe/DuMU99DMEQHy/0A2FRVgIduwj1xKe2tPTgezURVeHZJ1U/Mrci9kl
-	 JNyf7cWj3Gs8LZUN9O248fDaw3bz8qGKAQHoa4LP7FxW5mkXoHiSjwidoBJVH9sYCpirh
-	 MfNQME/XRj9tZnoujFQ7oEvyLxnVXpjayoEo1Mb2lxo22PsoaU2BlJjt8TNp9JdFqKw==
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=TFj1PLZZtoWbVRq955IZXwqJyuyzYFFvoCl1bDOikmw=;
+	b=1M9ejw/TsA/aV84Ap0llb5ENrb7bg5+1UdZTTV1qP/SfD2VKEzKQZZtFcnNLkPeFoa39
+	 56W0ckLZAVpzlJ2lB6vML8b33SDkRWp5JUQZbsyRFdp3yxqNcvhfx/TWl3TGYU/nFmP8w
+	 n1yXrw9lkgD2C9cdMStx2vkW9lc6Ju32w1QylFlg0IEmuBlnT3J3aFuLQwEGREf6OJgPg
+	 usfainF1gX39P4X6rmTykznqIRQjvWVqfbqk4xvVgH/LN8tciYyDFbXT18aBnvQN1XWN4
+	 D27xAVPMxWWOflHKg7SX2WRdIb78ZAxrZGREH+75OZyGBgTlk/2EyLyZIGo8cJYGWHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="Gla3bR/X";
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZUpUXWoC;
+	arc=none smtp.remote-ip=209.85.128.41
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D8A606A33C
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 12:15:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D9D8A606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9B0606A33F
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 12:15:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4D9B0606A33F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gla3bR/X
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4b467581b98so55326375e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:15:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZUpUXWoC
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4bb6057b333so26819105e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 04:15:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795608909; x=1796213709; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YOmjDet4CehHcWMpBY2GAw58yyKf1Sga9AXQjB5h2d8=;
-        b=Gla3bR/X3n4K3Z+ZPSeOtToRO8WnV6ERzay8JSw2o4o66TZlk2AtLz4tVhBUGoHmvl
-         PndKU8cV6wsff4YzyoK/fjelbiVzBk09L8OUwBw9JqWUmBDluN0b4FFcvEBEmzEKGJEr
-         Py3RM8CWfAHH46mfQBDMsJSvOMO61XMhSMfGkXX/hEvFvn3eLoeu56Cl1NaF/8jwr+Fb
-         nStF0gx3Hf8atPXEdCjT/tNrWQ7H3jwr+w5AkEz9rROj/PARYakD7XHbaIFx2+7sCJA/
-         GuJy8zBCHCzF72ObKP+M+IjtJXEhjIiThKndgjgFXGSW71GmhaQwgifhtDrfFHRd9sdR
-         bxLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795608909; x=1796213709;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20260707; t=1795608910; x=1796213710; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=YOmjDet4CehHcWMpBY2GAw58yyKf1Sga9AXQjB5h2d8=;
-        b=IxY9kgvefiu4o/uPLJGUkGIg5nYuhrj8O3ihXeIiNFSpaVjiEc1/h1pZrY2AqtgBBb
-         5iStustJ1RjgqcZDwxja8sIR5DCpLtq8l6qIkfdAvys5lR8aazImS2/8ar++mHTlSOfT
-         Dzw9aHwDCcRShOCV66x189LF7N42jyMoerHtgWd7NLV0i6gu3macroj/NU0vS8aJ6uGI
-         DXsa8xAuNvfkHRzDnpcd5Y4IBcOHUYrrpB38QNvgxQ2B6iOmPDnnDHyxgAwyrL1I/H+B
-         8SDtr0x674GNKOTuAxGNGr/jm+YKw1B8CDBQAJi/QJWmKTUXZblQE0SroweSdbjeXdOt
-         cdJg==
-X-Gm-Message-State: APuU4Z+YjkeWCix5DzwF3pbrfiaQkWrbob0tDsm8IWllEXvyfkMqB2yM
-	fziKxQ6HofCbuzGxuvt09H+RYoPAV6aVM1NdbSBGM24UaMhQEhIPvwixA+MLgCZQMpQ=
-X-Gm-Gg: AZFdTZemBZHxk1JWSqGlpuxBFGlPGWzq/WpRaPi6lpHtNZ77Py7OlZbTTyjx80FVVwR
-	R9gWK7igWRqdEW9NTtB70VbmRe4Qj5E3L2+PmPE3u81IJ5PTXNzV39NXxGj3QZEGvje1Bk/eqgL
-	MgW8lIqc8rh1ehzssre05VOuluSA5ectDOnFOGVRlspJ2cQBzPI8UYZfOepJsbW5zpy+RNDUEKe
-	AIujFOmUXDGTZHs3ZKQWpbzRDC+bgt+15/5bcQWbkKHEND8IorwTlSixuwrputXPM4HaTOPg8BO
-	/iWCHEv6M82Hrmkn+lHXpcrqmZw+4+8gIUqn1fmGbtIIKAMuKdeU4328NQUcCL12Yj2Ce4rH1ih
-	yx+QAre61hE+CjOd+s2bWjfbX/De7Z5CUF9tZ8zzCQadIviKNAfEz/eWGHPiM4dOalimmU9tkI4
-	LWLZ0znvcXT0MJ0m7F5pwZyhn5hf8W5GA9A0MmCiN/UNsl76ymMwsRVn7fYi4Y3INQupf1oKEdH
-	ZuAgsIoan9TgoFrNbG7iPC3F5bGWjNAf+ZXC4kqnATqd5sAMIGmYw+frbjVaO/dVkhMnnwtLnVu
-	ZwPIkuY26NF/CzeQVgF7DotLhk9d1Ynz4sEkvJArGoE7Zw4Wq3qbGysAWqAayKPd4MrcJekjLFY
-	6pW+W1G9Tbdk+T/zM7q18yYRnkmBdUE9aO1eMDAS7SgYvUQyd9TjwEROeL6opeaPQaBeoVM/B2k
-	uGX75pSwWv
-X-Received: by 2002:a05:600c:a117:b0:4bb:a5e1:7497 with SMTP id 5b1f17b1804b1-4bba5e18d83mr27314105e9.32.1795608908922;
-        Wed, 25 Nov 2026 04:15:08 -0800 (PST)
+        bh=TFj1PLZZtoWbVRq955IZXwqJyuyzYFFvoCl1bDOikmw=;
+        b=ZUpUXWoCPYTM6Grx7JkNR2uPrIqVqbUhQFfyvbv/Gw6iEwIM2sC08bQU0y4P18cd5x
+         thnFC12SScFugeE2QXzdoPQivUWSfmCdCCxym/QtQ9ZS9W1vesmDm77kKYSwv+3YKTps
+         1/HelArEvMB4FIi//KRuSxpa0Gj0MUWIAGBR/lkNU3PlMgfAty5lGZOx2LQ4EVI0NzHV
+         twJxziyxK2OP341/LsWoSKDtGR2ylSjPao2vhRdtzSNZYtR1KI4YukVXrFfxC0SuwSQO
+         ujLI73mZFgzZkzACnClcEGmgSpJhhhejgsOZXM6lJbWGEZ4GMLJ3bzVv6hf3yj/Aj/z9
+         nBNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795608910; x=1796213710;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=TFj1PLZZtoWbVRq955IZXwqJyuyzYFFvoCl1bDOikmw=;
+        b=bHc1UdQGwCvxBU7wBdyHFHZbTrXUk+BQAsDL5QCuWdZw5Ml9yq4IWfQ1/JJVKzNkPF
+         YclT3cu1LYpCEY0yK3Scqr/4e6IATaWob/GV51vDy76HNdBKUHKCXOGCizDbvWdpd+OG
+         LsdVL2Y/lPLhQL6MepZMXfqWNVFmlYMdgxfxKRMK6dU4CvtHXo4YEKDybxY9u2FEcrN8
+         K0BTWLCacWatauHd5fBu+27bZc5rjv2qc4IERWcY5ebdObuh2PcsqQSdpnmD2oAhiovb
+         P1rUAepyP8GxzULm2U99a9Po2P1w6IquOHZB/D9qMr0uug0F3EdgJ4W+mTcbMqL8xcai
+         MYQw==
+X-Gm-Message-State: APuU4Z9rnwSQ5VKXMnyxUU+1ef0oA+2+mSYgn0eRZ2yWePpWL/4zvqTt
+	PLMaKfDU1ZINOuRsWD2x++WCtjK2WWSRp+ZcHy/XkThhn2i8TkVNSo/+
+X-Gm-Gg: AZFdTZdlOKmUI8NfQuwl2whvSlITZ9ngnWplpGGB8rcVv6A4YthcTkSuyE6wec7IC/2
+	wYVh0xMu3zjVRVD22uDCIrCTr6TtqvVWw2e3YScBuYrZPje98Rkj7JAxXuxVqx9E5fyaSnZrGoZ
+	f833IZ2LLLER/LCo9l8kGT72/+BPyLBABA5xaPy2W3ECvLKF3KLdfJYONSUuckpppeapLtjMdzs
+	4q4DIkBXyke44ptWresQQNLtRyk6uIQoH/KGjkMNFa2qv8eFSD5Q54yHBLUh+EzFM8udbQsnaub
+	zu/ViHg4MuBeqoVzM6CHbBUD+rnd7/PtG34rYmnY4s0sJshdpVKWocJUzBOeOnwWo1xCMmk4chA
+	3qwFZFWTD/YU7FG5IeKuR5Q/mrKGyoEZntn/Um9RB4i7Qe38hygqXuNLwdk/shTJAb1MeTVxJlk
+	XOsXt0oWLLIP/RPvH1ojsqs4+6p8Zev7qQTzEBEjoUs+4VCxmk7m9LMmswPx7W8sVCp+Ej0Zwzn
+	SIKd7tXvmQ0iWRXnjMUsPbiDaBeJTy67Ww7eDlvIlZX5uJMFaYJCm2wwwtpw8oIHvbYj0BQahQ6
+	LkfXeBP2dkVCeRpXPnMco+xgu1nctHagKONhZF7iEHMgmN8mRkziYRaogAIj+FRvD+be4i8AnJt
+	ggA/0HrQZ4gxythc91LCp92gKeeNbgPAjzpgLJqqBRuz5+tGlOLfnGjDc5o024EtrN1k/MmpNtE
+	gjgHAsfSrr
+X-Received: by 2002:a05:600d:18:b0:4bb:9001:1aa with SMTP id 5b1f17b1804b1-4bb900102b8mr243378915e9.10.1795608909690;
+        Wed, 25 Nov 2026 04:15:09 -0800 (PST)
 Received: from iku.example.org ([2a00:23c8:254f:fd01:293b:cca7:e6a9:dea6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8538b09bsm947626355e9.4.2026.11.25.04.15.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8538b09bsm947626355e9.4.2026.11.25.04.15.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 04:15:08 -0800 (PST)
+        Wed, 25 Nov 2026 04:15:09 -0800 (PST)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -91,10 +92,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/6] arm64: dts: renesas: Drop GBETH filter properties
-Date: Wed, 25 Nov 2026 12:14:42 +0000
-Message-ID: <20261125121448.180847-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/6] arm64: dts: renesas: r9a09g047: Drop GBETH filter properties
+Date: Wed, 25 Nov 2026 12:14:43 +0000
+Message-ID: <20261125121448.180847-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.56.1
+In-Reply-To: <20261125121448.180847-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20261125121448.180847-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -108,37 +111,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi all,
+The GBETH nodes on RZ/G3E specify 'snps,perfect-filter-entries = <128>',
+but the IP provides only 32 perfect filter entries.
 
-This series drops the 'snps,perfect-filter-entries' and
-'snps,multicast-filter-bins' properties from the GBETH nodes in the
-Renesas DTSI files, as these values are derived from the hardware feature
-registers by the stmmac driver and do not need to be specified in the
-device tree.
+Both 'snps,perfect-filter-entries' and 'snps,multicast-filter-bins' are
+discoverable from the MAC hardware feature registers. The stmmac driver
+does not parse these properties for "snps,dwmac-5.20", and derives the
+number of perfect filter entries and hash table bins from the hardware
+feature registers instead.
 
-Logs:
-Before changes, https://gist.github.com/prabhakarlad/5d2530c2508e68d865507aab7f680f07
-After changes, https://gist.github.com/prabhakarlad/a4b871a72307a310678c66b803456949
+Drop both properties instead of correcting the value. There is no
+functional change for Linux.
 
-Cheers,
-Prabhakar
-
-Lad Prabhakar (6):
-  arm64: dts: renesas: r9a09g047: Drop GBETH filter properties
-  arm64: dts: renesas: r9a08g046: Drop GBETH filter properties
-  arm64: dts: renesas: r9a09g056: Drop GBETH filter properties
-  arm64: dts: renesas: r9a09g057: Drop GBETH filter properties
-  arm64: dts: renesas: r9a09g077: Drop GBETH filter properties
-  arm64: dts: renesas: r9a09g087: Drop GBETH filter properties
-
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 4 ----
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Since the driver derives them I havent added a fixes tag, in case we need
+one below is the tag which needs to be added:
+Fixes: 41ffbb1c42d3 ("arm64: dts: renesas: r9a09g047: Add GBETH nodes")
+---
  arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 4 ----
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 4 ----
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 4 ----
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 6 ------
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 6 ------
- 6 files changed, 28 deletions(-)
+ 1 file changed, 4 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+index 737bf1c60451..fdedcfce8e9e 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+@@ -1987,8 +1987,6 @@ eth0: ethernet@15c30000 {
+ 					  "tx-queue-2", "tx-queue-3";
+ 			resets = <&cpg 0xb0>;
+ 			power-domains = <&cpg>;
+-			snps,multicast-filter-bins = <256>;
+-			snps,perfect-filter-entries = <128>;
+ 			rx-fifo-depth = <8192>;
+ 			tx-fifo-depth = <8192>;
+ 			snps,mixed-burst;
+@@ -2092,8 +2090,6 @@ eth1: ethernet@15c40000 {
+ 					  "tx-queue-2", "tx-queue-3";
+ 			resets = <&cpg 0xb1>;
+ 			power-domains = <&cpg>;
+-			snps,multicast-filter-bins = <256>;
+-			snps,perfect-filter-entries = <128>;
+ 			rx-fifo-depth = <8192>;
+ 			tx-fifo-depth = <8192>;
+ 			snps,mixed-burst;
 -- 
 2.56.1
 
