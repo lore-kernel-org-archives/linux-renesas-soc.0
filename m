@@ -1,80 +1,32 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795622062;
-	b=J5KWHx+BIoaUWANG+g6pA32UpcedZwI34/ky+z1bb2RD++2+4rNuejnYoyJwQgi9sXGf
-	 +zRm3OFBVISmzC1kF9Dkmo1i4qw9upPT+8ypmVbIJRMemU6M86fY+LRN7Tmkp+H4jrqHu
-	 UteaUFkw+p0wBHOPAAMjp2tfBe+fwzv3qAtAsa43U+eo+qEGu3vU6ldA56csQEX79i+1k
-	 8JVA7z2lzz0poGmqbDXyyQErVBVwFpsD72FWON9d9Z9zWRyyV2qzKj/rr8AmddfI9jOhG
-	 ITmwLGqibEdMCu99nyHNwdrzos6ufABSsj727t9CFEqY0HqMVVCwMkT7N12gA4z2YCw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795622062;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=6GnOjmsc4+xQIMPh5yFK2pvj96/NhYolYrqEgyA0n+w=;
-	b=j8itdr97oXtHIXKcLzhnVHe1nhC0MoGtW+3rBf3423cticvya03yGKBidkIBXzUJBC+I
-	 O03aomobDaAIusFDLiIXz1JFD8RFjtWFIE44DPIVKke/NmA+N/2s4ODBTRIuSN4rnogTE
-	 w6aA4gpgKI14m/wkcRBl2uaAelKXYLhMUeA/b6fwxaoJPUJX0Tvh1pmAE4t3yah8icUEH
-	 cwcjCI4xMdP+L/film6rfIyRZh8Er+seYLVAiMawYIOFbGAsvdm9wVz2QdkZU5+HWWKND
-	 oGVonLecli0xy2SW9HMCCt2awDX0any6H5zPCz6GDgquz8NPo7lxmneEcHadrhTTRXQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n1Uwa7mM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795624788;
+	b=gvnOU5oESRK1IJ6xZ1Z5NJuKptGknPD37MSOVKzKoggeQGGOxpJGM6NxnJwVRQRqpD7t
+	 VJ6JZwzvOdAz9VoAJe+UTlDvLQnmgoxEhTAxaywiWed4yEXm7IG7iBiJDa1+TLQ+Ti8Kf
+	 C4MDBMjeqmaRfhZ2e9WP8FAn0MpKP6sB8dhX4/YvdRZrBoDz0T3rjFSDhXrtKOBMoxRy5
+	 2j54YjHiyKkCLXNSRu4q05ZS2LreJl5fye5iBt/6Xq3cYOYQSRoQZkeSC4GwfHHbCJHJK
+	 4vCtgLLu6/5FhqrajM4kL1vTfD78sBsp/dt4To0P7hU771GNwkxggTjHtzkbUsMmKmw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795624788;
+	h=Received:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:
+	 From:To:Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=dIJ6wlWtuq+YDcSjgi8UCsWxVOAWAUMRdLTxJIBzpgw=;
+	b=Jg5W/11CIiwXXO5yqNVk0C7qxWcg6XFklvfmJqYa2ts9MubPRodfGz5MdNc4YLOHj2Mt
+	 CedMcpmHx6D1I42wZSFrGfwrDMp32Y6jJ4htJ02qAZPLCpzXTQAP3kTInE8Ta4y6uG9qH
+	 sqvnyxGV2Fdu0d8e8e28ZSAQ5OQoXB8e632xtReki/aVs3O5Q5yzlfb0FacXqUbEMm/jM
+	 xBxj40e7J3K1QPp7h7ANQyt1BOQBXOXG2noOHefcITEC3hJoD+E2qdjUaMHrNCKj9J4Mn
+	 jC3cVrhrngnz0oBNXX8PiLwI7FOuAAsa/9Li1z0ykd+cR4HWE6QYvOityQFlFUU3elw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E9E606A32E;
-	Wed, 25 Nov 2026 15:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n1Uwa7mM
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795622061;
-	b=pKVcLikJ5AP+4s4i5d7yX8msf+7czWi4sgpnzXjoY4lwz/j5fwtTHzKaD70rFuG/NEfJ
-	 dgFU4PkBCx9z2tcdNZvjiIGpNhKp9hozwBskBlUc1G3DdiLD/1CfVEE2frZBric8XNxBz
-	 UvhaTGb6Xds8MJ9tPI2acdS5ucr2maiZ+1I5DlhMC96uu5S4555lm5mxSziFIXWBGVV5g
-	 1fIov1Z87GupXeCv2hwSq/t2+ISEAy0My5rEBAYkOl7MPXmG5zBlUcnydfb17SK4xheN9
-	 CWHevmh1gICnwD1U5iO6gX8CMCnC2ybjFKo9TIe0hOT+vdui0rIfeas1wz0z8YXe++g==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795622061;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=6GnOjmsc4+xQIMPh5yFK2pvj96/NhYolYrqEgyA0n+w=;
-	b=cedtiCGIPR1WBYCWSVDTBOPYGCVT6eJUs6JsT5uUlUYPEvfNoPcv/tcISF+ilFUDsysh
-	 VGdj7kEdQYNfmgGBFZ6+QrWDXG5bHGawEs8dHHYE+qGAO/NSt0qPkF/ceMx/mz9baZar3
-	 UdVoDQrqdh2XHPUkREkzOgHCDP33lwDGAGSbj3/mpRpdsGu4xjgAGLymFdXHFonUPMEtx
-	 31nC8wGJry6BfT04gNb1Jm6yBWB7Tb3ihf7c6V689OE9EagP+QAtspptEiZ7Shhy4enYg
-	 mofnTQBLckYJYucWKxbYxYiL0reQ3i1sU94D1a06Bh7kOtl1i8Bi24XvmNBtET52kTA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 1C35E1F000D2;
-	Wed, 25 Nov 2026 15:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795622061;
-	bh=6GnOjmsc4+xQIMPh5yFK2pvj96/NhYolYrqEgyA0n+w=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=n1Uwa7mMvP5ece7SD3wS/XX62ALzNvFprRfKqjLJ2bWzDiArrUUG4gNAl0JfF3oH2
-	 UAkYGHI17lVQ1l0CN6rakanljbqGONP8IE+fcO/CDolfsmHHfdzVVZXOuIBYpD/bqX
-	 ddVyMxL2R22WEe+2XVWcS9LV+IzeQzVuPtpxHSqC91s/svk9VkKQ7gxQNBY81XWe+3
-	 aHdjavx9HLz8G+y1ukNtTj8iYe4c2CZjFbfyfQ00Ymx9Mlfvw9uTJccf5BcPttH5Y9
-	 pH4qQAUGr4sCqk87+GtIHhqhV3DhKmHX6GV1cUyDiCfxLt6CHR3la3iVU6aaVOEp+l
-	 8pMPVWcmf33CQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 6C55A4CF44;
-	Wed, 25 Nov 2026 15:54:08 +0000 (UTC)
-From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Subject: [PATCH v3 0/3] clk: renesas: r9a06g032: Add reset controller to
- clear resets for mii converter
-Date: Wed, 25 Nov 2026 07:53:42 -0800
-Message-Id: <20261125-rzn1-miic-resets-v3-0-f25a4b656d71@reliablecontrols.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCC8606A339;
+	Wed, 25 Nov 2026 16:39:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BE01F000D4;
+	Wed, 25 Nov 2026 16:39:43 +0000 (UTC)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -86,78 +38,85 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XNTQ6CMBCG4auQrq3pDPKjK+9hXLR1kEmAmpY0K
- uHuFtyYqMv3S+aZSQTyTEEcskl4ihzYDSnyTSZsq4crSb6kFqiwBIWV9M8BZM9spadAY5B1ruo
- CCq3RKpHObp4avq/k6Zy65TA6/1g/RFjWNwaw/8YiSCUbIkJjsDZmd/TUsTYdWTeM3nVha10vF
- jfih4Xqh4WLBbbRZVWXUJg/1jzPL0cR4O0HAQAA
-X-Change-ID: 20261027-rzn1-miic-resets-8308515aa2c0
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Kyle Hendry <khendry@reliablecontrols.com>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795622048; l=1905;
- i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=qttgeoFz50m6xocphqe7rfGCN4ggYj2FjV0TRRZ7opM=;
- b=oEMenEM8aLeiWc1ZnKj1lpXCi6n9l26UZDFUGoSR/RsCpTBs7G3WUbzEKVlbTL44Q+GENko+N
- 14R9dmzhtLHCwC+EnrbsNhnlozsGAk2ZD9B3W0bJ3WiyffLtQ27LA+H
-X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
- pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
-X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
- with auth_id=946
-X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
-Reply-To: khendry@reliablecontrols.com
+Subject: Re: [PATCH v7 02/14] PCI: rzg3s-host: Fix runtime PM handling in
+ the NOIRQ suspend/resume phase
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
+ robh@kernel.org, bhelgaas@google.com, p.zabel@pengutronix.de, 
+ geert+renesas@glider.be, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev, 
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, 
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20261019065025.2146539-3-claudiu.beznea@kernel.org>
+References: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
+ <20261019065025.2146539-3-claudiu.beznea@kernel.org>
+Date: Wed, 25 Nov 2026 22:09:33 +0530
+Message-Id: <179562477303.5580.355686478965853081.b4-reply@b4>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2541;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=5i7lydFJ+0F7rak/+bGf2JUiQghRnvZnvqM+p+ijHX4=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrBw9IGXEasvmJCvMTeSF1cGl80UbscjR37EHJj
+ rc6/3QWGXyJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawcPSAAKCRBVnxHm/pHO
+ 9akgB/915LEZv5ZJ1jtPXakAsYWwbs5Z+HOzgmhNqdPKIt6DJSWsVQHpOW7ThyyGQa78XI4bHRV
+ 4hHwIIH3P5jPzzG+mDu7gYFQmiYowIwa0cAHw5q6rVHVHtvlT2yGO9nsGBofyug2TVIzWmwQ1Y9
+ 0hJ/zde7b8m7zmEs7naUegIrMTpR5AqQ7fvfDkr8NuM/DyKS/q+pfRW8gWMsXuzyKdSgcHCrqtF
+ fDrZCvrczaMWfLUMcXO5u049MQeAG3uatTi60Ib8EOjbQbKt4D3yQMd2xxO4dMV2RYa8jfnB0H1
+ XAGQfmjhyq+l65Zgz4j3MUOvUJnduWeF4bx72CXxgkgMsl2E
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On the rzn1, there are two resets for the mii converter in the system
-controller. If they are not cleared by the bootloader then the kernel needs
-to do it. 
+On 2026-10-19 09:50 +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The runtime PM documentation states the following:
+> - During system suspend, pm_runtime_get_noresume() is called for every
+>   device right before executing the subsystem-level .prepare() callback
+>   (in device_prepare()). In addition, the PM core disables runtime PM for
+>   every device right before executing the subsystem-level .suspend_late()
+>   callback (in device_suspend_late()).
+> - During system resume, pm_runtime_enable() is called for every device
+>   right after executing the subsystem-level .resume_early() callback (in
+>   device_resume_early()), and pm_runtime_put() is called right after
+>   executing the subsystem-level .complete() callback (in
+>   device_complete()).
+> 
+> The driver's .suspend_noirq() callback is invoked after .suspend_late(),
+> while .resume_noirq() is invoked before .resume_early().
+> 
+> If:
+> - the device is not part of the wake-up path, and
+> - its runtime PM status is not RPM_SUSPENDED,
+> the generic power domain .suspend_noirq()/.resume_noirq() callbacks
+> (genpd_suspend_noirq()/genpd_resume_noirq()) invoke the driver's
+> .suspend_noirq()/.resume_noirq() callbacks and call
+> genpd_stop_dev()/genpd_start_dev() before and after them, respectively.
+> 
+> Calling genpd_stop_dev()/genpd_start_dev() allows devices whose power is
+> controlled by generic power domains to be powered off and on during
+> system suspend and resume, even though their runtime PM usage count does
+> not reach zero.
+> 
+> Since the runtime PM usage count is incremented in device_prepare() and
+> decremented in device_complete(), runtime PM operations performed from
+> the driver's .suspend_noirq()/.resume_noirq() callbacks are no-ops. The
+> actual power transitions are handled by the generic power domain
+> .suspend_noirq()/.resume_noirq() callbacks.
+> 
+> Moreover, attempting to runtime resume a device while runtime PM is
+> disabled may return -EACCES. This may cause system resume to fail when
+> resuming after a failed Root Port reset, as described in a subsequent
+> patch adding hot-plug support.
+> 
+> Remove the runtime PM calls from the driver's
+> .suspend_noirq()/.resume_noirq() callbacks and rely on the generic power
+> domain callbacks to power the device off and on.
+> 
 
-To handle this, I've added a reset controller interface to the clock
-driver so the miic driver can deassert them.
+Going by this logic, do you really need the pm_runtime_resume_and_get() in
+probe()? Genpd should also enable the power domain before this driver's probe().
 
----
-Changes in v3:
-- Move reset_controller_dev to end of priv structure
-- Index resets from 0
-- Link to v2: https://lore.kernel.org/r/20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com
-
-Changes in v2:
-- Drop patches for pcs-rzn1-miic to be submitted separately to netdev
-- Add reset_controller_dev to r9a06g032_priv fix build error
-- Use designated initializers for the reset bit definitions
-- Change macro for getting priv data to static inline
-- Drop unnecessary reset from controller ops
-- Remove debugging argument from r9a06g032_reset_set
-- Remove configuration of of_reset_n_cells 
-- Add #reset-cells to required and example in schema
-- Make r9a06g032_reset_status correctly return the active low status
-- Move reset controller register earlier in probe to better handle failure
-- Link to v1: https://lore.kernel.org/r/20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com
-
----
-Kyle Hendry (3):
-      dt-bindings: clock: r9a06g032-sysctrl: Document reset cells
-      clk: renesas: r9a06g032: Add reset controller
-      ARM: dts: renesas: r9a06g032: Add #reset-cells to system controller node
-
- .../bindings/clock/renesas,r9a06g032-sysctrl.yaml  |  5 ++
- arch/arm/boot/dts/renesas/r9a06g032.dtsi           |  1 +
- drivers/clk/renesas/r9a06g032-clocks.c             | 59 ++++++++++++++++++++++
- include/dt-bindings/clock/r9a06g032-sysctrl.h      |  3 ++
- 4 files changed, 68 insertions(+)
----
-base-commit: 7d650c5db382c8226965b01a31e16fcf2df1d096
-change-id: 20261027-rzn1-miic-resets-8308515aa2c0
-
-Best regards,
--- 
-Kyle Hendry <khendry@reliablecontrols.com>
-
+- Mani
 
