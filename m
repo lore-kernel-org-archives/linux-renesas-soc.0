@@ -1,93 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.117.254.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795730326;
-	b=LWkx/g38b3Twoxbk1MlrmS49RWTM++Bxy5J+TF9xCG5loDgQuQ6fyPVi7+CcZ5nd/IyJ
-	 6fcElkTJNU4v4f05X+dkOs+6bTGnLEQWy5rl3W+MdMXP8599jz0v5LU2u098TtjrWll93
-	 dcvFRCech44di5phuqftjoeQqo1QsWLsRh47o+G/X+6BCjUoKXHB/0M6jd8dvQtXU75Q2
-	 0kMjZzeqdVfSL9gw2/Nd+PKZdTnh3TG5jmX5w5d+wiOs4ZXAGAhyV6tqq2hPLCLz3ulmY
-	 eDZYzeCZSiXPpuYAYdWXND14wsjLMs+V+pgT45pjSSCFWtHy9tBWPN7e0KsdOq2MA9w==
+	t=1795731536;
+	b=ytcjoyjMVGKd1ptVc+ypAiG6PeiqlIYzrB/j/BWB9ioQt14x2ffKDQRFC72OO+9Jnij1
+	 6AP5RYBQpqmHICrw5MZ9Dj7CYIwF8++W/wu4Y+mE9bOfpvWEsPZ6x2yToFAbLb4mzuIcX
+	 FYDAJoPPFFsIngbUtBcsCXhPItLhskldYt2CXmwvKwlNeA5YY8Hav5PLhrvTghGQB3U0e
+	 woOE36gCtu67+IPvG6aNIH6goHI8TRNFftRMEzajcGwBD9xw/RlDtD/AoAkMEd/yjeJ86
+	 Lj26ZixUFSCFzKf6tC8oI/GZreHgRp5Il6y6tFoqD1yLvLLs+cV7g2ZUd7RdZdJmkaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795730326;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
-	 X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=5uv6vKw+uzW/Wumcknavba6J4n9f8j4zCL8O++o9Hlk=;
-	b=nS4opKc0kjB6rWvf8zAeFJ1BZDjJ5Q9kYp8H0vUhD8r/BsRWADqlDf2USGuXXtJql8ZN
-	 QebAtjrKpYqCYkXSwULUcqL3mUUOx74+Z/KHB1sS2qf1fVFPf+zDlpHyw29QDA+7xLUev
-	 PRNZrhUblxoJIXvXxTXV6OC40EN4fGkPZBKQt5qkT2z3wOyT+r16caXLcpHh6c6IPLFgc
-	 IEkfzBxeIfBcDsE5Cmh19O7WCnpRkaZcKah97dHixs/PZFO56y2sWWqv+VzSmd4NNiOO8
-	 4XHH/2rL5pxRhlpuMN9/41uZ+Fo6zn/BMhQBJriVkGZxCHGp2ZjdIu6aGO6t8AU67GQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795731536;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:X-UD-Smtp-Session:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=pDZ4T9HNnrhv7OW06Bv3skkU7QYMWt1sIx+VN6xDhm4=;
+	b=nOmbwL/C4seFc0Xb37OAkZ2b6VhJKjtNvujdfzKWnVo0W2W1ajdjsoCusiAfvzfwXolX
+	 +Uq2kSIBD+A3H4rF2EXFKOBP1sKelp2pbBLCIQmH7vqZp2/YmbHbZccMGxhPLrahi7qQ0
+	 epTaT5a3v0nooPutJyfoc7L1ApezgF1zGF4ClYX3xdKJG4NhhtpSUPP6W3VCc+L7bW5at
+	 g7TjgWSkDEzOhmHw7/7CGRprBdKx2iR2IGawLbhT/7I1R1tzBrn9veRQhHLVBIcOBgMkL
+	 5TfvJS9epGEplrgQwA4N0q10X/srlSMPX9L8cPga0YF8jvPdZcHaoXlJTHuEtgXDp3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ytDheMb7;
-	arc=none smtp.remote-ip=209.85.128.54
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=sang-engineering.com;
+	spf=pass smtp.mailfrom=sang-engineering.com;
+	dkim=pass header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=ieb0EkxN;
+	arc=none smtp.remote-ip=194.117.254.33
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB22606A683
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 21:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7FB22606A683
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D95606A321
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 22:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6D95606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ytDheMb7
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a2d6d01ecbso40239745e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:58:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795730323; x=1796335123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5uv6vKw+uzW/Wumcknavba6J4n9f8j4zCL8O++o9Hlk=;
-        b=ytDheMb7CD2LrSJCt1+kuV6K/avkJkP6pnB6PDUMiQLqKHnnXonQInoDVdC6u33cRD
-         EJM+ITIgJvKrOEhgtjzbkZcJEZz0o+5whI0q8vmvwOzsekcj5+jzHdm7qebziwNsEtNW
-         SnSLfSc4O3MOu0xn01WS73VLIRLhs2QF2sebSN1pcyBVCfSVAV7ekKr9XNN0Rme29zpk
-         vcPqeXS/8t5DWwWsyoefFpexXT6f4uRF2CFnMhwVDyjEWNUoyngYVBFEcNgGmY8P2RJz
-         Z/7p+85pt1mVoHqklYK6BKBikW+6YuftadaisHoarCZ9gwnYFTQYyNg+bM9FtZKwqCiL
-         tK7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795730323; x=1796335123;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5uv6vKw+uzW/Wumcknavba6J4n9f8j4zCL8O++o9Hlk=;
-        b=M6wZa4EEvC02Bs035fWpqqRGOZWoA3J6FqlI02aNkK0TPHaUeABe+Q9oRsMjO7Byud
-         +X6oQwpVcCkdxldNZ8J/2oVGi19xbdPNieMy643FviHzgHg3+0qtHQBOdWszjGWRTuQ0
-         DypwdrEMpQjwlIgYMNRfkh3YEBFvuQVpCjCsL2inXyuviaG23s7sFp0UgbaGyY1EVnVD
-         yEmaYzRXBqII8lHhkmvTIR11+2MyDJ2B1w9a7oNEBY1xtwu8/x4maqS7dpbEgVkQC5eM
-         UFhCeqm527Xe4xxA+TSinf/z/luOQalAd02IBicgAe3l7dPNqw+R2RCMwsj3i95XGPkV
-         qvPQ==
-X-Gm-Message-State: APuU4Z+SIf2GOwFIdJHa2/vintUu2HPkBSP/N4Jk4YVw+/IVXwczCRVj
-	o9Vk+a+HYPIuepPFQAschr9HMjOkTELRJCgr2gS1y639jyoUB159jJiIhboWd3w+SUA=
-X-Gm-Gg: AZFdTZcAfXYh6tVv6b6ejc9NdTEcgICHKb5g9KompNhjIhYpkda+VxETyDXpKp0CmxH
-	Ph1Suf5nzptbY3l+Rwn1tPCphgJmdI97RdbuU0z8LiemXdUatSmDAL0sJrNKqB3HxNmrAdTtPse
-	trbXwSSxsfH692gvtvR25meT14Ds+jayHv5xBPJmqKUNSLbf98BtiYxqLPQJDLf3WyDXWZonvmr
-	IL2iidj9XIHTrzUWEYqxmlfO6mOqfoTO68fEszieFoCzOjDsz8TqOyvL9iss0rIIrKesfxeDh1d
-	pjRkb55vgmPuNw0A3qDNTGxSQCcAeogrcnjEOIN4yP9HLHEd+yNgvBojuHlAnLJKcC4WysyZnxV
-	mcSy3+ef4RHK+06KF5k+d+jtViuiZNdrRGcVxji1xQwzZ7OVYszBe+s+3fNhCPXRoYOWQmUZFb7
-	gX2nMoizSkwNEenlWy1tRlTwzL5Bdzqcs3H4Ux00oucPj2EL3FBPkMGTePJqykEuwmXVK+MHDqf
-	S3kSLdKYYZd/G5sFMl1hjZ9HoUWvM79HHuY450SRGv0X9bkQ1wy3ei5H+Z9dcV62a4k7d3T82U+
-	Kj73ISv97Dhdna5fhwhokBoMOtrzTphA7oohSP83KqSrlxf/8TVfPsUzeDtNDDc13Okv1aD0yZr
-	r6OYEGngQG/nGfcJ+v+iAZC+KlhYXIYzdZiLMjDxcqA9A2nrzr8cpdQdLEjwkpnMfKL9p6TRtrC
-	3CcVny8jUR
-X-Received: by 2002:a05:600c:4755:b0:4bb:7033:de79 with SMTP id 5b1f17b1804b1-4bb8881dd02mr466627855e9.35.1795730322670;
-        Thu, 26 Nov 2026 13:58:42 -0800 (PST)
-Received: from iku.example.org ([2a00:23c8:254f:fd01:dae0:ae50:6ba7:39c1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8d4f9aa8sm607535315e9.4.2026.11.26.13.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 13:58:42 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Enable MICROSEMI PHY config
-Date: Thu, 26 Nov 2026 21:58:39 +0000
-Message-ID: <20261126215839.2473086-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.56.1
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=ieb0EkxN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=pDZ4
+	T9HNnrhv7OW06Bv3skkU7QYMWt1sIx+VN6xDhm4=; b=ieb0EkxN4E9ZZby8SQZs
+	UlL/MTM6xVE0Mbavjg2DtVN9RfLw2vmFcSi2zVYOTMhy66/gxsm+hmn0tM0aQ/y0
+	ERnKqY00O9S8aQNwiwNbn6+icalaCIAs+GddSF27QvVhdcvmE4LADHI1LBPWlcyb
+	Sk2pWHLvejW/3AHhgpg1Zi22MWwCNeMl9SJVqG/UbGioUYk+ReWWKm7b7UopvCNl
+	WGoL6AcV4MVUrPYU6Tc83lxhQnWQ7Q01/aOJgyjJ6J8JckDKrLVblpdbhab3/yb3
+	rJ1nsP0mBgHkJlKnOCARmSy/KFWiY1g5Ft384tOdVn9qTi7gm7vi6NOgtd7LUIg2
+	nQ==
+Received: (qmail 1766453 invoked from network); 26 Nov 2026 23:18:50 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Nov 2026 23:18:50 +0100
+X-UD-Smtp-Session: l3s3148p1@qTL4UzVhiMIujnv5
+Date: Thu, 26 Nov 2026 23:18:50 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: khendry@reliablecontrols.com
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] clk: renesas: r9a06g032: Add reset controller
+Message-ID: <awiwRTNx-Qi-aNzZ@ninjato>
+References: <20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
+ <20261126-rzn1-miic-resets-v4-2-4f73af81d779@reliablecontrols.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -97,29 +74,53 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t2Y4PbylN5J00VDt"
+Content-Disposition: inline
+In-Reply-To: <20261126-rzn1-miic-resets-v4-2-4f73af81d779@reliablecontrols.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+--t2Y4PbylN5J00VDt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-RZ/T2H and RZ/N2H EVKs use MICROSEMI PHY enable the config for it.
+On Thu, Nov 26, 2026 at 08:11:06AM -0800, Kyle Hendry via B4 Relay wrote:
+> From: Kyle Hendry <khendry@reliablecontrols.com>
+>=20
+> The rzn1 system controller has two resets that need to be cleared for the
+> mii converter to work. They are not directly associated with any clocks
+> so they need a reset controller to set them.
+>=20
+> They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
+>=20
+> Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
+> Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
+>=20
+> Add a reset controller and add resets for those bits.
+>=20
+> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 3ead81d1155e..db392b586e1c 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -160,6 +160,7 @@ CONFIG_STMMAC_ETH=y
- CONFIG_MARVELL_10G_PHY=y
- CONFIG_MARVELL_88Q2XXX_PHY=y
- CONFIG_MICREL_PHY=y
-+CONFIG_MICROSEMI_PHY=y
- CONFIG_REALTEK_PHY=y
- CONFIG_CAN_RCAR=y
- CONFIG_CAN_RCAR_CANFD=y
--- 
-2.56.1
 
+--t2Y4PbylN5J00VDt
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmsIsEUACgkQFA3kzBSg
+Kbb25BAAscL31qp38pQcZ9Veug/0oHqeKBKjoMr/H7cX+GGbUuE6Pu3jrdGLBGMO
+st3/gw3ru5XMTUoOU9myYZnltdbq2TajaRgTDZpD15fsIpFxbiUS3syS9A/fq3jB
+unpUzggvHq3YKtXe3kgPsPnABkRMAdodicXTe/FJdItBeYtw8YqiwKS0UK5+d458
+GDU+uSk7gGcJXCvYx+NkFhAf7c4yPV7hMCS2Dea8l5iYrK87DXI2dDJ8PUrakwSF
+BUyaKvZgveF5Vf00VbRFm991YkN6mdvrY2UFqn/TEU3cNx7iAvJGg/0UKilsI0OQ
+TBeMs9Hr0uneDIetcP2qNalWnZ73JAoSO/X4nETS1It09MMSTmwrjGuPWYYTEIMG
+kVULn80hlC/pQTTJy4WO8YacC+NUeJ7LOcjy+Wmo1qEG5fwTU/P4GrJVk5CHxhfx
+ey97vd7dWsBnDW3ZBzLTsunmj6Q/DT26qgbJf0w/2zMrnsYzcgIPgGaom5Fmc5Yd
+Q9DmYpGOLawT/isIM1+Il6nsUwZ31nEdkyWyKzIRd0girHZpTZ5GsORlNlpcbKHY
+8gXu84XxPkjuGM3CF/pPq7nhYzkDt8d/QokPFt+Tqh31ESpOaGChqFmV9W9mcVyh
+Lqlpq8UKBeACf5IUZdKm+NKgo/8XByAmHkWdViJRyLqHqXZiNuo=
+=wHPG
+-----END PGP SIGNATURE-----
+
+--t2Y4PbylN5J00VDt--
