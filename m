@@ -1,104 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.38
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795709448;
-	b=mqH4HknuqdGKlX3PdDWRMRokPrSZfw8Z8T2/3AJ7l2N9r4UH2rJVtx9pozX24veRr/47
-	 OH7JIPJ/lEUUoZWYyv+Ug6GpQPJevmgO09Fj+SI/uEz6IOqKRzlyQ2DPx7KSXF+8quNWK
-	 TcDG0tTPRWUHnZaD9RilAbD9DfAckuCS6DWuclsTulfU6wP4kD/7ifhbhv8D3xsBQseCm
-	 kg5rtGL+thX1aG9wDsSG8L6IX32N6vf4WQR4gIQBs8S7FdgUotWZHKls/URahH8GO+YAv
-	 YzqLx0WfkexE6Wq6GfjSFM7jXq01pXWPC/IB15nPh13K7TgjhVwgWV0TvjcQ4OdKqmQ==
+	t=1795709484;
+	b=BoghcB4tzNKRIAdQfFayFEYdFL9Bzfs6sLzk2OrNW4m6waC8hJgnAZkmSuOiBN0brCVI
+	 vx8Vih33yV3sJIVbuV1Z4Rck4h4rhXwgzgXFiF0UJX2rDVZUx4xE+Ojn1Nt9lKlNk6sz0
+	 Mtz3N7TcVkCU9SNKm/GLvBcIHqixxkH2rcRLIqDDQMVGpgpZwp6rgvKFImJVa3Dl+QkNd
+	 8gA2okafC6amBZxmuHwqrtmeFUZKxOsSowJx+fZLJnw6C1xDC0J/2wf5LiX40ZFVhx4hc
+	 qA56/cnStYxb144L+ZqCoe4KthKKPFjYt454znGSEmvApPyAX1gJvJG2hqiC4d3aTew==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795709448;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795709484;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
 	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-LD-Processed:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=B9+EBnT/mu2LHNd46nsmLx9yGac2o6F/b7Q4WrzfGn4=;
-	b=hJmBfMjQl3m5P5Y0Fuv7bhnwDw7DjFUjh8wQ/544hJKVke45j6k3i0D07AU6IvHEpgDJ
-	 leW1LHM7ndjry1C23YQgWj6luvMszMvqzQsREcMWg5GfgG8Xfb6HgMjoATXr5QJcLnbHj
-	 h3z0xCrR3f9wauvkyMWvZ2vAh94iXUwBlyccuXKVEVZBPJ+VQJPu1yGWo4B1LiXzm2KL7
-	 seyMXFQ7sUXR8be1d9Ctzrvf29L0p//PU4kL3s+tXY/o+CGHxVFPTD86tTq6OnTm/VGOF
-	 JSI4V86Qe2trDCJdTB0j7aMCvRSkNY2lkXfxVbVXTgUGiLbQbmlUSKc3RxZ+O18xaAg==
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=FGTA+x8ZDZt3VBrV+ZM1sVU1Se758NrPiWguyvIOfJw=;
+	b=w26UNltlq4P0SNkCWFayzUh3lSHk5it/en8kSoTPQiFPc/KBiOsFr/sm0ywkNtDmoMtf
+	 QeKBJ8BeI8x66pm3qno4T/nXoFPN+pAzRykzkdE1AIhQjgNMQTrubO4ebG1Owhvj11/1E
+	 3Nlt6S26oKL4q9X/gBCdprujg7ZqaKDuP2J+U9RjfqWIxEt4yFG6oGLsyJutJQc2rmrg7
+	 EMKghVZIZV/oyuvfJVQxIXi9FtnuddnjCgrjfkUjrJSlBXOu2eeW0lZlY0M3y6oLkNiN9
+	 H3X9GhIhu1HKroN8SYwnYfiQf+PhQBoJCx5/5X8Nz0DV6kskrc+jAKPris8I32ulrzQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=kUKfjxJ4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.38
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010038.outbound.protection.outlook.com [52.101.228.38])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EJXzINEJ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447E6606A31C;
-	Thu, 26 Nov 2026 16:10:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 447E6606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980F606A32E;
+	Thu, 26 Nov 2026 16:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=kUKfjxJ4
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YDVyK2Xjusz3kb+MFqIPGVQ5/E60L92kXHMOecpRO/n0Mc968XoRJeNYm5tAhbfzqodOtVcPLChQorK6S96L61YgB6E/JuZVYfpVe3n/uAJDZ+LDHdbJCqJvBwj3W0S0X1nkL8Kmi5JIf4L1PRGdHGyvQSPYygOeApgGIdOcoJ0iCwOhjwsw+VJNdhl8WLwb0sbJlusMZ6HH8IDlfiHMtcoqmTyxJvdMTzX9vsrvvwYZMdPdUysvxcYhGzJQjjiTU+Z4FJZIx+DhVM1sS6Wp1S0PGVVqdG9msi84CYBBXiwAhMV1N+wERYxdZubjdtwS14WpMhOc8BanmsoZaTFs2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B9+EBnT/mu2LHNd46nsmLx9yGac2o6F/b7Q4WrzfGn4=;
- b=pLlGdSDU+BLz7PwA8RKXUaDQqzFKtnFtr2je1ZwB/9z8lMV2Z1vVeRn3e23Kbgy0Aht8coC5AmgTU2iJil0FXb9vy1dyNmeOhHSm4YCRnuWujswEvJOYqJBcE9o3mhIwJG6HhTRUGJCxxMIgA+upXYxKRfriVfnuS5tdeQ/VO/vfA2jOLoOsRyEKO863q7seh+mfHTBpe7OfI2HfN9o47KlModriJLlatFIZcjkYyMziekpcS1hxQbZpeL6RkZLTTrO7LSyjcMGy+EW7xbuOsRH0SNz0VvWN3jUX0VUAjYMzB53oiR/hjyCKSjOLQG51JRGzVEUOi9aeyE2MGpj33w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B9+EBnT/mu2LHNd46nsmLx9yGac2o6F/b7Q4WrzfGn4=;
- b=kUKfjxJ4F8aWtUXiucSzo8+m2wyl7zPTcUB3szqHN/CVBJ9bbRAFC1GyrDQprgKDbWjCmNbyvHUZNUQgKYe2zdquOHnjocM3v2tmG2irGYUpT8MVCo5YoY0ziZni10H+o5jNK6aT8reJv+MQ/kk1VNMR6mirRysXT5WJ7o7V2/E=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- (2603:1096:604:521::15) by TYWPR01MB7306.jpnprd01.prod.outlook.com
- (2603:1096:400:e8::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Thu, 26 Nov
- 2026 16:10:45 +0000
-Received: from OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180]) by OSOPR01MB295138.jpnprd01.prod.outlook.com
- ([fe80::4f0e:fd0e:ff2b:b180%7]) with mapi id 15.21.0662.004; Thu, 26 Nov 2026
- 16:10:45 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Date: Thu, 26 Nov 2026 17:10:25 +0100
-Subject: [PATCH] pinctrl: renesas: rzg2l: Add suspend/resume support for
- OSCBYPS registers
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261126-tm-oscbyps-v1-1-c9eb905c83a7@bp.renesas.com>
-X-B4-Tracking: v=1; b=H4sIAPBZCGsC/yXMTQ5AMBBA4avIrDXRSpvUVcSiajASP+kgRNxds
- fwW713AGAgZiuSCgDsxzVOETBPwvZs6FNREg8qUkVIZsY5iZl+fC4vMaudU3mjUFmKwBGzp+GZ
- l9Zu3ekC/vge47wdeqDq6bgAAAA==
-X-Change-ID: 20261126-tm-oscbyps-095aa23d5e59
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Linus Walleij <linusw@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- biju.das.jz@bp.renesas.com, tomm.merciai@gmail.com, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795709442; l=2622;
- i=tommaso.merciai.xr@bp.renesas.com; s=20251006; h=from:subject:message-id;
- bh=74ABKku7QFfEaNoKyAb2PHyDTR5HVU26q4ouDbAsb1Q=;
- b=2X5RNShz0DIjem0GpOm7r/VHuusuOn6F2FoFCoJrn5Voo1m93MMo3YUCcTL4RaqPwZC21zjs7
- AGXWIZQkPF2BKuF/1+mNFC+Oi+Lzxjav6vN9mVNCJrPOV/YEXEHY28A
-X-Developer-Key: i=tommaso.merciai.xr@bp.renesas.com; a=ed25519;
- pk=J15CiW2gJfhl906eXCszPfqo+ddBW7v9wVMkAFyVDys=
-X-ClientProxiedBy: FRYP281CA0009.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::19)
- To OSOPR01MB295138.jpnprd01.prod.outlook.com (2603:1096:604:521::15)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EJXzINEJ
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795709483;
+	b=3Igq7HoiBhyHCEmX6cZRHqBFln876MrIgxS5hODa8bjn2avD6JK9E7ui6OMK6cuBvZ2s
+	 JQxQpaSFwzEN6I5zrJGJJe8h2lQ+Ahx2z2Mn/LbCRDnMc/35RI2fGATigSBaoQUe5M1ww
+	 g0yMTyOyjvyCfl7vAPIzLZ1+h8/n1AnCkQA9QcJyswmJ8GS4y5++J/dIadesh3u4Qw9SW
+	 RsGQ5/wWn7m+T7vzhPrHP49Uo8hAl3AK+vvGT4ACIJeUs8CsntW8PO8/+kxOxB7r/jsmk
+	 Eo3Q18v+0TO5E1USh/URZe0HptkIUWvFh2bool/di6hX/m3r8Wk8n88DrDqXCr2OLoA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795709483;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=FGTA+x8ZDZt3VBrV+ZM1sVU1Se758NrPiWguyvIOfJw=;
+	b=GgJ4gquAF/xeAYzBEBKthErJDZj92XHbpV1DGCwWncZniIGL0QvP3Pl8YGDX3eOUrR4x
+	 Tt+JWFeiy1HN9PY+BJ6GNouDp30T3KYqc9WCNpM0Z+WKX8oXIRkxLpTEkvrI84e0SqaNf
+	 tBGTSUbsUZrxoKXkIiXMB+gC237HaJnBsnJuhldAJRnfYQu9t8IHy9DEW0WhVR15I3ScI
+	 qcN/Mbw3N1O+l/dD04ipFlFFuLpZjGpkQSqADVJ2E0p8YNyA+pvr+ZsqU8h/W1gVCKRJR
+	 scTGIn5BPqg6W1HIdEkr89JFP05QhgciPjlkca+N5Tr9jen4b3ig9WMLjZVIhZZSV1w==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id C11EF1F000D1;
+	Thu, 26 Nov 2026 16:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795709483;
+	bh=FGTA+x8ZDZt3VBrV+ZM1sVU1Se758NrPiWguyvIOfJw=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=EJXzINEJgm+h4QADTLjz9Lc1J5pC7iLNKVBzyn3Qoptw4ouaXZ+OpGpumcH9T07Rh
+	 bXzzz1Ryq4+7m0fm83iJmK0xwyQ+D8pzoMu6gV8su+LavZVU85BlNDN9alWJPVpbbf
+	 2WuDKmVoxri5YlSjbnoDWTpChyfevYwwpx7fQLxSvq8XUpbxqh7b3erm9aJZrKtYWZ
+	 9xjgWE2pOtK81jgPxlrOIGuTq8Jg97HhmPsTXxYvyPGhdrtq1Heipi2m/XOtogr3sX
+	 fPinPc0wYU06cYMhh9WaQm8uIAqor1FxyqVaCaOkfO4WAp1pfB7KuF0fInzRJfXh2+
+	 ZbaWdQ2SZcIPA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 1BC924D700;
+	Thu, 26 Nov 2026 16:11:14 +0000 (UTC)
+From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
+Subject: [PATCH v4 0/3] clk: renesas: r9a06g032: Add reset controller to
+ clear resets for mii converter
+Date: Thu, 26 Nov 2026 08:11:04 -0800
+Message-Id: <20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -108,150 +84,86 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSOPR01MB295138:EE_|TYWPR01MB7306:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45ebcf96-a48b-493c-182c-08df4bd7d3a5
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|52116014|376014|38350700014|261102123227099003|10067099003|261026140227099003|56012099006|11063799006|261028144727099003|261022105027099003|261021121427099003|261009223027099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	A7Kw/QDhNNJOGhmEEZUmFO8nMBdXmXKLCeC2/cdB4oopE2ia9Li+RGputyQ4kxiv8GlPqSeqFx3uo2hkU4dEcqIQ4x66jr5IKEPQuHLB7OtPNqwcq51VMQjRMOR7ZYpslCO4dyObIACd44IUYtQt2t+r26nQ/wxppLfURJvew/J/U5+AFFb0/mXpxiiK0QyF4NkouvxQy+oRSRp9Bbe52BeDTbXjxv+hQzdR/e5Na8alzEsY3oOq9i9wTph9KcSlDwmcpyE2AOI4Gfly2Ot89jY3LXoSVfiqvlOZkJAWOT3ryYt86mL1Nle0Fw4T8VstJxKk/4IFuGVLU4BNcPSWSXmfnMT1FzYOZpTWX6rdJqAiD/92p/2P0UInJD/G8SFc7E4MTCQFpTaCgPAhIp/qR7R65JWpThNg/880VLT+QGIIzUsmgziQ70gqaiWvYkpdZ8xzRg/VT0ymviBZarid8zZDWRPzmaVQsMTLWqetChmhlcCACVjOSopptSogqOPKppsdFZfE/vlyNVq/xSPKRg49oHlX/BroeH+5GeUjiKgB6XlHK+wJJa7OL07s0gw7F/qVspLMGQ3i/uF7SdMj0ssjCGs9XVGPSxVMXOb4yKeHyj82tIjo8yorMWhyPNNM8o8xBfajwWoOQKmo9F9sIdXLfHeBNsaMoVhoUdzIAxUVOEeZg5ULr1rdLLcC7Ec8gYNBg0fkWUpEz+42JwF0zB4FAh21CA6R5MA64dmAckY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSOPR01MB295138.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(52116014)(376014)(38350700014)(261102123227099003)(10067099003)(261026140227099003)(56012099006)(11063799006)(261028144727099003)(261022105027099003)(261021121427099003)(261009223027099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUtxR0RxR3d0bTlCa1ZDb1ByZFh1RzhHdzlFS1F2NUlBbWhNWnZEV1lycW03?=
- =?utf-8?B?b0tPa0tmRmdXMkw1ZTEvcC9vWlA1QlRwTS81N2c0ZTB0dG04RGI3T1dKT21j?=
- =?utf-8?B?WW1PcTRyNWhGNkNNVG93bk9uS1VxTWZteDB4cHpBaUdxY0FMeFBNcHRUY1c2?=
- =?utf-8?B?bXI0RVAxOXZmc3JHUTNPd2dLSkRXS25MMlB0dHZHYnE4dGFzSTVrZVNCMEVh?=
- =?utf-8?B?Uk9PTmltUlk3WjY4MnBoU3ZTclhvZTk5TXM0WFhRdzl2MXlNcFRDN1dFdlBq?=
- =?utf-8?B?RGl0QVp1MFBzYUo4VWJ2S0dkSVAxQXUxL2Z2aStGWXY4d2J1UkVtMW02TG94?=
- =?utf-8?B?UG5pTG84cit5Q0Q1NE9QMWVDQ25Jb1Z3MFBwbCtjU09jeUdDWktBU0Zma3VK?=
- =?utf-8?B?aGpGSEdsSm1ONVVwa1psVHJ2QjVGNGh6L1BtREUrbmxmbCs0cERjRi9Zd2dw?=
- =?utf-8?B?RDlaS1Y5M2hhZnBmSS91VHlvak9lZFNxRXBiVDJaaFlQTHZ3UWszcXVNT3d4?=
- =?utf-8?B?aDMwNEpMS0EwajFOWTRHMHJBMW9iVDdjQ1Q2Zm8rWE84T3hxdGxGczJueTZ0?=
- =?utf-8?B?a3ZoaXFHRVN5MXFZNVFtbmt3OStpYUVZdFlJNEppRzFmMzUvWGVCYVM4Zmw3?=
- =?utf-8?B?U1p0S1dNd01oV0xOY0JuRkdPU05ISlE2cXFmQlRwY2xjM3RBU0F0NVlKWm9p?=
- =?utf-8?B?UzZqak1ETGlTNXRza1k1WTRHVjZaT3hIMW0yNkRKNDFjeUI5Vms2aXJsMS8x?=
- =?utf-8?B?MXdCMEdwbHY0VUhkdVZTYkdNMndDcHNSM25pOEtsNkIybGdCVVpUQ1YxTlNZ?=
- =?utf-8?B?WmE0cE5wbU5qcDJ4cVZlQVNSYzJPK0lLK0ZrdWtNb3UrYkJhTTRacjBpeTNx?=
- =?utf-8?B?RkhaZUIxWmlESkpadTBYV2hjeEgvc3FzdEVaZEMrcXNxQUZxeVJpUmh0TU1x?=
- =?utf-8?B?T1k1b2JDREhIZFV6ZGN4K3oxUzBiUkp6N0VrNjR2NkZjcUNlN2hkTGhwcEtv?=
- =?utf-8?B?Z3l3dHljbGZxUHovUTI5RjlmSjhDc2ZpK08xWTVPakpNNHNoeEN4NUFOb0tm?=
- =?utf-8?B?RTBRazVwMjF0eTd6MTRtTEx3NU1sclFIcURqNWlaVnBvSmk0L0p3OWxGeE16?=
- =?utf-8?B?U1RYQzhuVmJ2Y1FsQ0NLWG1pcHZJdlVuK0tCVysxUlpUZmd1M3hMdjVvTUQv?=
- =?utf-8?B?UTEvdmFUcUxpM0xvem5NeE5zUFo0eGpZc29YN3RPUk9nR0VGK2pRd3FWdkJY?=
- =?utf-8?B?azVEbHpSeHFRVkUraGdDOTR1N2s1WGRjZHdVVVNqRkQvMzQxWDdzUWc2S21t?=
- =?utf-8?B?cGtETThMaUE3WlZEVkZuS2NRbHhlYlRYd3VWYlVaeUxpMzBlVDBrWmkyMHlM?=
- =?utf-8?B?Z2gyMTBzZXJQK29SbzNQMEdhaGM5RndtL0cvWXdRdXNYKzhpRStTS2FpcGlI?=
- =?utf-8?B?Z2hRZmw0bDZkVmI3Nnd6V0JrbjAyaWFlMlJoV055T2twL3AwbGIvR1JTVjEr?=
- =?utf-8?B?NDUwOFV5RXozT0dscUhSckl4N0RKck5RWHpQVEt0MHZmK0U5SFRqWnVCcGg0?=
- =?utf-8?B?ZHgrZDRhdzlHcG5jVW1uRlFXc0Q5dzlQUGNDK05aaXJ1Z1N3dXBxWEhxN0Rv?=
- =?utf-8?B?QTFjQlJtVFdsMnZjVlFtU0gxZXYxTlQxKzJmaTdnTjdsSVNzL2E3U3FtQkpJ?=
- =?utf-8?B?RDVKOERCVmd5YTZFZWF6RHMrWVZoSUhFajBWRHcwYkVzc1ZmRnJieHpUZ1lu?=
- =?utf-8?B?V2FSd2tDYi9HUTl5YmMydE4zVFZnKzduZUlERWJ1YkIvK1p3VmxBcG41cnBa?=
- =?utf-8?B?dXU3blgydWpOUGRGSnVWREl1SFZtdDlRcmY3MXNzNDN4WDdzUS9YaTBESU9T?=
- =?utf-8?B?YnVtbndtcTFtSk9kNUlvV2NiVmlHOC95RmpuRGZXL00wR1BpeExBYzYxaENH?=
- =?utf-8?B?cHE0L3Q4N3ZPeCtkUngzYWE1U0htSFdpV0lpeFRNcTBqOWtJUVpDRmsra1d6?=
- =?utf-8?B?Ly9JNmo5NWk3ZnozMVpiN2VHOHBqQTA0MFE3TElKUlowZmgvMHl1WHpLdHRl?=
- =?utf-8?B?Wm44SytqYXFOL3FUUUpYU3U0MjdBUEFpQ1A2dnVyU1l3QXc0VzlIaS9ldnZn?=
- =?utf-8?B?WVB3RHp6U3J2QVVmNG9YVE9tYWlQMlIyS3JwRlJvT3hUTW9aSFNZTTlFY0ND?=
- =?utf-8?B?cE9uMGFJYXBjdE5HUHg5dHRHcmQ3Q2w3VGoyb2svcHNuZU1iejV1UXp1b2lC?=
- =?utf-8?B?LzQ1NzFyNERsTE9mRFY2TDNDZmlxWDJXdXA1eUtGSTNob2dTQW9ieEdiMklq?=
- =?utf-8?B?Q0k0MmE5dnFOZS9HczFMbHJhQ09qZWttVUJUQ21CaWkraDY1WTg1WHFKSXdm?=
- =?utf-8?Q?EbL+pslq59DTo/+zhoGwd9ebmSbWpBr+LWMzB?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45ebcf96-a48b-493c-182c-08df4bd7d3a5
-X-MS-Exchange-CrossTenant-AuthSource: OSOPR01MB295138.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 16:10:45.1272
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WxNBXsurUaQff06/t+pwOM1ZmqlrcVvZOszGG7SrvGPDXKOsZcpz6m34iC63L/j533hVVQk00LNjrNmxYtJUjWNUx5kJOJk1SMN42aEi29kMngURRTIM5QUYscSejv7v
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB7306
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33NQQ6CMBCF4auYrq3pDLSgK+9hXLR10EmQmpYQl
+ XB3QTckosv/JfNNLxJFpiR2q15E6jhxaMbI1yvhL7Y5k+TT2AIVGlBYyPhsQF6ZvYyUqE2yzFS
+ pQVuLXonx7Bap4vubPBzHvnBqQ3y8P3QwrR8MYPuNdSCVrIgIncPSuXwfqWbravKhaWOo08aHq
+ 5jcDmcWqgULJwt8ZU1RGtDuj5XNLb1gZZOF2ubOaHMq4Ic1DMMLY0mY2VMBAAA=
+X-Change-ID: 20261027-rzn1-miic-resets-8308515aa2c0
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Kyle Hendry <khendry@reliablecontrols.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795709473; l=2199;
+ i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
+ bh=uAZ/LQcoPq9WKYaqq6iLQDLjbO+Ggs9qbO4DuShx6Y4=;
+ b=bUNe6jZfSPtcPCO8LOap1VfzJR4N1skwLClhu952fa640LF3L6JPdzSHSyoCDD/vAeG4Xj7mr
+ uwr6EsRyvZjDZPaD2q1e38Zi6ILRP+VXopdKzV/1j/Bvi6hXeYkvggy
+X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
+ pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
+X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
+ with auth_id=946
+X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
+Reply-To: khendry@reliablecontrols.com
 
-Renesas RZ/G3E supports a power-saving mode where power to most of the
-SoC components is lost, including the PIN controller. Save and restore
-the OSC Bypass Mode Switching Register contents to ensure the
-functionality is preserved after a suspend/resume cycle.
+On the rzn1, there are two resets for the mii converter in the system
+controller. If they are not cleared by the bootloader then the kernel needs
+to do it. 
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index ca2f36c46c39..3b58f55da76f 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -258,6 +258,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
-  * @qspi: QSPI register offset
-  * @other_poc: OTHER_POC register offset
-  * @i3c_set: I3C_SET register offset
-+ * @oscbyps: OSCBYPS register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
-@@ -268,6 +269,7 @@ struct rzg2l_register_offsets {
- 	u16 qspi;
- 	u16 other_poc;
- 	u16 i3c_set;
-+	u16 oscbyps;
- };
- 
- /**
-@@ -404,6 +406,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @other_poc: OTHER_POC register cache
-  * @qspi: QSPI registers cache
-  * @i3c_set: I3C_SET register cache
-+ * @oscbyps: OSCBYPS register cache
-  */
- struct rzg2l_pinctrl_reg_cache {
- 	u8	*p;
-@@ -424,6 +427,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u8	other_poc;
- 	u8	qspi;
- 	u8	i3c_set;
-+	u32	oscbyps;
- };
- 
- struct rzg2l_pinctrl {
-@@ -3814,6 +3818,8 @@ static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
- 		cache->other_poc = readb(pctrl->base + regs->other_poc);
- 	if (regs->i3c_set)
- 		cache->i3c_set = readb(pctrl->base + regs->i3c_set);
-+	if (regs->oscbyps)
-+		cache->oscbyps = readl(pctrl->base + regs->oscbyps);
- 
- 	if (pctrl->syscon) {
- 		int ret;
-@@ -3858,6 +3864,8 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 		writeb(cache->other_poc, pctrl->base + regs->other_poc);
- 	if (regs->i3c_set)
- 		writeb(cache->i3c_set, pctrl->base + regs->i3c_set);
-+	if (regs->oscbyps)
-+		writel(cache->oscbyps, pctrl->base + regs->oscbyps);
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
-@@ -4009,6 +4017,7 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg = {
- 
- static const struct rzg2l_hwcfg rzv2h_hwcfg = {
- 	.regs = {
-+		.oscbyps = 0x3c00,
- 		.pwpr = 0x3c04,
- 		.oen = 0x3c40,
- 	},
+To handle this, I've added a reset controller interface to the clock
+driver so the miic driver can deassert them.
 
 ---
-base-commit: c88442c97d6fd84b86eb1e29f006b9c71cba2528
-change-id: 20261126-tm-oscbyps-095aa23d5e59
+Changes in v4:
+- Add 5us delay after asserting/deasserting reset
+- Have CONFIG_CLK_R9A06G032 select CONFIG_RESET_CONTROLLER
+- Link to v3: https://lore.kernel.org/r/20261125-rzn1-miic-resets-v3-0-f25a4b656d71@reliablecontrols.com
+
+Changes in v3:
+- Move reset_controller_dev to end of priv structure
+- Index resets from 0
+- Link to v2: https://lore.kernel.org/r/20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com
+
+Changes in v2:
+- Drop patches for pcs-rzn1-miic to be submitted separately to netdev
+- Add reset_controller_dev to r9a06g032_priv fix build error
+- Use designated initializers for the reset bit definitions
+- Change macro for getting priv data to static inline
+- Drop unnecessary reset from controller ops
+- Remove debugging argument from r9a06g032_reset_set
+- Remove configuration of of_reset_n_cells 
+- Add #reset-cells to required and example in schema
+- Make r9a06g032_reset_status correctly return the active low status
+- Move reset controller register earlier in probe to better handle failure
+- Link to v1: https://lore.kernel.org/r/20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com
+
+---
+Kyle Hendry (3):
+      dt-bindings: clock: r9a06g032-sysctrl: Document reset cells
+      clk: renesas: r9a06g032: Add reset controller
+      ARM: dts: renesas: r9a06g032: Add #reset-cells to system controller node
+
+ .../bindings/clock/renesas,r9a06g032-sysctrl.yaml  |  5 ++
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi           |  1 +
+ drivers/clk/renesas/Kconfig                        |  1 +
+ drivers/clk/renesas/r9a06g032-clocks.c             | 65 ++++++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h      |  3 +
+ 5 files changed, 75 insertions(+)
+---
+base-commit: 7d650c5db382c8226965b01a31e16fcf2df1d096
+change-id: 20261027-rzn1-miic-resets-8308515aa2c0
 
 Best regards,
---  
-Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+-- 
+Kyle Hendry <khendry@reliablecontrols.com>
+
 
