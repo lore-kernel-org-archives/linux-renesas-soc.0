@@ -1,111 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795700674;
-	b=sYb8F4pAiM//vu94P5BiSZ8wbWz5BiVaAE+LXfbsIgQHqXpNwT+6QMdp8bGHV63HAZUg
-	 +tFw672nZTPJvhFykeCOG2nUWIg2hZMzDNslXYyREF782ZMG4rL4TPgZcGKIbrdkj+v5I
-	 P5UCkUn6bZjOMWjz7fEJp6sl8wU9Gw2B8471pkO6ACpLy3wHrWXYW4zRFHBlAJzjEOPJU
-	 oB5LkCOhMaXPfibVMO6Hu4VLgNw8IvwjuMlHrwEsmIuWY+CFhTDSIOeBHpy3TCVe7vax2
-	 cUyQ6I+pnpI+BoMMvE1FwThjzQ6bxzVfphJlFM15i4oWSCv4qlWA5rsqMFdrYX63F+w==
+	t=1795700911;
+	b=42b0riM1ipe/Dafp29/kYpyhb+meWnZhm7u3axhgsypd+TEAq7G8ExrHlrXKfBu3tNU6
+	 owBOxfwYt0kr+2rTx0Ctx9qyq064msKZrpfZqyoEXDxSmmIK9yjgAcsM8wmhSWs5dxMq/
+	 nQKbKliA7jp/kA4fH61PxSL+Jh2Wu1AjMagJsK5rS+LXnE1M32B3s3xbWAmqLkinE4kKr
+	 vuwBfL4zJuvWpXde94gWyxkXYd6lpeYaXlNMLp8gzST8wBW4knb06oFEd00s2uzgJBRiq
+	 Qkm1zT41UBxcAChJuAD7r/Zm3ZhI9y+E1mnwCpD+9DAm+FaF3+uf3X/L++aNeb9026Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795700674;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=jY7SRS8EY4WvgV5Hy1de+tHZT9Z4JJSU2OV+0aUvWLY=;
-	b=gp4ekh/XOojk2Jr7C9giWMMAOKP8HwvKsBJ26XPZTh10eVedP7ykuDzsQaLPyLhfELz5
-	 328U2peXuwEosaOid/KwAdkQBUeIplWWlIfu6JVsSpx/SPVeYhrxJGmxsvWmioFVxVUkr
-	 4fa0mzkeTX2eeJRjpnV2iuLR7mF1Xg1JRes0raIGaNlHX8vEMJCnc3cMNaLAPhbWAmVDX
-	 ALlTUxexNJSmzXavv7GT9TkhFPvstWKdj8dPQeIsWIfcOqzppbEP0mncaiMILGsTE9OpV
-	 POPeGEEH9BnEkABa1cbSYDILUth2+YNVO70cM+LIkA9KLHKs13qzsUFujY3y14nB7pg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795700911;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=Rm9Myfp9UNOe4eMcJGRVkZiHPATpQ0cO2bVLAIkG12I=;
+	b=3aGbdJBYTCWr0V0FzaxT+vQdOcslDbcCBs9Vs9eHROf2anjVIy5xSChzpc7KKXhGyx2z
+	 lDodqeFnG12P3KwVAgi2tPuvNGQVy1VblVukZf5oSGpWhxHeJ6B1V0sQBDDUIys1bPcxq
+	 LgMmcIR/z9C0PGTo1kGx/t+AmO6sqE0XjZaRvt4Gd5SBlAMuktl6J0QGb2OHpeurjziAb
+	 dhX3cfSpgDIUGGsCw+3anmmbwOXJa1OqQHQFJaKrdYmrvsD5VPoVd+hvj6lnqTyKBQx+P
+	 EWQLO6FMRq7LScNXaKmDd/EZ2evexQTmfWDDBfOIZlvN5JFhblvh4jMJ1o60PihkoMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=glider.be;
-	spf=pass smtp.mailfrom=glider.be;
-	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=ks9M+NXe;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=aJHgQI0K;
-	arc=none smtp.remote-ip=103.168.172.138
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YYYqiX33;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D15606A327
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:44:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 65D15606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080E8606A335
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 080E8606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=ks9M+NXe;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=aJHgQI0K
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailflow.phl.internal (Postfix) with ESMTP id 6AD011380603
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 08:44:33 -0500 (EST)
-Received: from ams-imap-13 ([10.64.2.33])
-  by ams-compute-02.internal (MEProxy); Thu, 26 Nov 2026 08:44:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1795700670;
-	 x=1795704270; bh=jY7SRS8EY4WvgV5Hy1de+tHZT9Z4JJSU2OV+0aUvWLY=; b=
-	ks9M+NXeZToCkNeyCEcOiO57Vrff20M6XgsDpWwrzz7/99elcZw89qmkkNU7a8XF
-	W9knFLhuXGK5+nHGGqTzHbcNNrAjH5T7S6wKwx0NhagvoKM+3vuEmzAD2UBbK7BL
-	lAY6zCiBnAeiawp6a5hPfjsoYWe/eMmx4cgKjN+dsJtPteiJRAsCP+AF9Luy6/9p
-	97Ycl3hRWouLImTT2i83xFXLuFoPBdf4Ha3hI+0VAVw1RZ0l1mFrQnAkJOOWy+Lb
-	vGqI0JoWdgEzBCkT0dtrf8uThSHpndUoSSFcQPAExQYwPVKx3Z8nSfUQ1+q4ta3m
-	TNMfi2OP8RVYW7NCfaySlg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795700670; x=
-	1795704270; bh=jY7SRS8EY4WvgV5Hy1de+tHZT9Z4JJSU2OV+0aUvWLY=; b=a
-	JHgQI0KIdaNNSs30w5t4TZxOw7mXGverwiNhoRJwNZ5K0QO5ncWRRUf/SzZ5aduc
-	PoNa6uKtipFes1JQ8AB2zSzkSr5AlgpJxyDHyRF28uqBlkUs+BDr5lsQiCy9VQIR
-	0S5DFK5+ALe2/wuyVfSAGq8ti9UMeBpzNe6JMAPbKM3bMBbi921J56d6Bixpat47
-	48bjiokL645lklxXX6UCs9LTMl6XxKdexXwnwyxueK4NHxbWsWNjmp1+6dAvT60h
-	+KejqD3f9gBejuveG/E7d3v0VkLzI6APPJW6IlyflLpttsByx1FV/21sgUdpxwdF
-	HInHpoWLG5ZzZhDpDQxBQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=glider.be a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795700670; d=glider.be;
-	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:WMSmoGn6e5s1hV+G6fIDEcMhWj1kyauBzrUNX9JI4AA+A4f
-	q34BQU7m7dLQUj6q5z6Jd/CLBXI97+alO2VVaCHj0eOB6wsNLqPV/YrJWd3WCi1b
-	UphZHiMK0JtWcuzsZChkHNkNSKCg2iMJ0y7D+zid4XVLBJO1BKmlVSbEmPUXMUrz
-	VA5Q3d+g9LfmsiQ6lKFYCUcQBezNMpgy4vZQ6GUz5EQeO014AkhLWOxOmKgzxDqo
-	woDsHXE9UyCYjNokLql3x3GoZO2ApytcBTBpNdwTc2l1wmv91ue2D/XandJ1xeib
-	4/kzdIzoP6Sq5tVuMBXZ4eTvy7iYDso0mQcQFSg==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:CH5LxRj4t7fUnkD/K9gm9IqfmmHJlbgLCoYZhkvySOA=:STMR6hsVSFCsgck2T08ksDap6/kwxk6X43QzRdvj+Ck=;
-X-ME-Sender: <xms:uzcIa441yI-H9ilfRWxqDlaJNCtYtgrLA-OrB2ZGeFyC0r2AIdW2sg>
-    <xme:uzcIa0s103boGVZssNZZSPCpa7HdvpqSqt7uFKFxjHLN71lhp7BfWDsrkAHODfvwV
-    RwjqE4LlAKS_jJWTnqCIHlHDeEEBx2g_xymND0oaVEWUw7HsXamNhU>
-X-ME-Proxy-Cause: dmFkZTGiE3u+QPdbaOCW+PkpYwEs1CFrKcWeYM604yYgXfDsFBYxjQMMgVHFUqRERJSYUt
-    /ekq/G541e9LXNUlfiNzNnL6bc6s2cb0zMshW18VpRzvQ7HeH/Ln6Tt/ynSpgqqra0JECT
-    rmKMLIqvOUhCilWj57mKJrc5kCRWZNYAlx2nukAIuKI1u4P0xSQMv9WgfAth0Q+Xq79OKf
-    TkIHs07z8Z+owMB3TsrNFLpWsCJ+NmMR3MgmsfERXWGjQW08bTNiXtdRV7kTGoJz7E8t0f
-    ngz8k++2bURX45zZ4HIhEFCJFbozNAJp9cA9UOBTUHdGxmFw51u8dux9bu3RL3FcVbRsc+
-    7eukkmksuIMCal2gD2+cEbcxEmUp1HCvGB31duJJFfmu+PPQwCG9YsbVeq3k9IS/7CWBf4
-    eRfxo/0C7F3xL/nHQ5eFHLVLJPFUdh3cy41hVTN32NlVi0ypseK/tIr/zcPvs+qnNGHS5b
-    SQGoALwIMnb6XpVlbhkmuKwlad0nEHNDVXn7ESM57qqrv3VewNzHwCKfDpq8vqaO49An1u
-    uivcraA0Yo8Ej5eW2hOz3XAsT/5LfQmDSkT4qcE8HvQUrUjvO4xyumB4Gl+roeHnLwneGi
-    k9fRwqa1zy+T3KPtgnzteySuaOXRRv59Ad3d+M07BkFpruUfKG3Hs0NSB8Iw
-X-ME-Proxy: <xmx:vDcIa32ztnOw2c8OL8LDX6_BPg4e_qYIpXhE0qZdrgJc_nHqwgpE9Q>
-    <xmx:vDcIa7Bv1VQzRSGPzFoDIlllQp1VWmz-P0ytFDP_231LFfdUNDY-XQ>
-    <xmx:vDcIa8Ld-PiqDL785CuVC334lstFkfK5mDRQ9ptlppHqm4hrksMRag>
-    <xmx:vDcIa8ltrFVYQAeNHmRHkdsenv9ZwOT6yz1mHbqd7BYbJLbFJDCQvA>
-    <xmx:vTcIa_ScZLEsLt_j2TAlpzjoYZ_qNrbGQXJ84YkdY55tZ4HjUiRRmiwg>
-Feedback-ID: ia0f84a9e:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 8FE88F800A1; Thu, 26 Nov 2026 08:44:27 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YYYqiX33
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4bb55cda775so43870755e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:48:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795700909; x=1796305709; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Rm9Myfp9UNOe4eMcJGRVkZiHPATpQ0cO2bVLAIkG12I=;
+        b=YYYqiX331Uy8GlHegZwnmL8M2gdNuEmd2y4FgLMJzBrtRRTg31i1EvYs75DI49hK6R
+         S92SWOdBbl1TWmOZGHXtjlJ7wURi+o7F8/Vc23U086MMxYO/IsKJjeLUGUHlT7fWuYIB
+         1Vd0Su9q32vl1oDxbCDXnPavu86w0GqSm4linkryRaw4TTJQLT88vK2NN+TI6VC26KHW
+         U+Di4QRNwyEAYO+T3sK+CoJ/AyRE4ezKVsu+v+lWd0eNCgvilz+/oqQbc4zWlnfGNa82
+         SfdXw/X8Alpb6zrTCJrKfJL1ELKWaR0qfYpCf04PnQU0mmKmloVx2Iqi6pR9w33sW17P
+         ZJWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795700909; x=1796305709;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Rm9Myfp9UNOe4eMcJGRVkZiHPATpQ0cO2bVLAIkG12I=;
+        b=K+rNjnhWGuftbAsq6BnOIvJahAsCVWBi2pLpIZj7SthUoEL9PMNcGv5D4DrY4QNMwY
+         8zWeme6QLgc7AwZD7aO5B094xHqAaSBI5QM9dYXlbGmagLhsBW+j4F5g4BXbmtJDSH9u
+         NciZn2+IlS8DW6c4SUKZyEsAMEoiNgSbcvU2K3/ZecI0vBsn6p1ghH7gpEfaiNryxLPs
+         Lc66nKvOh8PCgP6OoNaxsqyMr+OQQScnYxAl23S6LjkBFARvK4BxXkNCwtTihxDxFNHQ
+         ir4XjhlYP2ZzorDR9pmBxaPhBUd9MMIJ3o4QH5PSevDS4gAnA6rBNTZY3Ia2Hc/dd8L7
+         kqsw==
+X-Forwarded-Encrypted: i=1; AL+hErGPTyekT3UGhANL47nQaAjWErBcLD1K1n92Q45qhdNZQaSnHt/EZuXyDNyNl5Y9bPAVMT0OKkop85EonjJKA5L6aw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+2SLnDRSsf3wOaBFr9tc/b+o13p7msTJ5f7B1ZymwkxjvyAt9n
+	Ie5X71FrERBU+WMEm18agfBu0ZEJTsmTLuGGrevDsmtwLGVtbRiyJsWF
+X-Gm-Gg: AZFdTZcqGgol1KBHJvWqQVpk8oHXBGg1vRhhRXtDchbuegjOSvqSt5mXURCdUQ4nxYe
+	tG52jMwCEboFJv3B9kTMj3tbQeCvBo49OeK7OO4G/oXygAO7BTLKZdzIrjCKUQxNXKAfjXUaklI
+	ZUJwLbAf+L2MGLbp0CE5dmq2OJj69RqQQnTbqGWj/5LvcIz97IIofozwK33Czr/FwUxNSjiXNVJ
+	u7JO2KdWvRRJgMAkKoTXxxCouvfobsfELY4qI1GkjNhU6/RxBSsTIawN1L50PM2vGCDv4MA6yNA
+	RsDSEnTdGYplPAhmlaQT15c6X0AD899Vasde/+pzAFsqoz4mE7cL/QAxCTxIPJ7lt6MpmhZ3P6G
+	QV0upj13D0VTD5yzQ29aZ40VwlevXCLZLlKdAb5W4jVGW9j0zs/uR3W7r1maK53dXrPhq6j5TZ/
+	0kckOyOi0inL7GFbPOV0LU2znkCQlNM89gKZEZU5IAljgkmSFJAVgusxQwBvwOZe9LrCawHlvv9
+	PMYfzjQRRbkzdWmnnNi3fORwpS+Wy17ALM/KuVzOrWVxvrQMhNbSV1+IjhHMi1PX1CnN9zE7PcX
+	sdjmbS8f8pmR8mtFAWzuJKM8iTY9Y24BEByRhrVFAKCZMi5RrSWdHikJyY5a2A==
+X-Received: by 2002:a05:600c:828e:b0:4a2:526b:d40f with SMTP id 5b1f17b1804b1-4bb88785898mr440409255e9.0.1795700909186;
+        Thu, 26 Nov 2026 05:48:29 -0800 (PST)
+Received: from biju.lan ([2a00:23c4:a702:d301:c60d:8d79:1008:270f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884a3a3dsm591221015e9.10.2026.11.26.05.48.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 05:48:28 -0800 (PST)
+From: Biju Das <biju.das.au@gmail.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH] iio: adc: rzg2l_adc: Add fwnode_xlate() callback
+Date: Thu, 26 Nov 2026 13:48:19 +0000
+Message-ID: <20261126134826.46044-1-biju.das.au@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -115,66 +101,47 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AsmFC5iU653B
-Date: Thu, 26 Nov 2026 14:44:07 +0100
-From: "Geert Uytterhoeven" <geert+renesas@glider.be>
-To: "Yige Jiang" <yigejiang86@gmail.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Andi Shyti" <andi.shyti@kernel.org>, "Magnus Damm" <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Message-Id: <ec57d879-3b89-43d0-855d-723086e0a9fd@app.fastmail.com>
-In-Reply-To: <rc-b1-20261110-vc-182-eee62ef398fd@gmail.com>
-References: <rc-b1-20261110-vc-182-eee62ef398fd@gmail.com>
-Subject: Re: [PATCH] i2c: rcar: release DMA channels when host notify setup fails
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Yige,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Thu, Nov 26, 2026, at 14:31, Yige Jiang wrote:
-> rcar_i2c_master_xfer() requests the DMA channels lazily, on the first
-> transfer that finds priv->dma_tx or priv->dma_rx still set to
-> ERR_PTR(-EPROBE_DEFER). Clients probed while i2c_add_numbered_adapter()
-> registers the adapter can already issue such transfers, so the channels
-> may be held by the time rcar_i2c_probe() creates the host notify client.
->
-> If i2c_new_slave_host_notify_device() then fails, the out_del_device
-> path deletes the adapter but does not call rcar_i2c_release_dma(); only
-> rcar_i2c_remove() does. The channels then stay allocated, together with
-> their DMA engine references, after probe has failed and priv is freed.
->
-> Release the DMA channels right after deleting the adapter, in the same
-> order as rcar_i2c_remove(). rcar_i2c_release_dma() skips channels that
-> were never requested.
->
-> Fixes: c4651f11d09a ("i2c: rcar: add HostNotify support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
+On RZ/G3L ADC1, IIO channel indices don't map 1:1 to hardware channel
+numbers. Add a fwnode_xlate() callback that finds the registered channel
+whose number matches the specifier argument and returns its index.
 
-Thanks for your patch!
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/iio/adc/rzg2l_adc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-> ---
-> Based on linux-next next-20261109 (630059a5a632).
-> Compile-tested: arm64, GCC 14.2.0, W=1, CONFIG_I2C_RCAR=m, 
-> CONFIG_COMPILE_TEST=y (object only; no new warnings).
-> No hardware or runtime test was performed.
-> Needs a pre-Gen3 R-Car I2C node with the "smbus" property and dmas, a 
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index 340813f6f890..f00cfb897124 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -286,9 +286,23 @@ static int rzg2l_adc_read_label(struct iio_dev *iio_dev,
+ 	return sysfs_emit(label, "%s\n", rzg2l_adc_channels[chan->channel].name);
+ }
+ 
++static int rzg2l_adc_fwnode_xlate(struct iio_dev *indio_dev,
++				  const struct fwnode_reference_args *iiospec)
++{
++	if (iiospec->nargs != 1)
++		return -EINVAL;
++
++	for (unsigned int i = 0; i < indio_dev->num_channels; i++)
++		if (indio_dev->channels[i].channel == iiospec->args[0])
++			return i;
++
++	return -EINVAL;
++}
++
+ static const struct iio_info rzg2l_adc_iio_info = {
+ 	.read_raw = rzg2l_adc_read_raw,
+ 	.read_label = rzg2l_adc_read_label,
++	.fwnode_xlate = rzg2l_adc_fwnode_xlate,
+ };
+ 
+ static irqreturn_t rzg2l_adc_isr(int irq, void *dev_id)
+-- 
+2.43.0
 
-Why does it need a pre-Gen3 R-Car I2C node to trigger?
-Pre-Gen3 I2C controller do not support DMA, so this cannot happen?
-
-> client transfer during adapter registration, and a failing 
-> i2c_new_slave_host_notify_device() (e.g. a client already at 0x08); no 
-> in-tree DT sets "smbus" on an R-Car I2C node.
-
-Gr{oetje,eeting}s,
-
-                                                Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                                            -- Linus Torvalds
