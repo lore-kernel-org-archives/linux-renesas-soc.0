@@ -1,148 +1,127 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.21
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795694038;
-	b=ghaw0XB2rAJyxycRyULATMQ1Twg1IWYZGcFfGT/+/T7ysjHf+GJTa5Wpox5USwyPAKQh
-	 N1J9q86QTV0TtKUYCrdWYo8+iedDF5Sa0GcaqqeiYp6vz5LSM+aQqspkO9WS29kHauPLX
-	 dOfR2J9kAUvR2OcPtyctDpQJI+k8zdXxJEcuOdiFu2maS5HbrJg9vq40mcxQycWJpUg9w
-	 tjQpKU96axLbZVdvUwS07dOx4oVhPmWNFcnEzVI3eEMq8LYFQoP6hm8Jq0bMjZlKcHP8H
-	 YPl7dJ+KfHvyVsJCvZDwDHHOtYPl362lbLcDKpUXoua+cdlxqC9f1bNPehBNsFJqPug==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795694038;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
-	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
-	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
-	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
-	 x-ms-office365-filtering-correlation-id:x-ld-processed:
-	 x-ms-exchange-senderadcheck:x-ms-exchange-antispam-relay:
-	 x-microsoft-antispam:x-microsoft-antispam-message-info:
-	 x-forefront-antispam-report:
-	 x-ms-exchange-antispam-messagedata-chunkcount:
-	 x-ms-exchange-antispam-messagedata-0:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-originalarrivaltime:
-	 X-MS-Exchange-CrossTenant-fromentityheader:
-	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-	 X-MS-Exchange-CrossTenant-userprincipalname:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=3vphurk91I9PSWMTN1uXLY5xsD8BGnE//aHm35qgPwM=;
-	b=qwYw5LJlwLSQdyV8HjUPkiAKypEoBITzmFJQAiPKKyoefyBNrx8muLHJhbFLhKi3blP9
-	 6RGEik6JHlnhVPJhbNe/AmqE0yh5DdKP3KDHTwvUi/T+f0D2CbZt4ROEYzwDhALscIumQ
-	 hV/AngJd8XiMtVGSD2Q755D0wM2jEp1jvIPZ4vU7bZq2ZjVh84STc/vH//M5vNd+RedI2
-	 PrXv7tOc294BnlOjP1pNOzK7SObUl7w3h6kq6Eh8pigF8mj8gaq9f0ZSOhFtnqLRk0jNH
-	 M8p2GgCe309VptVcDV+CDthrTju5KfMbXDcjXZVvzwwwbCesTGe2958sWHEYiU+ByuQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bp.renesas.com;
-	spf=pass smtp.mailfrom=bp.renesas.com;
-	dkim=pass header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=BArzgYKA;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.228.21
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010021.outbound.protection.outlook.com [52.101.228.21])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.159
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795694292;
+	b=z6dyQTnlxnd+xmVJc2/lE+lIi3Sagz543/yYcQMJaQNERmei1rNUG/sKAK7RsKYzoOeB
+	 BQ3gneR0vMd1vHfX7di7qTQXtxrU24voSljHK7mYVr6cGzoovvoLZnPLtKOekuMd01J7g
+	 rBOYzpbztkXms1Vc4Qw+qmpU9bAstxzuSXp0zyKUltj1gF4LXfG+PBEXlOLfqFlfY9bOB
+	 x5kX8wvnut+8lOpxbaETMQdg8jtqBIVInDMZ+G346W0Nqe+lmNTkkxPu/kO6qGS6Fq5vC
+	 x+q+0LziHJnUEvfe0vN9cqIwRQBeqjghW8vZfKhngwTYQkKE88mh5xdR0qeL1hHmHXw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795694292;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=iQW6r4UZTY8RpdKAaydRLhL6rNwNReecY11ijRbcSM8=;
+	b=zxyMUoePW8+oo/wE4ojWMuZSMK4gJ7MFYh/Ph+DqSkWL0OPry7lnC7Ok0d5ZDP6aaJg1
+	 1Ix3W2n9vHKgYr1dQVLfVulm+to7DoSpZH8cg1jGxmSxqDiBbgC4SXta98lM9fTL52EUS
+	 weA/DpY7sh5yLTRX9DIDzPSVx2vasNOjd4dp0yNz2sBg7rAHl9Zf+aU9HQcIXXgsg8+9O
+	 oXFRhlU4x5oPDTmEAAzgBrJBUFMnc+B3YGfm2AYrme36ZFUKOs5jiILkvgG2qKJp67CdA
+	 Gsqypo1zP3vk2dq1s1U97dGjBO/u69n4zcpcuMdZGh9OMWfAopdFMqIvdOUTfcxd7Qg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=ragnatech.se;
+	spf=pass smtp.mailfrom=ragnatech.se;
+	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=rB43Zaxv;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=yvrwvHgC;
+	arc=none smtp.remote-ip=202.12.124.159
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3CA606A31C;
-	Thu, 26 Nov 2026 11:53:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4F3CA606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2500A606A329
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:58:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2500A606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=bp.renesas.com header.i=@bp.renesas.com header.a=rsa-sha256 header.s=selector1 header.b=BArzgYKA
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QytJQowLfXpvxtvN8Gc4moEu2PgTGmQirDNsZ/UbIENF54JoOzgidrJrtsamBXVL1rJNVgnHSGLnBXQK/6bNbSki613vmYe2a8WtaH5RG/WQeEOfMgW/S3cH/7n8fHtAtkU9WO30kLKHpNqEaBoLSu6/IuB0yWLegme1JrO4Z4fdyinT/qfUNAFY59oLG+V/qDiBaXN7eExUTvdvOyCevGuTfshp7DOg5qefMuEsloQXsdfx5i/2bnbg+ujfFhxlCRMiPVyIZTvkFFtCqCVyVyNJFN++VVIzxsWIiLKthC/yXAspeatZtcCTZ6uWr94nISPiXuPZUvbQDb51i54LXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3vphurk91I9PSWMTN1uXLY5xsD8BGnE//aHm35qgPwM=;
- b=Z1iRxKvM91286+cmCWqEoc/xuCSiB+EnqBqKhPuEY5Jv6NZkKqbw0FZSMMMiWXf+PdL+ZTtZGSArJsAj8la8MigeynGxeQGvGlOa2O3rMTbebtZPt3dh+43762fMRRypqvFx893Ctz/K1Z8bjAxyQj9vKhejH5C8jDEcpCqngyusmCQCzslfTn5BZVKOxfxzbILUYHwfElt3UHMcMq4ODlMn0iLbSQg8Gw0cQ5jNR5iHHrEaSruv2CHwvKnwTsYnNiXoMhKS5ROUV3jm4OcRFexGeWzUwV93luD5wWOz32R1HFE6lLzXx4/JXyKBVNUMH0gjdeckF6CLYq4CRkoYww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3vphurk91I9PSWMTN1uXLY5xsD8BGnE//aHm35qgPwM=;
- b=BArzgYKAL5nPQqgvTStSbABLoRCzlY7KeyC4SM7m0GA5jDuwFtir8/C2BwaplL4AkZcSYtDxQsBXq5Bt8Sq2SyXAlhh8XWRIDQlXd3yHops2DWHyxmQqZ4/kpZlDZ0KlsyDBQU/PVa+6/gX36jIc06zXrqto646/pvmf7rtUgKE=
-Received: from TYYPR01MB6603.jpnprd01.prod.outlook.com (2603:1096:400:e0::9)
- by OS3PR01MB8762.jpnprd01.prod.outlook.com (2603:1096:604:155::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Thu, 26 Nov
- 2026 11:53:53 +0000
-Received: from TYYPR01MB6603.jpnprd01.prod.outlook.com
- ([fe80::145b:b854:162:2e7f]) by TYYPR01MB6603.jpnprd01.prod.outlook.com
- ([fe80::145b:b854:162:2e7f%5]) with mapi id 15.21.0662.004; Thu, 26 Nov 2026
- 11:53:53 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, "biju.das.au"
-	<biju.das.au@gmail.com>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "magnus.damm"
-	<magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron
-	<jic23@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
-Subject: RE: [PATCH v9 1/4] arm64: dts: renesas: r9a08g046: Enable TSU
-Thread-Topic: [PATCH v9 1/4] arm64: dts: renesas: r9a08g046: Enable TSU
-Thread-Index: AQHdfMzusgZd8Hb48Eu0gv8O+Sr3cLdAKQyAgAAIbwA=
-Date: Thu, 26 Nov 2026 11:53:52 +0000
-Message-ID:
- <TYYPR01MB66036BB057404C15BB64E57B86422@TYYPR01MB6603.jpnprd01.prod.outlook.com>
-References: <20261125-usb_rzg3l-v9-0-ea14d3ab8a53@bp.renesas.com>
- <20261125-usb_rzg3l-v9-1-ea14d3ab8a53@bp.renesas.com>
- <a152df0a-0b0b-4193-b3ac-ee0df0350802@app.fastmail.com>
-In-Reply-To: <a152df0a-0b0b-4193-b3ac-ee0df0350802@app.fastmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYYPR01MB6603:EE_|OS3PR01MB8762:EE_
-x-ms-office365-filtering-correlation-id: de42a443-54e1-41f2-4e62-08df4bb3f163
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|23010399003|38070700021|10067099003|11063799006|56012099006|261026140227099003|261026121527099003|261022115727099003|261028144727099003|261022105027099003|261009223027099003|18002099003|22082099003|4143699003;
-x-microsoft-antispam-message-info:
- wEXkr9DCffm8fMZV43T58b9mc1RqMFd8/SdvQv03/GgmxUy/ZXZzH2JR3Q4VDH/Pw00tdBMC3c1sKB9klLhqCYFKMyg7GtgkF7WRLMQH+VJT51+7qt2is9x5P4jiwklm31z3CKzNNrmv8Nh29jaamGVY1N7Ni3NUxBRBw4Aeo2AzllVDnNSFRQCHke+xDAEQbjYUzmkxPjEwS5Tde7GDSXIAwhAQ5+cMhx5ss9QIu86aFR9MmbAYbEW5HeQiGkxCrkk6Ey5XPAHeMsAd3ySwjwr557MGyzxC/Yb7iXmv4sCKfm2ikwh2BC3nVC/PCTzSM28fxFc89KR1hcQTz6saraQbHK6sV+lzRPuV9uE0Sini4rWIPR6+GMZm3Jqqt6wZRDsFCg7V0m6USfL/rOlVoqVM07IOK+3KdzBxwtVoTdTggx3DJrql8C7cO2F2GT54RZTEkzMvOjw6Gs528hcI07Qvg85VHVU94yDg5uqNjPg/pylsnupCdLmslknPU6K2/Che1FVkmvvffGz1USyCQqciQ0rCXwqGNjoKreA6A0mJVGwl8MCdmM8wMFhtK5l9nhqo712ROlQ3Z/ulGKA6tuoebn9PK5EPYFckfsJbCLr09yCMTO2mJgurjqMtOqNLv913iNjsp1VtNyxhXLU5IAxGxnhkmKzAenfftd/9OQI=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB6603.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(23010399003)(38070700021)(10067099003)(11063799006)(56012099006)(261026140227099003)(261026121527099003)(261022115727099003)(261028144727099003)(261022105027099003)(261009223027099003)(18002099003)(22082099003)(4143699003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?SddQTV7C1Fwl20qy3dPPr2r6metEDzRyCv+cq16h5YMsUhpzdZE+VM7vPshO?=
- =?us-ascii?Q?BzAXHqAHUQJiTeCRh8v/4QMEs8WghkCCRkFNi/OU9+cqTVYmBCmQG+ugOssk?=
- =?us-ascii?Q?V89+5Mgnpq9/b2FXB65Q5R1WPlmK38qFXAh/YzuuL1fT95ffTqx7AeVNnZIM?=
- =?us-ascii?Q?78vz3RX6a8JQlg9opUmW1u2eiuSRZbmT6amxAIDwWLAlSHcMdqmjAU+GVa6P?=
- =?us-ascii?Q?w0ocS0qzXINmj7vw6swc1x7r2p8dGiAd07fINT0MxAVPnYyBhDuQXdEIMXlr?=
- =?us-ascii?Q?7Ciwh62FKiikUOjjlVOvaObiPd3s5NftaqOSOt9NchqntRGqNNlEqRDqfyeE?=
- =?us-ascii?Q?nmCmWsv6cPIerXWjQbtqgbAl4Ltwt1YCJgfB4WXvI8cajcP29gERhcRtcrDN?=
- =?us-ascii?Q?Jn25ZKfO8XU3gtX45rijQShXHVqtiQOUe/E6MfiVs6WllVLaY5wFCTa5hTaX?=
- =?us-ascii?Q?GWAk/sqJ3koJe363lDdmiY/9ZP31xxtjUDR2xMwdEEe504bEyDkWFiDBdUFw?=
- =?us-ascii?Q?A33Lla2uX6z7CGUv3FP5v4FwzI4wCBk9sfdHXZsyZJireuihXW9uwD0V2scg?=
- =?us-ascii?Q?CLN20ZZiGmueBVJ5xBK4cvSjUAbAjhLT/WvvKs4DjIs+ImLKh8aLuZuc7htj?=
- =?us-ascii?Q?1/KXFI5Go9pJLAKRy7V0CCrVKSOrta9Ayb11qR7VD2cRj5xMmfbTQnxZb6rK?=
- =?us-ascii?Q?3nc8gRTRaasAUPPhRiVxBXANOQ5ZyFJ4via7boAaUOpBKXKxLTE6Xmlkp4kD?=
- =?us-ascii?Q?/RqoMRY2wCt9inN8w5eVKb9/FV8hSZP44DlyydazAvmi1LMWMOziC2/J7pUU?=
- =?us-ascii?Q?tgFQPJB0nd6dQziDwCYRHl7tdiwVsNKuvLee/mgDXXc0ACymSTzBXvYvUDZo?=
- =?us-ascii?Q?h66FJJ1d22Ha4BA7yapAMBo7Fnj7KneYJ5MGE4JrwOCT3qrvnjdWRlvO+GVi?=
- =?us-ascii?Q?v7dXRQb201oCxcz6r12pv6rFYUSAkD9b/P9ljTPvv9r/F6kUT+jBzVBSxyHg?=
- =?us-ascii?Q?+MW+ehiJL0K+kRn2Yc3uLXF57iXFeCElBwlelrRwakNheo5xK1F74uZrE6PR?=
- =?us-ascii?Q?mwpzHJGdArrVciOWwwwWxzzGuXuak/0u99sreJP9GL3GQCNSDwRW9jV13nwb?=
- =?us-ascii?Q?5nyWuwHq5X4EUnsKTEf+5VtRPQ2dF34xTWZIdNI53L6wzKXqR8LeE6KAa3Rr?=
- =?us-ascii?Q?N06HP1dta0w671CUIMx3+NrzrxmExNwGcCwRCs13iIk1CjJZsu7+oMki+2v6?=
- =?us-ascii?Q?MoDpDJ9IGU7qMd1OcnKnKRybg8thviyT0zmvpZkPh1Krj2OYON7p+XvJ78RU?=
- =?us-ascii?Q?rFhMm8Ho/ZpnwGGvXJ7t14WqXDEmGYUQQvG+02KQKBziL4Z/v+G6YPrRDfED?=
- =?us-ascii?Q?BKOtmHtvrv7zRD6Pqbk5cDx7mxrrcpO3UHxefnBf+bWO734sELokfpiXAB4J?=
- =?us-ascii?Q?lCRTUVma3P6uK7up6bInoG/QOvJ/l9Pq9hInTUH3wRLawW1HP9gZhr1InQ6L?=
- =?us-ascii?Q?/iIpWEJeyF++Z9f9sGS9BcBj6To9WD7TWlJidChNZmABWaTUx3fsMkmpOhqj?=
- =?us-ascii?Q?lEOsdUb8tjyiHyyiimgHcUYw0y1nl5yAVtlYpIBMawX7Oto6UumQ9ItxaSVQ?=
- =?us-ascii?Q?ZOI0YRsEJqu60Uhkz0VyoOJSPkRic4+iWd+5bgxHfL5znBToyehaxHWR8jFs?=
- =?us-ascii?Q?41uSBvsUkZa45Wa3LRwXLXNzEq9o8zIUn1F1LYsqPnaxyriVPtrltEGB7/kD?=
- =?us-ascii?Q?3GQRLpH14g=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=rB43Zaxv;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=yvrwvHgC
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 5D8FF7A03E9
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 06:58:10 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 26 Nov 2026 06:58:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1795694289;
+	 x=1795780689; bh=iQW6r4UZTY8RpdKAaydRLhL6rNwNReecY11ijRbcSM8=; b=
+	rB43ZaxvN/3HgZ8FbOy1U6R3eAa5IrAJpM/neOE3gx4jtTWpsQBq9ZLw2MFy3fku
+	ZPpoAn2CIiNnFT7N74BOeFt54LWh/B40cjsvSVkxt7Rqb3zM/rPnYByC+w1c+kV7
+	c+QCijLbAGZMyAQvHBZFOo6wmzG81nOoGOyULDd7okquEaH9slR1yRClLeyJiCHG
+	6IvVH+6x0sCkFco0IvMdU744UGqDGf+2TGtT28rwifbBHOEp0fPcE3aeXj7nnnZO
+	p39RwbtSWs2RUDqP8nBGMrZYBAO9mM1eL+Y3b3CznkjcjP2LOH8U1ExV3pRqDVzp
+	lH9knkD/yGmHRUmfbSZRtg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795694289; x=
+	1795780689; bh=iQW6r4UZTY8RpdKAaydRLhL6rNwNReecY11ijRbcSM8=; b=y
+	vrwvHgC5/EY9XWL1dg5aS3G4wjt+0Et+Yu3sweiQjS580uPot8jPTRmzWEP7/nyD
+	zurIw3uF50KtkDuSJElKqKp1obA3/mcSGWnMS/fyO6nDQSsjPc1pbc2LT+Zs0w8D
+	X7sJWDZihF7dJni7qXOPzBo2PnhN7jV8uPKK+dBTLAjmosSYMhKdww7635tXH5wY
+	pS/WH50kUeJvWHYJXGyiWnUNAdSroe6k2KEx/u/PPQfWDG5qAHzt47jWHKdd8W4E
+	iQ9oKtKsCoxB5nCs4bL+DyMzFKgPsHPFQjO9vmFS8YfqNrU3Kw1vtdo/vK2ZmflF
+	w+R+jXEBL9KEnFc1UC6kw==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=ragnatech.se a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795694289; d=ragnatech.se;
+	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm2:rsa-sha256:kqX+yUNcHUmH3OdqEfSF7bD+407lRGFOobuh8IkzD/2Qbn6
+	/P8qoiod97ZXdU1wrHm0VN0qMPvkI8XXXDzxTif34goVtCG9Kp7xLQID2af7c2NA
+	8/RdRHsMcp6H/J4IaN7gEw5viEdkGKY8Ho716PlJdy+jMMvSZDR2Cvby9Ex/ElP9
+	Ep1oCujhQhfQ0GaBq9nDWSHX67NgJ5lYSHR/3cjeyE+k6Brj26vc4VQJW1f/cgsc
+	foCvhUvzvKaCfRUQ4JyQ5AlIZBu5l11fPbbHa58jqW44RuPqIFks70t3xWP452O8
+	IcMR6UZ5prZlMgFG7t4thmOytbAgWokhpVs2+aw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=13;
+	hn=cc,content-disposition,content-transfer-encoding,
+	content-type,date,feedback-id,from,in-reply-to,message-id,
+	mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:2QmgQCQCZxf2l3/728nfKWATWfWOTsCmwjr04Ag9cL8=:dOEAWIeel+AGrymSiWHAvMAANVKg8O2dcbt2sPHjXo4=;
+X-ME-Sender: <xms:0R4IaxR3bCbMBGseP_7AR5XWWLPBAo7_HmhfHWNizGjPAW-nZIit6A>
+    <xme:0R4Ia3WSZmVHUfVnjbuNnJ7zI1W2_ZWhtN6lktefLj1SVOmbZOEARnYhEFr-cFSRo
+    AiJwR2mwz96Af2fhuxcpv5WPzyebNKaCGCPwKpKCGpHLBr1iN8ikVpQ>
+X-ME-Received: <xmr:0R4Ia7Syw0HPNvtDBo7o9Ns2ly-yLFIggogZoy0J8nUIJ7pebhJyV5KyrnKCCEMjK4vTj2AiINaUX569VF76-rWsvzx6QYI>
+X-ME-Proxy-Cause: dmFkZTG0bzJWOKv9yAufAK3CGuu/qiL0R3alEF/1g2C8PJgS0X4PnevIcCPjHhGpa6E705
+    ZaVlr9a8PgKzmK9Ar+OmBXZAH/YgQuRCNV8BiqmRNKpOsx9IqdYpcSbG7OhPJoFFzEzV/2
+    5MJumn6yLU+YrRYcbpNl50I9KN4eYyOr5aytFZV9po+zEGoPHH5XOPi4Obi69tS7yc4lyA
+    JBISblMZet6xqQZsslT04gsniVLOSeB/+jEyKqFAZJhGTKB0IfJiRWZlKcCWG7L6J7C7vf
+    eVLdpoPwk04hSooAr6Bq9O9Mwg66kXw3+bStaO16huDMmlw0jRRBBpAecwKt60HRPocxWq
+    WXOix8zG0psqQY29AN5J4wjKC4o8ZAVKOl0h/5YMPoVKpFrQAkGl7UbwReZ3itG/1HFqDG
+    ds1Mz8HgaVOysi9aLRHuyBdePZgH0uoXJ98g0OdcxODl9O0CgawYkiLiK8d1//6Xrf3vYn
+    JZQN82b7y4Aj9zubA2sL5EQA81IOduiu7feL8OuHAxcmjL4C82Gt/gFgAb0dgn9jwVsBiu
+    RBwGfugHhm0vEPH+Vkj2AXYin20YmAUiqitd0RX5WkF7zsZOcCAyrfbk+0GdrQYkO0SR0w
+    tFLTgmUYYCaYBovWwIaK2i2rGvvmguKDiD9tptslI3zoGeC7jFxxvAAFWIlw
+X-ME-Proxy: <xmx:0R4Ia_3PRdkR0PKMpn2hgeBVO7tPY2nTwBq4-evdI_91udFYlKsutw>
+    <xmx:0R4Ia7e08Lr6TTbBacEQffQTfrvY-Fl4AzLI8KfEnydg4gcEy61o4w>
+    <xmx:0R4Ia3PTj_5XfyhyDHgNMZhBS01gHJLAAcnQS5zRaLclzy41d7lntg>
+    <xmx:0R4Ia_XC-tb5sJa5uK-RI24ZKm3npYYwNpjteunQtiWrvIi-tW-F1Q>
+    <xmx:0R4Ia4ltjkTHPzRZqSo0zg_7r1pBDATWqZjRi7ksEwinTN1aXYHS_SZ0>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Nov 2026 06:58:08 -0500 (EST)
+Date: Thu, 26 Nov 2026 12:58:06 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Yaohan Li <shunsheng1218@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] thermal: rcar_gen3: check for sensors before reading
+ the fuses
+Message-ID: <20261126115806.GN3898744@ragnatech.se>
+References: <20261125060429.GK3898744@ragnatech.se>
+ <20261126013626.2168810-1-shunsheng1218@gmail.com>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -152,129 +131,87 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB6603.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de42a443-54e1-41f2-4e62-08df4bb3f163
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2026 11:53:53.0511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Z8ZEajPIaYdKjQf+OcyNhk2n5KnxT/nFvatA/nsXmgQ1dwK2acA3KBkp8Xv6vJETShhBMFiwSXe95pzVenqaUnIiO8imEPfGIPmI22HZ9TQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8762
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261126013626.2168810-1-shunsheng1218@gmail.com>
 
-Hi Geert,
+Hi Yaohan,
 
-Thanks for the feedback.
+Thanks for your work and persistence.
 
-> -----Original Message-----
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> Sent: 26 November 2026 10:32
-> Subject: Re: [PATCH v9 1/4] arm64: dts: renesas: r9a08g046: Enable TSU
->=20
-> Hi Biju,
->=20
-> Cc IIO
->=20
-> On Wed, Nov 25, 2026, at 12:05, Biju Das wrote:
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > Add #cooling-cells to the CPU nodes, and describe the ADC1 (used
-> > exclusively by the TSU) and TSU nodes along with a CPU thermal zone
-> > using passive and critical trip points, with CPU frequency cooling
-> > maps for thermal mitigation.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Thanks for your patch!
->=20
-> > --- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
->=20
-> > @@ -381,6 +385,37 @@ scif5: serial@1004e000 {
-> >  			status =3D "disabled";
-> >  		};
-> >
-> > +		adc1: adc@108c0000 {
-> > +			compatible =3D "renesas,r9a08g046-adc1";
-> > +			reg =3D <0 0x108c0000 0 0x10000>;
-> > +			interrupts =3D <GIC_SPI 378 IRQ_TYPE_EDGE_RISING>;
-> > +			clocks =3D <&cpg CPG_MOD R9A08G046_ADC1_ADCLK>,
-> > +				 <&cpg CPG_MOD R9A08G046_ADC1_PCLK>;
-> > +			clock-names =3D "adclk", "pclk";
-> > +			resets =3D <&cpg R9A08G046_ADC1_PRESETN>,
-> > +				 <&cpg R9A08G046_ADC1_ADRST_N>;
-> > +			reset-names =3D "presetn", "adrst-n";
-> > +			power-domains =3D <&cpg>;
-> > +			#address-cells =3D <1>;
-> > +			#size-cells =3D <0>;
-> > +			#io-channel-cells =3D <1>;
-> > +
-> > +			channel@8 {
-> > +				reg =3D <8>;
-> > +			};
-> > +		};
-> > +
-> > +		tsu: thermal@108d0000 {
-> > +			compatible =3D "renesas,r9a08g046-tsu";
-> > +			reg =3D <0 0x108d0000 0 0x10000>;
-> > +			clocks =3D <&cpg CPG_MOD R9A08G046_TSU_PCLK>;
-> > +			resets =3D <&cpg R9A08G046_TSU_PRESETN>;
-> > +			power-domains =3D <&cpg>;
-> > +			#thermal-sensor-cells =3D <0>;
-> > +			io-channels =3D <&adc1 0>;
->=20
-> <&adc1 8>
+On 2026-11-26 09:36:26 +0800, Yaohan Li wrote:
+> rcar_gen3_thermal_read_fuses() reads the THSCP register through the
+> first TSC. If the device has no TSC resources, priv->tscs[0] is NULL,
+> and the read causes a NULL pointer dereference.
+> 
+> Before hardware calibration support was added, leaving the
+> !priv->num_tscs check at the end of probe was safe because TSCs were
+> only accessed inside loops over the discovered sensors.
+> rcar_gen3_thermal_read_fuses() introduced an unconditional access to
+> priv->tscs[0] before that check.
+> 
+> Move the existing zero-TSC check right after discovering the sensors,
+> before reading the calibration fuses.
+> 
+> Fixes: c3131bd5586d ("thermal: rcar_gen3_thermal: Read calibration from hardware")
+> Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
 
-With the above entries, I get below error as adc1 has a single channel
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/iio/inkern.c#L135
+> ---
+> Changes since v4 (split out from the withdrawn 3-patch series):
+>   - Split out as a standalone single patch per Niklas Söderlund's feedback
+>     (<20261125060429.GK3898744@ragnatech.se>,
+>      <20261125113106.GM3898744@ragnatech.se>).
+>   - Rewrote the commit message and added the Fixes tag per Niklas's review.
+>   - No functional code change relative to v4 patch 1/3.
+> 
+> Testing:
+>   Compile tested only (no Renesas R-Car Gen3 hardware): arm64
+>   (aarch64-linux-gnu-gcc, CONFIG_ARCH_RENESAS=y, CONFIG_RCAR_GEN3_THERMAL=y,
+>   W=1, 0 warnings) against 666539eecdf4.
+> 
+> AI assistance:
+>   AI tools assisted with initial static analysis and commit/patch drafting;
+>   the author manually reviewed the probe/remove paths, verified commit
+>   c3131bd5586d, ran the arm64 compile check, and takes full responsibility
+>   for the patch.
+> 
+>  drivers/thermal/renesas/rcar_gen3_thermal.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
+> index 9c64cbc2ee670..a96f02d4a8adf 100644
+> --- a/drivers/thermal/renesas/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
+> @@ -557,6 +557,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	priv->num_tscs = i;
+> +	if (!priv->num_tscs) {
+> +		ret = -ENODEV;
+> +		goto error_unregister;
+> +	}
+>  
+>  	if (!rcar_gen3_thermal_read_fuses(priv))
+>  		dev_info(dev, "No calibration values fused, fallback to driver values\n");
+> @@ -588,11 +592,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+>  		dev_info(dev, "Sensor %u: Loaded\n", i);
+>  	}
+>  
+> -	if (!priv->num_tscs) {
+> -		ret = -ENODEV;
+> -		goto error_unregister;
+> -	}
+> -
+>  	return 0;
+>  
+>  error_unregister:
+> -- 
+> 2.34.1
+> 
 
-[   15.067383] iio iio:device0: invalid channel index 8
-[   15.083648] ERROR: could not get IIO channel /soc/thermal@108d0000:tsu(0=
-)
-[   15.094096] rzg3s-thermal 108d0000.thermal: error -EINVAL: Failed to get=
- IIO channel!
-[   15.103500] rzg3s-thermal 108d0000.thermal: probe with driver rzg3s-ther=
-mal failed with error -22
-
-
->=20
-> You cannot have "channel@8" in the ADC node and magically assume consumer=
-s should refer to this using
-> "<&adc1 0>".
-
-ADC1 has single channel and HW manual says it is ADCR8(A/D conversion resul=
-t register 8)
-That is the reason for channel@8.
-
-You mean I should use channel@0 instead to avoid the above error as a singl=
-e channel
-registered by iio??
-	channel@0 {
-			reg =3D <8>;
-	}
-
->=20
-> I don't buy your rationale in [1]:
->=20
->    "There is a mapping between internal Linux array index (0) and the act=
-ual hardware channel ID (8).
->=20
->     See the code
->     https://elixir.bootlin.com/linux/v7.3-rc3/source/drivers/iio/adc/rzg2=
-l_adc.c#L354"
->=20
-> This mapping is in the driver, and there is no mention of it in the DT bi=
-ndings.
-> This means the driver must be fixed first, too.
-
-OK. You mean I should add custom of_xlate in driver?
-
-Please let me know if you prefer adding .of_xlate to the ADC driver
-so we can use <&adc1 8> in the DTS, or keeping <&adc1 0> with the default
-simple xlate.
-
-Cheers,
-Biju
+-- 
+Kind Regards,
+Niklas Söderlund
