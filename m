@@ -1,66 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795667354;
-	b=Ig5xt4axRUFnURpe+zdJo6slLWyVOYHWFK9w8RVWwrRKvdcL8yxno8Qbeear3+4wNH9B
-	 5UB5gcsQUSQ3WRl/IrOZWRNK/K13s1YyT+0Q7bxN/1PsiZELgD9oaATEP0eIYCFaNyG+Y
-	 KvupRem4b1MKRV5LvOe5mlZNipeHpWi3EbsXIvSASZUlE50cm2bkMgJxt5J4a7y147j97
-	 gbGwKfwhiZ4Ma8KfcZYoDAXaFCOuK6lsTADNPDyVn2wXevrF7/xmUSGhwtexGFa5oQOPK
-	 DkZSimdrOhHxZkTstn+XZhbHZb8EmJE/7O3P7ymscpl4Z/xbqxX56nXESzLkApArq6Q==
+	t=1795667360;
+	b=Q+RsT/q5RlZKzNHGPt/QM2Ce3DmmfyzVOR9GxT0Rc566KuOBhyZLFqTcZv6m+RtzSOnz
+	 a/ULA8Et1n8tmfotf//lc7A/RzYLUNJRtDn+LNUVpwLvE7mOYkiJW2UVDGqeztQ5OFXkd
+	 bqNNvO1zwDuwuFk+nnrIWzW0ENChwTm7+asQumpnnPLcokoys+pmygeh/v+WCtqHpKjmU
+	 QzkK6X2HWgWBSVnIM1bKtYvrRgtAUL1AzGV2bZKWz+fVoQy5sVFq/hCtLgEsxrLv/dN0b
+	 psRxBmR3EA74mLp0Hehczh+uhnxf8L/PaLRvqM9PSoyNLv4g2HoUBT5ai382ajzuZsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795667354;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795667360;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
 	 Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=ww6Ld1OYmVkj0bHZucGABCGWQrZXYhKCLzrtCyRHGfw=;
-	b=k2wfktFkJEjhCHr5mEPpIi1ap1Ah68suXX4X9qoHpeWO9mP6GuZcJEzKpo+Kb3X80Qy7
-	 B+P31t3qjRyGIr58uneFf8wK92ELgm+C+3XLmhK3F7HaGmjaf5HE1K6FeMnLfiF1jzXLr
-	 k2kkx8zjLLtYze5ROhqhBZildiuph86rn/mDgChIKPOLE4qKxSmrWqwoY4aNwMcBZcq1L
-	 jX9nWLggo+niDfUnxyyviqaYon/kEG6i8GNLWdL9OwVsWkfY/i51FaoimJykaODXVnRAd
-	 geyBz5oFSilbVB7/iFXuYNpz1n5r3zl9ZSsIIk6MGdJxShLISnhQGbn03hMwNR/AmQg==
+	bh=BDHrGP4CZUTi6YV0wuLzVp9VSjNqS3NwXhEF/30oZnc=;
+	b=WMeOj1PQHVDaJwRGW60hyP3FdM+wpwj/eorH24YhfKVz7pJjUlzE7qfFmwyd1Y1rzfho
+	 wV+bmV1ql4ZgB14aK2+1uGtnODF18pPQ1YuBcfsNwm7Ig+9tqhKhHvFu/tEdKE+JpsCjh
+	 C67xHt5EV+S7I3jKazVgx/Sm7YT9kwYXBGQ5dHoBSInz6wPV8d2tnE7tT8oo1Z9Myyrco
+	 4OCBzXTlCm58mGKrvp0PXvNkCFVKegBd2UOlRcGExRpNtyxa4MVgFFPTtdg4YLVtJD/OT
+	 Kyas5ElKPOEeiQlkaHYQXS7OByPavQ3e5KsbJ4NSIOx70ajlXDZVuizAx0VzT0ZHEdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=nCEHWZNf;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PuBL85pP;
 	arc=none smtp.remote-ip=198.175.65.14
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977F1606A32A;
-	Thu, 26 Nov 2026 04:29:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 977F1606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A012606A326;
+	Thu, 26 Nov 2026 04:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A012606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=nCEHWZNf
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PuBL85pP
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795667354; x=1827203354;
+  t=1795667361; x=1827203361;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Bt9NFNtQXe1HDzT+V+VDfnLdD9tpBQ7s6IOSxy0yJPI=;
-  b=nCEHWZNf3apEX1TbcNGeSMEdVQtWBM7ATNF03eo2mW/12ds8ZKWNu/Mz
-   0Xktga8elnmIfozCEtoso/lHP1T0I2+TTFpUfkdEyzc4kQJ2eNXPJBuGu
-   Pu8nIQVpXgBjj9TDiMhM0wjbtN90pLL8F1VPqR+Iy2Tm0QtKy0/Cz/T5/
-   bxeBlR65Sn5UtzDmHqCrT+FNgRW4xg+/nxNJ8kbCODaOc1AlyeSW4mft/
-   hTNPvvzCxhKX1sZQrk66R0wnQwv2AyG5kZoz9aEc7W3lpNxiOt9iYCThq
-   sVBGS5Anj1399ZTBTgnpX9qzId/UACEIPfeHqXtTVdeSUL23pF7qXx5xI
-   w==;
-X-CSE-ConnectionGUID: ijETJ/p3SYyhYOMIWWaI4Q==
-X-CSE-MsgGUID: TCTqaosTSnCDbk2sVe1FYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4472775"
+  bh=EGNDccke0TEPf9u5l5GhQ4xg3GtepUUAiBwYWmGMpR4=;
+  b=PuBL85pPhE9s1o3OETtiKEOiOA+QUUyYPSyLMLs4tkcloN2h2Tl7Jipt
+   Env+Bdx1BNhOYmN+FWOB8NrZYtoH+cL87R1BdQkfX7L+aVQ1WgzydfPAv
+   93b2wDRJ4f393ytW3UJmqJymxQrpkrM7q5OH9ajOFFJGngQljaIa4+lFM
+   ntjvtpDNKA0wEDmh1lR+hTBLUUc0S4ayYe64VPzELFNJ+FFHIQ9w6bBz3
+   6O37iLyNvyCwYS35gHjEllGAp/uUMPExdVbVczClIR00BDGUqX4ISS7q7
+   g0STDSlOC/AQ45Ik/xmY0uCQ4Edsx5gb2Fqm3lEONymEoxERJznCN4mTT
+   Q==;
+X-CSE-ConnectionGUID: vkZjE6bPSnmdK6w2kx8HwQ==
+X-CSE-MsgGUID: fgKpWMt5S/Sty7kaSBG10Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11977"; a="4472792"
 X-IronPort-AV: E=Sophos;i="6.27,234,1787036400"; 
-   d="scan'208";a="4472775"
+   d="scan'208";a="4472792"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 20:29:14 -0800
-X-CSE-ConnectionGUID: +IiETmXvT96lo4BLeKTbMg==
-X-CSE-MsgGUID: qwV5TvMqScuoenYm8CnRYQ==
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2026 20:29:20 -0800
+X-CSE-ConnectionGUID: m68eC+yURtWF8o2uW8dqfw==
+X-CSE-MsgGUID: lh68Z+owQma7Zlr2IPg3zA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,234,1787036400"; 
-   d="scan'208";a="12287721"
+   d="scan'208";a="12287735"
 Received: from kandpal-x299-ud4-pro.iind.intel.com ([10.190.239.10])
-  by fmviesa003.fm.intel.com with ESMTP; 25 Nov 2026 20:29:06 -0800
+  by fmviesa003.fm.intel.com with ESMTP; 25 Nov 2026 20:29:13 -0800
 From: Suraj Kandpal <suraj.kandpal@intel.com>
 To: dri-devel@lists.freedesktop.org,
 	amd-gfx@lists.freedesktop.org,
@@ -90,9 +90,9 @@ Cc: dmitry.baryshkov@oss.qualcomm.com,
 	uma.shankar@intel.com,
 	arun.r.murthy@intel.com,
 	Suraj Kandpal <suraj.kandpal@intel.com>
-Subject: [PATCH v8 4/7] drm: writeback: Modify drm_writeback_signal_completion helper
-Date: Thu, 26 Nov 2026 09:58:32 +0530
-Message-Id: <20261126042835.436307-5-suraj.kandpal@intel.com>
+Subject: [PATCH v8 5/7] drm: writeback: Modify drm_writeback_get_out_fence helper
+Date: Thu, 26 Nov 2026 09:58:33 +0530
+Message-Id: <20261126042835.436307-6-suraj.kandpal@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261126042835.436307-1-suraj.kandpal@intel.com>
 References: <20261126042835.436307-1-suraj.kandpal@intel.com>
@@ -107,191 +107,83 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-drm_writeback_signal_completion() needs access to the parent
-drm_connector object as well as the drm_writeback_connector object
-itself. So, pass in the top level drm_connector and traverse down
-to drm_writeback_connector rather than passing in the lower level
-object and traversing back up. Update to use the top level object
-for consistency across the writeback interface.
+drm_writeback_get_out_fence() does not itself need the parent
+drm_connector object, but update it to take drm_connector for
+consistency across the writeback interface, which is being moved
+to use the top level drm_connector and traverse down to
+drm_writeback_connector rather than passing in the lower level
+object and traversing back up.
 
 Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: John Harrison <John.Harrison@Igalia.com>
+Reviewed-by: Alex Hung <alex.hung@amd.com>
 ---
 v6 -> v7:
 - Rebase over latest kernel
 - Rebase over latest writeback series by Dmitry
-- Fix null pointer dereference (Alex)
 
 v5 -> v6:
 - Rebase over latest kernel
-
-v4 -> v5:
-- Make @connector kerneldoc wording consistent across the series (John)
 
 v3 -> v4:
 - Update subject line for consitency (John)
 - Update commit message across commits for consitency (John)
 
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c   | 2 +-
- drivers/gpu/drm/arm/display/komeda/komeda_crtc.c    | 2 +-
- drivers/gpu/drm/arm/malidp_hw.c                     | 6 +++---
- drivers/gpu/drm/drm_writeback.c                     | 6 ++++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c | 4 ++--
- drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c | 2 +-
- drivers/gpu/drm/vc4/vc4_txp.c                       | 2 +-
- drivers/gpu/drm/vkms/vkms_composer.c                | 2 +-
- include/drm/drm_writeback.h                         | 2 +-
- 9 files changed, 15 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/drm_atomic_uapi.c | 4 +---
+ drivers/gpu/drm/drm_writeback.c   | 4 ++--
+ include/drm/drm_writeback.h       | 2 +-
+ 3 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index d51b4bac1dcd..17abf739acad 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -4545,7 +4545,7 @@ bool amdgpu_dm_crtc_complete_writeback(struct amdgpu_crtc *acrtc)
- 	if (!pending)
- 		return false;
+diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
+index a3e8809b4508..139210b093e8 100644
+--- a/drivers/gpu/drm/drm_atomic_uapi.c
++++ b/drivers/gpu/drm/drm_atomic_uapi.c
+@@ -1498,7 +1498,6 @@ static int prepare_signaling(struct drm_device *dev,
+ 	}
  
--	drm_writeback_signal_completion(acrtc->wb_conn, 0);
-+	drm_writeback_signal_completion(drm_writeback_to_connector(acrtc->wb_conn), 0);
- 	drm_crtc_vblank_put(&acrtc->base);
+ 	for_each_new_connector_in_state(state, conn, conn_state, i) {
+-		struct drm_writeback_connector *wb_conn;
+ 		struct drm_out_fence_state *f;
+ 		struct dma_fence *fence;
+ 		s32 __user *fence_ptr;
+@@ -1520,8 +1519,7 @@ static int prepare_signaling(struct drm_device *dev,
+ 		f[*num_fences].out_fence_ptr = fence_ptr;
+ 		*fence_state = f;
  
- 	return true;
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-index fd35f81dfca8..21445385b245 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -214,7 +214,7 @@ void komeda_crtc_handle_event(struct komeda_crtc   *kcrtc,
- 		struct komeda_wb_connector *wb_conn = kcrtc->wb_conn;
+-		wb_conn = &conn->writeback;
+-		fence = drm_writeback_get_out_fence(wb_conn);
++		fence = drm_writeback_get_out_fence(conn);
+ 		if (!fence)
+ 			return -ENOMEM;
  
- 		if (wb_conn)
--			drm_writeback_signal_completion(&wb_conn->base.writeback, 0);
-+			drm_writeback_signal_completion(&wb_conn->base, 0);
- 		else
- 			drm_warn(drm, "CRTC[%d]: EOW happen but no wb_connector.\n",
- 				 drm_crtc_index(&kcrtc->base));
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 5a7bd27d3718..9b845d3f34e1 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -1315,15 +1315,15 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
- 	if (status & se->vsync_irq) {
- 		switch (hwdev->mw_state) {
- 		case MW_ONESHOT:
--			drm_writeback_signal_completion(&malidp->mw_connector.writeback, 0);
-+			drm_writeback_signal_completion(&malidp->mw_connector, 0);
- 			break;
- 		case MW_STOP:
--			drm_writeback_signal_completion(&malidp->mw_connector.writeback, 0);
-+			drm_writeback_signal_completion(&malidp->mw_connector, 0);
- 			/* disable writeback after stop */
- 			hwdev->mw_state = MW_NOT_ENABLED;
- 			break;
- 		case MW_RESTART:
--			drm_writeback_signal_completion(&malidp->mw_connector.writeback, 0);
-+			drm_writeback_signal_completion(&malidp->mw_connector, 0);
- 			fallthrough;	/* to a new start */
- 		case MW_START:
- 			/* writeback started, need to emulate one-shot mode */
 diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 5d19d7852e7f..77f7955f955a 100644
+index 77f7955f955a..613cfaaa2584 100644
 --- a/drivers/gpu/drm/drm_writeback.c
 +++ b/drivers/gpu/drm/drm_writeback.c
-@@ -458,7 +458,8 @@ static void cleanup_work(struct work_struct *work)
+@@ -509,10 +509,10 @@ drm_writeback_signal_completion(struct drm_connector *connector,
+ EXPORT_SYMBOL(drm_writeback_signal_completion);
  
- /**
-  * drm_writeback_signal_completion - Signal the completion of a writeback job
-- * @wb_connector: The writeback connector whose job is complete
-+ * @connector: DRM connector which contains the writeback connector whose
-+ * job is complete
-  * @status: Status code to set in the writeback out_fence (0 for success)
-  *
-  * Drivers should call this to signal the completion of a previously queued
-@@ -473,10 +474,11 @@ static void cleanup_work(struct work_struct *work)
-  * See also: drm_writeback_queue_job()
-  */
- void
--drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector,
-+drm_writeback_signal_completion(struct drm_connector *connector,
- 				int status)
+ struct dma_fence *
+-drm_writeback_get_out_fence(struct drm_writeback_connector *wb_connector)
++drm_writeback_get_out_fence(struct drm_connector *connector)
  {
- 	unsigned long flags;
+ 	struct dma_fence *fence;
+-	struct drm_connector *connector = drm_writeback_to_connector(wb_connector);
 +	struct drm_writeback_connector *wb_connector = &connector->writeback;
- 	struct drm_writeback_job *job;
- 	struct dma_fence *out_fence;
  
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-index 0a4026f22274..977fc0337fbd 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-@@ -370,7 +370,7 @@ static void dpu_encoder_phys_wb_done_irq(void *arg)
- 	spin_unlock_irqrestore(phys_enc->enc_spinlock, lock_flags);
- 
- 	if (wb_enc->wb_conn)
--		drm_writeback_signal_completion(wb_enc->wb_conn, 0);
-+		drm_writeback_signal_completion(drm_writeback_to_connector(wb_enc->wb_conn), 0);
- 
- 	/* Signal any waiting atomic commit thread */
- 	wake_up_all(&phys_enc->pending_kickoff_wq);
-@@ -431,7 +431,7 @@ static void _dpu_encoder_phys_wb_handle_wbdone_timeout(
- 	phys_enc->enable_state = DPU_ENC_ERR_NEEDS_HW_RESET;
- 
- 	if (wb_enc->wb_conn)
--		drm_writeback_signal_completion(wb_enc->wb_conn, 0);
-+		drm_writeback_signal_completion(drm_writeback_to_connector(wb_enc->wb_conn), 0);
- 
- 	dpu_encoder_frame_done_callback(phys_enc->parent, phys_enc, frame_event);
- }
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-index c3802bbced16..02e74048d00f 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-@@ -258,5 +258,5 @@ void rcar_du_writeback_setup(struct rcar_du_crtc *rcrtc,
- 
- void rcar_du_writeback_complete(struct rcar_du_crtc *rcrtc)
- {
--	drm_writeback_signal_completion(&rcrtc->wb_connector.writeback, 0);
-+	drm_writeback_signal_completion(&rcrtc->wb_connector, 0);
- }
-diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
-index 584610e1628f..7b9f9828ea4e 100644
---- a/drivers/gpu/drm/vc4/vc4_txp.c
-+++ b/drivers/gpu/drm/vc4/vc4_txp.c
-@@ -505,7 +505,7 @@ static irqreturn_t vc4_txp_interrupt(int irq, void *data)
- 	 */
- 	TXP_WRITE(TXP_DST_CTRL, TXP_READ(TXP_DST_CTRL) & ~TXP_EI);
- 	vc4_crtc_handle_vblank(vc4_crtc);
--	drm_writeback_signal_completion(&txp->connector.writeback, 0);
-+	drm_writeback_signal_completion(&txp->connector, 0);
- 
- 	return IRQ_HANDLED;
- }
-diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-index 85724e380c2e..7a6a7875520c 100644
---- a/drivers/gpu/drm/vkms/vkms_composer.c
-+++ b/drivers/gpu/drm/vkms/vkms_composer.c
-@@ -745,7 +745,7 @@ void vkms_composer_worker(struct work_struct *work)
- 		return;
- 
- 	if (wb_pending) {
--		drm_writeback_signal_completion(&out->wb_connector.writeback, 0);
-+		drm_writeback_signal_completion(&out->wb_connector, 0);
- 		spin_lock_irq(&out->composer_lock);
- 		crtc_state->wb_pending = false;
- 		spin_unlock_irq(&out->composer_lock);
+ 	if (WARN_ON(connector->connector_type !=
+ 		    DRM_MODE_CONNECTOR_WRITEBACK))
 diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-index b4c11d380df0..5e8ab51c2da4 100644
+index 5e8ab51c2da4..2afa48ea7c00 100644
 --- a/include/drm/drm_writeback.h
 +++ b/include/drm/drm_writeback.h
-@@ -100,7 +100,7 @@ void drm_writeback_queue_job(struct drm_connector *wb_connector,
- void drm_writeback_cleanup_job(struct drm_writeback_job *job);
- 
- void
--drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector,
-+drm_writeback_signal_completion(struct drm_connector *connector,
+@@ -104,5 +104,5 @@ drm_writeback_signal_completion(struct drm_connector *connector,
  				int status);
  
  struct dma_fence *
+-drm_writeback_get_out_fence(struct drm_writeback_connector *wb_connector);
++drm_writeback_get_out_fence(struct drm_connector *connector);
+ #endif
 -- 
 2.34.1
 
