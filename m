@@ -1,101 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.52
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795693559;
-	b=h9KCfD0aks9JodVsXf99eaAX49kLQZLDnRjW8JBSmgg9suQSjUF71JKyTQHKUqBWtf1P
-	 7Q17j8zK3u6lgkPnqxCtVWKzwCgSRptk9gEKWHrL6qRVmHezTtJZVEwO+MehHMg9V1gK7
-	 Iw8iUTEHo1smAUILUq+1aLoZo92tGYQbLgi1Yh0ptF96T2lS6I6lUCceL2ysAHTNfuA4j
-	 +Uebyv1a3rb7t0Lvk8RZisi3sPCueTr4QtI9J6yDMZ7ojuQBfqcpWG+X9Bay4ujgp4n+V
-	 yfvJyfSfIw8/l3s2R3hEcMKcHGVeWvd1F4M8aKSbVFifoigrBYJnryg76MPl6k+u5TQ==
+	t=1795693986;
+	b=OnQ2DNU/sNnBsPYoc0IoWgCDHKIdvonusiknCYeVjnztogAcmhqGwjVSNhVvVp2Diavc
+	 neBadRpvMAc3bztUSxIE9cB+4jZdeXm1fFWmf2AsoQI7exjVuLbuyE4dz6zkIbVq0JFHA
+	 hE6JkJKUr9zEJ60K7nFKOpJnTCM5UzFccU/k6ZmIV3GieySHBg53SR5KO++hYy/At5Vad
+	 bjsLYeK7FJbhgBVWJMiYoj5RnutFvjJ5e7Oj2HH8JMCMvqqMEIzSyUUwpyx1ffE4RnXbx
+	 E4R3No5GXINAHFdYDiu5A1t0eQzlfrJ5Djiq3Gd5UGMQajodYV8nOW3nYmw7ezZpiCA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795693559;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795693986;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=KhpuoXVxsmipcY+EIJDYgZSdqvKp313n7f7r77OAm5A=;
-	b=El4hDbzwf9PP+IBuMcKu7CiuA4xalKFVwhbId698sqI1VzhDHPQes+VVGmxIWokFuzU2
-	 pxmTuJ5w3s2MizvGFNDFlh0+Jm29ujs2MwG5w9X/t8hDd1a0huXk1bomnd86jm/lHkQv5
-	 MGGN1SGHUtQryXxBlb2EyhccH1A6n6araCZuGS2xjf1d5AEcsgC/2V8PIl5URzMOtrh7J
-	 NlHDkZRYbXo5+1RP5KnkiHVS5xR5dUf6uoVWVbSgbTnn3EKDcjcXkAawq1uY6hfit2o6k
-	 GwfgM6B90u7FQZPb5V9fLHZD7nCQTVqtHbP3kwDLYPEQT5AW/NqURQMXZttVc5lxlAg==
+	bh=H9aEGpaBgrUqyjrZLFv+rrixVdKutJ5TaTpfNSMOxho=;
+	b=t0P8S00kxA9SCi+wRQtSsDtQvj+FoGg9XctRrStv26c2v4HJlefMA5SFBSm1+c/NV7Fw
+	 FkUlNqvJxL5SpaDOE7RFdm7++jdNP3qpYnNOxHpvy7Fidi8BKCPOEyiqnfkid3WOV/uQ9
+	 WnUPcAlUXfBk/yZJrwt/pJ8ss9feDkCt0RCDrQ1P+1i/8/O2GUm2d9vvP9cXAq/qW+1ll
+	 p4Uyn1qJp71bH9Zsa54QS/j4NLIoLOpKoQfKE8S+etyFo719PhAYFOP73jXUkwWUkwNOF
+	 /KK5tJkF91dHT09A/9Z3nZt4dW17usBY2JL6gnk9CRNesjRdltGJZaWWrCDCH/RgoMw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=MjnbXg6o;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.45
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=S0aeFzXs;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81658606A681
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:45:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 81658606A681
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC7B606A323
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BFC7B606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=MjnbXg6o
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c4203bbb1e9so1153929466b.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 03:45:59 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795693558; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=S0aeFzXs
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48dee593f18so6444821f8f.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 03:53:05 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795693984; cv=none;
         d=google.com; s=arc-20260327;
-        b=GFE+LF8cieW4WofyKo3DOFWWjDCLyUvFaFuZEmFggCUWa+yhZQJEzAZH5F57RlThBo
-         LOjYCnONf+bGgJxDXLrZ/zyTCzoNFNwz3ec0LNQuVCzfQlnc/f7gwthfw5VezGXU7kYC
-         gjABr2z2q/iHy2j/KDvuIrL6odCI3uaqEeEdExwY7wfFHTGJ81mXnpT4SXHVFBzLl9Pu
-         tmm8UdpNihWuMSjbpPx4ko6ndez1JzA1+Y3H+zpaw/RjEl5YDSFWb4TtopQjsXV+4axg
-         GqOFzrOQPARxInEzKYCAJvCUchtxL5XY++lhGhf5SAYJtZmwGEsgqMFpTkLRNXQClSVA
-         xa7w==
+        b=CWbEyDvRmThc2+uPbKkKFtaYbMwMh2T75BARa5Pr58IUEbhMoNGRuRic+pPZ1EAyrL
+         4jWMCXna65330D+fyT+n11uX3u293AYPTaVmljrSeJi1WBO+YOLkMOq4ibKQVhoqYOrw
+         4CBsFtlrgta4hzM4mtTV+aSZjIjPUVWT40NFvWnHEmqYRqbKClX+92sEVcJNm73gFFia
+         Rd0iIuSDDqEqYGUFNzVrglWo3ProeuiNxiJiDEv4NJJajW4XYQzK4cS/Zu2qSGiUrACP
+         v7O9tMTCDWKdHCUniG5PcyKrY4wAzqJ6/c9dZ7GHdJZLZrbnWb1kpR6ip+/WmWXjJA/n
+         RgGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=KhpuoXVxsmipcY+EIJDYgZSdqvKp313n7f7r77OAm5A=;
-        fh=ryDV0JwvsfdDWvsSLYQCFi1hnDGpgXwSUGIQ7CPY594=;
-        b=lowRQxfEzn8Q8sVaHILx6MDXJnyEwJ8TEtmbuD+CKBcdylzjOjlYNJIiudyDZQvuVk
-         Kofx7u9NfHqCPvW2LDNYEzubcLGs0B4fbbLnBrc7Na8qHmsjuZobGGL0GwFKvJ4jyV8M
-         an+0iR9TRXFDyApNPNOcCoywNl5CNBsHk8F3mp9bZOWMC1hCiN0pkBRD9hKYC3Q/ZbKN
-         VL12n1G6Sh4rtTekrTs6BSwyCLkjsI5HFKPXXboTf8nAyJ1Lmn6n33HuMzdH28SiYr6E
-         zBouj52nz204SyPifLjyMQldvVGHByaMqW2/gB9VAr0EZzxui9a6yd51j80QVIW/7ykC
-         IGng==;
+        bh=H9aEGpaBgrUqyjrZLFv+rrixVdKutJ5TaTpfNSMOxho=;
+        fh=MmvZxsbbvkR4PTK3CiKwr8a8oF8hUNvvuRbfNaBStrI=;
+        b=KeY2H1WlZyz4nTbwmaaSejlEXBsDqnY38jC/9YMCWM/Wx8UOwRGM16rUN7dt3NGSN1
+         fzhA2/Ky+wLY7T2iKIR49RhEDVMt1gtgDI/hy0LZxBLPBTiprGZZD1kPqGZt/xHwcMD6
+         xNg1Uzh8puDvY7EKVBUgzMRVwlC2sIvd3rGqiEYxVrcU1fTc7KdWNozeFpqgt8z0Qk/R
+         vcBdn43g95z8sBGZtircxmWseY4hYJpG7KkBANXluPpU/T0tU7bBWMfUIouZbQMcSZAZ
+         cx1GpSAUPw9N85anXQA78hxrHhbH3mleP8b7Xyggf/wdYhs+KBTgWWVS9+ZnZPgEMlu1
+         zArw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795693558; x=1796298358; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795693984; x=1796298784; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=KhpuoXVxsmipcY+EIJDYgZSdqvKp313n7f7r77OAm5A=;
-        b=MjnbXg6oubXtXF4GY3n6Ri5wN3VjErZ440rJoOeW/FZXxlLziYjCa4zwOuzVOB/nM7
-         kxDEQqXK5mGAAmvSrTNNMya2J9/qUJliW7Kq2H0el3Z30EEyWCXdcgpRU8TGeVQ8+68r
-         RO1es397Vh73f82VTxxEh9PLH6ii2fkNzbtnp6na+zBypER3q8Mc/gruiXSmExGh+Mfy
-         8ym4h9wJf0JSPuljojTsIYmmtnC7K6SLxBkJRLo5+r8KIpCXVuym419RANN7BmeNgJk4
-         qUw0UepBK61we9Ih9TJMsCa1vvZ8PiPQ0wt/Q8x4NL2px1sTpsqJYpvCzsbn4BZlWK16
-         B21A==
+        bh=H9aEGpaBgrUqyjrZLFv+rrixVdKutJ5TaTpfNSMOxho=;
+        b=S0aeFzXs8Ydxkd9skMwIIs7vYu438WzLCdSH1AhQRK2t/3eQ/tH2INCrLxs8Ige2ym
+         dTV3cW9r6JBOKuLokz/ZTzKF4wvh4/KHKWyioIo/roQe4ctBB8SLklKMOecXePLfDIbs
+         ApUHSe49kqHosp9KeFS1skNO4y1Z1DUe1SvAgCMaJna0mJR43cBrFhUk2JzU2tNxGYoX
+         TSyQ6m3GFNMU5Fh8vHr3ok+H1I/EzZoiZHBKeiIkYS+iTMnJ6hrBOULC6e1xzngCo+us
+         Xo20s1nzuZcB5h0jY1X3ptrNvDZqzTYKZ7qh84y+6IfidobrggRjMpMFb2OPpOQkr2N+
+         yWpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795693558; x=1796298358;
+        d=1e100.net; s=20260707; t=1795693984; x=1796298784;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=KhpuoXVxsmipcY+EIJDYgZSdqvKp313n7f7r77OAm5A=;
-        b=bUx8XDX3vdNjjBMBqfHx53HeA6+zNwIoy4lNJhzDDqOB3/yn7TJuulc73jIAdoJXEH
-         whiyqexvSnBeEYcaFMdMvF0MpqzTYaQCcnBnuKAEbVIAIQLzpw1mjRMDofTuHWLx8kNg
-         ZxSytfWoZOzlY/u+82xDmzkRJGETOpCrE2VHiyzZst3QWktrXb4KOMsCtDMiNhLlgIlZ
-         3K+X+Vm1XI1H1x0NmUtS/H3qZe0cBcHtw/tzJJ3u7H8bxah40C57ppaTRkWWUi4qjg+n
-         j7BFx59QP5KP07B9MWtvK0hJmbj2jukIRk2ck0B4wAwgXBCbsCE+7BuBpGBrc6Gm9Kia
-         wSoA==
-X-Forwarded-Encrypted: i=1; AL+hErGkaVoRLB06UD5OL0E7NL+jkxgawUXkCKRrzZwYFKaY4z3GPnBahwf8iXAxkd9eeiMitJRpJtCGDvHQLxcl9lbNKA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+OYaeeGsLfRIUXQET05B7F8OFzsL2eEsFLjPzl9o0qOcSRg09z
-	qLy9jjE9E13CKNv2XA6nZ7LPfVHVzPkddyVdyBNe7sdY5d8hRHxMt2S3LKSnkRLJX76Jd76SWUA
-	zm53PoyoOenGggRgkos/h4+GDFwNyRhI=
-X-Gm-Gg: AZFdTZdf0OS38Tkw8uDZrI4Hz9cQ+x85wXuXI3fIX4uCsx+ar/pepibnRUVwgOqkfP3
-	1LnMPogfVzJiqSKsSYXqDtPwEfZrZkPBhsOJBnj8HubEcmVrHFyTkQ11J3I5m6x4Uy1NBjVZKhL
-	uDS2I7BhtGT17P/z25Je4dlS0xcSwt+NJCKD8MXYAcQJKto4+KbosokVW75AvbfDK4fKWXN6cC0
-	9gVvO0U8Du6x2daiVYdhuaCl/5CR8RjZCHNptEJTaRb+7Q9uEzv6qpIP/6tXCkjM2dixY2MT2M7
-	TlNKx39ZSVsgx7MsX9GOgWB+myfZsrLgsjn2kQEe5O6FPKvWRx3I28FXb0lH6sr5Nn5cdXhGG1v
-	Y+2hOj8ZXiLhgf5vc30c98MBPTCZKMAZt/0K84YWY3XN0+Aqds0G4aFinH3KAz6EzIeVukfDKGs
-	2z+bqMWrIKIKnxoToCmAb15Ps3nL0PdBPDixmI5+z/8UesqBvW7cIYEVrTxQ==
-X-Received: by 2002:a17:907:940a:b0:c50:94be:22ab with SMTP id
- a640c23a62f3a-c513a805245mr1958182366b.18.1795693557771; Thu, 26 Nov 2026
- 03:45:57 -0800 (PST)
+        bh=H9aEGpaBgrUqyjrZLFv+rrixVdKutJ5TaTpfNSMOxho=;
+        b=u1tzBdlv0KCRV/yU7gxlfG3P88Qo9wWFDr0nN7ESXuwPGdFi4LNZoJznqO3iN1MN/8
+         jk4MAzkHI1XKrXA6G8vcdFm/0G+vs9p44WOFDY769nxyAMnhyVDr/H+JKOoIYZy8hEQe
+         4MvXciAxNm3HJxPSNA9pl/N/g15LX1ZOJH4F3qNTMQ55iYeeYCmVD76ElVacuUK4yws2
+         Es+BdwUES5d8NgFqdPmXTUhpDcsSYXr+4f7SmZpZ+40GM2ClQwRdMl9ETI5mj/UceH/3
+         AtLlY+gc8LBTvpCnmdRT29y5X9b9JaxVcwm96C5MIoQLM9pK+HmKfw7SplmLy3Lsx7aG
+         NwcA==
+X-Forwarded-Encrypted: i=1; AL+hErEEJO6FmobVJrplnq7FQWx6GyONrgwwho0fKlTHtSu/Ml0/iJSnbMv7CH8qvUelrBm36rKn14oli7LjAQbmBW9WLg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/3f2xmcmIfumTvbyHVvGfLM7920o3uXXFHy0Wj+EIRpit++Wu/
+	I46BEl7uQ2xvWmENbiTfkQTBxgn+MRtpbVlzGTdusmBEyhU1dgYqb5WBcCIlD8ZIHkvDHiVEDlh
+	L4IbAx6MtAFoAnyx/Cc1j6ghngC+lCtM=
+X-Gm-Gg: AZFdTZcW9vovq0JaRVfmRdT4lgyyaa+j3WGBfKVwHh0Nm7rLHNqDX8aRV4/deidhdEd
+	7aD8svRuWI7zT1JX5scwkXUsm6Dv9ZAwpFr5fnV7g16zG1xIumIi/0YyJ/UDaZ6pwC7NkFRuuxi
+	O0MF73we1l/xdOlaCGYnd/sk6Ie0sC/lerjFqCAeStFSZoymHsdgQ4WKtLmIG7GAqlNmvA++qxF
+	kEckBxGdTz8fVicTlNw23zkQxNcC+p6P7N02MbrtAU5SRZzr7YGCmOuEDGYUXt+G7lEXTqrnsC7
+	dh2EhNnrtQjpYIWrMj9xEi2xsAK+cv66gZUimlmtmQCamIfkDsAz3ECQ2uFtWLZsxY8C3+mr+Hr
+	HWFuxvN+o9j9ipMg3jB70O/cwdrreF0KfD2jGpFvyB3NFWu7BaOq6eZ+16HxxQma/kxK4pbrEtX
+	oODh/2k3Ca41jnNRlv0MdqutPH11NZpne5YmFPPsAdzPffvt3l0zB6hZIc9zo=
+X-Received: by 2002:a05:6000:299c:10b0:4a7:9630:7b5a with SMTP id
+ ffacd0b85a97d-4abb47b2043mr29738022f8f.47.1795693983751; Thu, 26 Nov 2026
+ 03:53:03 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,14 +105,14 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261126081155.501493-1-wenst@chromium.org> <20261126081155.501493-2-wenst@chromium.org>
-In-Reply-To: <20261126081155.501493-2-wenst@chromium.org>
+References: <20261126081155.501493-1-wenst@chromium.org> <20261126081155.501493-3-wenst@chromium.org>
+In-Reply-To: <20261126081155.501493-3-wenst@chromium.org>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 26 Nov 2026 11:45:31 +0000
-X-Gm-Features: Aa3M54ply6HBL37GF18a3MYmohyvcmh2WIoJZK4wXqF_bZ1XD2F1MsOFc3J2ofg
-Message-ID: <CA+V-a8tqzDTbMu5375vub=DBHmpJWW2TvUGKfsuPf_gjpSuC=w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] power: sequencing: Allow desc=NULL in
- enable/disable stub functions
+Date: Thu, 26 Nov 2026 11:52:36 +0000
+X-Gm-Features: Aa3M54q70A5WmDyjKjXpU3fpfqljo9KNpnEhQvgxjBv6crELfdOj0n7b-mbXhxE
+Message-ID: <CA+V-a8vgFBmQ-ih35f6GrXg-JBekovdF4jOuXcvteGkBwDEGUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: rzt2h: depend on POWER_SEQUENCING
+ instead of selecting it
 To: Chen-Yu Tsai <wenst@chromium.org>
 Cc: Bartosz Golaszewski <brgl@kernel.org>, 
 	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
@@ -121,66 +121,60 @@ Cc: Bartosz Golaszewski <brgl@kernel.org>,
 	Andy Shevchenko <andy@kernel.org>, linux-pm@vger.kernel.org, linux-iio@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org, 
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Biju Das <biju.das.jz@bp.renesas.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Thu, Nov 26, 2026 at 8:12=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> w=
 rote:
 >
-> The non-stub versions of pwrseq_{enable,disable}() are no-ops when
-> the descriptor is NULL; however the stub versions always return -ENOSYS.
+> Commit bdfc454e8567 ("iio: adc: rzt2h: Add support for RZ/V2H(P) SoC")
+> recently added usage of the power sequencing API to the rzt2h_adc
+> driver, and directly selects POWER_SEQUENCING.
 >
-> This would require more code to deal with on the consumer side if the
-> power sequencer is only needed for a subset of the supported devices.
-> One such example is the rzt2h_adc driver. Only one of its two supported
-> hardware blocks requires a power sequencer. The driver could be built
-> without power sequencing support and the other supported hardware block
-> would still work (provided the Kconfig dependencies are changed).
+> This new Kconfig select causes a recursive dependency when combined with
+> the in-flight power sequencing integration into the USB core:
 >
-> Align the pwrseq_{enable,disable}() stub functions so that they also
-> return success on NULL descriptors, acting as no-ops like their non-stub
-> counterparts.
+>         error: recursive dependency detected!
+>                 symbol USB depends on POWER_SEQUENCING
+>                 symbol POWER_SEQUENCING is selected by RZT2H_ADC
+>                 symbol RZT2H_ADC depends on IIO
+>                 symbol IIO is implied by HID_MCP2221
+>                 symbol HID_MCP2221 depends on USB_HID
+>                 symbol USB_HID depends on USB
 >
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Power sequencing is not needed for RZ/T2H and RZ/N2H, whereas RZ/V2H(P)
+> and RZ/V2N do need it. But it is not a strict build time requirement
+> for the driver. Change it to an optional depends on.
+>
+> This also requires a change to the pwrseq stub functions so that the
+> pwrseq_{enable,disable}() calls in the driver still work without a
+> power sequencing descriptor with POWER_SEQUENCING=3Dn.
+>
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
-> Changes since v1:
-> - Added blank lines before return statements (Bartosz)
-> - Collected Biju's Reviewed-by tag
-> ---
->  include/linux/pwrseq/consumer.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/iio/adc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Cheers,
 Prabhakar
 
-> diff --git a/include/linux/pwrseq/consumer.h b/include/linux/pwrseq/consu=
-mer.h
-> index b69117ad3fa7..d3f5f37603d6 100644
-> --- a/include/linux/pwrseq/consumer.h
-> +++ b/include/linux/pwrseq/consumer.h
-> @@ -47,11 +47,17 @@ devm_pwrseq_get(struct device *dev, const char *targe=
-t)
->
->  static inline int pwrseq_enable(struct pwrseq_desc *desc)
->  {
-> +       if (!desc)
-> +               return 0;
-> +
->         return -ENOSYS;
->  }
->
->  static inline int pwrseq_disable(struct pwrseq_desc *desc)
->  {
-> +       if (!desc)
-> +               return 0;
-> +
->         return -ENOSYS;
->  }
->
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 1d6ed49041ab..7874d0e78e9e 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -1631,7 +1631,7 @@ config RZT2H_ADC
+>         select IIO_ADC_HELPER
+>         select IIO_BUFFER
+>         select IIO_KFIFO_BUF
+> -       select POWER_SEQUENCING
+> +       depends on POWER_SEQUENCING if POWER_SEQUENCING
+>         help
+>           Say yes here to build support for the ADC found in Renesas SoCs=
+:
+>           - RZ/N2H
 > --
 > 2.56.1.839.g22a8290db9-goog
 >
