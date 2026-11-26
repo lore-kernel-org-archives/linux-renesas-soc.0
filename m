@@ -1,77 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.138
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795700010;
-	b=srarwkI3k3sOWHUxVXF7FMxRogXDTsgCICF5K6RU/ZKmDDjbxD3ByzdPdpupwgz6JVMo
-	 MewKShOBMjMcZzzMpGkOtMto6CgrCQHIQiOxTj6G1ONDVm8X2JHNG7i5zLXD8d/J3xfSm
-	 jl7gTe4Scx1txxrgeQHtsFp3azYW/Oa5C/6RjYGuF+9f8egNaE+dWtPkaGFXCtunGaCJN
-	 vkNzEql3skQ6qMbFKjLo0FGyTFCOZZnzGjZfk/IZnlFTXAThMVPhkNlU/FLofzP6pHQyG
-	 vX6zNi/ID40CegQEY7MBMFJcvPqGQyi9nA6/H0BqAHWavWSoN6p3+AS9IULiNluHx5A==
+	t=1795700239;
+	b=L2xMI5zh5ZzvWYgiVXL6W0o7uITgZjFh1VKYrZ2DswPVgSDR2GdolBJPmRUvfe27rlvI
+	 9oa7k/flIpwJ8yVTOJWWSll2KKw4eonr8XQUAO7o4p8p07DwJxexh4dEIK1R6rktiLsoN
+	 xnT75HzrexpPf33p4xHGelTM0FKv1yM0KvY/B/3ca/BciKOIM+KBCfoK7rMKiMreijKYM
+	 e03u5l6GjqRvmStFwvpwCmzAX6/waEnTJWub+ErekEgVmhhGFlyHXuxjhf03edkMXDG6a
+	 CCSQg5lkvLe6+Wn8NcZnpW1s0rAHq64L8gONiN0uF/7N24OTxsq0TWjJws2vDxPFTJQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795700010;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=HcwFZv9BM0w57FN62L5UyDAXYgvPAV25zeOmEc/ACiU=;
-	b=SxqomkvDvwqIj3L50pysiFR3SmZLyk8nufHYYT9wJuPaMk1/Zvcz87lqt5Ih5Nibfe2N
-	 Cb3mZKbLcuI5GZicaeA60ev6z7phkuyaM65ZEqiIwHF3kmSRBi5yHiCsLIORRB3WjZGm2
-	 gn1+9klilqqB2+Udj+9pCWZ4EV4zDhRC8fPYQYcRBSSbC/UB1ljAl0t8wuw8ACFC0vzbo
-	 oeDppea7vNEe8qahoO99fo2weSxao3oWKpeEs2Ycbi7BF9+i3k4MhyrChPHUH4O8g5bRj
-	 jWp1Wa28DlxOXPNzWLWKZkmoXP6I7PiFkzImSuhKxHgaCOmoNcnbLn7PYr5JLAlloPQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795700239;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
+	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
+	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=JMugssCcily/7wa694wDfnnBgfL202tVpzluRelC+Xs=;
+	b=sqJAApjrxdQRGScaw/l7tCw2LI5pshD4ODOmD7oICFJI+V4MGs+i5vJBoM1dUt4CJn5S
+	 V4NyBlWIpvdAovpami9dTihhT2Chjl31ydferrMoP0XBvhEKXL80UJNBsgW1wpuDX8RxI
+	 s4oTcY6JZVTA5YKOIrFG+1jPr6/zBRQINlqHpbeOLYj6Gum8GjY75GDrudKAt4CjOMHnT
+	 /JW2nv2Jp5Us+L4oq7MpJ83xTBE6syyDQnU9v7glrrXGtBhPH9Jq0T/fC/FKooabVxdzR
+	 Ta/3sAihu0rSXCEZaiQNRAb9qMOTdLwneBwN3COHKIccQuiXgJGaYauv5jBjp/lh++Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.222.54
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=glider.be;
+	spf=pass smtp.mailfrom=glider.be;
+	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=Ru7CDrNI;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=thUwDvQa;
+	arc=none smtp.remote-ip=103.168.172.138
+Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CA4606A327
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 61CA4606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-99c042cee7dso3694013241.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:33:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795700009; x=1796304809;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=HcwFZv9BM0w57FN62L5UyDAXYgvPAV25zeOmEc/ACiU=;
-        b=xMld0zScRbjCVsPX5udUhxT5IgDbhMiUlrZ14SpqwIiM3Xuy+3R03AhUCk9x5mzwaO
-         s9q23KOyKd1GsKrBjFWdRbkcgoDL3kayCZSNXxhZizKwIKzvivGMiVG0HHVMfOQQqVdh
-         aJ3AxQvTFDoudp6g0r3AG/u9LMGoiCYJRX3cOSk/KIEtRMCIlxq6BKcM3WlXvMqz6gNk
-         XrBJSZq9Hjq9Jxf75wtZ4Em/Tq4gFFLgW9ak+lvizUnN3T6V96Nwudftzg3TnTxyhb7t
-         gEJiPOOq/0qiDEDSQQdIA06Yd86jXhAClLYmTTsQnDqlcvKlRW205lTAqZ4sZqY61w6J
-         WP8w==
-X-Forwarded-Encrypted: i=1; AL+hErHyd6/OLkUSPgTtUXkn0Pygvo3Rm4Z2LR1zaesE3J0mCapRXKospoPlmUlDKCsv9/wNXVUkR5i1Ts7EZqXbtCbE8w==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9vg3curDym2MSmhQ5lr0iZShvo06Jspom8BogS5cATePE8efiM
-	nPJ4yhDwb7O7tBORvWC8oBIMuJyIqewcyUHipq8r1ZHvn0EarEbe7I966OdAMve6
-X-Gm-Gg: AZFdTZe6i68952JTsxeuIWhZEm0u9t+7i8PRDkTV0imsANu7DXES/S8+22tR1OjCfzm
-	NK/2n0P6ZT8q3/35uSo4wZBt+YFL6+w8zQnEkzAsEHncG2PrxKshWUXz3pp86idApDbdYIuQnvy
-	XPNEZEP/t4VCvUNsoh/Uy45F7ysK8K3yDUJLYpkzXSk8D3rX+uiBe7rtWaV059cf44kNFp7jR5K
-	j7cfH6zF3ypTid1d9Up0jm8sjEln2Q5Pe5fJ+ZZl7GeF18OXJTXwUvYsXD0QG6FHwog75Cpc/T+
-	Nf3Q8xeEVV66zL7QhN+9NxpW6yo3eTGq9dHe4tngkHvPffnwbYX4PTXGqr7j3ED16NNDzo2Cp8f
-	laBANkfl7R3Cel3w4xA4gW3UeR1NyaPKJ/5J4j1PJGKQwmaG5FfDMSsaRlkW641OcrY2XJdWGDU
-	Mfi5Tv/gVa5chbShmYLNF3LGS6OyUcKyZ2WRZlBGebkpu3tfR6edRmtepp2SBvfiz9qGABGhbHg
-	8fmDjqJSmw2SaXrtxUB3GZUpdEsxsfXO/Tf/txY1wCJvWFSTe3JSebn6ytxZliebYwJkK1yqqKs
-	uEU2cDviqO33fbYWC82lBGeb03QmfNHxb0y3IMrPH/3JgkfuodFufFCbD/iHGdlmH8w=
-X-Received: by 2002:a05:6102:a53:b0:7c1:ce61:19b3 with SMTP id ada2fe7eead31-7d73967e59dmr12309568137.33.1795700009217;
-        Thu, 26 Nov 2026 05:33:29 -0800 (PST)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99e6e08a02asm21443367241.11.2026.11.26.05.33.28
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Nov 2026 05:33:28 -0800 (PST)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-74ab99038afso4574160137.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:33:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErEF90KwUnMS8y9FMhnZQODy1uyZEZK2ronZgNCcNc+77iar4AtVSHpTa8XoC1kMv3LSuBv0Qm0IMtbeBnlow0XibA==@vger.kernel.org
-X-Received: by 2002:a05:6102:3f94:b0:7cc:2674:b78c with SMTP id
- ada2fe7eead31-7d739391bf3mr11259967137.7.1795700008033; Thu, 26 Nov 2026
- 05:33:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E344B606A327
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:37:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E344B606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=Ru7CDrNI;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=thUwDvQa
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailflow.phl.internal (Postfix) with ESMTP id 0641F13806FB
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 08:37:17 -0500 (EST)
+Received: from ams-imap-13 ([10.64.2.33])
+  by ams-compute-02.internal (MEProxy); Thu, 26 Nov 2026 08:37:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1795700235;
+	 x=1795703835; bh=JMugssCcily/7wa694wDfnnBgfL202tVpzluRelC+Xs=; b=
+	Ru7CDrNIMYLGbjqcXniwkQQZGEz1z+hYmiW3IV6ICK6gOXNbKKftIV9c9RRDu30a
+	hnlumkMH61KfllQOwIiiMmnhfNqG+HzMu/3yQc5fcRtk4IJNUuDUy5bYqpDxftan
+	2GUJFVZxsFwRSIpDc8+m3ruJ5fb4S5nCTt5R65zJP0W2niJnpPTnMubcfu/g44M7
+	Tz/qJvOvt7aY32RJq3H+4k9ESf+oXgZPo5ioRKStDaO7VZIkVfuuEBj/2C0mt27g
+	sxhVN+WGWxqK4UD6+rYgUgclBRwq9h53xvmDfIAsbGBIldF5o9RLrzyIQCPIZEGJ
+	l8yixWPJkC4pLeOV5W23+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795700235; x=
+	1795703835; bh=JMugssCcily/7wa694wDfnnBgfL202tVpzluRelC+Xs=; b=t
+	hUwDvQa4HoU2mjaj8GcCvlOHkRd7eAPlbjWf9tRSGVLjqq7tMxaVvsOaqokvJgIr
+	+kyA8izVqh8oJyCmHYFsjLtV6a7FTmdObSl5LyBHbes0tGHoVW0kyaPQ0TiRYMJb
+	gM8Taa0ixyxnxo1ToYHRaJ/CpuxcqFrBGjKwyovnDApw+OIomHJhRqPjEmyiVTg9
+	cKlCgwVLu0OetojImSqScS53j27SKJ6YXedWIIp5HVRb7cuBsSrs692LfmYa+cxX
+	/sEeeT9cwZunT9x1qmsEVnZ+hLDNJXg2dOzpFQHjuwuig2wQxMzijUCM743Xi7hx
+	Qf9N6ASOGei5VXtWDfz9w==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=sign d=glider.be a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795700235; d=glider.be;
+	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
+	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm1:rsa-sha256:oMPsp8LVazvD44gyLQcl/w+XjHTEElkHAzh58Z02SgCXYVq
+	893pBd6gJnExa9dJ8/snWKYzdTR66Z+YmFVWgrQPC3MH8iC+tDVfd6KRdgQu8atK
+	7CwfOnxkTO+35WYGtlK6mqhkPACyQuINvYm1Nq8Y9rE6vXcQys1CLDbCGNuGK9dl
+	vly7sFFqTrJSKOv0bWEtJttnZLp1kd0TFhvr27MccOiLQyU3BT1WHcMeVwGn4rmv
+	OwA7Kwo+kWE80R96SB8iOCEq4zv6vHatMhLLv0yKfolj5Yrx/tgU6gGJbMRDg5Ld
+	baxoRRhFUzCmTvaGEGJ5sq2jjqYVxq6YVBhgX2A==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:42cS/u5GRwGS1MIqUEs68Rnpw8J8OQUCyWSrsVRG6tA=:Tv/37dhwHGiEPheMbeF/i/uv3mWlE33EsHblwdW4/rI=;
+X-ME-Sender: <xms:CDYIa4nF98PxlGb14V6pqX4qtwGMSMfsRo-J4IeoWFKScXJYm8yUZg>
+    <xme:CDYIayoF089wjlb9VIu-eVWOCSw1GnRHgglE-o5Ez9dUZgm-UjtQshB8LWhTUD0R5
+    fIa9BJAdxoyHqln6xRYDMSqT_Md-hWINhkBxKw3COLb4yPBogNpVR91>
+X-ME-Proxy-Cause: dmFkZTErsaaucJjYq/x+6V2mCCXBrJA3xek8KYWqXgKZNN9IFx6iUHi2/PpW1dzrLefW6Q
+    GLHalkwlOBSs/MsCjgh1wT+SNniTnkE/oU+REiRyOwTCL/ugTHXDip+KVAvegPcl8V5QAf
+    UTWH5/GWxy3iNfpZ7xE8DBd2e/SAAl0VMEN7VlARs78KtmMZDeXwEfIbm7zuPByl0tZQp3
+    LfrkfplXFbAN0y9sryCubVqu9yUdw4wwe4sUrHcep0ykM8fRn1YjayJmFNWJcm60e4hbX0
+    isuE8t6Vxqu67mDR4fH67HzmJfiKRMTbBYjZFhhcutPHbQhMrP89Kn78qQ/tqh7YgNttsT
+    5Vfg4/jlpV+7+m5rJKJLERcY92vxQBDS8d/1oY/LixBfKEtsiJhAt3RonCo5g3zIR7nSkL
+    sqQY6WnOUNA+PTPtS/P3l1ktRe88wWSj0OTLFjB8pzOWfm4l9swQb/Ok88bgvFCMbE+51I
+    2Ch15Erkjr03P3bOFUBrg83QYFgk9MHKU/MONMTKc1t3o30N5WxoVQ3C1ZmuvplmAzA5Jr
+    H9xTqM/HutCAXLwbckISFgxYgu4+k/QvlN/a4Y/S5BDP4lgtu5TLlqleRNhzJ78GOZXxV5
+    PQ5Hnbc8UHLH3pXp5V02rW4O4uHR3cf1ljOH6/Wv/UYi58X7fAq/A6OSoP8Q
+X-ME-Proxy: <xmx:CjYIa0IAbLSn7U_Nu-wkcANmrlIicuUH5B_4PRBMJkpGnaGAtiRAdA>
+    <xmx:CjYIa2Zs3VEdRRNcVYrlKShiYaWbRGm-SZo540zd9QPBTtQitxd9Xw>
+    <xmx:CjYIa2-n9hfOuvwlzv5JS4VG3EFBW-V3yQrNoimvIWDR4aEtKez4ng>
+    <xmx:CjYIa3ZydvmxheEv0bGg6auow_TXJ7xQ4lFT4yttlQ4gCF-_9k_VcQ>
+    <xmx:CzYIa_o4ZIK-gm8mEUWKmIwc7qwcNBhAm5KSAUpCilMIyuYGh0exuY_H>
+Feedback-ID: ia0f84a9e:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id BDBE2F800A1; Thu, 26 Nov 2026 08:37:12 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -81,78 +115,42 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261110080727.2377040-1-niklas.soderlund+renesas@ragnatech.se> <20261110080727.2377040-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20261110080727.2377040-4-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Nov 2026 14:33:17 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWpZfsaJOcTEBCugyDgKDXNRje68n59OrGFx-0hJXG+4Q@mail.gmail.com>
-X-Gm-Features: Aa3M54q5_iVD09yTxiCPbutEOoqFTTuL8Qbh52NAGvGv6cSg6_A-6RxSK9Zhqcw
-Message-ID: <CAMuHMdWpZfsaJOcTEBCugyDgKDXNRje68n59OrGFx-0hJXG+4Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v8 3/3] arm64: dts: renesas: r8a779g0: Add gPTP node
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "DavidS. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Sergey Shtylyov <sergei.shtylyov@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: ASQztn6YUXh7
+Date: Thu, 26 Nov 2026 14:36:52 +0100
+From: "Geert Uytterhoeven" <geert+renesas@glider.be>
+To: "Yuho Choi" <oss.patchbox@gmail.com>, "Ulf Hansson" <ulfh@kernel.org>
+Cc: "Magnus Damm" <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1ad06f20-621d-4dc3-8978-4c22dcd476dc@app.fastmail.com>
+In-Reply-To: <20261124153811.338437-2-oss.patchbox@gmail.com>
+References: <20261124153811.338437-2-oss.patchbox@gmail.com>
+Subject: Re: [PATCH] pmdomain: renesas: rcar-sysc: Fix CPG/MSTP node reference leak
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Niklas,
-
-On Tue, 10 Nov 2026 at 09:10, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The gPTP module is shared between the RAVB and RTSN Ethernet devices on
-> the SoC.
+On Tue, Nov 24, 2026, at 16:38, Yuho Choi wrote:
+> rcar_sysc_pd_init() checks whether the device tree has a
+> "renesas,cpg-mstp-clocks" node by storing the result of
+> of_find_compatible_node() in the bool has_cpg_mstp. The returned node
+> has its reference count raised, and the reference is lost when the
+> pointer is converted to a bool. rcar_sysc_pd_init() runs once as an
+> early initcall, so this leaks a single reference at boot.
 >
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> @@ -606,6 +606,15 @@ mfis: system-controller@e6260000 {
->                         status =3D "disabled";
->                 };
+> Keep the node in a local variable and put it after the check.
 >
-> +               gptp: ptp@e6449000 {
-> +                       compatible =3D "renesas,r8a779g0-gptp", "renesas,=
-rcar-gen4-gptp";
-> +                       reg =3D <0 0xe6449000 0 0x500>;
+> Fixes: 1c8c77f52d10 ("soc: renesas: rcar-sysc: Enable Clock Domain for 
+> I/O devices")
+> Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
 
-Can you please remind me again where I can find this base address in
-the documentation?
-The size looks too small to me, though, as there are registers at offsets
-0x500 - 0x788.
-
-> +                       clocks =3D <&cpg CPG_MOD 2723>;
-> +                       power-domains =3D <&sysc R8A779G0_PD_ALWAYS_ON>;
-> +                       resets =3D <&cpg 2723>;
-> +                       status =3D "disabled";
-> +               };
-> +
->                 tsn0: ethernet@e6460000 {
->                         compatible =3D "renesas,r8a779g0-ethertsn", "rene=
-sas,rcar-gen4-ethertsn";
->                         reg =3D <0 0xe6460000 0 0x7000>,
-
-The rest LGTM, the bindings don't descripe the two gPTP interrupts,
-so they cannot be added to the DTS yet.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
-                        Geert
+                                                Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                                            -- Linus Torvalds
