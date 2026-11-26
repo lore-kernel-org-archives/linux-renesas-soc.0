@@ -1,80 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795709484;
-	b=BoghcB4tzNKRIAdQfFayFEYdFL9Bzfs6sLzk2OrNW4m6waC8hJgnAZkmSuOiBN0brCVI
-	 vx8Vih33yV3sJIVbuV1Z4Rck4h4rhXwgzgXFiF0UJX2rDVZUx4xE+Ojn1Nt9lKlNk6sz0
-	 Mtz3N7TcVkCU9SNKm/GLvBcIHqixxkH2rcRLIqDDQMVGpgpZwp6rgvKFImJVa3Dl+QkNd
-	 8gA2okafC6amBZxmuHwqrtmeFUZKxOsSowJx+fZLJnw6C1xDC0J/2wf5LiX40ZFVhx4hc
-	 qA56/cnStYxb144L+ZqCoe4KthKKPFjYt454znGSEmvApPyAX1gJvJG2hqiC4d3aTew==
+	t=1795709479;
+	b=iEWBPedsdJH7x6br7wgGCUiVxILdo0Z8sYdALI2j7TcU2QbTet4wYkAOiXxUaNXkq7xp
+	 18F7ptLbfLATB+baawnhnK5rRUJDKr8/mRgirAj8KdWG9LJACMJu1AjVqLUCBE/Mrvsdy
+	 TXWCVkmtMzBx+hYbS7Zy2Jplc3iOfvTPeEtqJcoO/10VyOqAlMMweqO+cpSWCoxzZfGTZ
+	 Nkw6UEO72G81YraKf8eLAdsxz+8FSATIiVcHB+7lKOixFNuH8xE2k9c/Q4EL6Ymw/lypC
+	 S+ROLfx7KI+3W5FtnlUwtyHqkWUZRdQxIcCsYhQcQu8gJzCXgvTfPApRopF9Km5Kp2w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795709484;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=FGTA+x8ZDZt3VBrV+ZM1sVU1Se758NrPiWguyvIOfJw=;
-	b=w26UNltlq4P0SNkCWFayzUh3lSHk5it/en8kSoTPQiFPc/KBiOsFr/sm0ywkNtDmoMtf
-	 QeKBJ8BeI8x66pm3qno4T/nXoFPN+pAzRykzkdE1AIhQjgNMQTrubO4ebG1Owhvj11/1E
-	 3Nlt6S26oKL4q9X/gBCdprujg7ZqaKDuP2J+U9RjfqWIxEt4yFG6oGLsyJutJQc2rmrg7
-	 EMKghVZIZV/oyuvfJVQxIXi9FtnuddnjCgrjfkUjrJSlBXOu2eeW0lZlY0M3y6oLkNiN9
-	 H3X9GhIhu1HKroN8SYwnYfiQf+PhQBoJCx5/5X8Nz0DV6kskrc+jAKPris8I32ulrzQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795709479;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=TvxjHITJOzjmt+7iOw1sa4TYT9yXQN/3c21i5WbJxoE=;
+	b=UP3lVQq5yRC8qq+qFmXCYjsgyL5caqCqacVF5rR36bBKs0c+LT9Ha6mYxRhbGCQ/K3ei
+	 p0iotVOWcfeLTjlIGznvBQEqOLAvXR/3E62YDSmYtT+xlw4q9FMfguRKL7Uu1o5ZDczUA
+	 eMG9HPNH7dk9B7OGzyaeEV1GbNaHQ2vXhDbNS5jRUXvlnBKQ9Itf+me3xtDOsTA2mr32/
+	 lwN3drPMAgZsp5dTA1pf7qgbrgQicBLVQwMngSaE+ddaM15XpzkWsvZ+shsqDsHcsq1Nc
+	 4Ufg5fdZQjvhvKO3hAK89to5V9Mk0sX1jJLoeBhXfUegiHsQwgaS0a4O4KWiVdgY3Uw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EJXzINEJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="fC25/bpc";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980F606A32E;
-	Thu, 26 Nov 2026 16:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDE3606A31C;
+	Thu, 26 Nov 2026 16:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EJXzINEJ
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fC25/bpc
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795709483;
-	b=3Igq7HoiBhyHCEmX6cZRHqBFln876MrIgxS5hODa8bjn2avD6JK9E7ui6OMK6cuBvZ2s
-	 JQxQpaSFwzEN6I5zrJGJJe8h2lQ+Ahx2z2Mn/LbCRDnMc/35RI2fGATigSBaoQUe5M1ww
-	 g0yMTyOyjvyCfl7vAPIzLZ1+h8/n1AnCkQA9QcJyswmJ8GS4y5++J/dIadesh3u4Qw9SW
-	 RsGQ5/wWn7m+T7vzhPrHP49Uo8hAl3AK+vvGT4ACIJeUs8CsntW8PO8/+kxOxB7r/jsmk
-	 Eo3Q18v+0TO5E1USh/URZe0HptkIUWvFh2bool/di6hX/m3r8Wk8n88DrDqXCr2OLoA==
+	t=1795709479;
+	b=ECRd0ikZqTkS+byBgmBPZpxA07NNnJg4BZJbFibOVXGNnYNnDba/dTXkCvYks/pijn2N
+	 kzKGiCiaQUv0XtPfdR8hz3TZoeE98ZzKjS/Jzs7osvj4wFhGpUHG53WZewO1EPoHH4LsD
+	 0fbE8XN7sMWuOB9KOMQmQvjMKAIe8s9h7VXWK20V0heK69QVj6kbgnGTmjd1rZSnvFpGY
+	 96bg9KmUyBmJ0FVmIN2ImYaLCRVD4xbS5FWxzPbl9rsOWva4nrcy847Q9RHMDcAf2Af/V
+	 Ggaquo7gvG/Am/bscJBxN0B5FOK9OzwOn0uGBfa3bu4xu1rhuBKxQ4GHo97sv/hTClw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795709483;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=FGTA+x8ZDZt3VBrV+ZM1sVU1Se758NrPiWguyvIOfJw=;
-	b=GgJ4gquAF/xeAYzBEBKthErJDZj92XHbpV1DGCwWncZniIGL0QvP3Pl8YGDX3eOUrR4x
-	 Tt+JWFeiy1HN9PY+BJ6GNouDp30T3KYqc9WCNpM0Z+WKX8oXIRkxLpTEkvrI84e0SqaNf
-	 tBGTSUbsUZrxoKXkIiXMB+gC237HaJnBsnJuhldAJRnfYQu9t8IHy9DEW0WhVR15I3ScI
-	 qcN/Mbw3N1O+l/dD04ipFlFFuLpZjGpkQSqADVJ2E0p8YNyA+pvr+ZsqU8h/W1gVCKRJR
-	 scTGIn5BPqg6W1HIdEkr89JFP05QhgciPjlkca+N5Tr9jen4b3ig9WMLjZVIhZZSV1w==
+	c=relaxed/relaxed; t=1795709479;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=TvxjHITJOzjmt+7iOw1sa4TYT9yXQN/3c21i5WbJxoE=;
+	b=Kz2L/NRa4QfkzTnxuGCVpWY0LC6PHG7hax/bhv5QJ4fh1HJMo/5MTCbsXAzdbO4SX65C
+	 o04L8rVtxWz10+EfydiQ7xDUNSor/dp9F7tRXogweUHRn3LclaR7z8ghpHJM8Mm7r8Y0u
+	 OwS0ysnPqNzbeEX2UIRmrSED6LYvvOV+oc0iOP5nWgY1lLiJfCLh/Nh9Wogu/1zS5mX8L
+	 bH8pXITRHKQtvPMUG2/2CgoUYv6kHExnn69P9pNCyQOHwQE0Tr+zMSXQ4vq8T35Gatvk+
+	 aSIFOuMl69pb0IF7xTlWVkejOZunwbcSnD0c0BTgv/EhKsGpFZHCZy6lV31kFs1gzjg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id C11EF1F000D1;
+	by smtp.kernel.org (Postfix) with ESMTPS id C12351F000D2;
 	Thu, 26 Nov 2026 16:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795709483;
-	bh=FGTA+x8ZDZt3VBrV+ZM1sVU1Se758NrPiWguyvIOfJw=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=EJXzINEJgm+h4QADTLjz9Lc1J5pC7iLNKVBzyn3Qoptw4ouaXZ+OpGpumcH9T07Rh
-	 bXzzz1Ryq4+7m0fm83iJmK0xwyQ+D8pzoMu6gV8su+LavZVU85BlNDN9alWJPVpbbf
-	 2WuDKmVoxri5YlSjbnoDWTpChyfevYwwpx7fQLxSvq8XUpbxqh7b3erm9aJZrKtYWZ
-	 9xjgWE2pOtK81jgPxlrOIGuTq8Jg97HhmPsTXxYvyPGhdrtq1Heipi2m/XOtogr3sX
-	 fPinPc0wYU06cYMhh9WaQm8uIAqor1FxyqVaCaOkfO4WAp1pfB7KuF0fInzRJfXh2+
-	 ZbaWdQ2SZcIPA==
+	s=k20260515; t=1795709479;
+	bh=TvxjHITJOzjmt+7iOw1sa4TYT9yXQN/3c21i5WbJxoE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=fC25/bpc9sAgJvvw19dH9ct8KP5sFEW7E1yN6Qkgg303vKlWj1MGS637kY9jFrk2x
+	 uhAokkp0+wdqzi5Kj7zGsyZCspQsxD3YoUKMhb1dXfYkHnnVBQkCzK6/X8qKW4PU7S
+	 cH10yMskoFdAHWVucuoZAqrDjMLusc3QDkqqEJcSZ0AZoXGAhoQOc02cifsR5UCDao
+	 Bogga7HwkFGX19aIWTKt86IkuRZpcb9QtV7k7sVBjny6k0ZX+jedV1JUCkUiaDlDvW
+	 fFCnBCLIQneZdy1DLs9ZyqQCPyZnn3OdhIMe2QZq0fllgIUywCQghvd6036OP6ALja
+	 hV52xgUy0ek4A==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 1BC924D700;
+	by lkml.kernel.org (Postfix) with ESMTP id 45B164D621;
 	Thu, 26 Nov 2026 16:11:14 +0000 (UTC)
 From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Subject: [PATCH v4 0/3] clk: renesas: r9a06g032: Add reset controller to
- clear resets for mii converter
-Date: Thu, 26 Nov 2026 08:11:04 -0800
-Message-Id: <20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
+Date: Thu, 26 Nov 2026 08:11:05 -0800
+Subject: [PATCH v4 1/3] dt-bindings: clock: r9a06g032-sysctrl: Document
+ reset cells
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -85,12 +84,9 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33NQQ6CMBCF4auYrq3pDLSgK+9hXLR10EmQmpYQl
- XB3QTckosv/JfNNLxJFpiR2q15E6jhxaMbI1yvhL7Y5k+TT2AIVGlBYyPhsQF6ZvYyUqE2yzFS
- pQVuLXonx7Bap4vubPBzHvnBqQ3y8P3QwrR8MYPuNdSCVrIgIncPSuXwfqWbravKhaWOo08aHq
- 5jcDmcWqgULJwt8ZU1RGtDuj5XNLb1gZZOF2ubOaHMq4Ic1DMMLY0mY2VMBAAA=
-X-Change-ID: 20261027-rzn1-miic-resets-8308515aa2c0
+Message-Id: <20261126-rzn1-miic-resets-v4-1-4f73af81d779@reliablecontrols.com>
+References: <20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
+In-Reply-To: <20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
@@ -103,67 +99,74 @@ Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  Wolfram Sang <wsa+renesas@sang-engineering.com>, 
  Kyle Hendry <khendry@reliablecontrols.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795709473; l=2199;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795709473; l=1840;
  i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=uAZ/LQcoPq9WKYaqq6iLQDLjbO+Ggs9qbO4DuShx6Y4=;
- b=bUNe6jZfSPtcPCO8LOap1VfzJR4N1skwLClhu952fa640LF3L6JPdzSHSyoCDD/vAeG4Xj7mr
- uwr6EsRyvZjDZPaD2q1e38Zi6ILRP+VXopdKzV/1j/Bvi6hXeYkvggy
+ bh=3gnuD7B0CFK427B4+Q3tucnWjRFrW/+a9MUpmAlxi/c=;
+ b=uBwZ0w9aQfhNCo86A+BL4hHvpW1wO25a02PvcZpTvqwyHpqh6c5qOFfOyyHeV1tARcmPDjkzU
+ pxumqbQdZ8PAUK8HXeOvKIQjfTS7PqKMkBXNYl5VS9F+vAU90KNkwZG
 X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
  pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
 X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
  with auth_id=946
 X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
 Reply-To: khendry@reliablecontrols.com
+Content-Transfer-Encoding: 7bit
 
-On the rzn1, there are two resets for the mii converter in the system
-controller. If they are not cleared by the bootloader then the kernel needs
-to do it. 
+From: Kyle Hendry <khendry@reliablecontrols.com>
 
-To handle this, I've added a reset controller interface to the clock
-driver so the miic driver can deassert them.
+Update the rzn1 system controller to indicate it can be a reset controller
+and add defines for miic resets
 
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 ---
-Changes in v4:
-- Add 5us delay after asserting/deasserting reset
-- Have CONFIG_CLK_R9A06G032 select CONFIG_RESET_CONTROLLER
-- Link to v3: https://lore.kernel.org/r/20261125-rzn1-miic-resets-v3-0-f25a4b656d71@reliablecontrols.com
+ .../devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml         | 5 +++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h                        | 3 +++
+ 2 files changed, 8 insertions(+)
 
-Changes in v3:
-- Move reset_controller_dev to end of priv structure
-- Index resets from 0
-- Link to v2: https://lore.kernel.org/r/20261120-rzn1-miic-resets-v2-0-f1cfa678615b@reliablecontrols.com
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+index 26d94cedc871..70ccc315a10c 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+@@ -36,6 +36,9 @@ properties:
+   '#clock-cells':
+     const: 1
+ 
++  '#reset-cells':
++    const: 1
++
+   '#power-domain-cells':
+     const: 0
+ 
+@@ -56,6 +59,7 @@ required:
+   - clocks
+   - clock-names
+   - '#clock-cells'
++  - '#reset-cells'
+   - '#power-domain-cells'
+ 
+ additionalProperties: false
+@@ -69,5 +73,6 @@ examples:
+                      <&ext_rgmii_ref>;
+             clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
+             #clock-cells = <1>;
++            #reset-cells = <1>;
+             #power-domain-cells = <0>;
+     };
+diff --git a/include/dt-bindings/clock/r9a06g032-sysctrl.h b/include/dt-bindings/clock/r9a06g032-sysctrl.h
+index d9d7b8b4f426..244f5b221642 100644
+--- a/include/dt-bindings/clock/r9a06g032-sysctrl.h
++++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
+@@ -146,4 +146,7 @@
+ #define R9A06G032_CLK_UART6		152
+ #define R9A06G032_CLK_UART7		153
+ 
++#define R9A06G032_RST_TS		0
++#define R9A06G032_RST_MIIC		1
++
+ #endif /* __DT_BINDINGS_R9A06G032_SYSCTRL_H__ */
 
-Changes in v2:
-- Drop patches for pcs-rzn1-miic to be submitted separately to netdev
-- Add reset_controller_dev to r9a06g032_priv fix build error
-- Use designated initializers for the reset bit definitions
-- Change macro for getting priv data to static inline
-- Drop unnecessary reset from controller ops
-- Remove debugging argument from r9a06g032_reset_set
-- Remove configuration of of_reset_n_cells 
-- Add #reset-cells to required and example in schema
-- Make r9a06g032_reset_status correctly return the active low status
-- Move reset controller register earlier in probe to better handle failure
-- Link to v1: https://lore.kernel.org/r/20261119-rzn1-miic-resets-v1-0-feee2bb28bb4@reliablecontrols.com
-
----
-Kyle Hendry (3):
-      dt-bindings: clock: r9a06g032-sysctrl: Document reset cells
-      clk: renesas: r9a06g032: Add reset controller
-      ARM: dts: renesas: r9a06g032: Add #reset-cells to system controller node
-
- .../bindings/clock/renesas,r9a06g032-sysctrl.yaml  |  5 ++
- arch/arm/boot/dts/renesas/r9a06g032.dtsi           |  1 +
- drivers/clk/renesas/Kconfig                        |  1 +
- drivers/clk/renesas/r9a06g032-clocks.c             | 65 ++++++++++++++++++++++
- include/dt-bindings/clock/r9a06g032-sysctrl.h      |  3 +
- 5 files changed, 75 insertions(+)
----
-base-commit: 7d650c5db382c8226965b01a31e16fcf2df1d096
-change-id: 20261027-rzn1-miic-resets-8308515aa2c0
-
-Best regards,
 -- 
-Kyle Hendry <khendry@reliablecontrols.com>
+2.53.0
 
 
