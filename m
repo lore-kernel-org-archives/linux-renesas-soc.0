@@ -1,101 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.44
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795695229;
-	b=MqZtdDgeGtL2G3WeOWXB6chxshsw/A57STla1I8/yP80393wzoyIh6B6RgdkEzpIDPEG
-	 D6ry2GW9l5BXLqW3HK0oHNf+qERnyBM2Iw7zrEsiARp4Ntfw+ExTaBmdZsAz7Hivobt6P
-	 rUSYKHwz7B4dg7UZegDq/+tv7VzjsRYPbHRjUzittfPnWvCdQMqSNmFH63GAS8QVl9Zgq
-	 QGrfn0JbTTpyd1z5EnVV8dyMEkA76p+R0GrsH0/UE9cWM6YnWKTpn/H7YHETe7sc4YOP0
-	 S+mxO+RYseoANKjM+V813NMdD2Ho+acz5aDhqim+AGnhLsH2B97fmj2gFTEseD9AA4g==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795695229;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.50
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795695323;
+	b=Gz3CruUaDsxjkcTjifHAsvN8eSFY5whZON4/8BuJoXo7OvML2QhUYquvMgVCL39Z5lZr
+	 y9cPBMw/lIK98QbX77mA9nN3JxEv7CROQv3yuAFtzjSU5rF+oFggJ5VH165ZKPp92s22S
+	 a6FEHRJexjpgRuODvxtSuaVEKbPBPjtqzS3I4RG8TQd+ehLsBjngqhivxzQHo2Q/IM4xZ
+	 iv0to0bqCVp1X0TtXv7otC17UetD9tZ4UdK6L32WwOa9fPTmcSQfSXI0EdsWdCGb8aXdw
+	 6/27E7lfQ2kYr2ztnWm0TKxi2pTJud3uWLzTc9QvQIMVOYXlXx7DCmabUlZnXF4c8jQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795695323;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
-	b=K8AtVPe+LdoPq8i32XnNpJju/nxE5wy/zhK1+5+eqqFkOG/xjxgUS4lxeEWwSUx7G3yB
-	 BceIp7rIYjUUXv0mhCfVCOZU3w4ngrSv+VL1eA1K3T/t9NNyX+mCv3pgBLcEe6zPNW2R7
-	 jUjIsif3sDEWqaU54+fLghSyBj4reRcXBKSuDae1SoH55Rj1xLLgzJyFRuZDgqU4xbech
-	 +KEvlV58fJe8HattlD5fWDRgankwGWBEXggFO9jQzAhA0ZN5lHvse/S5fWcpfgM3gNy3Q
-	 leM7oniGorBrv0wiVOyWbBuia03F+dwToEGTRPpRbmkxzroaLjNC71H/W6f/IsYC0tg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OnTrh62B;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.44
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=N7R2bspuSN2vTU9KXTd+Gs5ucj/LrOjxnprdX2nps1A=;
+	b=PVVPVasdlIGwPER/FLs51v/su0FyW4SrhPxxRbGpNOzBfqcdJBcNw2rP5BJZOX5hEkEW
+	 c+gsJ0BtKSTWzcaXuvJtUF4t/Wm6uxFSo+yXWgQxkN31z0q4UrDt8PaUbQe295XUIkXZy
+	 zaCLysT+jIz6ridnfNI9mObBJlDJLKm7WLVnyKYa8nX/R3gcPyGt0lSv4N3hqR4vxbvsH
+	 xti4q71S1EPpkAqOuc4JmLAtPVeVBKPPb8HlDo+uKwl0J+JbAu8dk3+iOBvra0juC53CL
+	 /UVZz6bjl7Y98HQs00NmhuaMyl566IAnARe417YrOjo7K5x4OkqfHtneEEQkRxG89+g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=FwRjmudW;
+	arc=none smtp.remote-ip=209.85.128.50
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6D1606A69F
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 12:13:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA6D1606A69F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C697A606A31E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 12:15:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C697A606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OnTrh62B
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-497614c95f0so3956169f8f.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 04:13:48 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795695227; cv=none;
-        d=google.com; s=arc-20260327;
-        b=i06MhHCyBa0C3ZZVVKNjHu1MFBlrGdAJ9yXO8mmq/cUxRS1XBMSlQD326HQ+g7MUbE
-         PHt2IlSATJpHTZoVoBhN2B+IYmzDEB0fVC77JrDtvoqRTJPaxBj+YMcYFlyqTEkV5XrA
-         XjIiUeUixC+/Zf5qhXapo47K74yxlH4fMdUkkfEbJIWfce02+/iZUbje+l39SFfxNFSh
-         5pMI/N7IbY/SDBeMfSMtaG0MNg0DuOZAbzfGlDaEdkQPXLCvJVCvhbpFBvU64RaQIdKY
-         WM5jK3wuEez2AJDuraFbt9g+Q6gvmFJxLuSZClMoir0KI4+M80N9PA5Wfp2/EO2KThP/
-         2/vA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
-        fh=1YDq27P+KDEY/qZJcQDeYhm0NR8viM6LpDW9ahSTSVM=;
-        b=YVc4HNr0FOzv1lp3TLOxNSjTpPialoOcXhrhzoA/A46HAYTUEu8fNSta+GbAlzZX4I
-         bwfIPfEu9+JBeqcxxDbHlYOuXnNUI/klMSOiwCOl6jQ5FUGyAuF52i05o0FxpAkS/hSI
-         8fjNuwmGPipAaDE43xkgRzaL4S9riREIZKD2AF+C+nEhQI8fPtJEka4eVOSX7k7/K6Iv
-         TCETqfGg93dfiNSomd+y3EfhWVQTWyyKM3qK7KzLFyiHWwGJZNsbBlh1nzm3vxOsIe6g
-         aT0JTEGGC9Yieh19Ftn1RfDrrl6AMSlYNmwZF9oaRTOGQbUBjZUPosm5pg3Nnds0XBmo
-         CwRg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=FwRjmudW
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a207b02a2cso49521245e9.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 04:15:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795695227; x=1796300027; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
-        b=OnTrh62BErmlljhlpukUz7dfRdVPWlz9elGN1Cpqbny/F6/cIHqS6TRRPLJU36UtI0
-         2lAneuhQjEImukoH/gIvi5std14Hg8LcaMmAIEQ2BaVDynDM93tIkxaRxRrBHZ/qVWXD
-         GWuRs0rik2RSvxn0XidRhyLV/Tv1g7CT/XZEMiDvt1QfssEYdjd9mw9HEiNzQz6urGx9
-         ItTNFxmqQwDux8YDHHcj4nD8qO3pGUU3ifos8fFtPn580DyTaVVxoJngQO8sBD+472+J
-         YlShpSQZvDoTlUcDK4sy06iW9YigluSeMQFBpFH5FFASXTAKQIgBjZT60G3rPyK1d8KD
-         oEbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795695227; x=1796300027;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1795695321; x=1796300121; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
-        b=DvtH0MwFCT+8jCa224cxHXhpHjebXNvMb1tFKuJfhNWp0T5WG05fXDrUiiHdEDhRRU
-         e4KyBIryuL6WeZzR1N1SsVYKk1RRHGm5jYoeAX51ZQpXHNNgscEwPFewB1MRcNrgX0O2
-         pCtA+I5W8y6cSbtajhjDOSPXth9J6zmuXX7NB8G6ZLtQCGP6oSBVgmXCoazs4aDA1Nae
-         xRFLqgRWrWrs5qiK8y6+/SbEuym9se2lAx9KtD52YbHJpxlN0LjY4laXVhS1purFi4qi
-         JIUuLjw6V9y0hGXufQpm2/4+sS3iRfwUXZFhBNguQ/rEdTyi5cbWkUQ5bffmHdPRKCW/
-         WckA==
-X-Forwarded-Encrypted: i=1; AL+hErHKIl7CANPwEeA45j1mUFX5BIWMGRbVRAc5wf9YmotYvgaQdwL3o6dkiiPCgsECEuO6ANfXbUpQl73h4OSn2LqoXw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8tSODSSnTPkCSWoeHcR4K20dIospc66l15MdW+9FHXEcnKRSrk
-	MGQmeuiSiEiTMNww8n/gDmadAop3pvw0KVIrhz/mt+JJBuA1RZLAk2zQibRzydQ6n4xXQUYmtcw
-	rn+BjBNytBIgahQltlJkDnNjxf3Tzix4=
-X-Gm-Gg: AZFdTZf4Z0WlzBBlIZEeRJB2ehJMj1BUS02BJunTDA5Fhov9wm4ivgtNksrEFbQg4cx
-	LIjhQ7QD7XElZqr/Jn14c97OJExyLu7Fbjbu27bwZO+dvlzty53Ei+95eYCkXuOFhNkSqaldxea
-	m18EH2TxhavIfUFUrQQg+0No202981JUF311bNdx+65MFc4RVD20DeIZgGmG9P1uJaOt3r4QjQp
-	1FnGuywsS+YdA3ciBMyqdYffSSuxNZZc3CC1WVxgp78dJbN+4kwyYA52fDTVkxJCaiPSbLMkxUo
-	q7b9vj3LaZNmiMJ3vucItym/gTaBmPQI5fTkbxxaeQ4AYXaq1OZ1UUGgA+Kz7Xc+5yGVVpPuuh2
-	BXWHKvWxDhOJu6OLYgY4z16ABUxXowSHXyIBOF4pirdqXA9P/UgHTVPhk7u4SgT0nn417n1Ro9H
-	35ZTnlK3onN0pn0MHrxXP9PLpFvgJZDP1R2Q3wJRdnA4wdxf2jORPEmeAkrg==
-X-Received: by 2002:a05:600c:6219:b0:4bb:60b1:4409 with SMTP id
- 5b1f17b1804b1-4bb88816525mr406462305e9.19.1795695226899; Thu, 26 Nov 2026
- 04:13:46 -0800 (PST)
+        bh=N7R2bspuSN2vTU9KXTd+Gs5ucj/LrOjxnprdX2nps1A=;
+        b=FwRjmudWL65oLgTj/u0S7HQX4RFS3WnOCzEmmUj60oHwEXRK/tuKkJNusyKZlWK1M9
+         Q3OWtaUEnyPQMKwdLfw/GSnHVTtxYsSTBID0lVsgQ+7Q7IR1flV5EeGHRZeXIv4a3g0u
+         Qa23F7gHKt5tLT3NTo5Ox0mgBBDrx/nxvTvTh+tjKsv4tzk67N/YeWXxxPfyt6pWUUBg
+         2Dfyjmgf30+RljnWLlu996rmkIJJykXjPdfyAG1Qt2Ml1kKCIByWel5t5wtqUFcyDadF
+         30t/r9Humb2RC7ljW6BOWSF5sZaZnLBTgR0GHu82jg405d1/psWuDQyX3zYU4ZDWOxL9
+         2czQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795695321; x=1796300121;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=N7R2bspuSN2vTU9KXTd+Gs5ucj/LrOjxnprdX2nps1A=;
+        b=O6dl75kUuxgDRPvy9s5XQhhfkMRsBB3YaAdUINiRRskbQJbzSF9dwEI0u4LRsOY8kY
+         JIv6kCTFz7CtSCc2zzcN3z7Kn+CS7USY9kiTblJbPc20InHMgO6VpM0T47O+uue6JFag
+         0SmyE2C/U9jW3JL5K4NF3ZA7+w/JKRNz7ZDO1ecmtphZ4s0PNoJuNhlamKv8e5uRsjKf
+         eapGzP6+CsGwd1VyaSK9SCX71H4UQ1uoXGR1oOqvyMkjFzWO3Q+O2Mc2OwbkwBes3bZk
+         w4Zw8wxObT6Z+/ppcQ67jez5NnmzT1+DF4VfNSNSXOGF1sshlJAIaiKCVuFjmoVvyZ/D
+         Mzog==
+X-Forwarded-Encrypted: i=1; AL+hErFrrb2lskqjhz+AyKm04zfbZUDz0ZH+WWrMYcCGsLJwIsqLZEWSWnrZyO6mceHPAt+BGcCSMTqciwMOCT6MerkVtA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+rS2szTDnEw3voZaRQNIG4uFQslVAuVCOd6Cik+9aTlADQU8/o
+	CuDY4a+THYLs54E7fDZuPFWgqzVzPMDBnfIpb3L4xOCGqwyEVR/mNZDDYb31SvAyBZw=
+X-Gm-Gg: AZFdTZd/AWxC3mIH9iQg+5AGNhnrnoZV6Pe+X3gnJLvj9vVxsGc3EeHnY261soWe4w1
+	LQIqOQTp43XQ4n8Ksc11m21HUNvjS5EQe1I+0ko6P6RKIFwv1cw9ZelcEOdqWBfARz6x7JeJ+qT
+	iSyDnfkctUO0VE5QIBbU2/JvKCGDd0kE7xi6/alyXX3jrmRLNBZQNNeu+r4vWquwEdXKsRp3Tfm
+	IGYgQ7FuUuXKzV3TmCHPa8MtnCk9RtgjtZxtU6nBbLaMzThaJYkh03cDqeZFpobivKU8SHQorkX
+	ljGqE+cMwrr7GS7pqMZV7nLwW+78ycB2ZlNRhLpTFwWTZOvikcuoD4regif6C6EVMpPeIzjvg61
+	TOKpFVoKCPKIZVM955o1MbtXVJHk7fBO8o02Nk+HUZnck6wNANpu8wIQuZ5FPL2u5W56epbcR43
+	v+wHViSEdTr/pW0DiWwNxF9CYYjz2QfKSnWybAhzuaSOo7jMljD97R9yTuH4u9wCOuD5wGoWhsH
+	HxHmVqYpUgKoyHJzSbN9S5SLorlGV1pFkgFBjagwfUr5yXMyye3sp7jlkV65e8gTAHfs2t/tXrX
+	Gm7RWLlhuU7dFtO+IX7HgmDdT2kFdenkBAdSyu63Oky/sfztjh1jLLURB+8WEgUi7AnzT180qGE
+	dHuc+gM6YpspVbMrnr+oYmTEkoLfEq6XNC8c8jstMLYrKZnD9ncpMCeV3vDw7zrlgYA==
+X-Received: by 2002:a05:600c:3b91:b0:4bb:7e4e:de53 with SMTP id 5b1f17b1804b1-4bb8881059bmr507224745e9.12.1795695320857;
+        Thu, 26 Nov 2026 04:15:20 -0800 (PST)
+Received: from ?IPV6:2a02:842a:9b20:d01:a06b:e180:2ea9:f6eb? (2a02-842a-9b20-0d01-a06b-e180-2ea9-f6eb.rev.sfr.net. [2a02:842a:9b20:d01:a06b:e180:2ea9:f6eb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb906c089dsm349451575e9.1.2026.11.26.04.15.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Nov 2026 04:15:20 -0800 (PST)
+Message-ID: <bc5f0035-08ba-4813-9bda-9b2ba68f3680@baylibre.com>
+Date: Thu, 26 Nov 2026 13:15:18 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -105,185 +93,163 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261102104907.16007-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20261102104907.16007-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 26 Nov 2026 12:13:20 +0000
-X-Gm-Features: Aa3M54o554CBQDS46Q5cL_QVod_O_1ZDWVlLVSBjQ9SBzaVxWUHV8HeeuRLzrP0
-Message-ID: <CA+V-a8s-GdrW_d1OY42awLqBapVY1LpKbpq_u8ZvGmij_Mnzug@mail.gmail.com>
-Subject: Re: [PATCH v3] phy: renesas: rcar-gen3-usb2: Keep OTG VBUS disabled
- until role is known
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/15] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+ support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Paul Elder <paul.elder+renesas@ideasonboard.com>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <cover.1795029012.git.geert+renesas@glider.be>
+ <1e9c5ac3-d82b-4af9-9946-0302cadf7404@baylibre.com>
+ <20261119234759.GB2324725@killaraus.ideasonboard.com>
+ <19c3745a-6308-46ff-bb37-3acc88fe22e2@baylibre.com>
+ <awAqqg6F2Z1t55x2@ninjato>
+ <d94ad9ca-afdd-4301-a69c-0bbad5b334fa@baylibre.com>
+ <20261123103633.GB2959742@killaraus.ideasonboard.com>
+ <fc13a7a8-b825-400c-9ea0-ceb2670dc478@baylibre.com>
+ <20261123160550.GA3050935@killaraus.ideasonboard.com>
+ <27796cff-eef5-46ce-8079-93a0a8d40db5@baylibre.com>
+ <20261125221502.GD3581@killaraus.ideasonboard.com>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>
+Autocrypt: addr=clegoffic@baylibre.com; keydata=
+ xjMEafx9bxYJKwYBBAHaRw8BAQdAtc85GIwDXLz0rh9thWXC80Lji0otVDVncXT4qaS4j1fN
+ K0Nsw6ltZW50IExlIEdvZmZpYyA8Y2xlZ29mZmljQGJheWxpYnJlLmNvbT7ClgQTFgoAPhYh
+ BJjMiHuM4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsDBQkJZgGABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEH6EW4KtCh6Tt+sA/jVC35rY1npFlOy7YnncTdrID8Qf855JA78IzXgvzpGp
+ AP9FkuuT80m66PP3DvgYX9kVnG17mSDKO0+v2W18v6ZgCM44BGn8fW8SCisGAQQBl1UBBQEB
+ B0DMwF4u//aQyzsFlO8rPJ/cqsAuPH80IeIA3HOEo5mlVgMBCAfCfgQYFgoAJhYhBJjMiHuM
+ 4ZUwFqUPr36EW4KtCh6TBQJp/H1vAhsMBQkJZgGAAAoJEH6EW4KtCh6TdSgBAMDS0MiWCivt
+ LjzZc9bs+P/xdXywUjDKq3lpQGJ6vZ0GAP9vI6DnN7vwVK6jt6/+0aBGkog5Ura9+WwRFEdM
+ vLfPDQ==
+In-Reply-To: <20261125221502.GD3581@killaraus.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 2, 2026 at 10:49=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> On OTG channels of SoCs without ADP control, the VBUS regulator is
-> acquired with devm_regulator_get_exclusive() and its output is switched
-> by rcar_gen3_enable_vbus_ctrl() using regulator_hardware_enable() once
-> the port role is known.
->
-> The helper acquiring the regulator has the following problems:
->
-> - The internal regulator is unconditionally enabled at probe, so VBUS
->   is driven before the port role is known. If the port is connected to
->   an external host this can back-power it.
->
-> - regulator_get_exclusive() hands the consumer an enable reference if
->   the regulator is already enabled, for example by the bootloader. The
->   unconditional regulator_enable() then takes a second reference while
->   only one is released on unbind, leaving the regulator enabled and
->   triggering the WARN_ON() in _regulator_put().
->
-> Fix this by making sure the driver always holds exactly one reference
-> to the regulator: reuse the reference handed over by the exclusive get
-> if the regulator is already enabled, and call regulator_enable()
-> otherwise. Register the disable action in both cases, then turn off the
-> physical VBUS output with regulator_hardware_enable() until the port
-> role is established. Enabling a disabled regulator to take the
-> reference may briefly drive VBUS during probe; this cannot be avoided
-> with the regulator API.
->
-> Rename the regulator helper to reflect that it acquires the regulator
-> without directly enabling its physical VBUS output.
->
-> Fixes: b6d7dd157763 ("phy: renesas: rcar-gen3-usb2: Add regulator for OTG=
- VBUS control")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.co=
-m>
-> ---
-> v2->v3:
-> - Added Fixes tag
-> - Added Reviewed-by and Tested-by tags
->
-> v1->v2:
-> - regulator_enable() is only called if the regulator is not already enabl=
-ed,
->   ensuring exactly one reference is held.
-> - Dropped enable parameter from the function
-> - Renamed function rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable=
-()
->   to rcar_gen3_phy_usb2_vbus_regulator_get_exclusive()
-> - Updated commit message
-> ---
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 35 +++++++++++++++++-------
->  1 file changed, 25 insertions(+), 10 deletions(-)
->
-Gentle ping.
+Hi Geert, Laurent,
 
-Cheers,
-Prabhakar
+Thanks to both of you for the answers, I reply to all of them here.
 
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-> index b5ba751805aa..3481505dea2e 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -1114,8 +1114,7 @@ static void rcar_gen3_phy_usb2_vbus_disable_action(=
-void *data)
->         regulator_disable(vbus);
->  }
+On 11/25/26 3:45 PM, Geert Uytterhoeven wrote:
+> Status = "reserved" would work fine for a leaf device (e.g. a network
+> interface), without further dependencies.
 >
-> -static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(struct=
- rcar_gen3_chan *channel,
-> -                                                                 bool en=
-able)
-> +static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive(struct rcar_g=
-en3_chan *channel)
->  {
->         struct device *dev =3D channel->dev;
->         int ret;
-> @@ -1133,17 +1132,35 @@ static int rcar_gen3_phy_usb2_vbus_regulator_get_=
-exclusive_enable(struct rcar_ge
->                 return 0;
->         }
+> For core components like the CPG and MDLC its different, as every single
+> module on the SoCs makes use of them.
+
+Right, an SCMI DT changes every producer and consumer node, and they would change again with each firmware version that changes its ids. If I were to do it, I would handle those changes in a downstream tree, as SCMI does not seem designed for several firmware versions with different ids on the same chip.
+
+>   1. They are not stable!
+>      We only _assumed_ they are stable, so we could relax dependencies.
+>      With that assumption, there is no longer a need for the (contented)
+>      addition of scmi_get_base_info(), which would be needed to
+>      distinguish among different firmware using e.g. different ID
+>      spaces.
+
+I think this is the real problem, and it is not specific to X5H. Ideally the SCMI firmware keeps its ids stable, and to me it should even be mandatory.
+
+>   2. That can't work for now, due to limitations/deficiencies of the
+>      current SCMI firmware specification and/or firmware implementation.
+
+Which ones? Can't we work on improving it?
+
+>   3. Last but not least, they are not hardware description.
+
+They are firmware ids, and the arm,scmi binding is made for them.
+
+On 11/25/26 3:52 PM, Geert Uytterhoeven wrote:
+> This only focuses on the IDs, not on different abstractions offered by
+> SCMI.
 >
-> -       if (enable) {
-> +       ret =3D regulator_is_enabled(channel->vbus);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (!ret) {
->                 ret =3D regulator_enable(channel->vbus);
->                 if (ret)
->                         return ret;
->         }
->
-> -       if (regulator_is_enabled(channel->vbus))
-> -               return devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_v=
-bus_disable_action,
-> -                                               channel->vbus);
-> +       /*
-> +        * An exclusive get of an enabled regulator already holds a refer=
-ence, so
-> +        * add a cleanup action to disable it when the device is released=
-.
-> +        */
-> +       ret =3D devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_vbus_dis=
-able_action,
-> +                                      channel->vbus);
-> +       if (ret)
-> +               return ret;
->
-> -       return 0;
-> +       /*
-> +        * The regulator is enabled only so that the regulator core holds=
- a
-> +        * reference to it. Do not drive VBUS until the port's role is kn=
-own;
-> +        * rcar_gen3_enable_vbus_ctrl() switches it from then on.
-> +        *
-> +        * The VBUS regulator used on these SoCs implement the .enable/.d=
-isable
-> +        * ops, so regulator_hardware_enable() cannot fail with -EOPNOTSU=
-PP here
-> +        * and no special handling for it is needed.
-> +        */
-> +       return regulator_hardware_enable(channel->vbus, false);
->  }
->
->  static int rcar_gen3_phy_usb2_vbus_regulator_register(struct rcar_gen3_c=
-han *channel)
-> @@ -1151,7 +1168,6 @@ static int rcar_gen3_phy_usb2_vbus_regulator_regist=
-er(struct rcar_gen3_chan *cha
->         struct device *dev =3D channel->dev;
->         struct regulator_config rcfg =3D { .dev =3D dev, };
->         struct regulator_dev *rdev;
-> -       bool enable =3D false;
->
->         rcfg.of_node =3D of_get_available_child_by_name(dev->of_node,
->                                                       "vbus-regulator");
-> @@ -1165,10 +1181,9 @@ static int rcar_gen3_phy_usb2_vbus_regulator_regis=
-ter(struct rcar_gen3_chan *cha
->                                              "Failed to create vbus-regul=
-ator\n");
->
->                 channel->otg_internal_reg =3D true;
-> -               enable =3D true;
->         }
->
-> -       return rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(cha=
-nnel, enable);
-> +       return rcar_gen3_phy_usb2_vbus_regulator_get_exclusive(channel);
->  }
->
->  static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
-> --
-> 2.56.0
->
+> The latter leads to the need for changes in (many) DT bindings and
+> drivers, to support the same hardware blocks that are already supported
+> without SCMI in the same and/or older SoCs.  How many different DT
+> binding variants, with corresponding more complex handling in drivers,
+> are you willing to support for the same hardware block?
+> The remapping driver takes care of this in a single place, avoiding DT
+> binding and driver changes all over the tree.
+
+Agreed, the ids are only one part. But most of the other differences on X5H come from the firmware (missing clocks, zero rates, reserved resets) or from the missing clock domain in SCMI, so I would rather fix them in the firmware and in the specification.
+
+On 11/25/26 3:55 PM, Geert Uytterhoeven wrote:
+> So we can't upstream DT, until we have stable IDs for real?
+
+Yes, that would be my take, to avoid glue code based on the firmware version.
+
+To me, development firmware is the SDK, made for development, and a released firmware is the one that has been fully tested, where no new resource or missing id is discovered anymore. As you wrote to Wolfram, "We are still discovering missing SCMI IDs for some resource", so I think the X5H firmware is still in development.
+
+I was also always told not to upstream something that is not mature enough, as your cover letter says for the firmware. So why is it important to upstream the DT before the firmware is mature?
+
+On 11/25/26 11:15 PM, Laurent Pinchart wrote:
+> It's not a matter of "in development". Software is always in
+> development. Don't get me wrong, I agree that we should minimize
+> breaking changes in SCMI firmware, but we can't avoid them, or even
+> minimize them enough, without a QA cost that nobody seems willing to
+> pay. Where's the stable SCP firmware for X5H ?
+
+Linux is always in development too, and it still keeps its userspace ABI stable. I think a firmware can do the same with its ids: keeping them stable is not a QA cost, it is a rule when adding resources, append only and never renumber.
+
+The open-source SCP firmware I am developing for X5H is public here: https://git.gitlab.arm.com/clegoffic/SCP-firmware/-/tree/renesas
+
+For the SDK firmware, Geert's v5 cover says one table covers SDK 4.31 and later, tested with 4.36 and 4.39, so the ids v5 uses have not changed since 4.31.
+
+Personally, I also don't like to see version numbers of firmware that is neither upstream nor public in an open-source project like the Linux kernel.
+
+On 11/25/26 3:55 PM, Geert Uytterhoeven wrote:
+> Zephyr has less complex software abstractions than Linux, and
+> might not care about DT stability.
+
+Yes, we are lucky on this one :-D
+
+On 11/25/26 3:56 PM, Geert Uytterhoeven wrote:
+> I understand that can work on servers with N CPU cores, N network
+> interfaces, and N storage controllers, where you run multiple
+> virtual instances using the same DTB describing e.g. a single CPU core,
+> network interface, and storage controller.
+> But not on an embedded platform with complex I/O...
+
+To me, X5H is an Arm platform like another, not a special case. NXP's automotive S32G, which also has complex I/O, already uses SCMI ids in its mainline DT. That is why I would rather handle the firmware versions with the SCMI quirk framework, the same way for every platform, than with a special case for each SoC.
+
+On 11/25/26 11:15 PM, Laurent Pinchart wrote:
+> We have two options to deal with that: either we handle that instability
+> in every leaf driver, or we handle it in a central place. The latter
+> seems a much better solution to me.
+
+Agreed on a central place rather than every leaf driver. Where we differ is which central place: I think it is the SCMI framework, with its quirk framework, rather than one remapping driver per SoC. A hardware revision is handled by the driver of that hardware, but SCMI is the same protocol on every SoC, so its firmware versions are better handled once in the SCMI stack.
+
+Anyway, I know I am going against the common view here, and maybe I live in an idealistic world. I truly think that one SCMI platform should have only one SCMI firmware version, but somehow several exist here. Do you know why the old SDK firmware versions are not simply fixed and updated?
+
+In general, different SoC vendors seem to face the same issue, so perhaps it comes from the software development process around SCMI servers. That may be worth stating somewhere, or even directly in the SCMI specification, for example that a released SCMI firmware keeps its ids stable.
+
+As long as old firmware versions are not fixed, it changes how the SCMI Linux framework has to think about the product development lifecycle: how can we handle several SCMI server versions without a set of device trees and without dependencies inside the drivers?
+
+My first idea was an upstream interface in the SCMI framework, used by tables maintained downstream. But that does not hold, as an upstream interface needs an upstream user, and I am not in favor of adding one for this.
+
+So I would rather keep a set of atomic patches downstream, one per firmware version, built on the SCMI quirk framework, so they stay easy to rebase and maintain. This way upstream carries no development firmware, no extra device trees and no version-specific code.
+
+This would also follow the comment in drivers/clk/clk-scmi-oem.c: "impl_ver-specific behavior should be considered a bug and handled via SCMI Quirk framework".
+
+> The way to go in my opinion is minimizing firmware breakages *and*
+> having a remapping driver. Those are not mutually exclusive.
+
+Agreed, they are not. We only disagree on where the remapping should live.
+
+Best regards,
+Clément
