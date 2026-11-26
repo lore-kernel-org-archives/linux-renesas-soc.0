@@ -1,94 +1,96 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795674200;
-	b=kFmQLraCRYEdoQzFURNW/aceCmlJhvbkNur5Mlypdq31SBKWB7LcdeZE1MV8Ydk2dd58
-	 umFasfi9jdQX8bnMpIiio7skNa4WsA+/xYcYGero5DagZ34rWLXxgJnfSTnID0fIRL1Am
-	 ZH4bzcLZCcLlzm/xzeoCGiJjYrRBv0lLbXAB44uAE7TqH46Bq9GdldpBnD5jZMscJfJQY
-	 UsSuOlwJbJj1sKludPeevTENQfQR4R1Sp1lYwSrkMBCOBMHF/h8qDNkj5TPdXSlxRZf7d
-	 C4tA1gIEroz5jkpqLJPa8CqOXzg18yAmRXFCLFD8yh1EI4ZhrhiHbP5BhOeK3WhxT+g==
+	t=1795680722;
+	b=bII6J19I1ZuMxgs7eBYHGfpPAjBGw6V/Ri5MT588oQnOOMZz0IYT/H5yP16v6wEiORSO
+	 1Mok5rfwQcztjRS08lXDyjP8y3caQOCWOr7eQiaGOUoY0++loCMAsyWKC/KTRyYuf9zix
+	 1zL+diC5wfNaj317Q+G25DLJ+FbVvXn+VP5zcFF9k1cYQjv6VSMw8nOcHzTTRo/nPB9mu
+	 nZdNVAZOCVuJd7UAUE+CHHetSeWwDUww0A8WutPIUPN4V1wWJLKuy1bn2n2o+FJMIeyKl
+	 T6ZBq8Qjq72NloqD/G0tTW3+7K+hZyv0s7ks5d5E3RArSZKYYO0OAnNbF+h5FGLY1Hg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795674200;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795680722;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=5bb5Je9p97xfNctApi5CrFhZd9ei04elcnBUavAD020=;
-	b=OSWgtBemFgr0FvYqnOgvP88zTUteP7qnjOAcND/OOxW67Km6mt9QqZgraWHkM1SSRnt9
-	 Wddu011axavpYQMMsKmZQOjn/WQUiCYUJwZPWeDjm4cilPYDzwXIkp23KMMSZmKl3hIZB
-	 5wDmIPSTFWJQVqTV+5NPfpqTo+kQ/gYbVQED4HYi894ndx2Eqtvrqdp1MSzhdhCNtwnp3
-	 UX9zJ6mwWwfn4yFHcfHR2ovX0PSG16bik5EgFI5/pQ20SxZkUEGqJMhSocoJFPZyqDD9g
-	 HeYChpoGvZWtrCaUtPQ2DBZV+iN6LDgj9YS3z24snf4vDiPyWLOMaqsSEE5QKZ6mrvw==
+	bh=LIceXVfgUW/+K3E1yyCM/bErBx0QHF8gu29sHeG+Asc=;
+	b=wMTlbJ3tpwAfXuYhJsBFm1DhRmuMwLau8Kdv+nJ2utdljx0NRiYHZsgthVcqh1VL52o2
+	 12S/QTt1cQ0hMb5aRwcqZ9LAotbXrnjFS3vY9/UsPrNS7seaCSak1CN3z2wTzdYHjjFGn
+	 w7KLuO/8l4YJKB8OWeM/JuW++uQ3tfi7xh9te9KuIE6qY10nsz43uLR637vkX7iqwvZro
+	 bJvRM6hB5OOXXid7iY6HN8p1g7aBF9JrxTJy2i6FekILmXRnNzVQaJNahMR2fqu5DeM6s
+	 z/+f8lBvGYnRDpMFBO6sMgYmMLhWNmzV1tr34Ci5+JrV8td9ZvRvT7aQ3UQZf3gQ2NA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YACbua7o;
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=BbdbSX7w;
 	arc=none smtp.remote-ip=209.85.216.47
 Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1F4606A327
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 06:23:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F1F4606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CF9606A335
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 08:12:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0CF9606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YACbua7o
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3b51a9606e8so150514a91.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Nov 2026 22:23:19 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=BbdbSX7w
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3ac9f49b984so3846683a91.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 00:12:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795674198; x=1796278998; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1795680721; x=1796285521; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5bb5Je9p97xfNctApi5CrFhZd9ei04elcnBUavAD020=;
-        b=YACbua7oSN7sJw24HYX57m0e9cVdc1sjtYLdAIvO3Cg3hutEKad156pvmOXb2cEj3W
-         pET12Z7zu6/oqTMbLIPxRWZxdAOyxPa3evc9VAD4XfUfNOHSV2e0CiD9OvSwNh8ND8MX
-         3wbd6UmrU35bE/ykoZ+nC8Jr8UKnnRU1l06r8J/MhvMz4Z/Egpmjzj51PnH5KnWxhIly
-         ErJIyJUFHfxnz8ZWR/nv5uFtbZ1VA+uNYnR3wpts0jwh+ViEMYs7BNUq5FiXwAt+DJ/G
-         Fo5ADZQozTr/arFscBB9uNCCUOOSCu8Zn7/ANmdhJUl46PFLQqdXGxp63uz/7pawIzbM
-         TI7A==
+        bh=LIceXVfgUW/+K3E1yyCM/bErBx0QHF8gu29sHeG+Asc=;
+        b=BbdbSX7wwOQQL4prnHw0pE68+2q09ukaAXLRXVlrVhcC2deoQ3y8C8Y1C7zm4PYR/A
+         Mr9vkicwYcpS/g2rcx4VkXLPC7CDXJGmahGx+LbrO4BTgZv/G0tZrQfQCgH5eKjf5xN7
+         GXqhP4Fn7Ay1WVekMz2wMJdONbsI3Mw7YLYPo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795674198; x=1796278998;
+        d=1e100.net; s=20260707; t=1795680721; x=1796285521;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=5bb5Je9p97xfNctApi5CrFhZd9ei04elcnBUavAD020=;
-        b=eT/1+wkBIxzRlvv2Gqqj6bzPZeos3L3tciT4FNQR1fUdj+Fa7h+OsnWDZ/mgMbupKM
-         z0zA4nvUerry3BAY/Pm+YO2TR8OrLaYG00fKWiE8oDtkSUIXgahxaQafgDOwT8MluOGv
-         q5Yq1PSyH8Cz9ujVhZEv/LEa1dX59B5jBHQLkqf7LJrkgYMsiIxdOlDjDoKVxvx5CVlt
-         J9g2SFQgNxxr7+UPV5ocOjoHua+YKPqIXcUJeSKPNTUnzRPjqK+jtKWRuDf5up3LdFb7
-         kltTh10k2hFDMyw4j5t1+OF9Ig0BENCiX/CE4sEmRtDQgkp6xvnf4cSvkcmyrrfJZHSp
-         KrqQ==
-X-Forwarded-Encrypted: i=1; AL+hErE38XkoU4q+0GOe7Iy6HmTb3cDGio6bXiN1DP8iESocH/upAzibKzP26sd+EOV1wRxaclQBfhBVRhbPHS94bypP1Q==@vger.kernel.org
-X-Gm-Message-State: APuU4Z81eFuH69FZfT5D9jNyYFA0dPrLdv6We56kyfDtBmhjEODGcita
-	1uHTZJrFg4lYdZa1Vcw6zpghGaThUAz5DISebgbBr51Vap/n+Za2FYnt
-X-Gm-Gg: AZFdTZe1Mgpgp/vsLAEMH3b/e8rWjwPolA3mqq55UWWRjR8nV1Uih+L63ry3wY10n0i
-	myRXZLbvblVkdvIa3pojkv4lpeOJftCigCUHoUNlF2m1ziqKk3HcGaGIUCodj3e+Ik6/dkb13x1
-	FoUlGbq4ADNKaZEe78mor2uQjAFUuf9PbpsMYqS3eWG0TxWk6LcPzTUCjVJDK1k/tsBckNHo810
-	xJltpuIePNO0ya28eTiwuekXc13wbSP7JXAT47g6sHq1Ar6LefJz7hT3tTghtFYgPHUuMKM6j6x
-	/6blHG2IJoNsvBWDWfOhrfYeZ/enaPwxvG5owt0r45ltXevQvN8d+rWQAWafuxkJbRmQA+6LSSB
-	e7DnSObQK+NgPSY13QYpf0rk0qW+IQzfR0UhK8S1u+jg4WD+T28//GPd8K8OUtS5KKTTXoG4UNE
-	11oOwXcauYoJGwMDH9WgPwCfLiTB8ll8WQ/zo6B5721VmMhPuMCFhzNcB6oSfDcn2ZZHuMjFKrR
-	yRyZnb10TgoGq4RGACgIA54EzNKEfhuzKa/sojybzfjkQzXJVV97dbghhSw9yDFx2oB0YToKmHl
-	o3ejaSzNr9D/xTGSN90d4bZS/2M7DmCyHzRDJXtz7Oz2gbt66jkSks4yv6Tx4wbAFPcs
-X-Received: by 2002:a17:90b:2f07:b0:3b5:a68:297c with SMTP id 98e67ed59e1d1-3b50a689b5cmr2618272a91.66.1795674198424;
-        Wed, 25 Nov 2026 22:23:18 -0800 (PST)
-Received: from linux.internal.banvien.com ([119.82.142.58])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b495035339sm18122486a91.0.2026.11.25.22.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 22:23:18 -0800 (PST)
-From: Nhat Tran <nhat.tranminhk2@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+        bh=LIceXVfgUW/+K3E1yyCM/bErBx0QHF8gu29sHeG+Asc=;
+        b=aOl8pYEz78TRdeRyPPNqpXOeRQe7ODAAa91qsQYk6bwh6y9vtW4LWqIsFseBWOkqzw
+         eqtadt+YxroeQxBW8XxWa+Y8P4Vuhv4V8QjS7f+XcihDxxzhoDh6gMhrJDkyKbtFXiK8
+         PtAtIS3ipEdHYIZL0fEIpyvOW7ncsUI4x69YcePkq4d6gdvsPSm1IxzSTcaKu2KhcDKR
+         CM2rmQvEM2s7IXN/VV7wlx44GXidmJggcmXf99AaQ9rFYXdOtheS/fTe+zC+tJASupuy
+         XKzk+aJOG3BTFapwltG+/npGCt3oFZRMcWACgFVSMDeGHlgltpJ293F7T7fxAzXQY1xy
+         Ovyg==
+X-Forwarded-Encrypted: i=1; AL+hErEsBAqPafKmVrn1COPQfYCnzAQ5gMWi5IDaX5YiE7uqVk8Xg4SYtnY0NqEN4ulR63r/ikHRpRnu0SzDBmoDqmMcxg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9ubaxSAgt15CETxx+b4IqPw9QnIIS2MsIAFLYsbJdrDwyRbJKl
+	qpFsRB03r6PCabiDs/gQk+FpkMzd2INZ52VtAMOwCcL8oFtGCQTWBYy6rla7Q0QIkA==
+X-Gm-Gg: AZFdTZcvCvo7Hq0eqmrBzkEGNZkOT+emvIGRz/m2+peSuwtjRtRlxtVRLdzn8qPalHr
+	cirqfRhbF68Fof1JhyT7kqcITuMOPJV58mzbeITeEcrOyJKGbr5DHaTRMtYoVIy2k2LXlsCbuC1
+	AFw8Mo4chUwFQRtOXu0e9O1rnEyhY5OaAt+Lxc60hI9LUUMHoAotmcudzjdv71Dc1Cdgqj+k4wn
+	dXX47GJ+g9PEjQJUY5j2+mb4Fljjkrm3szgl4uCqOXeCKUwRBOIWE/NGZ0n8UgzSs0ya/bY7ACd
+	z7Xxg9XswmMVNAqIe1OV5+5ow5HaiQHH2ZTW/RrXM8xRgjhe760Dgal2RBvldwVX8392NShGANk
+	0jiZrrSniyIdEywamVfXN5CcZlBGsj9PWks1ORoOBI4Y1r8yiD249bEPrxGo2cNoK1wa5fKaPND
+	qtF4p1Qquj48wFrTbkdGso7Y9BISfxHnoqcaaVjKoU73ZZFIVbEtiaMg3sm0rRkyBUUnQU2C8Np
+	LDMmXsSmuz7y7rk7QV69sveAN5kqOulMt2LzC3dczuRS2ZgEBafdW/OMveak/5/yhEeoaY+hT3x
+	jd+aPINcov4IKCEWmSju3SDQQsUKRAXC+QANxcbqgLiLCXB5dBI6fl8OvhH4
+X-Received: by 2002:a17:90b:4a4f:b0:3a0:cca0:4a8c with SMTP id 98e67ed59e1d1-3b41c8e0c68mr13193599a91.7.1795680720910;
+        Thu, 26 Nov 2026 00:12:00 -0800 (PST)
+Received: from localhost ([2a00:79e0:203d:7:418f:e7d0:882d:ceec])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3b405ec698dsm34037852a91.14.2026.11.26.00.11.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Nov 2026 00:12:00 -0800 (PST)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Bartosz Golaszewski <brgl@kernel.org>,
 	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	mfd@lists.linux.dev,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-pm@vger.kernel.org,
+	linux-iio@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nhat Tran <nhat.tranminhk2@gmail.com>
-Subject: [PATCH] mfd: rz-mtu3: Fix MTU5 timer start register offset
-Date: Thu, 26 Nov 2026 13:23:07 +0700
-Message-Id: <20261126062307.53943-1-nhat.tranminhk2@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] iio: adc: rzt2h: Make POWER_SEQUENCING dependency optional
+Date: Thu, 26 Nov 2026 16:11:52 +0800
+Message-ID: <20261126081155.501493-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -100,51 +102,62 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-rz_mtu3_get_tstr_offset() returns RZ_MTU3_TSTR for MTU5, which is the
-index of TSTR in rz_mtu3_8bit_ch_reg_offs[], not a register offset.
-rz_mtu3_start_stop_ch() and rz_mtu3_is_enabled() pass the result to the
-shared register helpers, which add it to the MMIO base directly. For
-MTU5 they therefore access offset 0x002, which is TMDR1 of MTU3, instead
-of TSTR at offset 0xab4.
+Hi folks,
 
-Reproduced on RZ/G2L SMARC with MTU3 in PWM mode 1 on MTIOC3A and a
-temporary debugfs hook calling rz_mtu3_enable()/rz_mtu3_disable() on
-MTU5:
+This is v2 of making the POWER_SEQUENCING dependency for RZT2H_ADC optional.
 
-                          TMDR1 (MTU3)   TSTR (MTU5)
-  initial                     0x02           0x00
-  MTU5 start, before fix      0x06           0x00
-  MTU5 start, after fix       0x02           0x04
+Changes since v1:
+- Added blank lines before return statements in patch 1 (Bartosz)
+- Collected Biju's Reviewed-by tag on patch 1
+- Link to v1:
+  https://lore.kernel.org/all/20261123113755.3033436-1-wenst@chromium.org/
 
-Before the fix, starting MTU5 switches MTU3 out of PWM mode 1 while
-MTU5 itself never starts, and rz_mtu3_is_enabled() still reports MTU5
-as running.
+Commit bdfc454e8567 ("iio: adc: rzt2h: Add support for RZ/V2H(P) SoC")
+in the IIO tree added power sequencing support to the rzt2h_adc driver
+and made rzt2h_adc select POWER_SEQUENCING. When combined with the
+in-flight USB core power sequencing integration [1], this introduces a
+recursive Kconfig dependency:
 
-Look up the real offset in rz_mtu3_8bit_ch_reg_offs[].
+	error: recursive dependency detected!
+		symbol USB depends on POWER_SEQUENCING
+		symbol POWER_SEQUENCING is selected by RZT2H_ADC
+		symbol RZT2H_ADC depends on IIO
+		symbol IIO is implied by HID_MCP2221
+		symbol HID_MCP2221 depends on USB_HID
+		symbol USB_HID depends on USB
 
-No in-tree user starts or stops MTU5 today.
+Since RZ/T2H and RZ/N2H do not use a power sequencer, rzt2h_adc does not
+strictly require POWER_SEQUENCING at build time and can use an optional
+dependency instead. However, rzt2h_adc calls pwrseq_{enable,disable}()
+unconditionally in its runtime PM callbacks with adc->pwrseq == NULL on
+RZ/T2H and RZ/N2H, whereas the !CONFIG_POWER_SEQUENCING stubs currently
+return -ENOSYS even for a NULL descriptor.
 
-Fixes: 654c293e1687 ("mfd: Add Renesas RZ/G2L MTU3a core driver")
-Signed-off-by: Nhat Tran <nhat.tranminhk2@gmail.com>
----
- drivers/mfd/rz-mtu3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1 aligns the pwrseq_{enable,disable}() stubs with the core
+implementation so they act as no-ops (returning 0) when desc is NULL.
 
-diff --git a/drivers/mfd/rz-mtu3.c b/drivers/mfd/rz-mtu3.c
-index 7e1313a57abc..b7872ee0ba97 100644
---- a/drivers/mfd/rz-mtu3.c
-+++ b/drivers/mfd/rz-mtu3.c
-@@ -196,7 +196,7 @@ static u16 rz_mtu3_get_tstr_offset(struct rz_mtu3_channel *ch)
- 		offset = RZ_MTU3_TSTRA;
- 		break;
- 	case RZ_MTU3_CHAN_5:
--		offset = RZ_MTU3_TSTR;
-+		offset = rz_mtu3_8bit_ch_reg_offs[RZ_MTU3_CHAN_5][RZ_MTU3_TSTR];
- 		break;
- 	case RZ_MTU3_CHAN_6:
- 	case RZ_MTU3_CHAN_7:
+Patch 2 switches rzt2h_adc from selecting POWER_SEQUENCING to an
+optional dependency on it.
 
-base-commit: ebb7a8dc1e74c705daffe11c2faf38ec2628f838
+Patch 2 relies on patch 1 at runtime when POWER_SEQUENCING=n on RZ/T2H
+and RZ/N2H. On v1, Bartosz noted he would "prefer to pick up patch 1/2
+and provide an immutable branch to the IIO subsystem".
+
+
+Thanks
+ChenYu
+
+[1] https://lore.kernel.org/all/20260916075745.3549953-1-wenst@chromium.org/
+
+
+Chen-Yu Tsai (2):
+  power: sequencing: Allow desc=NULL in enable/disable stub functions
+  iio: adc: rzt2h: depend on POWER_SEQUENCING instead of selecting it
+
+ drivers/iio/adc/Kconfig         | 2 +-
+ include/linux/pwrseq/consumer.h | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
 -- 
-2.25.1
+2.56.1.839.g22a8290db9-goog
 
