@@ -1,47 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795718294;
-	b=dV8jk0CWe/wYXGJjr8XBStfZOPbB6EqFtnLqVRsoesFKvUo1HZP14NiAiThscb9MofKg
-	 cNfRQUTGrEw+KAuYxHO07KdcEEuxQ+y4twJDJGH1eJFkc5kWVk3h1ZyZ8fPR9zFlDJbuY
-	 cVdLHX4zUw7nvVRpLfBrMxfC0kmMm2AERyfgQcb8A906WYUPVc1LdVFVoTwoW0oAEnyc8
-	 HC8bCIvF9A1koaUC6IUOIfj4i1jCbFthVyxYl8xcIGy96jEGcA/g1DWJtLuzZ9NxCsfK1
-	 iv2eLK5a6xBWz6r9si1p8gHsdpRf795P57v0UW4M6J+/B0Rs9K9gFSiqOAiUe6ARAEw==
+	t=1795730326;
+	b=LWkx/g38b3Twoxbk1MlrmS49RWTM++Bxy5J+TF9xCG5loDgQuQ6fyPVi7+CcZ5nd/IyJ
+	 6fcElkTJNU4v4f05X+dkOs+6bTGnLEQWy5rl3W+MdMXP8599jz0v5LU2u098TtjrWll93
+	 dcvFRCech44di5phuqftjoeQqo1QsWLsRh47o+G/X+6BCjUoKXHB/0M6jd8dvQtXU75Q2
+	 0kMjZzeqdVfSL9gw2/Nd+PKZdTnh3TG5jmX5w5d+wiOs4ZXAGAhyV6tqq2hPLCLz3ulmY
+	 eDZYzeCZSiXPpuYAYdWXND14wsjLMs+V+pgT45pjSSCFWtHy9tBWPN7e0KsdOq2MA9w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795718294;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=0JG6aovU53Gj28fQBHTFybyaNfmBaXUxB5wClm6BRjM=;
-	b=Ajf3sJXFmBasmL8akVacGKmNsBGSWO17uZy8uuQ5rbwQjN6CLoTkiC0wXya+xfFALKyT
-	 4AL5R3UkhA6yI2E98EDuysGx0w1h7D7KOxVE7x7KbsTtASctbcp5EBE14AV4OJywrPyjY
-	 2ElyL0b56usUQSF4U7LiAwtrGHJ9VdThDLwNkT6kbgpliobANWSctrXFAMc4YAYotPcdg
-	 R4oJz9VCjb+Qc1+Te+gHV8jUsezbv/vfDvSwqU0wGc0Te7qThADcjjBNW+51ZWpC5zylo
-	 OnENFWnHF2WixIdBbcPAGE6YsNGkykAXUheNY7fCOlaGu0//aNYtm2vxYcSXXwsz6pQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795730326;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:
+	 X-Google-Original-From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=5uv6vKw+uzW/Wumcknavba6J4n9f8j4zCL8O++o9Hlk=;
+	b=nS4opKc0kjB6rWvf8zAeFJ1BZDjJ5Q9kYp8H0vUhD8r/BsRWADqlDf2USGuXXtJql8ZN
+	 QebAtjrKpYqCYkXSwULUcqL3mUUOx74+Z/KHB1sS2qf1fVFPf+zDlpHyw29QDA+7xLUev
+	 PRNZrhUblxoJIXvXxTXV6OC40EN4fGkPZBKQt5qkT2z3wOyT+r16caXLcpHh6c6IPLFgc
+	 IEkfzBxeIfBcDsE5Cmh19O7WCnpRkaZcKah97dHixs/PZFO56y2sWWqv+VzSmd4NNiOO8
+	 4XHH/2rL5pxRhlpuMN9/41uZ+Fo6zn/BMhQBJriVkGZxCHGp2ZjdIu6aGO6t8AU67GQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="F/3vuzP+";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ytDheMb7;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DC8606A32A;
-	Thu, 26 Nov 2026 18:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB22606A683
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 21:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7FB22606A683
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F/3vuzP+
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB581F000C4;
-	Thu, 26 Nov 2026 18:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795718293;
-	bh=0JG6aovU53Gj28fQBHTFybyaNfmBaXUxB5wClm6BRjM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=F/3vuzP+6n/+79X4tAfOZ1aSAZe4UF9ef3Y85F8LU/Jl9IGTaGLzqvWUbStGYCrcG
-	 wGheNCN2HLV7oh7s/OwpOp9KvQbgFUkSb5K95Xl7a56mt3yx58EpmlBgC4auXUbJN7
-	 KI5QHihgn0ejBG5k4zg6w50K7oYV+EJo2IdN5nG80l2E+5TUsOu1zcAQOIMpzjA+47
-	 4xb/WZqK/0UZIoWsXEZxr+1ZehqXpWThVt3nMpl3aFKuqNnHD6AWtF6pBGdvp+L78b
-	 dAJpoo+VJwjzE8jLmF9X4+2LOGuXXl95FyOgBuRTk1TtRbJ2B9EOlisKwr9/9TFwbr
-	 tKOpT8Q6EJQgg==
-Message-ID: <d125e248-1300-477a-b60d-fc0842103905@kernel.org>
-Date: Thu, 26 Nov 2026 20:38:08 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ytDheMb7
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a2d6d01ecbso40239745e9.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:58:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795730323; x=1796335123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5uv6vKw+uzW/Wumcknavba6J4n9f8j4zCL8O++o9Hlk=;
+        b=ytDheMb7CD2LrSJCt1+kuV6K/avkJkP6pnB6PDUMiQLqKHnnXonQInoDVdC6u33cRD
+         EJM+ITIgJvKrOEhgtjzbkZcJEZz0o+5whI0q8vmvwOzsekcj5+jzHdm7qebziwNsEtNW
+         SnSLfSc4O3MOu0xn01WS73VLIRLhs2QF2sebSN1pcyBVCfSVAV7ekKr9XNN0Rme29zpk
+         vcPqeXS/8t5DWwWsyoefFpexXT6f4uRF2CFnMhwVDyjEWNUoyngYVBFEcNgGmY8P2RJz
+         Z/7p+85pt1mVoHqklYK6BKBikW+6YuftadaisHoarCZ9gwnYFTQYyNg+bM9FtZKwqCiL
+         tK7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795730323; x=1796335123;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5uv6vKw+uzW/Wumcknavba6J4n9f8j4zCL8O++o9Hlk=;
+        b=M6wZa4EEvC02Bs035fWpqqRGOZWoA3J6FqlI02aNkK0TPHaUeABe+Q9oRsMjO7Byud
+         +X6oQwpVcCkdxldNZ8J/2oVGi19xbdPNieMy643FviHzgHg3+0qtHQBOdWszjGWRTuQ0
+         DypwdrEMpQjwlIgYMNRfkh3YEBFvuQVpCjCsL2inXyuviaG23s7sFp0UgbaGyY1EVnVD
+         yEmaYzRXBqII8lHhkmvTIR11+2MyDJ2B1w9a7oNEBY1xtwu8/x4maqS7dpbEgVkQC5eM
+         UFhCeqm527Xe4xxA+TSinf/z/luOQalAd02IBicgAe3l7dPNqw+R2RCMwsj3i95XGPkV
+         qvPQ==
+X-Gm-Message-State: APuU4Z+SIf2GOwFIdJHa2/vintUu2HPkBSP/N4Jk4YVw+/IVXwczCRVj
+	o9Vk+a+HYPIuepPFQAschr9HMjOkTELRJCgr2gS1y639jyoUB159jJiIhboWd3w+SUA=
+X-Gm-Gg: AZFdTZcAfXYh6tVv6b6ejc9NdTEcgICHKb5g9KompNhjIhYpkda+VxETyDXpKp0CmxH
+	Ph1Suf5nzptbY3l+Rwn1tPCphgJmdI97RdbuU0z8LiemXdUatSmDAL0sJrNKqB3HxNmrAdTtPse
+	trbXwSSxsfH692gvtvR25meT14Ds+jayHv5xBPJmqKUNSLbf98BtiYxqLPQJDLf3WyDXWZonvmr
+	IL2iidj9XIHTrzUWEYqxmlfO6mOqfoTO68fEszieFoCzOjDsz8TqOyvL9iss0rIIrKesfxeDh1d
+	pjRkb55vgmPuNw0A3qDNTGxSQCcAeogrcnjEOIN4yP9HLHEd+yNgvBojuHlAnLJKcC4WysyZnxV
+	mcSy3+ef4RHK+06KF5k+d+jtViuiZNdrRGcVxji1xQwzZ7OVYszBe+s+3fNhCPXRoYOWQmUZFb7
+	gX2nMoizSkwNEenlWy1tRlTwzL5Bdzqcs3H4Ux00oucPj2EL3FBPkMGTePJqykEuwmXVK+MHDqf
+	S3kSLdKYYZd/G5sFMl1hjZ9HoUWvM79HHuY450SRGv0X9bkQ1wy3ei5H+Z9dcV62a4k7d3T82U+
+	Kj73ISv97Dhdna5fhwhokBoMOtrzTphA7oohSP83KqSrlxf/8TVfPsUzeDtNDDc13Okv1aD0yZr
+	r6OYEGngQG/nGfcJ+v+iAZC+KlhYXIYzdZiLMjDxcqA9A2nrzr8cpdQdLEjwkpnMfKL9p6TRtrC
+	3CcVny8jUR
+X-Received: by 2002:a05:600c:4755:b0:4bb:7033:de79 with SMTP id 5b1f17b1804b1-4bb8881dd02mr466627855e9.35.1795730322670;
+        Thu, 26 Nov 2026 13:58:42 -0800 (PST)
+Received: from iku.example.org ([2a00:23c8:254f:fd01:dae0:ae50:6ba7:39c1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8d4f9aa8sm607535315e9.4.2026.11.26.13.58.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 13:58:42 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Enable MICROSEMI PHY config
+Date: Thu, 26 Nov 2026 21:58:39 +0000
+Message-ID: <20261126215839.2473086-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -51,77 +97,29 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/14] PCI: rzg3s-host: Add PCIe hotplug support
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- robh@kernel.org, bhelgaas@google.com, p.zabel@pengutronix.de,
- geert+renesas@glider.be, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-References: <20261019065025.2146539-1-claudiu.beznea@kernel.org>
- <179562868433.5580.1979396952125967073.b4-reply@b4>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@kernel.org>
-In-Reply-To: <179562868433.5580.1979396952125967073.b4-reply@b4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Mani,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 11/25/26 19:44, Manivannan Sadhasivam wrote:
-> On 2026-10-19 09:50 +0300, Claudiu Beznea wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Hi,
->>
->> Series adds hotplug support for the rzg3s-host driver. This is a
->> continuation of the series John posted initially at [1]. Along with it,
->> prerequisites fixes and cleanup patches were added.
->>
->> Series was tested on RZ/G3S and RZ/G3E boards by generating consecutive
->> link down/up events. The RZ/G3S has an I2C device which, depending on
->> the way it is programmed, it controls the state of the PCIe link. The
->> board has 3 PCIe interface: PCIE_SLOT, M.2 Key E, M.2 Key B. The
->> following script was executed for ~9 hours:
->>
->> #!/bin/sh
->>
->> echo performance > /sys/module/pcie_aspm/parameters/policy
->>
->> while :; do
->>          i2cset -y 1 0x18 0xf4 0x8 # Link down
->>          i2cset -y 1 0x18 0xf4 0xc # Link up: PCIE_SLOT (NVMe Micron)
->>          i2cset -y 1 0x18 0xf4 0x8 # Link down
->>          i2cset -y 1 0x18 0xf4 0xd # Link up: M.2 Key B (NVMe Transcend)
->>          i2cset -y 1 0x18 0xf4 0x8 # Link down
->>          i2cset -y 1 0x18 0xf4 0xb # Link up: M.2 Key E (WiFi AX200)
->> done
->>
-> 
-> Given that this series is already 14 patches, you should really consider
-> splitting it into atleast two. Patches 1-12 are mere code cleanups/refactors, so
-> they can get merged independently and you can post the follow-up series after
-> incorporating comments for patches 13 and 14.
-I agree. Yesterday, when I got your review comments, I was in the process of 
-preparing a fixes series (patches 1-6 + [1]). I've added [1] since its becoming 
-necessary for our testing (and Ovidiu proposed it like this).
+RZ/T2H and RZ/N2H EVKs use MICROSEMI PHY enable the config for it.
 
-If you consider OK, I can also add the cleanups along with the fixes series, thus:
-- patches 1-6
-- patch [1]
-- patches 7-12
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Or go with 3 series:
-1/ fixes (patches 1-2, 4-6, [1])
-2/ cleanups (patches 3, 7-12)
-3/ link event + reset root port
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 3ead81d1155e..db392b586e1c 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -160,6 +160,7 @@ CONFIG_STMMAC_ETH=y
+ CONFIG_MARVELL_10G_PHY=y
+ CONFIG_MARVELL_88Q2XXX_PHY=y
+ CONFIG_MICREL_PHY=y
++CONFIG_MICROSEMI_PHY=y
+ CONFIG_REALTEK_PHY=y
+ CONFIG_CAN_RCAR=y
+ CONFIG_CAN_RCAR_CANFD=y
+-- 
+2.56.1
 
-Please let me know which option you would prefer
-
-Thank you for your review,
-Claudiu
-
-[1] https://lore.kernel.org/all/20261029172831.9409-1-ovidiu.panait.rb@renesas.com
