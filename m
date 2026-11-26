@@ -1,111 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.141
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795689132;
-	b=kiyWPBZE4kqeCJP0tC50C7i95aJuZC9z3YnHurc8oX7j7iUIA8iOrUU/5VhtKwvOWdsQ
-	 xQSA9z1c/4k93u3YfyE7/QRkLkw2Qq+Aji7T/XaWjkDsXuVdYQAuzWAj8LzHzvmXR5yBV
-	 Sr47N6OxThk81mmmbq6jvDI+45SuGXG+1hYF6wW5XrB3qCJ0BLgSNHmJ/58geWrzVdpCU
-	 cA1vYO85PnIMWUj9dZjH7ixbHBc/aakM2L4nMynLIaZ4nbZhK4sS0OJVguIjjY0m1zvMH
-	 VWBBQOM1JqZsDLVxiXCMDiiCor0nH4OXDY8LNIeC5mL1pM1vZnY+/51sRW6jAUOEJ/w==
+	t=1795692568;
+	b=ceTpDI8XVXfGlB9txf/1ss89FU8doISPmp0WbKETeTCCL+ILnlFMYT+dMc6xxSk15R4e
+	 /kf2tBoaLNwWu2SMi0hrtUu+LzuEoU26K6OSMgt0AbEgZiIk4EDj6Pfe2dv5y5aw78qsX
+	 Ol2ymOEzazKxeLV9wun4tTmd8lbURAocmf5Jo8q5ImVEvkQMEWS1pBBrc6CmNtQCLAC6m
+	 eUAza+mBneoShOd2Ob9txCkbHngY5OUQ030Pr42amM2DNYEfSoWZq/H3FfFwp3RXLgkQ2
+	 ZeTcy7osTcmHDZr+TdPkSTdnt3zE2v3p9ICoFWY3tZqDDPtiMoJxyne2/RkI0DEZKqA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795689132;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=zwLpoMTDh+rDsEqSsqnZuSBnBidh5uHQGhBxiSxbmTw=;
-	b=PmXw8k1KLJewVNXBd8Q/7rUKcp/mZtaxM9R3j0CdemD8BHSlc4IxhHKKctC4+dKq1ZkS
-	 t4slT8m+ga6xP/o92Y6YBBtrF3EkBQsyCK7IAiWhqVbKdtj0VNJW3MxhX3el73n7y6p5q
-	 nqNimMzcWt/SvqbzwgeY+vkh2z1SxEjlqeq2j3Y+8BpICVEUF3ZqH5Kmd+4HDuZM0fg12
-	 cs0f36ojl2FhcD+fHgzyuMdQdyYmoqCGxW6sVqvwdUw2Yvebtgp38cReh8/JPOv3Wr//e
-	 N9Dd0A2mm/nkzWFQ2onMI4vkaQhENrifyx7KrDl5yA6RYyItqy+6UbbMsTqUbjCfy5Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795692568;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=KzkXaWiJVAGevwCKGmXrszqK2VboCvPIQ4QmMjaaIPc=;
+	b=iHs0haUhd/Hb3tVz2GYMxwnIUVVJ4zdtg+noGbXNfDNoXE0ySDgtXT/3njvYp9x8kFIF
+	 3QKB2Vl5CWlj+uDHPQIO6H3MBHy1e/pmjuzT10YRe4fPVGx0X1k94Jg0gtsGn7BVhGoxU
+	 wPQD4eAC6hfyko+1GP207imQYiN7Ba97PXgUIQ28xm4ZH4jeuAg1VOyRXl8thv0ELBTPq
+	 fFURTsOOpp/uuyuBjZ54KK3paQ0qZ55Rks75UKJFDaocTgHx0U1mK4xvwGIwTVj1zBbgA
+	 NjMQwegvuyRn/IUQSspDPXmCa/5uBzy64rUdDLw8gO08GYak9wo9XC54To0XQN2/LTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=glider.be;
-	spf=pass smtp.mailfrom=glider.be;
-	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=IilueBVg;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=LBfXY8J+;
-	arc=none smtp.remote-ip=103.168.172.141
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jGLBP+Jk;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C55606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 10:32:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0C55606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0486A606A31C;
+	Thu, 26 Nov 2026 11:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=IilueBVg;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=LBfXY8J+
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailflow.phl.internal (Postfix) with ESMTP id CDD7A1380264
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:32:10 -0500 (EST)
-Received: from ams-imap-13 ([10.64.2.33])
-  by ams-compute-02.internal (MEProxy); Thu, 26 Nov 2026 05:32:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1795689124;
-	 x=1795692724; bh=zwLpoMTDh+rDsEqSsqnZuSBnBidh5uHQGhBxiSxbmTw=; b=
-	IilueBVgdzjicrcAbwIbzrsCJFvKspcf3WV2wiTJYvXNutLxS3LnrR+zMPcQtUTn
-	DYm2LE6hYP2sPW1QMezOxJQ9KQVeGFlcklxWDDAVX3X4YlbQKxIkUsd6RRda3OcZ
-	byNerrN7AWogGco35qjnPHSzpemrdtq+dLRp8v+dWIZZW8k/m1p9scUAIecRBJu2
-	gqvd9kfM+j3Ky0y/x+Oxfvedkz8TJoR6Ev0RJyCQFmSzA1m0zebYHbBt8vImcU/i
-	3AZGl7VDi2kWQCmh9sA5iosJpFCEVMbZhnUgOOxM3825AWbBlPIanVwYUjTDxfq+
-	skTx8ucLnz8AK55zgqAwTQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795689124; x=
-	1795692724; bh=zwLpoMTDh+rDsEqSsqnZuSBnBidh5uHQGhBxiSxbmTw=; b=L
-	BfXY8J+3QBhpC8LlEnfaUhb+uoTGvbEeGhrXBw+H2Y8Jzac/7AYpPJ0QI9JLDeQE
-	q8ecp38RkL5Bw1yXAfpRUzTjUxxSrx2tCS5BPYMIzxN7tiiEkNWKPT+YH6oEJw0F
-	+8v6fIBSh30HHPfyvrKnGvlnAHosCT5rJjd/mVMqmSYk9tY+RMieGUI2Uuoq1p9G
-	3QQWvaM+ZfOSgT0ArvPZRcxaU1RxIpU7vG8GFkLC+/c8gavGnu/OIlglFOMjH35K
-	MpUgmFNitqmU9cyMC1pj+qIjxsQKv3F8HUbb/kqVl5Sx/HKHQR55pAlVpjhKwqBs
-	MjMEElK1Z3K3FfgFXkW0g==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=glider.be a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795689124; d=glider.be;
-	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:ignQ/0Gc8XrJik7txaJTIe1xKuxpHYWqVCqTvcZc1/JdAxL
-	BLqAr0ISNDpy0j5etPufVfMcQEo4WTdJGfNfOkffW3vtKvf2J1IsiqAtkGofg52W
-	ucXuOTRCzTu7gYN0VZgSm/ekrgwyGDAoSgYAetBSEt1yyFAP1IuhrJ5h8pdquWWX
-	b41LcB1JdoJ6rkhMMs1u0FzX/de5LMscH5vpGFQhcVU+LCYTVS7nQ9n2GWxHZbFc
-	a8pbpRzB18FgdHG421OeL8JEuxev1RrtXhyIFQq6kK5gk5uLpkGuPG5a91Kwy3yd
-	d9iYQ5YeV2M0ubhuL+X7Vp0NBG6uLVmjUnrTIew==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:e5cy9doLIF5C6wbBkPba6K8PNQINcmhh9dBQqy+XHlY=:bQlHbabK+rwltW9kvGOAlyQRBHqT6rZIVsz7rG1QBUI=;
-X-ME-Sender: <xms:oQoIa2NRa7hQmqTLL6G3bG9NaX3B4hqAODGUfUk45TJQdjm-QHTtkQ>
-    <xme:oQoIa_xso63afPBlnDXcpUlnqyvnNPIDVrS3M8bn6tSiSb69WKaJJtL44T5NPQFNq
-    ZSYJNfshc-CjrRqGVtDy_W_6AQ0IYtsvZ8OS0tWgfBNZYWvehkjZfom>
-X-ME-Proxy-Cause: dmFkZTFqP/5itI8IXg0jtDx1RRhA5+6i9xrlrwkNLGkLPQGfno2so2LZefRssDIodX6/cj
-    Rsw/hicadzFHxkGhz2WpHt2yxszTMbDqzlLglErQk18ti87CYykQRRmg4ZD95lMzCUiieM
-    w0dqTaLk6JrC1Oju9NPXtc0wLxOmwrznPSQnZlG1ZsnTVS44na1OkN8QVKC1GriP1hydXQ
-    GCM0pVwz6upSRk6rtAijuC8D6UqLu9eJk+rzhjUWA14QpWvRUq00b8kK8FS5wKxhFLvs3/
-    2a7Z61Ys8KwskpDpbjvypWPn6y9hOZi3vEwQCWk6XqyGXSELvRrfMMvoZXaus5RCanXStX
-    I03y+KeHmWwnHUNLap0Toidb1Ti1EwpIQUQzxKRMbG0b23Sf+VZcOrKzI5JvjndnggtW4W
-    Ps2HyILsKDXMYI4Csp/NNACHGgCwjpaNmA08eonKeurIhsE6YUkj1DnwV7PjPxRtgXInh0
-    uSQLYm4V/ku6a65AXZrS4aZYwX/i3sPaKgKS9bZSOrzPYCsfLhe2WYkaknaILyxvIX1z/N
-    mhzwTe5GUKANKLQZrPktQ5M/IJGdvkJ6qSDLJRna0o9/GSwqDZ/F7g7eOozfszKW2a85kP
-    zCM5xUNnximjKkAtFZh3hwo+zKzSRI71PmuAz8tUcOIuoBzWtLxz4lQxAzbA
-X-ME-Proxy: <xmx:owoIa4njR6Qo75jvN99EjpCjR3Ji0j8txk1-T6CQk-TI7ThweG_QaQ>
-    <xmx:owoIa__IU0QsoKtLBiXLxXEZ4OCOgsgqP1ZdL8UY-LiX-c14JB26Xg>
-    <xmx:owoIa2K87pSCE6O3zFz8dQgEl0Xslb8RatbgTXrv-A6RLkbvRerPIQ>
-    <xmx:owoIa0jAqN9XDDtorfmgc4ry5mZB9vmeOp0f7yxdhLuQ0qh-5ewsIQ>
-    <xmx:pAoIa1WpxsyVq-1Tp0H614sK4Wmo1A_vmx0IO3pQeQl76LYncvT2x2Aj>
-Feedback-ID: ia0f84a9e:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 715D7F800A2; Thu, 26 Nov 2026 05:32:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jGLBP+Jk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F051C1F000ED;
+	Thu, 26 Nov 2026 11:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795692567;
+	bh=KzkXaWiJVAGevwCKGmXrszqK2VboCvPIQ4QmMjaaIPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jGLBP+JkU2AJkwG9HWQna8c8E2ZvqeVoV5+VRg7CN6hd6tZtRBknL2TpTaNnOZLkp
+	 ++wUEWQMUvtqiKaa0n7aHWor/sUtoYJePQ4+wk8KbuBx+y4dNsrrB1DzOLdxu/fd84
+	 7nJ+qaZaEIdV/ui+bWcw7Y9XXykuYFkNX5usk+qZyoZjTWQ8jTuqdAK+/uvAfhfBYm
+	 vLD1rwU46gYuEBsyZVKz9IY7OLhaa+QXs5xBMV4s82f/hBfe/3SwdDDBmdRgkcmTu1
+	 ImNQEPC/1S4bLzmmUQWpOrLnIUoLzzMnK5BacdDhrKMn8QfcSOGBubn0/jVnTBv2cw
+	 Qqj2bkOrMtc0Q==
+Date: Thu, 26 Nov 2026 11:29:07 +0000
+From: Lee Jones <lee@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-mmc@vger.kernel.org, aaro.koskinen@iki.fi,
+	adrian.hunter@intel.com, aidanmacdonald.0x0@gmail.com,
+	alcooperx@gmail.com, allen.lkml@gmail.com, apelete@seketeli.net,
+	aubin.constans@microchip.com, bcm-kernel-feedback-list@broadcom.com,
+	chenhuacai@kernel.org, christian.loehle@arm.com, djakov@kernel.org,
+	florian.fainelli@broadcom.com, geert+renesas@glider.be,
+	hkallweit1@gmail.com, jan.glauber@gmail.com, jbrunet@baylibre.com,
+	jh80.chung@samsung.com, josua@solid-run.com,
+	kamal.dasu@broadcom.com, khilman@baylibre.com,
+	krzysztof.kozlowski@oss.qualcomm.com, lars@metafoo.de,
+	lgs201920130244@gmail.com, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	martin.blumenstingl@googlemail.com, mirq-linux@rere.qmqm.pl,
+	neil.armstrong@linaro.org, niklas.soderlund+renesas@ragnatech.se,
+	oakad@yahoo.com, paul@crapouillou.net, pb@handhelds.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, pramod.gurav@linaro.org,
+	rric@kernel.org, sameo@openedhand.com, shawn.lin@rock-chips.com,
+	support@cavium.com, tony@atomide.com, u.kleine-koenig@baylibre.com,
+	ulfh@kernel.org, wsa+renesas@sang-engineering.com,
+	yoshihiro.shimoda.uh@renesas.com, zhoubinbin@loongson.cn
+Subject: Re: [00/13] mmc: Assorted bug fixes across MMC host drivers
+Message-ID: <20261126112907.GE38590@joneslee-macbookpro.roam.internal>
+References: <20261123191703.179283-1-lee@kernel.org>
+ <bc602723-07fb-4af9-9201-272dd0fe759e@web.de>
+ <20261126085340.GC38590@joneslee-macbookpro.roam.internal>
+ <9e76edf9-433e-43ab-a748-8a71804e2b26@web.de>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -115,107 +79,35 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AJ3dJRnBKuuc
-Date: Thu, 26 Nov 2026 11:31:41 +0100
-From: "Geert Uytterhoeven" <geert+renesas@glider.be>
-To: "Biju Das" <biju.das.au@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Biju Das" <biju.das.jz@bp.renesas.com>,
- "Magnus Damm" <magnus.damm@gmail.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Jonathan Cameron" <jic23@kernel.org>,
- linux-iio@vger.kernel.org
-Message-Id: <a152df0a-0b0b-4193-b3ac-ee0df0350802@app.fastmail.com>
-In-Reply-To: <20261125-usb_rzg3l-v9-1-ea14d3ab8a53@bp.renesas.com>
-References: <20261125-usb_rzg3l-v9-0-ea14d3ab8a53@bp.renesas.com>
- <20261125-usb_rzg3l-v9-1-ea14d3ab8a53@bp.renesas.com>
-Subject: Re: [PATCH v9 1/4] arm64: dts: renesas: r9a08g046: Enable TSU
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e76edf9-433e-43ab-a748-8a71804e2b26@web.de>
 
-Hi Biju,
+On Thu, 26 Nov 2026, Markus Elfring wrote:
 
-Cc IIO
-
-On Wed, Nov 25, 2026, at 12:05, Biju Das wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Add #cooling-cells to the CPU nodes, and describe the ADC1 (used
-> exclusively by the TSU) and TSU nodes along with a CPU thermal zone
-> using passive and critical trip points, with CPU frequency cooling
-> maps for thermal mitigation.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-
-> @@ -381,6 +385,37 @@ scif5: serial@1004e000 {
->  			status = "disabled";
->  		};
+> >> How do you think about to sort (and group) desired adjustments
+> >> by affected software components?
+> > 
+> > This is new to me.  What guidance says to do that?
+> > 
+> > Making your own rules up and spraying them at contributors wastes people's time.
+> Can the following list variant be more helpful eventually?
 > 
-> +		adc1: adc@108c0000 {
-> +			compatible = "renesas,r9a08g046-adc1";
-> +			reg = <0 0x108c0000 0 0x10000>;
-> +			interrupts = <GIC_SPI 378 IRQ_TYPE_EDGE_RISING>;
-> +			clocks = <&cpg CPG_MOD R9A08G046_ADC1_ADCLK>,
-> +				 <&cpg CPG_MOD R9A08G046_ADC1_PCLK>;
-> +			clock-names = "adclk", "pclk";
-> +			resets = <&cpg R9A08G046_ADC1_PRESETN>,
-> +				 <&cpg R9A08G046_ADC1_ADRST_N>;
-> +			reset-names = "presetn", "adrst-n";
-> +			power-domains = <&cpg>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			#io-channel-cells = <1>;
-> +
-> +			channel@8 {
-> +				reg = <8>;
-> +			};
-> +		};
-> +
-> +		tsu: thermal@108d0000 {
-> +			compatible = "renesas,r9a08g046-tsu";
-> +			reg = <0 0x108d0000 0 0x10000>;
-> +			clocks = <&cpg CPG_MOD R9A08G046_TSU_PCLK>;
-> +			resets = <&cpg R9A08G046_TSU_PRESETN>;
-> +			power-domains = <&cpg>;
-> +			#thermal-sensor-cells = <0>;
-> +			io-channels = <&adc1 0>;
+>   mmc: cavium: Prevent slot_pdev[] out-of-bounds write during probe
+>   mmc: cavium: Remove MMC slots before destroying slot platform devices
+>   mmc: dw_mmc: Disarm central watchdog when ending a request
+>   mmc: jz4740: Apply DMA max_seg_size limit to unified tx-rx channel
+>   mmc: jz4740: Skip DMA cleanup in PIO mode during post_req
+>   mmc: meson-gx: Fail request when descriptor chain DMA mapping fails
+>   mmc: omap: Shut down cover timer before disabling cover BH work
+>   mmc: renesas_sdhi: Disable internal DMAC BH work items on release
+>   mmc: renesas_sdhi: Fix SDIO manual tap correction in SDR104 mode
+>   mmc: renesas_sdhi: Guard host->cmd access in internal DMAC issue work
+>   mmc: sdhci-brcmstb: Handle absent optional sdio_freq clock in probe
+>   mmc: sdhci-msm: Resume runtime PM before accessing registers on remove
+>   mmc: tifm_sd: Synchronise timeout handler with request completion
 
-<&adc1 8>
+No.  Stop making up rules!
 
-You cannot have "channel@8" in the ADC node and magically assume
-consumers should refer to this using "<&adc1 0>".
-
-I don't buy your rationale in [1]:
-
-   "There is a mapping between internal Linux array index (0) and the actual hardware channel ID (8).
-
-    See the code
-    https://elixir.bootlin.com/linux/v7.3-rc3/source/drivers/iio/adc/rzg2l_adc.c#L354"
-
-This mapping is in the driver, and there is no mention of it in the DT bindings.
-This means the driver must be fixed first, too.
-
-> +			io-channel-names = "tsu";
-> +		};
-> +
->  		i2c0: i2c@100ae000 {
->  			compatible = "renesas,riic-r9a08g046", "renesas,riic-r9a09g057";
->  			reg = <0 0x100ae000 0 0x400>;
-
-[1] https://lore.kernel.org/TY3PR01MB11346F7B4718113C76B93362986872@TY3PR01MB11346.jpnprd01.prod.outlook.com/
-
-Gr{oetje,eeting}s,
-
-                                                Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                                            -- Linus Torvalds
+-- 
+Lee Jones
