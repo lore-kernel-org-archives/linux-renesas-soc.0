@@ -1,63 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795703478;
-	b=UkxqqCUSm57gn0obk+ErR9TpYl7oU4sn+ckt+CuyRPjJr3Us5KeWVEW+ZL9BCx/JAwQF
-	 gEBXndgkSYfIWv243lNlHXcFha+//BZPcNB3yEQyW0MmoVH9Kz1/AyKL4HT+CIMgbx1RY
-	 9V5K61NtbJyzVX9MhWCvbdsxocOALASqUgoFYYmGLtEGLVSLNc+zI3LSd+7pMNm11grSB
-	 x4BW+C+F2H6sFKq+bX+agFhvwgU1zVm8nForJIETYmWDWt0dWQoUoOADKlbvGtYMFB4HZ
-	 KYUn6bmHCrIev+9k1m+f2OjAQxsbuRxL6e/TsbkiUyhPUHUAnLAvdVBb1cQABIdmvRg==
+	t=1795704378;
+	b=h3oYKBNRi7KY0rJ+G+Tj69SqisYdR0KTNo44x0nRx7yfdarvoQj3EKD/Xu0A7rUUQpQ8
+	 U+xzmSCpx0U2Bw1aAHW6yB+k+jzeEFMUMlGCKJuwATPFC3trgc2NhD9DRJzIJo2UEvmH5
+	 +/gP2FEJrZpbwpJvHviR2ARELT5mRLhgTVGkmUdTA/XZ2GFPyw3ZHAuPJ2cCFhKq3hsdp
+	 DLFNnmnA7tPcfe2FpcmuxfunHATwcAROIKGQTn229jg4snv4M3Am21kuKWehAAOXRrqO4
+	 4zLBNQl7rVPCmDy+3Z43BD6gP1tO+jOFtCNpoYHjIdwv1Qhfa5FOq4Br6zLgEUeCdqw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795703478;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795704378;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=dqOp3x2OhTFdbiY5eg3d1jl/evxMxcw9ptScest3hww=;
-	b=OwRwDpKffeAGq93cEZ0/B+RA/hRR0AeCXZ8yPtAvRmbBzrQLDDQY8S+qDiChIJo3w95+
-	 Wj2havMni5TrAhE9aIFQDij9BkBsjGiu5x114sebnQsouYkN9lOvZPVnYbdsLIt7TIMCm
-	 FcPMRPUS01YKivkEQijVZt/mHEW6inrUGBwfqTRfO/P3SIgAG8oAq4qjhnzytX0wLefn7
-	 5Ha3xKthYkGG1MBMXzfhTHxmbYZXA+nmpfdlsQPRT16yQtPck428PRKztRRshu+fjjJHL
-	 ODxz4oWqQWAXfqZuMIkfcnPlqZG8Jlq7i9UGgjC9m979U575TD0Auf4Gh6K0g2TK22w==
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=FQqYJqwtBrP6h9ufZuOBMWa2CJjZkqf6/Q6UP5ZZSYo=;
+	b=kObkQoKBxT/e7x9gQujNKSJ/5Db2O3qQJX55pYynDsU5stHRL19GIKxB25+9Pb2epn+M
+	 OTOIUInieis4/K6+wzToh5ggYT5Kp0DXt3FKKi5Cx1kfn2pixfJOYJr5wfrETJD9GxyGP
+	 aGXjXGWg8aeE0g2haLFEuUqAeytZD8r72Ou6aZpnW/xq71SI87qyxKiZZUZ+XE881Ik6N
+	 eH6+XB28i5UlwWsRzZb6I6Kj0Tuk3cAdcrpRgzpdnlmlBevmZo6yLwLVB8pNWdTGnMgcB
+	 pH45Out/I651XMwnMdwE1aMya/ssgqB+Q0ooG+fFUeYfLKmIFtz7rRw41x8M4keiQlw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="G/2c6oyT";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W4lEEzGm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96370606A6A5;
-	Thu, 26 Nov 2026 14:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531C6606A321;
+	Thu, 26 Nov 2026 14:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G/2c6oyT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19C81F008B2;
-	Thu, 26 Nov 2026 14:31:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W4lEEzGm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390BB1F000C6;
+	Thu, 26 Nov 2026 14:46:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795703478;
-	bh=dqOp3x2OhTFdbiY5eg3d1jl/evxMxcw9ptScest3hww=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=G/2c6oyT4mkGQ1GvFwW0RWDn6uK67t55gc7COa1Avts+AEEAdFczdaxOZlP3aPIt+
-	 CEMoS68X7bGtI107btrvioBgRYuyexRJeV4AhdMWBt94wwsl+SQ3fnMrbt4hnPYHOo
-	 oSNhfl1D8WekRCcpk+3Rsnkx9BXUl84fWWd3MDraUm/CX+Grs9/fiGAIvk1jQvm9iU
-	 aC3hTYYdOCiQ29uF79ZOI+m1sico6LAEKuPlzfl79Kq55RFxoqziZkGAjkZqheNSUu
-	 sLRBB6tNDkOfm6f1n7hZwDE9U2PusAleO6lhOTYT10aDwcJxinJJxlhpuVdf0sX4lq
-	 ESbkJ6bmKKG6A==
+	s=k20260515; t=1795704378;
+	bh=FQqYJqwtBrP6h9ufZuOBMWa2CJjZkqf6/Q6UP5ZZSYo=;
+	h=From:To:Cc:Subject:Date;
+	b=W4lEEzGmFvg7p7zf8qNUuB16MRSJ2bsA92X0kKu9U7Q6n5JA9cGJeEJs15r0MU118
+	 wtYlscmBCGZZoWzhuN3fq0kzm7vS5QhCOXMlop5WXm3qgju08tGVRHf5tZwMgqCbVr
+	 dVFqimnITuu6qXT2+BarE9LzO8hWiuUonvsp4V2P3biP+9wITMTWCu0R2MFwU77ZjB
+	 akU4lxUZb1EbR0pEenQceDCSFV7OH+uhPKoVICghqafMwBr3nf39nB2q/q4TYMiIVP
+	 722+uGX8iEucFmHo3iy6aJ+URvO19hh8cUUxg8B8NPpXmlvyjxox0JG1Tk2zYubYY8
+	 a2dmD6i7QnLpw==
 From: Geert Uytterhoeven <geert@kernel.org>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-pwm@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-can@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 6/6] pwm: rcar: Add support for R-Car Gen5
-Date: Thu, 26 Nov 2026 15:30:41 +0100
-Message-ID: <b85cb5b3a2b580c3ee7dd4c5feeef552783e2321.1795702568.git.geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] can: rcar_canfd: Add R-Car X5H support
+Date: Thu, 26 Nov 2026 15:46:05 +0100
+Message-ID: <cover.1795703576.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1795702568.git.geert+renesas@glider.be>
-References: <cover.1795702568.git.geert+renesas@glider.be>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -71,81 +71,48 @@ Content-Transfer-Encoding: 8bit
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-R-Car Gen5 enlarged the PWM output cycle and high-level period fields
-from 10 to 24 bits.  As the existing register bitfields can accommodate
-only 16 bits, the high parts of each field are stored in a new register.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Improve patch description.
----
- drivers/pwm/pwm-rcar.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+This patch series adds support for the CAN-FD interfaces on the Renesas
+R-Car X5H SoC to the R-Car CAN-FD driver:
+  1. The first RFC patch documents support for CAN-FD on R-Car X5H,
+  2. Patches 2-4 add driver support for CAN-FD on R-Car X5H.
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 3813094c601efc8c..5e91509de7a7c162 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -31,7 +31,8 @@
- #define  RCAR_PWMCR_SS0		BIT(4)
- #define  RCAR_PWMCR_EN0		BIT(0)
- 
--#define RCAR_PWMCNT		0x04
-+#define RCAR_PWMCNTA		0x04		/* Low part */
-+#define RCAR_PWMCNTB		0x08		/* High part (R-Car Gen5) */
- #define  RCAR_PWMCNT_CYC0_MASK	GENMASK(31, 16)
- #define  RCAR_PWMCNT_PH0_MASK	GENMASK(15, 0)
- 
-@@ -124,9 +125,15 @@ static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp, int div, u64 duty_ns,
- 		return -EINVAL;
- 
- 	rcar_pwm_write(rp,
--		       FIELD_PREP(RCAR_PWMCNT_CYC0_MASK, cyc) |
--		       FIELD_PREP(RCAR_PWMCNT_PH0_MASK, ph),
--		       RCAR_PWMCNT);
-+		       FIELD_PREP(RCAR_PWMCNT_CYC0_MASK, lower_16_bits(cyc)) |
-+		       FIELD_PREP(RCAR_PWMCNT_PH0_MASK, lower_16_bits(ph)),
-+		       RCAR_PWMCNTA);
-+
-+	if (rp->cycle_bits >= 16)
-+		rcar_pwm_write(rp,
-+		       FIELD_PREP(RCAR_PWMCNT_CYC0_MASK, upper_16_bits(cyc)) |
-+		       FIELD_PREP(RCAR_PWMCNT_PH0_MASK, upper_16_bits(ph)),
-+		       RCAR_PWMCNTB);
- 
- 	return 0;
- }
-@@ -146,9 +153,14 @@ static int rcar_pwm_enable(struct rcar_pwm_chip *rp)
- 	u32 value, cyc, ph;
- 
- 	/* Don't enable the PWM device if CYC0 or PH0 is 0 */
--	value = rcar_pwm_read(rp, RCAR_PWMCNT);
-+	value = rcar_pwm_read(rp, RCAR_PWMCNTA);
- 	cyc = FIELD_GET(RCAR_PWMCNT_CYC0_MASK, value);
- 	ph = FIELD_GET(RCAR_PWMCNT_PH0_MASK, value);
-+	if (rp->cycle_bits >= 16) {
-+		value = rcar_pwm_read(rp, RCAR_PWMCNTB);
-+		cyc |= FIELD_GET(RCAR_PWMCNT_CYC0_MASK, value) << 16;
-+		ph |= FIELD_GET(RCAR_PWMCNT_PH0_MASK, value) << 16;
-+	}
- 
- 	if ((cyc & RCAR_PWM_MAX_CYCLE(rp)) == 0 ||
- 	    (ph & RCAR_PWM_MAX_CYCLE(rp)) == 0)
-@@ -262,8 +274,13 @@ static const struct rcar_pwm_info rcar_pwm_info = {
- 	.cycle_bits = 10,
- };
- 
-+static const struct rcar_pwm_info rcar_gen5_pwm_info = {
-+	.cycle_bits = 24,
-+};
-+
- static const struct of_device_id rcar_pwm_of_table[] = {
- 	{ .compatible = "renesas,pwm-rcar", .data = &rcar_pwm_info },
-+	{ .compatible = "renesas,rcar-gen5-pwm", .data = &rcar_gen5_pwm_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+Changes compared to v1[1]:
+  - Drop platform integration patches not intended for the CAN tree,
+  - Improve RFC question,
+  - Add Reviewed-by,
+  - Update new user.
+
+CAN-FD channels 1 to 6 and 12 to 15 have been tested on the Ironhide
+development board using canfdtest and an oscilloscope.
+
+Thanks for your comments!
+
+[1] "[PATCH 0/9] arm64: renesas: r8a78000: Add PWM support"
+                        (yeah, wrong component ^^^, sorry for that)
+    https://lore.kernel.org/cover.1793278754.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (4):
+  [RFC] dt-bindings: can: renesas,rcar-canfd: Document R-Car X5H support
+  can: rcar_canfd: Add Runtime PM support
+  can: rcar_canfd: Make clkp local
+  can: rcar_canfd: Add support for R-Car Gen5
+
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 84 +++++++++++++++++++
+ drivers/net/can/rcar/rcar_canfd.c             | 47 ++++++++---
+ 2 files changed, 120 insertions(+), 11 deletions(-)
+
 -- 
 2.43.0
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
