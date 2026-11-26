@@ -1,96 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795700911;
-	b=42b0riM1ipe/Dafp29/kYpyhb+meWnZhm7u3axhgsypd+TEAq7G8ExrHlrXKfBu3tNU6
-	 owBOxfwYt0kr+2rTx0Ctx9qyq064msKZrpfZqyoEXDxSmmIK9yjgAcsM8wmhSWs5dxMq/
-	 nQKbKliA7jp/kA4fH61PxSL+Jh2Wu1AjMagJsK5rS+LXnE1M32B3s3xbWAmqLkinE4kKr
-	 vuwBfL4zJuvWpXde94gWyxkXYd6lpeYaXlNMLp8gzST8wBW4knb06oFEd00s2uzgJBRiq
-	 Qkm1zT41UBxcAChJuAD7r/Zm3ZhI9y+E1mnwCpD+9DAm+FaF3+uf3X/L++aNeb9026Q==
+	t=1795703457;
+	b=jmebdbo+cJ+ikWUTMHUZpUa+kHlur+a/k4WrDJJjxzkZ1yMr9ZgISuBWi+/32HooqJWg
+	 szd5m6OnDNg5xkE4hCGAiBiVQg6uyE6qe6z5Xk/c7HCOvm4pp1RmVTpJE+2c1iCAjzEuz
+	 LygZuU41AA/aoOFhLYLYzYb/FwZJnzyaWFs38Y6PvGy1RFp8jnQ5qYtTQCKG13mOawq7l
+	 wxUI7HUKVJqOYMOPV1KvEDy0AItqmlL70cp84Qhi3ko0WZc8ZK2iVPuXHNlTas4zHG3m+
+	 9yZjG3WHbWX4VcflPQx8IglPCMd4XXEDpzwi3lbZZumbZU92iu9DNji4wF5gfFYjTuQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795700911;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=Rm9Myfp9UNOe4eMcJGRVkZiHPATpQ0cO2bVLAIkG12I=;
-	b=3aGbdJBYTCWr0V0FzaxT+vQdOcslDbcCBs9Vs9eHROf2anjVIy5xSChzpc7KKXhGyx2z
-	 lDodqeFnG12P3KwVAgi2tPuvNGQVy1VblVukZf5oSGpWhxHeJ6B1V0sQBDDUIys1bPcxq
-	 LgMmcIR/z9C0PGTo1kGx/t+AmO6sqE0XjZaRvt4Gd5SBlAMuktl6J0QGb2OHpeurjziAb
-	 dhX3cfSpgDIUGGsCw+3anmmbwOXJa1OqQHQFJaKrdYmrvsD5VPoVd+hvj6lnqTyKBQx+P
-	 EWQLO6FMRq7LScNXaKmDd/EZ2evexQTmfWDDBfOIZlvN5JFhblvh4jMJ1o60PihkoMg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795703457;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=bhjx/ath+sZuV0+nGHM7slA63K+OA/qHJM3pgi+RkQg=;
+	b=3/jZ6rQgL7d5SjtJ6Wx/I+nouA9zv7nKRmIz9IDj7MychNHL7FdQPbPzzDGZzpqgff0a
+	 SndxEMfNOdH6sE46acE847Yc7bHIFoTWdqQ7zDZbWK+aSsio/Xu6oaL7HFeqZZNowtsiS
+	 CCBclnWYzErGYsBOU194aJa0N8rjLrlcmOGbJ2xQC0SmKFNgcFy/Y7kRRuQo+AQnk4aGh
+	 ZrwSSdUIwCZT8Ypn5etatiZ4kzDEohPRXcwWaGCNhVcOPIzdyAkqCHuXxKDZ2UzOKRghP
+	 WWHZe97JjG/515vkG3J2VDnFGxcaHFxAMuvyUiap9J+jjWq6Vk5jDnjf6a2jjhm9Ehw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YYYqiX33;
-	arc=none smtp.remote-ip=209.85.128.46
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="H8HOHuz/";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080E8606A335
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 080E8606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABA9606A698;
+	Thu, 26 Nov 2026 14:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YYYqiX33
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4bb55cda775so43870755e9.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:48:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795700909; x=1796305709; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Rm9Myfp9UNOe4eMcJGRVkZiHPATpQ0cO2bVLAIkG12I=;
-        b=YYYqiX331Uy8GlHegZwnmL8M2gdNuEmd2y4FgLMJzBrtRRTg31i1EvYs75DI49hK6R
-         S92SWOdBbl1TWmOZGHXtjlJ7wURi+o7F8/Vc23U086MMxYO/IsKJjeLUGUHlT7fWuYIB
-         1Vd0Su9q32vl1oDxbCDXnPavu86w0GqSm4linkryRaw4TTJQLT88vK2NN+TI6VC26KHW
-         U+Di4QRNwyEAYO+T3sK+CoJ/AyRE4ezKVsu+v+lWd0eNCgvilz+/oqQbc4zWlnfGNa82
-         SfdXw/X8Alpb6zrTCJrKfJL1ELKWaR0qfYpCf04PnQU0mmKmloVx2Iqi6pR9w33sW17P
-         ZJWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795700909; x=1796305709;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Rm9Myfp9UNOe4eMcJGRVkZiHPATpQ0cO2bVLAIkG12I=;
-        b=K+rNjnhWGuftbAsq6BnOIvJahAsCVWBi2pLpIZj7SthUoEL9PMNcGv5D4DrY4QNMwY
-         8zWeme6QLgc7AwZD7aO5B094xHqAaSBI5QM9dYXlbGmagLhsBW+j4F5g4BXbmtJDSH9u
-         NciZn2+IlS8DW6c4SUKZyEsAMEoiNgSbcvU2K3/ZecI0vBsn6p1ghH7gpEfaiNryxLPs
-         Lc66nKvOh8PCgP6OoNaxsqyMr+OQQScnYxAl23S6LjkBFARvK4BxXkNCwtTihxDxFNHQ
-         ir4XjhlYP2ZzorDR9pmBxaPhBUd9MMIJ3o4QH5PSevDS4gAnA6rBNTZY3Ia2Hc/dd8L7
-         kqsw==
-X-Forwarded-Encrypted: i=1; AL+hErGPTyekT3UGhANL47nQaAjWErBcLD1K1n92Q45qhdNZQaSnHt/EZuXyDNyNl5Y9bPAVMT0OKkop85EonjJKA5L6aw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+2SLnDRSsf3wOaBFr9tc/b+o13p7msTJ5f7B1ZymwkxjvyAt9n
-	Ie5X71FrERBU+WMEm18agfBu0ZEJTsmTLuGGrevDsmtwLGVtbRiyJsWF
-X-Gm-Gg: AZFdTZcqGgol1KBHJvWqQVpk8oHXBGg1vRhhRXtDchbuegjOSvqSt5mXURCdUQ4nxYe
-	tG52jMwCEboFJv3B9kTMj3tbQeCvBo49OeK7OO4G/oXygAO7BTLKZdzIrjCKUQxNXKAfjXUaklI
-	ZUJwLbAf+L2MGLbp0CE5dmq2OJj69RqQQnTbqGWj/5LvcIz97IIofozwK33Czr/FwUxNSjiXNVJ
-	u7JO2KdWvRRJgMAkKoTXxxCouvfobsfELY4qI1GkjNhU6/RxBSsTIawN1L50PM2vGCDv4MA6yNA
-	RsDSEnTdGYplPAhmlaQT15c6X0AD899Vasde/+pzAFsqoz4mE7cL/QAxCTxIPJ7lt6MpmhZ3P6G
-	QV0upj13D0VTD5yzQ29aZ40VwlevXCLZLlKdAb5W4jVGW9j0zs/uR3W7r1maK53dXrPhq6j5TZ/
-	0kckOyOi0inL7GFbPOV0LU2znkCQlNM89gKZEZU5IAljgkmSFJAVgusxQwBvwOZe9LrCawHlvv9
-	PMYfzjQRRbkzdWmnnNi3fORwpS+Wy17ALM/KuVzOrWVxvrQMhNbSV1+IjhHMi1PX1CnN9zE7PcX
-	sdjmbS8f8pmR8mtFAWzuJKM8iTY9Y24BEByRhrVFAKCZMi5RrSWdHikJyY5a2A==
-X-Received: by 2002:a05:600c:828e:b0:4a2:526b:d40f with SMTP id 5b1f17b1804b1-4bb88785898mr440409255e9.0.1795700909186;
-        Thu, 26 Nov 2026 05:48:29 -0800 (PST)
-Received: from biju.lan ([2a00:23c4:a702:d301:c60d:8d79:1008:270f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884a3a3dsm591221015e9.10.2026.11.26.05.48.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 05:48:28 -0800 (PST)
-From: Biju Das <biju.das.au@gmail.com>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-iio@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H8HOHuz/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED34F1F000C0;
+	Thu, 26 Nov 2026 14:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795703457;
+	bh=bhjx/ath+sZuV0+nGHM7slA63K+OA/qHJM3pgi+RkQg=;
+	h=From:To:Cc:Subject:Date;
+	b=H8HOHuz/mP1Q+w4VDLFEhy4Y/dqemuhjrFjZG0YULa0CLbZLLOBxmf4wckiXe7u8q
+	 J/pdZUDBLansXk07zCs7gOKYMjrnhWFTCU8AaVThjKKXIv6/r+zoGLX1npBkYCeFLr
+	 nreiWzX7+WDGR7QcRsfN6n6ngFTRI1ScJtkq1RoMZf1U/qsQf7ipzkyXGbBWawPGfc
+	 tNSMGTHwd0eR5t6eYmWy2qfKdsEjEpN8qhy//lmxiL7bb9P7Nh5wNNy2dagKJrHJF0
+	 +d+ELGbz1i3Qo6rR27es3avwP/KmLG2uxRubLRU/VyKH7zYTpSAuNyhFR+5T55vYmi
+	 hcYVLRXe3KFRg==
+From: Geert Uytterhoeven <geert@kernel.org>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] iio: adc: rzg2l_adc: Add fwnode_xlate() callback
-Date: Thu, 26 Nov 2026 13:48:19 +0000
-Message-ID: <20261126134826.46044-1-biju.das.au@gmail.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/6] pwm: renesas: Add R-Car X5H support
+Date: Thu, 26 Nov 2026 15:30:35 +0100
+Message-ID: <cover.1795702568.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -103,45 +67,58 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On RZ/G3L ADC1, IIO channel indices don't map 1:1 to hardware channel
-numbers. Add a fwnode_xlate() callback that finds the registered channel
-whose number matches the specifier argument and returns its index.
+	Hi all,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/iio/adc/rzg2l_adc.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+This patch series adds support for the 16-Bit Timer Pulse Unit (TPU) and
+the PWM instances on the Renesas R-Car X5H SoC to the Renesas PWM
+drivers:
+  1. The first patch documents support for the 16-Bit Timer Pulse Unit
+     (TPU) on R-Car X5H; no driver changes are needed,
+  2. Patches 2-6 document and add support for the PWM instances on R-Car
+     X5H, after a few customary refactorings.
 
-diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 340813f6f890..f00cfb897124 100644
---- a/drivers/iio/adc/rzg2l_adc.c
-+++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -286,9 +286,23 @@ static int rzg2l_adc_read_label(struct iio_dev *iio_dev,
- 	return sysfs_emit(label, "%s\n", rzg2l_adc_channels[chan->channel].name);
- }
- 
-+static int rzg2l_adc_fwnode_xlate(struct iio_dev *indio_dev,
-+				  const struct fwnode_reference_args *iiospec)
-+{
-+	if (iiospec->nargs != 1)
-+		return -EINVAL;
-+
-+	for (unsigned int i = 0; i < indio_dev->num_channels; i++)
-+		if (indio_dev->channels[i].channel == iiospec->args[0])
-+			return i;
-+
-+	return -EINVAL;
-+}
-+
- static const struct iio_info rzg2l_adc_iio_info = {
- 	.read_raw = rzg2l_adc_read_raw,
- 	.read_label = rzg2l_adc_read_label,
-+	.fwnode_xlate = rzg2l_adc_fwnode_xlate,
- };
- 
- static irqreturn_t rzg2l_adc_isr(int irq, void *dev_id)
+Changes compared to v1[1]:
+  - Drop platform integration patches not intended for the PWM tree,
+  - Add Acked-by,
+  - Add Reviewed-by,
+  - Improve patch description.
+
+PWM instances 0 to 5 and TPU channels 0 and 1 have been tested on the
+Ironhide development board using a set of blinkenlights and a logic
+analyzer.
+
+Thanks for your comments!
+
+[1] "[PATCH 00/11] arm64: renesas: r8a78000: Add PWM support"
+    https://lore.kernel.org/cover.1793026273.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (5):
+  dt-bindings: pwm: renesas,pwm-rcar: Add support for R-Car X5H
+  pwm: rcar: Use FIELD_PREP() for PWMCR_CC0 access
+  pwm: rcar: Add helper variable dev to rcar_pwm_probe()
+  pwm: rcar: Parametrize cycle counter field size
+  pwm: rcar: Add support for R-Car Gen5
+
+Khanh Le (1):
+  dt-bindings: pwm: renesas,tpu-pwm: Add support for R-Car X5H
+
+ .../bindings/pwm/renesas,pwm-rcar.yaml        | 61 ++++++------
+ .../bindings/pwm/renesas,tpu-pwm.yaml         |  1 +
+ drivers/pwm/pwm-rcar.c                        | 92 +++++++++++++------
+ 3 files changed, 96 insertions(+), 58 deletions(-)
+
 -- 
 2.43.0
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
