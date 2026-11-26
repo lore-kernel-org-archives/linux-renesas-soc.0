@@ -1,110 +1,110 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.136
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795710306;
-	b=bZUf5ThkFwdkUYq6cwtLpHvf/KCfYA2J80n1iJAzfV1o8vfunx1dkJWDdJReFKlleIa0
-	 NDIL+RPYSALDhqYPZpJ+eL1k1aIHJxq2cAK2faVbpUn22IFOcU/FXdUNUY5qBlfpyX2kR
-	 YCqVd/iWO+nyGt4xIvgFqGk6moNC8VAIMD373PRLwYDvAgfnAun/UoOv1F6AtztdJCgI0
-	 3HMkhUnt/bpjyK/LsUT+Hdne7aihs8yRWNuLVgOmtcvGC+66pIkE1FRsO4sAPsswRzOEl
-	 QJWVDdJM5294P86zI7xNGJPlSM50vRRwwXzk+eMoM4Lyw7Hdk/U/0QbP1YK+lkBqhmw==
+	t=1795711068;
+	b=4LeAB/OZrVRIu7ih8Qq9Ti/FjuQuqYGGyqdGVoKCS7bGQcEm6L99iU+dojevhUx75MRS
+	 Gt6ulRLmIa9A+DmwZ/NgKyIoXio3GKspGwmefpmAA++5KiVfZkN+zrL8xW4uzVJ+ZbVTK
+	 6M25uu1OYYrBoIVTFR348kMYm+ita8rddFFzsTr1NqAJcNfyKkne2vhhZBg4C1QX2EIs5
+	 0tCmNTzb6Fq06LWP7nu5o+Uzpmx6q/5f+ykEUtt8IIhNu/SfrJIcdgEhRQm2bjr0fpSqu
+	 Lg73Ab/P3TLLGmXaopF6njEYJTDH+qznK0p4yLSh3OOkSkP3lmYoPlqNm5eL7yjMDVQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795710306;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795711068;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
 	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
 	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
 	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
 	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=DXKJcxGChXQiUrdpxHtH8E3kYOstiLhQvbObQ9yIL8U=;
-	b=VnkjCddg14/ER/ksm+Ji3EvRwkyUcO407Whr/QpqBrwhdbFTkooarnfEuOdWcoKA3j7G
-	 NnvKZ1vE7lucCuI3cPEvoxI0MaujdyYblisY7cMKiLFZEHGm4CMw/KUghfu7Y3c/fLtxV
-	 1QLIX5zhOCc6xKV6fcZYIUpqA0zlck0C5Lk1EbO2z8q/esQCjDUYBT/9wPO9SUYYdUdIa
-	 WzPjAK1kxR/1BP8itp5cZqFVFlpFsqZcQtWnMq87iHdzNIzMP8sZIkuqJDhCbcGYomQ3d
-	 9VhVafTDWtLNbsiOcnhmsUrrfZZn+5+pFxX6rl3vJUvIBzFmhkfumuFEeODcBtaoNXg==
+	bh=7N9CqDyP/26dU8hQlMN8Gw5eUjqqoWujGZFQZYS0sgs=;
+	b=E8tDsPXxv8clZY4aVw5PEjFZ0JGMF40YDSRE4+qbe1dRCohRyhsgwcsFAFyISWxoONsZ
+	 M4tbVl6cRN6hRbYZNIC79wPHANgZuhbDXs8+6xWGk+IEn8XJHmNtwGC4053CqMIylLOrX
+	 /Ug04yWzOSzPNb0nzwdHpSZwfczVPArtdo4fjigRXlQJq1/QnY8IStMX44HyOVAa7f3Ij
+	 OZownhwCck1E43BebLr7Nv/M7Jw4AhjPzSgLlCpMewxYpzeYaqNFWLt12mwXGOAXJTO/w
+	 KdTOR46rqmIEntrq3t0gCena3TQcwWXmbjL36D7VCY4bR4j+K0jSdMVJyPLC5p4UWBw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=glider.be;
 	spf=pass smtp.mailfrom=glider.be;
-	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=Hfcsa6Nx;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=YGnZOuga;
+	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=K+1sgLTx;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=Xg9JPNBB;
 	arc=none smtp.remote-ip=103.168.172.136
 Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67910606A6BF
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 16:25:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67910606A6BF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB867606A32C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 16:37:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB867606A32C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=Hfcsa6Nx;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=YGnZOuga
+	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=K+1sgLTx;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=Xg9JPNBB
 Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailflow.phl.internal (Postfix) with ESMTP id 62BB01380637
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:25:05 -0500 (EST)
+	by mailflow.phl.internal (Postfix) with ESMTP id C81311380A44
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:37:46 -0500 (EST)
 Received: from ams-imap-13 ([10.64.2.33])
-  by ams-compute-02.internal (MEProxy); Thu, 26 Nov 2026 11:25:05 -0500
+  by ams-compute-02.internal (MEProxy); Thu, 26 Nov 2026 11:37:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1795710299;
-	 x=1795713899; bh=DXKJcxGChXQiUrdpxHtH8E3kYOstiLhQvbObQ9yIL8U=; b=
-	Hfcsa6NxZgPO2oooy1zABDj+ZKWv9vbkk6CosmJQG1Wr5gc24eRHexTYqhg/Bmk0
-	WUztAJPAYly2S67xQbfzKQUu7O08LCNIS5FoyChYQYJBISttLTj+18T3D4mWokVQ
-	C69iLJ0aJDadwn6qEaqxBqdWhpZkyI9zyKIWu3Q+pj4TtkP1pTjePZL0L2JMjuCg
-	JB0/o7THcUtbrUE0fgZNe2Prpvi639Is76+9Uu5XzvJ1HyFg4FAHWmR5qTAjkjhL
-	5Hc72j+SqpSCrQNzKhbnpDgXmXPUeIC4w4Aj8bobaXyqxpXGUVyJluv7mT5vV0gE
-	PVBj7kS0uIQHtb5w6tODqg==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1795711056;
+	 x=1795714656; bh=7N9CqDyP/26dU8hQlMN8Gw5eUjqqoWujGZFQZYS0sgs=; b=
+	K+1sgLTxn+oZBTF/0K4FnHg3YBph1wgD84vxNK6UhpqPlR/qd66zaA1hqkFw5krg
+	OnszmlvpvAwYwj4hQWNwAtyZTxKCY8EhEGmBQXMAcy5PWCMssXGyVb7Hs2qzYlRO
+	ZWvTtJ2Lzl5rnxvZNzrNygKD6oyDvWs/vG40fU0f9g/55g0GE1+3Q2GFpfZ4vWOY
+	8aKDqIJgBvD7Wm4YhraYAQQn8MANQK3/SpDrnFNhk+tlEHUQczzY85E0IvgW4P+L
+	rveJ9hngOTAD+n46LRn7JvAikvDVMBqZhBxfFM1M104Pww03jaFfyNsqXrsFwVE5
+	eE8Axp9VLZ6vUweG249/bQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795710299; x=
-	1795713899; bh=DXKJcxGChXQiUrdpxHtH8E3kYOstiLhQvbObQ9yIL8U=; b=Y
-	GnZOugaev9KPjjtYyJX9FzgNQhhFAZnycXL3qmzU6mn+9K+J1D8YlJOpgHLul60R
-	0+npOoxr0klltVV4Vp9AP9A5ySV39rXHY5rItfa3+RfT33DqfrqrWjz/ph+P4rW3
-	H9TWu9bv5J1RIcHnSwxxSpLoTSlcb/kBdzoET6PbCCm6fbZSu6umKQPvg53eQpjv
-	oOSsbXeVmWWy5CU/Y20ESqAxOW93LmzsGO+D1m/MVZbEut3joZXn0N+cCeSoLDcY
-	/g4YV1AjD5H5x9KMvMKyAbftHFfZrBxl9s+RIM7Yob2qE6fVxVtn6L2muqlpJL5g
-	srJwb0BrC4K47fgE6r4+A==
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795711056; x=
+	1795714656; bh=7N9CqDyP/26dU8hQlMN8Gw5eUjqqoWujGZFQZYS0sgs=; b=X
+	g9JPNBBBcLijRjk0pfY16YUtm1CBX414eOuCB1tIQRyaGvdZ1WDokwp5i8ZJ6GS0
+	uICl+qh93lzuFNNHb70i3l4/MsKuT00jcqasjqytuRspXD3pHNjjyyZnuPR/x0rq
+	OOKS9N2F54FoBpiyvU7sU0ih+KMDt3IX6b8qzX04R2nQgg+MWgQovtqzmdpIWNTx
+	KlD34XCHWW2SzUeU6xC+xZL0L9uTBaZN8YixkWFWG0b3Jt4IwJhz7V79cpjia9Mz
+	0F21yweNyBzJeY5D1IlqxTxa1FP1UHpmqHNEPZhM/UgfbCaOcKUwaXUyjx1nCCIa
+	2ulCN/KRLgfn6w0leottg==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
 	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
 	action=sign d=glider.be a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795710299; d=glider.be;
+DKIM2-Signature: i=1; m=1; t=1795711056; d=glider.be;
 	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
 	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:Wu1q7aFWJhbRojQiiXipLR4VNBlGIvhlGW68ajWgOacCctS
-	k8RKAbfs1+cBwlONeyAHHHmSgNsz55lymsZrbf/GtwtefbE6AsN6n+bi3t+aPWNK
-	jXk3GFXdltxUPVe82Eq9AHXUrgBj23mhO/eGeswKlZ3rdzt2l+gn4GAh9GlgasEW
-	ougLBcdfig+WxUpfsi0TzvZ1n2meVus3+P1Kh9QW9RmQxNe/NhbGDncsQofnT8Lb
-	b736lsH+X6XMtyvFWGI5wkFU732c5RoEWlOtWa6IxLsXcYbDnHcgU63u65/c+UDM
-	HGmvgV4DN2qolvgKTf6sPG9zEpqxZp6O+p+RSkg==;
+	s=fm1:rsa-sha256:YauIlmDIF6d4/H/IgOUyWaEw5SF0l0QWBD5QiH5fnOWYA58
+	81Ty3xhp+O7C58mBIHv6FwV6xsDzGWz9WBlmQYgiPa/SGhOgHXcN5ITNqgvQGeNG
+	0pps9qJx7GpdL1/c4RkU3mPMKVuCD4e4scknazCCJGKzTxXL3xgEuWEW+5yyjkKx
+	FrxomsO6VBXEvR8KdTVtZBjdQV1ccMET75DXflo2TJq6I67XWrDDIOP+KZ8AIQnH
+	hvB/EROPCZncR31UnqcTp3jFe4kyRsU9jWOsCAdPAgX2rUgJgCgdBJJPcuZLwnX1
+	xXgu5Wv/x1U1KTg2HnSn92ev4oRDB6YDfsmQmdA==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
 	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
 	action=mi-m=1; hc=12;
 	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
 	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:qQmxHQMPHnQCDKMum53alWNecHWe+s/lRISCTxwfOlU=:GavFexzO7MLi+LG2UwFc5A1XfxPf5DjnFR3tbQ8qYJo=;
-X-ME-Sender: <xms:VF0IaymM8aZkVfJnVqDkT0sbMQQv91e4f3WuzhhIo_jaeDQqqfkdfw>
-    <xme:VF0Ia0pXILhvAExHt2GutKUHLbFWQNy3Xwy1-D7Y9-2IntLnR_Qu38uzG7n1w8z4H
-    Q5mwoh3wN_ZNPF3dMxA2hLeuI5hsxVcgbk0TkQlfwsnD1rMsELilLg>
-X-ME-Proxy-Cause: dmFkZTEzIYBhsi6k5llXTMz4GXc+EbdpoaswLc95h6NFOzvpV8/KUTbBEazoXgShRjdNab
-    jToHlegpkP9DfKohUEAKpEHqRJBeuEOlftX2vwaJqYGj+8rwl5lmj0+0AiKl6dNraXUjr2
-    jskLUbgPnBk6tX1LPv9xkNHsXny/sYTE/4WgcDxF2zYEDbtC+jHtrj6hcQIJd9sdb5eVxC
-    E8o+DtF/RWJZ6pzRQs9f5X0iEGn0lT+FV5gNui++5GYjdsv4Hv+KFfQS24cVxTVEOYNhq/
-    2ItEBylLx7vSEvxvc3PdrH7eciXnZ1C93T4f8vpbSXObWlLHmA8zHeFT5NDmwletNWUwiA
-    UmdcpBon0rYEBzDsPudxtJKad7f8vXQCXitRdOnNqoe1lJzkNYNTrOoa3SdWZ7QAPzEy+w
-    afoa7SpG4SPGicCQ+LZ2lZsdvAdxRCX/2WdtxN740is2T62WHfLH9C98KTGJ8+bqAvO7x2
-    5gjfXtbG7J5Va3256WYwY8cXBsSt5xJuqBwMtCvZzhPsuMnLgszvDYWjXRlRNHvGqYbq7h
-    ZHS6aHZW/GGtfTpXeAwD4Hr4zuqBrvLF3zS1Zv0/SwLtzpOTQjuD0iOwwfemRYHyPJoLZU
-    v28B/O+f9LW2mAb0ElvqVRCi2u6AOcilH10orEkg1MbP8beVGDgT8+pJmXHw
-X-ME-Proxy: <xmx:V10Ia2jAvtXnSokeiJEZysrrHTZCbwTb--4o-irTEqNZpIpV2CCIug>
-    <xmx:V10Ia2eAXA4lPegcEJfNgBZkwKHAvTHTQf7pohp3a1NW2LoGLraCmA>
-    <xmx:V10Ia_I63n1ll2YNSl2xoJjwZmb9wNgStyreoRUJu8inY2WRxpZnww>
-    <xmx:V10Iazn4VqfhlrMkDqDVq1tNzeIP3MKJslQeIK6kzlPKaGRQGP3DkA>
-    <xmx:Wl0Ia-QSII4wvdMJmIEpLcjVu3uLIKmz02FQHpJmAHEKPtn-FsAwVV5k>
+Message-Instance: m=1; h=sha256:nMgMgSrmiGsCzKZ1mh2+YPrLrgLtUqzrZKX5JkCu/Sc=:wajF0TYs/efJ2/mzQNPa/JmU/kugYKouUAKN30PKxIQ=;
+X-ME-Sender: <xms:SWAIa-vo0o6uA6PbFLXnTvmQzGbSU2DyOyCIj2cgNpDSp0804okIEA>
+    <xme:SWAIa-QhQ6uYrJZnoijlZUgLP7GO8p6gUGyCISolMa-3vMMiUkQP1ZWYZ0DukaMRc
+    xvZo4K7S61xyo3fdNO-Hq7Zg6CDLOmRDDhu8jgjLtHVKFYGU5pvunYP>
+X-ME-Proxy-Cause: dmFkZTGZmBWwU3V/QNYiKM+c/hRjR19JHOGb0aomStv+4VVeJ9evFBPg7DQ1RchCV40GBP
+    GftWfMqpbi5jZblGSjmujJw8BZSDlznDhVZdjnrHzRRX5Dhk2k1CqMHF/hCw98rlww5TXA
+    fZS7iCk9NQk4g+LETv1JEZTe9/4Rx74QDiyh1ReQZy2x5lFlMc+PmTHhjUXJn31qoFntWR
+    ER1XIwZj451kFFZxQnzpoxkk4c9wG0TjhTZT7Ko/Ug2/dYg3y+6kV/57CF+1KTT0zuIxHE
+    PY1t012qkgAHPCzf/gY3qbVz3YruN8nUJZfFIKhEqWQ2v73teGB7YH+UYcXCknwQkN8GnI
+    LzYBwffXBVxkMRT9FQvBtkF+g/LyuqiO8qhR+tQZFUl3/I3y3GxpV/FjUwaBbUGERyltIF
+    xad+tSnyP9m+NRlXdf280RwYsSkF1VCMkkgjBpQdGhCKymBMFQVlLxGJbCh2DZSrG2oVEU
+    57Sv2u64G2rihlnmVwaBxkJBzo9sEM5lIbGa9gSycPU0XXCRDYRFdhj2NGmN9uQMtDVIbP
+    5v5uHHYeO8lVVC2jJ872axQwvdR/qOZeNASNbNiq6HmLdaMsGcoV0tg1fK6/EstwdX2fdf
+    XIOMgTGYiO/aTJmXYni9AAJeLQvSzkc2I6PLj1qN+0WEp3S/zyUCSu8npIuQ
+X-ME-Proxy: <xmx:TGAIa3iD8udm1nBOqQTyK5fznYWiC7Bv-FUyIvKEnMGR5gg-MW0c3g>
+    <xmx:TGAIa1rRyPzWDwegm5fOQtq_dASWPCDYcNv0aszADYx-X8nU9VGcWQ>
+    <xmx:TGAIa7LkUX9F0jyterAiu0EfmIKZ0DI9kMj8zNwSEmBe8dY7PQ_lJA>
+    <xmx:TGAIa6vyf79Wq4Jm2lyKozfySWmd-Y5FGvH3IuBWwUoU2AFMk52GuQ>
+    <xmx:UGAIa5J8hd4Nit4hQqmMnSHG-bDwbXFwU7hSdlk_gK9OcrGQ-O72pZ-x>
 Feedback-ID: ia0f84a9e:Fastmail
 Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id DAD3DF800A1; Thu, 26 Nov 2026 11:24:52 -0500 (EST)
+	id 15134F800A1; Thu, 26 Nov 2026 11:37:29 -0500 (EST)
 X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
@@ -115,71 +115,75 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AQpAu8X3laJJ
-Date: Thu, 26 Nov 2026 17:24:32 +0100
+X-ThreadId: AEry5dm4iUXw
+Date: Thu, 26 Nov 2026 17:37:08 +0100
 From: "Geert Uytterhoeven" <geert+renesas@glider.be>
-To: "Markus Elfring" <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>,
- "Florian Fainelli" <f.fainelli@gmail.com>, "Frank Li" <Frank.Li@kernel.org>,
- "Michal Simek" <michal.simek@amd.com>, linux-renesas-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, "Jacopo Mondi" <jacopo+renesas@jmondi.org>,
- "Linus Walleij" <linusw@kernel.org>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Phil Edworthy" <phil.edworthy@renesas.com>
-Message-Id: <c3281c86-0326-4d9a-908b-ca461d038052@app.fastmail.com>
-In-Reply-To: <02632c0d-110f-4d42-82f8-30091468aa91@web.de>
-References: <02632c0d-110f-4d42-82f8-30091468aa91@web.de>
-Subject: Re: [PATCH v2] pinctrl: renesas: rzn1: Use devm_clk_get_enabled() in
- rzn1_pinctrl_probe()
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+To: "Koichiro Den" <den@valinux.co.jp>
+Cc: "Marek Vasut" <marek.vasut+renesas@mailbox.org>,
+ "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>,
+ "Shawn Lin" <Shawn.lin@rock-chips.com>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Magnus Damm" <magnus.damm@gmail.com>,
+ "Jingoo Han" <jingoohan1@gmail.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>,
+ "Niklas Cassel" <cassel@kernel.org>,
+ "Wilfred Mallawa" <wilfred.mallawa@wdc.com>,
+ "Serge Semin" <fancer.lancer@gmail.com>, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Manivannan Sadhasivam" <mani@kernel.org>
+Message-Id: <0c3d98cb-6641-47a5-9f15-0cf315979069@app.fastmail.com>
+In-Reply-To: <awhXFPlyc3vnmjtC@z790sl>
+References: <20261020031049.969895-1-den@valinux.co.jp>
+ <20261020031049.969895-18-den@valinux.co.jp>
+ <CAMuHMdWk9pZdJ+eh0dNHrZSMVDe84_rsvmrD=pC1Fjy9wEyp1Q@mail.gmail.com>
+ <awhXFPlyc3vnmjtC@z790sl>
+Subject: Re: [PATCH v5 17/17] arm64: dts: renesas: r8a779h0: Describe the PCIe AER
+ interrupt
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 23, 2026, at 15:21, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 23 Nov 2026 15:00:10 +0100
->
-> * Reuse existing functionality from devm_clk_get_enabled() instead of
->   keeping duplicate source code.
->
-> * Delete a clk_disable_unprepare() call on an error handling path
->   and the implementation of the function =E2=80=9Crzn1_pinctrl_remove=E2=
-=80=9D.
->
-> * Convert the data structure member =E2=80=9Cclk=E2=80=9D to a local v=
-ariable.
->
-> * Omit the label =E2=80=9Cerr_clk=E2=80=9D.
+Hi Den-san,
 
-And platform_set_drvdata()...
-
-
+On Thu, Nov 26, 2026, at 17:24, Koichiro Den wrote:
+> On Thu, Nov 26, 2026 at 02:10:32PM +0100, Geert Uytterhoeven wrote:
+>> On Tue, 20 Oct 2026 at 05:11, Koichiro Den <den@valinux.co.jp> wrote:
+>> > The PCIe controller reports Root Port AER notifications through SPI 454,
+>> > separately from the integrated MSI receiver interrupt. Describe this
+>> > interrupt with the "aer" name so the controller driver can use it for
+>> > Root Port error reporting.
+>> >
+>> > Append the new interrupt to preserve the existing interrupt indices.
+>> >
+>> > Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>> > Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>> > Signed-off-by: Koichiro Den <den@valinux.co.jp>
+>> 
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> i.e. will queue in renesas-devel for v7.5.
 >
-> This issue was detected by using the Coccinelle software.
+> Thanks, Geert. TBH I'm worried that the rest of the series might possibly not
+> get picked up, in which case dtbs_check will keep warning indefinitely.
 >
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+> Mani, mind if I ask whether the series still in your review queue (it looks so
+> on patchwork [1]), or whether there's no hope of it landing for some reason?
 >
-> V2:
-> Wolfram Sang requested further adjustments according to the proposed c=
-hanges.
-> https://lore.kernel.org/linux-gpio/awQ7qa5FGG9RETtS@ninjato/
+> [1] https://patchwork.kernel.org/project/linux-pci/list/?series=1189393
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.5.
+Oops, I incorrectly assumed your DT bindings patch had been applied,
+as my grep for "aer" matched Marek's addition of "aer" for R-Car Gen5
+in commit 2fcb7513361b4493 ("dt-bindings: PCI: rcar-gen4-pci-host:
+Replace sft_ce IRQ with AER IRQ on R-Car Gen5")...
 
 Gr{oetje,eeting}s,
 
                                                 Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m=
-68k.org
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker.=
- But
-when I'm talking to journalists I just say "programmer" or something lik=
-e that.
-                                                            -- Linus Tor=
-valds
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                                            -- Linus Torvalds
