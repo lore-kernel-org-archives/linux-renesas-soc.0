@@ -1,76 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795698645;
-	b=m76oZwnkTgxGnL/nTMthhwm4fiTRuz27B5QrR/LRBbOQJG7gl3wS6K6P0sgGhgI3K4DS
-	 9METqLkqUP0Xk6S+nFxw1Z0E399YYfO6U8TEnuwxHDmuFfbadPINPh9Rfh6DiQNKfUP6L
-	 D8Y2/k0S7zQ8pjyhTf90/58CJxogjGHSeXZV8OzcDp7cHoyrk5XVa0O2rw0NB9pLLq6Xn
-	 bEqxRJGiwzOW0dV3ZZYQ79zaMjJzq85yE/q1gknL75pMQCsRbeqjfqQ2FaP4Q+8+qG4hl
-	 NRXe9VHTK9gdPrgxjHwJXEiBBodJ+zD57GFcS0ruIMXRsZj7NSKO10e2yfICElp2L3g==
+	t=1795699049;
+	b=rALl0PR/SlAsfMVoaVmc/DY/u8DeJZCWHrc9ZuY9tGrwYbUjZ98oGKwZvXIYXXGNaG6E
+	 /+VGD8yQUjqnHUZDepsYx4WjcSvphusjSN2erGmJZBcyooIbZKB/KQ5lj0pQGnkeNS2ah
+	 bHzulLepynwI9EXc7Oqv4hH0UvUlZP0Hyh+Ui9mrwr0cU6Bhvb5yVCA525j02GdfUf1fx
+	 5UMd8S6ou9JElHphhny2WQrIyOKPoQMB2F4FwgyIDSWhL+dO6iJ+SU7xH2Wm5vOhdngw8
+	 4NSH3sQl22DRQNNI+UNFGEmjvMTwL8lUU3P/NnX9Z75nNDksgdAq078C9LsrM7plH1Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795698645;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795699049;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=8lzx438I9zhWgrnJA+oH7tC0er2jtBCrxj4IPB3U0cU=;
-	b=iqMjMv9I9/28JRVP5pcR71ZbCJkVc5F7p/Vcu7BkGlt9dSt9ej036f4Foup5fpA/FGg2
-	 MTtgxD2asjgWV1S4r3ywgh7ViQERuSe5GBiT3gK1Ho/pGwdR4F5O4XPRCdnvgX9qSJVck
-	 ILPZIZQrLKF7tWLreqIVIKUS+hnvlpjKip4lhv+HIY0OdU784sePWF68f1rX0JAbSE0j2
-	 pLM+k7s/d2SS0zCwUgTsF83bpGFdHk4pOA0OSx3xCQJAfHQr1TzBTkD472sfADcGI1dc/
-	 jeM6LRbes8BXsNwFmd0t4Tkse1RtPyNZK01RGjG9zAXdPhaIuOx4n0CABXSv239ym7A==
+	bh=/8RldKvPQUEazbYpydH6ulNIbu8h2Gc8WOSWGgj6gjU=;
+	b=ae0xTk9evOFunxPuBaioDQ0L7dU038vrB5qnsTeSDGTPyT1W/MCAXwFJeGr2PpQSXd/7
+	 9p86TjMlv+jLG7V/sJnfDGbncdEqnhk9zwxJAHatpUI9apppEzgITydq9DCPhIF0ueJZc
+	 y/Dpz+GOuGbgUR8Atghlxo5QKEUfiilq+a/0tZEwqMaTQJaW+BLEC0c3tW82sfBhl1sUm
+	 BjA8zYHWwX2pFHbUIGRJF+LsKLNAzbgNhXP2u9srcubRz2FpZfF6eY6UtimfSYlnTXJwm
+	 7YtTsAt0kOp09sKoxdxLtDaNi6Q+Tg7t+zhdYl4ElDgz2CxxvOhFVj3jjFKGgWrpb6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=fail header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.51
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	arc=none smtp.remote-ip=209.85.216.44
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C270606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:10:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C270606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0668606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 13:17:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0668606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-7d2dbc0a8d4so2238885137.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:10:45 -0800 (PST)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3b09a83d12aso4874278a91.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:17:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795698644; x=1796303444;
+        d=1e100.net; s=20260707; t=1795699048; x=1796303848;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=8lzx438I9zhWgrnJA+oH7tC0er2jtBCrxj4IPB3U0cU=;
-        b=sfYtF3CUSxwUuMZYwbx/NrItF77iSkcBUlj6xUiR0+t80988aXMgZYqQbcgi16MWbp
-         3w3vrRPXWnO1NBaFmr058yUf6Xz0Vjjcul1FeCiRM+AeIOdN3VQL9VHNl3JvwA3Mszx2
-         AkjKvAi0rPcx3EuS6sVpNwiIXK2BXmn2WMhmOd4dTcDzsJreODd97nKT11M2AJfNf5Ne
-         vUrB8I7EqyVytTnO9WKOhL/V/Cyx5SVYLf3KhVtEnBEoxeOta7aHFvR5d8D0SyLTbBsS
-         dUQE+fcN4UW4Pvi2U5cS0DpEJUcbSvPZHjT/ofzda5v4YIWvdN1sCtqlm+SkoPebJR1p
-         vGKA==
-X-Forwarded-Encrypted: i=1; AL+hErGcIoxCWDQlrCINnkxKPDDS6NDmTarDZ03S5hLvbet32yQ5gFS4rMmr1CMfIEenjt9zKra9h6LoUHGasXsZMRPFCA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/gE9ncFVYQlmmUb4BAi3D0mzOjqdrayKksW5QWIEFSyA8G8/Jr
-	ikdUZpb6z3C0Zn7yXIs1uVrPpwE+0b8M/ReaZ0JZ1CkLkrpAlALyMsOwm0ucGVh9
-X-Gm-Gg: AZFdTZeMbssCqwiH2e9VRF2OOI1+l4TuikC8mtw/WS42l0ew1CGNckkiebNUgQKSv4H
-	CQXMuQoGmbZ2TbvjgU0LWgg4MDMfqLUaECtzKin906kkJir/rUbmdQkau/Uki25Kj/L8cPokxKu
-	ivnITemGKoFYPFYSynudcslS+A7Aould5g0TMCyfxAAjwL5YoebZlDc7GYtgLyheH7AZKuniUyB
-	xtPUBpy70OHjbRfbhiWGrg2/6psCs+Tc0Qhi/OJChNxVG44m5T7ZVY3eLmtdnCFiAL0sAB+nLHY
-	Uf3WbYkk7BJlx1Yiz9J8Hgv/lnluQGZfjaMiKncQbqoRKs3yiB+7hPwQjiNHacS++BJHSBCyh8C
-	G2vzqr5zwf25e0bFf9nHznPyJSctIXFwqG7F8PZ8Ow7L6mj36w+8jLn1u1vshDp6KHxVIBMzWEi
-	8ifof+nsX9QZGY77OxQR/Dg3F/CFOwGnHzT1ebKqlTzsN9ri2xHxcRlWA4FZ9H+l6Alg4O652UL
-	9rm+zB5zOspvaq+asvIDMymWtTXvCkBVJ308FazL+J+tJDws4zX5UJGpeV1OVTeTkrgKyK6taOT
-	fWiqzjRepf7+Uy2aAEZkB1/+/IAj+zYa2txUq99Bp3zW5JcLyMuhTua0+ydOvyXdr3vQtGA=
-X-Received: by 2002:a05:6102:84c8:b0:7a7:19aa:f0d4 with SMTP id ada2fe7eead31-7d7396a6e4dmr7553774137.33.1795698644368;
-        Thu, 26 Nov 2026 05:10:44 -0800 (PST)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d6e7d784b3sm21640745137.2.2026.11.26.05.10.44
+        bh=/8RldKvPQUEazbYpydH6ulNIbu8h2Gc8WOSWGgj6gjU=;
+        b=GFKjEdcrPvw5cME+EX7BdzdZv9vN+EH750+sTqkkU2N29GQvrzRPhMb7wosvJgtr4i
+         hKsV4jitX2H8zTU9j83JSzgv+UR+xiw96sIm71HMYyK56Lzq/wMdrvnsvA/QX+T+dvHD
+         ljL5LFNS6J7zo5wylj15XhnQt8wgr+YnkZZajyXxrJOPQz7ymMvOKCrxtdIDpDyCnHGZ
+         E2uh7Dd3xSpnf3c0srZtDJYuHH537pfpyWrt8yGqf4Av4dEKcl2vKvBcLHpk4GqFW2HM
+         Z+PQZKTvnwUMY/ZfyMmmAC0LMFtCdinLSHXx4jsXavdqiVvzI73yEwSUADx/AN0HUp94
+         VgLA==
+X-Forwarded-Encrypted: i=1; AL+hErGrnk4xYrsUDZOHScq1H1xqH8mjNwMTff62Lz5ZKDAkS0XSe+3EeeOwLVHKNPSzZvWsIYv6ww5ZJPcSADEiKs54Bg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8cY4KyfECdnqwCc5GXWTeSgj5QVacG/jw6COtrrObi0LEsyEmx
+	OBprDAvvY2EgXLkLEOf+JM2iaTesEIDKhtgtMphS1zN4UT603i/eODUdOYmyJGDz
+X-Gm-Gg: AZFdTZcXWDt690rQ4USpcwkdeAv2FrKKQbioGP7LxApnIxX2NBi48D1FaT2TI1tA3Oi
+	HzuCNwpyXgO/jcH1GGAcB00Ctqa0j1bHC+SmAmpgbk5RZ/UjbwFCYlYuRCBufO6BEVXa7ygMljY
+	zjhvNzDRSAD73m4w2pnE8OjLm3MfN7WnDAJw+pGoC5fylnpCjDWggEjr43G+vLM8X9xnk9wa5wX
+	D/+GZfsdLxkVyijFJpgtdjiwtxiqXy5sCttDAFoBn58bflJ1xrdr9LQdfL0G/duAZGWyD2GAIG0
+	3wlnkNEJLzCkEeadPYL3LIacoDqEQ/TDjEFEZq7EVPQnOMB9rOq2qtjtmPEbXzjiLo/IpzTTbGo
+	34Bcgl8OF5oKV79TUxbjGWTMcoNNEESumzy98yITiwKyCoUsP8PJ+DRlgQ1pWZ4cEvv3TTtlEaA
+	olKRpEvRH3yn2RB59xqDE77Z58BRhSy/lvcnZj1GhSZoObuO4qWuZAxJlamoM/FfzAm33C79gju
+	Ho8tCEBBVLqEHkkLGkRvf++6/GhWSL3/453I6t9OA9ETZzi8jeHsYbGD/xxsx2blYUIgAt1nETM
+	PRH99an8gKPEle82l0oiG5LNMjSh3aH7AYKSw2KfmztO0CnswbHh79w/O6yOqsG2V6Y=
+X-Received: by 2002:a17:90b:5888:b0:3b5:a3:442a with SMTP id 98e67ed59e1d1-3b500a34677mr4685778a91.40.1795699047873;
+        Thu, 26 Nov 2026 05:17:27 -0800 (PST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com. [209.85.216.54])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b48b41928esm22934037a91.9.2026.11.26.05.17.27
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Nov 2026 05:10:44 -0800 (PST)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5ebf39def3aso2530863e0c.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:10:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFYEmrJKpB2i2sHbGB2imG7+nd690Wj+Zo3RnQRgQ8wds61wh5329ConRzOdN6HEgJWUYheUqewMgxDV3//VtTaKg==@vger.kernel.org
-X-Received: by 2002:a05:6122:1352:b0:5ea:d1c4:7cbe with SMTP id
- 71dfb90a1353d-5ee8af79c4emr10201505e0c.23.1795698643771; Thu, 26 Nov 2026
- 05:10:43 -0800 (PST)
+        Thu, 26 Nov 2026 05:17:27 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3b41e627cadso4368944a91.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 05:17:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErF7i5mgtxfTmD8LFAhYkPqUYDJ2Fd4DvY3t3yHE87D4wnUUGU/4cPx0NfyGWhkZYv7J/GR2MEh5ytjOQtoz0BUj1g==@vger.kernel.org
+X-Received: by 2002:a05:6122:8b87:b0:5ee:27c9:ebec with SMTP id
+ 71dfb90a1353d-5ee8ae89d30mr10164180e0c.6.1795698590878; Thu, 26 Nov 2026
+ 05:09:50 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -80,15 +80,15 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261020031049.969895-1-den@valinux.co.jp> <20261020031049.969895-18-den@valinux.co.jp>
-In-Reply-To: <20261020031049.969895-18-den@valinux.co.jp>
+References: <20261020031049.969895-1-den@valinux.co.jp> <20261020031049.969895-16-den@valinux.co.jp>
+In-Reply-To: <20261020031049.969895-16-den@valinux.co.jp>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Nov 2026 14:10:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWk9pZdJ+eh0dNHrZSMVDe84_rsvmrD=pC1Fjy9wEyp1Q@mail.gmail.com>
-X-Gm-Features: Aa3M54pKW-6JgYTYZWdXwvcVTMAw8E4E5W6RppZyD7aVJ1bsffJTTTgDbIyWkEQ
-Message-ID: <CAMuHMdWk9pZdJ+eh0dNHrZSMVDe84_rsvmrD=pC1Fjy9wEyp1Q@mail.gmail.com>
-Subject: Re: [PATCH v5 17/17] arm64: dts: renesas: r8a779h0: Describe the PCIe
- AER interrupt
+Date: Thu, 26 Nov 2026 14:09:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUodx0aRPvj9YZVS5SV_42vq0bvnk8VgPFmeOoZDXh4NQ@mail.gmail.com>
+X-Gm-Features: Aa3M54oGF1y6BfpWLxe4xGuZFgd7nGmTk63s0g99O3cHf_svXMj9Q2unpIc8mY8
+Message-ID: <CAMuHMdUodx0aRPvj9YZVS5SV_42vq0bvnk8VgPFmeOoZDXh4NQ@mail.gmail.com>
+Subject: Re: [PATCH v5 15/17] arm64: dts: renesas: r8a779f0: Describe the PCIe
+ AER interrupts
 To: Koichiro Den <den@valinux.co.jp>
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Shawn Lin <Shawn.lin@rock-chips.com>, 
@@ -104,14 +104,14 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 Content-Type: text/plain; charset="UTF-8"
 
 On Tue, 20 Oct 2026 at 05:11, Koichiro Den <den@valinux.co.jp> wrote:
-> The PCIe controller reports Root Port AER notifications through SPI 454,
-> separately from the integrated MSI receiver interrupt. Describe this
-> interrupt with the "aer" name so the controller driver can use it for
-> Root Port error reporting.
+> The PCIe controllers report Root Port AER notifications through
+> intreq_pci0_lperr (SPI 421) and intreq_pci1_lperr (SPI 428),
+> respectively, separately from the integrated MSI receiver interrupts.
+> Describe these interrupts with the "aer" name so the controller driver
+> can use them for Root Port error reporting.
 >
-> Append the new interrupt to preserve the existing interrupt indices.
+> Append the new interrupts to preserve the existing interrupt indices.
 >
-> Suggested-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > Signed-off-by: Koichiro Den <den@valinux.co.jp>
 
