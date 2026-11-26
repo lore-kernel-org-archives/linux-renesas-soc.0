@@ -1,127 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.159
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795694292;
-	b=z6dyQTnlxnd+xmVJc2/lE+lIi3Sagz543/yYcQMJaQNERmei1rNUG/sKAK7RsKYzoOeB
-	 BQ3gneR0vMd1vHfX7di7qTQXtxrU24voSljHK7mYVr6cGzoovvoLZnPLtKOekuMd01J7g
-	 rBOYzpbztkXms1Vc4Qw+qmpU9bAstxzuSXp0zyKUltj1gF4LXfG+PBEXlOLfqFlfY9bOB
-	 x5kX8wvnut+8lOpxbaETMQdg8jtqBIVInDMZ+G346W0Nqe+lmNTkkxPu/kO6qGS6Fq5vC
-	 x+q+0LziHJnUEvfe0vN9cqIwRQBeqjghW8vZfKhngwTYQkKE88mh5xdR0qeL1hHmHXw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795694292;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Received:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=iQW6r4UZTY8RpdKAaydRLhL6rNwNReecY11ijRbcSM8=;
-	b=zxyMUoePW8+oo/wE4ojWMuZSMK4gJ7MFYh/Ph+DqSkWL0OPry7lnC7Ok0d5ZDP6aaJg1
-	 1Ix3W2n9vHKgYr1dQVLfVulm+to7DoSpZH8cg1jGxmSxqDiBbgC4SXta98lM9fTL52EUS
-	 weA/DpY7sh5yLTRX9DIDzPSVx2vasNOjd4dp0yNz2sBg7rAHl9Zf+aU9HQcIXXgsg8+9O
-	 oXFRhlU4x5oPDTmEAAzgBrJBUFMnc+B3YGfm2AYrme36ZFUKOs5jiILkvgG2qKJp67CdA
-	 Gsqypo1zP3vk2dq1s1U97dGjBO/u69n4zcpcuMdZGh9OMWfAopdFMqIvdOUTfcxd7Qg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ragnatech.se;
-	spf=pass smtp.mailfrom=ragnatech.se;
-	dkim=pass header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=rB43Zaxv;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=yvrwvHgC;
-	arc=none smtp.remote-ip=202.12.124.159
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.44
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795695229;
+	b=MqZtdDgeGtL2G3WeOWXB6chxshsw/A57STla1I8/yP80393wzoyIh6B6RgdkEzpIDPEG
+	 D6ry2GW9l5BXLqW3HK0oHNf+qERnyBM2Iw7zrEsiARp4Ntfw+ExTaBmdZsAz7Hivobt6P
+	 rUSYKHwz7B4dg7UZegDq/+tv7VzjsRYPbHRjUzittfPnWvCdQMqSNmFH63GAS8QVl9Zgq
+	 QGrfn0JbTTpyd1z5EnVV8dyMEkA76p+R0GrsH0/UE9cWM6YnWKTpn/H7YHETe7sc4YOP0
+	 S+mxO+RYseoANKjM+V813NMdD2Ho+acz5aDhqim+AGnhLsH2B97fmj2gFTEseD9AA4g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795695229;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
+	b=K8AtVPe+LdoPq8i32XnNpJju/nxE5wy/zhK1+5+eqqFkOG/xjxgUS4lxeEWwSUx7G3yB
+	 BceIp7rIYjUUXv0mhCfVCOZU3w4ngrSv+VL1eA1K3T/t9NNyX+mCv3pgBLcEe6zPNW2R7
+	 jUjIsif3sDEWqaU54+fLghSyBj4reRcXBKSuDae1SoH55Rj1xLLgzJyFRuZDgqU4xbech
+	 +KEvlV58fJe8HattlD5fWDRgankwGWBEXggFO9jQzAhA0ZN5lHvse/S5fWcpfgM3gNy3Q
+	 leM7oniGorBrv0wiVOyWbBuia03F+dwToEGTRPpRbmkxzroaLjNC71H/W6f/IsYC0tg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OnTrh62B;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.44
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2500A606A329
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:58:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2500A606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6D1606A69F
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 12:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA6D1606A69F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ragnatech.se header.i=@ragnatech.se header.a=rsa-sha256 header.s=fm2 header.b=rB43Zaxv;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=yvrwvHgC
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 5D8FF7A03E9
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 06:58:10 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 26 Nov 2026 06:58:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795694289;
-	 x=1795780689; bh=iQW6r4UZTY8RpdKAaydRLhL6rNwNReecY11ijRbcSM8=; b=
-	rB43ZaxvN/3HgZ8FbOy1U6R3eAa5IrAJpM/neOE3gx4jtTWpsQBq9ZLw2MFy3fku
-	ZPpoAn2CIiNnFT7N74BOeFt54LWh/B40cjsvSVkxt7Rqb3zM/rPnYByC+w1c+kV7
-	c+QCijLbAGZMyAQvHBZFOo6wmzG81nOoGOyULDd7okquEaH9slR1yRClLeyJiCHG
-	6IvVH+6x0sCkFco0IvMdU744UGqDGf+2TGtT28rwifbBHOEp0fPcE3aeXj7nnnZO
-	p39RwbtSWs2RUDqP8nBGMrZYBAO9mM1eL+Y3b3CznkjcjP2LOH8U1ExV3pRqDVzp
-	lH9knkD/yGmHRUmfbSZRtg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795694289; x=
-	1795780689; bh=iQW6r4UZTY8RpdKAaydRLhL6rNwNReecY11ijRbcSM8=; b=y
-	vrwvHgC5/EY9XWL1dg5aS3G4wjt+0Et+Yu3sweiQjS580uPot8jPTRmzWEP7/nyD
-	zurIw3uF50KtkDuSJElKqKp1obA3/mcSGWnMS/fyO6nDQSsjPc1pbc2LT+Zs0w8D
-	X7sJWDZihF7dJni7qXOPzBo2PnhN7jV8uPKK+dBTLAjmosSYMhKdww7635tXH5wY
-	pS/WH50kUeJvWHYJXGyiWnUNAdSroe6k2KEx/u/PPQfWDG5qAHzt47jWHKdd8W4E
-	iQ9oKtKsCoxB5nCs4bL+DyMzFKgPsHPFQjO9vmFS8YfqNrU3Kw1vtdo/vK2ZmflF
-	w+R+jXEBL9KEnFc1UC6kw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=ragnatech.se a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795694289; d=ragnatech.se;
-	mf=PG5pa2xhcy5zb2Rlcmx1bmRAcmFnbmF0ZWNoLnNlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm2:rsa-sha256:kqX+yUNcHUmH3OdqEfSF7bD+407lRGFOobuh8IkzD/2Qbn6
-	/P8qoiod97ZXdU1wrHm0VN0qMPvkI8XXXDzxTif34goVtCG9Kp7xLQID2af7c2NA
-	8/RdRHsMcp6H/J4IaN7gEw5viEdkGKY8Ho716PlJdy+jMMvSZDR2Cvby9Ex/ElP9
-	Ep1oCujhQhfQ0GaBq9nDWSHX67NgJ5lYSHR/3cjeyE+k6Brj26vc4VQJW1f/cgsc
-	foCvhUvzvKaCfRUQ4JyQ5AlIZBu5l11fPbbHa58jqW44RuPqIFks70t3xWP452O8
-	IcMR6UZ5prZlMgFG7t4thmOytbAgWokhpVs2+aw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=13;
-	hn=cc,content-disposition,content-transfer-encoding,
-	content-type,date,feedback-id,from,in-reply-to,message-id,
-	mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:2QmgQCQCZxf2l3/728nfKWATWfWOTsCmwjr04Ag9cL8=:dOEAWIeel+AGrymSiWHAvMAANVKg8O2dcbt2sPHjXo4=;
-X-ME-Sender: <xms:0R4IaxR3bCbMBGseP_7AR5XWWLPBAo7_HmhfHWNizGjPAW-nZIit6A>
-    <xme:0R4Ia3WSZmVHUfVnjbuNnJ7zI1W2_ZWhtN6lktefLj1SVOmbZOEARnYhEFr-cFSRo
-    AiJwR2mwz96Af2fhuxcpv5WPzyebNKaCGCPwKpKCGpHLBr1iN8ikVpQ>
-X-ME-Received: <xmr:0R4Ia7Syw0HPNvtDBo7o9Ns2ly-yLFIggogZoy0J8nUIJ7pebhJyV5KyrnKCCEMjK4vTj2AiINaUX569VF76-rWsvzx6QYI>
-X-ME-Proxy-Cause: dmFkZTG0bzJWOKv9yAufAK3CGuu/qiL0R3alEF/1g2C8PJgS0X4PnevIcCPjHhGpa6E705
-    ZaVlr9a8PgKzmK9Ar+OmBXZAH/YgQuRCNV8BiqmRNKpOsx9IqdYpcSbG7OhPJoFFzEzV/2
-    5MJumn6yLU+YrRYcbpNl50I9KN4eYyOr5aytFZV9po+zEGoPHH5XOPi4Obi69tS7yc4lyA
-    JBISblMZet6xqQZsslT04gsniVLOSeB/+jEyKqFAZJhGTKB0IfJiRWZlKcCWG7L6J7C7vf
-    eVLdpoPwk04hSooAr6Bq9O9Mwg66kXw3+bStaO16huDMmlw0jRRBBpAecwKt60HRPocxWq
-    WXOix8zG0psqQY29AN5J4wjKC4o8ZAVKOl0h/5YMPoVKpFrQAkGl7UbwReZ3itG/1HFqDG
-    ds1Mz8HgaVOysi9aLRHuyBdePZgH0uoXJ98g0OdcxODl9O0CgawYkiLiK8d1//6Xrf3vYn
-    JZQN82b7y4Aj9zubA2sL5EQA81IOduiu7feL8OuHAxcmjL4C82Gt/gFgAb0dgn9jwVsBiu
-    RBwGfugHhm0vEPH+Vkj2AXYin20YmAUiqitd0RX5WkF7zsZOcCAyrfbk+0GdrQYkO0SR0w
-    tFLTgmUYYCaYBovWwIaK2i2rGvvmguKDiD9tptslI3zoGeC7jFxxvAAFWIlw
-X-ME-Proxy: <xmx:0R4Ia_3PRdkR0PKMpn2hgeBVO7tPY2nTwBq4-evdI_91udFYlKsutw>
-    <xmx:0R4Ia7e08Lr6TTbBacEQffQTfrvY-Fl4AzLI8KfEnydg4gcEy61o4w>
-    <xmx:0R4Ia3PTj_5XfyhyDHgNMZhBS01gHJLAAcnQS5zRaLclzy41d7lntg>
-    <xmx:0R4Ia_XC-tb5sJa5uK-RI24ZKm3npYYwNpjteunQtiWrvIi-tW-F1Q>
-    <xmx:0R4Ia4ltjkTHPzRZqSo0zg_7r1pBDATWqZjRi7ksEwinTN1aXYHS_SZ0>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Nov 2026 06:58:08 -0500 (EST)
-Date: Thu, 26 Nov 2026 12:58:06 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] thermal: rcar_gen3: check for sensors before reading
- the fuses
-Message-ID: <20261126115806.GN3898744@ragnatech.se>
-References: <20261125060429.GK3898744@ragnatech.se>
- <20261126013626.2168810-1-shunsheng1218@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OnTrh62B
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-497614c95f0so3956169f8f.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2026 04:13:48 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795695227; cv=none;
+        d=google.com; s=arc-20260327;
+        b=i06MhHCyBa0C3ZZVVKNjHu1MFBlrGdAJ9yXO8mmq/cUxRS1XBMSlQD326HQ+g7MUbE
+         PHt2IlSATJpHTZoVoBhN2B+IYmzDEB0fVC77JrDtvoqRTJPaxBj+YMcYFlyqTEkV5XrA
+         XjIiUeUixC+/Zf5qhXapo47K74yxlH4fMdUkkfEbJIWfce02+/iZUbje+l39SFfxNFSh
+         5pMI/N7IbY/SDBeMfSMtaG0MNg0DuOZAbzfGlDaEdkQPXLCvJVCvhbpFBvU64RaQIdKY
+         WM5jK3wuEez2AJDuraFbt9g+Q6gvmFJxLuSZClMoir0KI4+M80N9PA5Wfp2/EO2KThP/
+         2/vA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
+        fh=1YDq27P+KDEY/qZJcQDeYhm0NR8viM6LpDW9ahSTSVM=;
+        b=YVc4HNr0FOzv1lp3TLOxNSjTpPialoOcXhrhzoA/A46HAYTUEu8fNSta+GbAlzZX4I
+         bwfIPfEu9+JBeqcxxDbHlYOuXnNUI/klMSOiwCOl6jQ5FUGyAuF52i05o0FxpAkS/hSI
+         8fjNuwmGPipAaDE43xkgRzaL4S9riREIZKD2AF+C+nEhQI8fPtJEka4eVOSX7k7/K6Iv
+         TCETqfGg93dfiNSomd+y3EfhWVQTWyyKM3qK7KzLFyiHWwGJZNsbBlh1nzm3vxOsIe6g
+         aT0JTEGGC9Yieh19Ftn1RfDrrl6AMSlYNmwZF9oaRTOGQbUBjZUPosm5pg3Nnds0XBmo
+         CwRg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795695227; x=1796300027; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
+        b=OnTrh62BErmlljhlpukUz7dfRdVPWlz9elGN1Cpqbny/F6/cIHqS6TRRPLJU36UtI0
+         2lAneuhQjEImukoH/gIvi5std14Hg8LcaMmAIEQ2BaVDynDM93tIkxaRxRrBHZ/qVWXD
+         GWuRs0rik2RSvxn0XidRhyLV/Tv1g7CT/XZEMiDvt1QfssEYdjd9mw9HEiNzQz6urGx9
+         ItTNFxmqQwDux8YDHHcj4nD8qO3pGUU3ifos8fFtPn580DyTaVVxoJngQO8sBD+472+J
+         YlShpSQZvDoTlUcDK4sy06iW9YigluSeMQFBpFH5FFASXTAKQIgBjZT60G3rPyK1d8KD
+         oEbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795695227; x=1796300027;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8oQPuCvkPSk5AvgWx1uVWwUGY4FHBPq4s1ADy1aw6U4=;
+        b=DvtH0MwFCT+8jCa224cxHXhpHjebXNvMb1tFKuJfhNWp0T5WG05fXDrUiiHdEDhRRU
+         e4KyBIryuL6WeZzR1N1SsVYKk1RRHGm5jYoeAX51ZQpXHNNgscEwPFewB1MRcNrgX0O2
+         pCtA+I5W8y6cSbtajhjDOSPXth9J6zmuXX7NB8G6ZLtQCGP6oSBVgmXCoazs4aDA1Nae
+         xRFLqgRWrWrs5qiK8y6+/SbEuym9se2lAx9KtD52YbHJpxlN0LjY4laXVhS1purFi4qi
+         JIUuLjw6V9y0hGXufQpm2/4+sS3iRfwUXZFhBNguQ/rEdTyi5cbWkUQ5bffmHdPRKCW/
+         WckA==
+X-Forwarded-Encrypted: i=1; AL+hErHKIl7CANPwEeA45j1mUFX5BIWMGRbVRAc5wf9YmotYvgaQdwL3o6dkiiPCgsECEuO6ANfXbUpQl73h4OSn2LqoXw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8tSODSSnTPkCSWoeHcR4K20dIospc66l15MdW+9FHXEcnKRSrk
+	MGQmeuiSiEiTMNww8n/gDmadAop3pvw0KVIrhz/mt+JJBuA1RZLAk2zQibRzydQ6n4xXQUYmtcw
+	rn+BjBNytBIgahQltlJkDnNjxf3Tzix4=
+X-Gm-Gg: AZFdTZf4Z0WlzBBlIZEeRJB2ehJMj1BUS02BJunTDA5Fhov9wm4ivgtNksrEFbQg4cx
+	LIjhQ7QD7XElZqr/Jn14c97OJExyLu7Fbjbu27bwZO+dvlzty53Ei+95eYCkXuOFhNkSqaldxea
+	m18EH2TxhavIfUFUrQQg+0No202981JUF311bNdx+65MFc4RVD20DeIZgGmG9P1uJaOt3r4QjQp
+	1FnGuywsS+YdA3ciBMyqdYffSSuxNZZc3CC1WVxgp78dJbN+4kwyYA52fDTVkxJCaiPSbLMkxUo
+	q7b9vj3LaZNmiMJ3vucItym/gTaBmPQI5fTkbxxaeQ4AYXaq1OZ1UUGgA+Kz7Xc+5yGVVpPuuh2
+	BXWHKvWxDhOJu6OLYgY4z16ABUxXowSHXyIBOF4pirdqXA9P/UgHTVPhk7u4SgT0nn417n1Ro9H
+	35ZTnlK3onN0pn0MHrxXP9PLpFvgJZDP1R2Q3wJRdnA4wdxf2jORPEmeAkrg==
+X-Received: by 2002:a05:600c:6219:b0:4bb:60b1:4409 with SMTP id
+ 5b1f17b1804b1-4bb88816525mr406462305e9.19.1795695226899; Thu, 26 Nov 2026
+ 04:13:46 -0800 (PST)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -131,87 +105,185 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261126013626.2168810-1-shunsheng1218@gmail.com>
+References: <20261102104907.16007-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20261102104907.16007-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 26 Nov 2026 12:13:20 +0000
+X-Gm-Features: Aa3M54o554CBQDS46Q5cL_QVod_O_1ZDWVlLVSBjQ9SBzaVxWUHV8HeeuRLzrP0
+Message-ID: <CA+V-a8s-GdrW_d1OY42awLqBapVY1LpKbpq_u8ZvGmij_Mnzug@mail.gmail.com>
+Subject: Re: [PATCH v3] phy: renesas: rcar-gen3-usb2: Keep OTG VBUS disabled
+ until role is known
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yaohan,
-
-Thanks for your work and persistence.
-
-On 2026-11-26 09:36:26 +0800, Yaohan Li wrote:
-> rcar_gen3_thermal_read_fuses() reads the THSCP register through the
-> first TSC. If the device has no TSC resources, priv->tscs[0] is NULL,
-> and the read causes a NULL pointer dereference.
-> 
-> Before hardware calibration support was added, leaving the
-> !priv->num_tscs check at the end of probe was safe because TSCs were
-> only accessed inside loops over the discovered sensors.
-> rcar_gen3_thermal_read_fuses() introduced an unconditional access to
-> priv->tscs[0] before that check.
-> 
-> Move the existing zero-TSC check right after discovering the sensors,
-> before reading the calibration fuses.
-> 
-> Fixes: c3131bd5586d ("thermal: rcar_gen3_thermal: Read calibration from hardware")
-> Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+On Mon, Nov 2, 2026 at 10:49=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> On OTG channels of SoCs without ADP control, the VBUS regulator is
+> acquired with devm_regulator_get_exclusive() and its output is switched
+> by rcar_gen3_enable_vbus_ctrl() using regulator_hardware_enable() once
+> the port role is known.
+>
+> The helper acquiring the regulator has the following problems:
+>
+> - The internal regulator is unconditionally enabled at probe, so VBUS
+>   is driven before the port role is known. If the port is connected to
+>   an external host this can back-power it.
+>
+> - regulator_get_exclusive() hands the consumer an enable reference if
+>   the regulator is already enabled, for example by the bootloader. The
+>   unconditional regulator_enable() then takes a second reference while
+>   only one is released on unbind, leaving the regulator enabled and
+>   triggering the WARN_ON() in _regulator_put().
+>
+> Fix this by making sure the driver always holds exactly one reference
+> to the regulator: reuse the reference handed over by the exclusive get
+> if the regulator is already enabled, and call regulator_enable()
+> otherwise. Register the disable action in both cases, then turn off the
+> physical VBUS output with regulator_hardware_enable() until the port
+> role is established. Enabling a disabled regulator to take the
+> reference may briefly drive VBUS during probe; this cannot be avoided
+> with the regulator API.
+>
+> Rename the regulator helper to reflect that it acquires the regulator
+> without directly enabling its physical VBUS output.
+>
+> Fixes: b6d7dd157763 ("phy: renesas: rcar-gen3-usb2: Add regulator for OTG=
+ VBUS control")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.co=
+m>
 > ---
-> Changes since v4 (split out from the withdrawn 3-patch series):
->   - Split out as a standalone single patch per Niklas Söderlund's feedback
->     (<20261125060429.GK3898744@ragnatech.se>,
->      <20261125113106.GM3898744@ragnatech.se>).
->   - Rewrote the commit message and added the Fixes tag per Niklas's review.
->   - No functional code change relative to v4 patch 1/3.
-> 
-> Testing:
->   Compile tested only (no Renesas R-Car Gen3 hardware): arm64
->   (aarch64-linux-gnu-gcc, CONFIG_ARCH_RENESAS=y, CONFIG_RCAR_GEN3_THERMAL=y,
->   W=1, 0 warnings) against 666539eecdf4.
-> 
-> AI assistance:
->   AI tools assisted with initial static analysis and commit/patch drafting;
->   the author manually reviewed the probe/remove paths, verified commit
->   c3131bd5586d, ran the arm64 compile check, and takes full responsibility
->   for the patch.
-> 
->  drivers/thermal/renesas/rcar_gen3_thermal.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/thermal/renesas/rcar_gen3_thermal.c b/drivers/thermal/renesas/rcar_gen3_thermal.c
-> index 9c64cbc2ee670..a96f02d4a8adf 100644
-> --- a/drivers/thermal/renesas/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/renesas/rcar_gen3_thermal.c
-> @@ -557,6 +557,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  	}
->  
->  	priv->num_tscs = i;
-> +	if (!priv->num_tscs) {
-> +		ret = -ENODEV;
-> +		goto error_unregister;
-> +	}
->  
->  	if (!rcar_gen3_thermal_read_fuses(priv))
->  		dev_info(dev, "No calibration values fused, fallback to driver values\n");
-> @@ -588,11 +592,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  		dev_info(dev, "Sensor %u: Loaded\n", i);
->  	}
->  
-> -	if (!priv->num_tscs) {
-> -		ret = -ENODEV;
-> -		goto error_unregister;
-> -	}
-> -
->  	return 0;
->  
->  error_unregister:
-> -- 
-> 2.34.1
-> 
+> v2->v3:
+> - Added Fixes tag
+> - Added Reviewed-by and Tested-by tags
+>
+> v1->v2:
+> - regulator_enable() is only called if the regulator is not already enabl=
+ed,
+>   ensuring exactly one reference is held.
+> - Dropped enable parameter from the function
+> - Renamed function rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable=
+()
+>   to rcar_gen3_phy_usb2_vbus_regulator_get_exclusive()
+> - Updated commit message
+> ---
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 35 +++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 10 deletions(-)
+>
+Gentle ping.
 
--- 
-Kind Regards,
-Niklas Söderlund
+Cheers,
+Prabhakar
+
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
+as/phy-rcar-gen3-usb2.c
+> index b5ba751805aa..3481505dea2e 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -1114,8 +1114,7 @@ static void rcar_gen3_phy_usb2_vbus_disable_action(=
+void *data)
+>         regulator_disable(vbus);
+>  }
+>
+> -static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(struct=
+ rcar_gen3_chan *channel,
+> -                                                                 bool en=
+able)
+> +static int rcar_gen3_phy_usb2_vbus_regulator_get_exclusive(struct rcar_g=
+en3_chan *channel)
+>  {
+>         struct device *dev =3D channel->dev;
+>         int ret;
+> @@ -1133,17 +1132,35 @@ static int rcar_gen3_phy_usb2_vbus_regulator_get_=
+exclusive_enable(struct rcar_ge
+>                 return 0;
+>         }
+>
+> -       if (enable) {
+> +       ret =3D regulator_is_enabled(channel->vbus);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       if (!ret) {
+>                 ret =3D regulator_enable(channel->vbus);
+>                 if (ret)
+>                         return ret;
+>         }
+>
+> -       if (regulator_is_enabled(channel->vbus))
+> -               return devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_v=
+bus_disable_action,
+> -                                               channel->vbus);
+> +       /*
+> +        * An exclusive get of an enabled regulator already holds a refer=
+ence, so
+> +        * add a cleanup action to disable it when the device is released=
+.
+> +        */
+> +       ret =3D devm_add_action_or_reset(dev, rcar_gen3_phy_usb2_vbus_dis=
+able_action,
+> +                                      channel->vbus);
+> +       if (ret)
+> +               return ret;
+>
+> -       return 0;
+> +       /*
+> +        * The regulator is enabled only so that the regulator core holds=
+ a
+> +        * reference to it. Do not drive VBUS until the port's role is kn=
+own;
+> +        * rcar_gen3_enable_vbus_ctrl() switches it from then on.
+> +        *
+> +        * The VBUS regulator used on these SoCs implement the .enable/.d=
+isable
+> +        * ops, so regulator_hardware_enable() cannot fail with -EOPNOTSU=
+PP here
+> +        * and no special handling for it is needed.
+> +        */
+> +       return regulator_hardware_enable(channel->vbus, false);
+>  }
+>
+>  static int rcar_gen3_phy_usb2_vbus_regulator_register(struct rcar_gen3_c=
+han *channel)
+> @@ -1151,7 +1168,6 @@ static int rcar_gen3_phy_usb2_vbus_regulator_regist=
+er(struct rcar_gen3_chan *cha
+>         struct device *dev =3D channel->dev;
+>         struct regulator_config rcfg =3D { .dev =3D dev, };
+>         struct regulator_dev *rdev;
+> -       bool enable =3D false;
+>
+>         rcfg.of_node =3D of_get_available_child_by_name(dev->of_node,
+>                                                       "vbus-regulator");
+> @@ -1165,10 +1181,9 @@ static int rcar_gen3_phy_usb2_vbus_regulator_regis=
+ter(struct rcar_gen3_chan *cha
+>                                              "Failed to create vbus-regul=
+ator\n");
+>
+>                 channel->otg_internal_reg =3D true;
+> -               enable =3D true;
+>         }
+>
+> -       return rcar_gen3_phy_usb2_vbus_regulator_get_exclusive_enable(cha=
+nnel, enable);
+> +       return rcar_gen3_phy_usb2_vbus_regulator_get_exclusive(channel);
+>  }
+>
+>  static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+> --
+> 2.56.0
+>
