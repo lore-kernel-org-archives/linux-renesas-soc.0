@@ -1,111 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.140
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795768100;
-	b=K9jKXdZYmKnS+kRDJ2mCG38THFOymt3ebhoDMY+c6cdO/7G3W14kMJDF4EaMptxQMt6l
-	 6awva4y9J0gzSrtBeqMf6ztHS7rLvzz78yICkbGuVefHNfsu9caNRJ/WXoKQA4dH8OunW
-	 poeCmBYEhD5uIO4f8HhqKrWwBCW6Ia0ND2jsi6zQrZQW+AGdyxaBGzHFV030aF6hVQjU1
-	 gA1qcl38LiF/bioFlXro1DWUmmM7RIRHmXajZWQLjC657aoeCXPCs6IG5hZuqDCiviAny
-	 p7986tMSxEspeFy3tihX2TDUtsquzI0OgWWY4eT+/DfEgQpuzXlEB4EjIaZ92tfugLg==
+	t=1795768607;
+	b=wVZvCp9w98f1abGqSN056MOKuOfHInX65pEwYLoezom3zyI6z9HSjT7HW43/J6bFG0Z+
+	 0GfuOubE7HLqFVhOZ/K0jWLru4xL/mgSKY5Z2B2S4GRcwP1tjVnwYh9v4ixAiILeT8wax
+	 JSjCIGNWQRIKhFUEaUGnNf2mOTt+ETDemlEQASwu2Y9E6XEkMHfZaG8XCqrgK6G+AGRSi
+	 hwr3gr7vjSc5Xpk7qatTSWHEo056t05Lyfw2UmfTg4pJCFSczB4uTRbeLgfPrYADCr/IA
+	 NOiJGmNwsmELKQNrR6WHs8MpVZaaN3cfKfQRwMXuNRZvFXnu/kAqGsVJWX14LWGIYGA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795768100;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=PHoEsBWMB/Vv0GOcIoPO7nCqnHKlQq/3bEMPvkd/FSs=;
-	b=sDeMW3gpr/AAwcUodQKD6RGWOLlpMx9/9Gl+6SAErHhqd6C0xydSieJgW9YUaEA7uOrE
-	 hAZMLkLPk5c7RrCggeLqmxk4szKagJAZYu6zcl7ZQMa5MwQCMQbnl1S+/jW4krbKmEBG8
-	 YSTOsG1ooKGRuxrN8fpnURqpCLIxI3ElRNGNz0CxSiH2TrjQcK6WZbDCzm1AKRNjIXIeK
-	 8uYFySDbYPwskmPUK88/YEfb+B66NYxl/B+j3QndP0MQ3Ds8aXjUlLfX8EDsH8MM/74bm
-	 iylusH2H36HuS0K4NGDRpq0a+dRq0RipKSR7PCBP24MPQVYA8cF0ZIjhRAN0hfeeBQA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795768607;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=Db+joe8rpw399lL58pGgMb5PYNQLeC5tKwj9k0QIVOA=;
+	b=QHNMnYZbmtBq6hCZStS14QbsJ8lJW1qB90VL2Yv8QW2Tu5oIaFDpiB+4s+5ZEwf8PTVC
+	 l90k0ZT6RcEG6eWoPz+YJjOdK8B6bumx/Qfef3L1JWq+nUGJpCfrZDXYKlMxa60lTrYSB
+	 VxPbsAvZ5rTB2ScGD7n2Ofk8bEiRNTYC0mwkEAsIclFrrGDIOIuCadsAir2apkYgp1AGN
+	 eTqHrCi7qNOaoYPlGzV0xYS1INMsTZgjZ3vtgM+wwlxGUcONCbvJ3ffwUMMwzEnrj/lSD
+	 +dB1d/LggJUPcjeiE6GtscCHMhoPObYCj+R0MsHGTgwYTkJluEijGeoar8Nj9hS1KHw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=glider.be;
-	spf=pass smtp.mailfrom=glider.be;
-	dkim=pass header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=CgA0O09R;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=UgohNIFo;
-	arc=none smtp.remote-ip=202.12.124.140
-Received: from flow-b5-smtp.messagingengine.com (flow-b5-smtp.messagingengine.com [202.12.124.140])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=K914BApr;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EC6606A31C
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 08:28:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0EC6606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glider.be
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC3D606A31C
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 08:36:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CC3D606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=glider.be header.i=@glider.be header.a=rsa-sha256 header.s=fm1 header.b=CgA0O09R;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=UgohNIFo
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailflow.stl.internal (Postfix) with ESMTP id AE7731302E45
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 03:28:18 -0500 (EST)
-Received: from ams-imap-13 ([10.64.2.33])
-  by ams-compute-02.internal (MEProxy); Fri, 27 Nov 2026 03:28:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=glider.be; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1795768095;
-	 x=1795771695; bh=PHoEsBWMB/Vv0GOcIoPO7nCqnHKlQq/3bEMPvkd/FSs=; b=
-	CgA0O09R9B1wAsYt5vMW+n0K3Mad5pEsbaLPJxh5NEZ6ybivcqb+8fMNsrzKPPx0
-	li5wRaRYnAPti/HyxLIa4asBvV27eOZga82hGNR0/RPNuRayCEGxEYocEinvY+36
-	cIQAvRlZEVkEUIyO5DzIpxsK5jDFdsnKdVwUoyQRLn7AL4Jsf8NmG5J6qlgYCD+0
-	dQ3UBNaqb7d6/PdNQB84V0o9DW71bDKyiCfw8kX+bsB4djkJWmuFgYqMJ3je/MgZ
-	Vf0TlhMS74XJdrnZo3GIdmDWPF96mHlnOOxOe8Cr2SW9sWBt6NPKP6f6gmiqBzR5
-	YcJ9Jgb7uFUYlPPHUurPIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795768095; x=
-	1795771695; bh=PHoEsBWMB/Vv0GOcIoPO7nCqnHKlQq/3bEMPvkd/FSs=; b=U
-	gohNIFoNQvj6IKovQiP+hT6C1JbeEepAZDWci5u4cSRg9TTyoBKfqdfQx+7tR0W0
-	3EMN2uxAJoOsEHDA7AFKYyoJeoMQejixX9SbCDLNiJC2lwzHtgx4jDlh/ZXrSV76
-	/v58Dw7xTpqSJKKkb3OH26RVJgJLIRjujC9wbnxwbEiV4/MWIP+vATKFxLvfGwF0
-	uqWZewL5B4npNaZdFTpYssfj1dgjaO2LB4OvJDJ8k7DNrXY/wJ+TaatiG2xuRwyI
-	HiF9Rgg7PcKQeURBLfe9tnx5gv+h4zqRag1S9t1ajkwEY+N4FLSi/s8BAEq0Iav1
-	0JbohXG28Za57AdDlRSGA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=glider.be a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795768095; d=glider.be;
-	mf=PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg==;
-	rt=PGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4=;
-	s=fm1:rsa-sha256:SshXiGV7NBYSY3nF11ecRcLqgsvWfnimFGiDKGp+bEpPTnQ
-	67g6tGDj2Y1+XAZLGmTPOnm46XzdyYWdtUUy6JRtAuuiCqrV91r3ZBh+0Kq/B87T
-	T0F7nnj/5TIDlEacKBZ1TLzgOa2QMQngHbTre2i7DpL80Ns36kEPAn/wHvzTf+Bz
-	sGt/p5GM6ReGTh5oqxbOyu8ZDzyPGcljeGysSvbym8tuAbXagUrkOEhgANzAz0p3
-	32qDr3T+4qwFkpVr8rSOW9k1fg8kDj4w817Ym3o7+a/MzARzkmJufcQLb61s63on
-	pEE3Ujld1eHLlnRc5kIHlJr4EGie2e9P8wIEmvw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:JQ13mwjQSnnLHD1U62VcR6g8sa4ICjl/rw/wjbS6sSo=:Lssb4J0SX8nLPBA/hS+IhV4CtK40HRDJSmlj0QhTAts=;
-X-ME-Sender: <xms:HT8Ja3j2onYF1zMx37E2Xc4ubQmqAd4vtD01JQqLr4pDq3X_SUUFqA>
-    <xme:HT8Ja-2UAQ-4PVSUJRnzKhJpCcI7ggon8Yh3NaFPQzS3y8_EDNse0aR5fKUBaFQfX
-    L32Iajlzla21vmgfmnr_GjTkXwSXcEMMMKw-478T4elv1_07ALpiag>
-X-ME-Proxy-Cause: dmFkZTFfqaFfUznSGYVQzFKOKxtdbFhsMSVBQf++tvRHuXGvItOYHDFSDY8XW5MZY9+3hf
-    ml8dFqH8O0n0MkeydhK5lCwkEhJh5RN6ZKhOtivXegDYl0PQm7EcKHVf9xITCeFhoWlBUZ
-    6veNHka/krOgdCogNZaZyeDaAXjwslJyceT5LdB37IL8GYDS6ZsyhFq5sx/mZOSoPBgjPl
-    dY8C/rbGtIs2QaYgldSan3axMy67PzXwZQC5CGBHF08WipD18RrpX5xzNCy7iWYvKptwgf
-    OrAcy6i7UbPXt70OKhmJ2BAbEPRQsLi03Z55Jymsr9TUg1jMIyP3/VSTvgwPYbxTLwK1Rr
-    DYK/JJzRIGa0UlN9EkPsDIg5gjhGeEdTkx0LGjtodDblGIMGNvKwm/HYH5WEJDAziiukj7
-    UEkk4Ld3GFsiSaP019OFn7vtIV+RbUr05zCv3Tbqe73XQo/BetuFcCz5uzvui/l8ioKfNe
-    c/o3ApHy7MVL9tc4bYFu8lU3W8nyWmXjB/L+8HqTaQA/6zKH9JOqI3X9a46nK2NdQmW1So
-    cvF8bes/j/AiZVL9u3JhbMPAppkj+xLjIAFpk7S0hWwk7tVsK7ZF85inSfRUkup8xNMq45
-    93lcYnruNaDVeD0U6dNeRzFmwGeAwypkOS3vFvgfa+rc2FJfDZfPN1sMsV7A
-X-ME-Proxy: <xmx:Hj8Ja1JyHXttPmk-uFm4N9eqnrzQ5dpdgL8CmflR5cmZaeTSAv1gEg>
-    <xmx:Hj8Ja8mmba4R1dgpsgiyBOBpdsLCiQgHB108mVK8jxIk7qn79SBv6A>
-    <xmx:Hj8JaxOtv1-VlBKQvrfE624KoOP3J75kkF35sRYD2dxdSEL_mkN19w>
-    <xmx:Hj8Ja62pzBwucNP2LQlm_wjd-sNO-G_IQdgpd7CoREC5ncTLq8ZaPg>
-    <xmx:Hz8Ja7Ep95q5RNLCoAKL2Fni8f_KvvILT_DPJQRFbpTvkrgy--Vqm4fA>
-Feedback-ID: ia0f84a9e:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 7884FF8009C; Fri, 27 Nov 2026 03:28:13 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=K914BApr
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so79017085e9.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 00:36:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795768606; x=1796373406; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Db+joe8rpw399lL58pGgMb5PYNQLeC5tKwj9k0QIVOA=;
+        b=K914BAprYdabZwltvD+D7iBmXnO1hjFFIlxPoORHYa0kJgn+V9Gfb2lEm2wO0dGyAO
+         x/QHMYNxJI3CxeLZ95p9nvJAEW49GeMMhPS4h71jC9i1+mWBDkQKMhEPH78JLZCocFgq
+         2UxM1p7VPVmkKIowcUFcwPkU2UmVNNkniX3Zz5Zvss4U3V71UnTL+IEYXHrtWh6o9rmn
+         gLd/HFpWF+3CWQKmcElu81fIFf3LmzDa3JPRwMvmTrqEcV2Oropq8YmlCno3F6TgYLnD
+         /9A3Ho6Hx2WIP1ME3wn567SrYexhAqbptVPhRv6/p+AHaj7RTnltDvGz0Tn9WOiE49vk
+         FOHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795768606; x=1796373406;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Db+joe8rpw399lL58pGgMb5PYNQLeC5tKwj9k0QIVOA=;
+        b=pDohcUXpGoNKS1FHLE23ohZ3PR3/KziNQx14auQT0ElfCSQQ3F5/851YeJt11L5Whd
+         qh5z2wy9nAOd1oXy7oaEKxm+F9RbJGQZm70bQev/0ckMXZ8XoIG4XTYtmYXCGmWjHcTd
+         CfCNYTCmgBOpIFbxjDBBglDufv2ZSB+9vQtRHveHGnyFkea1OIpImpcgP9qUJH78A6CN
+         FGUQ2XkWh+Lo/a5WTwy3iUdb85CGrRam7eMJ/1SzbrEgoYW9pyT0XnrsLM/Zi5v8iqDB
+         XIn0TN4ADSMyUCflsrrXZxB3vpdPzxjqv2kL0jh+plF3d6ujA3pjomw/RUji3qjna6fJ
+         uVOg==
+X-Forwarded-Encrypted: i=1; AL+hErHgsT/+BLOygzzcVECXo+8elxNWTGSAfpgAfsuIawEx5rOolTNNnY9dI8rGOBI6Y9dcVgpZ5CNeyC+j/UAswxrKCA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/KJISitzUVqKuV0OoNaBHOiOSxlIY8uvgKW+HPQaJOTx2PpTKE
+	VAtuMYzs1DfCggT8gX1LwLIMIuYiys0Q15zFdeOqHTtedtErKJGvOSw/
+X-Gm-Gg: AZFdTZev65zBpT+8/9dhUnegJd/ozJFrVDDSOmHXPBfULZ1YC8LInu0p16C37qvDUEf
+	gq1UOyqfctREvX7ml0wUfHE1xO8iLkHDCov886511RmgcWU0e17KkQgV0Oizt0ptJsAIx1g52vG
+	3A7gXAW04yTxiwHrQ/G1CmyY+MuVG+KWeacl+W2cEqGSZo/ylvpO1PE4H4sssF/7EQ+AFCSf76R
+	yzRsSlHgnwoMFOd89je8+zMTMXeIOCotYutQf9BccyFHThMjwv1RhvSOKBrFJb9EAwqiBoi2KnI
+	AjuaIysFUJkD3K4ZP4qTdlTT7Pg/2u4Q6n0etmqcT0KM3uuJoNQPXolHnQRHz0ib9KRPhv5/+Nt
+	qhys50W2mQ2+rsAJY6Wdl70vMvBXp1EYhhHFL3aENWlH1dWLc2sHqw4MU7I6o7ULi/T5ACf3rom
+	zFqRFu5b4lzgIeC7RNt77p71xrF1SYR2zK8BPVIcMBf38qwrVzbWaa9j6O5fo4QVgngWw5zLht+
+	ULLG8iEel8cw9gKIagZP4bbZKdVlPdoyMhCAfh1IWoq2p3xEXTiwuQHWeVLQKHNE7zFhx9vzyil
+	mm1+0Zuoa7IqSu1ySxUDZBxMHn2PYOvV56ZoyqmHM4RkpRlckMFf2dnphqO6PCMT2IyaM/zF51F
+	L1dQ=
+X-Received: by 2002:a05:600c:820e:b0:4ac:da92:2bd4 with SMTP id 5b1f17b1804b1-4bb887c9936mr468832785e9.1.1795768605767;
+        Fri, 27 Nov 2026 00:36:45 -0800 (PST)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:ff94:bbe1:5ba9:635a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884911e3sm820464965e9.6.2026.11.27.00.36.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2026 00:36:45 -0800 (PST)
+From: Biju Das <biju.das.au@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Luca Weiss <luca.weiss@fairphone.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Sven Peter <sven@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] arm64: defconfig: Enable RZ/G3L LVDS driver
+Date: Fri, 27 Nov 2026 08:36:40 +0000
+Message-ID: <20261127083642.131486-1-biju.das.au@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -115,39 +107,30 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: Ay4LnPi-Nlx7
-Date: Fri, 27 Nov 2026 09:27:53 +0100
-From: "Geert Uytterhoeven" <geert+renesas@glider.be>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
- Prabhakar <prabhakar.csengg+renesas@gmail.com>,
- "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-Id: <33ce3c55-4de0-4639-9860-1d0e0c43f9e4@app.fastmail.com>
-In-Reply-To: 
- <20261126215839.2473086-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: 
- <20261126215839.2473086-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH/LOCAL] arm64: renesas: defconfig: Enable MICROSEMI PHY config
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 26, 2026, at 22:58, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> RZ/T2H and RZ/N2H EVKs use MICROSEMI PHY enable the config for it.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will apply to topic/renesas-defconfig.
+The Renesas RZ/G3L SMARC EVK uses the RZ/G3L LVDS driver.
+Enable DRM_RZG3L_LVDS so the display works on this board.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-                                                Geert
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 9c5b64f34a22..aad8ea31c76b 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1057,6 +1057,7 @@ CONFIG_DRM_PL111=m
+ CONFIG_DRM_RCAR_DU=m
+ CONFIG_DRM_RCAR_DW_HDMI=m
+ CONFIG_DRM_RZG2L_DU=m
++CONFIG_DRM_RZG3L_LVDS=m
+ CONFIG_DRM_ROCKCHIP=m
+ CONFIG_ROCKCHIP_VOP2=y
+ CONFIG_ROCKCHIP_ANALOGIX_DP=y
+-- 
+2.43.0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                                            -- Linus Torvalds
