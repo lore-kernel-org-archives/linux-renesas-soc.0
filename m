@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795771035;
-	b=y2oc0caDruuQfjsp8V+qCeClioJl+l5Tq8oFCSNPsyXQm4tl+ppwJsIYWKBh7VKksLsx
-	 ClfkB5KHS50Alu6ZeF+UWD2+3+YF1VzrW6lgicmQTurleKSw48RxlfwZXESiG1pY9U58+
-	 nfNnZcaxbjSEkaFkpYqwbQHIwyluikvjc4SDfXeZlq5RxppXd/cPb7EUcFD6tDSmv3kLs
-	 ATZLncApBw2X3cPwtZyBQE1cjAnel0uDtqCX1VfPPgyNvkETu6B1TOOKQalA7CveWGJJC
-	 qFC6nQqZLjKhwvpJhTgI6DCE/xEptWE0vrmZ42nk8LhRbqiSE4KRiQc5Zn9jBWT6YFA==
+	t=1795771054;
+	b=G/ffAuguCjKzLofTiY1bGngV+XYd2FZlPjT0xgqnlolO2xca0zDNpABxzHOIr4GjWUI2
+	 FH9a4LR+EvI7/yQO5d/JpYQtKMc/dbWGUFuS53ct8EN5DvKUI6MWhsHiGtbNI3qD40Wi4
+	 eEW3HfJiL6pA4Xb2uPz71xbJOQMjMNlMtBpkMltCA03gyQE3GghYrMcdwDW6Kk2+a+Hmf
+	 lGKn+8k+witnlzlqPzD6AHfteO/EJYFPILic6iaZyA5fTefU837WuRlOk7R/9PnZSsYBY
+	 9xSBw390HiJbhmlejobU3Tk1VUXoPuUghsmTcod63C8/xSgjLYT/Xj/lSYF/PJjDeYg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795771035;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795771054;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=F15I2fevZFaSQ3g9iMuUelugyCWRoLXcJodfxUxh7tw=;
-	b=xCYhgncyEfGehfxo0K17wZBheG2NlFLyWh3zHr6BlEoAH5OvMpaLef/8WCcqQEyAfom2
-	 blWT7myPkahQ+97Rbn2zm8NuxnMofiUYtzqQ3LyZkuMYqx1L/Q6UhwoOW6niDWHxEGx4k
-	 iIwjVFilIKSzjghTki3qimWM2i3k7IEq788pbbbPaxsf0uUAaySPXB0k2YFFH6u2PjtO/
-	 hBWP8AsuCRVhbTnm4y8QtK5SiAjcwts5Z7B7d/ivibK5uiZEr+6u/1lMVeOo91oR+b3FU
-	 6gjYAOUp9WM5gZB8EooFz12besLucEKreBVY/2CYloVaAF+QZJVfSFUzLi1i6P6l8Uw==
+	bh=iJDwnblXoPc0E7sZTKvXtcZa2lLf2LQdU3Jx0B40YZ8=;
+	b=ceBpohhLyHmzV7b7dlfz5IsyzsdDmAMMwA/Y+YiRmeqS88cFtv/r/aN2rlgZ7H6TbKcI
+	 mjb7lg07OCi3mMlEBlQARYyuIhycoFRX3NeFvIiKC3UJOM7+WXbwRGjM0mJCFMhZAzPCN
+	 49NVUdVgoIPqLLRd8Cfi9WYCduT2+B4sAZRisOdE/U837Odi5/FweiMTSGkpysw9V/P15
+	 n8hm8aJEilTe7QaqWlSYqiV8qDXf5rXZFkRHloBslSCxcbzmRdZ/smbjNzaQysRaxCjYT
+	 O0NqXs4Jwp7JQ97ZqvkKsHQF/FI3JAQuvgrmttAH9Cehyrh8D4JX5RJ5HhfQW3coEcw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=tuxon.dev;
 	spf=pass smtp.mailfrom=tuxon.dev;
-	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=iBRw+JF7;
-	arc=none smtp.remote-ip=209.85.221.52
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=aI0lqB3a;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF4D606A321
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 09:17:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4BF4D606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F43606A326
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 09:17:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25F43606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=iBRw+JF7
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-49412eb1474so5164902f8f.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 01:17:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=aI0lqB3a
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4bb64ef5a00so63899805e9.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Nov 2026 01:17:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1795771034; x=1796375834; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1795771051; x=1796375851; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=F15I2fevZFaSQ3g9iMuUelugyCWRoLXcJodfxUxh7tw=;
-        b=iBRw+JF7XI+FsbMljrWUMpxaiKKpfOzx9BNFr1VLGWhsoqp2VSaP5SWnYO8z1hBxgi
-         IQNbBMdeJhsysl+DyR6W0NanRt2DWD8sIglYpY/x5UY1LoWAgPv5ZUnnBfND0YLbUSfl
-         Itsk0XaTbtlowa3WI5Gxl3k5nAWrW+1EmwyyX02Xxa/mHvv+dh/iykowrav92nNUb9uO
-         Bj83vjke6GeDzVChb/+X4O5URXYdSZf9UGvHEF7bClbXmYZAtIIFShgddgG0GM0/SIrH
-         tcAyTh1+lo13Kmdf0MVGZ9iMoPoBNW3igWAXE0c5LOGBN4lH4dIidyqeIIR4bXjt1rJi
-         qmcg==
+        bh=iJDwnblXoPc0E7sZTKvXtcZa2lLf2LQdU3Jx0B40YZ8=;
+        b=aI0lqB3aCQ/4qBvwVRrDv3T2pKd7GIXvwQaW/Zh+LDPEWa17gOnnrr1BRlBIiBDLGi
+         3xPfRxJaZjTyG/xvFc3dneK3xD/vNNrfe7lzCHKDtGApXlb18j3sVqNfkNpyZlK6n953
+         YXQWqBLq6DgnAMebNL03Z+0dRUS7k1lzTKtoLXWxp18A2ag/Vuu/j9v/pXqDglpge3+U
+         0aSVeDRd0euIBB0pClkJqh+3k8ujN4D7hiwgn+JHi6wQmvh/EL4Kk4CFcoCmmj/IueNy
+         dsgWcm41bUvXD8zNf1yL+83BWKY+VC6T4IQuzt9lZYBAlNR/nIKXUaaUworjOtwk/D1z
+         Ktag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795771034; x=1796375834;
+        d=1e100.net; s=20260707; t=1795771051; x=1796375851;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=F15I2fevZFaSQ3g9iMuUelugyCWRoLXcJodfxUxh7tw=;
-        b=AzJ8n4it4368enP3OeuxPACY4qCNC/mrUsF4nX7HDSAJhd32pDZnyVKn4EIVCkMBBl
-         23IEVUcGUXLK0nEs168R9lR03qiiGeGxE4ZUACP9ljbZm+gsMev7uFHAbRU4KRczyLpi
-         bQlfXTY2MjZpN7ifrrV4fGSTUX8913K3K5/6XjvoGUPaUybzStIpfakwXBjO3gBC2yIt
-         67c99pGRWtB5NDHqQIKoTL51IKL44OV1fPlSbpjwq4tz2tO9dEjuY6BqJML5OW3C0xVL
-         fm5mlRvVNeu8tztlTQ0VJPSPtfgVcZaXkJAspD1LqjK8v9Mum2azsfr39v6ew9l7WuQt
-         OF3A==
-X-Forwarded-Encrypted: i=1; AL+hErHDgJ22qWk64ogHozP8nZyDR6BMDcpP0XQYaLWGtGhceicw2fWa4rCufIRaWTL8vf8U366Yp1lpeL5r2gb/FhJQXw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z84S/9C9bbP/pobjhTOQ74FmBGEW2y7nBjYhw02esoLkKCA8Ffq
-	vTYolLfSz6Rqg+0Tu3ho1nrJNXrflJPbLRpZQbq2EQ1OifMdj6EdcGtCsWcFJlyJMRY=
-X-Gm-Gg: AZFdTZf6C8UAAPA6/kD9nb2WFzZIDWUvPb5CAb4h7K4fVg2dV4nogzAIhHMNSKOLEWs
-	wb6Bg+Wa8v3EPW+yM48nbAW1flgvqUrqDJfpltNp7/JXiTtpShaGd7sanpsXR4CAsVxHyz82jHM
-	3XEPj8ufsrKNipgGN0IFBh8gmsWHCgWTOfbkgb7q4fLVuNVtXPTUKL+LhXe3ZcI18SZZegCSTHd
-	IBN7NugdUL0itzQfD7PS1AfjZSZC8HljWanmT71+UvPMwQQjwpQ6MhXYNKWe9Xg8PrLLDLE3Hyp
-	IXwt1BPRRgM3504K8TJBOiPEIbGT39tRQ4pVeYvgC5UmdMnI/33bl2dzVzDDksdRKNJSS0fQmql
-	H5mWn81qDykPyF6X9F95IlpgdpN5ANrIWyWLkM2fw/qk5tIcp1LFQ9X+Y7bPPE3KStYKNXLhuBE
-	UIdGaA2B/cVjxFFwzUOkhfrxEF4nU/dc6FRiaxyiZBK4QwDdww3tDrsBtSmXxPdt7Wxs4wz2qND
-	PNlQ8ccvohExXUF+MLTuvic898FHFLIj7VTJqijIIq6eSiNQTzynBSXGIbBKVk30JNm5kQlY2HJ
-	XwjGPVjb3ernl0AYEwpdJ8NWFM3FwL7EUiRq
-X-Received: by 2002:a05:6000:2f87:b0:4a6:bc53:246b with SMTP id ffacd0b85a97d-4abb5144ebdmr45324253f8f.30.1795771033589;
-        Fri, 27 Nov 2026 01:17:13 -0800 (PST)
+        bh=iJDwnblXoPc0E7sZTKvXtcZa2lLf2LQdU3Jx0B40YZ8=;
+        b=aQttdchuuUjYQnMIwcPsC9C+x41UA8l3Wsv/hln0BU9B7isbji6Xm451Vi5hK3did0
+         wOcZ0fGESwLcbgju6zmXyHXXMyIRAm3awpe3mgM6L1x1j7ENlG9s3eRnUrqffq0GhHRi
+         mD3i0KGNpNbLKTU4VvmFlLS+bDryF5CN+9dXkb7uJ52MPUhMK38DzN/Dek4B3Y2UH2W/
+         70vg2xirF8OwXEPlpDqCD0vueUO7jJ2gA/6lKhMie8AiJCiWK31rQU5kTihRay5WHckl
+         wGRIfoF+3mhZDDwNiI0QiwxjrKrb6avMbSuoVozpNqN9isIMEfy3GNKFnNqEkNrpD/C1
+         u3Ww==
+X-Forwarded-Encrypted: i=1; AL+hErEsyjxUvjrcAAohZxU1d4PbZCZIvg/dCdWzEhtmZNSmYZ/bDq+PGJUnUluQAq2adaiOC9EIjVyXMMpWJ1iUtycJEQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9pWQ635nfn0six4zBXimEbNdQ2c80IAzVjwP3iENUXTEST2lTs
+	3c2nLjTmxA18/g4vgT1aDmIg1R4yX26tDzlli9onUR/vdynzP9CddLpFG5QYVO9kCHE=
+X-Gm-Gg: AZFdTZc9872wm8+0bnU+aVlx2+yFMWhbqlXeBtl05ZVqJGa319nqsIJIJ+nfqEYC+Dx
+	1qr26Eek0FcsfconsEdrt8eYa7WKRELOO6OPADEAPZAvlNLSJB4rFEGUKTqhRjgnlV1AO1rCyK7
+	hhCfrN1EJR3J8g4jMZ+VOOpzmUDzx7f/ZhbGFV1t5XoqpHfDl6NNwyvkZDgDWeHLHoGQV5PgOAg
+	LdvrqTtdxgkpgt2zVXcYRhe5HqWHEEodf5Bmq+jtMbCMeWu/v2O1YchMrE5IICv34XFIxG1X5g6
+	N/FeeVnxclnoZ0hjUAnNvEKEvREtrkx/h3qPaqDOoMPoTF1v7dKIzMCTvwHzLZJOb6HUEduc3pi
+	uZ9W5Ive1+FdBQITEPiRe80xCPRZ2VQ8jO4XnzJpQAZofTNCe6yjNt/li9XXzFLPqR3djoeUaPv
+	4a1+3Kc0UZ2MBXT+i9m3P3Sq9744KflWNPnTOJ5LVJ9BAvblLu2YlTiwp53oX3B/nBSFrSv2OO/
+	QZDVhxXzO+CShLlY0fSijJvwM6uvXGRF5frHPZrsi+iV32icZnSZDPGKfwgnOqLBy9PEdmJAbX5
+	wBZFQRna+zfNaCeSWp1zZ5inl7d2pzoik633
+X-Received: by 2002:a05:600c:1389:b0:4bb:7347:d5c0 with SMTP id 5b1f17b1804b1-4bb88826937mr438432725e9.9.1795771051464;
+        Fri, 27 Nov 2026 01:17:31 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b8b7888sm45914055f8f.42.2026.11.27.01.17.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8526cbd0sm896151645e9.0.2026.11.27.01.17.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Nov 2026 01:17:13 -0800 (PST)
-Message-ID: <bc1ac983-16ba-4165-9827-a7cde032c988@tuxon.dev>
-Date: Fri, 27 Nov 2026 11:17:11 +0200
+        Fri, 27 Nov 2026 01:17:30 -0800 (PST)
+Message-ID: <5c05644b-fcf2-41e7-a012-338ce7eec8d2@tuxon.dev>
+Date: Fri, 27 Nov 2026 11:17:29 +0200
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -93,8 +93,8 @@ List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] pinctrl: renesas: rzg2l: Add RZ/G3L support for
- selecting I3C power source
+Subject: Re: [PATCH v2 2/7] i3c: renesas: Drop comma after OF match table
+ sentinel
 To: Diogo Ivo <diogo.ivo.sx@renesas.com>,
  Wolfram Sang <wsa+renesas@sang-engineering.com>,
  Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
@@ -109,22 +109,20 @@ Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
- <20261026-divo-ssgrlpcsrc-2966-i3c-v2-6-2e76b87209bb@renesas.com>
+ <20261026-divo-ssgrlpcsrc-2966-i3c-v2-2-2e76b87209bb@renesas.com>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-6-2e76b87209bb@renesas.com>
+In-Reply-To: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-2-2e76b87209bb@renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 10/26/26 13:35, Diogo Ivo wrote:
-> The Renesas RZ/G3L I3C pins can be powered at either 1.8V or 1.2V.  The
-> pin controller provides a register to select between these two options.
-> On RZ/G3L the I3C signals are multiplexed on the P2 port pins.  Update
-> the Renesas RZ/G2L pin controller driver to allow selecting the I3C
-> power source on RZ/G3L SoC.
+> Drop the unnecessary terminator comma on the compatible table.
+> No functional changes intended.
 > 
+> Reviewed-by: Wolfram Sang<wsa+renesas@sang-engineering.com>
+> Reviewed-by: Frank Li<Frank.Li@nxp.com>
 > Signed-off-by: Diogo Ivo<diogo.ivo.sx@renesas.com>
-
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
