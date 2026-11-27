@@ -1,95 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.12
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.3
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795786929;
-	b=u+04R1nw5AhMBYnPJmfqxRngOQ/ge42yDdbIdizRVefcgYfhYMQKTcJZiS1XAvg/1krr
-	 trRyJw/5QC6RlJXrqGZJpsBAS5yyCtW/e/j7dFqg7XVzyyfoF5t4VVEw5ZV3JicV+l5Qs
-	 yH1EjpHP/GGDGnQTjSEYO02NcNVfOvUEU1mZIIO1qT8LAscAMMhhmGhjKGggGNibKk8Q2
-	 7zSdkwvT1X6U4NKxNsSm9yL9KnUNK1M7xUCB5IGoNncOu86peCM3xEB27EfFSkdtJtgf8
-	 rck5gQaQc7F5xsUj2PQ5YVPsEM4N+Iq1nxb+CebQ2osyMexFgFCgxWU95SeKSX1D7+w==
+	t=1795787488;
+	b=eRdSo+jaAiTbn21zcn0UU8EAjLuQ+x7QMmbMAr33blI8YPCrHxef2G3LrJLz47IXPEXy
+	 iJvW/jbr2fAc1jkVbXc/i3g5h3zKgACc9JaVIwFJs/b9WdOKncD70E2fymgktJeiFbfGu
+	 PMG/CWPtdlFeFDquO9JHihO7oBf6nMA1T+/+tb2mgsOQnBYzb/FlmEc4CBpUbLYBp8apC
+	 m5Ro2uAmO6ESQzVCKTvqZYhNVNV6zF/3lm8HT/8LXsbNOSkXo/y+OtuGdjSNnePuP5mwh
+	 EiF6w5ILXe0MWeju5F6EFD9iu05WeGeoJ+oX9bFzDK1Z0wiL1GAbkb2Sa5T+UdK07gg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795786929;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-EOPAttributedMessage:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795787488;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
 	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
 	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
 	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
 	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
 	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=atyb43qYmihoBCqNKLY27VMh3jBuUG9hc9RrYHqQ2yE=;
-	b=spMjJ/usMjIkb8/Mfc2d/PzsDzamt6v76zyRwZ9sVhbtcD/IyDCRWRRoep/sNX+SoDYl
-	 ACjYhn45o7MqmrM4ZVBD26fKEC+F6zzGEIeMFXmAZ81lphaAzEqJanu9SXgxNNpZczll4
-	 ufiXjNka9xrETZ3ANbnNEOpUWjJ6TH3u3MjzqFQbH8qY3ks/K/BzjOSqfPv5ROvJz1qdF
-	 8ZhV7qQ75xTrZonP88myBJYBf+q8j0FANWbWxkrbSP0PGbhn8ZtqxQ3fEavIh1aXoElHY
-	 tNxnmMeoNMtBHq3nyKV8rGtWyrePqDK2HCPqgOwmj3gFR5GTh93vAmHYmj7ZSpFAVLA==
+	bh=Zfo3H2DVXSEm3U1wLHu/CQbo35QCCW4YqgWXFfojTIc=;
+	b=1CUuTZMeJnQ7XwmRQzjCRmbEgBD2Elj4QkExJFP3vhI0X+vCUv4rBDk9InIj7vl/rboZ
+	 4I6Db+c5lbboBaU280x7J9I1Qfn+9amIRns+3TIqIxOn+DskcKRlXZwIWKi9hRITTdE1c
+	 cux63vPHxuJaWZ7lojlKb77ICZGplscHBt/T0gabeVj3kRMFkfifOWb3Epom/UK6x71gv
+	 dJ4/Eo4NFYUC/5E+I3tL8e4xh2EEXRIMxfQVY6GkEzyinZWtucKIM3+HuQzVbQmf14UCV
+	 zDXAQ5aClbmBzvAJtaQMXWoPzvdlAhIyaGpHPRdyFbpCM63fMRvEAzMws+41RJOVpLQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=renesas.com;
 	spf=pass smtp.mailfrom=renesas.com;
-	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=FERLc25K;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.125.12
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011012.outbound.protection.outlook.com [52.101.125.12])
+	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=Z4sUDsjg;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.3
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011003.outbound.protection.outlook.com [40.107.74.3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859C3606A31C;
-	Fri, 27 Nov 2026 13:42:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 859C3606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93324606A31C;
+	Fri, 27 Nov 2026 13:51:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93324606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=FERLc25K
+	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=Z4sUDsjg
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dafh59c96deJRV7MT09+u7BChD2xT3XIaiR7RvAcHYzXqUkeFkjzraUQ2kyMlA5+xfFhX6hoxGZuBuUG3MLjp2On67eFZG6oMj2yhnklbMU8/NGClBMsxTTTyO0Y2/V1TNXPt7YIzoBX6dWsp1XJx8MuIhY+NoIMlfMEVwGg8ntJWyNRCve24H3upMUgCN4i8+f+BSofDHjD+GFCD/uGOTldFuerrj55Nu7ajynlprWLyTTwMXSZUQBu0zkUE3xZmOQKFJVeUVA9ccAkLj/ktJ4jRmdKoLwthzpRsKnV51M8MQVrk6zyXp8ZVtcPfyJE14yxLDbih13k+xseizWvGw==
+ b=Qt1FhDVSSPsEs02ppDIfHhzGEI0WuKaRoVOk050z+odmUWKC7tN9g7Uu6XqCSbKHPbqWDkH4Nl3vC64cKPBeA4rk5Ov2kks6k9/Cig2vORQfju3mYqPDgCLQP8cm4ww/33/BlFXDKMoe2xUvTP25alBBzvuiJR8TanwkYH/sWC+BCwj60UvUokmSjSOUflNr02NFvvPIDVy0V3QyMdnfmvyIuiQgOwBOd3jApbSfcez2U0sauTVbSGDfzgq/zbpP/HcWUF9Q1Jnu4RJjBk4wDKbJFFeEUvAdPyxsAqxxMPP41EIdXz/lVkU4gtQXElAsBQGAVN9RRv9YP0TJiRhZZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=atyb43qYmihoBCqNKLY27VMh3jBuUG9hc9RrYHqQ2yE=;
- b=O0HM3DGs0C+/CWdXq1dLp2mrtLxU6ovCmSR1QkFylEhrIr62mvynNwC3Q++O3VRHRcleb7lyNwhi8h+zjfBNeX6oj9kCy+x0Q5VgK1oZ9yElF32SSNMK6cksY3fOKK4K67zM28F8K9lACUuChICXo7Y+AjTYHJERGiLzWArjG1slGyT/X3RKM8Go2PHY7xwsR4H757XS+33kMNpuegD15VjZ8cH55YUPQv/xOnd7VUQ7XWZbSjykJNql9KyACiiK6oDJp3z9ChM2wmS46ZXXPbHlyGjKRnsTJdOfpAoawH+dFYTo65wjUkWPrwu2dMNCV/l44LoJcagzKTIyuj+nxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=kernel.org smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
+ bh=Zfo3H2DVXSEm3U1wLHu/CQbo35QCCW4YqgWXFfojTIc=;
+ b=Se3gQL/OpXpI+6mj4Z/VuaXE2Hx0rTA8ylhjijW1BR6P66W4ba0sBHASbp3ujLauCXE67yR51angMvScY56FHo6v9tQlnFl174OHNZfP6FP/4x7FOY9pWE19DJCLf4tchLCLGPEDs0+qrfMiHzMgCt+D7AZVp2oXrH+pi2kwf5JY6MtmQbZrcJFkF/86zEXsZXmoHySKWxQYHFVEenFnVxSDn/TgFRrVqCPm5BEWYkWbVJDx9l4AmN9gnRBVdzflYd3PocnEkvRma/LASbjzXkcXRjzTbrjqS3++fLUIOQz/WW6asd85SiJxmINDoFQfzTK0/784DyoNmgFUioQLOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=atyb43qYmihoBCqNKLY27VMh3jBuUG9hc9RrYHqQ2yE=;
- b=FERLc25KmT3sUnzjN08aKmYWk1tIydtFTTJ6U3hAtIWFXjKmQcIwiy0LE+Y88i44fSp25kNPWeTsOENnYCiGDtegAUN5j3N+MFbyLQNOzkiQUWG8c0ZPoSYWhXIURaaOiz79XvngkWtgsXlKfMP5NOMnHJZgCM6RvMLIERRZrh0=
-Received: from OS7P286CA0027.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:26d::8)
- by TYCPR01MB18545.jpnprd01.prod.outlook.com (2603:1096:405:390::6) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=Zfo3H2DVXSEm3U1wLHu/CQbo35QCCW4YqgWXFfojTIc=;
+ b=Z4sUDsjgZ+TrWcPSAaJ8nNsW3tnaEv1fPwQ6RQxmmpInd3fviSxnTBb4y1qN5Gi5soI9gO7iY2uslzaLmqGwGrVoQWGhIBMrWvqIgM9PKbeeWaa8XLFnjK3okM5SykjHlMaEkcwgGeZKSIKAHa3nokllyiiu9VOJlwLAzFpI404=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
+ (2603:1096:405:1a1::11) by TYWPR01MB7307.jpnprd01.prod.outlook.com
+ (2603:1096:400:ea::10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Fri, 27 Nov
- 2026 13:42:04 +0000
-Received: from OS1PEPF0000D215.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:26d:cafe::6e) by OS7P286CA0027.outlook.office365.com
- (2603:1096:604:26d::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.662.11 via Frontend Transport; Fri,
- 27 Nov 2026 13:42:04 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 8.62.32.50) smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
-Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D215.mail.protection.outlook.com (10.167.240.22) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.688.5
- via Frontend Transport; Fri, 27 Nov 2026 13:42:04 +0000
-Received: from [192.168.1.200] (unknown [10.226.92.192])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 677663000224;
-	Fri, 27 Nov 2026 22:41:59 +0900 (JST)
+ 2026 13:51:25 +0000
+Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
+ ([fe80::1116:d56:8164:63b4]) by TYYPR01MB15118.jpnprd01.prod.outlook.com
+ ([fe80::1116:d56:8164:63b4%6]) with mapi id 15.21.0662.007; Fri, 27 Nov 2026
+ 13:51:24 +0000
+Message-ID: <d132b7e9-ead1-4f6b-a3c2-7240b89156ae@renesas.com>
+Date: Fri, 27 Nov 2026 14:51:11 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] i3c: renesas: Fix zero I2C SCL rate on pure I3C
+ buses
+To: claudiu beznea <claudiu.beznea@tuxon.dev>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
+ <20261026-divo-ssgrlpcsrc-2966-i3c-v2-1-2e76b87209bb@renesas.com>
+ <bd8014fe-6a77-445d-b73d-e87404638593@tuxon.dev>
+Content-Language: en-US
 From: Diogo Ivo <diogo.ivo.sx@renesas.com>
-Date: Fri, 27 Nov 2026 13:40:57 +0000
-Subject: [PATCH] serial: rsci: Clear TDRE once per TX FIFO refill
+In-Reply-To: <bd8014fe-6a77-445d-b73d-e87404638593@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0271.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e6::20) To TYYPR01MB15118.jpnprd01.prod.outlook.com
+ (2603:1096:405:1a1::11)
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -99,145 +111,145 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261127-divo-ssgrlpcsrc-2996-rsci-txi-v1-1-88e1614ea0b8@renesas.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/02O26rCMBBFf6Xk2UAy2mnSXzmI5DLtGVHrybRFE
- P/deHk4jws2a6+7EipMovrmrgqtLDxdKthNo9JvuIykOVdWYACthU5nXictMpbTNUlJGrxHXSS
- xnm+sB5cd7dDGTF5Vx7XQwLe3/2f/YVnikdL8kn4Xhf6Wejx/ZioGIZ2m85nnvtlmAJ/IeYcQH
- TnInQ2erM04uJ1JAToImFH9D+6bd64Bo0dYTodXXayMBim0se3XVu0fjydwpMSP/QAAAA==
-X-Change-ID: 20261127-divo-ssgrlpcsrc-2996-rsci-txi-f8d8e461bde9
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, Diogo Ivo <diogo.ivo.sx@renesas.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795786918; l=3519;
- i=diogo.ivo.sx@renesas.com; s=20240529; h=from:subject:message-id;
- bh=62oEN9KCPFY5TOgPKuoUWjc9cPu6NmFjLDK+Gt4Al+s=;
- b=tPBL0XRGJaJ9WscCVCddiXb8+ER1KHZ0+T7eaiWi3C0mM+GcBUIFkTun2wwwUcgyCAsKPkZDB
- +XaOj0FV2M4D0onutXtRIBUAlVvTDLWIAWruwmu1bt6rriYpndBYfB0
-X-Developer-Key: i=diogo.ivo.sx@renesas.com; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D215:EE_|TYCPR01MB18545:EE_
-X-MS-Office365-Filtering-Correlation-Id: 119174c9-b635-48df-5a0f-08df4c8c38e1
+X-MS-TrafficTypeDiagnostic: TYYPR01MB15118:EE_|TYWPR01MB7307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b2956d4-8272-40ff-a0e0-08df4c8d867c
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|1800799024|82310400026|23010399003|10067099003|11063799006|56012099006|261021121427099003|261026121527099003|261022105027099003|261021123027099003|261028144727099003|261102123227099003|261026140227099003|261009223027099003|18002099003|6133799003;
+	BCL:0;ARA:13230040|23010399003|366016|7416014|376014|1800799024|11063799006|4143699003|18002099003|261009223027099003|261009221227099003|22082099003|921020|10067099003|56012099006|261102123227099003|261028144727099003|261026140227099003|261026121527099003|261021123027099003|261021121427099003|261022105027099003;
 X-Microsoft-Antispam-Message-Info:
-	ANwOfZxWlpq4pRuSu+JgB+BfBFVakWqRWaUZwkw6LwsL6bexIvmMeFuIgoZSKNjdO8rc7MkHwWvVHQwp9UmXwUa2rUA+70PWtH5lxjRCJ9YjHBchvzG2J2ECFWZxq3KIDxFNEsmEnm+5cmNgtNnFBZ/vCwuCc6J7SSofUeW/0J+tmrQyh5rZenHeFV2P27g1mAdG2+tg7V4siuSYpi9Vauk/AuTJy91mHhihQTLxXHK9ToRHHQ8AxPfkPj/M1FO8m6LpxV6V6yED1XZlX4c92VX4heGYVYuKmSvs3wSDK+5xI0UJiP1uo6hI7qnnQNkvRuxTcjYsYtVL61tv2MXNYwLOvmIKFc0z0NG1CERdUPtA0DjvIom8cr0WurqfUOk9PTblAUAMQpWe7BJMSmlzLTh/yCCynA/UmQ+g4Yozrm76vh425XfrIO8x4GlBxGYtUHQ82SnA8k16vbzRLOSASImeWVerU8kP4cAjxvg7HsoiSLlbP0t5PFJaukZj3fIAMS4pGJqxolumXdixKL7r9y+Bu93JIowzzfOgFOUqSDI7tVqLE2CBcrev8CiUmSG3i3XVDA+24Tk/wESIE1RfNdkpuX3QfpYmVrcSEhYJaDUUATqySvDZuyt/vVXSnHorlxNE/6HrZTty2Jfc2v9rNxwfis93TDVr3MiAIn6UAqdfMVoxPxvuRKbCbZeukgiJ2nw0k0mejYI12Fh/P/erKw==
+	jCeLZr7PB/SXjpp0MLhCNulA1HblVsB7f6nYO/Xwh37XtD4Ry5MOZwuWd2i/6FFZvuaMy5q3ROt1HB6LejiS/U30U2DFkD7soywZ9KWtt/Xxerhu5cwxm5VbRWRkZjPEABgTI8JHaYLIMH3B01lazK0XXJnmeqG8TrjgvPsNne+ac1ok8ifKgcXnU7k7lYgX6msipEvSpGkJJx/pG7TGJORNqx+ex5dAJzmSzIxswip/7a5wnt3E2RkSq3Y7fX/y75LNXqEcaa/lfU/LjK5eVfIBKEniBHh2GarA9zK1Odu1haXmQBOEiy1hr9Z6kqZNkBXvE78U5oosqzy6JfYGFQLFCktt6krPCCL4MXIynsK6vO58dAepLdOXVNreKM0cEAwAX/ivNgGMY+vNmnll1rjVcm4lpl/cm1UwxexRDKTXw4dzZOzC643ae0ehraD9GCLKRtyA/UKVoqVXv3K4hV8AVbrCTBQsHz8uxQW5kyrUcdGCycw5z4sPD5q3lGvYhVgDVQ0m66+AJC9q4kvgMlo7dQ4Avu1rr1U//AkLTOtF9KRHuq85CIIM1aMhM6hEo5Rjr7fj/LrGHjsu6X1RRQ3N3MPOrfECKafB0cLwH27ALT/PCptBB182CYcXNgqYQ+bsMGGmuOJOLA9clwzaqP59TI04lAYQ5GpEXFvu6e26J5kNUlUhaCD62N3Z4jK2j0Lp5nzFvVfTJnhO3Ih1+Q==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(1800799024)(82310400026)(23010399003)(10067099003)(11063799006)(56012099006)(261021121427099003)(261026121527099003)(261022105027099003)(261021123027099003)(261028144727099003)(261102123227099003)(261026140227099003)(261009223027099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB15118.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(7416014)(376014)(1800799024)(11063799006)(4143699003)(18002099003)(261009223027099003)(261009221227099003)(22082099003)(921020)(10067099003)(56012099006)(261102123227099003)(261028144727099003)(261026140227099003)(261026121527099003)(261021123027099003)(261021121427099003)(261022105027099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	AEOA6M7JXuhxOZGP5G4pM76nqQovithz1qzApjHJ7ySvHgSbOu98K+xsh96RMnUCL1xM3635lT36d/6D4gqgD3QVGGqB3mPlqQU7RLGwL26HuOseQq5sT8jbLSUsTEdM7GpnsTCsk0dDChSHSGw0UvEhe1cVEbxJvK8RG9I/OXSh13UBDawa4NvYiQW/8FvRJysMkmwsj6uVZlOYJdCGeSLdewsf8ZaAp2hIomJL7XLk2uG73jUnUpkix9QsUXxSm7WYn0ghiWXkbsk03IvAAkaCTMuLGbexkuwcIeF/xEWqX+iyq2zwCurcftfOtLegB9iOFrNqxnViHue1pn/hIwKNy+i9Tp+udW57VHqQ42/K3v+vD0u0p3J0xRDKXipkZQ7SlGLzzM2Pjt/7h9FL20wkMFF0khI6nTgvsEXwQg+eKqLQ2ctVAezW4Ru8qaqq
+	=?utf-8?B?QmNMdmNBSU44amU5V0V1NDNhcU5aWEpTcGxlRU5GK1hSZEpYRDJ6ZHRVT0dC?=
+ =?utf-8?B?cTIwTmVhS1VoeFJFOC94aGFjd0c3RzZ0U0dheEVqaHJQUjNaRHBsMUFqV0Jm?=
+ =?utf-8?B?emxIVDNiYjhMaEhpVzFXL1plSnNwYW03OFpRQVZWdGpreUx3VEM1bm1oR2Zx?=
+ =?utf-8?B?aVk4amUySlk4ZHJjcU9VQWlQS09rKzRsN0hMS0RjeTdrYkVCbkprRE9Cdy8w?=
+ =?utf-8?B?b1U2Z3hibUJYQUlWME9icEFQOFhLOVpLS1gxMXgzMWd1b0UwUVlCQ0M0M0Ur?=
+ =?utf-8?B?aXRzNGtOaHlkVEl5RzRZdFN1MUdEQmorV2tlU1dNWHpuRnAwb1FZdCt2QTJr?=
+ =?utf-8?B?RnJsMnN5MjdBa3VsbE5YUUorUllzc0ZxNHpnaDl4OU91LysvRE9ZcUdCcmNp?=
+ =?utf-8?B?bTFFMCt2enFzUlpvT2d1M01kUlV5SnU1TGVWOENxOXlQalBZNGdYb3JjMEpB?=
+ =?utf-8?B?RWFHNEI4UXJsT0ZwQ0JMcXBsV3ExWlR0VkEvUzFyYkhGSlZTQXNZTUs0K1Ry?=
+ =?utf-8?B?akgvalJCWHdEeitXTFVKa3pSTVJXMDJrQnFIcU9VbUdSdzNXMkVCSEFzUkJQ?=
+ =?utf-8?B?N1dHRUYrbmJsN01jZUpOY0hsbzFickFRdy9TTFFVR252NWwwOFFmVTN5K3Vq?=
+ =?utf-8?B?a0RlYythN2Mzb3o3U29jcnBUNW9JaGliQXY1NG1JTmQxK2FOeFV1WTVIOGlM?=
+ =?utf-8?B?eWFjdFpXaWM1T1BtY0p0QWpaWjVBTnM1SzB3SCtacUdsWjFmY3U3Vndjd3lF?=
+ =?utf-8?B?TllIN3RVcUFqVGV3MERQL0Z5dENOamJXem40cEM2RW9pM09YOUtJWGZ6eXpZ?=
+ =?utf-8?B?ZmJ1Y1NlN1RPdmMyWmM3L3g4M0lEbFdRT0VyMG9RL0ovN0ljVjBFdk5kaWhB?=
+ =?utf-8?B?WEZVSjlHc2I0Y0hWWU1XYWNSQTdyQW1WZHJqcWlyU1FaNytwamxlN1NwR1Vm?=
+ =?utf-8?B?RlJ6dm1JMm1TU1dxYVpPWG4rQ1lXS2JINURwVm1VcHlObUFlelExWHMwNW5S?=
+ =?utf-8?B?bVZVS21IRFh6YVhiZ2t1ZUJaU0JBNFVCMnZKSWhkRitkaVBZblVGUFFEaldH?=
+ =?utf-8?B?azJzNCtxYWpVdlF2SU1pdk0zRGNRMUVUTHJKbk9sblRJQkxWSlpvVzVYcUli?=
+ =?utf-8?B?OCsyWDZHY2VvU2xjMFl0K2xVRXdGRndFQzhlY3BMMExkaE9OLzRMVW5qY2lz?=
+ =?utf-8?B?bElKa2lHNUtyMUFhb3hXL3R6UjF3SjBpR0JNZzJtM25JOTFpbGZ4VXhWejR3?=
+ =?utf-8?B?d2Z0NUVDekxuM3hPZldCS3pKMHVxakNsUzY1NzZ1T2tlTEdSRmRqanJwY2s3?=
+ =?utf-8?B?eXFwTWdYcXJxV0djcE91YlpDcmZVWmhBRytzNlY5ZkJRZHlTSmhva1lhNTVh?=
+ =?utf-8?B?V2RlMEU4WnNPMUZReGthbUY0VTBtV3VWQjVnd2U0SW1rNWdVL0lEbnVqNjdS?=
+ =?utf-8?B?S1RXY3FveTFrbU1tOVZtVEpld0J1YTJWcnFSc05kbzBMMkloNUpnSXpiNVQ3?=
+ =?utf-8?B?UmtwaHkrd2ErT1pvRXNQY2dDeDhveXRycmZ2Y05YdWQ0eDh3OEtqU1JNbGpi?=
+ =?utf-8?B?VjJSMis0V3hLOFZuckxhbVpFRE1oMmRQRlJYMVVzQ2Z4eXlIYzVHSWxDTkN5?=
+ =?utf-8?B?SFhrN242RS8wc0ZGZmNGWWxVTlBlcjRqTjN4dUxyYnJZTG9Kc1FaUzZHdWZo?=
+ =?utf-8?B?K3BaUUYvRWNrdHJJelE3Szhzb0dwUkhUK1EzOEMvNmFCNDlJUDJjVnhsWkVD?=
+ =?utf-8?B?QUIwQXJ6cGNqOXJobzVDWmw2ZEpTRkVBMkkzQXFvdEFmbnZDa2tLM0IvRERC?=
+ =?utf-8?B?NGdDOEhmMXlkZ2ZMc3k1dWtKNDBFdWV4U1Bua2tHVVZSMmZMY2pvY1I2ZEVX?=
+ =?utf-8?B?aHJnMEJ3UjdrMFZRdXd5SG83TjdWQmR4VXZwQ29pM0JtcmN5ZUcrTG1ya0hM?=
+ =?utf-8?B?d3pNZFhFWHV3TnNQUTE0WXZRVU1sNkVYaFF6NU84WUVNcnpJZFdUV1NNVFpJ?=
+ =?utf-8?B?RXFlNHZCdk9VYkwraTUyaW5EY2lFY1dOOFN1a0VrSGw5N3lWdDJ2VWQzYS9k?=
+ =?utf-8?B?bzZDNEdUc21ERnVvbG1qT0dsYW9VYldWbU9TdTltcjlGSS9EUTQyd2t6UmxO?=
+ =?utf-8?B?blVVZmx6WWNHaHRIUVFKclBIV1dQSGUvVDJ0ck9TSG81MkkvaEx3ZWJNejMz?=
+ =?utf-8?B?dStwZStFdG50MnN3SGl4UDkwNXNpOCt4ZzAwQzNIU2NlczZHbEV5L3NEQXcw?=
+ =?utf-8?B?N1dYRjFKekR1OE9FMzJqc05HcmZTODRRd0Judi9WOWQzelFzRmFma25ManpI?=
+ =?utf-8?B?elpWdU9JVFpYU0lZeHRXV1JrS1VUOXp0cW01ck1qVVFuK2FXZkhkbFlEcXNG?=
+ =?utf-8?Q?j+wx+zhAeENYhzIE=3D?=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 13:42:04.2680
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b2956d4-8272-40ff-a0e0-08df4c8d867c
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB15118.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 13:51:24.6549
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 119174c9-b635-48df-5a0f-08df4c8c38e1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D215.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB18545
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dgmXsENx4njtMFIbbJCyalU+AWzcUlC8Bmylu/NWVJGeuGG6/rkz4kCU+2H9P81QsQcLQoSUeQlU1X11PbouwXHc45js2BjIBaUkaNmPbq8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB7307
 
-rsci_transmit_chars() clears TDRE before each write to TDR, going
-against what is stated in Figure 7.3-17 of section 7.3.3.8 (Serial
-Data Transmission (Asynchronous Mode)), FIFO mode, of the RZ/G3L
-hardware manual:
+On 11/27/2026 10:12 AM, claudiu beznea wrote:
+> Hi, Diogo,
+> 
+> On 10/26/26 13:35, Diogo Ivo wrote:
+>> On a pure I3C bus there are no I2C devices, so the I3C core leaves
+>> bus->scl_rate.i2c at zero if i2c-scl-hz is not specified in DT.
+>> Deriving i2c_total_ticks from that zero rate programs a zero-width
+>> open-drain SCL into the STDBR open-drain fields, which are still used
+>> in pure I3C mode for example in DAA.
+>>
+>> Fall back to the 1 MHz FM+ limit instead, the fastest rate an I2C
+>> device could have, so that a sane open-drain timing is programmed.
+>>
+>> Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas 
+>> I3C controller")
+>> Cc: stable@vger.kernel.org
+>> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
+>> ---
+>> Changes in v2:
+>>   - Substituted if/else with ternary operator
+>>   - Picked up R-b from Wolfram Sang
+>> ---
+>>   drivers/i3c/master/renesas-i3c.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/ 
+>> renesas-i3c.c
+>> index 8b264f72e55c..78d0a2c4a19e 100644
+>> --- a/drivers/i3c/master/renesas-i3c.c
+>> +++ b/drivers/i3c/master/renesas-i3c.c
+>> @@ -579,7 +579,15 @@ static int renesas_i3c_bus_init(struct 
+>> i3c_master_controller *m)
+>>       if (!i3c->rate)
+>>           return -EINVAL;
+>> -    i2c_total_ticks = DIV_ROUND_UP(i3c->rate, bus->scl_rate.i2c);
+>> +    /*
+>> +     * A pure I3C bus has no I2C devices, so the I3C core leaves
+>> +     * scl_rate.i2c at zero if not explicitly defined in DT. The
+>> +     * open-drain SCL fields of STDBR, which are used for the DAA
+>> +     * pending read, are derived from it though, so fall back to
+>> +     * the 1 MHz FM+ limit instead of programming a zero-width clock.
+>> +     */
+>> +    i2c_total_ticks = DIV_ROUND_UP(i3c->rate,
+>> +                       bus->scl_rate.i2c ?: 
+>> I3C_BUS_I2C_FM_PLUS_SCL_MAX_RATE);
+> 
+> The manual (at lest the RZ/G3S, Rev.1.30) mentions on the documentation 
+> of BFCTL.FMPE bit:
+> 
+> Set this bit to 1 when using the transmission rate within a range up to 
+> 1 Mbps (Fast-mode Plus [Fm+]) of the I3C-bus specification. Set this bit 
+> to 0 when using the transmission rate at other rates (up to 100 kbps 
+> [Sm], up to 400 kbps
+> [Fm]).
+> 
+> In case the i2c_total_ticks = I3C_BUS_I2C_FM_PLUS_SCL_MAX_RATE should 
+> the BFCTL.FMPE bit also be set for the operation you mentioned? If so, 
+> maybe set the default to I3C_BUS_I2C_FM_SCL_MAX_RATE to avoid any 
+> further changes?
 
-  To continue serial transmission, write all transmit data to
-  the transmit FIFO (TDR) by using a TXI interrupt and clear
-  TDRE flag to 0.
-
-This leads to two problems: (a) up to (FIFO_SIZE - 1) unnecessary MMIO
-writes to clear TDRE that take a significant amount of time in interrupt
-context and (b) a second TXI interrupt is generated while the first is
-being handled. This is described in the RZ/G3L hardware manual in section
-7.3.2.2.18 (Common Status Register), under the TDRE bit,
-
-  When the condition which becomes 1b and the condition which becomes 0b
-  were formed at the same time, TDRE flag will be 0b. After that, when the
-  number of data stored in transmit FIFO is judged, and if that is equal to
-  or less than TTRG value, TDRE is set to 1b after 1b RSCI_m_PCLK.
-
-meaning that if we clear TDRE while the FIFO is still empty TDRE can
-reassert and trigger another TXI. This was observed on a test on RZ/G3L:
-clearing TDRE with an empty FIFO made another TXI pending.
-
-Fix both issues by writing the batch to TDR before clearing TDRE. If no
-bytes were written leave TDRE alone.
-
-A test on an RZ/G3L platform (FIFO_SIZE = 32) sending 64KiB of data led
-to 4096 TXIs and around 159 ms spent servicing them without this patch.
-With the patch the number of TXIs went down to the expected
-(64KiB / 32) = 2048 which took around 86 ms in total.
-
-Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
----
- drivers/tty/serial/rsci.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/tty/serial/rsci.c b/drivers/tty/serial/rsci.c
-index 80087be11808..e4704cb3b6c7 100644
---- a/drivers/tty/serial/rsci.c
-+++ b/drivers/tty/serial/rsci.c
-@@ -432,16 +432,16 @@ static void rsci_transmit_chars(struct uart_port *port)
- {
- 	unsigned int stopped = uart_tx_stopped(port);
- 	struct tty_port *tport = &port->state->port;
-+	unsigned int sent, room;
- 	u32 status;
--	int count;
- 
- 	status = rsci_serial_in(port, CSR);
- 	if (!(status & CSR_TDRE))
- 		return;
- 
--	count = rsci_txroom(port);
-+	room = rsci_txroom(port);
- 
--	do {
-+	for (sent = 0; sent < room; sent++) {
- 		unsigned char c;
- 
- 		if (port->x_char) {
-@@ -451,11 +451,13 @@ static void rsci_transmit_chars(struct uart_port *port)
- 			break;
- 		}
- 
--		rsci_clear_CFC(port, CFCLR_TDREC);
- 		rsci_serial_out(port, TDR, c);
-+	}
- 
--		port->icount.tx++;
--	} while (--count > 0);
-+	if (sent) {
-+		rsci_clear_CFC(port, CFCLR_TDREC);
-+		port->icount.tx += sent;
-+	}
- 
- 	if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
- 		uart_write_wakeup(port);
-
----
-base-commit: 3d229ce89862b8e82d71a9e11d6f840ca272a6d6
-change-id: 20261127-divo-ssgrlpcsrc-2996-rsci-txi-f8d8e461bde9
-prerequisite-change-id: 20261020-g2ul_sci-b610606ea5b5:v5
-prerequisite-patch-id: ed5f3ae4090037e6b4c6126e86b3a5ef1c6c1b44
-prerequisite-patch-id: bec547271f9d220883db537de4c595fb9734d5ce
-prerequisite-patch-id: fd136809f0c9d90c66f23b5165f59d3e50117928
-prerequisite-patch-id: 498b88618f0dd6fcc63f671fde36edaf5cd0c811
-prerequisite-patch-id: da7a159d3cd6376a17a9ab5edb91eb283574243b
-prerequisite-patch-id: fd9ac71ffbbcc1aa106be6f923583a39342c7296
-prerequisite-patch-id: 988f616382a3b4aedf191e097cc829b7be0546e1
+I checked the RZ/G3L manual Rev 1.00 and this same block about FMPE is 
+there. However, in that case shouldn't this be applied to the whole 
+driver? For example on a pure I3C bus with a bus speed of 12.5 MHz what
+this section says is that the bit should be enabled. I checked the 
+driver and neither the BFCTL register nor the FMPE bit in the register
+are defined, so if I understand this correctly the FMPE bit seems like
+something that should be addressed for the entire driver on a separate
+patch and here we can keep this speed, but please correct me if I am wrong.
 
 Best regards,
---  
-Diogo Ivo <diogo.ivo.sx@renesas.com>
+Diogo
+
+> Thank you,
+> Claudiu
 
