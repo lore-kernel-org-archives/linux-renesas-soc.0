@@ -1,79 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795803326;
-	b=KaOT9/80KuwVmv4HmrIRPJMzqm5APsBap3Q6nnWNdFi3/U7NrjbGFvcdmmD1An2ZZjri
-	 7S4oQ2dLbhE9U9pRsWCv/q6c2NgruXOb0g8L9Wa+V2vtoN77ZbG2+WGUr+XbUNRvKa19b
-	 zdXJCRspAkMUANorhjI8byGJLrA5BrCUYAb1ZvhNSSCYl8+FvegoWTHYDKEL/0FwE28yK
-	 eTFj0jvEJphLvgjttNNQQlhgRs2bQFCpIYPFhUNE2/ty9822ATYD5os8xCyt+/FBtMYUb
-	 /trFUXIIfo8RvA1sGWJx7782rkG/eFvARNeQKtNDt3dNhp2MWneL0kD85rlDPTRCFOw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795803326;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=47ronz9/gcsD9bz5yzNQgEXoqsksImANIoSU7oiUS90=;
-	b=ojPv7eo1T/fKqA+bSWRX2T955394fU4jU/6XO8awhHEWoDsPhqbrPhSgVV/sCHNKMnTh
-	 c+6hxQmtTvYeC9Lbc2oncvrTbm+mkt8dvP4leRzg/1+BnSGMPJEZ2itYrkivkRVf/nO5j
-	 LtXSIsGUrFbCmhqE1OM6Yqkz+VQSr1BEPUjjuWg4tmXrz3QM0FvpNWsi9YGfTLmI2NAIg
-	 TwjD+KLByx3ug4k/hahKGOC0Evb89Nfc7iX5DvzCPpPu63bKLsUqoe8wUPFqMKju7fgNF
-	 IwXazSawII6tWlrDsm6U4X4SLDtQLwtg6+qdba8VRM2U9zO16dvJmZxM7nM4qRewxHw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eh8gPpt0;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40F4606A324;
-	Fri, 27 Nov 2026 18:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eh8gPpt0
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795803326;
-	b=PZGygl+pOZulIwOFZGuX1pYo+gN2nGlt+aZJp8DLrTcKxtC3EUUhQbZ3RZdygKE68JLm
-	 Xqxg3kFXmb0wRDNFJicKwPciBdCQdQ3IoQNX0/XSq/HNERUu4sldic9xX0HS+p+ysLjwf
-	 /vvpvs7RyfIEqi0isJ9+xuhW6WS5IgSSH2OWHG9ShJiALU9r2V1aeenRYQO+GAs+ZC8bM
-	 3nreYKsakSPyq77YRcqqoyoxI6rTJZk6s+fCc3UmHq/NwYpbX88wmvBuo1I11iFH8TkQ5
-	 zk0YXB7ys2hDQaup96Rke08IujGXa3VX3gLwprFIq8S/mVBPdfexQNZll26sQZOAbTg==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795803326;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=47ronz9/gcsD9bz5yzNQgEXoqsksImANIoSU7oiUS90=;
-	b=lQ1Sph9ptysoQiMJmzIFA4vuKzxvSrQEldjFQsiOjpTU3zXBZMf3vsnoCHQrFJfRw6bC
-	 1mlTJheRHxJQWEwuxsusThLAJjbUod5cfwA/8fnoOKP90SAfj4UWRiwF95PreuRZVRg9K
-	 2VEgXFXH8QYEWwrptYZOJ/N+zMCApDeRINunBuGeaIaHZNRlnyCRE1reMbR7rFBbeBwdW
-	 95A0+U6u0A2aeulUHkh/9MArc8WmO5CtU1ejHSywojI8IMXj+yldxC6WUxKY8tFZ1vFzm
-	 wa9pIsTCD4M1CqdZSkAq233hv7fPSFmlLsLv/g6EUl21vrzcWKyPIQvG7WnbSnMYtqQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.151
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795803908;
+	b=Au6nIWpd1kt6fo4uEdawCGuVjF1I/OQWVqcEMdv/DP02WMaKP05EK4upiVBdZZSLinWb
+	 breUo3yXuYmbx536rcL5AWoaGEmAScWGwPJmIB2UlvWmJg54debuaVG3K6HfZv5OYXC6v
+	 vwDJyzjXYgsSMobXOX3FriBHlQy5tutcYynpZp5qW4jmnBnKcRYbFefZEpllr+zmV4EzW
+	 krK7vbIWM289ZOqdKvJNy79c80NUtv10Yk+izhTsmaY+l+asBuQrfxKO2DKRDvrZH36Jz
+	 QShd2S9/WU0IBF0JUby/l7Rw8JXq1G2SkVsQEBNOINoafuMAde9onca3NJIKE0jv+7Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795803908;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
+	bh=nhYYKORTR+/BNUYkaM3WAO4aIQzSPeOEyfSMlfBv7+k=;
+	b=eZmnKiKfgvALBKifPzuymRVbhoKec+7QRIrCIc+0U7OuIJpNV+/k0+Cby4LKE2q1/gU+
+	 4SsXipincuBEaLWSji+ntdUopHvj3VlFZwDjs5Xhm//6+HH1YuQhx9d03cW5p79/m7SuV
+	 JiD6T59DRpjI1MUpJgBmq1r1+ztGqF11K6KI1hN4l0f72BqM9Xz0jxvp/YkvVmElSJflq
+	 3qlNFYEcP9GiS7GLkaES1vuCdmR8NifI4wg98CpRNDlPIGSTzPl619C63OabsXhS17dIP
+	 GYHjeZC2mMU5BKYmHYwC17WyXnJhVExDUVwGQcl00OcW3YPBx8QYPXmGgR2i4BJhhIQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=rp0o4cZg;
+	arc=none smtp.remote-ip=80.241.56.151
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id B4DB41F0089B;
-	Fri, 27 Nov 2026 18:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795803326;
-	bh=47ronz9/gcsD9bz5yzNQgEXoqsksImANIoSU7oiUS90=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=eh8gPpt0/+wsmY0FNl6Aw2IaS8ON7CIxYGu+3kdPmtFs8JQNHtDOYD2g1+zwopREx
-	 3I2lms91jhUOH6L8LX0lYJ7IoM8FB7KtzjUf7RaHCi/iNK6RKaZC5R9K+iU0yNDPgj
-	 6hBUmXwa98pADvanIFHHv9jt29IXnDNxpQR1pKu9vLD73Unl9s3q05kS+wMqu7a85p
-	 HKClcN9GwiQH0e6yrMH5MWfVrjsKDOZ4aVkClPhubCUjw+5j6oJHjuj3Ts6Z5JUlJr
-	 y3mlyHi6gDX81eslQT+z5kqLMLV6z4QLvS1aCM/XuxpyEsNaZs0X/B+YGqhNEPJ2Vb
-	 ioLcZbM0cfF6w==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 407654DD13;
-	Fri, 27 Nov 2026 18:15:13 +0000 (UTC)
-From: Kyle Hendry via B4 Relay <devnull+khendry.reliablecontrols.com@kernel.org>
-Date: Fri, 27 Nov 2026 10:14:27 -0800
-Subject: [PATCH net-next 3/3] ARM: dts: renesas: r9a06g032: Add resets to
- mii converter
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0195606A321;
+	Fri, 27 Nov 2026 18:25:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F0195606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=rp0o4cZg
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4jbhfR0W8sz8vb0;
+	Fri, 27 Nov 2026 19:25:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1795803903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nhYYKORTR+/BNUYkaM3WAO4aIQzSPeOEyfSMlfBv7+k=;
+	b=rp0o4cZg/2LoIO1Q3s2bGCHl0Aon823Hf088RxGd6yK0MGZt0OcgEHQyZ8sPv/bU9JRYhC
+	qfnbtzyR0NSsKumv1eWkS6y22w/gphMewwv47R1gJk07iLtsp/FHrbmnTm3wsmGibl6682
+	AB7m/c/rSdKsxCj7EVhQXuOcTdBL1Jg4NCfVCTSsOZDMnx6lWDFEKpjljbhE/RQ7/+YMeV
+	nr6R4OO+cgd8IDbsU8hyAuExijEq1D+zcY7LVNMGKNH5hKOT4UQ3VCqaH9K+dES520+O0c
+	zv/tXwq6+iJm2zJFx6THtVHP7g/ytNNUCEcX72NJX4FNmrF5vBCiD/1CP6LXFQ==
+Message-ID: <0e44d7dd-eb49-4c47-a43c-11ed90c96bb0@mailbox.org>
+Date: Fri, 27 Nov 2026 19:24:58 +0100
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 List-Id: <linux-renesas-soc.vger.kernel.org>
 List-Post: <mailto:linux-renesas-soc@vger.kernel.org>
@@ -83,62 +62,56 @@ List-Unsubscribe: <mailto:linux-renesas-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-renesas-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261127-miic-reset-consumer-v1-3-3cab78b94e23@reliablecontrols.com>
-References: <20261127-miic-reset-consumer-v1-0-3cab78b94e23@reliablecontrols.com>
-In-Reply-To: <20261127-miic-reset-consumer-v1-0-3cab78b94e23@reliablecontrols.com>
-To: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@linux.dev>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, Kyle Hendry <khendry@reliablecontrols.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795803312; l=858;
- i=khendry@reliablecontrols.com; s=20260813; h=from:subject:message-id;
- bh=ZBaHSFr71t1pKyCTBE4kMOXQIuAsyn3xFeo5+Tn5MSI=;
- b=DHaRzMwkYulCSs08qZt/fJgZXEdTzttvlTd6v6hJbzmDjJihwrfQ3SOlCKVmCMEBALo7ZAPVf
- zTjlHzmSOmGAt1hpriWQXZo2qSie23LBP66CbbTpMovkoISBDpaBrBQ
-X-Developer-Key: i=khendry@reliablecontrols.com; a=ed25519;
- pk=gbK6oghz3qBlBiaGCsEzALLOtj5VklmsuolHQNhDV5M=
-X-Endpoint-Received: by B4 Relay for khendry@reliablecontrols.com/20260813
- with auth_id=946
-X-Original-From: Kyle Hendry <khendry@reliablecontrols.com>
-Reply-To: khendry@reliablecontrols.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/14] clk: renesas: r8a78000: Merge debug prints in
+ r8a78000_clk_get()
+To: Geert Uytterhoeven <geert@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Paul Elder <paul.elder+renesas@ideasonboard.com>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <cover.1795796064.git.geert+renesas@glider.be>
+ <7abac4b033081657e2a9870182bc06f5a5a02c0c.1795796064.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <7abac4b033081657e2a9870182bc06f5a5a02c0c.1795796064.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: cepmxa9jpmdz5zarare85p9sm4r8pee9
+X-MBO-RS-ID: feb1e7b3c69ed64ac80
 
-From: Kyle Hendry <khendry@reliablecontrols.com>
+On 11/27/26 5:26 PM, Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> The two debug prints in r8a78000_clk_get() are very similar.
+> Merge them into a single debug print.
+> 
+> Note that the clock's name is still printed, but its ID no longer is, as
+> that is purely internal.  The printing of real firmware IDs will be
+> readded when their handling is added.
+> 
+> While at it, unwrap the (wrongly-indented) continuation of the
+> r8a78000_clk_get() function header, as it fits on a single line.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Add references to the resets in the system driver that the miic needs
-
-Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
----
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index 8645bab7ee23..12b8795797cd 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -462,6 +462,9 @@ eth_miic: eth-miic@44030000 {
- 				 <&sysctrl R9A06G032_CLK_RMII_REF>,
- 				 <&sysctrl R9A06G032_HCLK_SWITCH_RG>;
- 			clock-names = "mii_ref", "rgmii_ref", "rmii_ref", "hclk";
-+			resets = <&sysctrl R9A06G032_RST_TS>,
-+				 <&sysctrl R9A06G032_RST_MIIC>;
-+			reset-names = "rst_ts", "rst_miic";
- 			power-domains = <&sysctrl>;
- 			status = "disabled";
- 
-
--- 
-2.53.0
-
-
+Thank you !
